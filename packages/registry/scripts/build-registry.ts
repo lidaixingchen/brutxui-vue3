@@ -11,7 +11,8 @@ import {
     CSS_VARS,
 } from 'brutx-shared-vue';
 import { extractModuleSpecifiers, extractClassifiedModuleSpecifiers } from 'brutx-shared-vue/scan';
-import { scanComponentFiles, buildComponentIndexContent, type ComponentFileManifest } from 'brutx-shared-vue/scan';
+import { scanComponentFiles, buildComponentIndexContent } from 'brutx-shared-vue/scan';
+import { applyManifestOverrides, LIB_EXCLUDE } from '../../ui/scripts/manifest-shared';
 import type {
     MergedRegistryEntry,
     RegistryManifest,
@@ -88,37 +89,20 @@ export function reloadRegistry(): void {
 }
 
 /**
- * 重新生成 registry-manifest.json（复用 prebuild-scan 逻辑，供 watch 模式使用）。
+ * 重新生成 registry-manifest.json（复用 prebuild-scan 的共享清单，供 watch 模式使用）。
  * 当用户新增/删除组件文件时，manifest 需要更新才能让 build 感知到新的组件。
+ * 清单 LIB_EXCLUDE / MANIFEST_OVERRIDES 来自 ../../ui/scripts/manifest-shared，
+ * 与 prebuild-scan 同源，保证 watch 产物与 CI 产物不因清单漂移而分叉。
  */
-const SCAN_LIB_EXCLUDE = new Set<string>(['utils.ts']);
-
-const SCAN_MANIFEST_OVERRIDES: Record<string, Partial<ComponentFileManifest>> = {
-    loading: {
-        directives: ['loading.ts'],
-    },
-};
-
-function applyScanOverrides(manifest: Record<string, ComponentFileManifest>): void {
-    for (const [name, override] of Object.entries(SCAN_MANIFEST_OVERRIDES)) {
-        if (!manifest[name]) continue;
-        if (override.directives) {
-            const existing = new Set(manifest[name].directives);
-            for (const d of override.directives) existing.add(d);
-            manifest[name].directives = Array.from(existing).sort();
-        }
-    }
-}
-
 export function runPrebuildScan(): void {
     const manifest = scanComponentFiles({
         componentsDir: UI_COMPONENTS_DIR,
         composablesDir: UI_COMPOSABLES_DIR,
         libDir: UI_LIB_DIR,
         directivesDir: UI_DIRECTIVES_DIR,
-        libExclude: SCAN_LIB_EXCLUDE,
+        libExclude: LIB_EXCLUDE,
     });
-    applyScanOverrides(manifest);
+    applyManifestOverrides(manifest);
     const output = JSON.stringify(manifest, null, 2) + '\n';
     fs.writeFileSync(MANIFEST_PATH, output, 'utf-8');
 }

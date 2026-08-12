@@ -12,8 +12,8 @@
  * names, composable files, and directive files. Consumed by generate-exports.ts
  * and generate-component-index.ts.
  *
- * Manual overrides below cover convention-based dependencies that AST scanning
- * cannot discover (no import link between source files).
+ * Manual overrides (manifest-shared.ts) cover convention-based dependencies that
+ * AST scanning cannot discover (no import link between source files).
  *
  * Usage: pnpm prebuild:scan
  */
@@ -21,6 +21,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { scanComponentFiles, type ComponentFileManifest } from 'brutx-shared-vue/scan';
+import { applyManifestOverrides, LIB_EXCLUDE } from './manifest-shared';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -54,32 +55,6 @@ function listPublicSourceFiles(dir: string): string[] {
     return result.sort();
 }
 
-const LIB_EXCLUDE = new Set<string>(['utils.ts']);
-
-/**
- * Convention-based dependencies that AST scanning cannot discover.
- *
- * The loading directive (v-loading) is packaged with Loading.vue but not
- * imported by it — it's registered externally by consumers. This is the only
- * such case in the codebase; keep this list minimal and documented.
- */
-const MANIFEST_OVERRIDES: Record<string, Partial<ComponentFileManifest>> = {
-    loading: {
-        directives: ['loading.ts'],
-    },
-};
-
-function applyOverrides(manifest: Record<string, ComponentFileManifest>): void {
-    for (const [name, override] of Object.entries(MANIFEST_OVERRIDES)) {
-        if (!manifest[name]) continue;
-        if (override.directives) {
-            const existing = new Set(manifest[name].directives);
-            for (const d of override.directives) existing.add(d);
-            manifest[name].directives = Array.from(existing).sort();
-        }
-    }
-}
-
 function buildExportsManifest(manifest: Record<string, ComponentFileManifest>): ExportsManifest {
     return {
         components: Object.keys(manifest).sort(),
@@ -99,7 +74,7 @@ function main(): void {
 
     console.log('🔍 Scanning component files...');
     const manifest = scanComponentFiles(options);
-    applyOverrides(manifest);
+    applyManifestOverrides(manifest);
     const componentCount = Object.keys(manifest).length;
     console.log(`📦 Found ${componentCount} components.`);
 

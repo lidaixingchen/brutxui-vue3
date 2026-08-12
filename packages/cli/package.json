@@ -26,7 +26,8 @@
         "typecheck": "tsc --noEmit",
         "lint": "eslint src",
         "test": "vitest run --exclude \"tests/integration/**\"",
-        "test:integration": "vitest run tests/integration"
+        "test:integration": "vitest run tests/integration",
+        "check:tokens": "tsx scripts/check-brutalist-tokens.ts"
     },
     "dependencies": {
         "@inquirer/prompts": "^8.5.2",

@@ -19,7 +19,8 @@
                 "tsconfig.*.json",
                 "vite.config.ts",
                 "tailwind.config.*",
-                "postcss.config.*"
+                "postcss.config.*",
+                "../../packages/shared/src/**"
             ]
         },
         "brutx-registry-vue#build": {

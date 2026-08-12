@@ -1,14 +1,21 @@
 /**
- * 从 packages/shared/src/design-tokens.ts 生成 styles.css 的两处令牌块：
+ * 从 packages/shared/src/design-tokens.ts 生成样式文件的三处注入块：
  *
- * 1. @theme 块内的变量声明（含 fallback，取自 BASE_THEME.light）
+ * 1. styles.css @theme 块内的变量声明（含 fallback，取自 BASE_THEME.light）
  *    标记：/* @brutx:theme-tokens:start *\/ ... /* @brutx:theme-tokens:end *\/
  *
- * 2. @layer base 内的 :root / .dark 块（无 fallback，纯运行时值）
+ * 2. styles.css @layer base 内的 :root / .dark 块（无 fallback，纯运行时值）
  *    标记：/* @brutx:root-tokens:start *\/ ... /* @brutx:root-tokens:end *\/
  *
+ * 3. preflight.css body 的 font-family 兜底（源自 FONT_STACK 常量，见下方定义）
+ *    标记：/* @brutx:font-stack:start *\/ ... /* @brutx:font-stack:end *\/
+ *
+ * 模式：
+ *   - 默认：写回 styles.css 与 preflight.css（prebuild）
+ *   - --check：仅比对磁盘与生成结果，不一致则退出非零并打印差异摘要（CI 门禁）
+ *
  * 运行：pnpm --filter brutx-ui-vue prebuild:tokens
- * 消除 styles.css 与 design-tokens.ts 之间的硬编码漂移风险。
+ * 消除 styles.css / preflight.css 与 design-tokens.ts / FONT_STACK 之间的硬编码漂移风险。
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -18,11 +25,24 @@ import { CSS_VARS, BASE_THEME, type ThemeTokens } from 'brutx-shared-vue';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const STYLES_PATH = path.resolve(__dirname, '..', 'src', 'styles.css');
+const PREFLIGHT_PATH = path.resolve(__dirname, '..', 'src', 'preflight.css');
 
 const ROOT_START = '/* @brutx:root-tokens:start */';
 const ROOT_END = '/* @brutx:root-tokens:end */';
 const THEME_START = '/* @brutx:theme-tokens:start */';
 const THEME_END = '/* @brutx:theme-tokens:end */';
+const FONT_STACK_START = '/* @brutx:font-stack:start */';
+const FONT_STACK_END = '/* @brutx:font-stack:end */';
+
+/**
+ * 全局默认字体栈（单一事实来源）。
+ * 下游两处均由本脚本生成、禁止手改：styles.css @theme 的 `--default-font-family`
+ * 与 preflight.css body 的 `var(--default-font-family, <FONT_STACK>)` 兜底。
+ * 注意：src/lib/theme-variables.ts、src/themes/index.ts 的字体栈是运行时主题预设数据，
+ * 不在本常量管辖范围（见审查报告 §11.4 边界说明）。
+ */
+const FONT_STACK =
+    '"Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif';
 
 interface ThemeEntry {
     themeVar: string;
@@ -92,8 +112,7 @@ const THEME_GROUPS: ThemeGroup[] = [
         entries: [
             {
                 themeVar: '--default-font-family',
-                build: () =>
-                    '"Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
+                build: () => FONT_STACK,
             },
         ],
     },
@@ -170,6 +189,39 @@ function generateThemeBlock(): string {
     return lines.join('\n');
 }
 
+/** 生成 preflight.css body 的 font-family 声明（含 --default-font-family 兜底），缩进与 body 规则体一致。 */
+function generateFontStackBlock(): string {
+    const parts = FONT_STACK.split(', ');
+    const lines: string[] = [
+        '        font-family: var(',
+        '            --default-font-family,',
+    ];
+    for (let i = 0; i < parts.length; i++) {
+        const comma = i < parts.length - 1 ? ',' : '';
+        lines.push(`            ${parts[i]}${comma}`);
+    }
+    lines.push('        );');
+    return lines.join('\n');
+}
+
+/** 打印某注入区间「磁盘现状 vs 生成期望」的差异摘要（供 --check 模式使用）。 */
+function printBlockDiff(
+    content: string,
+    startMarker: string,
+    endMarker: string,
+    generated: string,
+    label: string,
+): void {
+    const startIdx = content.indexOf(startMarker);
+    const endIdx = content.indexOf(endMarker);
+    if (startIdx === -1 || endIdx === -1) return;
+    const oldBlock = content.slice(startIdx + startMarker.length, endIdx);
+    console.error(`--- 现有（磁盘）${label}`);
+    console.error(oldBlock);
+    console.error(`+++ 期望（生成）${label}`);
+    console.error(`\n${generated}`);
+}
+
 function injectBetweenMarkers(
     content: string,
     startMarker: string,
@@ -180,7 +232,7 @@ function injectBetweenMarkers(
     const endIdx = content.indexOf(endMarker);
     if (startIdx === -1 || endIdx === -1) {
         throw new Error(
-            `无法在 styles.css 中找到注入标记。请确认存在 "${startMarker}" 与 "${endMarker}"。`,
+            `无法在目标文件中找到注入标记。请确认存在 "${startMarker}" 与 "${endMarker}"。`,
         );
     }
     const startLineStart = content.lastIndexOf('\n', startIdx) + 1;
@@ -191,28 +243,65 @@ function injectBetweenMarkers(
 }
 
 function main(): void {
-    let content = fs.readFileSync(STYLES_PATH, 'utf-8');
-    let changed = false;
+    const isCheckMode = process.argv.slice(2).includes('--check');
 
-    const themeNext = injectBetweenMarkers(content, THEME_START, THEME_END, generateThemeBlock());
-    if (themeNext !== content) {
-        content = themeNext;
-        changed = true;
+    // --- styles.css 两处令牌块 ---
+    const stylesOriginal = fs.readFileSync(STYLES_PATH, 'utf-8');
+    let stylesContent = stylesOriginal;
+
+    const themeBlock = generateThemeBlock();
+    const themeNext = injectBetweenMarkers(stylesContent, THEME_START, THEME_END, themeBlock);
+    const themeChanged = themeNext !== stylesContent;
+    if (themeChanged) {
+        stylesContent = themeNext;
     }
 
-    const rootNext = injectBetweenMarkers(content, ROOT_START, ROOT_END, generateRootBlock());
-    if (rootNext !== content) {
-        content = rootNext;
-        changed = true;
+    const rootBlock = generateRootBlock();
+    const rootNext = injectBetweenMarkers(stylesContent, ROOT_START, ROOT_END, rootBlock);
+    const rootChanged = rootNext !== stylesContent;
+    if (rootChanged) {
+        stylesContent = rootNext;
     }
 
-    if (!changed) {
-        console.log('✓ styles.css 令牌块已是最新，无需更新');
+    const stylesChanged = themeChanged || rootChanged;
+
+    // --- preflight.css 字体栈 ---
+    const preflightOriginal = fs.readFileSync(PREFLIGHT_PATH, 'utf-8');
+    const fontStackBlock = generateFontStackBlock();
+    const preflightNext = injectBetweenMarkers(
+        preflightOriginal,
+        FONT_STACK_START,
+        FONT_STACK_END,
+        fontStackBlock,
+    );
+    const preflightChanged = preflightNext !== preflightOriginal;
+
+    if (!stylesChanged && !preflightChanged) {
+        console.log('✓ styles.css 令牌块与 preflight.css 字体栈已是最新，无需更新');
         return;
     }
 
-    fs.writeFileSync(STYLES_PATH, content, 'utf-8');
-    console.log('✓ styles.css 令牌块已从 design-tokens.ts 重新生成');
+    if (isCheckMode) {
+        console.error('✗ 生成内容与磁盘不一致，需运行 `pnpm prebuild:tokens` 重新生成。');
+        if (themeChanged) {
+            printBlockDiff(stylesOriginal, THEME_START, THEME_END, themeBlock, 'styles.css @theme 令牌块');
+        }
+        if (rootChanged) {
+            printBlockDiff(stylesOriginal, ROOT_START, ROOT_END, rootBlock, 'styles.css :root/.dark 区块');
+        }
+        if (preflightChanged) {
+            printBlockDiff(preflightOriginal, FONT_STACK_START, FONT_STACK_END, fontStackBlock, 'preflight.css 字体栈');
+        }
+        process.exit(1);
+    }
+
+    if (stylesChanged) {
+        fs.writeFileSync(STYLES_PATH, stylesContent, 'utf-8');
+    }
+    if (preflightChanged) {
+        fs.writeFileSync(PREFLIGHT_PATH, preflightNext, 'utf-8');
+    }
+    console.log('✓ styles.css 令牌块与 preflight.css 字体栈已从 design-tokens.ts / FONT_STACK 重新生成');
 }
 
 main();

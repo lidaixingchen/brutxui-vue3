@@ -13,6 +13,8 @@
     body {
         margin: 0;
         line-height: inherit;
+        /* 字体栈由 scripts/generate-styles-tokens.ts 的 FONT_STACK 常量生成注入，禁止手改，改字体只改该常量 */
+        /* @brutx:font-stack:start */
         font-family: var(
             --default-font-family,
             "Inter",
@@ -26,6 +28,7 @@
             "Noto Sans",
             sans-serif
         );
+        /* @brutx:font-stack:end */
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }

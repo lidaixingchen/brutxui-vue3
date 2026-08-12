@@ -55,6 +55,22 @@ const MANUAL_EXPORTS_KEYS = [
     './locales',
 ] as const
 
+// 手工 key 的期望 exports 值（与 package.json 现值逐字比对）。
+// 这些 key 不与任何组件/组合式函数对应，由 generate-exports 保留原样，
+// 故 --verify 需单独校验它们的存在性与指向，防止手工维护时漏改/错改。
+const MANUAL_EXPORTS_EXPECTED: Record<(typeof MANUAL_EXPORTS_KEYS)[number], string | ExportEntry> = {
+    '.': {
+        types: './dist/index.d.ts',
+        import: './dist/index.js',
+    },
+    './style.css': './dist/styles.css',
+    './preflight.css': './dist/preflight.css',
+    './locales': {
+        types: './dist/locales.d.ts',
+        import: './dist/locales.js',
+    },
+}
+
 function buildEntry(distRel: string): ExportEntry {
     return {
         types: `./dist/${distRel}.d.ts`,
@@ -108,6 +124,34 @@ function verifyArtifacts(autoExports: Record<string, ExportEntry>): void {
             `exports artifacts missing (${missing.length}):\n` +
             missing.map(m => `  - ${m}`).join('\n') +
             '\nRun `pnpm build` to regenerate dist/.',
+        )
+    }
+}
+
+function manualEntryMatches(actual: unknown, expected: string | ExportEntry): boolean {
+    if (typeof expected === 'string') return actual === expected
+    if (typeof actual !== 'object' || actual === null) return false
+    const entry = actual as Record<string, unknown>
+    return entry.types === expected.types && entry.import === expected.import
+}
+
+function verifyManualExports(pkgExports: Record<string, unknown>): void {
+    const problems: string[] = []
+    for (const key of MANUAL_EXPORTS_KEYS) {
+        const expected = MANUAL_EXPORTS_EXPECTED[key]
+        const actual = pkgExports[key]
+        if (actual === undefined) {
+            problems.push(`${key} is missing from package.json exports`)
+            continue
+        }
+        if (!manualEntryMatches(actual, expected)) {
+            problems.push(`${key} points to ${JSON.stringify(actual)}, expected ${JSON.stringify(expected)}`)
+        }
+    }
+    if (problems.length > 0) {
+        throw new Error(
+            `manual exports keys are invalid (${problems.length}):\n` +
+            problems.map(p => `  - ${p}`).join('\n'),
         )
     }
 }
@@ -175,7 +219,9 @@ function main(): void {
 
     if (isVerifyMode) {
         verifyArtifacts(autoExports)
-        console.log(`✓ Verified ${Object.keys(autoExports).length} export artifacts exist in dist/`)
+        const pkg = JSON.parse(readFileSync(PACKAGE_JSON_PATH, 'utf-8'))
+        verifyManualExports((pkg.exports ?? {}) as Record<string, unknown>)
+        console.log(`✓ Verified ${Object.keys(autoExports).length} auto export artifacts and ${MANUAL_EXPORTS_KEYS.length} manual keys in package.json`)
         return
     }
 

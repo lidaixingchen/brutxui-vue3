@@ -1,8 +1,11 @@
 /**
  * BrutxUI 设计令牌 fallback 覆盖率审计脚本
  *
- * 扫描所有 `.css`/`.vue` 文件中的 `var(--brutal-*)` 引用，校验是否带 fallback。
- * 无 fallback 的引用将在 CI 中报错（退出码 1）。
+ * 扫描所有 `.css`/`.vue` 文件中的 `var(--brutal-*)` 引用，校验两类问题：
+ *   1. 无 fallback（missing-fallback）
+ *   2. fallback 值不等于 BASE_THEME.light 对应值（fallback-mismatch；比对前先归一化，
+ *      如 `#fff` ≡ `#ffffff`；组件本地令牌如 --brutal-code-* 不在 BASE_THEME 中，跳过）
+ * 任一违规将在 CI 中报错（退出码 1）。
  *
  * 用法：
  *   pnpm audit:fallback                       人类可读报告，违规则退出 1
@@ -17,11 +20,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { CSS_VARS } from 'brutx-shared-vue';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const SCAN_ROOT = path.resolve(__dirname, '..', 'src');
 const BASELINE_FILE = path.resolve(__dirname, '.fallback-baseline.json');
+
+type ViolationType = 'missing-fallback' | 'fallback-mismatch';
 
 interface Violation {
     file: string;
@@ -29,6 +35,9 @@ interface Violation {
     column: number;
     snippet: string;
     varName: string;
+    type: ViolationType;
+    /** fallback-mismatch 时：`实际值 → 期望值` 说明 */
+    detail?: string;
 }
 
 interface AuditResult {
@@ -38,6 +47,28 @@ interface AuditResult {
 }
 
 const VAR_BRUTAL_PREFIX = 'var(--brutal-';
+
+/** BASE_THEME.light 的 var 名 → 值映射（key 不含 `--` 前缀），用于 fallback 值比对。 */
+const LIGHT_VARS: Readonly<Record<string, string>> = CSS_VARS.light;
+
+/** 归一化 CSS 值用于比对：转小写 + 展开 3 位 hex 简写（#fff ≡ #ffffff，等价不应误报）。 */
+function normalizeCssValue(value: string): string {
+    const lower = value.trim().toLowerCase();
+    return lower.replace(/^#([0-9a-f])([0-9a-f])([0-9a-f])$/, '#$1$1$2$2$3$3');
+}
+
+/**
+ * 有意偏离 BASE_THEME.light 的 fallback 白名单（键：`相对文件:--brutal-*变量名`，不随行号漂移）。
+ * Image.vue：
+ *   - 加载占位/错误条纹用更浅的骨架色（muted #e5e5e5、bg #fff），非主题令牌值；
+ *   - 预览工具栏按钮（border-2、shadow-brutal-sm）按下位移用 1px 而非主题 pressedOffset 的 2px。
+ * 属组件级设计决定；新增此类偏离须在此登记理由。
+ */
+const INTENTIONAL_FALLBACK_OVERRIDES = new Set([
+    'components/image/Image.vue:--brutal-muted',
+    'components/image/Image.vue:--brutal-bg',
+    'components/image/Image.vue:--brutal-pressed-offset',
+]);
 
 function walkSourceFiles(root: string): string[] {
     const results: string[] = [];
@@ -72,7 +103,7 @@ function walkSourceFiles(root: string): string[] {
 function parseVarCall(
     text: string,
     startIdx: number,
-): { endIdx: number; hasFallback: boolean; inner: string } | null {
+): { endIdx: number; hasFallback: boolean; inner: string; fallback: string | null } | null {
     const openParen = text.indexOf('(', startIdx);
     if (openParen === -1) return null;
     let depth = 1;
@@ -92,7 +123,9 @@ function parseVarCall(
     }
     if (depth !== 0) return null;
     const inner = text.slice(openParen + 1, i);
-    return { endIdx: i + 1, hasFallback, inner };
+    const commaIdx = inner.indexOf(',');
+    const fallback = hasFallback && commaIdx !== -1 ? inner.slice(commaIdx + 1).trim() : null;
+    return { endIdx: i + 1, hasFallback, inner, fallback };
 }
 
 function computeLineColumn(text: string, idx: number): { line: number; column: number } {
@@ -119,6 +152,7 @@ function extractSnippet(text: string, startIdx: number, endIdx: number): string 
 function auditFile(filePath: string): { violations: Violation[]; referenceCount: number } {
     const content = fs.readFileSync(filePath, 'utf-8');
     const violations: Violation[] = [];
+    const relativeFile = path.relative(SCAN_ROOT, filePath).replace(/\\/g, '/');
     let referenceCount = 0;
     let searchFrom = 0;
     while (searchFrom < content.length) {
@@ -130,17 +164,33 @@ function auditFile(filePath: string): { violations: Violation[]; referenceCount:
             continue;
         }
         referenceCount++;
+        const varNameMatch = parsed.inner.match(/^--brutal-[a-z-]+/);
+        const varName = varNameMatch ? varNameMatch[0] : '--brutal-?';
+        const { line, column } = computeLineColumn(content, idx);
+        const base: Omit<Violation, 'type'> = {
+            file: relativeFile,
+            line,
+            column,
+            snippet: extractSnippet(content, idx, parsed.endIdx),
+            varName,
+        };
         if (!parsed.hasFallback) {
-            const varNameMatch = parsed.inner.match(/^--brutal-[a-z-]+/);
-            const varName = varNameMatch ? varNameMatch[0] : '--brutal-?';
-            const { line, column } = computeLineColumn(content, idx);
-            violations.push({
-                file: path.relative(SCAN_ROOT, filePath).replace(/\\/g, '/'),
-                line,
-                column,
-                snippet: extractSnippet(content, idx, parsed.endIdx),
-                varName,
-            });
+            violations.push({ ...base, type: 'missing-fallback' });
+        } else if (
+            parsed.fallback !== null &&
+            !INTENTIONAL_FALLBACK_OVERRIDES.has(`${relativeFile}:${varName}`)
+        ) {
+            const expected = LIGHT_VARS[varName.slice(2)];
+            if (
+                expected !== undefined &&
+                normalizeCssValue(parsed.fallback) !== normalizeCssValue(expected)
+            ) {
+                violations.push({
+                    ...base,
+                    type: 'fallback-mismatch',
+                    detail: `${parsed.fallback} → 期望 ${expected}`,
+                });
+            }
         }
         searchFrom = parsed.endIdx;
     }
@@ -165,13 +215,16 @@ function audit(): AuditResult {
 
 function formatReport(result: AuditResult): string {
     const lines: string[] = [];
+    const missingCount = result.violations.filter(v => v.type === 'missing-fallback').length;
+    const mismatchCount = result.violations.filter(v => v.type === 'fallback-mismatch').length;
     lines.push('=== BrutxUI fallback 覆盖率审计 ===');
     lines.push(`扫描文件：${result.scannedFiles}`);
     lines.push(`var(--brutal-*) 引用总数：${result.totalReferences}`);
-    lines.push(`无 fallback 违规数：${result.violations.length}`);
+    lines.push(`无 fallback 违规数：${missingCount}`);
+    lines.push(`fallback 值与 BASE_THEME.light 不一致数：${mismatchCount}`);
     lines.push('');
     if (result.violations.length === 0) {
-        lines.push('✓ 全部引用均带 fallback，审计通过。');
+        lines.push('✓ 全部引用均带 fallback 且值与 BASE_THEME.light 一致，审计通过。');
         return lines.join('\n');
     }
     const byFile = new Map<string, Violation[]>();
@@ -182,13 +235,15 @@ function formatReport(result: AuditResult): string {
     for (const [file, fileViolations] of byFile) {
         lines.push(`■ ${file}（${fileViolations.length} 处）`);
         for (const v of fileViolations) {
-            lines.push(`  L${v.line}:${v.column}  ${v.varName}`);
+            const tag = v.type === 'fallback-mismatch' ? '[值不符]' : '[无 fallback]';
+            lines.push(`  L${v.line}:${v.column}  ${tag} ${v.varName}${v.detail ? `（${v.detail}）` : ''}`);
             lines.push(`    ${v.snippet}`);
         }
         lines.push('');
     }
-    lines.push('修复指南：将 var(--brutal-foo) 改为 var(--brutal-foo, <fallback>)，');
-    lines.push('fallback 值参考 packages/shared/src/design-tokens.ts 的 BASE_THEME。');
+    lines.push('修复指南：无 fallback 的引用改为 var(--brutal-foo, <fallback>)；');
+    lines.push('fallback 值须与 packages/shared/src/design-tokens.ts 的 BASE_THEME.light 一致，');
+    lines.push('有意偏离请登记到脚本内 INTENTIONAL_FALLBACK_OVERRIDES 白名单（含理由）。');
     return lines.join('\n');
 }
 
@@ -277,8 +332,9 @@ function formatBaselineReport(result: AuditResult, check: BaselineCheckResult): 
         }
         lines.push('');
     }
-    lines.push('修复指南：将 var(--brutal-foo) 改为 var(--brutal-foo, <fallback>)，');
-    lines.push('fallback 值参考 packages/shared/src/design-tokens.ts 的 BASE_THEME。');
+    lines.push('修复指南：无 fallback 的引用改为 var(--brutal-foo, <fallback>)；');
+    lines.push('fallback 值须与 packages/shared/src/design-tokens.ts 的 BASE_THEME.light 一致，');
+    lines.push('有意偏离请登记到脚本内 INTENTIONAL_FALLBACK_OVERRIDES 白名单（含理由）。');
     return lines.join('\n');
 }
 
