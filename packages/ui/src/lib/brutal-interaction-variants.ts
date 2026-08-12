@@ -1,4 +1,20 @@
 /**
+ * 共享交互变体机制契约（与 COMPONENT_GUIDE「## 共享交互变体机制契约」镜像，两处需同步）：
+ *
+ * ① 完整类名字面量（@source 契约）：styles.css 的 @source 指令声明扫描 src 下所有 .vue/.ts
+ *    源码（含本文件），Tailwind 按源码字面量逐个匹配，每个完整类名必须是可扫描源码中的
+ *    字面量；禁止类名内部 ${...} 插值；允许「完整字面量常量 + ${} 组合」（本文件即样板）。
+ *    机制见 docs/guides/tailwind-v4-mechanisms.md §4。
+ * ② data-* 复合变体字节序（竞态）：产物字节序 hover:* < focus:* < active:* < data-[highlighted]:*
+ *    < data-[state=on]:* 等，同特异度 (0,2,0) 恒后者胜 → data-* 恒压过 brutalPress 的 active:*；
+ *    需在持久 data-* 态下保留瞬态按压反馈时写 data-*:active:... 复合变体（特异度 0,3,0，
+ *    含 translate-x-0 重置）；持久态下取消按压反馈则删引用并注释，严禁保留永不生效的导入。
+ * ③ 管辖分界：brutalPress（瞬态 active）vs brutalPressedState（持久 data-* 态）；持久「保持按下」
+ *    态必须复用 brutalPressedState / brutalPressedStateOn 语义，严禁内联手抄 fallback 字面量；
+ *    switch/checkbox 的 checked 位移驱动独立 thumb 元素属合法边界。
+ */
+
+/**
  * 按压位移完整类名字面量（引用全局样式 styles.css 的 --brutal-pressed-offset，默认 2px）。
  * 必须保存完整类名而非插值片段：Tailwind 源码扫描器无法从 `${...}` 动态拼接中
  * 提取类名，完整字面量才能保证产物 CSS 始终包含该工具类。
@@ -22,6 +38,11 @@ export const brutalPress = `${pressedOffset} active:shadow-none`
 // 永久按下态（无 active: 前缀）：供 copied/selected 等「保持按下」状态引用，
 // 与 brutalPress 共享位移/阴影语义，避免两处硬编码 fallback 脱同步
 export const brutalPressedState = `${pressedOffsetBase} shadow-none`
+
+// 持久「开启态保持按下」版本（data-[state=on] 前缀，特异度 0,2,0）。
+// translate-x-0 重置 hoverLift 的 X 轴侧滑（仿 cascader/select）；
+// 其他持久 data-* 态（selected 等）需要同样语义时在此派生对应前缀版本，勿内联手抄 fallback。
+export const brutalPressedStateOn = 'data-[state=on]:translate-y-[var(--brutal-pressed-offset,2px)] data-[state=on]:translate-x-0 data-[state=on]:shadow-none'
 
 // Derived interaction variants
 // 过渡仅限 transform/box-shadow，避免 transition-all 对其他可动画属性（颜色等）产生不必要的开销

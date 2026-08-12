@@ -13,6 +13,10 @@ import { twMerge } from 'tailwind-merge'
  *
  * 颜色走主题令牌 `--color-brutal-ring`（依赖 styles.css @theme 定义），运行时经
  * `--brutal-*` 变量随 dark 类与替代主题自动翻转，避免硬编码纯黑/纯白出现接缝。
+ *
+ * 注意：`--tw-outline-style` 是元素级变量（@property inherits:false，不跨元素），本常量
+ * 不得与任何 `outline-none` 同元素共存（`outline-<n>` 不重置被置 none 的变量，焦点环静默
+ * 不渲染）；机制与合法例外见 docs/guides/tailwind-v4-mechanisms.md §1。
  */
 export const FOCUS_OUTLINE_CLASSES =
     'focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2'

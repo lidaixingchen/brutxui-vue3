@@ -1,6 +1,10 @@
 import { cva } from 'class-variance-authority'
 
-/** CSS variable `--sep-thickness` 的默认 fallback 值 */
+/**
+ * CSS variable `--sep-thickness` 的默认 fallback 值（公共导出常量，仅供外部读取/文档参考）。
+ * 类名字符串必须硬编码字面量 `3px`（与 DEFAULT_THICKNESS 同值）：Tailwind @source 扫描
+ * 无法从 `${...}` 插值推断类名，类名内禁止 ${} 插值（见 check:class-literals 门禁）。
+ */
 export const DEFAULT_THICKNESS = '3px'
 
 const separatorColorVariants = {
@@ -20,8 +24,8 @@ export const separatorVariants = cva('shrink-0', {
         variant: separatorColorVariants,
         size: separatorSizeVariants,
         orientation: {
-            horizontal: `h-[var(--sep-thickness,${DEFAULT_THICKNESS})] w-full`,
-            vertical: `h-full w-[var(--sep-thickness,${DEFAULT_THICKNESS})]`,
+            horizontal: 'h-[var(--sep-thickness,3px)] w-full',
+            vertical: 'h-full w-[var(--sep-thickness,3px)]',
         },
     },
     defaultVariants: {
@@ -31,7 +35,7 @@ export const separatorVariants = cva('shrink-0', {
     },
 })
 
-export const separatorLineVariants = cva(`flex-1 h-[var(--sep-thickness,${DEFAULT_THICKNESS})]`, {
+export const separatorLineVariants = cva('flex-1 h-[var(--sep-thickness,3px)]', {
     variants: {
         variant: separatorColorVariants,
         size: separatorSizeVariants,

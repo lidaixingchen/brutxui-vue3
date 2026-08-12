@@ -1,5 +1,5 @@
 import { cva } from 'class-variance-authority'
-import { brutalHoverLiftSm, brutalPress } from '@/lib/brutal-interaction-variants'
+import { brutalHoverLiftSm, brutalPress, brutalPressedStateOn } from '@/lib/brutal-interaction-variants'
 import { FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
 
 export const toggleVariants = cva(
@@ -16,12 +16,17 @@ export const toggleVariants = cva(
                 default: [
                     'bg-brutal-bg text-brutal-fg shadow-brutal-sm',
                     `hover:bg-brutal-muted ${brutalHoverLiftSm}`,
-                    'data-[state=on]:bg-brutal-primary data-[state=on]:text-brutal-primary-foreground data-[state=on]:shadow-none data-[state=on]:translate-y-[var(--brutal-pressed-offset,2px)]',
+                    // ON 态保持按下：位移+去影+translate-x-0 重置（复用 brutalPressedStateOn 共享变体，
+                    // 与 brutalPress 同源派生，避免手抄 fallback 脱同步；translate-x-0 重置 hoverLift 的 X 轴侧滑）
+                    'data-[state=on]:bg-brutal-primary data-[state=on]:text-brutal-primary-foreground',
+                    brutalPressedStateOn,
                 ],
                 outline: [
                     'bg-transparent text-brutal-fg border-3 border-brutal shadow-brutal-sm',
                     `hover:bg-brutal-muted ${brutalHoverLiftSm}`,
-                    'data-[state=on]:bg-brutal-secondary data-[state=on]:text-brutal-secondary-foreground data-[state=on]:shadow-none data-[state=on]:translate-y-[var(--brutal-pressed-offset,2px)]',
+                    // 同上：ON 态保持按下复用共享变体
+                    'data-[state=on]:bg-brutal-secondary data-[state=on]:text-brutal-secondary-foreground',
+                    brutalPressedStateOn,
                 ],
             },
             size: {
