@@ -160,8 +160,8 @@ Compose new card templates directly from the `Card` sub-components.
 - **Semantic structure**: `CardTitle` renders as an `h3` heading element by default, customizable to an appropriate heading level via the `as` prop
 - **Interactive feedback**: The `interactive` variant provides hover effects; it is recommended to use it with keyboard focus styles
 - **Clickable cards**: Setting the `interactive` prop (or using `variant="interactive"`) adds `role="button"` and `tabindex="0"` to the card, with Enter/Space key support to trigger the `activate` event (dispatching native event parameter)
-- **Disabled state**: An `interactive` card with `disabled` is not focusable (`tabindex="-1"`), is marked `aria-disabled="true"`, and neither clicks nor keys trigger `activate`
-- **Nested interactive elements**: Clicks on interactive elements nested inside the card (buttons/links) do not trigger the card `activate` (avoiding double-firing of "child action + card activation"); also avoid nesting interactive elements inside an `interactive` card, which would create invalid ARIA nesting
+- **Disabled state**: An `interactive` card with `disabled` is not focusable (`tabindex="-1"`), is marked `aria-disabled="true"`, and neither clicks nor keys trigger `activate`; visually, the pointer cursor and hover/press interaction styles are no longer applied, distinguishing it from interactive cards
+- **Nested interactive elements**: Clicks on, or Enter/Space key presses on, interactive elements nested inside the card (buttons/links) do not trigger the card `activate` (consistent with `onClick` behavior, avoiding double-firing of "child action + card activation"); also avoid nesting interactive elements inside an `interactive` card, which would create invalid ARIA nesting
 - **Content organization**: The `CardHeader`, `CardContent`, and `CardFooter` sub-components provide a clear content structure, making it easier for assistive technologies to understand the page layout
 
 ### Clickable Card

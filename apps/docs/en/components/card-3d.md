@@ -66,7 +66,7 @@ Control the card background and text color via the `variant` prop.
 
 ## Clickable
 
-Setting `clickable` to `true` changes the card cursor to `pointer`, adds `role="button"`, `tabindex="0"` and Enter/Space key support, and triggers a `click` event.
+Setting `clickable` to `true` changes the card cursor to `pointer`, adds `role="button"`, `tabindex="0"` and Enter/Space key support, and triggers a `click` event. Each Enter press or Space release triggers a single `click` event without duplicates; long-press repeat does not re-trigger. Real mouse clicks are unaffected, and programmatic `el.click()` no longer triggers the `click` event.
 
 ```vue
 <script setup>
@@ -96,6 +96,7 @@ function handleClick(event) {
 | `variant` | `'default' \| 'primary' \| 'accent' \| 'muted'` | `'default'` | Card background color variant |
 | `disabled` | `boolean` | `false` | Disables 3D effect, card stays static |
 | `clickable` | `boolean` | `false` | Enables click; when true, adds `role="button"`, `tabindex="0"`, keyboard support and triggers click events |
+| `ariaLabel` | `string` | — | Accessible name for clickable cards; sets `aria-label` only when explicitly provided, otherwise the slot content serves as the accessible name |
 | `class` | `string` | — | External class override |
 
 ## Events
@@ -113,5 +114,6 @@ function handleClick(event) {
 ## Accessibility
 
 - The component sets `role="group"` and provides `aria-label` via i18n (Chinese: `"3D Interactive Card"`, English: `"3D Interactive Card"`)
+- For clickable cards, `aria-label` is set only when `ariaLabel` is explicitly provided; otherwise the slot content serves as the accessible name. A clickable card with an empty slot and no `ariaLabel` has no accessible name — pass `ariaLabel` in that case
 - When the user prefers `prefers-reduced-motion: reduce`, the 3D deflection effect is automatically disabled
 - The 3D effect can be fully disabled via the `disabled` prop

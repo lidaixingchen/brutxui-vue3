@@ -65,7 +65,7 @@ import { Card3D } from 'brutx-ui-vue'
 
 ## 可点击
 
-设置 `clickable` 为 `true` 后，卡片光标变为 `pointer`，添加 `role="button"`、`tabindex="0"` 并支持 Enter/Space 键触发 `click` 事件。
+设置 `clickable` 为 `true` 后，卡片光标变为 `pointer`，添加 `role="button"`、`tabindex="0"` 并支持 Enter/Space 键触发 `click` 事件。Enter 按下或 Space 抬起各触发一次 `click`，长按不会重复触发；键盘激活产生的合成 click 不会重复发出，真实鼠标点击不受影响，程序化调用 `el.click()` 不再触发 `click` 事件。
 
 ```vue
 <script setup>
@@ -95,6 +95,7 @@ function handleClick(event) {
 | `variant` | `'default' \| 'primary' \| 'accent' \| 'muted'` | `'default'` | 卡片背景色变体 |
 | `disabled` | `boolean` | `false` | 禁用 3D 效果，卡片保持静态 |
 | `clickable` | `boolean` | `false` | 是否启用点击，true 时添加 `role="button"`、`tabindex="0"`、键盘支持并触发 click 事件 |
+| `ariaLabel` | `string` | — | 可点击卡片（`clickable`）的可访问名称；仅显式传入时设置 `aria-label`，未传入时由 slot 内容充当可访问名称 |
 | `class` | `string` | — | 外部类覆盖 |
 
 ## 事件
@@ -112,5 +113,6 @@ function handleClick(event) {
 ## 可访问性
 
 - 组件设置了 `role="group"`，并通过 i18n 提供 `aria-label`（中文为 `"3D 交互卡片"`，英文为 `"3D Interactive Card"`）
+- 可点击卡片（`clickable`）仅在显式传入 `ariaLabel` 时设置 `aria-label`，未传入时由 slot 内容充当可访问名称；空 slot 且未传 `ariaLabel` 的可点击卡片将无可访问名称，调用方应自行传入 `ariaLabel`
 - 当用户偏好 `prefers-reduced-motion: reduce` 时，自动禁用 3D 偏转效果
 - 可通过 `disabled` prop 完全禁用 3D 效果
