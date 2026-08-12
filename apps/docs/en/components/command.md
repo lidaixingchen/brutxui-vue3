@@ -182,7 +182,7 @@ const open = ref(false)
 
 ## Programmatic Control
 
-`Command` exposes a `filterSearch` reactive reference via `defineExpose`, allowing parent components to programmatically read or set the search keyword, thereby triggering item filtering without relying on `CommandInput`. When a `CommandInput` is present, writing `filterSearch` externally is also reflected back into the input.
+`Command` exposes a `filterSearch` reactive reference via `defineExpose`, allowing parent components to programmatically read or set the search keyword, thereby triggering item filtering without relying on `CommandInput`. When a `CommandInput` is present, writing `filterSearch` externally is also reflected back into the input; if the written value differs from the input's current display, `CommandInput` also synchronously emits `update:modelValue`, keeping the parent's `v-model` in sync with the input display (the parent-driven `v-model` write-back path does not re-emit, so there is no loop).
 
 > Note: Writing to `filterSearch` only triggers filtering logic when internal filtering is enabled (i.e., `disable-filter` is not set); when `disableFilter` is `true`, internal filtering is disabled and writes will not affect item display.
 

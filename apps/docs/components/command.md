@@ -181,7 +181,7 @@ const open = ref(false)
 
 ## 程序化控制
 
-`Command` 通过 `defineExpose` 暴露 `filterSearch` 响应式引用，允许父组件程序化读取或设置搜索关键词，从而在不依赖 `CommandInput` 的情况下触发项目过滤。当内部存在 `CommandInput` 时，外部写入 `filterSearch` 会同步回显到输入框。
+`Command` 通过 `defineExpose` 暴露 `filterSearch` 响应式引用，允许父组件程序化读取或设置搜索关键词，从而在不依赖 `CommandInput` 的情况下触发项目过滤。当内部存在 `CommandInput` 时，外部写入 `filterSearch` 会同步回显到输入框；若写入的值与输入框当前显示不一致，还会同步触发 `CommandInput` 的 `update:modelValue` 事件，保证父组件 `v-model` 与输入框显示一致（父组件 `v-model` 驱动的回写不会重复触发该事件，无回环）。
 
 > 注意：仅当内部过滤启用时（即未设置 `disable-filter`）写入 `filterSearch` 才会触发过滤逻辑；`disable-filter` 为 `true` 时内部过滤被禁用，写入不会影响项目显示。
 

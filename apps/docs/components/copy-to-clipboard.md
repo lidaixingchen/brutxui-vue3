@@ -96,7 +96,7 @@ import { CopyToClipboard } from 'brutx-ui-vue'
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `text` | `string` | — | 需要拷贝到剪贴板的文本（必填） |
-| `duration` | `number` | `2000` | 复制成功反馈（"已复制"状态）的保持毫秒数 |
+| `duration` | `number` | `2000` | 复制成功/失败反馈（"已复制"/"复制失败"状态）的保持毫秒数 |
 | `variant` | `'default' \| 'primary' \| 'outline'` | `'default'` | 按钮颜色变体 |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 按钮尺寸预设 |
 | `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 图标尺寸预设 |
@@ -109,7 +109,7 @@ import { CopyToClipboard } from 'brutx-ui-vue'
 | `default` | `{ copied: boolean; failed: boolean }` | 自定义按钮内容。`copied` 表示是否刚复制成功；`failed` 表示最近一次复制是否失败（剪贴板权限被拒等场景） |
 
 ::: tip 复制失败反馈
-组件默认文案会在复制失败时切换为「复制失败」（可通过覆盖 locale `copyToClipboard.copyFailed` 自定义），并进入红色破坏态；屏幕阅读器经隐藏的 `role="status"` live region 播报成功/失败状态。
+组件默认文案会在复制失败时切换为「复制失败」（可通过覆盖 locale `copyToClipboard.copyFailed` 自定义），并进入红色破坏态；屏幕阅读器经隐藏的 `role="status"` live region 播报成功/失败状态。失败反馈时长与成功反馈一致，由 `duration` 控制；若失败反馈期间再次复制成功，界面会立即清除失败状态并切回成功反馈。
 :::
 
 ```vue

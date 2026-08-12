@@ -97,7 +97,7 @@ import { CopyToClipboard } from 'brutx-ui-vue'
 | Prop | Type | Default | Description |
 |------|------|--------|------|
 | `text` | `string` | — | Text to copy to the clipboard (required) |
-| `duration` | `number` | `2000` | Duration in milliseconds to maintain the "copied" feedback state |
+| `duration` | `number` | `2000` | Duration in milliseconds to maintain the success/failure feedback state ("copied"/"copy failed") |
 | `variant` | `'default' \| 'primary' \| 'outline'` | `'default'` | Button color variant |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Button size preset |
 | `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | Icon size preset |
@@ -110,7 +110,7 @@ import { CopyToClipboard } from 'brutx-ui-vue'
 | `default` | `{ copied: boolean; failed: boolean }` | Custom button content; `copied` indicates whether a copy was just successful, `failed` whether the last copy failed (e.g. clipboard permission denied) |
 
 ::: tip Copy failure feedback
-On a failed copy the default label switches to "Copy failed" (customizable by overriding the locale `copyToClipboard.copyFailed`) and enters a red destructive state; a visually-hidden `role="status"` live region announces success/failure to screen readers.
+On a failed copy the default label switches to "Copy failed" (customizable by overriding the locale `copyToClipboard.copyFailed`) and enters a red destructive state; a visually-hidden `role="status"` live region announces success/failure to screen readers. The failure feedback lasts as long as the success feedback, both controlled by `duration`; if a copy succeeds again while the failure feedback is showing, the failed state is cleared immediately and the button switches back to the success feedback.
 :::
 
 ```vue
