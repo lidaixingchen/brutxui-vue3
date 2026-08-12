@@ -314,10 +314,10 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
      * 更新主题变量（支持部分更新）
      */
     function updateTheme(name: string, variables: PartialThemeVariables): boolean {
-        // name 外部可控，写入前拦截原型链危险键（themes['__proto__'] 取到 Object.prototype，对其写属性即污染原型）
-        if (isUnsafeThemeKey(name)) return false
+        // name 外部可控：Object.hasOwn 判断存在性——themes['__proto__'] 取到 Object.prototype、
+        // 继承属性（hasOwnProperty 等）truthy，统一拦截可防原型读写污染
+        if (!Object.hasOwn(themes, name)) return false
         const existing = themes[name]
-        if (!existing) return false
 
         // 深度合并各部分
         if (variables.colors) {
@@ -352,9 +352,8 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
      * 导出主题为 JSON 字符串
      */
     function exportTheme(name: string): string | null {
-        if (isUnsafeThemeKey(name)) return null
+        if (!Object.hasOwn(themes, name)) return null
         const theme = themes[name]
-        if (!theme) return null
         return JSON.stringify(theme, null, 2)
     }
 
@@ -412,9 +411,8 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
      * 生成主题的 CSS 变量代码
      */
     function generateCSS(name: string, cssOptions?: CSSGenerateOptions): string | null {
-        if (isUnsafeThemeKey(name)) return null
+        if (!Object.hasOwn(themes, name)) return null
         const theme = themes[name]
-        if (!theme) return null
 
         // 主题名可来自外部输入（如 importThemeFromFile 的文件名），用作选择器值前须转义，防止 CSS 选择器注入
         const safeName = typeof CSS !== 'undefined' && typeof CSS.escape === 'function'
@@ -488,20 +486,21 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
      */
     function getTheme(name: string): ThemeVariables | undefined {
         // 返回深拷贝，避免调用方绕过 updateTheme / onThemeChange 直接修改内部状态（与 getAllThemes 一致）
-        // 危险键直接返回 undefined：themes['__proto__'] 取到 Object.prototype，structuredClone 会抛 DataCloneError
-        if (isUnsafeThemeKey(name)) return undefined
-        const theme = themes[name]
-        return theme ? structuredClone(theme) : undefined
+        // Object.hasOwn 判断存在性：themes['__proto__'] 取到 Object.prototype、继承属性（hasOwnProperty 等）
+        // truthy，统一拦截可避免 structuredClone 抛 DataCloneError
+        if (!Object.hasOwn(themes, name)) return undefined
+        return structuredClone(themes[name])
     }
 
     /**
      * 复制主题
      */
     function cloneTheme(source: string, target: string): boolean {
-        // target 可能来自外部输入，写入前须拦截原型链危险键
+        // target 写入前须拦截原型链危险键；source 用 Object.hasOwn 判断存在性——
+        // themes['__proto__'] 取到 Object.prototype（truthy 通过旧检查），structuredClone 会抛 DataCloneError
         if (isUnsafeThemeKey(target)) return false
+        if (!Object.hasOwn(themes, source)) return false
         const sourceTheme = themes[source]
-        if (!sourceTheme) return false
 
         themes[target] = structuredClone(sourceTheme)
         onThemeChange?.(target, themes[target])
@@ -515,7 +514,7 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
         // 不允许删除内置主题；危险键直接拒绝（__proto__ 恒在原型链上，in 守卫不足以拦截 delete 语义）
         if (isUnsafeThemeKey(name)) return false
         if (name in DEFAULT_THEMES) return false
-        if (!themes[name]) return false
+        if (!Object.hasOwn(themes, name)) return false
 
         delete themes[name]
         return true
@@ -525,10 +524,11 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
      * 重置主题为默认值
      */
     function resetTheme(name: string): boolean {
-        // name 外部可控，写入前拦截原型链危险键（themes[name] 赋值 '__proto__' 会触发原型 setter 污染）
+        // name 外部可控：Object.hasOwn 判断 DEFAULT_THEMES 存在性（继承属性不通过），
+        // 写入 themes[name] 前仍须拦截原型链危险键（赋值 '__proto__' 触发 setter 污染）
         if (isUnsafeThemeKey(name)) return false
+        if (!Object.hasOwn(DEFAULT_THEMES, name)) return false
         const defaultTheme = DEFAULT_THEMES[name]
-        if (!defaultTheme) return false
 
         themes[name] = structuredClone(defaultTheme)
         if (autoApply) {
@@ -542,10 +542,9 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
      * 实时预览主题（应用到 DOM）
      */
     function previewTheme(name: string): boolean {
-        // 危险键返回 false：themes['__proto__'] 取到 Object.prototype，非 ThemeVariables 结构，applyToDom 会出错
-        if (isUnsafeThemeKey(name)) return false
+        // Object.hasOwn 判断存在性：themes['__proto__']/继承属性非 ThemeVariables 结构，applyToDom 会出错
+        if (!Object.hasOwn(themes, name)) return false
         const theme = themes[name]
-        if (!theme) return false
 
         applyToDom(theme, true)
         return true

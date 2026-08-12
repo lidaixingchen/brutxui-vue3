@@ -114,9 +114,10 @@ export function useCarouselEnhanced(options: UseCarouselEnhancedOptions = {}) {
     })
 
     onActivated(() => {
-        // 重新激活时恢复：仅当停用前进度计时仍在运行才重启（startProgressTimer 内部复核 trackProgress / reduced 条件）
+        // 重新激活时恢复：停用前进度计时在运行、或停用期间 autoplay 被外部开启（onAutoplayChange
+        // 回调路径同样被 isDeactivated 拦截）都重启——startProgressTimer 内部复核 trackProgress / reduced 条件
         isDeactivated.value = false
-        if (wasProgressRunningBeforeDeactivate) {
+        if (wasProgressRunningBeforeDeactivate || toValue(options.autoplay) === true) {
             startProgressTimer()
         }
     })

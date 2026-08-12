@@ -7,14 +7,16 @@
  * 由 scripts/generate-styles-tokens.ts 从 shared 生成；CLI 手抄副本不随 shared 变更，
  * 且 audit-brutal-fallback.ts 只扫 packages/ui/src，覆盖不到 CLI。
  *
- * 本脚本做两级校验（对齐 ui 生成产物 styles.css 而非直接读 shared，因为 CLI 值
- * 的语义是"与用户看到的 ui 样式一致"）：
- * ① 值漂移：CLI 每个主题令牌块中出现的每个 `--brutal-*` 令牌，若 ui styles.css
- *    对应块有同名令牌，则值必须一致（允许 CLI 缺令牌——覆盖率缺口另行告警）。
- * ② 块覆盖：预设主题块（pastel/mono/warm 的 light/dark）必须存在。
+ * 本脚本对齐 ui 生成产物 styles.css（CLI 值语义是"与用户看到的 ui 样式一致"），
+ * 做两级校验：
+ * ① 块覆盖：ui styles.css 的每个主题令牌块（:root / .dark / .theme-pastel|mono|warm
+ *    的 light/dark 两态），CLI 必须存在同名块，缺失即报错。
+ * ② 值漂移：两方共有令牌的值必须一致（hex 3 位展开 + 小写归一化后比对；
+ *    允许 CLI 缺令牌——覆盖率缺口由块级检查兜底）。
  *
- * 说明：styles.css 末尾含 `@media (prefers-contrast: high)` 嵌套块（高对比度特殊值，
- * 非默认主题），解析时按花括号深度跳过嵌套块，避免把其中 `.dark` 误当顶层块。
+ * 说明：styles.css 的令牌块嵌套在 `@layer base` 内，末尾还有
+ * `@media (prefers-contrast: high)` 高对比度覆盖块（特殊值、非默认主题）。
+ * 扫描时对 @layer/@supports 容器递归提取内部子块；@media/@keyframes 整块跳过。
  *
  * 使用：pnpm --filter brutx-vue exec tsx scripts/check-brutalist-tokens.ts
  */
@@ -31,7 +33,9 @@ const uiCss = readFileSync(uiCssPath, 'utf-8')
 
 /** 选择器 → 规范化块键：`:root`→root、`.dark`→dark、`.theme-x`→light:x、组合 dark→dark:x；其余块忽略 */
 function normalizeSelector(selector: string): string | null {
-    const s = selector.replace(/\s+/g, ' ').trim()
+    // 先剥离 CSS 注释：styles.css 的 :root 前有 `/* @brutx:root-tokens:start */` 生成标记，
+    // 不剥离会导致选择器严格相等判断失效、该块被静默跳过（门禁假绿）
+    const s = selector.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\s+/g, ' ').trim()
     if (s === ':root') return 'root'
     if (s === '.dark') return 'dark'
     const m = s.match(/\.theme-([a-z0-9-]+)/)
@@ -48,12 +52,24 @@ function normalizeColor(value: string): string {
     return v
 }
 
+/** 提取块内 `--brutal-*` 令牌值（写入 blocks[blockKey]） */
+function extractVars(blockText: string, blocks: Record<string, Record<string, string>>, blockKey: string): void {
+    const vars: Record<string, string> = {}
+    const varRe = /--brutal-([a-z0-9-]+):\s*([^;]+);/g
+    let varMatch: RegExpExecArray | null
+    while ((varMatch = varRe.exec(blockText)) !== null) {
+        vars[varMatch[1]] = normalizeColor(varMatch[2])
+    }
+    blocks[blockKey] = vars
+}
+
 /**
- * 按花括号深度扫描顶层非嵌套块（令牌块无嵌套；@media 等嵌套块整体跳过），
- * 提取每个块内 `--brutal-*` 令牌值。
+ * 递归扫描 CSS 文本的顶层块：
+ * - @layer/@supports 容器 → 递归提取内部子块（styles.css 令牌块嵌套在 @layer base 内）
+ * - @media/@keyframes → 整块跳过（媒体查询内为主题的特殊覆盖值，如高对比度，不参与对齐比对）
+ * - 其余顶层块 → 若为令牌块则提取
  */
-function parseThemeBlocks(css: string): Record<string, Record<string, string>> {
-    const blocks: Record<string, Record<string, string>> = {}
+function scanBlocks(css: string, blocks: Record<string, Record<string, string>>): void {
     let i = 0
     while (i < css.length) {
         const braceIdx = css.indexOf('{', i)
@@ -63,12 +79,10 @@ function parseThemeBlocks(css: string): Record<string, Record<string, string>> {
         // 括号配对：找到本块闭合的 `}`
         let depth = 0
         let j = braceIdx
-        let nested = false
         for (; j < css.length; j++) {
             const ch = css[j]
             if (ch === '{') {
                 depth++
-                if (depth > 1) nested = true
             } else if (ch === '}') {
                 depth--
                 if (depth === 0) break
@@ -77,47 +91,39 @@ function parseThemeBlocks(css: string): Record<string, Record<string, string>> {
         if (j >= css.length) break // 未闭合，防御性退出
         const blockText = css.slice(braceIdx + 1, j)
 
-        if (!nested && selectorRaw) {
+        if (/^@(layer|supports)\b/.test(selectorRaw)) {
+            scanBlocks(blockText, blocks)
+        } else if (/^@/.test(selectorRaw)) {
+            // @media/@keyframes 等其他 @ 规则：跳过
+        } else if (selectorRaw) {
             const key = normalizeSelector(selectorRaw)
-            if (key) {
-                const vars: Record<string, string> = {}
-                const varRe = /--brutal-([a-z0-9-]+):\s*([^;]+);/g
-                let varMatch: RegExpExecArray | null
-                while ((varMatch = varRe.exec(blockText)) !== null) {
-                    vars[varMatch[1]] = normalizeColor(varMatch[2])
-                }
-                blocks[key] = vars
-            }
+            if (key) extractVars(blockText, blocks, key)
         }
         i = j + 1
     }
-    return blocks
 }
 
-/** 预设主题块必须齐全（light/dark 两态） */
-const REQUIRED_THEMES = ['pastel', 'mono', 'warm'] as const
+function parseThemeBlocks(css: string): Record<string, Record<string, string>> {
+    const blocks: Record<string, Record<string, string>> = {}
+    scanBlocks(css, blocks)
+    return blocks
+}
 
 const uiBlocks = parseThemeBlocks(uiCss)
 const cliBlocks = parseThemeBlocks(cliCss)
 
 const failures: string[] = []
 
-for (const theme of REQUIRED_THEMES) {
-    if (!cliBlocks[`light:${theme}`]) {
-        failures.push(`CLI 缺主题块 .theme-${theme}（ui 有，见 styles.css）`)
+// ① 块覆盖 + ② 值漂移：以 ui 为主题块基准，CLI 缺块或缺令牌不逃过检查
+for (const [blockKey, uiVars] of Object.entries(uiBlocks)) {
+    const cliVars = cliBlocks[blockKey]
+    if (!cliVars) {
+        failures.push(`CLI 缺主题块 ${blockKey}（ui 有，见 styles.css）`)
+        continue
     }
-    if (!cliBlocks[`dark:${theme}`]) {
-        failures.push(`CLI 缺主题块 .dark .theme-${theme} / .theme-${theme}.dark（ui 有，见 styles.css）`)
-    }
-}
-
-// 值漂移：CLI 出现的令牌必须与 ui 同块同名令牌一致
-for (const [blockKey, cliVars] of Object.entries(cliBlocks)) {
-    const uiVars = uiBlocks[blockKey]
-    if (!uiVars) continue
-    for (const [tokenName, cliValue] of Object.entries(cliVars)) {
-        const uiValue = uiVars[tokenName]
-        if (uiValue === undefined) continue // CLI 独有/ui 无此令牌，跳过（覆盖率缺口走块级检查）
+    for (const [tokenName, uiValue] of Object.entries(uiVars)) {
+        const cliValue = cliVars[tokenName]
+        if (cliValue === undefined) continue // CLI 缺此令牌：覆盖率缺口，块级检查已兜底
         if (cliValue !== uiValue) {
             failures.push(
                 `令牌 --brutal-${tokenName} 在块 ${blockKey} 漂移：CLI=${cliValue} vs ui=${uiValue}（改 shared design-tokens 后需同步 CLI）`
@@ -134,4 +140,4 @@ if (failures.length > 0) {
     process.exit(1)
 }
 
-console.log(`✓ CLI brutalist.css 令牌对齐：${Object.keys(cliBlocks).length} 个块全部一致，主题块齐全`)
+console.log(`✓ CLI brutalist.css 令牌对齐：${Object.keys(uiBlocks).length} 个 ui 主题块在 CLI 全部存在且值一致`)

@@ -188,9 +188,10 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
     })
 
     onActivated(() => {
-        // 重新激活时恢复：仅当停用前自动播放仍在运行才重启（startAutoplay 内部复核 autoplay / reduced / delay 条件）
+        // 重新激活时恢复：停用前在运行、或停用期间 autoplay 被外部开启（watcher 被 isDeactivated 拦截
+        // 未启动定时器）都重启——startAutoplay 内部复核 autoplay / reduced / delay 条件
         isDeactivated.value = false
-        if (wasAutoplayRunningBeforeDeactivate) {
+        if (wasAutoplayRunningBeforeDeactivate || toValue(options.autoplay)) {
             startAutoplay()
         }
     })

@@ -51,10 +51,16 @@ const VAR_BRUTAL_PREFIX = 'var(--brutal-';
 /** BASE_THEME.light 的 var 名 → 值映射（key 不含 `--` 前缀），用于 fallback 值比对。 */
 const LIGHT_VARS: Readonly<Record<string, string>> = CSS_VARS.light;
 
-/** 归一化 CSS 值用于比对：转小写 + 展开 3 位 hex 简写（#fff ≡ #ffffff，等价不应误报）。 */
+/**
+ * 归一化 CSS 值用于比对：转小写 + 展开 3/4 位 hex 简写（#fff ≡ #ffffff、#ffff ≡ #ffffffff）
+ * + 去除 rgba() 等函数内空格（rgba(0,0,0,0.5) ≡ rgba(0, 0, 0, 0.5)），等价写法不应误报。
+ */
 function normalizeCssValue(value: string): string {
     const lower = value.trim().toLowerCase();
-    return lower.replace(/^#([0-9a-f])([0-9a-f])([0-9a-f])$/, '#$1$1$2$2$3$3');
+    const noInnerSpace = lower.replace(/\(\s+/g, '(').replace(/\s+\)/g, ')').replace(/,\s*/g, ',');
+    return noInnerSpace
+        .replace(/^#([0-9a-f])([0-9a-f])([0-9a-f])$/, '#$1$1$2$2$3$3')
+        .replace(/^#([0-9a-f])([0-9a-f])([0-9a-f])([0-9a-f])$/, '#$1$1$2$2$3$3$4$4');
 }
 
 /**
@@ -164,7 +170,7 @@ function auditFile(filePath: string): { violations: Violation[]; referenceCount:
             continue;
         }
         referenceCount++;
-        const varNameMatch = parsed.inner.match(/^--brutal-[a-z-]+/);
+        const varNameMatch = parsed.inner.match(/^--brutal-[a-z0-9-]+/);
         const varName = varNameMatch ? varNameMatch[0] : '--brutal-?';
         const { line, column } = computeLineColumn(content, idx);
         const base: Omit<Violation, 'type'> = {

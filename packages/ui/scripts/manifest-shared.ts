@@ -19,7 +19,9 @@ export const LIB_EXCLUDE = new Set<string>(['utils.ts']);
  * v-loading 指令随 Loading.vue 打包但未被其 import——由消费者外部注册。
  * 这是代码库中唯一此类情况；保持清单最小且有文档说明。
  */
-export const MANIFEST_OVERRIDES: Record<string, Partial<ComponentFileManifest>> = {
+// 类型收窄为实际支持的字段：applyManifestOverrides 仅实现 directives 覆盖，
+// 若未来追加其他字段（files/composables/lib 等）须同步扩展实现，避免静默失效
+export const MANIFEST_OVERRIDES: Record<string, Partial<Pick<ComponentFileManifest, 'directives'>>> = {
     loading: {
         directives: ['loading.ts'],
     },
