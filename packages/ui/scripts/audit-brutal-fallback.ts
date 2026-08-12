@@ -44,6 +44,8 @@ interface AuditResult {
     scannedFiles: number;
     totalReferences: number;
     violations: Violation[];
+    /** 白名单中未被任何引用豁免的冗余条目（配置过时：值已与主题一致或引用消失） */
+    redundantWhitelist: string[];
 }
 
 const VAR_BRUTAL_PREFIX = 'var(--brutal-';
@@ -66,13 +68,14 @@ function normalizeCssValue(value: string): string {
 /**
  * 有意偏离 BASE_THEME.light 的 fallback 白名单（键：`相对文件:--brutal-*变量名`，不随行号漂移）。
  * Image.vue：
- *   - 加载占位/错误条纹用更浅的骨架色（muted #e5e5e5、bg #fff），非主题令牌值；
+ *   - 加载占位/错误条纹用更浅的骨架色（muted #e5e5e5），非主题令牌值；
  *   - 预览工具栏按钮（border-2、shadow-brutal-sm）按下位移用 1px 而非主题 pressedOffset 的 2px。
  * 属组件级设计决定；新增此类偏离须在此登记理由。
+ * 注意：--brutal-bg 的 `#fff` 经归一化展开等于主题 `#ffffff`，不构成偏离，无需登记；
+ * 审计结束后会检测并报告从未被豁免命中的冗余条目（防配置漂移）。
  */
 const INTENTIONAL_FALLBACK_OVERRIDES = new Set([
     'components/image/Image.vue:--brutal-muted',
-    'components/image/Image.vue:--brutal-bg',
     'components/image/Image.vue:--brutal-pressed-offset',
 ]);
 
@@ -155,7 +158,7 @@ function extractSnippet(text: string, startIdx: number, endIdx: number): string 
     return text.slice(lineStart, stop).trim();
 }
 
-function auditFile(filePath: string): { violations: Violation[]; referenceCount: number } {
+function auditFile(filePath: string, usedWhitelist: Set<string>): { violations: Violation[]; referenceCount: number } {
     const content = fs.readFileSync(filePath, 'utf-8');
     const violations: Violation[] = [];
     const relativeFile = path.relative(SCAN_ROOT, filePath).replace(/\\/g, '/');
@@ -182,10 +185,8 @@ function auditFile(filePath: string): { violations: Violation[]; referenceCount:
         };
         if (!parsed.hasFallback) {
             violations.push({ ...base, type: 'missing-fallback' });
-        } else if (
-            parsed.fallback !== null &&
-            !INTENTIONAL_FALLBACK_OVERRIDES.has(`${relativeFile}:${varName}`)
-        ) {
+        } else if (!INTENTIONAL_FALLBACK_OVERRIDES.has(`${relativeFile}:${varName}`)) {
+            // 注：hasFallback 为真时 fallback 恒非 null（至多为空串），无需冗余判断
             const expected = LIGHT_VARS[varName.slice(2)];
             if (
                 expected !== undefined &&
@@ -197,6 +198,9 @@ function auditFile(filePath: string): { violations: Violation[]; referenceCount:
                     detail: `${parsed.fallback} → 期望 ${expected}`,
                 });
             }
+        } else {
+            // 命中白名单豁免：记录，供审计结束后检测冗余白名单配置
+            usedWhitelist.add(`${relativeFile}:${varName}`);
         }
         searchFrom = parsed.endIdx;
     }
@@ -207,15 +211,19 @@ function audit(): AuditResult {
     const files = walkSourceFiles(SCAN_ROOT);
     let totalReferences = 0;
     const allViolations: Violation[] = [];
+    const usedWhitelist = new Set<string>();
     for (const file of files) {
-        const { violations, referenceCount } = auditFile(file);
+        const { violations, referenceCount } = auditFile(file, usedWhitelist);
         totalReferences += referenceCount;
         allViolations.push(...violations);
     }
+    // 冗余白名单：未被任何引用豁免的条目说明已过时（值已与主题一致或引用消失），防配置漂移
+    const redundantWhitelist = [...INTENTIONAL_FALLBACK_OVERRIDES].filter((key) => !usedWhitelist.has(key));
     return {
         scannedFiles: files.length,
         totalReferences,
         violations: allViolations,
+        redundantWhitelist,
     };
 }
 
@@ -351,6 +359,16 @@ function main(): void {
     const updateBaseline = args.includes('--update-baseline');
     const checkBaseline = args.includes('--check-baseline');
     const result = audit();
+
+    // 冗余白名单属配置错误（条目已不再豁免任何引用），始终拦截（含 --check-baseline / --update-baseline 模式）
+    if (result.redundantWhitelist.length > 0) {
+        console.error('白名单存在冗余条目（未被任何引用豁免，值已与主题一致或引用消失）：');
+        for (const key of result.redundantWhitelist) {
+            console.error(`  - ${key}`);
+        }
+        console.error('请从 INTENTIONAL_FALLBACK_OVERRIDES 中移除过时条目。');
+        process.exit(1);
+    }
 
     if (updateBaseline) {
         const snapshot = computeBaseline(result.violations);

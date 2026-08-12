@@ -1,8 +1,9 @@
-import { ref, inject, provide, readonly, getCurrentScope, getCurrentInstance, onScopeDispose, onUnmounted, type InjectionKey, type DeepReadonly, type Ref } from 'vue'
+import { ref, inject, provide, readonly, getCurrentScope, onScopeDispose, type InjectionKey, type DeepReadonly, type Ref } from 'vue'
 import { MAX_TOASTS } from '../lib/defaults'
 import type { VariantProps } from 'class-variance-authority'
 import { toastVariants } from '../components/toast/toast-variants'
-import { isClient, getWindow } from '../lib/env'
+import { isClient } from '../lib/env'
+import { createFallbackManager } from '../lib/fallback-manager'
 
 
 type ToastVariantProps = VariantProps<typeof toastVariants>
@@ -214,30 +215,16 @@ export function createToast(isFallback = false, globalOptions?: { grouping?: boo
     }
 }
 
-let fallbackInstance: UseToastReturn | null = null
-// 引用计数：多组件共享 fallback 单例时，仅在最后一个组件卸载时才清空单例，
-// 避免提前 clearToasts 导致其他仍使用单例的组件丢失 toast（仿 useTheme 的 fallback 引用计数模式）
-let fallbackRefCount = 0
+// 共享 fallback 单例：懒创建 + 引用计数清理 + beforeunload 注册/移除统一由 lib/fallback-manager 管理
+// （与 useTheme 共用同一实现，见审查报告 §12.2；destroy 后重建的单例会重新注册 beforeunload 监听）
+const fallbackManager = createFallbackManager<UseToastReturn>({
+    isClient,
+    createInstance: () => createToast(true),
+    destroyInstance: (instance) => instance.clearToasts(),
+})
 
-// beforeunload 全局监听句柄：destroyFallback() 时移除，防止 HMR/多应用同页重复注册累积
-let beforeUnloadHandler: (() => void) | null = null
-
-if (isClient) {
-    beforeUnloadHandler = () => destroyFallback()
-    getWindow()?.addEventListener('beforeunload', beforeUnloadHandler)
-}
-
-function destroyFallback() {
-    // 移除 beforeunload 全局监听：为 destroyBrutxUI() 提供清理出口，避免 HMR/多应用同页重复注册累积
-    if (beforeUnloadHandler) {
-        getWindow?.()?.removeEventListener('beforeunload', beforeUnloadHandler)
-        beforeUnloadHandler = null
-    }
-    if (fallbackInstance) {
-        fallbackInstance.clearToasts()
-        fallbackInstance = null
-        fallbackRefCount = 0
-    }
+export function destroyFallback() {
+    fallbackManager.destroy()
 }
 
 export function provideToast(globalOptions?: { grouping?: boolean }): UseToastReturn {
@@ -252,26 +239,6 @@ export function useToast(): UseToastReturn {
     if (typeof console !== 'undefined') {
         console.warn('[BrutxUI] useToast() called without provideToast(). Falling back to shared singleton. Call provideToast() in your root component.')
     }
-    if (!fallbackInstance) {
-        fallbackInstance = createToast(true)
-    }
-    // 组件级清理：引用计数归零时清空单例 toasts（仿 useTheme 的 fallback 引用计数模式）。
-    // 仅当在组件 setup 上下文中调用时才注册清理（与 provideTheme/useTheme 行为一致）。
-    // 共享单例状态下，一处的 clearToasts 仍会清空全部；如需按作用域隔离请在应用根部调用 provideToast()。
-    if (getCurrentInstance()) {
-        // 捕获本次 setup 使用的实例：若外部（beforeunload/显式调用）先 destroyFallback
-        // 导致单例被重建，本组件卸载时不得误减新实例的引用计数或误清空新单例
-        const instance = fallbackInstance
-        fallbackRefCount++
-        onUnmounted(() => {
-            if (fallbackInstance !== instance) return
-            fallbackRefCount--
-            if (fallbackRefCount <= 0) {
-                destroyFallback()
-            }
-        })
-    }
-    return fallbackInstance
+    // 共享单例状态下，一处的 clearToasts 仍会清空全部；如需按作用域隔离请在应用根部调用 provideToast()
+    return fallbackManager.acquire()
 }
-
-export { destroyFallback }

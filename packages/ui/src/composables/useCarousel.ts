@@ -28,7 +28,7 @@ export interface UseCarouselReturn {
     scrollPrev: () => void
     scrollNext: () => void
     scrollTo: (index: number) => void
-    startAutoplay: () => void
+    startAutoplay: () => boolean
     stopAutoplay: () => void
 }
 
@@ -71,14 +71,14 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
         emblaApi.value?.scrollTo(index)
     }
 
-    function startAutoplay() {
+    function startAutoplay(): boolean {
         stopAutoplay()
-        if (!toValue(options.autoplay) || prefersReducedMotion.value) return
+        if (!toValue(options.autoplay) || prefersReducedMotion.value) return false
         // KeepAlive 停用期间不启动定时器，避免隐藏轮播空转
-        if (isDeactivated.value) return
+        if (isDeactivated.value) return false
         const delay = toValue(options.autoplayDelay) ?? DEFAULT_AUTOPLAY_DELAY
         // 非法延迟（<= 0）直接返回：setInterval 会退化为浏览器下限（约 4ms）疯狂滚动，与 useCarouselEnhanced 守卫一致
-        if (delay <= 0) return
+        if (delay <= 0) return false
         autoplayTimer = setInterval(() => {
             if (emblaApi.value && scrollSnaps.value.length > 0) {
                 // 用 canScrollNext() 同步判断是否到达末尾：selectedIndex 由 'select' 事件异步更新，
@@ -94,6 +94,7 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
                 }
             }
         }, delay)
+        return true
     }
 
     function stopAutoplay() {
@@ -114,8 +115,9 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
             cachedApi.reInit({ duration: 0 })
         }
         onInit()
-        startAutoplay()
-        if (toValue(options.autoplay) && !prefersReducedMotion.value) {
+        // 仅真正启动（autoplay 开启且非 reduced-motion、delay 合法）才上报启用，
+        // 与 startAutoplay 返回值对齐，避免静默失败路径误报
+        if (startAutoplay()) {
             options.onAutoplayChange?.(true)
         }
     }
@@ -140,11 +142,12 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
 
     watch(() => toValue(options.autoplay), (val) => {
         if (val) {
-            // prefersReducedMotion 时 startAutoplay 直接 return（定时器并未启动），
+            // prefersReducedMotion 或非法 delay 时 startAutoplay 返回 false（定时器并未启动），
             // 不应上报启用，避免外部回调收到与实际启停状态不一致的通知
             if (prefersReducedMotion.value) return
-            startAutoplay()
-            options.onAutoplayChange?.(true)
+            if (startAutoplay()) {
+                options.onAutoplayChange?.(true)
+            }
         } else {
             stopAutoplay()
             options.onAutoplayChange?.(false)
@@ -174,8 +177,9 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
         } else {
             emblaApi.value.reInit({})
             if (toValue(options.autoplay)) {
-                startAutoplay()
-                options.onAutoplayChange?.(true)
+                if (startAutoplay()) {
+                    options.onAutoplayChange?.(true)
+                }
             }
         }
     })

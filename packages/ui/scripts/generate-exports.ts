@@ -132,7 +132,12 @@ function manualEntryMatches(actual: unknown, expected: string | ExportEntry): bo
     if (typeof expected === 'string') return actual === expected
     if (typeof actual !== 'object' || actual === null) return false
     const entry = actual as Record<string, unknown>
-    return entry.types === expected.types && entry.import === expected.import
+    const expectedKeys = Object.keys(expected)
+    // 完整比对字段集合与每个值：仅比 types/import 会漏掉误加的 default/require 等条件字段（静默通过）
+    return (
+        Object.keys(entry).length === expectedKeys.length &&
+        expectedKeys.every((key) => entry[key] === expected[key])
+    )
 }
 
 function verifyManualExports(pkgExports: Record<string, unknown>): void {

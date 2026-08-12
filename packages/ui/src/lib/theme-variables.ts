@@ -478,51 +478,51 @@ const DEFAULT_THEMES: Record<string, ThemeVariables> = {
  * theme-editor 传自定义 prefix 复用同一份键列表，消除两处逐字重复导致的键列表漂移。
  */
 export function themeVariablesToCssVars(variables: ThemeVariables, prefix = '--brutal'): Record<string, string> {
-    const p = prefix
+    // 前缀须以 `--` 开头（CSS 自定义属性名规范）；直接使用 prefix 而非单字符别名，保持键名语义直观
     return {
         // 颜色变量
-        [`${p}-primary`]: variables.colors.primary,
-        [`${p}-primary-foreground`]: variables.colors.primaryForeground,
-        [`${p}-secondary`]: variables.colors.secondary,
-        [`${p}-secondary-foreground`]: variables.colors.secondaryForeground,
-        [`${p}-accent`]: variables.colors.accent,
-        [`${p}-accent-foreground`]: variables.colors.accentForeground,
-        [`${p}-destructive`]: variables.colors.destructive,
-        [`${p}-destructive-foreground`]: variables.colors.destructiveForeground,
-        [`${p}-success`]: variables.colors.success,
-        [`${p}-success-foreground`]: variables.colors.successForeground,
-        [`${p}-info`]: variables.colors.info,
-        [`${p}-info-foreground`]: variables.colors.infoForeground,
-        [`${p}-bg`]: variables.colors.bg,
-        [`${p}-fg`]: variables.colors.fg,
-        [`${p}-muted`]: variables.colors.muted,
-        [`${p}-muted-foreground`]: variables.colors.mutedForeground,
-        [`${p}-ring`]: variables.colors.ring,
-        [`${p}-overlay`]: variables.colors.overlay,
-        [`${p}-placeholder`]: variables.colors.placeholder,
+        [`${prefix}-primary`]: variables.colors.primary,
+        [`${prefix}-primary-foreground`]: variables.colors.primaryForeground,
+        [`${prefix}-secondary`]: variables.colors.secondary,
+        [`${prefix}-secondary-foreground`]: variables.colors.secondaryForeground,
+        [`${prefix}-accent`]: variables.colors.accent,
+        [`${prefix}-accent-foreground`]: variables.colors.accentForeground,
+        [`${prefix}-destructive`]: variables.colors.destructive,
+        [`${prefix}-destructive-foreground`]: variables.colors.destructiveForeground,
+        [`${prefix}-success`]: variables.colors.success,
+        [`${prefix}-success-foreground`]: variables.colors.successForeground,
+        [`${prefix}-info`]: variables.colors.info,
+        [`${prefix}-info-foreground`]: variables.colors.infoForeground,
+        [`${prefix}-bg`]: variables.colors.bg,
+        [`${prefix}-fg`]: variables.colors.fg,
+        [`${prefix}-muted`]: variables.colors.muted,
+        [`${prefix}-muted-foreground`]: variables.colors.mutedForeground,
+        [`${prefix}-ring`]: variables.colors.ring,
+        [`${prefix}-overlay`]: variables.colors.overlay,
+        [`${prefix}-placeholder`]: variables.colors.placeholder,
 
         // 边框变量
-        [`${p}-border-width`]: variables.border.width,
-        [`${p}-border-color`]: variables.border.color,
-        [`${p}-radius`]: variables.border.radius,
+        [`${prefix}-border-width`]: variables.border.width,
+        [`${prefix}-border-color`]: variables.border.color,
+        [`${prefix}-radius`]: variables.border.radius,
 
         // 阴影变量
-        [`${p}-shadow-offset-x`]: variables.shadow.offsetX,
-        [`${p}-shadow-offset-y`]: variables.shadow.offsetY,
-        [`${p}-shadow-color`]: variables.shadow.color,
+        [`${prefix}-shadow-offset-x`]: variables.shadow.offsetX,
+        [`${prefix}-shadow-offset-y`]: variables.shadow.offsetY,
+        [`${prefix}-shadow-color`]: variables.shadow.color,
 
         // 间距变量
-        [`${p}-spacing-xs`]: variables.spacing.xs,
-        [`${p}-spacing-sm`]: variables.spacing.sm,
-        [`${p}-spacing-md`]: variables.spacing.md,
-        [`${p}-spacing-lg`]: variables.spacing.lg,
-        [`${p}-spacing-xl`]: variables.spacing.xl,
+        [`${prefix}-spacing-xs`]: variables.spacing.xs,
+        [`${prefix}-spacing-sm`]: variables.spacing.sm,
+        [`${prefix}-spacing-md`]: variables.spacing.md,
+        [`${prefix}-spacing-lg`]: variables.spacing.lg,
+        [`${prefix}-spacing-xl`]: variables.spacing.xl,
 
         // 排版变量
-        [`${p}-font-family`]: variables.typography.fontFamily,
+        [`${prefix}-font-family`]: variables.typography.fontFamily,
         ...Object.fromEntries(
             Object.entries(variables.typography.fontSize).map(
-                ([size, value]) => [`${p}-font-size-${size}`, value] as const,
+                ([size, value]) => [`${prefix}-font-size-${size}`, value] as const,
             ),
         ),
     }

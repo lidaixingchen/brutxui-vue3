@@ -55,7 +55,8 @@ function normalizeColor(value: string): string {
 /** 提取块内 `--brutal-*` 令牌值（写入 blocks[blockKey]） */
 function extractVars(blockText: string, blocks: Record<string, Record<string, string>>, blockKey: string): void {
     const vars: Record<string, string> = {}
-    const varRe = /--brutal-([a-z0-9-]+):\s*([^;]+);/g
+    // 允许块内最后一个声明省略分号（CSS 合法）：值匹配到 `;` 或块文本末尾（blockText 不含闭合 `}`）
+    const varRe = /--brutal-([a-z0-9-]+):\s*([^;]+?)\s*(?:;|$)/g
     let varMatch: RegExpExecArray | null
     while ((varMatch = varRe.exec(blockText)) !== null) {
         vars[varMatch[1]] = normalizeColor(varMatch[2])

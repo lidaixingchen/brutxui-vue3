@@ -35,14 +35,26 @@ const FONT_STACK_START = '/* @brutx:font-stack:start */';
 const FONT_STACK_END = '/* @brutx:font-stack:end */';
 
 /**
- * 全局默认字体栈（单一事实来源）。
+ * 全局默认字体栈（单一事实来源）：数组为唯一真相，字符串由数组派生。
  * 下游两处均由本脚本生成、禁止手改：styles.css @theme 的 `--default-font-family`
  * 与 preflight.css body 的 `var(--default-font-family, <FONT_STACK>)` 兜底。
  * 注意：src/lib/theme-variables.ts、src/themes/index.ts 的字体栈是运行时主题预设数据，
  * 不在本常量管辖范围（见审查报告 §11.4 边界说明）。
  */
-const FONT_STACK =
-    '"Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif';
+const FONT_STACK_PARTS = [
+    '"Inter"',
+    'system-ui',
+    '-apple-system',
+    'BlinkMacSystemFont',
+    '"Segoe UI"',
+    'Roboto',
+    '"Helvetica Neue"',
+    'Arial',
+    '"Noto Sans"',
+    'sans-serif',
+] as const
+
+const FONT_STACK = FONT_STACK_PARTS.join(', ')
 
 interface ThemeEntry {
     themeVar: string;
@@ -191,14 +203,13 @@ function generateThemeBlock(): string {
 
 /** 生成 preflight.css body 的 font-family 声明（含 --default-font-family 兜底），缩进与 body 规则体一致。 */
 function generateFontStackBlock(): string {
-    const parts = FONT_STACK.split(', ');
     const lines: string[] = [
         '        font-family: var(',
         '            --default-font-family,',
     ];
-    for (let i = 0; i < parts.length; i++) {
-        const comma = i < parts.length - 1 ? ',' : '';
-        lines.push(`            ${parts[i]}${comma}`);
+    for (let i = 0; i < FONT_STACK_PARTS.length; i++) {
+        const comma = i < FONT_STACK_PARTS.length - 1 ? ',' : '';
+        lines.push(`            ${FONT_STACK_PARTS[i]}${comma}`);
     }
     lines.push('        );');
     return lines.join('\n');
@@ -227,12 +238,13 @@ function injectBetweenMarkers(
     startMarker: string,
     endMarker: string,
     generated: string,
+    filePath: string,
 ): string {
     const startIdx = content.indexOf(startMarker);
     const endIdx = content.indexOf(endMarker);
     if (startIdx === -1 || endIdx === -1) {
         throw new Error(
-            `无法在目标文件中找到注入标记。请确认存在 "${startMarker}" 与 "${endMarker}"。`,
+            `无法在 ${filePath} 中找到注入标记。请确认存在 "${startMarker}" 与 "${endMarker}"。`,
         );
     }
     const startLineStart = content.lastIndexOf('\n', startIdx) + 1;
@@ -250,14 +262,14 @@ function main(): void {
     let stylesContent = stylesOriginal;
 
     const themeBlock = generateThemeBlock();
-    const themeNext = injectBetweenMarkers(stylesContent, THEME_START, THEME_END, themeBlock);
+    const themeNext = injectBetweenMarkers(stylesContent, THEME_START, THEME_END, themeBlock, STYLES_PATH);
     const themeChanged = themeNext !== stylesContent;
     if (themeChanged) {
         stylesContent = themeNext;
     }
 
     const rootBlock = generateRootBlock();
-    const rootNext = injectBetweenMarkers(stylesContent, ROOT_START, ROOT_END, rootBlock);
+    const rootNext = injectBetweenMarkers(stylesContent, ROOT_START, ROOT_END, rootBlock, STYLES_PATH);
     const rootChanged = rootNext !== stylesContent;
     if (rootChanged) {
         stylesContent = rootNext;
@@ -273,6 +285,7 @@ function main(): void {
         FONT_STACK_START,
         FONT_STACK_END,
         fontStackBlock,
+        PREFLIGHT_PATH,
     );
     const preflightChanged = preflightNext !== preflightOriginal;
 

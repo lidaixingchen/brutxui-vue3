@@ -639,8 +639,9 @@ describe('useTheme', () => {
     })
 
     describe('beforeunload global listener cleanup', () => {
-        it('destroyFallback removes the module-level beforeunload listener (HMR/multi-app cleanup)', async () => {
-            // 独立模块实例：确保 beforeunload 监听刚被模块加载注册，可验证 destroyFallback 会将其移除
+        it('destroyFallback removes the lazily-registered beforeunload listener (HMR/multi-app cleanup)', async () => {
+            // 独立模块实例：beforeunload 监听在首次 fallback 单例创建（懒注册）时注册，
+            // 先触发 useTheme() 再验证 destroyFallback 会将其移除
             vi.resetModules()
             vi.doMock('../lib/env', () => ({
                 hasDocument: true,
@@ -652,10 +653,13 @@ describe('useTheme', () => {
                 matchMedia: (q: string) => window.matchMedia(q),
             }))
 
-            const { destroyFallback: freshDestroyFallback } = await import('./useTheme')
+            const { destroyFallback: freshDestroyFallback, useTheme: freshUseTheme } = await import('./useTheme')
             const removeSpy = vi.spyOn(window, 'removeEventListener')
+            const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+            freshUseTheme() // 触发 fallback 单例创建 → 注册 beforeunload
             freshDestroyFallback()
             expect(removeSpy).toHaveBeenCalledWith('beforeunload', expect.any(Function))
+            warnSpy.mockRestore()
         })
     })
 })

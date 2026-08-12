@@ -1,5 +1,6 @@
 import { computed, getCurrentInstance, inject, onMounted, onUnmounted, provide, readonly, ref, type ComputedRef, type InjectionKey, type Ref } from 'vue'
-import { hasDocument, isClient, safeGetStorageItem, safeSetStorageItem, getDocument, matchMedia, getWindow } from '../lib/env'
+import { hasDocument, isClient, safeGetStorageItem, safeSetStorageItem, getDocument, matchMedia } from '../lib/env'
+import { createFallbackManager } from '../lib/fallback-manager'
 import { VALID_THEMES, type ThemeName } from '../lib/theme-names'
 
 // 从 lib 层引入并转发，避免 lib 反向依赖 composables（ThemeName/VALID_THEMES 定义下沉到 lib/theme-names）
@@ -188,13 +189,16 @@ export function createTheme(): UseThemeReturn {
     }
 }
 
-let fallbackInstance: UseThemeReturn | null = null
-// 引用计数：多组件共享 fallback 单例时，仅在最后一个组件卸载时才销毁单例，
-// 避免提前 destroy 导致其他仍使用单例的组件丢失 mediaQuery 监听器
-let fallbackRefCount = 0
-
-// beforeunload 全局监听句柄：destroyFallback() 时移除，防止 HMR/多应用同页重复注册累积
-let beforeUnloadHandler: (() => void) | null = null
+// 共享 fallback 单例：懒创建 + 引用计数清理 + beforeunload 注册/移除统一由 lib/fallback-manager 管理
+// （与 useToast 共用同一实现，见审查报告 §12.2；destroy 后重建的单例会重新注册 beforeunload 监听）
+const fallbackManager = createFallbackManager<UseThemeReturn>({
+    isClient,
+    createInstance: () => createTheme(),
+    // 注意与 provideTheme（延迟到 onMounted 再 init）的时序差异：fallback 在 setup 中
+    // 立即 init，保证首个消费方在 setup 期间就能读到已初始化的主题状态
+    initInstance: (instance) => instance.initTheme(),
+    destroyInstance: (instance) => instance.destroy(),
+})
 
 export function provideTheme(): UseThemeReturn {
     const theme = createTheme()
@@ -215,44 +219,9 @@ export function useTheme(): UseThemeReturn {
     if (typeof console !== 'undefined') {
         console.warn('[BrutxUI] useTheme() called without provideTheme(). Falling back to shared singleton. Call provideTheme() in your root component.')
     }
-    if (!fallbackInstance) {
-        fallbackInstance = createTheme()
-        // 注意与 provideTheme（延迟到 onMounted 再 init）的时序差异：fallback 在 setup 中
-        // 立即 init，保证首个消费方在 setup 期间就能读到已初始化的主题状态
-        fallbackInstance.initTheme()
-    }
-    // 组件级清理：引用计数归零时销毁单例，释放 mediaQuery 监听器。
-    // 仅当在组件 setup 上下文中调用时才注册清理（与 provideTheme 行为一致）。
-    if (getCurrentInstance()) {
-        // 捕获本次 setup 使用的实例：若外部（beforeunload/显式调用）先 destroyFallback
-        // 导致单例被重建，本组件卸载时不得误减新实例的引用计数或误销毁新单例
-        const instance = fallbackInstance
-        fallbackRefCount++
-        onUnmounted(() => {
-            if (fallbackInstance !== instance) return
-            fallbackRefCount--
-            if (fallbackRefCount <= 0) {
-                destroyFallback()
-            }
-        })
-    }
-    return fallbackInstance
+    return fallbackManager.acquire()
 }
 
 export function destroyFallback() {
-    // 移除 beforeunload 全局监听：为 destroyBrutxUI() 提供清理出口，避免 HMR/多应用同页重复注册累积
-    if (beforeUnloadHandler) {
-        getWindow?.()?.removeEventListener('beforeunload', beforeUnloadHandler)
-        beforeUnloadHandler = null
-    }
-    if (fallbackInstance) {
-        fallbackInstance.destroy()
-        fallbackInstance = null
-        fallbackRefCount = 0
-    }
-}
-
-if (isClient) {
-    beforeUnloadHandler = () => destroyFallback()
-    getWindow()?.addEventListener('beforeunload', beforeUnloadHandler)
+    fallbackManager.destroy()
 }
