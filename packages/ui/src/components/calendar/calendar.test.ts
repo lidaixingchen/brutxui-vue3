@@ -326,6 +326,11 @@ describe('Calendar', () => {
             expect(wrapper.find('[data-testid="calendar-event-dot"]').exists()).toBe(false)
         })
 
+        it('does not crash when events prop is explicitly null (default only applies for undefined)', async () => {
+            const wrapper = await mountCalendar({ events: null, mode: 'default' })
+            expect(wrapper.find('[data-testid="calendar-event-dot"]').exists()).toBe(false)
+        })
+
         it('renders duplicate-title events in card mode', async () => {
             const events = [
                 { date: new Date(2026, 5, 15), title: 'Same' },

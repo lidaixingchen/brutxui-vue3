@@ -186,7 +186,9 @@ function toDayKey(date: Date): string {
 // 预按日期分组，避免每个日格多次全量 filter（O(日格数 × 事件数)）
 const eventsByDay = computed(() => {
     const map = new Map<string, CalendarEvent[]>()
-    for (const event of props.events) {
+    // withDefaults 默认值仅在值为 undefined 时生效，父组件显式传 null 时需兜底，避免 for...of 抛 TypeError
+    const events = props.events ?? []
+    for (const event of events) {
         const date = parseEventDate(event.date)
         if (!date) continue
         const key = toDayKey(date)
