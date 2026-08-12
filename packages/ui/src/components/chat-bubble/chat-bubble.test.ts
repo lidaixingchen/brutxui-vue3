@@ -445,5 +445,8 @@ describe('ChatContainer time grouping', () => {
         // '14:30' 无法被 new Date 解析：不沉底，按原索引保留原位（first, display-time, third）
         const bubbles = wrapper.findAll('.px-4').map(w => w.text())
         expect(bubbles).toEqual(['first', 'display-time', 'third'])
+        // 无时间戳消息夹在同日消息之间不触发日期边界：仍是单一「今天」组，不重复渲染日期标签
+        const labels = wrapper.findAll('span.px-2').map(w => w.text())
+        expect(labels).toEqual(['今天'])
     })
 })

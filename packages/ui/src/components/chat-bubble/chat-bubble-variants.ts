@@ -17,6 +17,9 @@ export const chatBubbleVariants = cva(
                 // system 强制 text-xs / 无阴影，且忽略 size prop —— 字号恒为 text-xs 由
                 // ChatBubble.vue 中 isSystem && 'text-xs' 尾置类保证（经 tailwind-merge
                 // 恒定胜过 size 变体的字号），故变体串中不再重复声明 text-xs，避免失效类。
+                // ⚠️ 公共 API 契约：该约束仅由组件侧保证、变体串本身不兜底。chatBubbleVariants
+                //    是公共导出，外部消费者直接调用 chatBubbleVariants({ variant: 'system' }) 时
+                //    需自行附加 text-xs，否则字号会随 size 变体变化、不再恒定 text-xs。
                 // shadow-none 保留为显式「无阴影」声明，防止未来 base 恢复阴影时波及 system。
                 system: 'bg-brutal-muted text-brutal-fg mx-auto text-center italic border-dashed shadow-none',
             },

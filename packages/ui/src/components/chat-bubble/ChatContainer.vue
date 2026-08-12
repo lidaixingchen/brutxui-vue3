@@ -118,7 +118,9 @@ function groupMessages(messages: ChatMessage[]): ChatMessageGroup[] {
         const dateKey = date ? `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}` : '';
         const dateLabel = date ? getDateLabel(date) : '';
 
-        const isNewDate = dateKey !== currentDateKey;
+        // 无有效时间戳的消息（date === null，dateKey 为 ''）不触发日期边界：直接并入当前组，
+        // 否则夹在同日两条消息之间时会把同一天拆成「今天 / (空) / 今天」并重复渲染日期标签
+        const isNewDate = date !== null && dateKey !== currentDateKey;
         // 边界采用严格 >：时间差恰好等于 intervalMs 仍归入同组（interval 视为组内最大间隔）
         const exceedsInterval =
             date !== null &&
