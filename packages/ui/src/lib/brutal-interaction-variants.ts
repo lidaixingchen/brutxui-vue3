@@ -4,7 +4,7 @@
  * 提取类名，完整字面量才能保证产物 CSS 始终包含该工具类。
  */
 const pressedOffsetBase = 'translate-y-[var(--brutal-pressed-offset,2px)]'
-const pressedOffset = `active:${pressedOffsetBase}`
+const pressedOffset = 'active:translate-y-[var(--brutal-pressed-offset,2px)]'
 
 // 位移/阴影基础片段：各导出从这里派生，保证单一事实来源。
 // 后续调整位移距离或阴影等级只需修改对应片段。
