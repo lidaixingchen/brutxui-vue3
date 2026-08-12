@@ -6,6 +6,8 @@ export const commandInputWrapperVariants = cva(
         'flex h-12 items-center gap-3 px-4',
         'border-b-3 border-brutal',
         'bg-brutal-accent',
+        // 容器为 div（不可聚焦），内层 input 聚焦须用 focus-within:* 才可见（与 input 容器同模式）
+        'focus-within:outline-2 focus-within:outline-brutal-ring focus-within:outline-offset-2',
     ]
 )
 
@@ -13,7 +15,8 @@ export const commandItemVariants = cva(
     [
         'relative flex cursor-pointer items-center gap-3 px-3 py-2',
         'text-sm font-semibold',
-        'select-none outline-none',
+        // listbox 项不可聚焦（高亮由 reka Listbox 键盘导航管理），不携带 outline-none（见 C1 豁免规则）
+        'select-none',
         'border-3 border-transparent',
         'data-[highlighted]:bg-brutal-secondary data-[highlighted]:text-brutal-fg',
         'data-[highlighted]:font-black',
@@ -23,6 +26,11 @@ export const commandItemVariants = cva(
         // 与 select/dropdown-menu 的既有模式保持一致。
         brutalHighlightLiftWithBorder,
         brutalPress,
+        // data-[highlighted] 恒压过 active（字节序 data-* 后于 active，同特异度 0,2,0 后者胜）：
+        // 补 data-[highlighted]:active 复合变体（特异度 0,3,0）恢复高亮项按压反馈，含 translate-x-0 重置
+        'data-[highlighted]:active:translate-y-[var(--brutal-pressed-offset,2px)]',
+        'data-[highlighted]:active:translate-x-0',
+        'data-[highlighted]:active:shadow-none',
         'transition-all',
         'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
         '[&_svg]:pointer-events-none [&_svg]:shrink-0',
