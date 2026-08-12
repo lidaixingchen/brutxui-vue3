@@ -350,10 +350,6 @@
         animation: indeterminate 1.5s ease-in-out infinite;
     }
 
-    .border-3 {
-        border-width: var(--border-width-3);
-    }
-
     .border-brutal {
         border-style: solid;
         border-color: var(--brutal-border-color, #000000);

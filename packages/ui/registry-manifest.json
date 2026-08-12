@@ -282,9 +282,7 @@
       "useLocale.ts"
     ],
     "directives": [],
-    "lib": [
-      "brutal-interaction-variants.ts"
-    ]
+    "lib": []
   },
   "color-mode-switcher": {
     "files": [

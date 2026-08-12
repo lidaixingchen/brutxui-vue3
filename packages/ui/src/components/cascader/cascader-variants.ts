@@ -1,6 +1,7 @@
 import { cva } from 'class-variance-authority'
 import { brutalHoverLift } from '@/lib/brutal-interaction-variants'
 import { floatingContentAnimationClasses } from '@/lib/floating-animation-classes'
+import { FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
 
 export const cascaderTriggerVariants = cva(
     [
@@ -10,7 +11,10 @@ export const cascaderTriggerVariants = cva(
         'shadow-brutal',
         'transition-all duration-150',
         brutalHoverLift,
-        'focus:outline-none focus:shadow-brutal-lg focus:-translate-x-0.5 focus:-translate-y-0.5',
+        // 对齐 select trigger：focus-visible 用可见 outline 表达焦点（取代原 shadow+位移 方案），
+        // focus:shadow/位移 保留为聚焦增强
+        FOCUS_OUTLINE_CLASSES,
+        'focus:shadow-brutal-lg focus:-translate-x-0.5 focus:-translate-y-0.5',
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:translate-x-0 active:shadow-none', /* 组件私有：重置 X 轴位移，不抽取 */
         'disabled:cursor-not-allowed disabled:opacity-50',
         // 限定到首个文本 span：line-clamp 会设置 display:-webkit-box，若命中图标容器
@@ -41,7 +45,7 @@ export const cascaderContentVariants = cva(
 
 export const cascaderItemVariants = cva(
     [
-        'flex items-center justify-between w-full cursor-pointer select-none px-3 py-2 text-sm font-semibold rounded-brutal transition-all duration-150 outline-none',
+        'flex items-center justify-between w-full cursor-pointer select-none px-3 py-2 text-sm font-semibold rounded-brutal transition-all duration-150',
         'border-3 border-transparent',
         'disabled:pointer-events-none disabled:opacity-50',
     ],

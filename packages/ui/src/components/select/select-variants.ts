@@ -48,7 +48,8 @@ export const selectContentVariants = cva(
 export const selectItemVariants = cva(
     [
         'relative flex w-full cursor-pointer select-none items-center py-2 pl-8 pr-3',
-        'font-bold outline-none',
+        // listbox 项不可聚焦（高亮由 reka Listbox 键盘导航管理），不携带 outline-none
+        'font-bold',
         brutalHoverLift,
         brutalPress,
         'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',

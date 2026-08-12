@@ -6,7 +6,6 @@ export const popoverContentVariants = cva(
     [
         'z-50 w-72 p-4',
         ...brutalFloatingSurfaceClasses,
-        'outline-none',
         ...floatingContentAnimationClasses,
     ]
 )
