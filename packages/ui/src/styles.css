@@ -35,14 +35,6 @@
     --color-brutal-black: var(--brutal-black, #000000);
     --color-brutal-yellow: var(--brutal-yellow, #FFE66D);
 
-    /* Dynamic: shadows use --brutal-shadow-* for dark mode */
-    --shadow-brutal: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000);
-    --shadow-brutal-sm: calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000);
-    --shadow-brutal-lg: calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000);
-    --shadow-brutal-xl: calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000);
-    --shadow-brutal-primary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B);
-    --shadow-brutal-secondary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary, #4ECDC4);
-
     /* Dynamic: border/radius use --brutal-* for theme support */
     --border-width-3: var(--brutal-border-width, 3px);
     --radius-brutal: var(--brutal-radius, 0px);
@@ -51,6 +43,16 @@
     --default-font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
     /* @brutx:theme-tokens:end */
 }
+
+/* 阴影工具类：@utility 单层定义（原 @theme --shadow-brutal* 派生 5 层 --tw-shadow 组合工具类，
+   与手写单层类之间 1↔5 层过渡导致悬停/按压双影鬼影）。变量自 :root 派生（见
+   generate-styles-tokens.ts 的 SHADOW_ENTRIES），变体由 Tailwind 按需生成。 */
+@utility shadow-brutal { box-shadow: var(--shadow-brutal); }
+@utility shadow-brutal-sm { box-shadow: var(--shadow-brutal-sm); }
+@utility shadow-brutal-lg { box-shadow: var(--shadow-brutal-lg); }
+@utility shadow-brutal-xl { box-shadow: var(--shadow-brutal-xl); }
+@utility shadow-brutal-primary { box-shadow: var(--shadow-brutal-primary); }
+@utility shadow-brutal-secondary { box-shadow: var(--shadow-brutal-secondary); }
 
 @layer base {
 
@@ -96,6 +98,12 @@
         --brutal-placeholder: #9CA3AF;
         --brutal-black: #000000;
         --brutal-yellow: #FFE66D;
+        --shadow-brutal: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000);
+        --shadow-brutal-sm: calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000);
+        --shadow-brutal-lg: calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000);
+        --shadow-brutal-xl: calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000);
+        --shadow-brutal-primary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B);
+        --shadow-brutal-secondary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary, #4ECDC4);
     }
 
     .dark {
@@ -323,30 +331,6 @@
     .border-brutal {
         border-style: solid;
         border-color: var(--brutal-border-color, #000000);
-    }
-
-    .shadow-brutal {
-        box-shadow: var(--shadow-brutal);
-    }
-
-    .shadow-brutal-sm {
-        box-shadow: var(--shadow-brutal-sm);
-    }
-
-    .shadow-brutal-lg {
-        box-shadow: var(--shadow-brutal-lg);
-    }
-
-    .shadow-brutal-xl {
-        box-shadow: var(--shadow-brutal-xl);
-    }
-
-    .shadow-brutal-primary {
-        box-shadow: var(--shadow-brutal-primary);
-    }
-
-    .shadow-brutal-secondary {
-        box-shadow: var(--shadow-brutal-secondary);
     }
 
     @keyframes fadeIn {

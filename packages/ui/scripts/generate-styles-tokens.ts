@@ -73,35 +73,6 @@ const THEME_GROUPS: ThemeGroup[] = [
         ],
     },
     {
-        comment: 'Dynamic: shadows use --brutal-shadow-* for dark mode',
-        entries: [
-            {
-                themeVar: '--shadow-brutal',
-                build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
-            },
-            {
-                themeVar: '--shadow-brutal-sm',
-                build: l => `calc(var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) / 2) calc(var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) / 2) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
-            },
-            {
-                themeVar: '--shadow-brutal-lg',
-                build: l => `calc(var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) * 1.5) calc(var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) * 1.5) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
-            },
-            {
-                themeVar: '--shadow-brutal-xl',
-                build: l => `calc(var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) * 2) calc(var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) * 2) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
-            },
-            {
-                themeVar: '--shadow-brutal-primary',
-                build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px var(--brutal-primary, ${l.primary})`,
-            },
-            {
-                themeVar: '--shadow-brutal-secondary',
-                build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px var(--brutal-secondary, ${l.secondary})`,
-            },
-        ],
-    },
-    {
         comment: 'Dynamic: border/radius use --brutal-* for theme support',
         entries: [
             { themeVar: '--border-width-3', build: l => `var(--brutal-border-width, ${l.borderWidth})` },
@@ -120,6 +91,37 @@ const THEME_GROUPS: ThemeGroup[] = [
     },
 ];
 
+// 阴影派生令牌：原属 @theme，Tailwind 据此自动生成 5 层 --tw-shadow 组合工具类，与手写单层类
+// 之间发生 1↔5 层过渡（悬停/按压双影鬼影）。移出 @theme 为普通 :root 派生变量 + styles.css 内
+// @utility 单层工具类，变体由 Tailwind 按需生成；只发 :root 不发 .dark——引用运行时 --brutal-*，
+// 亮/暗同一份，fallback 取自 BASE_THEME.light（与原文 @theme build() 一致）。
+const SHADOW_ENTRIES: ThemeEntry[] = [
+    {
+        themeVar: '--shadow-brutal',
+        build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
+    },
+    {
+        themeVar: '--shadow-brutal-sm',
+        build: l => `calc(var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) / 2) calc(var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) / 2) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
+    },
+    {
+        themeVar: '--shadow-brutal-lg',
+        build: l => `calc(var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) * 1.5) calc(var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) * 1.5) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
+    },
+    {
+        themeVar: '--shadow-brutal-xl',
+        build: l => `calc(var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) * 2) calc(var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) * 2) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
+    },
+    {
+        themeVar: '--shadow-brutal-primary',
+        build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px var(--brutal-primary, ${l.primary})`,
+    },
+    {
+        themeVar: '--shadow-brutal-secondary',
+        build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px var(--brutal-secondary, ${l.secondary})`,
+    },
+];
+
 function formatVarsBlock(selector: string, vars: Record<string, string>): string {
     const lines = Object.entries(vars).map(
         ([key, value]) => `        --${key}: ${value};`,
@@ -128,7 +130,11 @@ function formatVarsBlock(selector: string, vars: Record<string, string>): string
 }
 
 function generateRootBlock(): string {
-    const lightBlock = formatVarsBlock(':root', CSS_VARS.light);
+    const lightVars: Record<string, string> = { ...CSS_VARS.light };
+    for (const entry of SHADOW_ENTRIES) {
+        lightVars[entry.themeVar.slice(2)] = entry.build(BASE_THEME.light);
+    }
+    const lightBlock = formatVarsBlock(':root', lightVars);
     const darkBlock = formatVarsBlock('.dark', CSS_VARS.dark);
     return `${lightBlock}\n\n${darkBlock}`;
 }
