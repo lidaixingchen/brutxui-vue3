@@ -98,7 +98,7 @@ const hasProgress = computed(() => props.progress !== undefined)
                     <Spinner size="lg" variant="default" />
                     <span 
                         v-if="text" 
-                        class="text-sm font-black text-brutal-black dark:text-white uppercase tracking-wider bg-brutal-yellow px-2 py-0.5 border border-brutal-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                        class="text-sm font-black text-brutal-fg uppercase tracking-wider bg-brutal-yellow px-2 py-0.5 border border-brutal shadow-brutal-sm"
                     >
                         {{ text }}
                     </span>

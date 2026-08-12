@@ -247,12 +247,12 @@ const measureClasses = computed(() =>
 const containerClasses = computed(() =>
     cn(
         'flex flex-col min-w-0',
-        props.card && 'p-4 border-2 border-brutal-black dark:border-white bg-white dark:bg-brutal-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]',
+        props.card && 'p-4 border-2 border-brutal bg-brutal-bg shadow-brutal',
         props.class
     )
 );
 
-const titleClasses = 'text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 select-none';
+const titleClasses = 'text-xs font-bold text-brutal-muted-foreground uppercase tracking-wider mb-2 select-none';
 </script>
 
 <template>

@@ -386,19 +386,19 @@ onBeforeUnmount((): void => {
         <div
             ref="popoverRef"
             :style="[popoverStyle, { zIndex: Z_INDEX.TOUR_POPOVER }]"
-            class="fixed bg-brutal-bg text-brutal-fg border-3 border-brutal-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] p-5 flex flex-col gap-4 max-w-sm rounded-brutal min-w-[280px] select-none"
+            class="fixed bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal p-5 flex flex-col gap-4 max-w-sm rounded-brutal min-w-[280px] select-none"
         >
-            <div v-if="currentStepVal?.title" class="text-lg font-black tracking-wide border-b-2 border-brutal-black dark:border-white pb-2">
+            <div v-if="currentStepVal?.title" class="text-lg font-black tracking-wide border-b-2 border-brutal pb-2">
                 {{ currentStepVal.title }}
             </div>
             <div v-if="currentStepVal?.description" class="text-sm font-medium leading-relaxed">
                 {{ currentStepVal.description }}
             </div>
-            <div class="flex items-center justify-between mt-2 pt-2 border-t-2 border-brutal-black dark:border-white border-dashed">
+            <div class="flex items-center justify-between mt-2 pt-2 border-t-2 border-brutal-dashed">
                 <div>
                     <button
                         type="button"
-                        class="px-2.5 py-1 text-xs font-black uppercase bg-brutal-bg text-brutal-fg border-2 border-brutal-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all cursor-pointer"
+                        class="px-2.5 py-1 text-xs font-black uppercase bg-brutal-bg text-brutal-fg border-2 border-brutal shadow-brutal-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all cursor-pointer"
                         @click="handleSkip"
                     >
                         {{ texts.skip }}
@@ -408,14 +408,14 @@ onBeforeUnmount((): void => {
                     <button
                         v-if="currentStep > 0"
                         type="button"
-                        class="px-2.5 py-1 text-xs font-black uppercase bg-brutal-bg text-brutal-fg border-2 border-brutal-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all cursor-pointer"
+                        class="px-2.5 py-1 text-xs font-black uppercase bg-brutal-bg text-brutal-fg border-2 border-brutal shadow-brutal-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all cursor-pointer"
                         @click="handlePrev"
                     >
                         {{ texts.prev }}
                     </button>
                     <button
                         type="button"
-                        class="px-2.5 py-1 text-xs font-black uppercase bg-brutal-accent text-brutal-accent-foreground border-2 border-brutal-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all cursor-pointer"
+                        class="px-2.5 py-1 text-xs font-black uppercase bg-brutal-accent text-brutal-accent-foreground border-2 border-brutal shadow-brutal-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all cursor-pointer"
                         @click="handleNextOrFinish"
                     >
                         {{ currentStep === steps.length - 1 ? texts.finish : texts.next }}

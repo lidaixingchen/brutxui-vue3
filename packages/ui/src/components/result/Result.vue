@@ -52,7 +52,7 @@ const rootClasses = computed(() =>
     cn(
         'flex flex-col items-center justify-center text-center',
         props.variant === 'card'
-            ? 'p-8 border-3 border-brutal-black dark:border-white bg-white dark:bg-brutal-black shadow-brutal-lg'
+            ? 'p-8 border-3 border-brutal bg-brutal-bg shadow-brutal-lg'
             : 'p-0',
         props.class
     )
@@ -66,7 +66,7 @@ const iconClasses = computed(() => cn(props.iconSize ? iconSizeVariants({ size: 
             <slot name="icon">
                 <div
                     :class="cn(
-                        'w-16 h-16 rounded-none flex items-center justify-center border-3 border-brutal-black shadow-[3px_3px_0px_0px_var(--brutal-shadow-color,#000000)]',
+                        'w-16 h-16 rounded-none flex items-center justify-center border-3 border-brutal shadow-[3px_3px_0px_0px_var(--brutal-shadow-color,#000000)]',
                         activeConfig.colorClass
                     )"
                 >
@@ -81,7 +81,7 @@ const iconClasses = computed(() => cn(props.iconSize ? iconSizeVariants({ size: 
         <component
             :is="titleAs"
             v-if="title || $slots.title" 
-            class="text-2xl font-black text-brutal-black dark:text-white mb-2 uppercase tracking-wide"
+            class="text-2xl font-black text-brutal-fg mb-2 uppercase tracking-wide"
         >
             <slot name="title">
                 {{ title }}
@@ -90,7 +90,7 @@ const iconClasses = computed(() => cn(props.iconSize ? iconSizeVariants({ size: 
 
         <p 
             v-if="subTitle || $slots.subTitle" 
-            class="text-sm font-bold text-gray-500 dark:text-gray-400 max-w-md mb-6 leading-relaxed"
+            class="text-sm font-bold text-brutal-muted-foreground max-w-md mb-6 leading-relaxed"
         >
             <slot name="subTitle">
                 {{ subTitle }}

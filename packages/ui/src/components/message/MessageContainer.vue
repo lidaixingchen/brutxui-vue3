@@ -34,7 +34,7 @@ const iconColorClasses: Record<MessageType, string> = {
 function messageClasses(msg: MessageItem): string {
     return cn(
         'pointer-events-auto min-w-[320px] max-w-[480px]',
-        'border-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]',
+        'border-3 shadow-brutal',
         typeClasses[msg.type],
     )
 }

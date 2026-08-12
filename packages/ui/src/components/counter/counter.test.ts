@@ -97,8 +97,8 @@ describe('Counter', () => {
             props: { to: 100, card: true },
         })
         expect(wrapper.classes()).toContain('border-2')
-        expect(wrapper.classes()).toContain('border-brutal-black')
-        expect(wrapper.classes()).toContain('shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]')
+        expect(wrapper.classes()).toContain('border-brutal')
+        expect(wrapper.classes()).toContain('shadow-brutal')
     })
 
     it('formats decimals with custom decimal separator', () => {

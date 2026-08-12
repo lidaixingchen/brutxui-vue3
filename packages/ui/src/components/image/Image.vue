@@ -346,7 +346,7 @@ onUnmounted(() => {
         <!-- 占位符/加载状态 -->
         <slot v-if="isLoading" name="placeholder">
             <div class="absolute inset-0 flex items-center justify-center w-full h-full font-bold select-none border-3 border-brutal" style="background: repeating-linear-gradient(45deg, var(--brutal-muted, #e5e5e5), var(--brutal-muted, #e5e5e5) 6px, var(--brutal-bg, #fff) 6px, var(--brutal-bg, #fff) 12px)">
-                <span class="bg-brutal-bg px-2 py-0.5 border-2 border-brutal shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">加载中...</span>
+                <span class="bg-brutal-bg px-2 py-0.5 border-2 border-brutal shadow-brutal-sm">加载中...</span>
             </div>
         </slot>
 

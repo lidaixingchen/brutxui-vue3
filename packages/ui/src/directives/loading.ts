@@ -20,7 +20,7 @@ interface LoadingEl extends HTMLElement {
  */
 
 // 加载文本样式在 mounted 与 updated 两条路径复用，避免后续调整只改一处导致两分支表现不一致
-const TEXT_SPAN_CLASSES = 'mt-3 text-sm font-black text-brutal-black dark:text-white uppercase tracking-wider bg-brutal-yellow px-2 py-0.5 border border-brutal-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+const TEXT_SPAN_CLASSES = 'mt-3 text-sm font-black text-brutal-fg uppercase tracking-wider bg-brutal-yellow px-2 py-0.5 border border-brutal shadow-brutal-sm'
 
 export const vLoading: Directive<LoadingEl, boolean> & { getSSRProps?: () => Record<string, unknown> } = {
     mounted(el, binding) {
