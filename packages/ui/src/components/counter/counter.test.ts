@@ -115,6 +115,13 @@ describe('Counter', () => {
         expect(wrapper.text()).toContain('1234,56')
     })
 
+    it('does not expand special patterns in custom decimal separator', () => {
+        const wrapper = mount(Counter, {
+            props: { to: 1234.56, decimals: 2, separator: '', decimalSeparator: '$&' },
+        })
+        expect(wrapper.text()).toContain('1234$&56')
+    })
+
     it('shows prefix in display', () => {
         const wrapper = mount(Counter, {
             props: { to: 100, prefix: '$' },

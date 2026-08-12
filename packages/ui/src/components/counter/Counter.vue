@@ -18,6 +18,10 @@ interface CounterProps {
     decimalSeparator?: string;
     prefix?: string;
     suffix?: string;
+    // 约束：prefixComponent / suffixComponent 必须是纯展示型（无内部状态）组件。
+    // 缩放测量会将其同时挂载到隐藏的 measure 测量节点与可见节点各一份实例；
+    // 若组件依赖内部状态 / useId / 定时器 / 随机内容 / 动画等副作用，两份实例会重复执行逻辑，
+    // 且可能因状态不同导致测量宽度与实际渲染宽度不一致。
     prefixComponent?: Component;
     suffixComponent?: Component;
     animatePrefix?: boolean;
@@ -80,7 +84,8 @@ function easingFn(t: number): number {
 function formatNumber(val: number): string {
     const fixed = val.toFixed(props.decimals);
     // separator 为空串时仅取消千分位，仍需应用自定义 decimalSeparator（toFixed 恒产出 '.'）
-    if (!props.separator) return fixed.replace('.', props.decimalSeparator);
+    // 用函数形式替换，避免 decimalSeparator 中的 $& / $' / `$` 等被 String.replace 当作特殊模式展开
+    if (!props.separator) return fixed.replace('.', () => props.decimalSeparator);
     const [int, dec] = fixed.split('.');
     const formatted = int.replace(/\B(?=(\d{3})+(?!\d))/g, props.separator);
     return dec !== undefined ? `${formatted}${props.decimalSeparator}${dec}` : formatted;
