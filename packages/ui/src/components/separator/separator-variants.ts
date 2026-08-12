@@ -1,9 +1,10 @@
 import { cva } from 'class-variance-authority'
 
 /**
- * CSS variable `--sep-thickness` 的默认 fallback 值（公共导出常量，仅供外部读取/文档参考）。
- * 类名字符串必须硬编码字面量 `3px`（与 DEFAULT_THICKNESS 同值）：Tailwind @source 扫描
- * 无法从 `${...}` 插值推断类名，类名内禁止 ${} 插值（见 check:class-literals 门禁）。
+ * `--sep-thickness` 的默认 fallback 值（经 index.ts `export *` 供外部读取的信息常量）。
+ * 注意：类名字符串硬编码 `3px` 字面量而非插值本常量——Tailwind @source 扫描无法从 `${...}`
+ * 插值推断类名，类名内禁止插值（见 check:class-literals 门禁）。调整默认厚度需同步
+ * 本常量与三处 `3px` 字面量。
  */
 export const DEFAULT_THICKNESS = '3px'
 

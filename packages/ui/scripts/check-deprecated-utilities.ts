@@ -31,8 +31,12 @@ interface Violation {
     category: 'RING' | 'SHADOW_RGBA';
 }
 
-const RING_RE = /(?<![\w-])ring(?:-|\[)[a-z0-9[\]-]+/g;
-const SHADOW_RGBA_RE = /\bshadow-\[[^\]"']*rgba/g;
+// ring 任意值可能含 `(`/`.`/`_`/`#`/`%`/`:` 等字符（如 ring-[var(--x)]、ring-[3px_3px]），
+// 字符类须覆盖，否则违规可被绕过或部分匹配导致计数失真
+const RING_RE = /(?<![\w-])ring(?:-|\[)[a-z0-9[\]().#_%:-]+/g;
+// 锚定到 rgba( 函数调用（而非任意位置出现 rgba 子串，避免误判 var(--shadow-rgba) 等变量名）；
+// 加 i 处理 RGBA()/Rgba() 大小写变体（CSS 颜色函数名大小写不敏感）
+const SHADOW_RGBA_RE = /\bshadow-\[[^\]"']*rgba\(/gi;
 
 function walkSourceFiles(root: string, includeTests: boolean): string[] {
     const results: string[] = [];
@@ -89,13 +93,17 @@ function audit(): Violation[] {
             });
         }
     };
-    // RING 只扫非测试文件；SHADOW_RGBA 含测试（counter.test.ts 等存量一并基线化）
-    for (const f of walkSourceFiles(SCAN_ROOT, false)) {
-        const content = fs.readFileSync(f, 'utf-8');
-        addMatches(f, content, RING_RE, 'RING');
-    }
+    // 单次遍历：RING 只扫非测试文件，SHADOW_RGBA 含测试（counter.test.ts 等存量一并基线化）；
+    // 读文件失败兜底跳过并告警，避免异常文件导致脚本崩溃
     for (const f of walkSourceFiles(SCAN_ROOT, true)) {
-        const content = fs.readFileSync(f, 'utf-8');
+        let content: string;
+        try {
+            content = fs.readFileSync(f, 'utf-8');
+        } catch (error) {
+            console.warn(`无法读取文件，已跳过：${path.relative(SCAN_ROOT, f)}`, error);
+            continue;
+        }
+        if (!/\.test\./.test(path.basename(f))) addMatches(f, content, RING_RE, 'RING');
         addMatches(f, content, SHADOW_RGBA_RE, 'SHADOW_RGBA');
     }
     return all;
@@ -112,12 +120,12 @@ function computeBaseline(violations: Violation[]): BaselineSnapshot {
     return counts;
 }
 
-function loadBaseline(): BaselineSnapshot {
-    if (!fs.existsSync(BASELINE_FILE)) return {};
+function loadBaseline(): { status: 'ok' | 'missing' | 'corrupt'; data: BaselineSnapshot } {
+    if (!fs.existsSync(BASELINE_FILE)) return { status: 'missing', data: {} };
     try {
-        return JSON.parse(fs.readFileSync(BASELINE_FILE, 'utf-8'));
+        return { status: 'ok', data: JSON.parse(fs.readFileSync(BASELINE_FILE, 'utf-8')) };
     } catch {
-        return {};
+        return { status: 'corrupt', data: {} };
     }
 }
 
@@ -143,6 +151,12 @@ function main(): void {
 
     if (checkBaseline) {
         const baseline = loadBaseline();
+        if (baseline.status === 'missing') {
+            console.warn('⚠ 基线文件不存在（.deprecated-utilities-baseline.json）——全部当前违规将被判为新增。请先运行 check:deprecated:update 生成基线。');
+        } else if (baseline.status === 'corrupt') {
+            console.warn('⚠ 基线文件损坏（JSON 解析失败）——无法比对，全部当前违规将被判为新增。请检查或重新运行 check:deprecated:update。');
+        }
+        const baseData = baseline.data;
         const current = computeBaseline(violations);
         const newKeys: string[] = [];
         const increased: Array<{ key: string; baseline: number; current: number }> = [];
@@ -150,11 +164,11 @@ function main(): void {
         let totalCurrent = 0;
         for (const [key, count] of Object.entries(current)) {
             totalCurrent += count;
-            const base = baseline[key] ?? 0;
+            const base = baseData[key] ?? 0;
             if (base === 0) newKeys.push(key);
             else if (count > base) increased.push({ key, baseline: base, current: count });
         }
-        for (const count of Object.values(baseline)) totalBaseline += count;
+        for (const count of Object.values(baseData)) totalBaseline += count;
 
         console.log('=== 已废弃工具类防回潮门禁（基线比对）===');
         console.log(`基线违规总数：${totalBaseline}`);

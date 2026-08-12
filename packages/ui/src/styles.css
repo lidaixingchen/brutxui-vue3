@@ -356,7 +356,9 @@
     }
 
     /* 虚线指示边框：专供拖拽/状态指示等虚线场景着色，随 --brutal-border-color 主题化。
-       border-brutal 强制 solid，不可与 border-dashed 混用（见 VISUAL_SYSTEM R1）。 */
+       border-brutal 强制 solid，不可与 border-dashed 混用（见 VISUAL_SYSTEM R1）。
+       注意：本类只设 style/color，不设 border-width——Tailwind preflight 将 border-width 重置为 0，
+       必须与宽度类配对使用（如 border-t-4 border-brutal-dashed / border-3 border-brutal-dashed）。 */
     .border-brutal-dashed {
         border-style: dashed;
         border-color: var(--brutal-border-color, #000000);
