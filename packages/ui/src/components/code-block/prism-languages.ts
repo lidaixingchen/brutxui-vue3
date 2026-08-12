@@ -111,7 +111,10 @@ const languageDependencies: Record<string, string[]> = {
 // 1) 环检测——若维护时引入 A→B→A 环，loadLanguage 在 pendingLoads 登记前的同步
 //    阶段会递归回到 A 并不断新建 Promise 形成无限递归（栈溢出），与
 //    「复用同一 Promise 去重」相悖，需在加载前显式暴露；
-// 2) 依赖名校验——拼写错误的依赖会在加载时让父语言被静默加入失败计数，尽早暴露。
+// 2) 依赖名校验——拼写错误的依赖会让父语言按 plaintext 降级，这里以告警暴露配置漂移。
+//    仅告警而非抛错：抛错会让「单语言配置错误」扩大为「本会话内所有语言加载全部失效」，
+//    且 dependenciesValidated 无法置位、每次 loadLanguage 都重跑并重复抛错。缺 loader 的
+//    语言本身由 loadLanguage 的「无 loader 即 plaintext」分支按语言粒度降级，属可接受行为。
 let dependenciesValidated = false
 
 function assertDependenciesValid(): void {
@@ -132,13 +135,13 @@ function assertDependenciesValid(): void {
             return
         }
         if (!languageLoaders[canonical]) {
-            throw new Error(`[prism-languages] 依赖图节点 "${canonical}" 在 languageLoaders 中不存在`)
+            console.warn(`[prism-languages] 依赖图节点 "${canonical}" 在 languageLoaders 中不存在，按 plaintext 降级`)
         }
         visiting.add(canonical)
         for (const dep of deps) {
             const depCanonical = resolveLanguage(dep)
             if (!languageLoaders[depCanonical]) {
-                throw new Error(`[prism-languages] 依赖 "${dep}"（→ ${depCanonical}）在 languageLoaders 中不存在`)
+                console.warn(`[prism-languages] 依赖 "${dep}"（→ ${depCanonical}）在 languageLoaders 中不存在，按 plaintext 降级`)
             }
             walk(dep)
         }
@@ -184,6 +187,9 @@ export async function loadLanguage(lang: string): Promise<string> {
             }
             await loader()
             loadedLanguages.add(canonical)
+            // 成功即清零失败计数：与注释「连续失败达上限才降级、期间任意一次成功即可恢复」语义一致，
+            // 避免已恢复语言残留累计失败计数，给未来语言卸载/重置逻辑留下陷阱
+            failedAttempts.delete(canonical)
             return canonical
         } catch {
             markFailed(canonical)

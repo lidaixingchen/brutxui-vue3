@@ -1,5 +1,31 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { resolveLanguage, loadLanguage, isLanguageLoaded } from './prism-languages'
+
+// 失败重试 / 阈值降级 / 恢复测试的 mock 状态：按 canonical 记录尝试次数，
+// succeedAfter 表示第几次尝试开始成功（用于模拟瞬时故障后恢复）。
+const mockLoadState = vi.hoisted(() => ({
+    attempts: {} as Record<string, number>,
+    succeedAfter: {} as Record<string, number>,
+}))
+
+function failOnAttempt(name: string): void {
+    const attempt = (mockLoadState.attempts[name] ?? 0) + 1
+    mockLoadState.attempts[name] = attempt
+    if (attempt < (mockLoadState.succeedAfter[name] ?? Number.POSITIVE_INFINITY)) {
+        throw new Error(`simulated load failure for ${name}`)
+    }
+}
+
+// rust / sql 两个独立 canonical：现有成功路径测试不触碰它们（go/ts/tsx 等），
+// 各自可独立覆盖「重试→降级」与「失败→恢复」，避免模块级 failedAttempts 状态跨测试串扰。
+vi.mock('prismjs/components/prism-rust', () => {
+    failOnAttempt('rust')
+    return {}
+})
+vi.mock('prismjs/components/prism-sql', () => {
+    failOnAttempt('sql')
+    return {}
+})
 
 describe('prism-languages', () => {
     describe('resolveLanguage', () => {
@@ -50,6 +76,41 @@ describe('prism-languages', () => {
             expect(isLanguageLoaded('typescript')).toBe(true)
             expect(isLanguageLoaded('markup')).toBe(true)
             expect(isLanguageLoaded('tsx')).toBe(true)
+        })
+    })
+
+    describe('loadLanguage failure handling', () => {
+        it('retries a transiently failing language up to MAX_FAILED_ATTEMPTS then degrades', async () => {
+            // rust 的 loader 每次动态 import 都抛错（succeedAfter 默认 Infinity）
+            await expect(loadLanguage('rust')).resolves.toBe('plaintext')
+            expect(mockLoadState.attempts['rust']).toBe(1)
+            expect(isLanguageLoaded('rust')).toBe(false)
+
+            // 首次失败后仍会重试（失败计数未达阈值）
+            await expect(loadLanguage('rust')).resolves.toBe('plaintext')
+            expect(mockLoadState.attempts['rust']).toBe(2)
+
+            // 达到阈值后直接降级，不再发起动态 import
+            await expect(loadLanguage('rust')).resolves.toBe('plaintext')
+            expect(mockLoadState.attempts['rust']).toBe(2)
+            expect(isLanguageLoaded('rust')).toBe(false)
+        })
+
+        it('recovers after a transient failure once the loader succeeds', async () => {
+            // sql 第 1 次尝试抛错、第 2 次开始成功（模拟瞬时故障恢复）
+            mockLoadState.attempts['sql'] = 0
+            mockLoadState.succeedAfter['sql'] = 2
+
+            await expect(loadLanguage('sql')).resolves.toBe('plaintext')
+            expect(mockLoadState.attempts['sql']).toBe(1)
+
+            await expect(loadLanguage('sql')).resolves.toBe('sql')
+            expect(mockLoadState.attempts['sql']).toBe(2)
+            expect(isLanguageLoaded('sql')).toBe(true)
+
+            // 成功后的再次加载走 loadedLanguages 短路，不再触发 loader
+            await loadLanguage('sql')
+            expect(mockLoadState.attempts['sql']).toBe(2)
         })
     })
 })
