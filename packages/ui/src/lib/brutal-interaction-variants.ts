@@ -44,6 +44,11 @@ export const brutalPressedState = `${pressedOffsetBase} shadow-none`
 // 其他持久 data-* 态（selected 等）需要同样语义时在此派生对应前缀版本，勿内联手抄 fallback。
 export const brutalPressedStateOn = 'data-[state=on]:translate-y-[var(--brutal-pressed-offset,2px)] data-[state=on]:translate-x-0 data-[state=on]:shadow-none'
 
+// 高亮项按压反馈复合变体（data-[highlighted]:active，特异度 0,3,0 压过 data-* 的 0,2,0）：
+// command 等 data-[highlighted] 高亮项在按压时恢复位移/去影反馈，含 translate-x-0 重置；
+// fallback 与 brutalPress/brutalPressedStateOn 同源派生（--brutal-pressed-offset），勿内联手抄
+export const brutalHighlightPress = 'data-[highlighted]:active:translate-y-[var(--brutal-pressed-offset,2px)] data-[highlighted]:active:translate-x-0 data-[highlighted]:active:shadow-none'
+
 // Derived interaction variants
 // 过渡仅限 transform/box-shadow，避免 transition-all 对其他可动画属性（颜色等）产生不必要的开销
 export const brutalPressWithTransition = `${brutalPress} transition-[transform,box-shadow]`

@@ -1,5 +1,5 @@
 import { cva } from 'class-variance-authority'
-import { brutalHighlightLiftWithBorder, brutalPress } from '@/lib/brutal-interaction-variants'
+import { brutalHighlightLiftWithBorder, brutalHighlightPress, brutalPress } from '@/lib/brutal-interaction-variants'
 
 export const commandInputWrapperVariants = cva(
     [
@@ -27,10 +27,8 @@ export const commandItemVariants = cva(
         brutalHighlightLiftWithBorder,
         brutalPress,
         // data-[highlighted] 恒压过 active（字节序 data-* 后于 active，同特异度 0,2,0 后者胜）：
-        // 补 data-[highlighted]:active 复合变体（特异度 0,3,0）恢复高亮项按压反馈，含 translate-x-0 重置
-        'data-[highlighted]:active:translate-y-[var(--brutal-pressed-offset,2px)]',
-        'data-[highlighted]:active:translate-x-0',
-        'data-[highlighted]:active:shadow-none',
+        // brutalHighlightPress 复合变体（特异度 0,3,0）恢复高亮项按压反馈（fallback 与共享变体同源）
+        brutalHighlightPress,
         'transition-all',
         'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
         '[&_svg]:pointer-events-none [&_svg]:shrink-0',
