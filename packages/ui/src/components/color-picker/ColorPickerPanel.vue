@@ -87,10 +87,11 @@ function syncFromModel() {
 let lastEmittedPanel: string | null | undefined
 
 watch(() => props.modelValue, (val) => {
-    if (val === lastEmittedPanel) {
-        lastEmittedPanel = undefined
-        return
-    }
+    // 与 ColorPickerInput 的 lastEmitted 同源问题：每次触发都先清空标记，
+    // 避免残留旧值把后续恰好等于该旧值的外部写入误判为「自回写」而跳过同步
+    const skip = val === lastEmittedPanel
+    lastEmittedPanel = undefined
+    if (skip) return
     syncFromModel()
 }, { immediate: true })
 
@@ -123,9 +124,9 @@ interface DragSession {
     id: number
     target: 'sv' | 'hue' | 'alpha'
 }
-// 按 pointerId 维护独立拖拽会话：多点触控时不同滑块互不干扰，
+// 按 pointerId 维护独立拖拽会话（Map 支持多点触控时不同滑块互不干扰），
 // pointercancel/lostpointercapture 统一清理，避免会话悬空后悬停移动误触发拖拽
-const activeDrag = ref<DragSession | null>(null)
+const activeDrags = new Map<number, DragSession>()
 
 function updateFromPointer(target: 'sv' | 'hue' | 'alpha', event: PointerEvent) {
     const el = target === 'sv' ? svPadEl.value : target === 'hue' ? hueSliderEl.value : alphaSliderEl.value
@@ -149,7 +150,7 @@ function updateFromPointer(target: 'sv' | 'hue' | 'alpha', event: PointerEvent) 
 
 function handlePointerDown(target: 'sv' | 'hue' | 'alpha', event: PointerEvent) {
     event.preventDefault()
-    activeDrag.value = { id: event.pointerId, target }
+    activeDrags.set(event.pointerId, { id: event.pointerId, target })
     const el = event.currentTarget
     if (el instanceof HTMLElement) {
         try {
@@ -162,15 +163,15 @@ function handlePointerDown(target: 'sv' | 'hue' | 'alpha', event: PointerEvent) 
 }
 
 function handlePointerMove(event: PointerEvent) {
-    const session = activeDrag.value
-    if (!session || event.pointerId !== session.id) return
+    const session = activeDrags.get(event.pointerId)
+    if (!session) return
     updateFromPointer(session.target, event)
 }
 
 function handlePointerUp(event: PointerEvent) {
-    const session = activeDrag.value
-    if (!session || event.pointerId !== session.id) return
-    activeDrag.value = null
+    const session = activeDrags.get(event.pointerId)
+    if (!session) return
+    activeDrags.delete(event.pointerId)
     const el = event.currentTarget
     if (el instanceof HTMLElement) {
         try {
@@ -184,9 +185,8 @@ function handlePointerUp(event: PointerEvent) {
 
 // 系统手势/滚动等取消指针，或指针捕获丢失：清理会话，后续悬停移动不再误触发
 function handlePointerCancel(event: PointerEvent) {
-    if (activeDrag.value?.id === event.pointerId) {
-        activeDrag.value = null
-    }
+    // 删除缺失键为无操作：指针已被系统取消或元素丢失捕获时安全兜底
+    activeDrags.delete(event.pointerId)
 }
 
 function confirmSelection() {

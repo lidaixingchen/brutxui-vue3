@@ -37,8 +37,9 @@ const classes = computed(() =>
 )
 
 function handleClick() {
-    // 非法色值不传播：避免空串/非标准色值写入历史或被 select 消费者误用
-    if (!isColorValid.value) return
+    // 禁用态与非法色值均不传播：原生 disabled 只拦真实浏览器点击，
+    // 测试/合成事件环境（trigger('click') 直接派发）下禁用按钮 click 仍到达处理器，故保留守卫
+    if (props.disabled || !isColorValid.value) return
     emit('select', props.value)
 }
 </script>
@@ -50,7 +51,7 @@ function handleClick() {
         type="button"
         :aria-label="ariaLabel ?? label ?? value"
         :aria-pressed="selected"
-        :disabled="disabled"
+        :disabled="disabled || !isColorValid"
         :title="label ?? value"
         :class="classes"
         :style="{ backgroundColor: isColorValid ? value : 'transparent' }"

@@ -45,10 +45,11 @@ function syncFromModel() {
 let lastEmitted: string | null | undefined
 
 watch(() => props.modelValue, (val) => {
-    if (val === lastEmitted) {
-        lastEmitted = undefined
-        return
-    }
+    // 每次触发都先清空标记：父级回写同一值（val === lastEmitted）时跳过同步，
+    // 外部写入时同步并清标记，避免残留旧值把后续恰好等于该旧值的外部写入误判为「自回写」
+    const skip = val === lastEmitted
+    lastEmitted = undefined
+    if (skip) return
     syncFromModel()
 }, { immediate: true })
 
