@@ -108,6 +108,18 @@ describe('ColorModeSwitcher', () => {
         expect(root.attributes('data-model-value')).toBe('light')
     })
 
+    it('shows resolved dark theme when colorMode is system but system is hidden', () => {
+        mockColorMode.value = 'system'
+        mockResolvedColorMode.value = 'dark'
+        const wrapper = mount(ColorModeSwitcher, {
+            props: { display: 'select', showSystem: false },
+            global: { stubs: selectStubs },
+        })
+        const root = wrapper.find('[data-test="select-root"]')
+        // 边界状态回退展示为实际亮暗（暗色），避免"页面为暗色而下拉框显示浅色"的感知偏差
+        expect(root.attributes('data-model-value')).toBe('dark')
+    })
+
     it('rejects programmatic system value when system is hidden', async () => {
         const wrapper = mount(ColorModeSwitcher, {
             props: { display: 'select', showSystem: false },

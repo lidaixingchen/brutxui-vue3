@@ -66,9 +66,10 @@ const labelFor = (mode: ColorMode) => t(`colorModeSwitcher.${mode}`)
 const currentLabel = computed(() => labelFor(colorMode.value))
 
 // 下拉展示值：当 colorMode 不在 availableModes（如 showSystem=false 但 colorMode=system）时，
-// 归一化到列表首项，避免 SelectValue 渲染出一个没有对应 SelectItem 的选中态
+// 回退展示为 resolvedColorMode（跟随系统时的实际亮暗），保证下拉值与页面真实外观一致，
+// 避免"页面为暗色而下拉框显示浅色"的感知偏差；仅归一化展示，不改变真实 colorMode，保持无副作用
 const normalizedSelectValue = computed<ColorMode>(() =>
-    availableModes.value.includes(colorMode.value) ? colorMode.value : (availableModes.value[0] ?? 'light')
+    availableModes.value.includes(colorMode.value) ? colorMode.value : resolvedColorMode.value
 )
 
 // 与 availableModes 保持一致：showSystem=false 时程序化传入的 'system' 不再被接受，
