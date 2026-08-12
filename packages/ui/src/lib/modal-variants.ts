@@ -16,7 +16,8 @@ export const sectionFooterVariants = cva([
     'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-3 pt-4 border-t-3 border-brutal',
 ])
 
-export const CLOSE_BUTTON_BASE_CLASSES = [
+// 仅被本文件 modalCloseButtonVariants 组装使用，不对外导出（无外部消费者）
+const CLOSE_BUTTON_BASE_CLASSES = [
     'h-8 w-8 flex items-center justify-center',
     'border-3 border-brutal bg-brutal-bg text-brutal-fg',
     'shadow-brutal-sm',

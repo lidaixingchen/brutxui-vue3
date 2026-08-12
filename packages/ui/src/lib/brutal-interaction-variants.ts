@@ -31,7 +31,7 @@ const hoverLiftSmNoX = 'hover:shadow-brutal hover:-translate-y-0.5'
 
 export const brutalHoverLift = hoverLiftLg
 
-export const brutalHighlightLift = 'data-[highlighted]:shadow-brutal-lg data-[highlighted]:-translate-x-0.5 data-[highlighted]:-translate-y-0.5'
+const brutalHighlightLift = 'data-[highlighted]:shadow-brutal-lg data-[highlighted]:-translate-x-0.5 data-[highlighted]:-translate-y-0.5'
 
 export const brutalPress = `${pressedOffset} active:shadow-none`
 
@@ -49,12 +49,10 @@ export const brutalPressedStateOn = 'data-[state=on]:translate-y-[var(--brutal-p
 // fallback 与 brutalPress/brutalPressedStateOn 同源派生（--brutal-pressed-offset），勿内联手抄
 export const brutalHighlightPress = 'data-[highlighted]:active:translate-y-[var(--brutal-pressed-offset,2px)] data-[highlighted]:active:translate-x-0 data-[highlighted]:active:shadow-none'
 
-// Derived interaction variants
-// 过渡仅限 transform/box-shadow，避免 transition-all 对其他可动画属性（颜色等）产生不必要的开销
-export const brutalPressWithTransition = `${brutalPress} transition-[transform,box-shadow]`
-export const brutalHoverLiftWithTransition = `${brutalHoverLift} transition-[transform,box-shadow]`
+// Derived interaction variants（共享片段派生，单一事实来源）。
+// brutalPressWithTransition / brutalHoverLiftWithTransition / brutalPressWithShadowSm 已删除：
+// 过渡属性须按场景显式声明（见审查报告 §八修复模板），WithTransition 组合为死导出，不再提供。
 export const brutalHoverLiftSm = hoverLiftSm
 export const brutalHoverLiftNoX = hoverLiftLgNoX
 export const brutalHoverLiftSmNoX = hoverLiftSmNoX
-export const brutalPressWithShadowSm = `${pressedOffset} active:shadow-brutal-sm`
 export const brutalHighlightLiftWithBorder = `${brutalHighlightLift} data-[highlighted]:border-brutal`

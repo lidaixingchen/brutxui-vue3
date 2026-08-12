@@ -2,11 +2,19 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { FocusScope } from 'reka-ui'
 import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCw, RotateCcw, FlipHorizontal } from '@lucide/vue'
-import { cn } from '@/lib/utils'
+import { cn, FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
 import { Z_INDEX } from '@/lib/z-index'
 import { hasIntersectionObserver, getDocument, getWindow, getIntersectionObserverCtor } from '@/lib/env'
+import { brutalHoverLiftNoX, brutalPress } from '@/lib/brutal-interaction-variants'
 
-// 模板内操作按钮的焦点类为字面值（focus-visible:outline-2），与 lib/utils 的 FOCUS_OUTLINE_CLASSES 保持一致
+// 预览大按钮共享交互类（hover 悬浮 / 按压反馈 / 焦点环）：
+// 复用 lib 共享变体（brutalHoverLiftNoX + brutalPress + FOCUS_OUTLINE_CLASSES），避免三处内联手抄
+const viewerControlClasses = cn(
+    'flex items-center justify-center w-12 h-12 border-3 border-brutal rounded-brutal shadow-brutal transition-all cursor-pointer',
+    brutalHoverLiftNoX,
+    brutalPress,
+    FOCUS_OUTLINE_CLASSES,
+)
 
 interface ImageProps {
     src: string
@@ -369,7 +377,8 @@ onUnmounted(() => {
             <FocusScope trapped loop>
                 <!-- 关闭按钮 -->
                 <button
-                    class="absolute top-6 right-6 flex items-center justify-center w-12 h-12 bg-brutal-accent text-brutal-accent-foreground border-3 border-brutal rounded-brutal shadow-brutal transition-all hover:translate-y-[-2px] hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none cursor-pointer focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
+                    class="absolute top-6 right-6 bg-brutal-accent text-brutal-accent-foreground"
+                    :class="viewerControlClasses"
                     :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_CONTROL }"
                     aria-label="关闭预览"
                     data-testid="image-viewer-close"
@@ -381,7 +390,8 @@ onUnmounted(() => {
                 <!-- 切换上一张 -->
                 <button
                     v-if="previewSrcList && previewSrcList.length > 1"
-                    class="absolute left-6 flex items-center justify-center w-12 h-12 bg-brutal-bg text-brutal-fg border-3 border-brutal rounded-brutal shadow-brutal transition-all hover:translate-y-[-2px] hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none cursor-pointer focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
+                    class="absolute left-6 bg-brutal-bg text-brutal-fg"
+                    :class="viewerControlClasses"
                     :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_CONTROL }"
                     aria-label="上一张"
                     data-testid="image-viewer-prev"
@@ -393,7 +403,8 @@ onUnmounted(() => {
                 <!-- 切换下一张 -->
                 <button
                     v-if="previewSrcList && previewSrcList.length > 1"
-                    class="absolute right-6 flex items-center justify-center w-12 h-12 bg-brutal-bg text-brutal-fg border-3 border-brutal rounded-brutal shadow-brutal transition-all hover:translate-y-[-2px] hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none cursor-pointer focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
+                    class="absolute right-6 bg-brutal-bg text-brutal-fg"
+                    :class="viewerControlClasses"
                     :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_CONTROL }"
                     aria-label="下一张"
                     data-testid="image-viewer-next"

@@ -130,9 +130,7 @@ const dayBaseClasses = computed(() => {
     const isCard = props.mode === 'card'
     return cn(
         // 日格子期望 hover 平滑（背景/文字/位移/阴影），用 breadcrumb 模型的显式过渡属性列表；
-        // 原 transition-all 会被 brutalPressWithTransition 的 transition-[transform,box-shadow] 经
-        // twMerge 同组静默移除（死类），改用完整过渡属性并保留 brutalPress（无 transition），
-        // 让过渡统一由本行声明（见裁决报告 §C5）
+        // 过渡统一由本行显式声明，brutalPress 不含 transition（见裁决报告 §C5）
         'flex font-semibold transition-[transform,box-shadow,background-color,color] duration-100 hover:bg-brutal-secondary hover:text-brutal-secondary-foreground hover:font-bold hover:shadow-brutal-sm cursor-pointer border-3 border-brutal/10 relative',
         isCard
             ? 'h-auto min-h-16 flex-col items-stretch justify-start p-1 text-[10px] sm:text-xs'
