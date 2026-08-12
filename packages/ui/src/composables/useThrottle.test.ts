@@ -260,6 +260,27 @@ describe('useThrottle', () => {
             expect(fn).toHaveBeenCalledTimes(1)
         })
 
+        it('组件卸载后残留引用调用不再执行 fn（disposed 守卫）', () => {
+            const fn = vi.fn()
+            const { throttled } = useThrottle(fn, 300)
+
+            throttled('first')
+            expect(fn).toHaveBeenCalledTimes(1)
+
+            vi.advanceTimersByTime(200)
+            throttled('second')
+
+            // 模拟组件卸载
+            unmountCallbacks.forEach(cb => cb())
+
+            // 卸载后残留引用再次调用：disposed 守卫应直接丢弃，不执行 fn
+            throttled('third')
+            vi.advanceTimersByTime(300)
+
+            expect(fn).toHaveBeenCalledTimes(1)
+            expect(fn).toHaveBeenCalledWith('first')
+        })
+
         it('组件卸载时没有待执行调用不会报错', () => {
             const fn = vi.fn()
             useThrottle(fn, 300)

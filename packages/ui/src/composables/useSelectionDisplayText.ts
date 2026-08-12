@@ -15,6 +15,9 @@ export interface UseSelectionDisplayTextOptions<TItem> {
     formatList?: (labels: string[]) => string
 }
 
+/** 多选模式未指定 maxDisplay 时的展示项数兜底值 */
+const DEFAULT_MAX_ITEMS = 3
+
 function defaultGetLabel<TItem>(item: TItem): string {
     if (typeof item === 'string') return item
     if (typeof item === 'number' || typeof item === 'boolean') return String(item)
@@ -44,6 +47,11 @@ function defaultFormatList(labels: string[]): string {
     return labels.join(', ')
 }
 
+// 默认数量文案为英文硬编码兜底；多语言场景请通过 formatCount 覆盖（与 formatList 一致的扩展点约定）
+function defaultFormatCount(count: number): string {
+    return `${count} selected`
+}
+
 export function useSelectionDisplayText<TItem>(
     options: UseSelectionDisplayTextOptions<TItem>
 ): ComputedRef<string> {
@@ -66,13 +74,13 @@ export function useSelectionDisplayText<TItem>(
 
         if (items.length === 0) return placeholder
 
-        const maxDisplay = toValue(options.maxDisplay) ?? 3
+        const maxDisplay = toValue(options.maxDisplay) ?? DEFAULT_MAX_ITEMS
         if (items.length <= maxDisplay) {
             const formatList = options.formatList ?? defaultFormatList
             // 过滤无可用标签的项（getLabel 返回空串），避免渲染出 "A, , C" 畸形文案
             return formatList(items.map(getLabel).filter((label) => label !== ''))
         }
 
-        return options.formatCount?.(items.length) ?? `${items.length} selected`
+        return options.formatCount?.(items.length) ?? defaultFormatCount(items.length)
     })
 }

@@ -193,6 +193,9 @@ let fallbackInstance: UseThemeReturn | null = null
 // 避免提前 destroy 导致其他仍使用单例的组件丢失 mediaQuery 监听器
 let fallbackRefCount = 0
 
+// beforeunload 全局监听句柄：destroyFallback() 时移除，防止 HMR/多应用同页重复注册累积
+let beforeUnloadHandler: (() => void) | null = null
+
 export function provideTheme(): UseThemeReturn {
     const theme = createTheme()
     provide(THEME_KEY, theme)
@@ -237,6 +240,11 @@ export function useTheme(): UseThemeReturn {
 }
 
 export function destroyFallback() {
+    // 移除 beforeunload 全局监听：为 destroyBrutxUI() 提供清理出口，避免 HMR/多应用同页重复注册累积
+    if (beforeUnloadHandler) {
+        getWindow?.()?.removeEventListener('beforeunload', beforeUnloadHandler)
+        beforeUnloadHandler = null
+    }
     if (fallbackInstance) {
         fallbackInstance.destroy()
         fallbackInstance = null
@@ -245,5 +253,6 @@ export function destroyFallback() {
 }
 
 if (isClient) {
-    getWindow()?.addEventListener('beforeunload', destroyFallback)
+    beforeUnloadHandler = () => destroyFallback()
+    getWindow()?.addEventListener('beforeunload', beforeUnloadHandler)
 }

@@ -1,4 +1,4 @@
-import { onUnmounted } from 'vue'
+import { getCurrentInstance, onUnmounted } from 'vue'
 
 /**
  * useDebounce 选项
@@ -106,10 +106,14 @@ export function useDebounce<T extends (...args: any[]) => unknown>(
         }, delay)
     }) as T
 
-    onUnmounted(() => {
-        disposed = true
-        cancel()
-    })
+    // 仅在组件 setup 上下文中注册卸载清理；非组件上下文（普通工具函数/模块级复用）
+    // 不会触发 Vue 的「onUnmounted 无活动组件实例」警告，清理交由调用方显式 cancel()
+    if (getCurrentInstance()) {
+        onUnmounted(() => {
+            disposed = true
+            cancel()
+        })
+    }
 
     return {
         debounced,

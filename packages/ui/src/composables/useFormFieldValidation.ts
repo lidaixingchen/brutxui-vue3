@@ -1,5 +1,8 @@
 import { ref, readonly, toValue, type MaybeRefOrGetter, type Ref } from 'vue'
 
+/** 规则返回 false 且未提供 defaultErrorMessage 时的默认错误文案（英文兜底；多语言场景请通过 defaultErrorMessage 覆盖） */
+const DEFAULT_ERROR_MESSAGE = 'Invalid value'
+
 export type ValidationState = 'default' | 'success' | 'error'
 export type ValidationRule<TValue> = (value: TValue) => boolean | string
 export type ValidateOn = 'input' | 'blur' | 'submit'
@@ -53,7 +56,7 @@ export function useFormFieldValidation<TValue = string>(options: UseFormFieldVal
                 isOk = false
                 errText = typeof result === 'string'
                     ? result
-                    : toValue(options.defaultErrorMessage) ?? 'Invalid value'
+                    : toValue(options.defaultErrorMessage) ?? DEFAULT_ERROR_MESSAGE
                 break
             }
         }

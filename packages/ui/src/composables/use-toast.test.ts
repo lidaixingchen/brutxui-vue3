@@ -499,6 +499,41 @@ describe('useToast', () => {
             destroyFallback()
             warnSpy.mockRestore()
         })
+
+        it('ref-counts component-level cleanup: clears fallback toasts only when last consumer unmounts', () => {
+            destroyFallback()
+
+            const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+            const Consumer = defineComponent({
+                setup() {
+                    const toast = useToast()
+                    toast.addToast({ title: 'Fallback toast' })
+                    return () => h('div')
+                },
+            })
+
+            const app1 = createApp(Consumer)
+            const app2 = createApp(Consumer)
+            const el1 = document.createElement('div')
+            const el2 = document.createElement('div')
+            app1.mount(el1)
+            app2.mount(el2)
+
+            // 两个消费者共享 fallback 单例，各自添加的 toast 都保留
+            expect(useToast().toasts.value.length).toBe(2)
+
+            // 卸载第一个：仍有第二个消费者使用单例，toast 不应被清空
+            app1.unmount()
+            expect(useToast().toasts.value.length).toBe(2)
+
+            // 卸载第二个：引用计数归零，fallback 单例被销毁，toast 被清空
+            app2.unmount()
+            expect(useToast().toasts.value.length).toBe(0)
+
+            warnSpy.mockRestore()
+            destroyFallback()
+        })
     })
 
     // ── destroyFallback ─────────────────────────────────────────
@@ -525,6 +560,16 @@ describe('useToast', () => {
         it('is safe to call when no fallback exists', () => {
             destroyFallback()
             destroyFallback() // should not throw
+        })
+
+        it('destroyFallback removes the module-level beforeunload listener (HMR/multi-app cleanup)', async () => {
+            // 独立模块实例：确保 beforeunload 监听刚被模块加载注册，可验证 destroyFallback 会将其移除
+            vi.resetModules()
+            const { destroyFallback: freshDestroyFallback } = await import('./useToast')
+
+            const removeSpy = vi.spyOn(window, 'removeEventListener')
+            freshDestroyFallback()
+            expect(removeSpy).toHaveBeenCalledWith('beforeunload', expect.any(Function))
         })
     })
 

@@ -2,6 +2,8 @@ import { onUnmounted, readonly, ref, toValue, type MaybeRefOrGetter, type Ref } 
 import { getNavigator } from '../lib/env'
 
 export const DEFAULT_COPIED_DURATION = 2000
+/** duration 下限保护：0/负数会按约 0ms 立即触发回调，见 copy 内注释 */
+export const MIN_COPIED_DURATION = 100
 
 export interface UseClipboardReturn {
     copy: (text: string) => Promise<boolean>
@@ -46,7 +48,7 @@ export function useClipboard(options: { duration?: MaybeRefOrGetter<number> } = 
                 if (timeoutId) clearTimeout(timeoutId)
                 // duration 下限保护：0/负数会按约 0ms 立即触发回调，
                 // copied 被瞬间置回 false，复制成功的视觉反馈几乎不可见
-                const duration = Math.max(toValue(options.duration) ?? DEFAULT_COPIED_DURATION, 100)
+                const duration = Math.max(toValue(options.duration) ?? DEFAULT_COPIED_DURATION, MIN_COPIED_DURATION)
                 timeoutId = setTimeout(() => {
                     copied.value = false
                 }, duration)

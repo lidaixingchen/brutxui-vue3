@@ -55,6 +55,9 @@ export function useThrottle<T extends (...args: never[]) => unknown>(
     let timeoutId: ReturnType<typeof setTimeout> | null = null
     let lastArgs: Parameters<T> | null = null
     let lastCallTime = 0
+    // 卸载标志：throttled 可能被外部（事件监听器/store 回调）持有并在卸载后调用，
+    // 若允许其重建定时器将不再有清理时机，导致定时器泄漏与卸载后的意外执行
+    let disposed = false
 
     function cancel(): void {
         if (timeoutId !== null) {
@@ -85,6 +88,8 @@ export function useThrottle<T extends (...args: never[]) => unknown>(
     }
 
     const throttled = ((...args: Parameters<T>) => {
+        if (disposed) return
+
         const now = Date.now()
 
         const isFirstCall = lastCallTime === 0
@@ -139,6 +144,7 @@ export function useThrottle<T extends (...args: never[]) => unknown>(
     // 不会触发 Vue 的「onUnmounted 无活动组件实例」警告，清理交由调用方显式 cancel()
     if (getCurrentInstance()) {
         onUnmounted(() => {
+            disposed = true
             cancel()
         })
     }

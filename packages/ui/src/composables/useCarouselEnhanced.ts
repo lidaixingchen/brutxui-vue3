@@ -1,4 +1,4 @@
-import { computed, onUnmounted, readonly, ref, toValue, type MaybeRefOrGetter } from 'vue'
+import { computed, onActivated, onDeactivated, onUnmounted, readonly, ref, toValue, type MaybeRefOrGetter } from 'vue'
 import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '../lib/defaults'
 import { useCarousel, type UseCarouselOptions } from './useCarousel'
 import { useReducedMotion } from './useReducedMotion'
@@ -17,9 +17,15 @@ export function useCarouselEnhanced(options: UseCarouselEnhancedOptions = {}) {
     // useCarousel 可能在 setup 阶段同步触发 onAutoplayChange/onAutoplayDelayChange 回调，
     // 若这些回调依赖后声明的 let/const 变量会因 TDZ 抛出 ReferenceError，
     // 消除对生命周期时序的隐式依赖
-    const prefersReducedMotion = useReducedMotion()
+    // 复用外部传入的 reduced-motion 引用（若宿主已实例化），否则自建一份并下传给 useCarousel，
+    // 消除 useCarousel 内部重复实例化同一媒体查询与监听（§12.4）
+    const prefersReducedMotion = options.prefersReducedMotion ?? useReducedMotion()
     const autoplayProgress = ref(0)
     let progressTimer: ReturnType<typeof setInterval> | null = null
+    // KeepAlive 停用标记：停用期间禁止启动进度定时器，避免隐藏轮播进度条空转
+    const isDeactivated = ref(false)
+    // KeepAlive 停用前进度计时是否仍在运行：重新激活时据此决定是否恢复
+    let wasProgressRunningBeforeDeactivate = false
 
     const progressUpdateInterval = computed(() =>
         toValue(options.progressInterval) ?? DEFAULT_PROGRESS_INTERVAL
@@ -28,6 +34,8 @@ export function useCarouselEnhanced(options: UseCarouselEnhancedOptions = {}) {
     function startProgressTimer() {
         stopProgressTimer()
         if (!toValue(options.trackProgress)) return
+        // KeepAlive 停用期间不启动进度定时器，避免隐藏轮播进度条空转
+        if (isDeactivated.value) return
         // 是否真的在自动播放由 useCarousel 的 onAutoplayChange 回调语义保证：
         // 该回调仅在自动播放真正启动/停止时触发（autoplay 开启且非 reduced motion），
         // 手动 startAutoplay 路径由下方增强版控制中的显式判断兜底，
@@ -68,6 +76,8 @@ export function useCarouselEnhanced(options: UseCarouselEnhancedOptions = {}) {
     // 复用基础 composable，通过回调同步进度条
     const carousel = useCarousel({
         ...options,
+        // 与自身共享同一 reduced-motion 引用，避免 useCarousel 内部重复实例化媒体查询监听
+        prefersReducedMotion,
         onAutoplayChange: (enabled) => {
             if (enabled) {
                 startProgressTimer()
@@ -95,6 +105,21 @@ export function useCarouselEnhanced(options: UseCarouselEnhancedOptions = {}) {
         carousel.stopAutoplay()
         stopProgressTimer()
     }
+
+    onDeactivated(() => {
+        // KeepAlive 缓存停用时停止进度定时器，避免隐藏轮播进度条空转
+        isDeactivated.value = true
+        wasProgressRunningBeforeDeactivate = progressTimer !== null
+        stopProgressTimer()
+    })
+
+    onActivated(() => {
+        // 重新激活时恢复：仅当停用前进度计时仍在运行才重启（startProgressTimer 内部复核 trackProgress / reduced 条件）
+        isDeactivated.value = false
+        if (wasProgressRunningBeforeDeactivate) {
+            startProgressTimer()
+        }
+    })
 
     onUnmounted(() => {
         stopProgressTimer()

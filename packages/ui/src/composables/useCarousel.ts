@@ -1,4 +1,4 @@
-import { ref, readonly, computed, onMounted, onUnmounted, watch, toValue, type ComputedRef, type DeepReadonly, type MaybeRefOrGetter, type Ref } from 'vue'
+import { ref, readonly, computed, onActivated, onDeactivated, onMounted, onUnmounted, watch, toValue, type ComputedRef, type DeepReadonly, type MaybeRefOrGetter, type Ref } from 'vue'
 import useEmblaCarousel from 'embla-carousel-vue'
 import { DEFAULT_AUTOPLAY_DELAY_MS } from '../lib/defaults'
 import { useReducedMotion } from './useReducedMotion'
@@ -13,6 +13,8 @@ export interface UseCarouselOptions {
     onAutoplayChange?: (enabled: boolean) => void
     /** autoplayDelay 变化后 autoplay 重启回调 */
     onAutoplayDelayChange?: () => void
+    /** 复用的 reduced-motion 偏好引用：传入可避免同一组件重复实例化媒体查询与监听（useCarouselEnhanced 复用自身实例） */
+    prefersReducedMotion?: Readonly<Ref<boolean>>
 }
 
 export interface UseCarouselReturn {
@@ -31,13 +33,17 @@ export interface UseCarouselReturn {
 }
 
 export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn {
-    const prefersReducedMotion = useReducedMotion()
+    const prefersReducedMotion = options.prefersReducedMotion ?? useReducedMotion()
 
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: toValue(options.loop) ?? false })
 
     const selectedIndex = ref(0)
     const scrollSnaps = ref<number[]>([])
     let autoplayTimer: ReturnType<typeof setInterval> | null = null
+    // KeepAlive 停用标记：停用期间禁止启动定时器，避免隐藏轮播空转
+    const isDeactivated = ref(false)
+    // KeepAlive 停用前自动播放是否仍在运行：重新激活时据此决定是否恢复计时
+    let wasAutoplayRunningBeforeDeactivate = false
 
     const canScrollPrev = computed(() => (toValue(options.loop) ?? false) || selectedIndex.value > 0)
     const canScrollNext = computed(() => (toValue(options.loop) ?? false) || selectedIndex.value < scrollSnaps.value.length - 1)
@@ -68,6 +74,11 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
     function startAutoplay() {
         stopAutoplay()
         if (!toValue(options.autoplay) || prefersReducedMotion.value) return
+        // KeepAlive 停用期间不启动定时器，避免隐藏轮播空转
+        if (isDeactivated.value) return
+        const delay = toValue(options.autoplayDelay) ?? DEFAULT_AUTOPLAY_DELAY
+        // 非法延迟（<= 0）直接返回：setInterval 会退化为浏览器下限（约 4ms）疯狂滚动，与 useCarouselEnhanced 守卫一致
+        if (delay <= 0) return
         autoplayTimer = setInterval(() => {
             if (emblaApi.value && scrollSnaps.value.length > 0) {
                 // 用 canScrollNext() 同步判断是否到达末尾：selectedIndex 由 'select' 事件异步更新，
@@ -82,7 +93,7 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
                     emblaApi.value.scrollNext()
                 }
             }
-        }, toValue(options.autoplayDelay) ?? DEFAULT_AUTOPLAY_DELAY)
+        }, delay)
     }
 
     function stopAutoplay() {
@@ -166,6 +177,21 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
                 startAutoplay()
                 options.onAutoplayChange?.(true)
             }
+        }
+    })
+
+    onDeactivated(() => {
+        // KeepAlive 缓存停用时停止自动播放定时器，避免隐藏轮播继续 scrollNext 空转
+        isDeactivated.value = true
+        wasAutoplayRunningBeforeDeactivate = autoplayTimer !== null
+        stopAutoplay()
+    })
+
+    onActivated(() => {
+        // 重新激活时恢复：仅当停用前自动播放仍在运行才重启（startAutoplay 内部复核 autoplay / reduced / delay 条件）
+        isDeactivated.value = false
+        if (wasAutoplayRunningBeforeDeactivate) {
+            startAutoplay()
         }
     })
 

@@ -637,4 +637,25 @@ describe('useTheme', () => {
             expect(document.documentElement.classList.contains('dark')).toBe(false)
         })
     })
+
+    describe('beforeunload global listener cleanup', () => {
+        it('destroyFallback removes the module-level beforeunload listener (HMR/multi-app cleanup)', async () => {
+            // 独立模块实例：确保 beforeunload 监听刚被模块加载注册，可验证 destroyFallback 会将其移除
+            vi.resetModules()
+            vi.doMock('../lib/env', () => ({
+                hasDocument: true,
+                isClient: true,
+                safeGetStorageItem: vi.fn(() => null),
+                safeSetStorageItem: vi.fn(),
+                getDocument: () => document,
+                getWindow: () => window,
+                matchMedia: (q: string) => window.matchMedia(q),
+            }))
+
+            const { destroyFallback: freshDestroyFallback } = await import('./useTheme')
+            const removeSpy = vi.spyOn(window, 'removeEventListener')
+            freshDestroyFallback()
+            expect(removeSpy).toHaveBeenCalledWith('beforeunload', expect.any(Function))
+        })
+    })
 })
