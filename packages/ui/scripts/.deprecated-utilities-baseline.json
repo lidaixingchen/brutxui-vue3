@@ -1,11 +1,1 @@
-{
-  "RING|components/input/input-variants.ts": 1,
-  "SHADOW_RGBA|components/calendar/Calendar.vue": 1,
-  "SHADOW_RGBA|components/counter/Counter.vue": 2,
-  "SHADOW_RGBA|components/counter/counter.test.ts": 1,
-  "SHADOW_RGBA|components/image/Image.vue": 1,
-  "SHADOW_RGBA|components/loading/Loading.vue": 1,
-  "SHADOW_RGBA|components/message/MessageContainer.vue": 2,
-  "SHADOW_RGBA|components/tour/Tour.vue": 8,
-  "SHADOW_RGBA|directives/loading.ts": 1
-}
+{}
