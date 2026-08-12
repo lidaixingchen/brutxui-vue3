@@ -6,6 +6,8 @@ import { cn } from '@/lib/utils'
 import { Z_INDEX } from '@/lib/z-index'
 import { hasIntersectionObserver, getDocument, getWindow, getIntersectionObserverCtor } from '@/lib/env'
 
+// 模板内操作按钮的焦点类为字面值（focus-visible:outline-2），与 lib/utils 的 FOCUS_OUTLINE_CLASSES 保持一致
+
 interface ImageProps {
     src: string
     alt?: string
@@ -367,7 +369,7 @@ onUnmounted(() => {
             <FocusScope trapped loop>
                 <!-- 关闭按钮 -->
                 <button
-                    class="absolute top-6 right-6 flex items-center justify-center w-12 h-12 bg-brutal-accent text-brutal-accent-foreground border-3 border-brutal rounded-brutal shadow-brutal transition-all hover:translate-y-[-2px] hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none cursor-pointer focus:outline focus:outline-[3px] focus:outline-brutal-ring focus:outline-offset-2"
+                    class="absolute top-6 right-6 flex items-center justify-center w-12 h-12 bg-brutal-accent text-brutal-accent-foreground border-3 border-brutal rounded-brutal shadow-brutal transition-all hover:translate-y-[-2px] hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none cursor-pointer focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
                     :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_CONTROL }"
                     aria-label="关闭预览"
                     data-testid="image-viewer-close"
@@ -379,7 +381,7 @@ onUnmounted(() => {
                 <!-- 切换上一张 -->
                 <button
                     v-if="previewSrcList && previewSrcList.length > 1"
-                    class="absolute left-6 flex items-center justify-center w-12 h-12 bg-brutal-bg text-brutal-fg border-3 border-brutal rounded-brutal shadow-brutal transition-all hover:translate-y-[-2px] hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none cursor-pointer focus:outline focus:outline-[3px] focus:outline-brutal-ring focus:outline-offset-2"
+                    class="absolute left-6 flex items-center justify-center w-12 h-12 bg-brutal-bg text-brutal-fg border-3 border-brutal rounded-brutal shadow-brutal transition-all hover:translate-y-[-2px] hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none cursor-pointer focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
                     :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_CONTROL }"
                     aria-label="上一张"
                     data-testid="image-viewer-prev"
@@ -391,7 +393,7 @@ onUnmounted(() => {
                 <!-- 切换下一张 -->
                 <button
                     v-if="previewSrcList && previewSrcList.length > 1"
-                    class="absolute right-6 flex items-center justify-center w-12 h-12 bg-brutal-bg text-brutal-fg border-3 border-brutal rounded-brutal shadow-brutal transition-all hover:translate-y-[-2px] hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none cursor-pointer focus:outline focus:outline-[3px] focus:outline-brutal-ring focus:outline-offset-2"
+                    class="absolute right-6 flex items-center justify-center w-12 h-12 bg-brutal-bg text-brutal-fg border-3 border-brutal rounded-brutal shadow-brutal transition-all hover:translate-y-[-2px] hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none cursor-pointer focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
                     :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_CONTROL }"
                     aria-label="下一张"
                     data-testid="image-viewer-next"
@@ -421,7 +423,7 @@ onUnmounted(() => {
                 >
                     <!-- 缩小 -->
                     <button
-                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,1px)] active:shadow-none cursor-pointer focus:outline focus:outline-[2px] focus:outline-brutal-ring focus:outline-offset-2"
+                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,1px)] active:shadow-none cursor-pointer focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
                         title="缩小"
                         data-testid="image-viewer-zoom-out"
                         @click="zoomOut"
@@ -430,7 +432,7 @@ onUnmounted(() => {
                     </button>
                     <!-- 放大 -->
                     <button
-                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,1px)] active:shadow-none cursor-pointer focus:outline focus:outline-[2px] focus:outline-brutal-ring focus:outline-offset-2"
+                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,1px)] active:shadow-none cursor-pointer focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
                         title="放大"
                         data-testid="image-viewer-zoom-in"
                         @click="zoomIn"
@@ -439,7 +441,7 @@ onUnmounted(() => {
                     </button>
                     <!-- 左旋 -->
                     <button
-                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,1px)] active:shadow-none cursor-pointer focus:outline focus:outline-[2px] focus:outline-brutal-ring focus:outline-offset-2"
+                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,1px)] active:shadow-none cursor-pointer focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
                         title="向左旋转"
                         data-testid="image-viewer-rotate-left"
                         @click="rotateLeft"
@@ -448,7 +450,7 @@ onUnmounted(() => {
                     </button>
                     <!-- 右旋 -->
                     <button
-                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,1px)] active:shadow-none cursor-pointer focus:outline focus:outline-[2px] focus:outline-brutal-ring focus:outline-offset-2"
+                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,1px)] active:shadow-none cursor-pointer focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
                         title="向右旋转"
                         data-testid="image-viewer-rotate-right"
                         @click="rotateRight"
@@ -457,7 +459,7 @@ onUnmounted(() => {
                     </button>
                     <!-- 翻转 -->
                     <button
-                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,1px)] active:shadow-none cursor-pointer focus:outline focus:outline-[2px] focus:outline-brutal-ring focus:outline-offset-2"
+                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,1px)] active:shadow-none cursor-pointer focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
                         title="左右翻转"
                         data-testid="image-viewer-flip"
                         @click="flipHorizontal"

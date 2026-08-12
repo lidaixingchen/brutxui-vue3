@@ -1,5 +1,6 @@
 import { cva } from 'class-variance-authority'
 import { brutalHoverLiftSmNoX, brutalPress } from '@/lib/brutal-interaction-variants'
+import { FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
 
 const sliderTrackSizeVariants = {
     sm: '[--slider-thickness:0.75rem]',
@@ -49,7 +50,7 @@ export const sliderThumbVariants = cva(
         'border-3 border-brutal',
         'shadow-brutal-sm',
         'transition-colors duration-150',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',
+        FOCUS_OUTLINE_CLASSES,
         'disabled:pointer-events-none disabled:opacity-50',
         brutalHoverLiftSmNoX,
         brutalPress,

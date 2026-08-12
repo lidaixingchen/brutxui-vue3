@@ -145,10 +145,11 @@ function resetColumnFilter() {
 <template>
     <Popover>
         <PopoverTrigger as-child>
+            <!-- 紧凑控件保留细指示 outline-1，与 lib/utils FOCUS_OUTLINE_CLASSES 语义一致但不并入常量 -->
             <Button
                 variant="default"
                 size="icon"
-                class="h-6 w-6 p-0 border-3 shadow-none focus-visible:ring-1"
+                class="h-6 w-6 p-0 border-3 shadow-none focus-visible:outline-1 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
                 :aria-label="`Filter ${column.id}`"
                 @click.stop
             >

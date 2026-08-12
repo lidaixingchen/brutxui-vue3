@@ -339,6 +339,17 @@ describe('ColorPicker', () => {
         expect(wrapper.find('input[type="hidden"]').exists()).toBe(false)
     })
 
+    it('sets disabled on the hidden input when disabled', () => {
+        // 原生语义：disabled 表单控件不随表单提交，隐藏 input 应继承 disabled 状态
+        wrapper = mount(ColorPicker, {
+            ...localeProvide,
+            props: { name: 'color', modelValue: '#ff0000', disabled: true },
+            attachTo: document.body,
+        })
+        const hidden = wrapper.find('input[type="hidden"]')
+        expect(hidden.attributes('disabled')).toBeDefined()
+    })
+
     it('points aria-controls to the rendered content id', async () => {
         wrapper = mount(ColorPicker, { ...localeProvide, attachTo: document.body })
         await openPanel(wrapper)
@@ -395,7 +406,7 @@ describe('ColorPickerSwatch', () => {
             attachTo: document.body,
         })
         const swatch = wrapper.find('button[aria-pressed]')
-        expect(swatch.classes()).toContain('ring-2')
+        expect(swatch.classes()).toContain('outline-brutal-ring')
     })
 
     it('sets aria-pressed attribute', () => {
@@ -418,14 +429,24 @@ describe('ColorPickerSwatch', () => {
         expect(wrapper.emitted('select')).toBeFalsy()
     })
 
+    it('marks invalid color swatch as disabled', () => {
+        // 非法色值是不可交互数据：置为 disabled，避免「看似可点击实则无效」的可聚焦元素
+        wrapper = mount(ColorPickerSwatch, {
+            props: { value: 'not-a-color' },
+            attachTo: document.body,
+        })
+        const swatch = wrapper.find('button[aria-pressed]')
+        expect(swatch.attributes('disabled')).toBeDefined()
+    })
+
     it('has focus-visible ring class', () => {
         wrapper = mount(ColorPickerSwatch, {
             props: { value: '#ff0000' },
             attachTo: document.body,
         })
         const swatch = wrapper.find('button[aria-pressed]')
-        expect(swatch.classes()).toContain('focus-visible:ring-2')
-        expect(swatch.classes()).toContain('focus-visible:ring-brutal-ring')
+        expect(swatch.classes()).toContain('focus-visible:outline-2')
+        expect(swatch.classes()).toContain('focus-visible:outline-brutal-ring')
     })
 })
 
@@ -585,6 +606,23 @@ describe('ColorPickerInput', () => {
         await wrapper.setProps({ modelValue: '#ff0000' })
         expect((input.element as HTMLInputElement).value).toBe('#FF0000')
     })
+
+    it('re-syncs when an externally written value equals a previously emitted value', async () => {
+        wrapper = mount(ColorPickerInput, {
+            ...localeProvide,
+            props: { modelValue: '#ff0000' },
+            attachTo: document.body,
+        })
+        const input = wrapper.find('input')
+        // 用户输入有效色并 emit，父级未回写（lastEmitted 残留）
+        await input.setValue('#00ff00')
+        // 外部先写其他值：走同步分支
+        await wrapper.setProps({ modelValue: '#0000ff' })
+        expect((input.element as HTMLInputElement).value).toBe('#0000ff')
+        // 外部再写回等于先前 emit 的旧值：应同步，而非被误判为「自回写」跳过
+        await wrapper.setProps({ modelValue: '#00ff00' })
+        expect((input.element as HTMLInputElement).value).toBe('#00ff00')
+    })
 })
 
 describe('ColorPickerPanel pointer interaction', () => {
@@ -701,6 +739,28 @@ describe('ColorPickerPanel pointer interaction', () => {
         await svSlider.trigger('pointerup', { pointerId: 1 })
         await hueSlider.trigger('pointermove', { pointerId: 2, pointerType: 'touch', clientX: 60, clientY: 0 })
         expect(wrapper.emitted('update:modelValue')?.length ?? 0).toBeGreaterThan(count)
+    })
+
+    it('re-syncs hsv when an externally written value equals a previously emitted value', async () => {
+        wrapper = mount(ColorPickerPanel, {
+            ...localeProvide,
+            props: { modelValue: '#ff0000', presets: ['#00ff00'], showHistory: false },
+            attachTo: document.body,
+        })
+        await nextTick()
+        // 选择预设触发 emit（父级不回声，lastEmittedPanel 残留为 #00ff00）
+        await wrapper.find('button[title="#00ff00"]').trigger('click')
+        await nextTick()
+        // 外部先写其他值：走同步分支并清空残留标记
+        await wrapper.setProps({ modelValue: '#0000ff' })
+        await nextTick()
+        await nextTick()
+        // 外部再写回等于先前 emit 的值：应同步 hsv，输入框显示该色而非残留旧态
+        await wrapper.setProps({ modelValue: '#00ff00' })
+        await nextTick()
+        await nextTick()
+        const input = wrapper.find('input')
+        expect((input.element as HTMLInputElement).value).toBe('#00ff00')
     })
 })
 

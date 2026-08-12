@@ -1,5 +1,6 @@
 import { cva } from 'class-variance-authority'
 import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
+import { FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
 
 export const tabsListVariants = cva(
     [
@@ -37,7 +38,7 @@ export const tabsTriggerVariants = cva(
         'border-3 border-transparent',
         'rounded-brutal',
         'transition-all duration-150',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',
+        FOCUS_OUTLINE_CLASSES,
         brutalPress,
         'disabled:pointer-events-none disabled:opacity-50',
         'data-[state=active]:text-brutal-fg data-[state=active]:border-brutal data-[state=active]:shadow-brutal-sm',
@@ -63,6 +64,6 @@ export const tabsContentVariants = cva(
     [
         'mt-3 p-4',
         'bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal rounded-brutal',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',
+        FOCUS_OUTLINE_CLASSES,
     ]
 )

@@ -95,7 +95,7 @@ describe('TabsContent', () => {
             global: { stubs: { TabsContent: primitiveStub } },
         })
         const classes = wrapper.classes().join(' ')
-        expect(classes).toContain('focus-visible:outline-none')
+        expect(classes).toContain('focus-visible:outline-2')
     })
 })
 

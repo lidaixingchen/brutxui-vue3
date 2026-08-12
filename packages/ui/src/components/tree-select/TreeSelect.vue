@@ -375,11 +375,12 @@ const contentId = `tree-select-content-${useId()}`
                 <span class="truncate">{{ displayText }}</span>
                 <span class="flex items-center gap-1">
                     <!-- 修复：清除按钮使用 span + role="button" -->
+                    <!-- 与 lib/utils FOCUS_OUTLINE_CLASSES 保持一致 -->
                     <span
                         v-if="showClear"
                         role="button"
                         :tabindex="disabled ? -1 : 0"
-                        class="p-0.5 hover:bg-brutal-muted rounded-brutal focus:outline-none focus:ring-2 focus:ring-brutal-ring"
+                        class="p-0.5 hover:bg-brutal-muted rounded-brutal focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
                         :aria-label="t('treeSelect.clear')"
                         @click="handleClear"
                         @keydown.enter="handleClear"

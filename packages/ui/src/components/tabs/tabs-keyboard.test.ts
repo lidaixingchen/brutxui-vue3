@@ -95,7 +95,7 @@ describe('Tabs keyboard navigation support', () => {
                 },
             })
 
-            expect(wrapper.classes()).toContain('focus-visible:outline-none')
+            expect(wrapper.classes()).toContain('focus-visible:outline-2')
             wrapper.unmount()
         })
     })

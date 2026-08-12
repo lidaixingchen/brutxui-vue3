@@ -319,7 +319,7 @@ export { default as Stepper } from './components/stepper/Stepper.vue'
 export type { StepperStep } from './components/stepper/types'
 export { stepperDotVariants, stepperConnectorVariants } from './components/stepper/stepper-variants'
 
-export { cn, FOCUS_RING_CLASSES } from './lib/utils'
+export { cn, FOCUS_OUTLINE_CLASSES } from './lib/utils'
 export { renderImperative } from './lib/render-imperative'
 export type { RenderImperativeOptions, RenderImperativeReturn } from './lib/render-imperative'
 export { hsvToRgb, rgbToHsv, rgbToHsl, hslToRgb, hsvToHex, hsvToHexAlpha, hexToHsv, hexToRgb, parseColor, isValidColor, formatColor, normalizeColor } from './lib/color'

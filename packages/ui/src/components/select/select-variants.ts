@@ -1,6 +1,7 @@
 import { cva } from 'class-variance-authority'
 import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
 import { floatingContentAnimationClasses } from '@/lib/floating-animation-classes'
+import { FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
 
 export const selectTriggerVariants = cva(
     [
@@ -10,7 +11,8 @@ export const selectTriggerVariants = cva(
         'shadow-brutal',
         'transition-all duration-150',
         brutalHoverLift,
-        'focus:outline-none focus:shadow-brutal-lg focus:-translate-x-0.5 focus:-translate-y-0.5',
+        FOCUS_OUTLINE_CLASSES,
+        'focus:shadow-brutal-lg focus:-translate-x-0.5 focus:-translate-y-0.5',
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:translate-x-0 active:shadow-none', /* 组件私有：特定 X 轴位移重置，不抽取 */
         'disabled:cursor-not-allowed disabled:opacity-50',
         '[&>span]:line-clamp-1',
@@ -24,8 +26,8 @@ export const selectTriggerVariants = cva(
             },
             variant: {
                 default: '',
-                error: 'border-brutal-destructive focus:ring-brutal-destructive',
-                success: 'border-brutal-success focus:ring-brutal-success',
+                error: 'border-brutal-destructive focus-visible:outline-brutal-destructive',
+                success: 'border-brutal-success focus-visible:outline-brutal-success',
             },
         },
         defaultVariants: {

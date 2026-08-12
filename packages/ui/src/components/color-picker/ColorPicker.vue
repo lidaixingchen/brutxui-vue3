@@ -97,7 +97,7 @@ const presetsForPanel = computed<string[] | readonly ColorPreset[] | undefined>(
 <template>
     <!-- 原生表单提交：触发器按钮是 type="button"，name 不随表单提交，
          渲染隐藏 input 携带当前颜色值，值随 modelValue 变化同步 -->
-    <input v-if="name" type="hidden" :name="name" :value="modelValue ?? ''" />
+    <input v-if="name" type="hidden" :name="name" :value="modelValue ?? ''" :disabled="disabled" />
     <PopoverRoot v-model:open="open">
         <PopoverTrigger as-child>
             <button
@@ -127,10 +127,11 @@ const presetsForPanel = computed<string[] | readonly ColorPreset[] | undefined>(
                     {{ normalizedDisplay ?? resolvedPlaceholder }}
                 </span>
                 <span class="flex items-center gap-1 shrink-0">
+                    <!-- 与 lib/utils FOCUS_OUTLINE_CLASSES 保持一致 -->
                     <span
                         v-if="clearable && modelValue && !disabled"
                         role="button"
-                        class="inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors focus:outline-none focus:ring-2 focus:ring-brutal-ring rounded-brutal"
+                        class="inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2 rounded-brutal"
                         :class="ICON_SIZE_CLASSES.clearButton[size]"
                         :aria-label="t('colorPicker.clear')"
                         tabindex="0"

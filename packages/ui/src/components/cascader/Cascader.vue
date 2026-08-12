@@ -123,35 +123,48 @@ function getOptionPath(option: CascaderOption, colIdx: number): CascaderValue[] 
     return [...activePath.value.slice(0, colIdx), option.value]
 }
 
-// 子树叶子路径缓存：同一 option 的叶子集合只依赖其子树（父路径由树位置唯一决定），
-// 渲染期间稳定。缓存避免每个可见选项每次渲染都递归整棵子树（activePath 变化触发
-// 全列重渲染时接近 O(n²)）；options 更新时清空。
+// 子树叶子路径缓存：同一 option 的叶子集合只依赖其子树，渲染期间稳定。
+// 缓存避免每个可见选项每次渲染都递归整棵子树（activePath 变化触发
+// 全列重渲染时接近 O(n²)）。缓存值只存「相对路径」（option 自身到叶子的
+// 值序列，不含祖先前缀），调用方读取时再拼接当前父路径：同一 option 引用
+// 挂在多个父节点（共享子树）时，各父路径下都能得到正确的完整叶子路径。
 const leafPathsCache = new Map<CascaderOption, CascaderValue[][]>()
 
+// 原地变更（push/splice、修改 children、切换 disabled）不改变 options 引用，
+// 必须深度监听才能让叶子缓存失效。代价是每次嵌套变更会全量遍历一次树，
+// 数据量极大且高频变更时需评估，必要时可改为由调用方以数据版本号主动失效。
 watch(() => props.options, () => {
     leafPathsCache.clear()
-})
+}, { deep: true })
 
-// Find all leaf paths of a given option node recursively
-function getLeafPaths(option: CascaderOption, parentPath: CascaderValue[]): CascaderValue[][] {
-    // disabled 节点不可被勾选：跳过该节点及其整个子树（含其可选后代叶子），
-    // 与 handleItemClick/toggleCheckbox 对 option.disabled 的拦截语义保持一致
+// 递归计算 option 到其全部叶子后代的相对路径（不含祖先前缀）。
+// disabled 节点不可被勾选：跳过该节点及其整个子树（含其可选后代叶子），
+// 与 handleItemClick/toggleCheckbox 对 option.disabled 的拦截语义保持一致
+function getRelativeLeafPaths(option: CascaderOption): CascaderValue[][] {
     if (option.disabled) return []
-    const cached = leafPathsCache.get(option)
-    if (cached) return cached
-
-    const currentPath = [...parentPath, option.value]
     if (!option.children || option.children.length === 0) {
-        const leaf = [currentPath]
-        leafPathsCache.set(option, leaf)
-        return leaf
+        return [[option.value]]
     }
     const paths: CascaderValue[][] = []
     for (const child of option.children) {
-        paths.push(...getLeafPaths(child, currentPath))
+        for (const leaf of getRelativeLeafPaths(child)) {
+            paths.push([option.value, ...leaf])
+        }
     }
-    leafPathsCache.set(option, paths)
     return paths
+}
+
+// 返回 option 在指定父路径下的完整叶子路径（父路径 + option 自身到叶子的相对路径）
+function getLeafPaths(option: CascaderOption, parentPath: CascaderValue[]): CascaderValue[][] {
+    // disabled 节点不可被勾选：跳过该节点及其整个子树
+    if (option.disabled) return []
+    const cached = leafPathsCache.get(option)
+    if (cached) {
+        return cached.map(leaf => [...parentPath, ...leaf])
+    }
+    const relativePaths = getRelativeLeafPaths(option)
+    leafPathsCache.set(option, relativePaths)
+    return relativePaths.map(leaf => [...parentPath, ...leaf])
 }
 
 // Check if a specific path is selected
@@ -433,10 +446,12 @@ function handleKeyDown(e: KeyboardEvent) {
     const currentColumnOptions = columns.value[activeColumnIndex.value] || []
     if (currentColumnOptions.length === 0) return
 
-    // 从当前项沿指定方向查找下一个非 disabled 项（循环）；找不到则保持原位置不变
+    // 从当前项沿指定方向查找下一个非 disabled 项（循环）；
+    // 全列无可用项时返回 -1：清除高亮（aria-activedescendant 回到 undefined，
+    // 焦点保持在触发按钮），避免按键后高亮与 activePath 均无变化的「无响应」观感
     const findNavigableIndex = (direction: 1 | -1): number => {
         const len = currentColumnOptions.length
-        if (len === 0) return activeItemIndex.value
+        if (len === 0) return -1
         const start = activeItemIndex.value === -1
             ? (direction === 1 ? -1 : len)
             : activeItemIndex.value
@@ -445,7 +460,7 @@ function handleKeyDown(e: KeyboardEvent) {
             const candidate = currentColumnOptions[candidateIdx]
             if (candidate && !candidate.disabled) return candidateIdx
         }
-        return activeItemIndex.value
+        return -1
     }
 
     switch (e.key) {
@@ -541,11 +556,12 @@ function getItemClasses(option: CascaderOption, colIdx: number) {
             >
                 <span class="truncate">{{ displayText }}</span>
                 <span class="flex items-center gap-1">
+                    <!-- 与 lib/utils FOCUS_OUTLINE_CLASSES 保持一致 -->
                     <span
                         v-if="showClear"
                         role="button"
                         :tabindex="disabled ? -1 : 0"
-                        class="p-0.5 hover:bg-brutal-muted rounded-brutal focus:outline-none focus:ring-2 focus:ring-brutal-ring"
+                        class="p-0.5 hover:bg-brutal-muted rounded-brutal focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
                         @click="handleClear"
                         @keydown.enter="handleClear"
                         @keydown.space.prevent="handleClear"

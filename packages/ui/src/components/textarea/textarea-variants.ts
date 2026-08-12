@@ -1,6 +1,7 @@
 import { cva } from 'class-variance-authority'
 import { inputVariantClasses } from '../input/shared-input-variants'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
+import { FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
 
 export const textareaVariants = cva(
     [
@@ -11,8 +12,8 @@ export const textareaVariants = cva(
         'font-medium',
         'placeholder:text-brutal-placeholder placeholder:font-normal',
         'transition-all duration-150',
-        'focus:outline-none focus:shadow-brutal',
-        'focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',
+        'focus:shadow-brutal',
+        FOCUS_OUTLINE_CLASSES,
         brutalPress,
         'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-brutal-muted',
         'resize-none',

@@ -1,11 +1,12 @@
 import { cva } from 'class-variance-authority'
 import { brutalHoverLiftSm, brutalPress } from '@/lib/brutal-interaction-variants'
+import { FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
 
 export const toggleVariants = cva(
     [
         'inline-flex items-center justify-center gap-2 text-sm font-black tracking-wide',
         'border-3 border-brutal rounded-brutal transition-all duration-150',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',
+        FOCUS_OUTLINE_CLASSES,
         'disabled:pointer-events-none disabled:opacity-50',
         brutalPress,
     ],

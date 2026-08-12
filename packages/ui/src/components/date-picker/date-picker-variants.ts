@@ -1,5 +1,6 @@
 import { cva } from 'class-variance-authority'
 import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
+import { FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
 
 export const datePickerTriggerVariants = cva(
     [
@@ -10,7 +11,7 @@ export const datePickerTriggerVariants = cva(
         'transition-all duration-150',
         brutalHoverLift,
         brutalPress,
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring',
+        FOCUS_OUTLINE_CLASSES,
         'disabled:opacity-50 disabled:pointer-events-none',
     ],
     {
