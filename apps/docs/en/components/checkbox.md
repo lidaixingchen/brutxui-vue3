@@ -94,6 +94,8 @@ import { Checkbox } from 'brutx-ui-vue'
 
 Set `checked` to `'indeterminate'` to display the indeterminate state. The indicator shows a `Minus` icon, commonly used for "partially selected" hierarchical selection scenarios.
 
+Uncontrolled mode supports it too: `<Checkbox defaultValue="indeterminate" />` initially renders the `Minus` icon with `aria-checked="mixed"`. Per reka-ui semantics, clicking switches the state to `checked` — it does not return to indeterminate automatically.
+
 ```vue
 <script setup>
 import { Checkbox } from 'brutx-ui-vue'

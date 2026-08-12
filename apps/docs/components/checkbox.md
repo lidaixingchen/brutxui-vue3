@@ -93,6 +93,8 @@ import { Checkbox } from 'brutx-ui-vue'
 
 将 `checked` 设置为 `'indeterminate'` 可展示不确定状态，此时指示器显示 `Minus`（减号）图标，常用于"部分选中"等层级选择场景。
 
+非受控模式同样支持：`<Checkbox defaultValue="indeterminate" />` 初始渲染 `Minus` 图标且 `aria-checked="mixed"`。按 reka-ui 语义，用户点击后状态切换为 `checked`，不会自动回到不确定态。
+
 ```vue
 <script setup>
 import { Checkbox } from 'brutx-ui-vue'

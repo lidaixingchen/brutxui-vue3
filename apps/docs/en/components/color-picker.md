@@ -261,7 +261,7 @@ const color = ref(null)
 | `disabled` | `boolean` | `false` | Disabled state |
 | `clearable` | `boolean` | `false` | Whether clearable |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Input size |
-| `name` | `string` | — | Form field name; when provided, renders a hidden `<input type="hidden">` submitted with the owning form carrying the current color value |
+| `name` | `string` | — | Form field name; when provided, renders a hidden `<input type="hidden">` submitted with the owning form carrying the current color value; when `disabled`, the hidden input is disabled too and the color value is not submitted |
 | `id` | `string` | — | Component ID |
 | `ariaLabel` | `string` | — | Accessibility label |
 | `open` | `boolean` | — | Whether the panel is open, supports v-model:open two-way binding |
@@ -307,7 +307,7 @@ const color = ref(null)
 
 ### Preset & History Swatches
 
-Preset and history color swatches are native `<button>` elements (Tab-focusable, activated with Enter/Space). The selected state is expressed via `aria-pressed`, and a `focus-visible` ring provides keyboard focus feedback. Invalid color values are filtered out (history) or rendered transparent and non-selectable (presets).
+Preset and history color swatches are native `<button>` elements (Tab-focusable, activated with Enter/Space). The selected state is expressed via `aria-pressed`, and a `focus-visible` ring provides keyboard focus feedback. Invalid color values are filtered out (history); invalid preset swatches are dimmed with opacity-40 and rendered as natively `disabled` buttons (not focusable, `cursor-not-allowed`, not keyboard-activatable).
 
 ## FAQ
 

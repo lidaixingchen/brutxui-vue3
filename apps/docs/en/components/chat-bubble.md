@@ -155,6 +155,8 @@ type MessageStatus = 'sending' | 'sent' | 'delivered' | 'read' | 'failed'
 | `read` | Double check | Theme primary color |
 | `failed` | Warning icon | Destructive color |
 
+> **Note:** `status` is a closed union type at the type level, but message data usually comes from backend APIs and may carry values outside the enum at runtime; in that case ChatBubble silently ignores the status (no status icon is rendered) without throwing an error.
+
 ## Props
 
 ### ChatBubble
@@ -184,7 +186,8 @@ type MessageStatus = 'sending' | 'sent' | 'delivered' | 'read' | 'failed'
 | `class` | `string` | — | Custom CSS class |
 
 > **Note:** When `groupByTime` is `true`:
-> - Messages are **stably sorted by timestamp ascending** before grouping (messages without/invalid timestamps sink to the end, keeping their relative order), so unordered input still yields continuous, non-jumping date groups;
+> - Messages with a valid timestamp are **sorted by timestamp ascending**, so unordered input still yields continuous, non-jumping date groups; messages without a valid timestamp (missing, or display-only strings like `'14:30'`, `'yesterday'` that cannot be parsed) stay anchored at their original index — they do not sink to the end and keep their relative order;
+> - Group boundaries are compared by the real calendar date (year/month/day), decoupled from the display string produced by `dateFormat`: even if a custom format outputs a time-only dimension (e.g., HH:mm), messages from different days are never merged and same-day messages are never split into separate date groups;
 > - Groups are separated by dividers and date labels (today/yesterday/specific date);
 > - Within the same date, adjacent messages whose time gap exceeds `groupInterval` minutes are further split into separate groups that show the specific time (HH:mm, customizable via `dateFormat`), without repeating the date label.
 

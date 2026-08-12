@@ -260,7 +260,7 @@ const color = ref(null)
 | `disabled` | `boolean` | `false` | 禁用状态 |
 | `clearable` | `boolean` | `false` | 是否可清除 |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 输入框尺寸 |
-| `name` | `string` | — | 表单字段名；提供时渲染隐藏 `<input type="hidden">`，随所属 `<form>` 提交当前颜色值 |
+| `name` | `string` | — | 表单字段名；提供时渲染隐藏 `<input type="hidden">`，随所属 `<form>` 提交当前颜色值；`disabled` 时隐藏 input 一并禁用，颜色值不随表单提交 |
 | `id` | `string` | — | 组件 ID |
 | `ariaLabel` | `string` | — | 无障碍标签 |
 | `open` | `boolean` | — | 面板是否打开，支持 v-model:open 双向绑定 |
@@ -306,7 +306,7 @@ const color = ref(null)
 
 ### 预设与历史色块
 
-预设与历史色块是原生 `<button>` 元素（可 Tab 聚焦，Enter/Space 激活），选中态以 `aria-pressed` 表达，并带有 `focus-visible` 焦点环。非法色值会被过滤（历史）或渲染为透明且不可选中（预设）。
+预设与历史色块是原生 `<button>` 元素（可 Tab 聚焦，Enter/Space 激活），选中态以 `aria-pressed` 表达，并带有 `focus-visible` 焦点环。非法色值会被过滤（历史）；预设中的非法值以 opacity-40 弱化显示，并置为原生 `disabled`（不可聚焦、`cursor-not-allowed`、键盘无法激活）。
 
 ## 常见问题
 
