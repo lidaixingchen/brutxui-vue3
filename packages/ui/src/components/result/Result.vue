@@ -27,19 +27,19 @@ const props = withDefaults(defineProps<ResultProps>(), {
 const statusConfig = {
     success: {
         icon: Check,
-        colorClass: 'bg-[#22c55e] text-brutal-black dark:text-white',
+        colorClass: 'bg-brutal-status-success text-brutal-status-success-foreground',
     },
     warning: {
         icon: AlertTriangle,
-        colorClass: 'bg-brutal-yellow text-brutal-black',
+        colorClass: 'bg-brutal-status-warning text-brutal-status-warning-foreground',
     },
     info: {
         icon: Info,
-        colorClass: 'bg-[#3b82f6] text-brutal-black dark:text-white',
+        colorClass: 'bg-brutal-status-info text-brutal-status-info-foreground',
     },
     error: {
         icon: X,
-        colorClass: 'bg-brutal-destructive text-white',
+        colorClass: 'bg-brutal-status-error text-brutal-status-error-foreground',
     },
     empty: {
         icon: FolderOpen,
@@ -52,7 +52,7 @@ const rootClasses = computed(() =>
     cn(
         'flex flex-col items-center justify-center text-center',
         props.variant === 'card'
-            ? 'p-8 border-3 border-brutal-black dark:border-white bg-white dark:bg-brutal-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]'
+            ? 'p-8 border-3 border-brutal-black dark:border-white bg-white dark:bg-brutal-black shadow-brutal-lg'
             : 'p-0',
         props.class
     )
@@ -66,7 +66,7 @@ const iconClasses = computed(() => cn(props.iconSize ? iconSizeVariants({ size: 
             <slot name="icon">
                 <div
                     :class="cn(
-                        'w-16 h-16 rounded-none flex items-center justify-center border-3 border-brutal-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]',
+                        'w-16 h-16 rounded-none flex items-center justify-center border-3 border-brutal-black shadow-[3px_3px_0px_0px_var(--brutal-shadow-color,#000000)]',
                         activeConfig.colorClass
                     )"
                 >

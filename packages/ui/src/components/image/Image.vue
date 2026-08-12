@@ -353,7 +353,7 @@ onUnmounted(() => {
         <!-- 错误状态 -->
         <slot v-if="hasError" name="error">
             <div class="absolute inset-0 flex items-center justify-center w-full h-full font-bold select-none border-3 border-brutal-destructive" style="background: repeating-linear-gradient(45deg, rgba(239,68,68,0.08), rgba(239,68,68,0.08) 6px, var(--brutal-bg, #fff) 6px, var(--brutal-bg, #fff) 12px)">
-                <span class="bg-brutal-bg px-2 py-0.5 border-2 border-brutal-destructive text-brutal-destructive shadow-[2px_2px_0px_0px_rgba(239,68,68,0.3)]">加载失败</span>
+                <span class="bg-brutal-bg px-2 py-0.5 border-2 border-brutal-destructive text-brutal-destructive shadow-brutal-destructive">加载失败</span>
             </div>
         </slot>
     </div>

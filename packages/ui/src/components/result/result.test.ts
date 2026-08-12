@@ -30,13 +30,13 @@ describe('Result.vue', () => {
             global: { provide: localeProvide },
         })
 
-        // 成功状态底色应为绿色 #22c55e
+        // 成功状态底色应为 status-success 令牌
         const successIconContainer = successWrapper.find('.w-16.h-16')
-        expect(successIconContainer.classes()).toContain('bg-[#22c55e]')
+        expect(successIconContainer.classes()).toContain('bg-brutal-status-success')
 
-        // 失败状态底色应为 destructive
+        // 失败状态底色应为 status-error 令牌
         const errorIconContainer = errorWrapper.find('.w-16.h-16')
-        expect(errorIconContainer.classes()).toContain('bg-brutal-destructive')
+        expect(errorIconContainer.classes()).toContain('bg-brutal-status-error')
     })
 
     it('renders extra action slot content correctly', () => {

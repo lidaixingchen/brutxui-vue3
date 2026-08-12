@@ -81,13 +81,15 @@ const dragOverType = computed(() => {
 const dragClasses = computed(() => {
     if (!isDragOver.value || !dragOverType.value) return '';
     if (dragOverType.value === 'before') {
-        return 'border-t-4 border-dashed border-black dark:border-white';
+        // 虚线指示边框：border-brutal-dashed 专供拖拽指示（随 --brutal-border-color 主题化）
+        return 'border-t-4 border-brutal-dashed';
     }
     if (dragOverType.value === 'after') {
-        return 'border-b-4 border-dashed border-black dark:border-white';
+        return 'border-b-4 border-brutal-dashed';
     }
     if (dragOverType.value === 'inner') {
-        return 'border-2 border-solid border-black dark:border-white bg-black/5 dark:bg-white/5';
+        // 5% 叠色为 R6 显式豁免（亮/暗各一套）
+        return 'border-2 border-solid border-brutal bg-black/5 dark:bg-white/5';
     }
     return '';
 });
@@ -297,7 +299,7 @@ defineExpose({ focus, nodeId: props.node.id });
             <button
                 v-if="showRetry"
                 type="button"
-                class="ml-2 p-1 border-2 border-black dark:border-white bg-brutal-primary text-black hover:bg-brutal-primary/80 transition-colors flex items-center justify-center rounded-none cursor-pointer"
+                class="ml-2 p-1 border-2 border-brutal bg-brutal-primary text-brutal-primary-foreground hover:bg-brutal-primary/80 transition-colors flex items-center justify-center rounded-none cursor-pointer"
                 title="Retry Loading"
                 @click.stop="handleRetry"
             >
