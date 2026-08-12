@@ -316,7 +316,7 @@ function handleFocus() {
 - `creative`: `boolean` — 默认 `false`，输入无匹配项时显示"创建 '{query}'"选项
 - Events: `update:modelValue`, `create(query: string)` — creative 模式下选择创建项时触发
 
-> ComboboxMulti 同步支持 `loading`/`creative`/`create`，但创建后不关闭下拉（多选模式保持打开）。
+> Combobox 多选模式同步支持 `loading`/`creative`/`create`，但创建后不关闭下拉（多选模式保持打开）。
 
 ### Combobox 暴露的 API
 

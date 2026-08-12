@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# commitlint 提交信息门禁：描述 ≤ 50 字符、type/scope 合规。
+# 历史提交不追溯；只强制新提交（见 COMMIT_CONVENTION.md「兜底验证」）。
+pnpm exec commitlint --edit "$1"

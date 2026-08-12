@@ -93,6 +93,25 @@ jobs:
             - name: Audit CSS fallback coverage
               run: pnpm --filter brutx-ui-vue audit:fallback:check
 
+            - name: Check @source class literals
+              run: pnpm --filter brutx-ui-vue check:class-literals
+
+            - name: Check deprecated utilities (ring / shadow-rgba)
+              run: pnpm --filter brutx-ui-vue check:deprecated:check
+
+            - name: Check component doc template sections
+              run: pnpm check:doc-template
+
+            - name: Commitlint on PR commits
+              if: github.event_name == 'pull_request'
+              run: |
+                  base="origin/${{ github.base_ref }}"
+                  git fetch origin "${{ github.base_ref }}" --depth=50 || true
+                  git log --format=%s "$base...HEAD" | while IFS= read -r subject; do
+                    [ -z "$subject" ] && continue
+                    echo "$subject" | pnpm exec commitlint || { echo "::error::提交信息不符合规范（描述≤50字符/type 合规）：$subject"; exit 1; }
+                  done
+
             - name: i18n mirror check (report)
               run: pnpm check:i18n
               continue-on-error: true
