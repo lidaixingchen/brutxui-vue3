@@ -44,11 +44,15 @@ watch(searchValue, (val) => {
     applyFilterSearch(val)
 })
 
-// 共享过滤状态被外部重置（如选中命令后经 Command 暴露的 filterSearch 清空搜索）时回写输入框；
-// 与 props.modelValue 的回写去重：写入相同值时 Vue 不会再次触发，避免回环
+// 共享过滤状态被外部重置（如选中命令后经 Command 暴露的 filterSearch 清空搜索）时回写输入框，
+// 并同步 emit 到父级 v-model，保证受控组件双向绑定不失步；
+// 与 props.modelValue 的回写去重：父驱动回写路径中 searchValue 已等于 next、不进入分支，避免回环
 watch(rootContext.filterSearch, (val) => {
     const next = val ?? ''
-    if (next !== searchValue.value) searchValue.value = next
+    if (next !== searchValue.value) {
+        searchValue.value = next
+        emit('update:modelValue', next)
+    }
 })
 
 applyFilterSearch(searchValue.value)

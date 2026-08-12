@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onUpdated, ref, type ComponentPublicInstance } from 'vue'
+import { computed, onBeforeUnmount, onMounted, onUpdated, ref, type ComponentPublicInstance } from 'vue'
 import { ListboxItem, useId } from 'reka-ui'
 import type { ClassValue } from 'clsx'
 import { cn } from '@/lib/utils'
@@ -48,8 +48,9 @@ const isRender = computed(() => {
 function syncIndexText() {
     const el = itemRef.value?.$el as HTMLElement | undefined
     if (!el) return
-    // innerText 优先：反映渲染后的可见文本，避免把 v-show 隐藏内容或模板缩进/换行计入搜索索引
-    const text = el.innerText || el.textContent || props.value
+    // 条目已由 v-show 改为 v-if：隐藏项被卸载、itemRef 为 null，不再存在「隐藏文本被索引」问题，
+    // 用 textContent（避免 innerText 读取触发强制同步布局）并 trim 去除模板缩进/换行即可
+    const text = el.textContent?.trim() || props.value
     if (rootContext.allItems.value.get(id) !== text)
         rootContext.allItems.value.set(id, text)
 }
@@ -58,7 +59,11 @@ const classes = computed(() =>
     cn(commandItemVariants(), props.class)
 )
 
-// onUpdated 覆盖首次挂载与后续插槽内容变化（异步请求 / 国际化切换 / 条件渲染）时的索引同步
+// onMounted 覆盖首次挂载：初始 filterSearch 为空时全部条目可见、itemRef 可用，同步插槽显示文本；
+// 否则索引停留在 setup 的 value 兜底，显示文本与 value 不一致时按显示文本搜索会漏匹配
+// onUpdated 覆盖后续插槽内容变化（异步请求 / 国际化切换 / 条件渲染）时的索引同步；
+// 隐藏条目 itemRef 为 null 会提前返回，重新可见时随 v-if 重新挂载再次同步、可自愈
+onMounted(syncIndexText)
 onUpdated(syncIndexText)
 
 // 条目元素用 v-if 而非 v-show：display:none 的项仍会被 reka Listbox 键盘导航命中，

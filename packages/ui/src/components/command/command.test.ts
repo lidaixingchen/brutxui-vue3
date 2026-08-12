@@ -188,14 +188,6 @@ describe('CommandInput', () => {
     it('does not echo update:modelValue when parent drives modelValue', async () => {
         const Harness = defineComponent({
             components: { Command, CommandInput },
-            template: `
-                <Command>
-                    <CommandInput
-                        :model-value="modelValue"
-                        @update:model-value="onUpdate"
-                    />
-                </Command>
-            `,
             setup() {
                 const modelValue = ref('alpha')
                 const updates: string[] = []
@@ -205,6 +197,14 @@ describe('CommandInput', () => {
                 }
                 return { modelValue, updates, onUpdate }
             },
+            template: `
+                <Command>
+                    <CommandInput
+                        :model-value="modelValue"
+                        @update:model-value="onUpdate"
+                    />
+                </Command>
+            `,
         })
 
         const wrapper = mount(Harness, {
@@ -220,6 +220,46 @@ describe('CommandInput', () => {
         await nextTick()
         expect(wrapper.find('input').element.value).toBe('beta')
         expect((wrapper.vm as any).updates).toEqual([])
+    })
+
+    it('emits update:modelValue when filterSearch is reset externally', async () => {
+        const Harness = defineComponent({
+            components: { Command, CommandInput },
+            setup() {
+                const modelValue = ref('')
+                const updates: string[] = []
+                function onUpdate(value: string) {
+                    updates.push(value)
+                    modelValue.value = value
+                }
+                return { modelValue, updates, onUpdate }
+            },
+            template: `
+                <Command>
+                    <CommandInput
+                        :model-value="modelValue"
+                        @update:model-value="onUpdate"
+                    />
+                </Command>
+            `,
+        })
+
+        const wrapper = mount(Harness, {
+            ...localeProvide,
+            global: { components: { Command, CommandInput } },
+        })
+        await nextTick()
+        await nextTick()
+
+        // 外部重置 Command 暴露的 filterSearch 时，输入框显示与父级 v-model 应同步更新
+        const command = wrapper.findComponent(Command)
+        ;(command.vm as any).filterSearch = 'external reset'
+        await nextTick()
+        await nextTick()
+
+        expect(wrapper.find('input').element.value).toBe('external reset')
+        expect((wrapper.vm as any).modelValue).toBe('external reset')
+        expect((wrapper.vm as any).updates).toEqual(['external reset'])
     })
 })
 
@@ -639,6 +679,39 @@ describe('Command filtering', () => {
         const empty = wrapper.find('[data-slot="command-empty"]')
         expect(empty.exists()).toBe(true)
         expect(empty.text()).toBe('No results found.')
+    })
+
+    it('matches items by rendered label when label differs from value', async () => {
+        const wrapper = mount(Command, {
+            ...localeProvide,
+            slots: {
+                default: `
+                    <CommandInput />
+                    <CommandList>
+                        <CommandGroup title="设置">
+                            <CommandItem value="settings">设置</CommandItem>
+                        </CommandGroup>
+                    </CommandList>
+                    <CommandEmpty />
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandInput, CommandList, CommandGroup, CommandItem, CommandEmpty },
+            },
+        })
+        await nextTick()
+        await nextTick()
+
+        const input = wrapper.find('input')
+        await input.setValue('设置')
+        await nextTick()
+        await nextTick()
+
+        const items = wrapper.findAll('[data-slot="command-item"]')
+        expect(items.length).toBe(1)
+        expect(items[0].text()).toContain('设置')
+        expect(wrapper.find('[data-slot="command-empty"]').exists()).toBe(false)
     })
 
     it('hides group when all items are filtered out', async () => {
