@@ -102,12 +102,24 @@ jobs:
             - name: Check component doc template sections
               run: pnpm check:doc-template
 
+            - name: Check guide conventions (R3/R6/R7 guard)
+              run: pnpm check:guides
+
+            - name: Check guide references (removed symbols / docs existence)
+              run: pnpm check:guide-refs
+
             - name: Commitlint on PR commits
               if: github.event_name == 'pull_request'
+              env:
+                  BASE_REF: ${{ github.base_ref }}
               run: |
-                  base="origin/${{ github.base_ref }}"
-                  git fetch origin "${{ github.base_ref }}" --depth=50 || true
-                  git log --format=%s "$base...HEAD" | while IFS= read -r subject; do
+                  # base 分支名经 env 传入，避免直接内插进 run: 脚本的注入风险
+                  base="origin/$BASE_REF"
+                  git fetch origin "$BASE_REF" --depth=50
+                  # 两点 diff + --no-merges：PR 事件 checkout 检出的是合成 merge commit，三点 diff
+                  # 会把该 merge 提交与 base 侧已合并提交一并纳入 → commitlint type-empty 恒红；
+                  # --no-merges 排除合成 merge commit，只校验 PR 分支自身提交
+                  git log --format=%s --no-merges "$base..HEAD" | while IFS= read -r subject; do
                     [ -z "$subject" ] && continue
                     echo "$subject" | pnpm exec commitlint || { echo "::error::提交信息不符合规范（描述≤50字符/type 合规）：$subject"; exit 1; }
                   done
