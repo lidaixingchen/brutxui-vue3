@@ -135,6 +135,7 @@ BrutxUI 使用 CSS 自定义属性定义设计令牌，便于主题切换和自�
 | --- | --- |
 | `border-3` | `border-width: var(--brutal-border-width)` |
 | `border-brutal` | `border-color: var(--brutal-border-color)` |
+| `border-brutal-dashed` | `border-style: dashed; border-color: var(--brutal-border-color)` |
 | `rounded-brutal` | `border-radius: var(--brutal-radius)` |
 
 ### 阴影
@@ -146,6 +147,7 @@ BrutxUI 使用 CSS 自定义属性定义设计令牌，便于主题切换和自�
 <div class="shadow-brutal-xl">       <!-- 超大阴影（8px 8px） -->
 <div class="shadow-brutal-primary">  <!-- 主色阴影 -->
 <div class="shadow-brutal-secondary"> <!-- 辅助色阴影 -->
+<div class="shadow-brutal-destructive"> <!-- 危险态半透明红阴影（30% 透明） -->
 ```
 
 | 类名 | 偏移量 |
@@ -156,6 +158,7 @@ BrutxUI 使用 CSS 自定义属性定义设计令牌，便于主题切换和自�
 | `shadow-brutal-xl` | 8px 8px |
 | `shadow-brutal-primary` | 使用 `--brutal-primary` 颜色 |
 | `shadow-brutal-secondary` | 使用 `--brutal-secondary` 颜色 |
+| `shadow-brutal-destructive` | 使用 `--brutal-destructive` 30% 透明 color-mix |
 
 > 注意：所有阴影都是硬偏移（无模糊），这是新粗野主义的核心视觉特征。
 
@@ -164,17 +167,22 @@ BrutxUI 使用 CSS 自定义属性定义设计令牌，便于主题切换和自�
 ```vue
 <!-- 背景色 + 文字色 -->
 <div class="bg-brutal-bg text-brutal-fg">           <!-- 白底黑字 -->
-<div class="bg-brutal-primary text-brutal-fg">       <!-- 珊瑚红 -->
-<div class="bg-brutal-secondary text-brutal-fg">     <!-- 薄荷青 -->
-<div class="bg-brutal-accent text-brutal-fg">        <!-- 黄色 -->
-<div class="bg-brutal-destructive text-brutal-fg">   <!-- 危险红 -->
-<div class="bg-brutal-success text-brutal-fg">       <!-- 成功绿 -->
-<div class="bg-brutal-info text-brutal-fg">          <!-- 信息蓝 -->
+<div class="bg-brutal-primary text-brutal-primary-foreground">       <!-- 珊瑚红 -->
+<div class="bg-brutal-secondary text-brutal-secondary-foreground">     <!-- 薄荷青 -->
+<div class="bg-brutal-accent text-brutal-accent-foreground">        <!-- 黄色 -->
+<div class="bg-brutal-destructive text-brutal-destructive-foreground">   <!-- 危险红 -->
+<div class="bg-brutal-success text-brutal-success-foreground">       <!-- 成功绿 -->
+<div class="bg-brutal-info text-brutal-info-foreground">          <!-- 信息蓝 -->
 <div class="bg-brutal-muted text-brutal-fg">         <!-- 柔和灰 -->
 <div class="text-brutal-muted-foreground">           <!-- 柔和文本 -->
 <div class="text-brutal-placeholder">                <!-- 占位符文本 -->
-<div class="ring-brutal-ring">                       <!-- 焦点环 -->
+<div class="bg-brutal-status-success text-brutal-status-success-foreground">   <!-- 状态成功 -->
+<div class="bg-brutal-status-warning text-brutal-status-warning-foreground">   <!-- 状态警告 -->
+<div class="bg-brutal-status-info text-brutal-status-info-foreground">   <!-- 状态信息 -->
+<div class="bg-brutal-status-error text-brutal-status-error-foreground">   <!-- 状态错误 -->
 ```
+
+> 注意：焦点指示用 outline（`focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2`，即 `FOCUS_OUTLINE_CLASSES`）；禁止使用 ring 系。前景色一律随 `*-foreground` 令牌，禁止 `text-white`/`text-black` 硬编码。
 
 ### 交互效果
 

@@ -46,6 +46,14 @@ export interface ThemeTokens {
     ring: string;
     info: string;
     infoForeground: string;
+    statusSuccess: string;
+    statusSuccessForeground: string;
+    statusWarning: string;
+    statusWarningForeground: string;
+    statusInfo: string;
+    statusInfoForeground: string;
+    statusError: string;
+    statusErrorForeground: string;
     overlay: string;
     placeholder: string;
     black: string;
@@ -79,6 +87,15 @@ export const BASE_THEME: Readonly<Record<ThemeMode, Readonly<ThemeTokens>>> = Ob
         info: '#4A90D9',
         // 黑字对比度 6.28:1 满足 WCAG AA（4.5:1），与 primary/secondary 黑字风格一致
         infoForeground: PALETTE_BLACK,
+        // 状态色为恒定辨识信号，亮暗一致（维持 Result 现状渲染）；success/info 黑字对比 8.6:1 / 5.8:1 过 AA
+        statusSuccess: '#22c55e',
+        statusSuccessForeground: PALETTE_BLACK,
+        statusWarning: PALETTE_YELLOW,
+        statusWarningForeground: PALETTE_BLACK,
+        statusInfo: '#3b82f6',
+        statusInfoForeground: PALETTE_BLACK,
+        statusError: '#EF476F',
+        statusErrorForeground: '#ffffff',
         overlay: 'rgba(0, 0, 0, 0.5)',
         placeholder: '#9CA3AF',
         black: PALETTE_BLACK,
@@ -110,6 +127,15 @@ export const BASE_THEME: Readonly<Record<ThemeMode, Readonly<ThemeTokens>>> = Ob
         info: '#3B82F6',
         // 黑字对比度 5.71:1 满足 WCAG AA（4.5:1）
         infoForeground: PALETTE_BLACK,
+        // 状态色恒定，亮暗一致（见 light 注释）
+        statusSuccess: '#22c55e',
+        statusSuccessForeground: PALETTE_BLACK,
+        statusWarning: PALETTE_YELLOW,
+        statusWarningForeground: PALETTE_BLACK,
+        statusInfo: '#3b82f6',
+        statusInfoForeground: PALETTE_BLACK,
+        statusError: '#EF476F',
+        statusErrorForeground: '#ffffff',
         overlay: 'rgba(0, 0, 0, 0.7)',
         placeholder: '#6B7280',
         black: PALETTE_BLACK,
@@ -142,6 +168,14 @@ const TOKEN_TO_CSS_VAR: Record<keyof ThemeTokens, string> = {
     ring: 'brutal-ring',
     info: 'brutal-info',
     infoForeground: 'brutal-info-foreground',
+    statusSuccess: 'brutal-status-success',
+    statusSuccessForeground: 'brutal-status-success-foreground',
+    statusWarning: 'brutal-status-warning',
+    statusWarningForeground: 'brutal-status-warning-foreground',
+    statusInfo: 'brutal-status-info',
+    statusInfoForeground: 'brutal-status-info-foreground',
+    statusError: 'brutal-status-error',
+    statusErrorForeground: 'brutal-status-error-foreground',
     overlay: 'brutal-overlay',
     placeholder: 'brutal-placeholder',
     black: 'brutal-black',

@@ -63,6 +63,14 @@ const THEME_GROUPS: ThemeGroup[] = [
             { themeVar: '--color-brutal-success-foreground', build: l => `var(--brutal-success-foreground, ${l.successForeground})` },
             { themeVar: '--color-brutal-info', build: l => `var(--brutal-info, ${l.info})` },
             { themeVar: '--color-brutal-info-foreground', build: l => `var(--brutal-info-foreground, ${l.infoForeground})` },
+            { themeVar: '--color-brutal-status-success', build: l => `var(--brutal-status-success, ${l.statusSuccess})` },
+            { themeVar: '--color-brutal-status-success-foreground', build: l => `var(--brutal-status-success-foreground, ${l.statusSuccessForeground})` },
+            { themeVar: '--color-brutal-status-warning', build: l => `var(--brutal-status-warning, ${l.statusWarning})` },
+            { themeVar: '--color-brutal-status-warning-foreground', build: l => `var(--brutal-status-warning-foreground, ${l.statusWarningForeground})` },
+            { themeVar: '--color-brutal-status-info', build: l => `var(--brutal-status-info, ${l.statusInfo})` },
+            { themeVar: '--color-brutal-status-info-foreground', build: l => `var(--brutal-status-info-foreground, ${l.statusInfoForeground})` },
+            { themeVar: '--color-brutal-status-error', build: l => `var(--brutal-status-error, ${l.statusError})` },
+            { themeVar: '--color-brutal-status-error-foreground', build: l => `var(--brutal-status-error-foreground, ${l.statusErrorForeground})` },
         ],
     },
     {
@@ -119,6 +127,13 @@ const SHADOW_ENTRIES: ThemeEntry[] = [
     {
         themeVar: '--shadow-brutal-secondary',
         build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px var(--brutal-secondary, ${l.secondary})`,
+    },
+    // 危险态半透明红阴影：30% 透明 color-mix 派生（WW1/WW5/WW6 统一版本）。
+    // 与 styles.css 的 @utility shadow-brutal-destructive 手写行同批合入（漏 @utility 则工具类
+    // 指向未定义变量 → 计算值无效 → none 静默失效）。
+    {
+        themeVar: '--shadow-brutal-destructive',
+        build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px color-mix(in srgb, var(--brutal-destructive, ${l.destructive}) 30%, transparent)`,
     },
 ];
 
