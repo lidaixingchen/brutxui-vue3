@@ -77,6 +77,7 @@ const THEME_GROUPS: ThemeGroup[] = [
             { themeVar: '--color-brutal-muted-foreground', build: l => `var(--brutal-muted-foreground, ${l.mutedForeground})` },
             { themeVar: '--color-brutal-ring', build: l => `var(--brutal-ring, ${l.ring})` },
             { themeVar: '--color-brutal-overlay', build: l => `var(--brutal-overlay, ${l.overlay})` },
+            { themeVar: '--color-brutal-overlay-subtle', build: l => `var(--brutal-overlay-subtle, ${l.overlaySubtle})` },
             { themeVar: '--color-brutal-placeholder', build: l => `var(--brutal-placeholder, ${l.placeholder})` },
         ],
     },

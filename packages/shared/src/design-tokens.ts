@@ -55,6 +55,7 @@ export interface ThemeTokens {
     statusError: string;
     statusErrorForeground: string;
     overlay: string;
+    overlaySubtle: string;
     placeholder: string;
     black: string;
     yellow: string;
@@ -97,6 +98,8 @@ export const BASE_THEME: Readonly<Record<ThemeMode, Readonly<ThemeTokens>>> = Ob
         statusError: '#EF476F',
         statusErrorForeground: '#ffffff',
         overlay: 'rgba(0, 0, 0, 0.5)',
+        // 5% 微妙叠色（拖拽指示等浅层覆盖，取代硬编码 bg-black/5，见审查报告 §3.4）
+        overlaySubtle: 'rgba(0, 0, 0, 0.05)',
         placeholder: '#9CA3AF',
         black: PALETTE_BLACK,
         yellow: PALETTE_YELLOW,
@@ -137,6 +140,8 @@ export const BASE_THEME: Readonly<Record<ThemeMode, Readonly<ThemeTokens>>> = Ob
         statusError: '#EF476F',
         statusErrorForeground: '#ffffff',
         overlay: 'rgba(0, 0, 0, 0.7)',
+        // 5% 微妙叠色（dark 下为白叠色，见 light 注释）
+        overlaySubtle: 'rgba(255, 255, 255, 0.05)',
         placeholder: '#6B7280',
         black: PALETTE_BLACK,
         yellow: PALETTE_YELLOW,
@@ -177,6 +182,7 @@ const TOKEN_TO_CSS_VAR: Record<keyof ThemeTokens, string> = {
     statusError: 'brutal-status-error',
     statusErrorForeground: 'brutal-status-error-foreground',
     overlay: 'brutal-overlay',
+    overlaySubtle: 'brutal-overlay-subtle',
     placeholder: 'brutal-placeholder',
     black: 'brutal-black',
     yellow: 'brutal-yellow',

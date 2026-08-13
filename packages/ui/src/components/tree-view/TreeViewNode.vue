@@ -88,8 +88,8 @@ const dragClasses = computed(() => {
         return 'border-b-4 border-brutal-dashed';
     }
     if (dragOverType.value === 'inner') {
-        // 5% 叠色为 R6 显式豁免（亮/暗各一套）
-        return 'border-2 border-solid border-brutal bg-black/5 dark:bg-white/5';
+        // 5% 叠色随 --brutal-overlay-subtle 主题化（亮/暗由 :root/.dark 提供）
+        return 'border-2 border-solid border-brutal bg-brutal-overlay-subtle';
     }
     return '';
 });

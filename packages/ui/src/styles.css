@@ -15,6 +15,7 @@
     --color-brutal-muted-foreground: var(--brutal-muted-foreground, #4B5563);
     --color-brutal-ring: var(--brutal-ring, #000000);
     --color-brutal-overlay: var(--brutal-overlay, rgba(0, 0, 0, 0.5));
+    --color-brutal-overlay-subtle: var(--brutal-overlay-subtle, rgba(0, 0, 0, 0.05));
     --color-brutal-placeholder: var(--brutal-placeholder, #9CA3AF);
 
     /* Dynamic: resolve at runtime so theme presets can override accents */
@@ -112,6 +113,7 @@
         --brutal-status-error: #EF476F;
         --brutal-status-error-foreground: #ffffff;
         --brutal-overlay: rgba(0, 0, 0, 0.5);
+        --brutal-overlay-subtle: rgba(0, 0, 0, 0.05);
         --brutal-placeholder: #9CA3AF;
         --brutal-black: #000000;
         --brutal-yellow: #FFE66D;
@@ -158,6 +160,7 @@
         --brutal-status-error: #EF476F;
         --brutal-status-error-foreground: #ffffff;
         --brutal-overlay: rgba(0, 0, 0, 0.7);
+        --brutal-overlay-subtle: rgba(255, 255, 255, 0.05);
         --brutal-placeholder: #6B7280;
         --brutal-black: #000000;
         --brutal-yellow: #FFE66D;
