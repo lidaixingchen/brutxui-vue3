@@ -69,14 +69,13 @@ function normalizeCssValue(value: string): string {
  * 有意偏离 BASE_THEME.light 的 fallback 白名单（键：`相对文件:--brutal-*变量名`，不随行号漂移）。
  * Image.vue：
  *   - 加载占位/错误条纹用更浅的骨架色（muted #e5e5e5），非主题令牌值；
- *   - 预览工具栏按钮（border-2、shadow-brutal-sm）按下位移用 1px 而非主题 pressedOffset 的 2px。
+ *   - 预览工具栏按钮（border-2、shadow-brutal-sm）按下位移用 2px 私有尺度而非共享按压语义（阴影偏移）的 4px。
  * 属组件级设计决定；新增此类偏离须在此登记理由。
  * 注意：--brutal-bg 的 `#fff` 经归一化展开等于主题 `#ffffff`，不构成偏离，无需登记；
  * 审计结束后会检测并报告从未被豁免命中的冗余条目（防配置漂移）。
  */
 const INTENTIONAL_FALLBACK_OVERRIDES = new Set([
     'components/image/Image.vue:--brutal-muted',
-    'components/image/Image.vue:--brutal-pressed-offset',
 ]);
 
 function walkSourceFiles(root: string): string[] {

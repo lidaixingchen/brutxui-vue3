@@ -37,7 +37,7 @@ export const dataTableHeadVariants = cva(
     {
         variants: {
             sortable: {
-                true: 'cursor-pointer select-none hover:bg-brutal-accent/40 active:translate-y-[var(--brutal-pressed-offset,2px)] active:bg-brutal-accent', /* 组件私有：可排序表头交互，不抽取 */
+                true: 'cursor-pointer select-none hover:bg-brutal-accent/40 active:translate-y-[2px] active:bg-brutal-accent', /* 组件私有：可排序表头交互，不抽取 */
                 false: '',
             },
             align: {

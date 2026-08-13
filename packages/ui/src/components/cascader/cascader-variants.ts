@@ -1,5 +1,5 @@
 import { cva } from 'class-variance-authority'
-import { brutalHoverLift } from '@/lib/brutal-interaction-variants'
+import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
 import { floatingContentAnimationClasses } from '@/lib/floating-animation-classes'
 import { FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
 
@@ -15,7 +15,7 @@ export const cascaderTriggerVariants = cva(
         // focus:shadow/位移 保留为聚焦增强
         FOCUS_OUTLINE_CLASSES,
         'focus:shadow-brutal-lg focus:-translate-x-0.5 focus:-translate-y-0.5',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:translate-x-0 active:shadow-none', /* 组件私有：重置 X 轴位移，不抽取 */
+        brutalPress,
         'disabled:cursor-not-allowed disabled:opacity-50',
         // 限定到首个文本 span：line-clamp 会设置 display:-webkit-box，若命中图标容器
         // span（flex 布局）会覆盖其 display，导致图标被裁剪/布局异常

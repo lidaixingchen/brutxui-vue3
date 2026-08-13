@@ -28,7 +28,6 @@ export interface ThemeTokens {
     shadowOffsetY: string;
     shadowColor: string;
     radius: string;
-    pressedOffset: string;
     bg: string;
     fg: string;
     primary: string;
@@ -69,7 +68,6 @@ export const BASE_THEME: Readonly<Record<ThemeMode, Readonly<ThemeTokens>>> = Ob
         shadowOffsetY: '4px',
         shadowColor: PALETTE_BLACK,
         radius: '0px',
-        pressedOffset: '2px',
         bg: '#ffffff',
         fg: PALETTE_BLACK,
         primary: '#FF6B6B',
@@ -111,7 +109,6 @@ export const BASE_THEME: Readonly<Record<ThemeMode, Readonly<ThemeTokens>>> = Ob
         shadowOffsetY: '4px',
         shadowColor: '#ffffff',
         radius: '0px',
-        pressedOffset: '2px',
         bg: '#141414',
         fg: '#ffffff',
         primary: '#FF6B6B',
@@ -155,7 +152,6 @@ const TOKEN_TO_CSS_VAR: Record<keyof ThemeTokens, string> = {
     shadowOffsetY: 'brutal-shadow-offset-y',
     shadowColor: 'brutal-shadow-color',
     radius: 'brutal-radius',
-    pressedOffset: 'brutal-pressed-offset',
     bg: 'brutal-bg',
     fg: 'brutal-fg',
     primary: 'brutal-primary',

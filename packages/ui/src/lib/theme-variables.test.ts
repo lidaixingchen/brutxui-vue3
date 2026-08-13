@@ -22,7 +22,7 @@ import { BASE_THEME, CSS_VARS, type ThemeTokens } from 'brutx-shared-vue/design-
 // 改 shared 只重生成 styles.css，theme-variables 预设/--brutal-* 命名会静默陈旧，此测试应变红。
 // ============================================================================
 
-/** 与 shared BASE_THEME 语义令牌重叠的字段名（不含 status 系、black、yellow、pressedOffset 等 ThemeVariables 无对应项） */
+/** 与 shared BASE_THEME 语义令牌重叠的字段名（不含 status 系、black、yellow 等 ThemeVariables 无对应项） */
 const OVERLAP_TOKEN_KEYS = [
     'borderWidth', 'borderColor', 'shadowOffsetX', 'shadowOffsetY', 'shadowColor',
     'radius', 'bg', 'fg', 'primary', 'primaryForeground', 'secondary',

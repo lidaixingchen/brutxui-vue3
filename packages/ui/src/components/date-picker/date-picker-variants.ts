@@ -48,7 +48,7 @@ export const datePickerShortcutVariants = cva(
         'cursor-pointer',
         'transition-all duration-100',
         'hover:bg-brutal-muted hover:-translate-x-0.5',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)]',
+        'active:translate-y-[2px]',
     ],
     {
         variants: {

@@ -77,7 +77,7 @@ const isSafeHref = (href?: string): boolean =>
                                 <a
                                     v-if="link.href && isSafeHref(link.href)"
                                     :href="link.href"
-                                    class="px-0 text-brutal-muted-foreground hover:text-brutal-fg text-sm font-medium cursor-pointer active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all"
+                                    class="px-0 text-brutal-muted-foreground hover:text-brutal-fg text-sm font-medium cursor-pointer active:translate-y-[2px] active:shadow-none transition-all"
                                     @click="emit('link-click', { groupIndex, linkIndex })"
                                 >
                                     {{ link.label }}

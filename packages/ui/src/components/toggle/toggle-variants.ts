@@ -16,8 +16,8 @@ export const toggleVariants = cva(
                 default: [
                     'bg-brutal-bg text-brutal-fg shadow-brutal-sm',
                     `hover:bg-brutal-muted ${brutalHoverLiftSm}`,
-                    // ON 态保持按下：位移+去影+translate-x-0 重置（复用 brutalPressedStateOn 共享变体，
-                    // 与 brutalPress 同源派生，避免手抄 fallback 脱同步；translate-x-0 重置 hoverLift 的 X 轴侧滑）
+                    // ON 态保持按下：位移+去影（复用 brutalPressedStateOn 共享变体，
+                    // 与 brutalPress 同源派生，避免手抄 fallback 脱同步；translate-x-[阴影偏移] 覆盖 hoverLift 的 X 轴侧滑）
                     'data-[state=on]:bg-brutal-primary data-[state=on]:text-brutal-primary-foreground',
                     brutalPressedStateOn,
                 ],

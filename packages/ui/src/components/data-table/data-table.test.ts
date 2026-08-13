@@ -299,7 +299,7 @@ describe('DataTable visual compliance', () => {
         const buttons = wrapper.findAll('button[aria-label]')
         expect(buttons.length).toBeGreaterThan(0)
         buttons.forEach(btn => {
-            expect(btn.classes().join(' ')).toContain('active:translate-y-[var(--brutal-pressed-offset')
+            expect(btn.classes().join(' ')).toContain('active:translate-y-[var(--brutal-shadow-offset-y')
         })
     })
 

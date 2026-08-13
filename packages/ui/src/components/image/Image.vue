@@ -434,7 +434,7 @@ onUnmounted(() => {
                 >
                     <!-- 缩小 -->
                     <button
-                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,1px)] active:shadow-none cursor-pointer focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
+                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[2px] active:shadow-none cursor-pointer focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
                         title="缩小"
                         data-testid="image-viewer-zoom-out"
                         @click="zoomOut"
@@ -443,7 +443,7 @@ onUnmounted(() => {
                     </button>
                     <!-- 放大 -->
                     <button
-                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,1px)] active:shadow-none cursor-pointer focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
+                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[2px] active:shadow-none cursor-pointer focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
                         title="放大"
                         data-testid="image-viewer-zoom-in"
                         @click="zoomIn"
@@ -452,7 +452,7 @@ onUnmounted(() => {
                     </button>
                     <!-- 左旋 -->
                     <button
-                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,1px)] active:shadow-none cursor-pointer focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
+                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[2px] active:shadow-none cursor-pointer focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
                         title="向左旋转"
                         data-testid="image-viewer-rotate-left"
                         @click="rotateLeft"
@@ -461,7 +461,7 @@ onUnmounted(() => {
                     </button>
                     <!-- 右旋 -->
                     <button
-                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,1px)] active:shadow-none cursor-pointer focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
+                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[2px] active:shadow-none cursor-pointer focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
                         title="向右旋转"
                         data-testid="image-viewer-rotate-right"
                         @click="rotateRight"
@@ -470,7 +470,7 @@ onUnmounted(() => {
                     </button>
                     <!-- 翻转 -->
                     <button
-                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,1px)] active:shadow-none cursor-pointer focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
+                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[2px] active:shadow-none cursor-pointer focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
                         title="左右翻转"
                         data-testid="image-viewer-flip"
                         @click="flipHorizontal"

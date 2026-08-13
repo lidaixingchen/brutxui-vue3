@@ -372,7 +372,7 @@ function getDayEvents(day: { date?: Date; startDate?: Date }) {
 }
 
 .brutx-calendar .vc-arrow:active {
-    transform: translateY(var(--brutal-pressed-offset, 2px));
+    transform: translate(var(--brutal-shadow-offset-x, 4px), var(--brutal-shadow-offset-y, 4px));
     box-shadow: none;
 }
 

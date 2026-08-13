@@ -266,7 +266,7 @@ function getShortcutClasses(shortcut: DatePickerShortcut): string {
 }
 
 .brutx-calendar .vc-container .vc-arrow:active {
-    transform: translateY(var(--brutal-pressed-offset, 2px));
+    transform: translate(var(--brutal-shadow-offset-x, 4px), var(--brutal-shadow-offset-y, 4px));
     box-shadow: none !important;
 }
 

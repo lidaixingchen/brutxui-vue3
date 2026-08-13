@@ -13,7 +13,7 @@ export const selectTriggerVariants = cva(
         brutalHoverLift,
         FOCUS_OUTLINE_CLASSES,
         'focus:shadow-brutal-lg focus:-translate-x-0.5 focus:-translate-y-0.5',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:translate-x-0 active:shadow-none', /* 组件私有：特定 X 轴位移重置，不抽取 */
+        brutalPress,
         'disabled:cursor-not-allowed disabled:opacity-50',
         '[&>span]:line-clamp-1',
     ],

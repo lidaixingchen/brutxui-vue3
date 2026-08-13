@@ -27,8 +27,8 @@ describe('Toggle', () => {
             props: { modelValue: true },
             attachTo: document.body,
         })
-        expect(wrapper.classes()).toContain('data-[state=on]:translate-y-[var(--brutal-pressed-offset,2px)]')
-        expect(wrapper.classes()).toContain('data-[state=on]:translate-x-0')
+        expect(wrapper.classes()).toContain('data-[state=on]:translate-x-[var(--brutal-shadow-offset-x,4px)]')
+        expect(wrapper.classes()).toContain('data-[state=on]:translate-y-[var(--brutal-shadow-offset-y,4px)]')
         expect(wrapper.classes()).toContain('data-[state=on]:shadow-none')
     })
 
