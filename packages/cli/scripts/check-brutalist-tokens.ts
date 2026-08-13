@@ -8,11 +8,18 @@
  * 且 audit-brutal-fallback.ts 只扫 packages/ui/src，覆盖不到 CLI。
  *
  * 本脚本对齐 ui 生成产物 styles.css（CLI 值语义是"与用户看到的 ui 样式一致"），
- * 做两级校验：
+ * 做三级校验：
  * ① 块覆盖：ui styles.css 的每个主题令牌块（:root / .dark / .theme-pastel|mono|warm
  *    的 light/dark 两态），CLI 必须存在同名块，缺失即报错。
  * ② 值漂移：两方共有令牌的值必须一致（hex 3 位展开 + 小写归一化后比对；
  *    允许 CLI 缺令牌——覆盖率缺口由块级检查兜底）。
+ * ③ @theme 区（原盲区，见审查报告 §10.10）：CLI @theme 手写条目与 ui 生成基准零一致性拦截——
+ *    - 正向：ui @theme 的 `--*: var(--brutal-*, ...)` 条目（--color-brutal-* 颜色映射、
+ *      --border-width-3/--radius-brutal），CLI 必须存在同名同内层变量条目；CLI 带 fallback 时
+ *      须与 ui fallback 一致（CLI 约定多数条目无 fallback，缺 fallback 的条目跳过值比对）。
+ *    - 阴影：ui 将 --shadow-brutal-* 生成在 :root（@brutx:root-tokens 区），CLI 放在 @theme——
+ *      双向集合与值（剥离 var() fallback 后）须一致，缺 --shadow-brutal-destructive 即拦截。
+ *    - --default-font-family 非 var(--brutal-*) 条目，不在比对范围（CLI 注入不携带字体栈）。
  *
  * 说明：styles.css 的令牌块嵌套在 `@layer base` 内，末尾还有
  * `@media (prefers-contrast: high)` 高对比度覆盖块（特殊值、非默认主题）。
@@ -110,6 +117,160 @@ function parseThemeBlocks(css: string): Record<string, Record<string, string>> {
     return blocks
 }
 
+/** 值规整：小写 + 去空白 + 剥离 var(..., fallback) 中的 fallback（CLI 多数条目无 fallback，语义等价） */
+function normalizeExpression(value: string): string {
+    return value
+        .toLowerCase()
+        .replace(/\s+/g, '')
+        .replace(/var\((--brutal-[a-z0-9-]+)\s*,[^)]*\)/g, 'var($1)')
+}
+
+interface ThemeEntry {
+    key: string
+    innerVar: string
+    /** 提取的 fallback（normalizeColor 归一化后）；条目无 fallback 时为 null */
+    fallback: string | null
+    /** 条目完整值表达式 */
+    value: string
+}
+
+/** 提取 @theme 块内引用 --brutal-* 变量的条目（值以 var(/calc( 开头均可，如阴影 calc 组合） */
+function extractThemeEntries(blockText: string): Map<string, ThemeEntry> {
+    const entries = new Map<string, ThemeEntry>()
+    // 与 extractVars 同形：捕获完整声明值，随后过滤「不含 var(--brutal-」的非令牌条目（如 --default-font-family）
+    const entryRe = /--([a-z0-9-]+):\s*([^;]+?)\s*(?:;|$)/g
+    let m: RegExpExecArray | null
+    while ((m = entryRe.exec(blockText)) !== null) {
+        const expr = m[2].trim()
+        if (!/var\(--brutal-/.test(expr)) continue
+        const innerMatch = expr.match(/--brutal-([a-z0-9-]+)/)
+        const fallbackMatch = expr.match(/--brutal-[a-z0-9-]+\s*,\s*(.+)\)\s*$/)
+        entries.set(m[1], {
+            key: m[1],
+            innerVar: innerMatch ? innerMatch[1] : '',
+            fallback: fallbackMatch ? normalizeColor(fallbackMatch[1]) : null,
+            value: expr,
+        })
+    }
+    return entries
+}
+
+/**
+ * 从 ui styles.css 的 :root 生成区提取 --shadow-brutal-* 令牌。
+ * 变量名不以 --brutal- 开头，extractVars（@theme 块检查）不覆盖，需单独提取；
+ * 返回 key 为完整变量名（shadow-brutal / shadow-brutal-sm / ...）。
+ */
+function extractShadowEntries(css: string): Record<string, string> {
+    const shadows: Record<string, string> = {}
+    const visit = (text: string): boolean => {
+        let i = 0
+        while (i < text.length) {
+            const braceIdx = text.indexOf('{', i)
+            if (braceIdx === -1) return false
+            const selectorRaw = text.slice(i, braceIdx).trim()
+            let depth = 0
+            let j = braceIdx
+            for (; j < text.length; j++) {
+                const ch = text[j]
+                if (ch === '{') {
+                    depth++
+                } else if (ch === '}') {
+                    depth--
+                    if (depth === 0) break
+                }
+            }
+            if (j >= text.length) return false
+            const blockText = text.slice(braceIdx + 1, j)
+            if (/^@(layer|supports)\b/.test(selectorRaw)) {
+                if (visit(blockText)) return true
+            } else if (selectorRaw.replace(/\/\*[\s\S]*?\*\//g, ' ').trim() === ':root') {
+                const shadowRe = /--(shadow-brutal[a-z0-9-]*):\s*([^;]+?)\s*(?:;|$)/g
+                let m: RegExpExecArray | null
+                while ((m = shadowRe.exec(blockText)) !== null) {
+                    shadows[m[1]] = normalizeColor(m[2])
+                }
+                return true
+            }
+            i = j + 1
+        }
+        return false
+    }
+    visit(css)
+    return shadows
+}
+
+/** 提取顶层 @theme 块文本（不递归容器：@theme 恒为顶层规则） */
+function extractThemeBlockText(css: string): string | null {
+    let i = 0
+    while (i < css.length) {
+        const braceIdx = css.indexOf('{', i)
+        if (braceIdx === -1) return null
+        const selectorRaw = css.slice(i, braceIdx).trim()
+        let depth = 0
+        let j = braceIdx
+        for (; j < css.length; j++) {
+            const ch = css[j]
+            if (ch === '{') {
+                depth++
+            } else if (ch === '}') {
+                depth--
+                if (depth === 0) break
+            }
+        }
+        if (j >= css.length) return null
+        // selectorRaw 可能带前缀（ui styles.css 的 @import/@source 语句），取最后一个空白分隔 token
+        if (selectorRaw.split(/\s+/).pop() === '@theme') return css.slice(braceIdx + 1, j)
+        i = j + 1
+    }
+    return null
+}
+
+/** ③ @theme 区比对（ui @theme ∪ ui :root 的 shadow 区 vs CLI @theme） */
+function verifyThemeArea(uiCss: string, cliCss: string, failures: string[]): void {
+    const uiThemeText = extractThemeBlockText(uiCss)
+    const cliThemeText = extractThemeBlockText(cliCss)
+    if (uiThemeText === null || cliThemeText === null) {
+        failures.push('@theme 块缺失（ui styles.css 或 CLI brutalist.css）')
+        return
+    }
+    const uiEntries = extractThemeEntries(uiThemeText)
+    const cliEntries = extractThemeEntries(cliThemeText)
+
+    // 正向：ui @theme 条目（颜色映射/border/radius）→ CLI @theme 必须存在且映射一致
+    for (const [key, uiEntry] of uiEntries) {
+        const cliEntry = cliEntries.get(key)
+        if (!cliEntry) {
+            failures.push(`CLI @theme 缺条目 --${key}（ui 有，见 styles.css @theme）`)
+            continue
+        }
+        if (cliEntry.innerVar !== uiEntry.innerVar) {
+            failures.push(`CLI @theme --${key} 映射 var(--${cliEntry.innerVar}) 与 ui var(--${uiEntry.innerVar}) 不一致`)
+        }
+        if (cliEntry.fallback !== null && uiEntry.fallback !== null && cliEntry.fallback !== uiEntry.fallback) {
+            failures.push(`CLI @theme --${key} fallback=${cliEntry.fallback} 与 ui fallback=${uiEntry.fallback} 不一致`)
+        }
+    }
+
+    // 阴影：ui :root 生成区（styles.css）↔ CLI @theme（手写区），双向集合与剥离 fallback 的值比对
+    const uiShadowVars = extractShadowEntries(uiCss)
+    const uiShadowKeys = Object.keys(uiShadowVars)
+    for (const key of uiShadowKeys) {
+        const cliEntry = cliEntries.get(key)
+        if (!cliEntry) {
+            failures.push(`CLI @theme 缺阴影条目 --${key}（ui 生成于 :root，见 styles.css）`)
+            continue
+        }
+        if (normalizeExpression(uiShadowVars[key]) !== normalizeExpression(cliEntry.value)) {
+            failures.push(`CLI @theme --${key} 与 ui :root 值不一致（剥离 fallback 后）：CLI=${cliEntry.value} vs ui=${uiShadowVars[key]}`)
+        }
+    }
+    for (const [key, cliEntry] of cliEntries) {
+        if (cliEntry.key.startsWith('shadow-brutal') && !uiShadowKeys.includes(key)) {
+            failures.push(`CLI @theme 阴影条目 --${key} 在 ui :root 不存在（疑似手抄残留）`)
+        }
+    }
+}
+
 const uiBlocks = parseThemeBlocks(uiCss)
 const cliBlocks = parseThemeBlocks(cliCss)
 
@@ -133,6 +294,9 @@ for (const [blockKey, uiVars] of Object.entries(uiBlocks)) {
     }
 }
 
+// ③ @theme 区比对（ui :root 的 shadow 区一并核）
+verifyThemeArea(uiCss, cliCss, failures)
+
 if (failures.length > 0) {
     console.error('CLI brutalist.css 令牌与 ui styles.css 未对齐：')
     for (const failure of failures) {
@@ -141,4 +305,8 @@ if (failures.length > 0) {
     process.exit(1)
 }
 
-console.log(`✓ CLI brutalist.css 令牌对齐：${Object.keys(uiBlocks).length} 个 ui 主题块在 CLI 全部存在且值一致`)
+const shadowCount = Object.keys(extractShadowEntries(uiCss)).length
+console.log(
+    '✓ CLI brutalist.css 令牌对齐：' +
+    Object.keys(uiBlocks).length + ' 个 ui 主题块 + @theme 区（含 ' + shadowCount + ' 个阴影条目）在 CLI 全部存在且值一致',
+)
