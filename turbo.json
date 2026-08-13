@@ -58,19 +58,20 @@
                 "vitest.config.ts",
                 "vitest.browser.config.ts",
                 "vitest.ssr.config.ts",
-                "registry/**"
+                "registry/**",
+                "../../packages/shared/src/**"
             ]
         },
         "test:ssr": {
             "dependsOn": ["build"],
-            "inputs": ["src/**", "vitest.ssr.config.ts"]
+            "inputs": ["src/**", "vitest.ssr.config.ts", "../../packages/shared/src/**"]
         },
         "typecheck": {
             "dependsOn": ["^build"],
-            "inputs": ["src/**", "tsconfig.json", "tsconfig.*.json"]
+            "inputs": ["src/**", "tsconfig.json", "tsconfig.*.json", "../../packages/shared/src/**"]
         },
         "lint": {
-            "inputs": ["src/**", "scripts/**", "tests/**", "eslint.config.js", ".eslintrc.*"]
+            "inputs": ["src/**", "scripts/**", "tests/**", "eslint.config.js", ".eslintrc.*", "../../packages/shared/src/**"]
         },
         "validate": {
             "dependsOn": ["build"],
