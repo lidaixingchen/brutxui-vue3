@@ -1,5 +1,11 @@
 # brutx-vue
 
+## 0.10.1
+
+### Patch Changes
+
+- 修复审查发现的缺陷：主题组合式函数与编辑器内部状态收敛、carousel 交互调整、回退样式与令牌脚本加固，以及 CLI 令牌校验脚本修复
+
 ## 0.10.0
 
 ### Minor Changes
