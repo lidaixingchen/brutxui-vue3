@@ -122,7 +122,8 @@ function normalizeExpression(value: string): string {
     return value
         .toLowerCase()
         .replace(/\s+/g, '')
-        .replace(/var\((--brutal-[a-z0-9-]+)\s*,[^)]*\)/g, 'var($1)')
+        // [^;]* 可跨嵌套括号（如 rgba(...) fallback）贪婪到末个 )，值表达式内无分号
+        .replace(/var\((--brutal-[a-z0-9-]+)\s*,[^;]*\)/g, 'var($1)')
 }
 
 interface ThemeEntry {
@@ -137,10 +138,12 @@ interface ThemeEntry {
 /** 提取 @theme 块内引用 --brutal-* 变量的条目（值以 var(/calc( 开头均可，如阴影 calc 组合） */
 function extractThemeEntries(blockText: string): Map<string, ThemeEntry> {
     const entries = new Map<string, ThemeEntry>()
-    // 与 extractVars 同形：捕获完整声明值，随后过滤「不含 var(--brutal-」的非令牌条目（如 --default-font-family）
+    // 与 extractVars 同形：捕获完整声明值，随后过滤「不含 var(--brutal-」的非令牌条目（如 --default-font-family）。
+    // 先剥离注释再匹配（OCR 审查）：注释内含形如 --xxx: var(--brutal-... 的文本会产生幽灵条目
     const entryRe = /--([a-z0-9-]+):\s*([^;]+?)\s*(?:;|$)/g
+    const cleaned = blockText.replace(/\/\*[\s\S]*?\*\//g, ' ')
     let m: RegExpExecArray | null
-    while ((m = entryRe.exec(blockText)) !== null) {
+    while ((m = entryRe.exec(cleaned)) !== null) {
         const expr = m[2].trim()
         if (!/var\(--brutal-/.test(expr)) continue
         const innerMatch = expr.match(/--brutal-([a-z0-9-]+)/)
@@ -159,14 +162,16 @@ function extractThemeEntries(blockText: string): Map<string, ThemeEntry> {
  * 从 ui styles.css 的 :root 生成区提取 --shadow-brutal-* 令牌。
  * 变量名不以 --brutal- 开头，extractVars（@theme 块检查）不覆盖，需单独提取；
  * 返回 key 为完整变量名（shadow-brutal / shadow-brutal-sm / ...）。
+ * 先剥离注释再扫描（注释内含 { } / 伪令牌声明会导致块边界错位或幽灵条目），
+ * 并收集全部 :root 块合并（OCR 审查：命中首个即返回会在生成区布局变化时静默缺失）。
  */
 function extractShadowEntries(css: string): Record<string, string> {
     const shadows: Record<string, string> = {}
-    const visit = (text: string): boolean => {
+    const visit = (text: string): void => {
         let i = 0
         while (i < text.length) {
             const braceIdx = text.indexOf('{', i)
-            if (braceIdx === -1) return false
+            if (braceIdx === -1) return
             const selectorRaw = text.slice(i, braceIdx).trim()
             let depth = 0
             let j = braceIdx
@@ -179,28 +184,27 @@ function extractShadowEntries(css: string): Record<string, string> {
                     if (depth === 0) break
                 }
             }
-            if (j >= text.length) return false
+            if (j >= text.length) return
             const blockText = text.slice(braceIdx + 1, j)
             if (/^@(layer|supports)\b/.test(selectorRaw)) {
-                if (visit(blockText)) return true
-            } else if (selectorRaw.replace(/\/\*[\s\S]*?\*\//g, ' ').trim() === ':root') {
+                visit(blockText)
+            } else if (selectorRaw === ':root') {
                 const shadowRe = /--(shadow-brutal[a-z0-9-]*):\s*([^;]+?)\s*(?:;|$)/g
                 let m: RegExpExecArray | null
                 while ((m = shadowRe.exec(blockText)) !== null) {
                     shadows[m[1]] = normalizeColor(m[2])
                 }
-                return true
             }
             i = j + 1
         }
-        return false
     }
-    visit(css)
+    visit(css.replace(/\/\*[\s\S]*?\*\//g, ' '))
     return shadows
 }
 
-/** 提取顶层 @theme 块文本（不递归容器：@theme 恒为顶层规则） */
+/** 提取顶层 @theme 块文本（不递归容器：@theme 恒为顶层规则；先剥离注释避免块内注释的 { } 干扰配对） */
 function extractThemeBlockText(css: string): string | null {
+    css = css.replace(/\/\*[\s\S]*?\*\//g, ' ')
     let i = 0
     while (i < css.length) {
         const braceIdx = css.indexOf('{', i)
@@ -244,7 +248,7 @@ function verifyThemeArea(uiCss: string, cliCss: string, failures: string[]): voi
             continue
         }
         if (cliEntry.innerVar !== uiEntry.innerVar) {
-            failures.push(`CLI @theme --${key} 映射 var(--${cliEntry.innerVar}) 与 ui var(--${uiEntry.innerVar}) 不一致`)
+            failures.push(`CLI @theme --${key} 映射 var(--brutal-${cliEntry.innerVar}) 与 ui var(--brutal-${uiEntry.innerVar}) 不一致`)
         }
         if (cliEntry.fallback !== null && uiEntry.fallback !== null && cliEntry.fallback !== uiEntry.fallback) {
             failures.push(`CLI @theme --${key} fallback=${cliEntry.fallback} 与 ui fallback=${uiEntry.fallback} 不一致`)
@@ -253,6 +257,10 @@ function verifyThemeArea(uiCss: string, cliCss: string, failures: string[]): voi
 
     // 阴影：ui :root 生成区（styles.css）↔ CLI @theme（手写区），双向集合与剥离 fallback 的值比对
     const uiShadowVars = extractShadowEntries(uiCss)
+    // fail-closed（OCR 审查）：提取为空说明生成区布局变化或解析失效，门禁须显式失败而非静默假绿
+    if (Object.keys(uiShadowVars).length === 0) {
+        failures.push('ui :root 未提取到任何 --shadow-brutal-* 条目（生成区布局变化？门禁 fail-closed 拦截）')
+    }
     const uiShadowKeys = Object.keys(uiShadowVars)
     for (const key of uiShadowKeys) {
         const cliEntry = cliEntries.get(key)
