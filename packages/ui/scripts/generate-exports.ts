@@ -235,7 +235,11 @@ function verifyMainEntryCoverage(manifest: ExportsManifest): void {
     for (const component of manifest.components) {
         if (component in SKIP_MAIN_ENTRY_COMPONENTS) continue
         const escaped = component.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-        if (!new RegExp(`from\\s+['"]\\./components/${escaped}(?:/|\\.vue|['"])`).test(indexSrc)) {
+        // 收紧（OCR 审查）：仅存在子路径 re-export（如 variants 的 .ts 导出）不算主入口覆盖，
+        // 必须命中组件 .vue 文件 re-export 或整目录 barrel（export * from './components/<name>'）
+        const barrelRe = new RegExp(`export \\* from\\s+['"]\\./components/${escaped}['"]`)
+        const vueRe = new RegExp(`from\\s+['"]\\./components/${escaped}/[^'"]+\\.vue['"]`)
+        if (!barrelRe.test(indexSrc) && !vueRe.test(indexSrc)) {
             missing.push(component)
         }
     }
@@ -273,6 +277,9 @@ function listPublicSourceFiles(dir: string): string[] {
  */
 function verifyManifestFreshness(manifest: ExportsManifest): void {
     const componentsDir = resolve(PACKAGE_ROOT, 'src', 'components')
+    if (!existsSync(componentsDir)) {
+        throw new Error(`components 目录不存在：${componentsDir}（manifest 新鲜度核对无法进行）`)
+    }
     const sourceComponents = readdirSync(componentsDir, { withFileTypes: true })
         .filter((e) => e.isDirectory())
         .map((e) => e.name)
