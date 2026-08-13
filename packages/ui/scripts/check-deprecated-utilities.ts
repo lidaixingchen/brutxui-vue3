@@ -6,6 +6,12 @@
  * - 手写 `shadow-[Npx_..._rgba(...)]` 任意值字面量被禁止；应使用 shadow-brutal 系工具类
  *   （含 shadow-brutal-destructive 危险态半透明红阴影）。
  *
+ * 扫描范围（SCAN_ROOTS）：
+ * - `packages/ui/src`：组件库源码，规则 R7 的唯一权威落地面。
+ * - `apps/docs`：文档站源码（.vitepress/theme 下 .vue/.ts/.css 等），docs-only 主题调试工具
+ *   （ThemePlayground.vue 等）同属视觉规则约束面，不因「docs 独立 Tailwind 作用域」豁免；
+ *   排除 node_modules/dist/cache 与 .vitepress 构建产物（dist/cache），只扫源码字面量。
+ *
  * 基线策略（复用 audit-brutal-fallback.ts）：既有违规以快照形式记录在
  * .deprecated-utilities-baseline.json，CI 仅拦截新增（计数增加或新文件出现）。修复既有违规
  * 自动减少计数，无需更新基线；存量清零后可 --update-baseline 收空基线。
@@ -21,7 +27,11 @@ import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const SCAN_ROOT = path.resolve(__dirname, '..', 'src');
+const REPO_ROOT = path.resolve(__dirname, '..', '..', '..');
+const SCAN_ROOTS = [path.resolve(REPO_ROOT, 'packages', 'ui', 'src'), path.resolve(REPO_ROOT, 'apps', 'docs')];
+// 排除目录：构建产物 / 依赖 / 缓存目录按 basename 命中即跳过。
+// `.vitepress` 本身不排除（config.ts / theme/* 是源码），仅其 dist/cache 子目录命中后排除。
+const SKIP_DIRS = new Set(['node_modules', 'dist', 'cache', '__snapshots__']);
 const BASELINE_FILE = path.resolve(__dirname, '.deprecated-utilities-baseline.json');
 
 interface Violation {
@@ -52,7 +62,7 @@ function walkSourceFiles(root: string, includeTests: boolean): string[] {
         for (const entry of entries) {
             const fullPath = path.join(current, entry.name);
             if (entry.isDirectory()) {
-                if (entry.name !== '__snapshots__') stack.push(fullPath);
+                if (!SKIP_DIRS.has(entry.name)) stack.push(fullPath);
             } else if (entry.isFile()) {
                 const ext = path.extname(entry.name).toLowerCase();
                 if (ext !== '.ts' && ext !== '.vue' && ext !== '.css') continue;
@@ -86,25 +96,27 @@ function audit(): Violation[] {
         re.lastIndex = 0;
         while ((m = re.exec(content)) !== null) {
             all.push({
-                file: path.relative(SCAN_ROOT, filePath).replace(/\\/g, '/'),
+                file: path.relative(REPO_ROOT, filePath).replace(/\\/g, '/'),
                 line: computeLineColumn(content, m.index),
                 snippet: extractSnippet(content, m.index, m.index + m[0].length),
                 category,
             });
         }
     };
-    // 单次遍历：RING 只扫非测试文件，SHADOW_RGBA 含测试（counter.test.ts 等存量一并基线化）；
-    // 读文件失败兜底跳过并告警，避免异常文件导致脚本崩溃
-    for (const f of walkSourceFiles(SCAN_ROOT, true)) {
-        let content: string;
-        try {
-            content = fs.readFileSync(f, 'utf-8');
-        } catch (error) {
-            console.warn(`无法读取文件，已跳过：${path.relative(SCAN_ROOT, f)}`, error);
-            continue;
+    // 多根遍历（packages/ui/src + apps/docs）：RING 只扫非测试文件，SHADOW_RGBA 含测试
+    // （counter.test.ts 等存量一并基线化）；读文件失败兜底跳过并告警，避免异常文件导致脚本崩溃
+    for (const root of SCAN_ROOTS) {
+        for (const f of walkSourceFiles(root, true)) {
+            let content: string;
+            try {
+                content = fs.readFileSync(f, 'utf-8');
+            } catch (error) {
+                console.warn(`无法读取文件，已跳过：${path.relative(REPO_ROOT, f)}`, error);
+                continue;
+            }
+            if (!/\.test\./.test(path.basename(f))) addMatches(f, content, RING_RE, 'RING');
+            addMatches(f, content, SHADOW_RGBA_RE, 'SHADOW_RGBA');
         }
-        if (!/\.test\./.test(path.basename(f))) addMatches(f, content, RING_RE, 'RING');
-        addMatches(f, content, SHADOW_RGBA_RE, 'SHADOW_RGBA');
     }
     return all;
 }
