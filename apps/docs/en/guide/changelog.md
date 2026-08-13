@@ -6,6 +6,10 @@ translated: true
 
 # Changelog
 
+::: warning Chinese-only
+The changelog is maintained in **Chinese only** — the root `CHANGELOG.md` and all archived version pages are written in Chinese. For the complete release history, please view the [Chinese changelog](../../changelog/).
+:::
+
 All notable changes to this project are documented in [CHANGELOG.md](https://github.com/lidaixingchen/brutxui-vue3/blob/main/CHANGELOG.md).
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
