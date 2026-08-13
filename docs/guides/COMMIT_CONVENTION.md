@@ -70,7 +70,7 @@
 1. **标题行 `!`**（推荐）：`feat(ui)!: 移除 xxx prop`
 2. **正文首行**：`BREAKING CHANGE: <影响与迁移说明>`
 
-`generate-changelog.mjs` 识别 `!` 与 `/BREAKING[ -]CHANGE:/`，归入根 CHANGELOG 的 `⚠️ Breaking Changes` 段置顶；两种标注等价。每个 breaking change 须遵循 [RELEASE.md](RELEASE.md)「Breaking Change 迁移文档规范」；发布时 changeset 声明 major bump。
+`generate-changelog.mjs` 识别 `!` 与 `/BREAKING[ -]CHANGE:/`，归入根 CHANGELOG 的 `⚠️ Breaking Changes` 段置顶；两种标注等价。
 
 ## 兜底验证
 
