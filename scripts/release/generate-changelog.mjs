@@ -287,6 +287,38 @@ function archiveOldestVersion(fullContent, newVersion) {
     return archiveOldestVersion(updatedContent, newVersion);
 }
 
+// 同步文档站「版本历史」页面（apps/docs/guide/changelog.md）的最新版本段。
+// 与根 CHANGELOG.md 的保留策略一致：提取 Unreleased 之后、归档段之前的全部版本全文
+// （archiveOldestVersion 保证 ≤3 个版本），区间替换「## 最新版本」段，锚点缺失时跳过
+// （保留手工模板），避免漂移。
+function syncDocsChangelogGuide(changelogContent) {
+    const guidePath = path.join(repoRoot, 'apps/docs/guide/changelog.md');
+
+    const versionHeaderRe = /\n## \[\d+\.\d+\.\d+\]/;
+    const startMatch = changelogContent.search(versionHeaderRe);
+    if (startMatch === -1) {
+        console.warn('[Docs] 根 CHANGELOG 无版本段落，跳过 guide 同步');
+        return;
+    }
+    const archiveStart = changelogContent.indexOf('\n## 归档版本');
+    const endIndex = archiveStart !== -1 ? archiveStart : changelogContent.length;
+    const latestVersions = changelogContent.slice(startMatch + 1, endIndex).trim();
+
+    if (!existsSync(guidePath)) {
+        console.warn('[Docs] apps/docs/guide/changelog.md 不存在，跳过同步');
+        return;
+    }
+    const guide = readFileSync(guidePath, 'utf-8');
+    // 区间替换：`## 最新版本` 段 → 下一个 `## 历史归档版本`（支持 CRLF）
+    const sectionRe = /## 最新版本\r?\n\r?\n[\s\S]*?(?=\r?\n## 历史归档版本)/;
+    if (!sectionRe.test(guide)) {
+        console.warn('[Docs] guide/changelog.md 缺少「## 最新版本 / ## 历史归档版本」锚点，跳过同步（需先按模板迁移）');
+        return;
+    }
+    writeFileSync(guidePath, guide.replace(sectionRe, `## 最新版本\n\n${latestVersions}`), 'utf-8');
+    console.log('[Docs] 已同步 apps/docs/guide/changelog.md 最新版本段');
+}
+
 function prependToChangelog(newEntry, version) {
     const changelogPath = path.join(repoRoot, 'CHANGELOG.md');
     const defaultHeader =
@@ -315,6 +347,8 @@ function prependToChangelog(newEntry, version) {
         }
         
         writeFileSync(changelogPath, finalChangelogContent, 'utf-8');
+        // 同步文档站版本历史页（与根 CHANGELOG 保留的版本段保持一致）
+        syncDocsChangelogGuide(finalChangelogContent);
     } catch (error) {
         console.error('Error updating CHANGELOG.md:', error instanceof Error ? error.message : String(error));
         process.exit(1);
@@ -332,6 +366,16 @@ function resolveFromTag(currentTag) {
 
 function main() {
     const isDryRun = process.argv.includes('--dry-run');
+    // 仅同步文档站版本历史页（不生成新条目）：迁移/修复 apps/docs/guide/changelog.md 用
+    if (process.argv.includes('--sync-guide-only')) {
+        const changelogPath = path.join(repoRoot, 'CHANGELOG.md');
+        if (!existsSync(changelogPath)) {
+            console.error(`Error: ${changelogPath} 不存在`);
+            process.exit(1);
+        }
+        syncDocsChangelogGuide(readFileSync(changelogPath, 'utf-8'));
+        process.exit(0);
+    }
     const explicitFrom = getArgValue('--from');
     const explicitVersion = getArgValue('--version');
     const explicitDate = getArgValue('--date');
