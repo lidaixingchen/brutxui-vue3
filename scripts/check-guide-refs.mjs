@@ -35,6 +35,7 @@ const REMOVED_SYMBOLS = [
     'TabsNav',
     'ComboboxMulti',
     'brutal-danger',
+    'brutal-pressed-offset',
 ]
 
 const SKIP_DIRS = new Set(['node_modules', 'dist', '.git', '__snapshots__'])

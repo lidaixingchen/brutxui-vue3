@@ -29,6 +29,8 @@ const SKIP_DIRS = new Set([
     'public',
     'cache',
     '.temp',
+    // changelog 归档为存量历史记录（zh 长期无 en 镜像，补译属独立翻译工程），豁免镜像校验
+    'changelog',
 ])
 
 const STRICT = !process.argv.includes('--report')
