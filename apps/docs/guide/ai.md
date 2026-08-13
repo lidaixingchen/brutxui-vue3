@@ -188,4 +188,4 @@ function handleError() {
 7. 使用 `--brutal-*` CSS 变量，绝不硬编码颜色
 8. 禁止使用软阴影（`shadow-md`、`shadow-lg`），只使用 `shadow-brutal*`
 9. 禁止使用圆角（`rounded-md`、`rounded-lg`），只使用 `rounded-brutal`
-10. 交互元素必须有按压反馈（`active:translate-y` + `active:shadow-none`）
+10. 交互元素必须有按压反馈（斜向位移 `active:translate-x-[var(--brutal-shadow-offset-x,4px)] active:translate-y-[var(--brutal-shadow-offset-y,4px)]` + `active:shadow-none`，位移=阴影偏移的盖影语义）

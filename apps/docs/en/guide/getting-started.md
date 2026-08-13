@@ -55,7 +55,6 @@ All visual properties are driven by CSS custom properties. You can override them
     --brutal-muted: #f3f4f6;
     --brutal-muted-foreground: #4B5563;
     --brutal-ring: #000000;
-    --brutal-pressed-offset: 2px;
     --brutal-info: #4A90D9;
     --brutal-overlay: rgba(0, 0, 0, 0.5);
     --brutal-placeholder: #9CA3AF;

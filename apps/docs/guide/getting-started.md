@@ -54,7 +54,6 @@ BrutxUI 采用复制粘贴组件模式，而非传统的 npm 包方式：
     --brutal-muted: #f3f4f6;
     --brutal-muted-foreground: #4B5563;
     --brutal-ring: #000000;
-    --brutal-pressed-offset: 2px;
     --brutal-info: #4A90D9;
     --brutal-overlay: rgba(0, 0, 0, 0.5);
     --brutal-placeholder: #9CA3AF;

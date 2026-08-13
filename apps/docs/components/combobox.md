@@ -174,7 +174,7 @@ interface ComboboxOption {
 选项遵循 Neo-Brutalist 视觉语言：
 
 - **高亮上浮**：鼠标悬停或键盘 `↑` / `↓` 导航聚焦选项时，选项向左上方偏移（`-translate-x-0.5 -translate-y-0.5`）并显示大阴影（`shadow-brutal-lg`），形成「浮起」效果。两种触发方式共享同一视觉反馈，确保键盘用户与鼠标用户获得一致体验。
-- **按下下沉**：点击选项时向下位移（`--brutal-pressed-offset`）并去除阴影，形成「按压」反馈。
+- **按下盖影**：点击选项时向右下位移（`--brutal-shadow-offset-*`）并去除阴影，落回阴影位置形成「按压」反馈。
 
 > 上浮样式由共享变体 `brutalHighlightLift` 提供，与 `Select` 选项的 `brutalHoverLift` 保持视觉一致；区别在于触发机制——Combobox 绑定 `data-[highlighted=true]`（兼容键盘高亮），Select 绑定 `hover:`。
 

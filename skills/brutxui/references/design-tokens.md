@@ -36,7 +36,6 @@ BrutxUI 使用 CSS 自定义属性定义设计令牌，便于主题切换和自�
 | `--brutal-muted` | `#f3f4f6` | `#1e1e1e` | 柔和背景 |
 | `--brutal-muted-foreground` | `#4B5563` | `#9CA3AF` | 柔和文本颜色 |
 | `--brutal-ring` | `#000000` | `#ffffff` | 焦点环颜色 |
-| `--brutal-pressed-offset` | `2px` | `2px` | 按压状态 Y 轴偏移 |
 | `--brutal-info` | `#4A90D9` | `#3B82F6` | 信息颜色 |
 | `--brutal-overlay` | `rgba(0,0,0,0.5)` | `rgba(0,0,0,0.7)` | 遮罩背景 |
 | `--brutal-placeholder` | `#9CA3AF` | `#6B7280` | 占位符文本颜色 |
@@ -190,11 +189,11 @@ BrutxUI 使用 CSS 自定义属性定义设计令牌，便于主题切换和自�
 <!-- 悬停：阴影增大 + 微偏移 -->
 <button class="hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5">
 
-<!-- 按压：向下偏移 + 阴影消失 -->
-<button class="active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none">
+<!-- 按压：斜向盖影（位移=阴影偏移）+ 阴影消失 -->
+<button class="active:translate-x-[var(--brutal-shadow-offset-x,4px)] active:translate-y-[var(--brutal-shadow-offset-y,4px)] active:shadow-none">
 
 <!-- 完整交互效果（推荐用于所有可点击元素） -->
-<button class="hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none">
+<button class="hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-[var(--brutal-shadow-offset-x,4px)] active:translate-y-[var(--brutal-shadow-offset-y,4px)] active:shadow-none">
 ```
 
 ---

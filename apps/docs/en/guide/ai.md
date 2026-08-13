@@ -189,4 +189,4 @@ function handleError() {
 7. Use `--brutal-*` CSS variables, never hardcode colors
 8. Never use soft shadows (`shadow-md`, `shadow-lg`), only use `shadow-brutal*`
 9. Never use rounded corners (`rounded-md`, `rounded-lg`), only use `rounded-brutal`
-10. Interactive elements must have press feedback (`active:translate-y` + `active:shadow-none`)
+10. Interactive elements must have press feedback (diagonal `active:translate-x-[var(--brutal-shadow-offset-x,4px)] active:translate-y-[var(--brutal-shadow-offset-y,4px)]` + `active:shadow-none`, offset = shadow offset)

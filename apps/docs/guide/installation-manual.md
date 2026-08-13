@@ -103,7 +103,6 @@ export default defineConfig({
         --brutal-muted: #f3f4f6;
         --brutal-muted-foreground: #4B5563;
         --brutal-ring: #000000;
-        --brutal-pressed-offset: 2px;
         --brutal-info: #4A90D9;
         --brutal-overlay: rgba(0, 0, 0, 0.5);
         --brutal-placeholder: #9CA3AF;
@@ -126,7 +125,6 @@ export default defineConfig({
         --brutal-muted: #1e1e1e;
         --brutal-muted-foreground: #9CA3AF;
         --brutal-ring: #ffffff;
-        --brutal-pressed-offset: 2px;
         --brutal-info: #3B82F6;
         --brutal-overlay: rgba(0, 0, 0, 0.7);
         --brutal-placeholder: #6B7280;

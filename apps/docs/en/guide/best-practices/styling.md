@@ -37,7 +37,6 @@ BrutxUI styles are powered by CSS Custom Properties (CSS variables). All variabl
 --brutal-shadow-offset-y       /* Shadow vertical offset */
 --brutal-shadow-color          /* Shadow color */
 --brutal-radius                /* Border radius, defaults to 0px */
---brutal-pressed-offset        /* Translation offset when clicked */
 ```
 
 ### 1.2 Global Variable Overrides

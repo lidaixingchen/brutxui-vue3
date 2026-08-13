@@ -32,7 +32,6 @@ All tokens are prefixed with `--brutal-` and defined at the `:root` level:
 | `--brutal-muted` | `#f3f4f6` | `#1e1e1e` | Muted background |
 | `--brutal-muted-foreground` | `#4B5563` | `#9CA3AF` | Muted text color |
 | `--brutal-ring` | `#000000` | `#ffffff` | Focus ring color |
-| `--brutal-pressed-offset` | `2px` | `2px` | Y-axis offset for pressed state |
 | `--brutal-info` | `#4A90D9` | `#3B82F6` | Info color |
 | `--brutal-overlay` | `rgba(0,0,0,0.5)` | `rgba(0,0,0,0.7)` | Overlay background |
 | `--brutal-placeholder` | `#9CA3AF` | `#6B7280` | Placeholder text color |

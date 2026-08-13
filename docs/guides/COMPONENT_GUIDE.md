@@ -23,7 +23,7 @@
 `packages/ui/src/lib/brutal-interaction-variants.ts` 顶部注释为**权威说明**，此处为镜像，两处需同步：
 
 - **① 完整类名字面量**（@source 契约）：styles.css 的 `@source` 指令让 Tailwind 静态扫描源码，每个完整类名必须是可扫描源码中的字面量；禁止类名内部 `${...}` 插值；允许「完整字面量常量 + `${}` 组合」（该文件即样板）。机制见 [tailwind-v4-mechanisms.md](tailwind-v4-mechanisms.md) §4。
-- **② data-* 复合变体字节序**（竞态）：产物字节序 `hover:*` < `focus:*` < `active:*` < `data-[highlighted]:*` < `data-[state=on]:*` 等，同特异度 `(0,2,0)` 恒后者胜 → `data-*` 恒压过 `brutalPress` 的 `active:*`；需在持久 data-* 态下保留瞬态按压反馈时写 `data-*:active:...` 复合变体（特异度 `0,3,0`，含 `translate-x-0` 重置）；持久态下取消按压反馈则删引用并注释，严禁保留永不生效的导入。
+- **② data-* 复合变体字节序**（竞态）：产物字节序 `hover:*` < `focus:*` < `active:*` < `data-[highlighted]:*` < `data-[state=on]:*` 等，同特异度 `(0,2,0)` 恒后者胜 → `data-*` 恒压过 `brutalPress` 的 `active:*`；需在持久 data-* 态下保留瞬态按压反馈时写 `data-*:active:...` 复合变体（特异度 `0,3,0`）；持久态下取消按压反馈则删引用并注释，严禁保留永不生效的导入。按压位移 X/Y 各等于阴影偏移（`--brutal-shadow-offset-x/y`，盖影语义），`translate-x-[阴影偏移]` 本身即是对 hover 侧滑的覆盖重置，无需 `translate-x-0`。
 - **③ 管辖分界**：`brutalPress`（瞬态 active）vs `brutalPressedState`（持久 data-* 态）；持久「保持按下」态必须复用 `brutalPressedState`/`brutalPressedStateOn` 语义，严禁内联手抄 fallback 字面量；`switch`/`checkbox` 的 checked 位移驱动独立 thumb 元素属合法边界。
 
 ## Neo-Brutalist 视觉系统

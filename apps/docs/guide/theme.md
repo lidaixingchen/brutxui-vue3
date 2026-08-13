@@ -31,7 +31,6 @@ BrutxUI 使用 CSS 自定义属性（设计令牌）来控制新粗野主义系�
 | `--brutal-muted` | `#f3f4f6` | `#1e1e1e` | 柔和背景 |
 | `--brutal-muted-foreground` | `#4B5563` | `#9CA3AF` | 柔和文本颜色 |
 | `--brutal-ring` | `#000000` | `#ffffff` | 焦点环颜色 |
-| `--brutal-pressed-offset` | `2px` | `2px` | 按下状态的 Y 轴偏移 |
 | `--brutal-info` | `#4A90D9` | `#3B82F6` | 信息颜色 |
 | `--brutal-overlay` | `rgba(0,0,0,0.5)` | `rgba(0,0,0,0.7)` | 遮罩背景 |
 | `--brutal-placeholder` | `#9CA3AF` | `#6B7280` | 占位符文本颜色 |

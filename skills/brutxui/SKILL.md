@@ -69,7 +69,7 @@ import { cn } from '@/lib/utils'
 ### 1. 物理阴影与位移的映射关系（Why & How）
 在编写您自定义的悬停与按压状态时，**位移与阴影变化必须符合物理映射关系**：
 - **悬停离开表面**：当 hover 发生向左上方偏移动画时（如 `hover:-translate-x-0.5 hover:-translate-y-0.5`），由于物体离接触面变远，其硬阴影必须增大（`hover:shadow-brutal-lg`）。
-- **按压贴合表面**：当 active 被按下时（如 `active:translate-y-[var(--brutal-pressed-offset,2px)]`），元素与地面重合，其硬阴影必须消失（`active:shadow-none`）。
+- **按压贴合表面**：当 active 被按下时（如 `active:translate-x-[var(--brutal-shadow-offset-x,4px)] active:translate-y-[var(--brutal-shadow-offset-y,4px)]`），元素斜向滑到阴影位置盖住影子，其硬阴影必须消失（`active:shadow-none`）。
 > **物理谬误**：严禁只声明向下位移，但在按压状态下仍然保留悬空阴影，这在三维视觉中是错误的。
 
 ### 2. 噪点物理材质与 3D 悬浮的应用

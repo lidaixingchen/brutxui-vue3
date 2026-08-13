@@ -37,7 +37,6 @@ BrutxUI 使用 CSS 自定义属性（CSS 变量）构建样式系统。所有变
 --brutal-shadow-offset-y       /* 阴影 Y 偏移 */
 --brutal-shadow-color          /* 阴影颜色 */
 --brutal-radius                /* 圆角，默认 0px */
---brutal-pressed-offset        /* 按下时偏移量 */
 ```
 
 ### 1.2 全局变量覆盖
