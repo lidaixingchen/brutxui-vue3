@@ -302,7 +302,10 @@ function syncDocsChangelogGuide(changelogContent) {
     }
     const archiveStart = changelogContent.indexOf('\n## 归档版本');
     const endIndex = archiveStart !== -1 ? archiveStart : changelogContent.length;
-    const latestVersions = changelogContent.slice(startMatch + 1, endIndex).trim();
+    // 与归档路径一致（archiveOldestVersion 第 232 行）：版本段可能含手工编辑混入的裸尖括号
+    // （历史 v0.9.4/v0.9.8 曾因 `Promise<boolean>` 破坏 docs 构建），复用 escapeBareAngles 转义；
+    // 函数保留反引号代码内原文，对已转义的 &lt; 幂等
+    const latestVersions = escapeBareAngles(changelogContent.slice(startMatch + 1, endIndex).trim());
 
     if (!existsSync(guidePath)) {
         console.warn('[Docs] apps/docs/guide/changelog.md 不存在，跳过同步');
@@ -368,6 +371,11 @@ function main() {
     const isDryRun = process.argv.includes('--dry-run');
     // 仅同步文档站版本历史页（不生成新条目）：迁移/修复 apps/docs/guide/changelog.md 用
     if (process.argv.includes('--sync-guide-only')) {
+        // dry-run 语义：只打印不写盘，与正常预检流程一致
+        if (isDryRun) {
+            console.log('[Dry-run] 跳过 guide 同步（--sync-guide-only 与 --dry-run 组合以只读为准）');
+            process.exit(0);
+        }
         const changelogPath = path.join(repoRoot, 'CHANGELOG.md');
         if (!existsSync(changelogPath)) {
             console.error(`Error: ${changelogPath} 不存在`);

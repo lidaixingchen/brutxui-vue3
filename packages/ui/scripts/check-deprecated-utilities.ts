@@ -29,9 +29,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const REPO_ROOT = path.resolve(__dirname, '..', '..', '..');
 const SCAN_ROOTS = [path.resolve(REPO_ROOT, 'packages', 'ui', 'src'), path.resolve(REPO_ROOT, 'apps', 'docs')];
-// 排除目录：构建产物 / 依赖 / 缓存目录按 basename 命中即跳过。
-// `.vitepress` 本身不排除（config.ts / theme/* 是源码），仅其 dist/cache 子目录命中后排除。
-const SKIP_DIRS = new Set(['node_modules', 'dist', 'cache', '__snapshots__']);
+// 排除目录：依赖与测试快照按 basename 全局跳过（任何源码树位置都不该扫）；
+// dist/cache 是构建产物目录，仅排除 `.vitepress` 直接子目录（docs 构建产物），
+// 避免未来源码树出现同名源码目录被静默漏扫（防回潮门禁的可信度要求）。
+function isSkippedDir(currentDir: string, name: string): boolean {
+    if (name === 'node_modules' || name === '__snapshots__') return true;
+    if (name === 'dist' || name === 'cache') return path.basename(currentDir) === '.vitepress';
+    return false;
+}
 const BASELINE_FILE = path.resolve(__dirname, '.deprecated-utilities-baseline.json');
 
 interface Violation {
@@ -62,7 +67,7 @@ function walkSourceFiles(root: string, includeTests: boolean): string[] {
         for (const entry of entries) {
             const fullPath = path.join(current, entry.name);
             if (entry.isDirectory()) {
-                if (!SKIP_DIRS.has(entry.name)) stack.push(fullPath);
+                if (!isSkippedDir(current, entry.name)) stack.push(fullPath);
             } else if (entry.isFile()) {
                 const ext = path.extname(entry.name).toLowerCase();
                 if (ext !== '.ts' && ext !== '.vue' && ext !== '.css') continue;
