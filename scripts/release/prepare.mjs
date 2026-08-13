@@ -17,6 +17,8 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../
 const isWin = process.platform === 'win32';
 const UI_PKG_PATH = path.join(repoRoot, 'packages', 'ui', 'package.json');
 const ARCHIVE_DIR = path.join(repoRoot, 'apps', 'docs', 'changelog');
+// generate-changelog.mjs 的 syncDocsChangelogGuide 会同步此文件，须随根 CHANGELOG 一并提交
+const GUIDE_CHANGELOG_PATH = path.join(repoRoot, 'apps', 'docs', 'guide', 'changelog.md');
 const ARCHIVE_FILE_RE = /^v\d+\.\d+\.\d+\.md$/;
 
 // ---------- helpers ----------
@@ -138,6 +140,7 @@ function prepare(dryRun) {
     const addPaths = [];
     if (existsSync(path.join(repoRoot, 'CHANGELOG.md'))) addPaths.push('CHANGELOG.md');
     if (existsSync(ARCHIVE_DIR)) addPaths.push('apps/docs/changelog');
+    if (existsSync(GUIDE_CHANGELOG_PATH)) addPaths.push('apps/docs/guide/changelog.md');
     const add = git(['add', '--', ...addPaths]);
     if (add.status !== 0) fail(`git add 根 CHANGELOG 失败：${add.stderr}`);
 

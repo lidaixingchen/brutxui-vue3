@@ -43,7 +43,7 @@ git pushp origin main --tags   # ⑤ 推送后 CI 自动发布
    - `pnpm changelog` → 更新根 CHANGELOG + 自动归档旧版本
    - 自动提交根 CHANGELOG（`docs: 更新根 CHANGELOG 至 <version>[并归档 ...]`）
 
-3. **`pnpm release`**：门禁（build/test/typecheck/lint）通过后 `changeset publish` 发布。失败先修复，通过后再打 tag
+3. **`pnpm release`**：门禁（build/test/typecheck/lint）+ 本地 `changeset publish`。**发布主通道是 CI**（tag 推送后由 `publish.yml` 用 `NPM_TOKEN` 执行），本地 publish 成功与否不影响发布——本地 npm 未登录（`npm whoami` 报 ENEEDAUTH）时此步报 `E401` 属正常，门禁通过即可继续。失败先修复，通过后再打 tag
 
 4. **`pnpm release:tag`**：自动读取 UI 包版本打 `v<version>` tag。tag 命名以 UI 包版本为主（如 `v0.10.0`），CLI 版本不单独打 tag
 
@@ -62,6 +62,8 @@ git pushp origin main --tags   # ⑤ 推送后 CI 自动发布
 - [ ] 四处一致：ui / shared / registry / cli 的源码、元数据、构建脚本、CLI 复制逻辑
 - [ ] lockfile 已同步（依赖变更时）
 - [ ] 本地手动发版（备用通道）：账号启用安全密钥 2FA 时 `pnpm publish --otp` 无效，须 `cd packages/ui && npm publish --registry https://registry.npmjs.org` 走浏览器交互验证（不传 `--otp`）
+- [ ] 本地 npm 未登录时 `pnpm release` 的 `changeset publish` 报 `E401` 属正常（发布主通道是 CI），门禁通过即可继续
+- [ ] Windows 下 `changeset version` 的 RELEASING commit 会因反斜杠 pathspec 报错（`fatal: pathspec '.changeset\xxx.md' did not match any files`）——属已知无害现象：版本 bump / 包 CHANGELOG / changeset 删除均已生效，改动随 prepare 后续 docs 提交一并入库，无需处理
 - [ ] 发布后核对 Publish run 与 npm 版本
 
 ## Changelog 体系概览
