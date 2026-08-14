@@ -243,8 +243,6 @@ function getComponentVariantsTemplate(_vars: TemplateVars): string {
     return lines.join('\n')
 }
 
-
-
 function getComponentTestTemplate(_vars: TemplateVars): string {
     const lines: string[] = [
         "import { describe, it, expect } from 'vitest'",

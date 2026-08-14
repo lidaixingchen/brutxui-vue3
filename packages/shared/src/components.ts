@@ -264,12 +264,14 @@ export const COMPONENTS: Record<string, RegistryComponentMeta> = {
         dependencies: ['@lucide/vue'],
         description: 'Text input field with validation styling.',
     },
+    // docsSlug 'kanban-board' 是刻意覆盖：注册键为 'kanban'，但文档页（components/kanban-board.md）按完整组件名命名，
+    // 与『键名即文档名』的其余条目不同。链路可用（sidebar 的 resolveSlug 用 docsSlug ?? name 生成链接），
+    // 重命名/新增文档时需同步该字段
     kanban: {
         titleZh: '看板',
         category: 'utility',
         dependencies: ['@lucide/vue'],
         description: 'Drag-and-drop kanban board with columns and cards.',
-        sidebarGroup: 'utility',
         docsSlug: 'kanban-board',
     },
     kbd: {

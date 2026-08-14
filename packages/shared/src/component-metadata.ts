@@ -85,7 +85,14 @@ function createComponentsByCategory(): Record<ComponentCategory, readonly string
 
     for (const entry of Object.values(COMPONENT_METADATA)) {
         if (entry.kind === 'block') continue;
-        groups[entry.category].push(entry.name);
+        const group = groups[entry.category];
+        if (!group) {
+            throw new Error(
+                `[component-metadata] Component "${entry.name}" has invalid category "${entry.category}". ` +
+                'Category must be one of the defined ComponentCategory values in types.ts.',
+            );
+        }
+        group.push(entry.name);
     }
 
     for (const names of Object.values(groups)) {

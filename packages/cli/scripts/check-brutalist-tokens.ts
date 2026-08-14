@@ -1,25 +1,16 @@
 /**
  * CLI brutalist.css 令牌漂移门禁
  *
- * 背景（审查报告 §10.1/10.2）：packages/cli/src/styles/brutalist.css 是
- * 无生成标记的纯手写副本，由 cli/src/lib/constants.ts 读取注入用户项目。
- * packages/shared/src/design-tokens.ts 是全库令牌唯一事实来源，ui 的 styles.css
- * 由 scripts/generate-styles-tokens.ts 从 shared 生成；CLI 手抄副本不随 shared 变更，
- * 且 audit-brutal-fallback.ts 只扫 packages/ui/src，覆盖不到 CLI。
+ * 背景：packages/cli/src/styles/brutalist.css 的令牌与预设区域现已通过
+ * scripts/generate-styles-tokens.ts 自动注入；packages/shared/src/design-tokens.ts 是全库
+ * 令牌唯一事实来源。
  *
  * 本脚本对齐 ui 生成产物 styles.css（CLI 值语义是"与用户看到的 ui 样式一致"），
- * 做三级校验：
+ * 做三级门禁校验：
  * ① 块覆盖：ui styles.css 的每个主题令牌块（:root / .dark / .theme-pastel|mono|warm
  *    的 light/dark 两态），CLI 必须存在同名块，缺失即报错。
- * ② 值漂移：两方共有令牌的值必须一致（hex 3 位展开 + 小写归一化后比对；
- *    允许 CLI 缺令牌——覆盖率缺口由块级检查兜底）。
- * ③ @theme 区（原盲区，见审查报告 §10.10）：CLI @theme 手写条目与 ui 生成基准零一致性拦截——
- *    - 正向：ui @theme 的 `--*: var(--brutal-*, ...)` 条目（--color-brutal-* 颜色映射、
- *      --border-width-3/--radius-brutal），CLI 必须存在同名同内层变量条目；CLI 带 fallback 时
- *      须与 ui fallback 一致（CLI 约定多数条目无 fallback，缺 fallback 的条目跳过值比对）。
- *    - 阴影：ui 将 --shadow-brutal-* 生成在 :root（@brutx:root-tokens 区），CLI 放在 @theme——
- *      双向集合与值（剥离 var() fallback 后）须一致，缺 --shadow-brutal-destructive 即拦截。
- *    - --default-font-family 非 var(--brutal-*) 条目，不在比对范围（CLI 注入不携带字体栈）。
+ * ② 值漂移：两方共有令牌的值必须一致（hex 3 位展开 + 小写归一化后比对）。
+ * ③ @theme 区：CLI @theme 条目与 ui 生成基准一致性拦截（颜色映射、边框/圆角、阴影等）。
  *
  * 说明：styles.css 的令牌块嵌套在 `@layer base` 内，末尾还有
  * `@media (prefers-contrast: high)` 高对比度覆盖块（特殊值、非默认主题）。

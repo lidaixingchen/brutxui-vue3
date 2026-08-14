@@ -48,9 +48,12 @@ export default {
         // 自动注册全部 Demo 组件（按文件名作为组件名，如 AlertDemo.vue -> AlertDemo）
         for (const [filePath, mod] of Object.entries(demoModules)) {
             const componentName = filePath.split('/').pop()?.replace(/\.vue$/, '');
-            if (componentName && mod.default) {
-                app.component(componentName, mod.default);
+            if (!componentName || !mod.default) continue;
+            if (!componentName.endsWith('Demo') || GLOBAL_COMPONENTS[componentName]) {
+                console.warn(`[theme] 跳过非 Demo 命名或与框架组件重名的文件: ${filePath}`);
+                continue;
             }
+            app.component(componentName, mod.default);
         }
     },
 } satisfies Theme;

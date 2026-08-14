@@ -17,7 +17,7 @@
  *    - @theme 区块：/* @brutx:theme-tokens:start *\/ ... /* @brutx:theme-tokens:end *\/
  *    - :root / .dark 区块：/* @brutx:root-tokens:start *\/ ... /* @brutx:root-tokens:end *\/
  *    - 主题预设区块：/* @brutx:theme-presets:start *\/ ... /* @brutx:theme-presets:end *\/
- *    - 保留下方 316~973 行的 650+ 行静态兼容性工具类。
+ *    - 保留主题预设结束标记之后的全部静态兼容性工具类。
  *
  * 模式：
  *   - 默认：写回 styles.css、preflight.css 与 brutalist.css（prebuild）
@@ -330,7 +330,13 @@ function main(): void {
     const cliRootBlock = generateRootBlock(0);
     const cliPresetsBlock = generateThemePresetsBlock(0);
 
-    if (fs.existsSync(CLI_BRUTALIST_PATH)) {
+    if (!fs.existsSync(CLI_BRUTALIST_PATH)) {
+        if (isCheckMode) {
+            console.error(`✗ CLI brutalist.css 不存在：${CLI_BRUTALIST_PATH}`);
+            process.exit(1);
+        }
+        console.warn(`⚠ CLI brutalist.css 不存在，已跳过注入：${CLI_BRUTALIST_PATH}`);
+    } else {
         cliOriginal = fs.readFileSync(CLI_BRUTALIST_PATH, 'utf-8');
         let cliContent = cliOriginal;
 
