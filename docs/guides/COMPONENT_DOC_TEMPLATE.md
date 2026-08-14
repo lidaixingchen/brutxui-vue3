@@ -2,7 +2,7 @@
 
 本文件是 BrutxUI 组件文档的标准模板。新建组件文档时，请复制 `apps/docs/components/` 下的对应文件并按此模板填写。
 
-**英文镜像强制要求**：每个组件文档必须成对维护——中文 `apps/docs/components/{name}.md` + 英文 `apps/docs/en/components/{name}.md`（同文件名、英文内容），与 COMPONENT_GUIDE Workflow Checklist 第 7 步一致；提交前运行 `pnpm check:i18n:strict` 校验镜像对称性。
+**英文镜像强制要求**：每个组件文档必须成对维护——中文 `apps/docs/components/{name}.md` + 英文 `apps/docs/en/components/{name}.md`（同文件名、英文内容），与 [COMPONENT_GUIDE.md](COMPONENT_GUIDE.md)「Workflow Checklist」第 7 步一致；提交前运行 `pnpm check:i18n:strict` 校验镜像对称性。
 
 ---
 

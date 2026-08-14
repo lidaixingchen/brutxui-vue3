@@ -14,8 +14,9 @@ pnpm release:tag           # ④ 自动读 ui 版本打 annotated tag v<version>
 git pushp origin main --tags   # ⑤ 推送后 CI 自动发布
 ```
 
-> 发布后核对 GitHub Actions 的 **Publish** run 是否成功、npm 是否真的出新版本（`brutx-ui-vue` / `brutx-vue`）。
-> 发布后发现问题需补修：提交修复 commit → `pnpm release:tag --force`（重打 tag 指向最新 commit）→ 重新推送。
+> [!NOTE]
+> - 发布后核对 GitHub Actions 的 **Publish** run 是否成功、npm 是否真的出新版本（`brutx-ui-vue` / `brutx-vue`）。
+> - 发布后发现问题需补修：提交修复 commit → `pnpm release:tag --force`（重打 tag 指向最新 commit）→ 重新推送。
 
 ## 版本发布（操作手册）
 

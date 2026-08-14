@@ -26,7 +26,9 @@
 
 ### `[skip ci]` 陷阱（已规避，供溯源）
 
-changeset 2.31 在 `"commit": true` 时，`pnpm version-packages` 生成的 `RELEASING` 提交**默认带 `[skip ci]`**。若 tag 指向该提交，`publish.yml`（由 `v*` tag 触发）会被 `[skip ci]` 静默跳过、npm 不发布。已在 `.changeset/config.json` 通过 `"commit": ["@changesets/cli/commit", { "skipCI": false }]` 关闭。即便如此，发布后仍需核对 GitHub Actions 的 Publish run 是否成功、npm 是否真的出新版本。
+> [!NOTE]
+> **Changeset 默认 `[skip ci]` 行为规避**
+> changeset 2.31 在 `"commit": true` 时，`pnpm version-packages` 生成的 `RELEASING` 提交**默认带 `[skip ci]`**。若 tag 指向该提交，`publish.yml`（由 `v*` tag 触发）会被 `[skip ci]` 静默跳过、npm 不发布。已在 `.changeset/config.json` 通过 `"commit": ["@changesets/cli/commit", { "skipCI": false }]` 关闭。即便如此，发布后仍需核对 GitHub Actions 的 Publish run 是否成功、npm 是否真的出新版本。
 
 ### Commit 格式要求
 

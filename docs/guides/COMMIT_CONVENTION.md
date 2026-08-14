@@ -4,10 +4,10 @@
 
 ## Shell 提交注意事项
 
-书写多行 commit message 时需注意不同 Shell 的语法差异：
-
-- **Bash 工具**（Claude Code 默认）：使用 Git Bash（POSIX sh），`@'...'@` 不是 here-string 语法，会被当作普通字符串。多行 commit message 应直接用普通引号包裹。
-- **PowerShell**：`@'...'@` 单引号 here-string 语法要求结束标记 `'@` 必须位于行首（列 0），前面不能有空格。
+> [!NOTE]
+> **多行提交信息的跨 Shell 语法差异**
+> - **Git Bash / POSIX sh**：`@'...'@` 不是 here-string 语法，会被当作普通字符串。多行 commit message 应直接用普通引号包裹换行。
+> - **PowerShell**：`@'...'@` 单引号 here-string 语法要求结束标记 `'@` 必须独占一行且**严格位于行首（列 0）**，前面不能有任何空格。
 
 ## 格式模板
 
@@ -61,7 +61,8 @@
 | `deps` | 依赖变更 |
 | `theme` | 主题及令牌变更 |
 
-> **说明**：推荐在必要时使用具体的子 Scope 来精确标识受影响的组件或模块，例如 `ui/toast`、`cli/add`。
+> [!TIP]
+> 推荐在必要时使用具体的子 Scope 来精确标识受影响的组件或模块，例如 `ui/toast`、`cli/add`。
 
 ## Breaking Change 标注
 
