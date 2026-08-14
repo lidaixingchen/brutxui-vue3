@@ -29,6 +29,15 @@
     --color-brutal-status-error-foreground: var(--brutal-status-error-foreground);
     --color-brutal-black: var(--brutal-black, #000000);
     --color-brutal-yellow: var(--brutal-yellow, #FFE66D);
+    --color-brutal-primary-subtle: var(--brutal-primary-subtle);
+    --color-brutal-secondary-subtle: var(--brutal-secondary-subtle);
+    --color-brutal-accent-subtle: var(--brutal-accent-subtle);
+    --color-brutal-destructive-subtle: var(--brutal-destructive-subtle);
+    --color-brutal-success-subtle: var(--brutal-success-subtle);
+    --color-brutal-info-subtle: var(--brutal-info-subtle);
+
+    --ease-brutal-snap: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-brutal-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 
     --shadow-brutal: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000);
     --shadow-brutal-sm: calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000);
@@ -79,6 +88,12 @@
     --brutal-placeholder: #9CA3AF;
     --brutal-black: #000000;
     --brutal-yellow: #FFE66D;
+    --brutal-primary-subtle: color-mix(in srgb, var(--brutal-primary, #FF6B6B) 12%, var(--brutal-bg, #ffffff));
+    --brutal-secondary-subtle: color-mix(in srgb, var(--brutal-secondary, #4ECDC4) 12%, var(--brutal-bg, #ffffff));
+    --brutal-accent-subtle: color-mix(in srgb, var(--brutal-accent, #FFE66D) 20%, var(--brutal-bg, #ffffff));
+    --brutal-destructive-subtle: color-mix(in srgb, var(--brutal-destructive, #EF476F) 12%, var(--brutal-bg, #ffffff));
+    --brutal-success-subtle: color-mix(in srgb, var(--brutal-success, #7FB069) 12%, var(--brutal-bg, #ffffff));
+    --brutal-info-subtle: color-mix(in srgb, var(--brutal-info, #4A90D9) 12%, var(--brutal-bg, #ffffff));
 }
 
 .dark {
@@ -118,6 +133,12 @@
     --brutal-placeholder: #6B7280;
     --brutal-black: #000000;
     --brutal-yellow: #FFE66D;
+    --brutal-primary-subtle: color-mix(in srgb, var(--brutal-primary, #FF6B6B) 20%, var(--brutal-bg, #141414));
+    --brutal-secondary-subtle: color-mix(in srgb, var(--brutal-secondary, #4ECDC4) 20%, var(--brutal-bg, #141414));
+    --brutal-accent-subtle: color-mix(in srgb, var(--brutal-accent, #FFE66D) 20%, var(--brutal-bg, #141414));
+    --brutal-destructive-subtle: color-mix(in srgb, var(--brutal-destructive, #EF476F) 20%, var(--brutal-bg, #141414));
+    --brutal-success-subtle: color-mix(in srgb, var(--brutal-success, #7FB069) 20%, var(--brutal-bg, #141414));
+    --brutal-info-subtle: color-mix(in srgb, var(--brutal-info, #3B82F6) 20%, var(--brutal-bg, #141414));
 }
 
 .theme-pastel {
