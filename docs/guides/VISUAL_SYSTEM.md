@@ -42,9 +42,9 @@
 | `--brutal-black` | `#000000` | `#000000` | 基础黑色 |
 | `--brutal-yellow` | `#FFE66D` | `#FFE66D` | 基础黄色 |
 
-## 视觉规则 (R1 - R7)
+## 视觉规则 (R1 - R8)
 
-> **单一权威声明**：本节 R1-R7 是全部视觉规则的唯一权威定义，[COMPONENT_GUIDE.md](COMPONENT_GUIDE.md) 与 [CVA.md](CVA.md) 只引用、不重复抄写；调整视觉规则只改本节，并同步抽查引用方。
+> **单一权威声明**：本节 R1-R8 是全部视觉规则的唯一权威定义，[COMPONENT_GUIDE.md](COMPONENT_GUIDE.md) 与 [CVA.md](CVA.md) 只引用、不重复抄写；调整视觉规则只改本节，并同步抽查引用方。
 
 ### R1 边框体系 (Border)
 - **主边框规则**：主边框必须使用 `border-3 border-brutal`，严禁细边框或浅色（如 `slate`/`gray`）边框。
@@ -96,6 +96,15 @@
   - `apps/docs` 属独立 Tailwind 作用域，不扫描跨包 TS 常量，须书写等值五件套字面量 `focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden`。
 - **防回潮守卫**：
   - `packages/ui/src` 与 `apps/docs` 内非标 `ring-*` 类由 CI 门禁 `check:deprecated:check`（白名单模式）拦截。
+
+### R8 排版体系 (Typography)
+- **核心规则**：各组件排版必须严格归属于以下 6 类排印语义层级，杜绝随意搭配字重与字间距：
+  - **展示级大标题（Display）**：`font-black tracking-tight leading-none`（用于 Hero 标题、主 Section 大标题）；
+  - **结构标题（Structural Heading）**：`font-bold tracking-tight leading-snug`（用于 CardTitle、AlertTitle、DialogTitle、Accordion 标题）；
+  - **主控交互（Primary Interactive）**：`font-black tracking-wide`（用于 Button、Toggle、Pagination 激活按钮等核心操作）；
+  - **次级标签（Secondary Interactive）**：`font-bold tracking-wide`（用于 Badge、TabsTrigger、Tag、Switch/Checkbox 旁附标签）；
+  - **数据与代码（Technical/Data）**：`font-mono font-bold tracking-normal`（用于 Kbd、CodeBlock、Counter、Metric、PinInput）；
+  - **正文与辅助描述（Body/Muted）**：`font-medium text-brutal-muted-foreground leading-relaxed`（用于 CardDescription、FormDescription、辅助提示）。
 
 ## CVA 变体文件
 
