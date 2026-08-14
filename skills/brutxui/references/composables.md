@@ -12,7 +12,6 @@
 | `useDatePicker` | 日期选择逻辑（面板开关、显示值、选择确认） | `brutx-ui-vue/date-picker` |
 | `useColorPicker` | 颜色选择逻辑 | `brutx-ui-vue/color-picker` |
 | `useColorHistory` | 颜色历史记录管理（localStorage 持久化、去重、最大数量限制） | 默认导出 |
-| `useAnimation` | 统一动画降级策略，自动尊重 prefers-reduced-motion | 默认导出 |
 | `useReducedMotion` | 检测用户 prefers-reduced-motion 系统设置 | 默认导出 |
 | `useFormFieldValidation` | 通用表单验证（rules、validateOn、validationState） | 默认导出 |
 | `useTheme` | 主题切换与运行时定制（支持 `setCustomVariable` / `removeCustomVariable` 动态修改单个变量） | 默认导出 |

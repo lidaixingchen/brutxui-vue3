@@ -9,7 +9,6 @@
 - [主题预设](#主题预设)
 - [暗色模式](#暗色模式)
 - [useTheme 组合式函数](#usetheme-组合式函数)
-- [useAnimation 组合式函数](#useanimation-组合式函数)
 - [国际化](#国际化)
 
 ---
@@ -403,25 +402,7 @@ function handleThemeChange(value: AcceptableValue) {
 </template>
 ```
 
----
 
-## useAnimation 组合式函数
-
-统一动画降级策略，自动尊重 `prefers-reduced-motion` 系统设置。
-
-```typescript
-import { useAnimation } from 'brutx-ui-vue'
-
-const { animationClass, prefersReduced } = useAnimation('animate-brutal-bounce')
-// prefersReduced=true 时 animationClass 为空字符串
-```
-
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `animationClass` | `ComputedRef<string>` | 解析后的动画类名（降级时为空） |
-| `prefersReduced` | `Ref<boolean>` | 是否启用了减少动效 |
-
----
 
 ## 国际化
 
