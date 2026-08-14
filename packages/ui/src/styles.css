@@ -40,6 +40,14 @@
     --color-brutal-status-error: var(--brutal-status-error, #EF476F);
     --color-brutal-status-error-foreground: var(--brutal-status-error-foreground, #ffffff);
 
+    /* Dynamic: subtle backgrounds derived via color-mix */
+    --color-brutal-primary-subtle: var(--brutal-primary-subtle, color-mix(in srgb, var(--brutal-primary, #FF6B6B) 12%, #ffffff));
+    --color-brutal-secondary-subtle: var(--brutal-secondary-subtle, color-mix(in srgb, var(--brutal-secondary, #4ECDC4) 12%, #ffffff));
+    --color-brutal-accent-subtle: var(--brutal-accent-subtle, color-mix(in srgb, var(--brutal-accent, #FFE66D) 20%, #ffffff));
+    --color-brutal-destructive-subtle: var(--brutal-destructive-subtle, color-mix(in srgb, var(--brutal-destructive, #EF476F) 12%, #ffffff));
+    --color-brutal-success-subtle: var(--brutal-success-subtle, color-mix(in srgb, var(--brutal-success, #7FB069) 12%, #ffffff));
+    --color-brutal-info-subtle: var(--brutal-info-subtle, color-mix(in srgb, var(--brutal-info, #4A90D9) 12%, #ffffff));
+
     /* Static design tokens (not theme-aware) */
     --color-brutal-black: var(--brutal-black, #000000);
     --color-brutal-yellow: var(--brutal-yellow, #FFE66D);
@@ -59,6 +67,10 @@
     --shadow-brutal-primary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B);
     --shadow-brutal-secondary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary, #4ECDC4);
     --shadow-brutal-destructive: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px color-mix(in srgb, var(--brutal-destructive, #EF476F) 30%, transparent);
+
+    /* Mechanical motion easing curves */
+    --ease-brutal-snap: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-brutal-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
     /* @brutx:theme-tokens:end */
 }
 
@@ -121,6 +133,12 @@
         --shadow-brutal-primary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B);
         --shadow-brutal-secondary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary, #4ECDC4);
         --shadow-brutal-destructive: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px color-mix(in srgb, var(--brutal-destructive, #EF476F) 30%, transparent);
+        --brutal-primary-subtle: color-mix(in srgb, var(--brutal-primary, #FF6B6B) 12%, #ffffff);
+        --brutal-secondary-subtle: color-mix(in srgb, var(--brutal-secondary, #4ECDC4) 12%, #ffffff);
+        --brutal-accent-subtle: color-mix(in srgb, var(--brutal-accent, #FFE66D) 20%, #ffffff);
+        --brutal-destructive-subtle: color-mix(in srgb, var(--brutal-destructive, #EF476F) 12%, #ffffff);
+        --brutal-success-subtle: color-mix(in srgb, var(--brutal-success, #7FB069) 12%, #ffffff);
+        --brutal-info-subtle: color-mix(in srgb, var(--brutal-info, #4A90D9) 12%, #ffffff);
     }
 
     .dark {
@@ -160,6 +178,12 @@
         --brutal-placeholder: #6B7280;
         --brutal-black: #000000;
         --brutal-yellow: #FFE66D;
+        --brutal-primary-subtle: color-mix(in srgb, var(--brutal-primary, #FF6B6B) 20%, #141414);
+        --brutal-secondary-subtle: color-mix(in srgb, var(--brutal-secondary, #4ECDC4) 20%, #141414);
+        --brutal-accent-subtle: color-mix(in srgb, var(--brutal-accent, #FFE66D) 20%, #141414);
+        --brutal-destructive-subtle: color-mix(in srgb, var(--brutal-destructive, #EF476F) 20%, #141414);
+        --brutal-success-subtle: color-mix(in srgb, var(--brutal-success, #7FB069) 20%, #141414);
+        --brutal-info-subtle: color-mix(in srgb, var(--brutal-info, #3B82F6) 20%, #141414);
     }
     /* @brutx:root-tokens:end */
 

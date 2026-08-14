@@ -398,7 +398,8 @@
   },
   "dashboard-shell": {
     "files": [
-      "DashboardShell.vue"
+      "DashboardShell.vue",
+      "dashboard-shell-variants.ts"
     ],
     "composables": [
       "useLocale.ts"

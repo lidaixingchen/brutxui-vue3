@@ -101,6 +101,58 @@ const SHADOW_ENTRIES: ThemeEntry[] = [
     },
 ];
 
+interface SubtleEntry {
+    varName: string;
+    buildLight: (l: ThemeTokens) => string;
+    buildDark: (d: ThemeTokens) => string;
+}
+
+// 浅色衍生背景令牌：基于语义色按比例叠加白色/暗黑底色，随运行时主题联动
+const SUBTLE_ENTRIES: SubtleEntry[] = [
+    {
+        varName: 'brutal-primary-subtle',
+        buildLight: l => `color-mix(in srgb, var(--brutal-primary, ${l.primary}) 12%, #ffffff)`,
+        buildDark: d => `color-mix(in srgb, var(--brutal-primary, ${d.primary}) 20%, #141414)`,
+    },
+    {
+        varName: 'brutal-secondary-subtle',
+        buildLight: l => `color-mix(in srgb, var(--brutal-secondary, ${l.secondary}) 12%, #ffffff)`,
+        buildDark: d => `color-mix(in srgb, var(--brutal-secondary, ${d.secondary}) 20%, #141414)`,
+    },
+    {
+        varName: 'brutal-accent-subtle',
+        buildLight: l => `color-mix(in srgb, var(--brutal-accent, ${l.accent}) 20%, #ffffff)`,
+        buildDark: d => `color-mix(in srgb, var(--brutal-accent, ${d.accent}) 20%, #141414)`,
+    },
+    {
+        varName: 'brutal-destructive-subtle',
+        buildLight: l => `color-mix(in srgb, var(--brutal-destructive, ${l.destructive}) 12%, #ffffff)`,
+        buildDark: d => `color-mix(in srgb, var(--brutal-destructive, ${d.destructive}) 20%, #141414)`,
+    },
+    {
+        varName: 'brutal-success-subtle',
+        buildLight: l => `color-mix(in srgb, var(--brutal-success, ${l.success}) 12%, #ffffff)`,
+        buildDark: d => `color-mix(in srgb, var(--brutal-success, ${d.success}) 20%, #141414)`,
+    },
+    {
+        varName: 'brutal-info-subtle',
+        buildLight: l => `color-mix(in srgb, var(--brutal-info, ${l.info}) 12%, #ffffff)`,
+        buildDark: d => `color-mix(in srgb, var(--brutal-info, ${d.info}) 20%, #141414)`,
+    },
+];
+
+// 机械弹性动效缓动曲线令牌
+const EASING_ENTRIES: ThemeEntry[] = [
+    {
+        themeVar: '--ease-brutal-snap',
+        build: () => 'cubic-bezier(0.16, 1, 0.3, 1)',
+    },
+    {
+        themeVar: '--ease-brutal-bounce',
+        build: () => 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+    },
+];
+
 const THEME_GROUPS: ThemeGroup[] = [
     {
         comment:
@@ -142,6 +194,13 @@ const THEME_GROUPS: ThemeGroup[] = [
         ],
     },
     {
+        comment: 'Dynamic: subtle backgrounds derived via color-mix',
+        entries: SUBTLE_ENTRIES.map(e => ({
+            themeVar: `--color-${e.varName}`,
+            build: l => `var(--${e.varName}, ${e.buildLight(l)})`,
+        })),
+    },
+    {
         comment: 'Static design tokens (not theme-aware)',
         entries: [
             { themeVar: '--color-brutal-black', build: l => `var(--brutal-black, ${l.black})` },
@@ -168,6 +227,10 @@ const THEME_GROUPS: ThemeGroup[] = [
         comment: 'brutal shadows：经 @theme 派生标准组装工具类，与 :root 双发射',
         entries: SHADOW_ENTRIES,
     },
+    {
+        comment: 'Mechanical motion easing curves',
+        entries: EASING_ENTRIES,
+    },
 ];
 
 function formatVarsBlock(selector: string, vars: Record<string, string>): string {
@@ -182,8 +245,17 @@ function generateRootBlock(): string {
     for (const entry of SHADOW_ENTRIES) {
         lightVars[entry.themeVar.slice(2)] = entry.build(BASE_THEME.light);
     }
+    for (const entry of SUBTLE_ENTRIES) {
+        lightVars[entry.varName] = entry.buildLight(BASE_THEME.light);
+    }
+
+    const darkVars: Record<string, string> = { ...CSS_VARS.dark };
+    for (const entry of SUBTLE_ENTRIES) {
+        darkVars[entry.varName] = entry.buildDark(BASE_THEME.dark);
+    }
+
     const lightBlock = formatVarsBlock(':root', lightVars);
-    const darkBlock = formatVarsBlock('.dark', CSS_VARS.dark);
+    const darkBlock = formatVarsBlock('.dark', darkVars);
     return `${lightBlock}\n\n${darkBlock}`;
 }
 
