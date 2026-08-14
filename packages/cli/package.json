@@ -19,6 +19,7 @@
         "dist"
     ],
     "scripts": {
+        "prebuild": "pnpm --filter brutx-ui-vue prebuild:tokens",
         "build": "tsup",
         "prepack": "tsup",
         "dev": "tsup --watch",

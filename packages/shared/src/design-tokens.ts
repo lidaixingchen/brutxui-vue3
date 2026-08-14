@@ -385,3 +385,90 @@ export const CSS_VARS: Record<ThemeMode, Record<string, string>> = {
     light: toCssVars(BASE_THEME.light),
     dark: toCssVars(BASE_THEME.dark),
 };
+
+/**
+ * 全局默认字体栈（单一事实来源）：数组为唯一真相，字符串由数组派生。
+ * 下游由生成脚本生成、禁止手改：styles.css @theme 的 `--default-font-family`
+ * 与 preflight.css body 的 `var(--default-font-family, <FONT_STACK>)` 兜底。
+ */
+export const FONT_STACK_PARTS = [
+    '"Inter"',
+    'system-ui',
+    '-apple-system',
+    'BlinkMacSystemFont',
+    '"Segoe UI"',
+    'Roboto',
+    '"Helvetica Neue"',
+    'Arial',
+    '"Noto Sans"',
+    'sans-serif',
+] as const;
+
+export const FONT_STACK = FONT_STACK_PARTS.join(', ');
+
+/** 机械弹性动效缓动曲线令牌 */
+export const EASING_TOKENS = {
+    snap: 'cubic-bezier(0.16, 1, 0.3, 1)',
+    bounce: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+} as const;
+
+export interface SubtleColorDef {
+    key: keyof ThemeTokens;
+    lightPct: number;
+    darkPct: number;
+}
+
+/**
+ * 浅色衍生背景令牌配置表：
+ * 语义色按比例与背景底色 var(--brutal-bg) 融合，自动联动各主题预设的实际底色。
+ * 注：accent(黄色系) 在浅色模式下混合比例提升至 20%（其余为 12%），以确保浅底上有足够的视觉对比度；暗色统一 20%。
+ */
+export const SUBTLE_COLOR_DEFS: readonly SubtleColorDef[] = [
+    { key: 'primary', lightPct: 12, darkPct: 20 },
+    { key: 'secondary', lightPct: 12, darkPct: 20 },
+    { key: 'accent', lightPct: 20, darkPct: 20 },
+    { key: 'destructive', lightPct: 12, darkPct: 20 },
+    { key: 'success', lightPct: 12, darkPct: 20 },
+    { key: 'info', lightPct: 12, darkPct: 20 },
+] as const;
+
+export interface ShadowTokenDefinition {
+    themeVar: string;
+    build: (tokens: ThemeTokens) => string;
+}
+
+/**
+ * 阴影派生令牌定义：
+ * 经 @theme 派生标准 5 层 --tw-shadow 组装工具类；同时在 :root 运行时发射派生变量。
+ */
+export const SHADOW_DEFINITIONS: readonly ShadowTokenDefinition[] = [
+    {
+        themeVar: '--shadow-brutal',
+        build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
+    },
+    {
+        themeVar: '--shadow-brutal-sm',
+        build: l => `calc(var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) / 2) calc(var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) / 2) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
+    },
+    {
+        themeVar: '--shadow-brutal-lg',
+        build: l => `calc(var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) * 1.5) calc(var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) * 1.5) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
+    },
+    {
+        themeVar: '--shadow-brutal-xl',
+        build: l => `calc(var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) * 2) calc(var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) * 2) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
+    },
+    {
+        themeVar: '--shadow-brutal-primary',
+        build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px var(--brutal-primary, ${l.primary})`,
+    },
+    {
+        themeVar: '--shadow-brutal-secondary',
+        build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px var(--brutal-secondary, ${l.secondary})`,
+    },
+    {
+        themeVar: '--shadow-brutal-destructive',
+        build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px color-mix(in srgb, var(--brutal-destructive, ${l.destructive}) 30%, transparent)`,
+    },
+] as const;
+

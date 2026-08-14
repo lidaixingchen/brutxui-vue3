@@ -1,5 +1,5 @@
 /**
- * 从 packages/shared/src/design-tokens.ts 生成样式文件的四处注入块：
+ * 从 packages/shared/src/design-tokens.ts 生成样式文件的注入块：
  *
  * 1. styles.css @theme 块内的变量声明（含 fallback，取自 BASE_THEME.light）
  *    标记：/* @brutx:theme-tokens:start *\/ ... /* @brutx:theme-tokens:end *\/
@@ -7,18 +7,23 @@
  * 2. styles.css @layer base 内的 :root / .dark 块（无 fallback，纯运行时值）
  *    标记：/* @brutx:root-tokens:start *\/ ... /* @brutx:root-tokens:end *\/
  *
- * 3. styles.css @layer base 内的 .theme-pastel / .theme-mono / .theme-warm 预设块
+ * 3. styles.css @layer base 内的主题预设块
  *    标记：/* @brutx:theme-presets:start *\/ ... /* @brutx:theme-presets:end *\/
  *
- * 4. preflight.css body 的 font-family 兜底（源自 FONT_STACK 常量，见下方定义）
+ * 4. preflight.css body 的 font-family 兜底（源自 shared FONT_STACK_PARTS）
  *    标记：/* @brutx:font-stack:start *\/ ... /* @brutx:font-stack:end *\/
  *
+ * 5. packages/cli/src/styles/brutalist.css 标记注入：
+ *    - @theme 区块：/* @brutx:theme-tokens:start *\/ ... /* @brutx:theme-tokens:end *\/
+ *    - :root / .dark 区块：/* @brutx:root-tokens:start *\/ ... /* @brutx:root-tokens:end *\/
+ *    - 主题预设区块：/* @brutx:theme-presets:start *\/ ... /* @brutx:theme-presets:end *\/
+ *    - 保留下方 316~973 行的 650+ 行静态兼容性工具类。
+ *
  * 模式：
- *   - 默认：写回 styles.css 与 preflight.css（prebuild）
+ *   - 默认：写回 styles.css、preflight.css 与 brutalist.css（prebuild）
  *   - --check：仅比对磁盘与生成结果，不一致则退出非零并打印差异摘要（CI 门禁）
  *
  * 运行：pnpm --filter brutx-ui-vue prebuild:tokens
- * 消除 styles.css / preflight.css 与 design-tokens.ts / FONT_STACK 之间的硬编码漂移风险。
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -28,6 +33,11 @@ import {
     BASE_THEME,
     THEME_PRESETS,
     TOKEN_TO_CSS_VAR,
+    FONT_STACK,
+    FONT_STACK_PARTS,
+    EASING_TOKENS,
+    SUBTLE_COLOR_DEFS,
+    SHADOW_DEFINITIONS,
     type ThemeTokens,
 } from 'brutx-shared-vue';
 
@@ -35,6 +45,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const STYLES_PATH = path.resolve(__dirname, '..', 'src', 'styles.css');
 const PREFLIGHT_PATH = path.resolve(__dirname, '..', 'src', 'preflight.css');
+const CLI_BRUTALIST_PATH = path.resolve(__dirname, '..', '..', 'cli', 'src', 'styles', 'brutalist.css');
 
 const ROOT_START = '/* @brutx:root-tokens:start */';
 const ROOT_END = '/* @brutx:root-tokens:end */';
@@ -44,26 +55,6 @@ const PRESETS_START = '/* @brutx:theme-presets:start */';
 const PRESETS_END = '/* @brutx:theme-presets:end */';
 const FONT_STACK_START = '/* @brutx:font-stack:start */';
 const FONT_STACK_END = '/* @brutx:font-stack:end */';
-
-/**
- * 全局默认字体栈（单一事实来源）：数组为唯一真相，字符串由数组派生。
- * 下游两处均由本脚本生成、禁止手改：styles.css @theme 的 `--default-font-family`
- * 与 preflight.css body 的 `var(--default-font-family, <FONT_STACK>)` 兜底。
- */
-const FONT_STACK_PARTS = [
-    '"Inter"',
-    'system-ui',
-    '-apple-system',
-    'BlinkMacSystemFont',
-    '"Segoe UI"',
-    'Roboto',
-    '"Helvetica Neue"',
-    'Arial',
-    '"Noto Sans"',
-    'sans-serif',
-] as const;
-
-const FONT_STACK = FONT_STACK_PARTS.join(', ');
 
 interface ThemeEntry {
     themeVar: string;
@@ -75,82 +66,27 @@ interface ThemeGroup {
     entries: ThemeEntry[];
 }
 
-// 阴影派生令牌：经 @theme 派生标准 5 层 --tw-shadow 组装工具类；同时在 :root 运行时发射派生变量（双发射），
-// 供消费方自定义 CSS 引用及门禁提取。只发 :root 不发 .dark——引用运行时 --brutal-*，亮/暗同一份，
-// fallback 取自 BASE_THEME.light。
-const SHADOW_ENTRIES: ThemeEntry[] = [
-    {
-        themeVar: '--shadow-brutal',
-        build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
-    },
-    {
-        themeVar: '--shadow-brutal-sm',
-        build: l => `calc(var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) / 2) calc(var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) / 2) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
-    },
-    {
-        themeVar: '--shadow-brutal-lg',
-        build: l => `calc(var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) * 1.5) calc(var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) * 1.5) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
-    },
-    {
-        themeVar: '--shadow-brutal-xl',
-        build: l => `calc(var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) * 2) calc(var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) * 2) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
-    },
-    {
-        themeVar: '--shadow-brutal-primary',
-        build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px var(--brutal-primary, ${l.primary})`,
-    },
-    {
-        themeVar: '--shadow-brutal-secondary',
-        build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px var(--brutal-secondary, ${l.secondary})`,
-    },
-    // 危险态半透明红阴影：30% 透明 color-mix 派生
-    {
-        themeVar: '--shadow-brutal-destructive',
-        build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px color-mix(in srgb, var(--brutal-destructive, ${l.destructive}) 30%, transparent)`,
-    },
-];
-
 interface SubtleEntry {
     varName: string;
     buildLight: (l: ThemeTokens) => string;
     buildDark: (d: ThemeTokens) => string;
 }
 
-interface SubtleColorDef {
-    key: keyof ThemeTokens;
-    lightPct: number;
-    darkPct: number;
-}
-
-// 浅色衍生背景令牌配置表：
-// 语义色按比例与背景底色 var(--brutal-bg) 融合，自动联动各主题预设（如 .theme-warm/.theme-mono）的实际底色。
-// 注：accent(黄色系) 在浅色模式下混合比例提升至 20%（其余为 12%），以确保浅底上有足够的视觉对比度；暗色统一 20%。
-const SUBTLE_COLOR_DEFS: SubtleColorDef[] = [
-    { key: 'primary', lightPct: 12, darkPct: 20 },
-    { key: 'secondary', lightPct: 12, darkPct: 20 },
-    { key: 'accent', lightPct: 20, darkPct: 20 },
-    { key: 'destructive', lightPct: 12, darkPct: 20 },
-    { key: 'success', lightPct: 12, darkPct: 20 },
-    { key: 'info', lightPct: 12, darkPct: 20 },
-];
+const SHADOW_ENTRIES: ThemeEntry[] = SHADOW_DEFINITIONS.map(def => ({
+    themeVar: def.themeVar,
+    build: def.build,
+}));
 
 const SUBTLE_ENTRIES: SubtleEntry[] = SUBTLE_COLOR_DEFS.map(({ key, lightPct, darkPct }) => ({
     varName: `brutal-${key}-subtle`,
-    buildLight: l => `color-mix(in srgb, var(--brutal-${key}, ${l[key]}) ${lightPct}%, var(--brutal-bg, #ffffff))`,
-    buildDark: d => `color-mix(in srgb, var(--brutal-${key}, ${d[key]}) ${darkPct}%, var(--brutal-bg, #141414))`,
+    buildLight: (l: ThemeTokens) => `color-mix(in srgb, var(--brutal-${key}, ${l[key]}) ${lightPct}%, var(--brutal-bg, #ffffff))`,
+    buildDark: (d: ThemeTokens) => `color-mix(in srgb, var(--brutal-${key}, ${d[key]}) ${darkPct}%, var(--brutal-bg, #141414))`,
 }));
 
-// 机械弹性动效缓动曲线令牌
-const EASING_ENTRIES: ThemeEntry[] = [
-    {
-        themeVar: '--ease-brutal-snap',
-        build: () => 'cubic-bezier(0.16, 1, 0.3, 1)',
-    },
-    {
-        themeVar: '--ease-brutal-bounce',
-        build: () => 'cubic-bezier(0.34, 1.56, 0.64, 1)',
-    },
-];
+const EASING_ENTRIES: ThemeEntry[] = Object.entries(EASING_TOKENS).map(([key, val]) => ({
+    themeVar: `--ease-brutal-${key}`,
+    build: () => val,
+}));
 
 const NON_COLOR_TOKEN_KEYS = new Set<keyof ThemeTokens>([
     'borderWidth',
@@ -181,14 +117,14 @@ const THEME_GROUPS: ThemeGroup[] = [
         comment: 'Dynamic: subtle backgrounds derived via color-mix',
         entries: SUBTLE_ENTRIES.map(e => ({
             themeVar: `--color-${e.varName}`,
-            build: l => `var(--${e.varName}, ${e.buildLight(l)})`,
+            build: (l: ThemeTokens) => `var(--${e.varName}, ${e.buildLight(l)})`,
         })),
     },
     {
         comment: 'Dynamic: border/radius use --brutal-* for theme support',
         entries: [
-            { themeVar: '--border-width-3', build: l => `var(--brutal-border-width, ${l.borderWidth})` },
-            { themeVar: '--radius-brutal', build: l => `var(--brutal-radius, ${l.radius})` },
+            { themeVar: '--border-width-3', build: (l: ThemeTokens) => `var(--brutal-border-width, ${l.borderWidth})` },
+            { themeVar: '--radius-brutal', build: (l: ThemeTokens) => `var(--brutal-radius, ${l.radius})` },
         ],
     },
     {
@@ -210,14 +146,16 @@ const THEME_GROUPS: ThemeGroup[] = [
     },
 ];
 
-function formatVarsBlock(selector: string, vars: Record<string, string>): string {
+function formatVarsBlock(selector: string, vars: Record<string, string>, indentSpaces = 4): string {
+    const baseIndent = ' '.repeat(indentSpaces);
+    const varIndent = ' '.repeat(indentSpaces + 4);
     const lines = Object.entries(vars).map(
-        ([key, value]) => `        --${key}: ${value};`,
+        ([key, value]) => `${varIndent}--${key}: ${value};`,
     );
-    return `    ${selector} {\n${lines.join('\n')}\n    }`;
+    return `${baseIndent}${selector} {\n${lines.join('\n')}\n${baseIndent}}`;
 }
 
-function generateRootBlock(): string {
+function generateRootBlock(indentSpaces = 4): string {
     const lightVars: Record<string, string> = { ...CSS_VARS.light };
     for (const entry of SHADOW_ENTRIES) {
         lightVars[entry.themeVar.slice(2)] = entry.build(BASE_THEME.light);
@@ -231,8 +169,8 @@ function generateRootBlock(): string {
         darkVars[entry.varName] = entry.buildDark(BASE_THEME.dark);
     }
 
-    const lightBlock = formatVarsBlock(':root', lightVars);
-    const darkBlock = formatVarsBlock('.dark', darkVars);
+    const lightBlock = formatVarsBlock(':root', lightVars, indentSpaces);
+    const darkBlock = formatVarsBlock('.dark', darkVars, indentSpaces);
     return `${lightBlock}\n\n${darkBlock}`;
 }
 
@@ -267,20 +205,21 @@ function collectPresetVars(overrides: Partial<ThemeTokens>, presetName: string):
 }
 
 /** 生成主题预设规则块（.theme-pastel / .theme-mono / .theme-warm 的 light 与 dark） */
-function generateThemePresetsBlock(): string {
+function generateThemePresetsBlock(indentSpaces = 4): string {
     const blocks: string[] = [];
+    const baseIndent = ' '.repeat(indentSpaces);
     for (const preset of Object.values(THEME_PRESETS)) {
         if (preset.description) {
-            blocks.push(`    /* ${preset.description} */`);
+            blocks.push(`${baseIndent}/* ${preset.description} */`);
         }
         const selector = `.theme-${preset.name}`;
         const darkSelector = `.dark .theme-${preset.name}, .theme-${preset.name}.dark`;
 
         const lightVars = collectPresetVars(preset.light, preset.name);
-        blocks.push(formatVarsBlock(selector, lightVars));
+        blocks.push(formatVarsBlock(selector, lightVars, indentSpaces));
 
         const darkVars = collectPresetVars(preset.dark, preset.name);
-        blocks.push(formatVarsBlock(darkSelector, darkVars));
+        blocks.push(formatVarsBlock(darkSelector, darkVars, indentSpaces));
     }
     return blocks.join('\n\n');
 }
@@ -340,35 +279,36 @@ function injectBetweenMarkers(
 
 function main(): void {
     const isCheckMode = process.argv.slice(2).includes('--check');
+    const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v') || process.env.BRUTX_VERBOSE === '1';
 
-    // --- styles.css 令牌块与预设块 ---
+    // --- 1. styles.css 令牌块与预设块 ---
     const stylesOriginal = fs.readFileSync(STYLES_PATH, 'utf-8');
     let stylesContent = stylesOriginal;
 
     const themeBlock = generateThemeBlock();
-    const themeNext = injectBetweenMarkers(stylesContent, THEME_START, THEME_END, themeBlock, STYLES_PATH);
-    const themeChanged = themeNext !== stylesContent;
-    if (themeChanged) {
-        stylesContent = themeNext;
+    const stylesThemeNext = injectBetweenMarkers(stylesContent, THEME_START, THEME_END, themeBlock, STYLES_PATH);
+    const stylesThemeChanged = stylesThemeNext !== stylesContent;
+    if (stylesThemeChanged) {
+        stylesContent = stylesThemeNext;
     }
 
-    const rootBlock = generateRootBlock();
-    const rootNext = injectBetweenMarkers(stylesContent, ROOT_START, ROOT_END, rootBlock, STYLES_PATH);
-    const rootChanged = rootNext !== stylesContent;
-    if (rootChanged) {
-        stylesContent = rootNext;
+    const stylesRootBlock = generateRootBlock(4);
+    const stylesRootNext = injectBetweenMarkers(stylesContent, ROOT_START, ROOT_END, stylesRootBlock, STYLES_PATH);
+    const stylesRootChanged = stylesRootNext !== stylesContent;
+    if (stylesRootChanged) {
+        stylesContent = stylesRootNext;
     }
 
-    const presetsBlock = generateThemePresetsBlock();
-    const presetsNext = injectBetweenMarkers(stylesContent, PRESETS_START, PRESETS_END, presetsBlock, STYLES_PATH);
-    const presetsChanged = presetsNext !== stylesContent;
-    if (presetsChanged) {
-        stylesContent = presetsNext;
+    const stylesPresetsBlock = generateThemePresetsBlock(4);
+    const stylesPresetsNext = injectBetweenMarkers(stylesContent, PRESETS_START, PRESETS_END, stylesPresetsBlock, STYLES_PATH);
+    const stylesPresetsChanged = stylesPresetsNext !== stylesContent;
+    if (stylesPresetsChanged) {
+        stylesContent = stylesPresetsNext;
     }
 
-    const stylesChanged = themeChanged || rootChanged || presetsChanged;
+    const stylesChanged = stylesThemeChanged || stylesRootChanged || stylesPresetsChanged;
 
-    // --- preflight.css 字体栈 ---
+    // --- 2. preflight.css 字体栈 ---
     const preflightOriginal = fs.readFileSync(PREFLIGHT_PATH, 'utf-8');
     const fontStackBlock = generateFontStackBlock();
     const preflightNext = injectBetweenMarkers(
@@ -379,28 +319,74 @@ function main(): void {
         PREFLIGHT_PATH,
     );
     const preflightChanged = preflightNext !== preflightOriginal;
-    const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v') || process.env.BRUTX_VERBOSE === '1';
 
-    if (!stylesChanged && !preflightChanged) {
+    // --- 3. CLI brutalist.css 标记注入 ---
+    let cliChanged = false;
+    let cliOriginal = '';
+    let cliNext = '';
+    let cliThemeChanged = false;
+    let cliRootChanged = false;
+    let cliPresetsChanged = false;
+    const cliRootBlock = generateRootBlock(0);
+    const cliPresetsBlock = generateThemePresetsBlock(0);
+
+    if (fs.existsSync(CLI_BRUTALIST_PATH)) {
+        cliOriginal = fs.readFileSync(CLI_BRUTALIST_PATH, 'utf-8');
+        let cliContent = cliOriginal;
+
+        const cliThemeNext = injectBetweenMarkers(cliContent, THEME_START, THEME_END, themeBlock, CLI_BRUTALIST_PATH);
+        cliThemeChanged = cliThemeNext !== cliContent;
+        if (cliThemeChanged) {
+            cliContent = cliThemeNext;
+        }
+
+        const cliRootNextInner = injectBetweenMarkers(cliContent, ROOT_START, ROOT_END, cliRootBlock, CLI_BRUTALIST_PATH);
+        cliRootChanged = cliRootNextInner !== cliContent;
+        if (cliRootChanged) {
+            cliContent = cliRootNextInner;
+        }
+
+        const cliPresetsNextInner = injectBetweenMarkers(cliContent, PRESETS_START, PRESETS_END, cliPresetsBlock, CLI_BRUTALIST_PATH);
+        cliPresetsChanged = cliPresetsNextInner !== cliContent;
+        if (cliPresetsChanged) {
+            cliContent = cliPresetsNextInner;
+        }
+
+        cliNext = cliContent;
+        cliChanged = cliThemeChanged || cliRootChanged || cliPresetsChanged;
+    }
+
+    const hasAnyChange = stylesChanged || preflightChanged || cliChanged;
+
+    if (!hasAnyChange) {
         if (isVerbose || isCheckMode) {
-            console.log('✓ styles.css 令牌块与 preflight.css 字体栈已是最新');
+            console.log('✓ styles.css、preflight.css 与 CLI brutalist.css 令牌块已是最新');
         }
         return;
     }
 
     if (isCheckMode) {
         console.error('✗ 生成内容与磁盘不一致，需运行 `pnpm prebuild:tokens` 重新生成。');
-        if (themeChanged) {
+        if (stylesThemeChanged) {
             printBlockDiff(stylesOriginal, THEME_START, THEME_END, themeBlock, 'styles.css @theme 令牌块');
         }
-        if (rootChanged) {
-            printBlockDiff(stylesOriginal, ROOT_START, ROOT_END, rootBlock, 'styles.css :root/.dark 区块');
+        if (stylesRootChanged) {
+            printBlockDiff(stylesOriginal, ROOT_START, ROOT_END, stylesRootBlock, 'styles.css :root/.dark 区块');
         }
-        if (presetsChanged) {
-            printBlockDiff(stylesOriginal, PRESETS_START, PRESETS_END, presetsBlock, 'styles.css 主题预设区块');
+        if (stylesPresetsChanged) {
+            printBlockDiff(stylesOriginal, PRESETS_START, PRESETS_END, stylesPresetsBlock, 'styles.css 主题预设区块');
         }
         if (preflightChanged) {
             printBlockDiff(preflightOriginal, FONT_STACK_START, FONT_STACK_END, fontStackBlock, 'preflight.css 字体栈');
+        }
+        if (cliThemeChanged) {
+            printBlockDiff(cliOriginal, THEME_START, THEME_END, themeBlock, 'CLI brutalist.css @theme 令牌块');
+        }
+        if (cliRootChanged) {
+            printBlockDiff(cliOriginal, ROOT_START, ROOT_END, cliRootBlock, 'CLI brutalist.css :root/.dark 区块');
+        }
+        if (cliPresetsChanged) {
+            printBlockDiff(cliOriginal, PRESETS_START, PRESETS_END, cliPresetsBlock, 'CLI brutalist.css 主题预设区块');
         }
         process.exit(1);
     }
@@ -411,7 +397,10 @@ function main(): void {
     if (preflightChanged) {
         fs.writeFileSync(PREFLIGHT_PATH, preflightNext, 'utf-8');
     }
-    console.log('✓ styles.css 令牌块与 preflight.css 字体栈已从 design-tokens.ts / FONT_STACK 重新生成');
+    if (cliChanged) {
+        fs.writeFileSync(CLI_BRUTALIST_PATH, cliNext, 'utf-8');
+    }
+    console.log('✓ styles.css、preflight.css 与 CLI brutalist.css 令牌块已从 design-tokens.ts 重新生成');
 }
 
 main();
