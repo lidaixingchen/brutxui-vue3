@@ -21,7 +21,7 @@ export const tabsListVariants = cva(
         },
         compoundVariants: [
             { size: 'sm', orientation: 'horizontal', class: 'h-9' },
-            { size: 'default', orientation: 'horizontal', class: 'h-12' },
+            { size: 'default', orientation: 'horizontal', class: 'h-11' },
             { size: 'lg', orientation: 'horizontal', class: 'h-14' },
         ],
         defaultVariants: {
@@ -33,7 +33,7 @@ export const tabsListVariants = cva(
 
 export const tabsTriggerVariants = cva(
     [
-        'inline-flex items-center justify-center whitespace-nowrap px-4 py-2',
+        'inline-flex items-center justify-center whitespace-nowrap px-3 h-full',
         'font-bold text-sm tracking-wide',
         'border-3 border-transparent',
         'rounded-brutal',

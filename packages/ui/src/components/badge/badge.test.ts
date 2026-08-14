@@ -56,6 +56,23 @@ describe('Badge', () => {
             expect(classes).toContain('bg-transparent')
             expect(classes).toContain('text-brutal-fg')
         })
+
+        it('applies subtle variant classes', () => {
+            const subtleVariants: Record<string, string> = {
+                'primary-subtle': 'bg-brutal-primary-subtle',
+                'secondary-subtle': 'bg-brutal-secondary-subtle',
+                'accent-subtle': 'bg-brutal-accent-subtle',
+                'danger-subtle': 'bg-brutal-destructive-subtle',
+                'success-subtle': 'bg-brutal-success-subtle',
+                'info-subtle': 'bg-brutal-info-subtle',
+            }
+            Object.entries(subtleVariants).forEach(([variant, expectedBg]) => {
+                const wrapper = mount(Badge, { props: { variant: variant as any } })
+                expect(wrapper.classes()).toContain(expectedBg)
+                expect(wrapper.classes()).toContain('text-brutal-fg')
+                expect(wrapper.classes()).toContain('shadow-brutal-sm')
+            })
+        })
     })
 
     describe('size classes', () => {

@@ -27,10 +27,16 @@ describe('Alert', () => {
             warning: ['bg-brutal-accent', 'text-brutal-accent-foreground'],
             danger: ['bg-brutal-destructive', 'text-brutal-destructive-foreground'],
             info: ['bg-brutal-info', 'text-brutal-info-foreground'],
+            'primary-subtle': ['bg-brutal-primary-subtle', 'text-brutal-fg'],
+            'secondary-subtle': ['bg-brutal-secondary-subtle', 'text-brutal-fg'],
+            'warning-subtle': ['bg-brutal-accent-subtle', 'text-brutal-fg'],
+            'danger-subtle': ['bg-brutal-destructive-subtle', 'text-brutal-fg'],
+            'success-subtle': ['bg-brutal-success-subtle', 'text-brutal-fg'],
+            'info-subtle': ['bg-brutal-info-subtle', 'text-brutal-fg'],
         }
 
         Object.entries(variantMap).forEach(([variant, expectedClasses]) => {
-            const wrapper = mount(Alert, { props: { variant: variant as 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' } })
+            const wrapper = mount(Alert, { props: { variant: variant as any } })
             expectedClasses.forEach((cls) => {
                 expect(wrapper.classes()).toContain(cls)
             })

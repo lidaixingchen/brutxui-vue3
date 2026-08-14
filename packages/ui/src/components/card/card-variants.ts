@@ -22,6 +22,12 @@ export const cardVariants = cva(
                 ],
                 primary: 'shadow-brutal-primary border-brutal-primary',
                 secondary: 'shadow-brutal-secondary border-brutal-secondary',
+                'primary-subtle': 'bg-brutal-primary-subtle shadow-brutal',
+                'secondary-subtle': 'bg-brutal-secondary-subtle shadow-brutal',
+                'accent-subtle': 'bg-brutal-accent-subtle shadow-brutal',
+                'destructive-subtle': 'bg-brutal-destructive-subtle shadow-brutal',
+                'success-subtle': 'bg-brutal-success-subtle shadow-brutal',
+                'info-subtle': 'bg-brutal-info-subtle shadow-brutal',
             },
             padding: {
                 none: 'p-0',

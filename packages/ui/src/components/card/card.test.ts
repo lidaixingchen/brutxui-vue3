@@ -47,6 +47,20 @@ describe('Card', () => {
                 expect(wrapper.classes()).toContain('border-brutal-secondary')
             }
         }
+
+        const subtleVariants: Record<string, string> = {
+            'primary-subtle': 'bg-brutal-primary-subtle',
+            'secondary-subtle': 'bg-brutal-secondary-subtle',
+            'accent-subtle': 'bg-brutal-accent-subtle',
+            'destructive-subtle': 'bg-brutal-destructive-subtle',
+            'success-subtle': 'bg-brutal-success-subtle',
+            'info-subtle': 'bg-brutal-info-subtle',
+        }
+        for (const [variant, bgClass] of Object.entries(subtleVariants)) {
+            const wrapper = mount(Card, { props: { variant: variant as any } })
+            expect(wrapper.classes()).toContain(bgClass)
+            expect(wrapper.classes()).toContain('shadow-brutal')
+        }
     })
 
     it('applies padding classes', () => {

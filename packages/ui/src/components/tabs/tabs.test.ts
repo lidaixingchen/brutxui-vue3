@@ -60,6 +60,7 @@ describe('TabsTrigger', () => {
         expect(wrapper.classes()).toContain('font-bold')
         expect(wrapper.classes()).toContain('border-3')
         expect(wrapper.classes()).toContain('border-transparent')
+        expect(wrapper.classes()).toContain('h-full')
     })
 
     it('applies custom class', () => {
@@ -101,11 +102,16 @@ describe('TabsContent', () => {
 
 describe('TabsList', () => {
     it('applies size variant classes', () => {
-        const wrapper = mount(TabsList, {
+        const wrapperSm = mount(TabsList, {
             props: { size: 'sm' },
             global: { stubs: { TabsList: primitiveStub } },
         })
-        expect(wrapper.classes()).toContain('h-9')
+        expect(wrapperSm.classes()).toContain('h-9')
+
+        const wrapperDefault = mount(TabsList, {
+            global: { stubs: { TabsList: primitiveStub } },
+        })
+        expect(wrapperDefault.classes()).toContain('h-11')
     })
 
     it('defaults to horizontal orientation', () => {
