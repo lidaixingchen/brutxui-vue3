@@ -31,6 +31,7 @@ import { fileURLToPath } from 'node:url'
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const mode = process.argv[2] ?? 'check'
 const dryRun = mode === 'fix' && process.argv.includes('--dry')
+const verbose = process.argv.includes('--verbose') || process.argv.includes('-v')
 
 /** 归一化为 posix 风格相对路径（映射表 key 与输出用） */
 const toPosix = (p) => p.split(path.sep).join('/')
@@ -91,6 +92,7 @@ const MIGRATE = {
   'docs/plans/composables状态只读化方案.md': 'docs/archive/2026/composables状态只读化方案.md',
   'docs/plans/changelog自动化设计.md': 'docs/archive/2026/changelog自动化设计.md',
   'docs/plans/文档目录改造方案.md': 'docs/archive/2026/文档目录改造方案.md',
+  'docs/plans/阴影过渡与焦点体系统一方案.md': 'docs/archive/2026/阴影过渡与焦点体系统一方案.md',
 }
 
 /** 本次删除的文件（check 时其被引用视作死链；fix 不生成） */
@@ -268,14 +270,34 @@ function runCheck() {
 
   const fmt = (item) => `  ${item.rel}:${item.line} → ${item.target}（${item.reason}）`
   console.log(`[check] 扫描 ${files.length} 个 md 文件`)
-  console.log(`[check] 死链 ${dead.length} 处：`)
-  dead.forEach((d) => console.log(fmt(d)))
-  console.log(`[check] 源码引用失效（历史快照，告警） ${stale.length} 处：`)
-  stale.forEach((s) => console.log(fmt(s)))
-  console.log(`[check] file:/// 绝对链接 ${absLinks.length} 处：`)
-  absLinks.forEach((a) => console.log(`  ${a.rel}:${a.line} → ${a.target}`))
-  console.log(`[check] 锚点未匹配告警 ${anchorWarn.length} 处：`)
-  anchorWarn.forEach((w) => console.log(`  ${w.rel}:${w.line} → ${w.target}（标题「${w.heading}」找不到锚点 ${w.anchor}）`))
+
+  if (dead.length > 0) {
+    console.log(`[check] ✗ 死链 ${dead.length} 处：`)
+    dead.forEach((d) => console.log(fmt(d)))
+  } else {
+    console.log(`[check] ✓ 死链 0 处`)
+  }
+
+  if (absLinks.length > 0) {
+    console.log(`[check] ✗ file:/// 绝对链接 ${absLinks.length} 处：`)
+    absLinks.forEach((a) => console.log(`  ${a.rel}:${a.line} → ${a.target}`))
+  } else {
+    console.log(`[check] ✓ file:/// 绝对链接 0 处`)
+  }
+
+  if (anchorWarn.length > 0) {
+    console.log(`[check] ⚠ 锚点未匹配告警 ${anchorWarn.length} 处${verbose ? '：' : '（加 --verbose 展开）'}`)
+    if (verbose) {
+      anchorWarn.forEach((w) => console.log(`  ${w.rel}:${w.line} → ${w.target}（标题「${w.heading}」找不到锚点 ${w.anchor}）`))
+    }
+  }
+
+  if (stale.length > 0) {
+    console.log(`[check] ⚠ 源码引用失效（历史快照，告警） ${stale.length} 处${verbose ? '：' : '（加 --verbose 展开）'}`)
+    if (verbose) {
+      stale.forEach((s) => console.log(fmt(s)))
+    }
+  }
 
   const failed = dead.length > 0 || absLinks.length > 0
   console.log(`[check] 结论：${failed ? `未通过（死链 ${dead.length}、绝对链接 ${absLinks.length}）` : '通过（0 死链、0 绝对链接）'}`)

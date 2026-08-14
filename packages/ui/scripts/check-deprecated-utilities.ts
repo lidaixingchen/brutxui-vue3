@@ -1,8 +1,10 @@
 /**
- * 已废弃工具类防回潮门禁（ring + shadow-[rgba] 硬编码）。
+ * 视觉规范门禁：非标 ring 工具类白名单拦截 + shadow-[rgba] 硬编码防回潮。
  *
  * 依据视觉规则 R2/R7（docs/guides/VISUAL_SYSTEM.md）：
- * - ring 系（box-shadow 实现）已废弃，与 brutal 阴影同属性争用；新增 ring- 前缀类应被拦截。
+ * - 焦点体系采用 ring（FOCUS_RING_CLASSES 五件套及标准变体）。为防止 ring-[...] 任意值、
+ *   非标宽度（如 ring-4）、ring-offset-white 白圈等滥用回潮，对 ring-* 实施白名单校验：
+ *   仅允许白名单内的标准类（FOCUS_RING_CLASSES 配套及少量合法变体）。
  * - 手写 `shadow-[Npx_..._rgba(...)]` 任意值字面量被禁止；应使用 shadow-brutal 系工具类
  *   （含 shadow-brutal-destructive 危险态半透明红阴影）。
  *
@@ -49,6 +51,23 @@ interface Violation {
 // ring 任意值可能含 `(`/`.`/`_`/`#`/`%`/`:` 等字符（如 ring-[var(--x)]、ring-[3px_3px]），
 // 字符类须覆盖，否则违规可被绕过或部分匹配导致计数失真
 const RING_RE = /(?<![\w-])ring(?:-|\[)[a-z0-9[\]().#_%:-]+/g;
+
+// 合法 ring 工具类白名单：FOCUS_RING_CLASSES 五件套及标准变体
+const RING_ALLOWLIST = new Set([
+    // 标准宽度及变体
+    'ring-1',
+    'ring-2',
+    'ring-3',
+    // 颜色类
+    'ring-brutal-ring',
+    'ring-brutal-destructive',
+    'ring-brutal-success',
+    // 偏移与间隙色
+    'ring-offset-1',
+    'ring-offset-2',
+    'ring-offset-brutal-bg',
+]);
+
 // 锚定到 rgba( 函数调用（而非任意位置出现 rgba 子串，避免误判 var(--shadow-rgba) 等变量名）；
 // 加 i 处理 RGBA()/Rgba() 大小写变体（CSS 颜色函数名大小写不敏感）
 const SHADOW_RGBA_RE = /\bshadow-\[[^\]"']*rgba\(/gi;
@@ -100,6 +119,9 @@ function audit(): Violation[] {
         let m: RegExpExecArray | null;
         re.lastIndex = 0;
         while ((m = re.exec(content)) !== null) {
+            if (category === 'RING' && RING_ALLOWLIST.has(m[0])) {
+                continue;
+            }
             all.push({
                 file: path.relative(REPO_ROOT, filePath).replace(/\\/g, '/'),
                 line: computeLineColumn(content, m.index),

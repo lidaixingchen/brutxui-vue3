@@ -2,7 +2,7 @@
  * @source 完整字面量门禁：校验动态拼接产出的类名必须命中源码字面量集。
  *
  * 背景：styles.css 的 @source 指令声明扫描 src 下所有 .vue/.ts 源码，Tailwind 按源码字面量
- * 逐个匹配，无法从 `${expr}` 动态拼接推断类名（见 docs/guides/tailwind-v4-mechanisms.md §4）。
+ * 逐个匹配，无法从 `${expr}` 动态拼接推断类名（见 docs/guides/TAILWIND_V4_MECHANISMS.md §4）。
  *
  * 语义：
  * - 类名上下文 = .ts 中含 `cva(` 的文件内的模板字面量 + .vue 的 class 属性值内的模板字面量；
