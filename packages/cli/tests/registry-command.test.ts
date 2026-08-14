@@ -68,6 +68,20 @@ describe('registry command (基础设施闭环 P1 源管理)', () => {
         });
     });
 
+    it('throws when components.json contains malformed JSON', async () => {
+        await fs.writeFile(path.join(tmpDir, 'components.json'), '{ "invalid_json": ');
+        await expect(registryAdd('https://x.example.com', { cwd: tmpDir })).rejects.toThrow(
+            /Failed to parse components\.json/,
+        );
+    });
+
+    it('throws when components.json is not an object', async () => {
+        await fs.writeFile(path.join(tmpDir, 'components.json'), '["not", "an", "object"]');
+        await expect(registryAdd('https://x.example.com', { cwd: tmpDir })).rejects.toThrow(
+            'Invalid components.json: expected an object.',
+        );
+    });
+
     it('throws on empty URL for add', async () => {
         await writeConfig({ $version: 1 });
         await expect(registryAdd('   ', { cwd: tmpDir })).rejects.toThrow();
