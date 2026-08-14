@@ -134,12 +134,13 @@ describe('ScratchCard', () => {
         expect(wrapper.emitted('completed')).toBeTruthy()
     })
 
-    it('cleans up resize observer on unmount', () => {
+    it('cleans up resize observer on unmount', async () => {
+        const disconnectSpy = vi.spyOn(ResizeObserver.prototype, 'disconnect')
         const wrapper = mount(ScratchCard, {
             slots: { default: 'Content' }
         })
+        await wrapper.vm.$nextTick()
 
-        const disconnectSpy = vi.spyOn(ResizeObserver.prototype, 'disconnect')
         wrapper.unmount()
         expect(disconnectSpy).toHaveBeenCalled()
         disconnectSpy.mockRestore()

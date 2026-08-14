@@ -1,9 +1,11 @@
 import { ref, inject, provide, readonly, getCurrentScope, onScopeDispose, type InjectionKey, type DeepReadonly, type Ref } from 'vue'
-import { MAX_TOASTS } from '../lib/defaults'
+import { MAX_TOASTS, DEFAULT_TOAST_DURATION } from '../lib/defaults'
 import type { VariantProps } from 'class-variance-authority'
 import { toastVariants } from '../components/toast/toast-variants'
 import { isClient } from '../lib/env'
 import { createFallbackManager } from '../lib/fallback-manager'
+
+export { DEFAULT_TOAST_DURATION }
 
 
 type ToastVariantProps = VariantProps<typeof toastVariants>
@@ -59,7 +61,6 @@ export interface UseToastReturn {
 }
 
 const TOAST_KEY: InjectionKey<UseToastReturn> = Symbol('brutx-toast')
-export const DEFAULT_TOAST_DURATION = 5000
 
 export function createToast(isFallback = false, globalOptions?: { grouping?: boolean }): UseToastReturn {
     const toasts = ref<ToastItem[]>([])

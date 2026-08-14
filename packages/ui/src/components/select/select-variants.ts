@@ -1,6 +1,7 @@
 import { cva } from 'class-variance-authority'
 import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
 import { floatingContentAnimationClasses } from '@/lib/floating-animation-classes'
+import { brutalFloatingSurfaceClasses } from '@/lib/floating-content-variants'
 import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const selectTriggerVariants = cva(
@@ -40,7 +41,7 @@ export const selectTriggerVariants = cva(
 export const selectContentVariants = cva(
     [
         'relative z-50 max-h-96 min-w-[8rem] overflow-hidden',
-        'bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal rounded-brutal',
+        ...brutalFloatingSurfaceClasses,
         ...floatingContentAnimationClasses,
     ]
 )

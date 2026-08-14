@@ -44,6 +44,9 @@ export const DEFAULT_TOAST_MAX_VISIBLE = 5
 /** Default vertical gap between toast items in pixels */
 export const DEFAULT_TOAST_GAP_PX = 12
 
+/** Default display duration for toast items in milliseconds */
+export const DEFAULT_TOAST_DURATION = 5000
+
 // ── DataTable ─────────────────────────────────────────────────
 
 /** Default page size options for paginated tables */

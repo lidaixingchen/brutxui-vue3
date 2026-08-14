@@ -6,6 +6,7 @@ import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 import { paginationVariants, paginationButtonVariants } from './pagination-variants'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
+import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_PAGE_SIZE } from '@/lib/defaults'
 import Input from '../input/Input.vue'
 import { SelectRoot, SelectValue } from 'reka-ui'
 import SelectTrigger from '../select/SelectTrigger.vue'
@@ -50,8 +51,8 @@ interface PaginationProps {
 const props = withDefaults(defineProps<PaginationProps>(), {
     totalPages: undefined,
     total: undefined,
-    pageSize: 10,
-    pageSizes: () => [10, 20, 50, 100],
+    pageSize: DEFAULT_PAGE_SIZE,
+    pageSizes: () => [...DEFAULT_PAGE_SIZE_OPTIONS],
     layout: 'sizes, prev, pager, next, jumper, total',
     disabled: false,
     background: false,

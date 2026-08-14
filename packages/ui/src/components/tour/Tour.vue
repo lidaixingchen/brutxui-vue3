@@ -4,6 +4,9 @@ import { useLocale } from '@/composables/useLocale'
 import { useThrottle } from '@/composables/useThrottle'
 import { getCanvas2DContext, getDevicePixelRatio, getResizeObserverCtor, getViewportSize, hasDocument, getWindow, getDocument, getComputedStyle } from '@/lib/env'
 import { Z_INDEX } from '@/lib/z-index'
+import { cn } from '@/lib/utils'
+import { brutalFloatingSurfaceClasses } from '@/lib/floating-content-variants'
+import Button from '../button/Button.vue'
 import type { TourProps, TourStep } from './types'
 
 const props = withDefaults(defineProps<TourProps>(), {
@@ -54,6 +57,13 @@ const texts = computed<{ prev: string; next: string; finish: string; skip: strin
 const currentStepVal = computed<TourStep | undefined>(() => {
     return props.steps[currentStep.value]
 })
+
+const popoverClasses = computed(() =>
+    cn(
+        'fixed p-5 flex flex-col gap-4 max-w-sm min-w-[280px] select-none',
+        brutalFloatingSurfaceClasses
+    )
+)
 
 const getTargetElement = (target: string | HTMLElement | undefined): HTMLElement | null => {
     if (!target) {
@@ -386,7 +396,7 @@ onBeforeUnmount((): void => {
         <div
             ref="popoverRef"
             :style="[popoverStyle, { zIndex: Z_INDEX.TOUR_POPOVER }]"
-            class="fixed bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal p-5 flex flex-col gap-4 max-w-sm rounded-brutal min-w-[280px] select-none"
+            :class="popoverClasses"
         >
             <div v-if="currentStepVal?.title" class="text-lg font-black tracking-wide border-b-2 border-brutal pb-2">
                 {{ currentStepVal.title }}
@@ -396,30 +406,33 @@ onBeforeUnmount((): void => {
             </div>
             <div class="flex items-center justify-between mt-2 pt-2 border-t-2 border-brutal-dashed">
                 <div>
-                    <button
-                        type="button"
-                        class="px-2.5 py-1 text-xs font-black uppercase bg-brutal-bg text-brutal-fg border-2 border-brutal shadow-brutal-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer"
+                    <Button
+                        variant="default"
+                        size="sm"
+                        class="px-2.5 py-1 text-xs uppercase"
                         @click="handleSkip"
                     >
                         {{ texts.skip }}
-                    </button>
+                    </Button>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button
+                    <Button
                         v-if="currentStep > 0"
-                        type="button"
-                        class="px-2.5 py-1 text-xs font-black uppercase bg-brutal-bg text-brutal-fg border-2 border-brutal shadow-brutal-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer"
+                        variant="default"
+                        size="sm"
+                        class="px-2.5 py-1 text-xs uppercase"
                         @click="handlePrev"
                     >
                         {{ texts.prev }}
-                    </button>
-                    <button
-                        type="button"
-                        class="px-2.5 py-1 text-xs font-black uppercase bg-brutal-accent text-brutal-accent-foreground border-2 border-brutal shadow-brutal-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer"
+                    </Button>
+                    <Button
+                        variant="accent"
+                        size="sm"
+                        class="px-2.5 py-1 text-xs uppercase"
                         @click="handleNextOrFinish"
                     >
                         {{ currentStep === steps.length - 1 ? texts.finish : texts.next }}
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

@@ -1,6 +1,7 @@
 import { cva } from 'class-variance-authority'
 import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
 import { floatingContentAnimationClasses } from '@/lib/floating-animation-classes'
+import { brutalFloatingSurfaceClasses } from '@/lib/floating-content-variants'
 import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const cascaderTriggerVariants = cva(
@@ -36,7 +37,7 @@ export const cascaderTriggerVariants = cva(
 export const cascaderContentVariants = cva(
     [
         'relative z-50 overflow-hidden',
-        'bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal rounded-brutal',
+        ...brutalFloatingSurfaceClasses,
         ...floatingContentAnimationClasses,
     ]
 )

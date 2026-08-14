@@ -7,18 +7,11 @@
 
 @theme {
     /* @brutx:theme-tokens:start */
-    /* Dynamic: resolve at runtime via --brutal-* for dark mode support.
-       Fallbacks sourced from BASE_THEME.light (see @brutx:root-tokens markers below). */
+    /* Dynamic color tokens derived from design-tokens.ts:
+       Resolve at runtime via --brutal-* for dark mode and theme presets support.
+       Fallbacks sourced from BASE_THEME.light. */
     --color-brutal-bg: var(--brutal-bg, #ffffff);
     --color-brutal-fg: var(--brutal-fg, #000000);
-    --color-brutal-muted: var(--brutal-muted, #f3f4f6);
-    --color-brutal-muted-foreground: var(--brutal-muted-foreground, #4B5563);
-    --color-brutal-ring: var(--brutal-ring, #000000);
-    --color-brutal-overlay: var(--brutal-overlay, rgba(0, 0, 0, 0.5));
-    --color-brutal-overlay-subtle: var(--brutal-overlay-subtle, rgba(0, 0, 0, 0.05));
-    --color-brutal-placeholder: var(--brutal-placeholder, #9CA3AF);
-
-    /* Dynamic: resolve at runtime so theme presets can override accents */
     --color-brutal-primary: var(--brutal-primary, #FF6B6B);
     --color-brutal-primary-foreground: var(--brutal-primary-foreground, #000000);
     --color-brutal-secondary: var(--brutal-secondary, #4ECDC4);
@@ -29,6 +22,9 @@
     --color-brutal-destructive-foreground: var(--brutal-destructive-foreground, #000000);
     --color-brutal-success: var(--brutal-success, #7FB069);
     --color-brutal-success-foreground: var(--brutal-success-foreground, #000000);
+    --color-brutal-muted: var(--brutal-muted, #f3f4f6);
+    --color-brutal-muted-foreground: var(--brutal-muted-foreground, #4B5563);
+    --color-brutal-ring: var(--brutal-ring, #000000);
     --color-brutal-info: var(--brutal-info, #4A90D9);
     --color-brutal-info-foreground: var(--brutal-info-foreground, #000000);
     --color-brutal-status-success: var(--brutal-status-success, #22c55e);
@@ -39,6 +35,11 @@
     --color-brutal-status-info-foreground: var(--brutal-status-info-foreground, #000000);
     --color-brutal-status-error: var(--brutal-status-error, #EF476F);
     --color-brutal-status-error-foreground: var(--brutal-status-error-foreground, #000000);
+    --color-brutal-overlay: var(--brutal-overlay, rgba(0, 0, 0, 0.5));
+    --color-brutal-overlay-subtle: var(--brutal-overlay-subtle, rgba(0, 0, 0, 0.05));
+    --color-brutal-placeholder: var(--brutal-placeholder, #9CA3AF);
+    --color-brutal-black: var(--brutal-black, #000000);
+    --color-brutal-yellow: var(--brutal-yellow, #FFE66D);
 
     /* Dynamic: subtle backgrounds derived via color-mix */
     --color-brutal-primary-subtle: var(--brutal-primary-subtle, color-mix(in srgb, var(--brutal-primary, #FF6B6B) 12%, var(--brutal-bg, #ffffff)));
@@ -47,10 +48,6 @@
     --color-brutal-destructive-subtle: var(--brutal-destructive-subtle, color-mix(in srgb, var(--brutal-destructive, #EF476F) 12%, var(--brutal-bg, #ffffff)));
     --color-brutal-success-subtle: var(--brutal-success-subtle, color-mix(in srgb, var(--brutal-success, #7FB069) 12%, var(--brutal-bg, #ffffff)));
     --color-brutal-info-subtle: var(--brutal-info-subtle, color-mix(in srgb, var(--brutal-info, #4A90D9) 12%, var(--brutal-bg, #ffffff)));
-
-    /* Static design tokens (not theme-aware) */
-    --color-brutal-black: var(--brutal-black, #000000);
-    --color-brutal-yellow: var(--brutal-yellow, #FFE66D);
 
     /* Dynamic: border/radius use --brutal-* for theme support */
     --border-width-3: var(--brutal-border-width, 3px);

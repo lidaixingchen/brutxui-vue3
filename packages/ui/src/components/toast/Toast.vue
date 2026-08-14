@@ -7,7 +7,7 @@ import Button from '../button/Button.vue'
 import { toastVariants } from './toast-variants'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
-import { DEFAULT_TOAST_DURATION } from '@/composables/useToast'
+import { DEFAULT_TOAST_DURATION } from '@/lib/defaults'
 
 type ToastVariantProps = VariantProps<typeof toastVariants>
 
