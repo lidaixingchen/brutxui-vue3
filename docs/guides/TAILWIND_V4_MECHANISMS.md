@@ -76,3 +76,18 @@ node --input-type=module -e "import { twMerge } from 'tailwind-merge'; console.l
 - 禁止字面量缺一截的拼接（如 `h-[var(--sep-thickness,${DEFAULT_THICKNESS})]` 把变量值嵌入任意值内部）——`${}` 内的值不会进入 Tailwind 扫描结果，产物缺失该类。
 
 **验证**：`grep -rnE '\$\{' packages/ui/src` 逐一核验（排除非类名上下文，如对象键、console 文案），并由 `check:class-literals` 门禁以类名上下文为界自动拦截（见 COMPONENT_GUIDE cn() 规则）。
+
+## §5 设计令牌单一信源（SSOT）与多端自动化派生机制
+
+全库设计令牌（颜色、阴影、动效缓动、字体栈、预设值）唯一事实来源为 `packages/shared/src/design-tokens.ts`（严格保持 0 外部依赖）。
+
+**自动化派生流向**：
+- `packages/ui/src/styles.css`：自动生成 `@theme`、`:root/.dark` 基础运行时变量与主题预设（`.theme-*`）；
+- `packages/ui/src/preflight.css`：自动生成 body 字体栈回退；
+- `packages/cli/src/styles/brutalist.css`：通过注释标记（Marker Injection）自动同步注入 `@theme` 与 `:root/.dark` 令牌及主题预设，并保护后方 650+ 行面向非 Tailwind v4 项目的静态工具类。
+
+**开发期规则**：
+- 严禁手动修改 `styles.css` 或 `brutalist.css` 中的令牌声明；
+- 修改令牌只需更新 `packages/shared/src/design-tokens.ts`，运行 `pnpm prebuild:tokens` 即可完成多端同步；
+- CI 门禁通过 `pnpm prebuild:tokens -- --check` 拦截任何未重新生成的样式文件漂移。
+

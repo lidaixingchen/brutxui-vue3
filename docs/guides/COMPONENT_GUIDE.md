@@ -6,7 +6,7 @@
 
 - **Props 声明**：统一采用 `<script setup lang="ts">` 配合 `defineProps<T>()` + `withDefaults()`。
 - **无障碍原语**：始终使用 `reka-ui` 实现无障碍无头原语。
-- **统一导出**：始终从 `src/index.ts` 导出新组件及公开的 TypeScript 类型。
+- **统一导出与生成**：始终从 `src/index.ts` 导出新组件及公开的 TypeScript 类型；组件目录下的 `index.ts` 由 `prebuild:component-index` 自动生成，测试文件遵循 `${kebabName}.test.ts` 命名规范。
 - **优先复用库内组件**：创建或修改组件时，优先复用现有 BrutxUI 组件，禁止用 native HTML 元素替代已有组件（如用 `Button` 而非 `<button>`、`Select` 系列而非 `<select>`/`<option>`、`Badge` 而非手写 badge `<div>`、`Input` 而非 `<input>`），防止重复造轮子；仅在特殊 ARIA 角色、内联图标切换等无对应组件的场景下方可使用 native 元素。
 - **定价区单一主实现**：`PricingSection` 是定价区唯一主实现，支持一次性价格与订阅切换；定价能力一律扩展 `PricingSection`，禁止新增或维护第二套定价逻辑。
 
@@ -74,13 +74,13 @@
 
 | 顺序 | 阶段 | 操作 / 运行命令 | 说明 / 验证方式 |
 | --- | --- | --- | --- |
-| 1 | **元数据登记** | 在 `packages/shared/src/components.ts` 的 `COMPONENTS` 中登记元数据（先 grep 确认 key 未被占用） | 声明 `dependencies`、`category`、`kind` 等元数据 |
+| 1 | **元数据登记** | 在 `packages/shared/src/components.ts` 的 `COMPONENTS` 中登记元数据（先 grep 确认 key 未被占用） | 必填 `titleZh`（中文名）、`category`（所属分类）、`description`、`dependencies`，可选 `kind` 等元数据（全库单一事实来源） |
 | 2 | **生成清单** | 在根目录下运行 `pnpm --filter brutx-ui-vue prebuild:scan` | 自动发现新组件文件，更新 `registry-manifest.json` |
 | 3 | **编译注册表** | 在根目录下运行 `pnpm --filter brutx-registry-vue build` | 编译组件 JSON，可用 `pnpm --filter brutx-registry-vue validate` 验证 |
 | 4 | **国际化检查** | 运行 `pnpm check:i18n:strict` | 严格校验中英文国际化 key 的镜像对称性 |
 | 5 | **本地局部自检** | ① 对修改文件运行 `npx eslint <changed-files> --fix`<br>② 对修改的子包运行类型检查（如 `pnpm --filter brutx-ui-vue typecheck`） | **核心**：仅自检被修改的文件或子包，严禁全局重型自检以节省资源 |
-| 6 | **编写演示组件** | 在 `apps/docs/.vitepress/theme/components/demos/` 目录下创建或更新 `{ComponentName}Demo.vue` | 遵循 `PascalCaseDemo.vue` 命名规范，用作文档预览 |
+| 6 | **编写演示组件** | 在 `apps/docs/.vitepress/theme/components/demos/` 目录下创建 `{ComponentName}Demo.vue` | 遵循 `PascalCaseDemo.vue` 命名规范，由 `import.meta.glob` 自动发现注册，无需手写 `index.ts` 注册 |
 | 7 | **编写文档** | 在 `apps/docs/components/` 和 `apps/docs/en/components/` 创建或更新 `{name}.md` 文档，并通过 `<{ComponentName}Demo />` 引入演示 | 必须符合 [COMPONENT_DOC_TEMPLATE.md](COMPONENT_DOC_TEMPLATE.md) 模板 |
-| 8 | **文档侧边栏** | 在 `apps/docs/.vitepress/config.ts` 中配置中文/英文 sidebar | 可通过 `pnpm --filter docs build` 验证文档构建 |
+| 8 | **文档侧边栏** | 侧边栏由 `sidebar-generator.ts` 基于 `COMPONENTS` 自动派生 | 无需手动维护中文名字典，可通过 `pnpm --filter docs build` 验证文档构建 |
 | 9 | **更新 AI 技能** | 在 `skills/brutxui/SKILL.md` 中同步新组件和函数 | 便于后续 AI Agent 能够识别并合理复用 |
 | 10 | **约定引用校验** | 运行 `pnpm check:guide-refs` | 校验 guide/skills 无已删除符号引用，登记组件均有中英文文档 |

@@ -7,7 +7,10 @@
 | 文件 | 触发更新的命令 |
 | --- | --- |
 | `packages/ui/registry-manifest.json` | `pnpm build` / `prebuild:scan`（lint、typecheck 也会前置执行，幂等） |
-| `packages/ui/src/styles.css` 的 `@theme` 与运行时 tokens | `prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
+| `packages/ui/src/styles.css` 的 `@theme`、`:root/.dark` 与预设 tokens | `prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
+| `packages/ui/src/preflight.css` 的 body 字体栈 | `prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
+| `packages/cli/src/styles/brutalist.css` 的令牌与预设标记块 | `prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
+| `packages/ui/src/components/*/index.ts` 组件级导出文件 | `prebuild:component-index`（唯一数据源组件目录结构与变体） |
 
 ## 单体仓库
 
