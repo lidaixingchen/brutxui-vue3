@@ -309,9 +309,9 @@ export { stepperDotVariants, stepperConnectorVariants } from './components/stepp
 export { cn, FOCUS_RING_CLASSES } from './lib/utils'
 export { renderImperative } from './lib/render-imperative'
 export type { RenderImperativeOptions, RenderImperativeReturn } from './lib/render-imperative'
-export { hsvToRgb, rgbToHsv, rgbToHsl, hslToRgb, hsvToHex, hsvToHexAlpha, hexToHsv, hexToRgb, parseColor, isValidColor, formatColor, normalizeColor } from './lib/color'
+export { hsvToRgb, hsvToHex, hsvToHexAlpha, parseColor, isValidColor, formatColor, normalizeColor } from './lib/color'
 export type { HSVColor, RGBColor, HSLColor, ColorFormat } from './lib/color'
-export { getISOWeekNumber, getWeekStartDate, formatDate, parseFormattedDate } from './lib/date'
+export { getWeekStartDate, formatDate, parseFormattedDate } from './lib/date'
 export { DEFAULT_COLOR_PRESETS } from './lib/default-presets'
 export type { ColorPreset } from './lib/default-presets'
 export { iconSizeVariants } from './lib/icon-size-variants'
@@ -322,21 +322,11 @@ export type { VariantProps } from 'class-variance-authority'
 export { BrutxUIPlugin } from './plugin'
 export type { BrutxUIPluginOptions } from './plugin'
 
-// Vue Devtools 插件
-export { devtoolsPlugin, setupDevtools, useDevtools } from './lib/devtools-plugin'
-export type {
-    DevtoolsPluginOptions,
-    BrutxUIDevtoolsContext,
-    EventLogEntry,
-    PerformanceEntry,
-    DevtoolsComponentMeta,
-    PerformanceReport,
-} from './lib/devtools-plugin'
 export { useLocale, provideLocale } from './composables/useLocale'
 export type { TranslateFunction } from './composables/useLocale'
 export { useColorHistory } from './composables/useColorHistory'
 export type { UseColorHistoryOptions, UseColorHistoryReturn } from './composables/useColorHistory'
-export { zhCN, en, mergeLocale } from './locales'
+export { zhCN, en } from './locales'
 export type { Locale, CommandLocale, ComboboxLocale, PaginationLocale, CarouselLocale, SpinnerLocale, SubmitButtonLocale, CopyToClipboardLocale, BeforeAfterLocale, AuthCardLocale, DashboardShellLocale, BrutalistHeroLocale, ToastLocale, DialogLocale, SheetLocale, BreadcrumbLocale, TreeViewLocale, TreeSelectLocale, StepperLocale, HeaderSectionLocale, FooterSectionLocale, FeedbackFormLocale, CookieConsentLocale, DataTableLocale, FormWizardLocale, ChatBubbleLocale, ScratchCardLocale, SketchyChartLocale, Card3dLocale, HardcoreInputLocale, CodeBlockLocale, KanbanLocale, CalendarLocale, DatePickerLocale, ColorPickerLocale, ColorModeSwitcherLocale, PricingSectionLocale, InputLocale, NumberInputLocale, TextareaLocale, VirtualScrollLocale, SwitchLocale, CheckboxLocale, TagsInputLocale, BadgeLocale, AlertLocale } from './locales/types'
 
 // 新增新粗野主义交互与数据可视化组件导出
@@ -377,7 +367,6 @@ export { useCanvasInteraction } from './composables/useCanvasInteraction'
 
 export { useColorPicker } from './composables/useColorPicker'
 export type { UseColorPickerOptions } from './composables/useColorPicker'
-export { useAnimation } from './composables/useAnimation'
 export { useFormFieldValidation } from './composables/useFormFieldValidation'
 export type { UseFormFieldValidationOptions, ValidationState, ValidationRule, ValidateOn } from './composables/useFormFieldValidation'
 
@@ -477,7 +466,6 @@ export type { UseThemeReturn } from './composables/useTheme'
 
 export type { UseColorPickerReturn } from './composables/useColorPicker'
 export type { UseFormFieldValidationReturn } from './composables/useFormFieldValidation'
-export type { UseAnimationReturn } from './composables/useAnimation'
 export type { UseAudioEngineReturn } from './composables/useAudioEngine'
 export type { UseCanvasInteractionReturn } from './composables/useCanvasInteraction'
 export type { UseDataTableSortReturn } from './composables/useDataTableSort'

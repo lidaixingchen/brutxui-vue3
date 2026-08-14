@@ -292,11 +292,17 @@ function collectPresetVars(overrides: Partial<ThemeTokens>, presetName: string):
 function generateThemePresetsBlock(): string {
     const blocks: string[] = [];
     for (const preset of Object.values(THEME_PRESETS)) {
+        if (preset.description) {
+            blocks.push(`    /* ${preset.description} */`);
+        }
+        const selector = `.theme-${preset.name}`;
+        const darkSelector = `.dark .theme-${preset.name}, .theme-${preset.name}.dark`;
+
         const lightVars = collectPresetVars(preset.light, preset.name);
-        blocks.push(formatVarsBlock(preset.selector, lightVars));
+        blocks.push(formatVarsBlock(selector, lightVars));
 
         const darkVars = collectPresetVars(preset.dark, preset.name);
-        blocks.push(formatVarsBlock(preset.darkSelector, darkVars));
+        blocks.push(formatVarsBlock(darkSelector, darkVars));
     }
     return blocks.join('\n\n');
 }

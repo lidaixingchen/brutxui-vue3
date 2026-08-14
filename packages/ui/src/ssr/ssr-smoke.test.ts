@@ -621,7 +621,6 @@ describe('SSR smoke: composables', () => {
                 emit: (() => {}) as never,
             }),
         },
-        { name: 'useAnimation', fn: () => BrutxUI.useAnimation() },
         { name: 'useFormFieldValidation', fn: () => BrutxUI.useFormFieldValidation() },
         { name: 'useAudioEngine', fn: () => BrutxUI.useAudioEngine(ref(false)) },
         // useCanvasInteraction 需要完整的 options（所有字段 required）

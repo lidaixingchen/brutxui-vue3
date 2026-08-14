@@ -79,8 +79,6 @@ export { useDataTablePagination } from './useDataTablePagination'
 export type { UseDataTablePaginationOptions, UseDataTablePaginationReturn } from './useDataTablePagination'
 
 // 动画/Canvas 类
-export { useAnimation } from './useAnimation'
-export type { UseAnimationReturn } from './useAnimation'
 export { useReducedMotion } from './useReducedMotion'
 export { useGlitchEffect } from './useGlitchEffect'
 export type { GlitchTrigger, UseGlitchEffectOptions } from './useGlitchEffect'
