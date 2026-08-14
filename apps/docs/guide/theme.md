@@ -24,22 +24,33 @@ BrutxUI 使用 CSS 自定义属性（设计令牌）来控制新粗野主义系�
 | `--brutal-bg` | `#ffffff` | `#141414` | 背景颜色 |
 | `--brutal-fg` | `#000000` | `#ffffff` | 前景（文本）颜色 |
 | `--brutal-primary` | `#FF6B6B` | `#FF6B6B` | 主色（珊瑚色） |
+| `--brutal-primary-foreground` | `#000000` | `#000000` | 主色前景文字（高对比黑字） |
 | `--brutal-secondary` | `#4ECDC4` | `#4ECDC4` | 辅助色（薄荷青） |
+| `--brutal-secondary-foreground` | `#000000` | `#000000` | 辅助色前景文字（高对比黑字） |
 | `--brutal-accent` | `#FFE66D` | `#FFE66D` | 强调色（黄色） |
+| `--brutal-accent-foreground` | `#000000` | `#000000` | 强调色前景文字（高对比黑字） |
 | `--brutal-destructive` | `#EF476F` | `#EF476F` | 危险/错误颜色 |
+| `--brutal-destructive-foreground` | `#000000` | `#000000` | 危险色前景文字（高对比黑字） |
 | `--brutal-success` | `#7FB069` | `#7FB069` | 成功颜色 |
+| `--brutal-success-foreground` | `#000000` | `#000000` | 成功色前景文字（高对比黑字） |
 | `--brutal-muted` | `#f3f4f6` | `#1e1e1e` | 柔和背景 |
 | `--brutal-muted-foreground` | `#4B5563` | `#9CA3AF` | 柔和文本颜色 |
 | `--brutal-ring` | `#000000` | `#ffffff` | 焦点环颜色 |
 | `--brutal-info` | `#4A90D9` | `#3B82F6` | 信息颜色 |
-| `--brutal-overlay` | `rgba(0,0,0,0.5)` | `rgba(0,0,0,0.7)` | 遮罩背景 |
+| `--brutal-info-foreground` | `#000000` | `#000000` | 信息色前景文字（高对比黑字） |
+| `--brutal-status-success` | `#22c55e` | `#22c55e` | 状态指示器成功色 |
+| `--brutal-status-success-foreground` | `#000000` | `#000000` | 状态成功色前景文字 |
+| `--brutal-status-warning` | `#FFE66D` | `#FFE66D` | 状态指示器警告色 |
+| `--brutal-status-warning-foreground` | `#000000` | `#000000` | 状态警告色前景文字 |
+| `--brutal-status-info` | `#3b82f6` | `#3b82f6` | 状态指示器信息色 |
+| `--brutal-status-info-foreground` | `#000000` | `#000000` | 状态信息色前景文字 |
+| `--brutal-status-error` | `#EF476F` | `#EF476F` | 状态指示器错误色 |
+| `--brutal-status-error-foreground` | `#000000` | `#000000` | 状态错误色前景文字 |
+| `--brutal-overlay` | `rgba(0, 0, 0, 0.5)` | `rgba(0, 0, 0, 0.7)` | 遮罩背景 |
+| `--brutal-overlay-subtle` | `rgba(0, 0, 0, 0.05)` | `rgba(255, 255, 255, 0.05)` | 微妙浅层遮罩背景 |
 | `--brutal-placeholder` | `#9CA3AF` | `#6B7280` | 占位符文本颜色 |
-| `--brutal-primary-foreground` | `#FFFFFF` | — | 主色前景文字 |
-| `--brutal-secondary-foreground` | `#FFFFFF` | — | 辅助色前景文字 |
-| `--brutal-accent-foreground` | `#2D1810` | — | 强调色前景文字 |
-| `--brutal-destructive-foreground` | `#FFFFFF` | — | 危险色前景文字 |
-| `--brutal-success-foreground` | `#FFFFFF` | — | 成功色前景文字 |
-| `--brutal-info-foreground` | `#FFFFFF` | — | 信息色前景文字 |
+| `--brutal-black` | `#000000` | `#000000` | 品牌标准黑色 |
+| `--brutal-yellow` | `#FFE66D` | `#FFE66D` | 品牌标准黄色 |
 
 ## 主题预设
 

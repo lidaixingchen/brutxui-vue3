@@ -25,22 +25,33 @@ All tokens are prefixed with `--brutal-` and defined at the `:root` level:
 | `--brutal-bg` | `#ffffff` | `#141414` | Background color |
 | `--brutal-fg` | `#000000` | `#ffffff` | Foreground (text) color |
 | `--brutal-primary` | `#FF6B6B` | `#FF6B6B` | Primary color (coral) |
+| `--brutal-primary-foreground` | `#000000` | `#000000` | Primary foreground text (high contrast black) |
 | `--brutal-secondary` | `#4ECDC4` | `#4ECDC4` | Secondary color (mint teal) |
+| `--brutal-secondary-foreground` | `#000000` | `#000000` | Secondary foreground text (high contrast black) |
 | `--brutal-accent` | `#FFE66D` | `#FFE66D` | Accent color (yellow) |
+| `--brutal-accent-foreground` | `#000000` | `#000000` | Accent foreground text (high contrast black) |
 | `--brutal-destructive` | `#EF476F` | `#EF476F` | Danger/error color |
+| `--brutal-destructive-foreground` | `#000000` | `#000000` | Destructive foreground text (high contrast black) |
 | `--brutal-success` | `#7FB069` | `#7FB069` | Success color |
+| `--brutal-success-foreground` | `#000000` | `#000000` | Success foreground text (high contrast black) |
 | `--brutal-muted` | `#f3f4f6` | `#1e1e1e` | Muted background |
 | `--brutal-muted-foreground` | `#4B5563` | `#9CA3AF` | Muted text color |
 | `--brutal-ring` | `#000000` | `#ffffff` | Focus ring color |
 | `--brutal-info` | `#4A90D9` | `#3B82F6` | Info color |
-| `--brutal-overlay` | `rgba(0,0,0,0.5)` | `rgba(0,0,0,0.7)` | Overlay background |
+| `--brutal-info-foreground` | `#000000` | `#000000` | Info foreground text (high contrast black) |
+| `--brutal-status-success` | `#22c55e` | `#22c55e` | Status indicator success color |
+| `--brutal-status-success-foreground` | `#000000` | `#000000` | Status success foreground text |
+| `--brutal-status-warning` | `#FFE66D` | `#FFE66D` | Status indicator warning color |
+| `--brutal-status-warning-foreground` | `#000000` | `#000000` | Status warning foreground text |
+| `--brutal-status-info` | `#3b82f6` | `#3b82f6` | Status indicator info color |
+| `--brutal-status-info-foreground` | `#000000` | `#000000` | Status info foreground text |
+| `--brutal-status-error` | `#EF476F` | `#EF476F` | Status indicator error color |
+| `--brutal-status-error-foreground` | `#000000` | `#000000` | Status error foreground text |
+| `--brutal-overlay` | `rgba(0, 0, 0, 0.5)` | `rgba(0, 0, 0, 0.7)` | Overlay background |
+| `--brutal-overlay-subtle` | `rgba(0, 0, 0, 0.05)` | `rgba(255, 255, 255, 0.05)` | Subtle overlay background |
 | `--brutal-placeholder` | `#9CA3AF` | `#6B7280` | Placeholder text color |
-| `--brutal-primary-foreground` | `#FFFFFF` | — | Primary color foreground text |
-| `--brutal-secondary-foreground` | `#FFFFFF` | — | Secondary color foreground text |
-| `--brutal-accent-foreground` | `#2D1810` | — | Accent color foreground text |
-| `--brutal-destructive-foreground` | `#FFFFFF` | — | Destructive color foreground text |
-| `--brutal-success-foreground` | `#FFFFFF` | — | Success color foreground text |
-| `--brutal-info-foreground` | `#FFFFFF` | — | Info color foreground text |
+| `--brutal-black` | `#000000` | `#000000` | Brand standard black |
+| `--brutal-yellow` | `#FFE66D` | `#FFE66D` | Brand standard yellow |
 
 ## Theme Presets
 
