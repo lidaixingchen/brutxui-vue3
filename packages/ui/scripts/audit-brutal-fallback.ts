@@ -76,6 +76,9 @@ function normalizeCssValue(value: string): string {
  */
 const INTENTIONAL_FALLBACK_OVERRIDES = new Set([
     'components/image/Image.vue:--brutal-muted',
+    // styles.css .dark 块中的 subtle 衍生色 fallback 为暗色主题基准值（#141414 / #3B82F6），属暗色作用域有意偏离
+    'styles.css:--brutal-bg',
+    'styles.css:--brutal-info',
 ]);
 
 function walkSourceFiles(root: string): string[] {
