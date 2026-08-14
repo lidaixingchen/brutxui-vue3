@@ -180,7 +180,7 @@ describe('devtoolsPlugin', () => {
             context = app.config.globalProperties.__BRUTX_UI_DEVTOOLS__ as BrutxUIDevtoolsContext
         })
 
-        it('should measure synchronous function', () => {
+        it('should measure synchronous function silently by default', () => {
             const consoleSpy = vi.spyOn(console, 'log')
 
             const result = context.measure('test-operation', () => {
@@ -193,12 +193,13 @@ describe('devtoolsPlugin', () => {
                 name: 'test-operation',
                 component: 'Button',
             })
-            expect(consoleSpy).toHaveBeenCalledWith(
+            // 默认不向控制台打印普通测量日志
+            expect(consoleSpy).not.toHaveBeenCalledWith(
                 expect.stringContaining('test-operation:')
             )
         })
 
-        it('should measure async function', async () => {
+        it('should measure async function silently by default', async () => {
             const consoleSpy = vi.spyOn(console, 'log')
 
             const result = await context.measureAsync('async-operation', async () => {
@@ -211,8 +212,27 @@ describe('devtoolsPlugin', () => {
                 name: 'async-operation',
                 component: 'Input',
             })
-            expect(consoleSpy).toHaveBeenCalledWith(
+            expect(consoleSpy).not.toHaveBeenCalledWith(
                 expect.stringContaining('async-operation:')
+            )
+        })
+
+        it('should log to console when enablePerformanceLogging is true', () => {
+            app = createApp({})
+            process.env.NODE_ENV = 'development'
+            app.use(devtoolsPlugin, {
+                enablePerformance: true,
+                enablePerformanceLogging: true,
+                performanceThreshold: 100,
+            })
+            context = app.config.globalProperties.__BRUTX_UI_DEVTOOLS__ as BrutxUIDevtoolsContext
+
+            const consoleSpy = vi.spyOn(console, 'log')
+            const result = context.measure('verbose-op', () => 42, 'Button')
+
+            expect(result).toBe(42)
+            expect(consoleSpy).toHaveBeenCalledWith(
+                expect.stringContaining('verbose-op:')
             )
         })
 

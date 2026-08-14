@@ -22,6 +22,8 @@ export interface DevtoolsPluginOptions {
     libraryName?: string
     /** 是否启用性能分析，默认 true */
     enablePerformance?: boolean
+    /** 是否启用性能测量控制台日志（正常耗时），默认 false */
+    enablePerformanceLogging?: boolean
     /** 是否启用事件日志，默认 true */
     enableEventLogging?: boolean
     /** 是否启用组件树可视化，默认 true */
@@ -217,6 +219,7 @@ const PLUGIN_NAME = 'BrutxUI Devtools'
 const DEFAULT_OPTIONS: Required<DevtoolsPluginOptions> = {
     libraryName: 'BrutxUI',
     enablePerformance: true,
+    enablePerformanceLogging: false,
     enableEventLogging: true,
     enableComponentTree: true,
     maxEventLogSize: 100,
@@ -253,7 +256,7 @@ function createDevtoolsContext(options: Required<DevtoolsPluginOptions>): BrutxU
                 console.warn(
                     `[${options.libraryName}] 性能警告: ${name} 耗时 ${duration.toFixed(2)}ms (阈值: ${options.performanceThreshold}ms)`
                 )
-            } else {
+            } else if (options.enablePerformanceLogging) {
                 console.log(
                     `[${options.libraryName}] ${name}: ${duration.toFixed(2)}ms`
                 )
