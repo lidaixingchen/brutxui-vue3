@@ -48,9 +48,9 @@ interface Violation {
     category: 'RING' | 'SHADOW_RGBA';
 }
 
-// ring 任意值可能含 `(`/`.`/`_`/`#`/`%`/`:` 等字符（如 ring-[var(--x)]、ring-[3px_3px]），
+// ring 任意值可能含 `(`/`.`/`_`/`#`/`%`/`:`/`/` 等字符（如 ring-[var(--x)]、ring-[3px_3px]、ring-black/50），
 // 字符类须覆盖，否则违规可被绕过或部分匹配导致计数失真
-const RING_RE = /(?<![\w-])ring(?:-|\[)[a-z0-9[\]().#_%:-]+/g;
+const RING_RE = /(?<![\w-])ring(?:-|\[)[a-z0-9[\]().#_%:/-]+/g;
 
 // 合法 ring 工具类白名单：FOCUS_RING_CLASSES 五件套及标准变体
 const RING_ALLOWLIST = new Set([
