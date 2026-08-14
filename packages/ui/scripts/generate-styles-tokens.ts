@@ -66,6 +66,41 @@ interface ThemeGroup {
     entries: ThemeEntry[];
 }
 
+// 阴影派生令牌：经 @theme 派生标准 5 层 --tw-shadow 组装工具类；同时在 :root 运行时发射派生变量（双发射），
+// 供消费方自定义 CSS 引用及门禁提取。只发 :root 不发 .dark——引用运行时 --brutal-*，亮/暗同一份，
+// fallback 取自 BASE_THEME.light。
+const SHADOW_ENTRIES: ThemeEntry[] = [
+    {
+        themeVar: '--shadow-brutal',
+        build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
+    },
+    {
+        themeVar: '--shadow-brutal-sm',
+        build: l => `calc(var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) / 2) calc(var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) / 2) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
+    },
+    {
+        themeVar: '--shadow-brutal-lg',
+        build: l => `calc(var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) * 1.5) calc(var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) * 1.5) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
+    },
+    {
+        themeVar: '--shadow-brutal-xl',
+        build: l => `calc(var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) * 2) calc(var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) * 2) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
+    },
+    {
+        themeVar: '--shadow-brutal-primary',
+        build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px var(--brutal-primary, ${l.primary})`,
+    },
+    {
+        themeVar: '--shadow-brutal-secondary',
+        build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px var(--brutal-secondary, ${l.secondary})`,
+    },
+    // 危险态半透明红阴影：30% 透明 color-mix 派生
+    {
+        themeVar: '--shadow-brutal-destructive',
+        build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px color-mix(in srgb, var(--brutal-destructive, ${l.destructive}) 30%, transparent)`,
+    },
+];
+
 const THEME_GROUPS: ThemeGroup[] = [
     {
         comment:
@@ -129,43 +164,9 @@ const THEME_GROUPS: ThemeGroup[] = [
             },
         ],
     },
-];
-
-// 阴影派生令牌：原属 @theme，Tailwind 据此自动生成 5 层 --tw-shadow 组合工具类，与手写单层类
-// 之间发生 1↔5 层过渡（悬停/按压双影鬼影）。移出 @theme 为普通 :root 派生变量 + styles.css 内
-// @utility 单层工具类，变体由 Tailwind 按需生成；只发 :root 不发 .dark——引用运行时 --brutal-*，
-// 亮/暗同一份，fallback 取自 BASE_THEME.light（与原文 @theme build() 一致）。
-const SHADOW_ENTRIES: ThemeEntry[] = [
     {
-        themeVar: '--shadow-brutal',
-        build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
-    },
-    {
-        themeVar: '--shadow-brutal-sm',
-        build: l => `calc(var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) / 2) calc(var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) / 2) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
-    },
-    {
-        themeVar: '--shadow-brutal-lg',
-        build: l => `calc(var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) * 1.5) calc(var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) * 1.5) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
-    },
-    {
-        themeVar: '--shadow-brutal-xl',
-        build: l => `calc(var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) * 2) calc(var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) * 2) 0px 0px var(--brutal-shadow-color, ${l.shadowColor})`,
-    },
-    {
-        themeVar: '--shadow-brutal-primary',
-        build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px var(--brutal-primary, ${l.primary})`,
-    },
-    {
-        themeVar: '--shadow-brutal-secondary',
-        build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px var(--brutal-secondary, ${l.secondary})`,
-    },
-    // 危险态半透明红阴影：30% 透明 color-mix 派生（WW1/WW5/WW6 统一版本）。
-    // 与 styles.css 的 @utility shadow-brutal-destructive 手写行同批合入（漏 @utility 则工具类
-    // 指向未定义变量 → 计算值无效 → none 静默失效）。
-    {
-        themeVar: '--shadow-brutal-destructive',
-        build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px color-mix(in srgb, var(--brutal-destructive, ${l.destructive}) 30%, transparent)`,
+        comment: 'brutal shadows：经 @theme 派生标准组装工具类，与 :root 双发射',
+        entries: SHADOW_ENTRIES,
     },
 ];
 

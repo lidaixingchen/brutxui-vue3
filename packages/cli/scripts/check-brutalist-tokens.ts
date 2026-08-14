@@ -242,6 +242,7 @@ function verifyThemeArea(uiCss: string, cliCss: string, failures: string[]): voi
 
     // 正向：ui @theme 条目（颜色映射/border/radius）→ CLI @theme 必须存在且映射一致
     for (const [key, uiEntry] of uiEntries) {
+        if (key.startsWith('shadow-brutal')) continue
         const cliEntry = cliEntries.get(key)
         if (!cliEntry) {
             failures.push(`CLI @theme 缺条目 --${key}（ui 有，见 styles.css @theme）`)
