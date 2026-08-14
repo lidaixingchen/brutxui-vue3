@@ -111,35 +111,17 @@ const { theme, setTheme } = useTheme()
         <SelectValue placeholder="选择主题" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="default">默认主题</SelectItem>
-        <SelectItem value="dark">深色主题</SelectItem>
-        <SelectItem value="high-contrast">高对比度</SelectItem>
-        <SelectItem value="minimal">极简主题</SelectItem>
+        <SelectItem value="classic">经典主题 (Classic)</SelectItem>
+        <SelectItem value="pastel">柔和主题 (Pastel)</SelectItem>
+        <SelectItem value="mono">黑白主题 (Mono)</SelectItem>
+        <SelectItem value="warm">温暖主题 (Warm)</SelectItem>
       </SelectContent>
     </Select>
   </div>
 </template>
 ```
 
-### 2.2 创建自定义主题
-
-```typescript
-// themes/custom.ts
-import { createCustomTheme, type ThemeVariables } from 'brutx-ui-vue'
-
-export const customTheme = createCustomTheme('default', {
-  primary: '#8b5cf6',
-  'primary-foreground': '#ffffff',
-  accent: '#f59e0b',
-  'accent-foreground': '#000000',
-  'border-width': '2px',
-  radius: '8px',
-  'shadow-offset-x': '3px',
-  'shadow-offset-y': '3px',
-})
-```
-
-### 2.3 CSS 类主题
+### 2.2 自定义 CSS 类主题
 
 ```css
 /* 定义自定义主题类 */

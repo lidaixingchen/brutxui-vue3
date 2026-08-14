@@ -113,35 +113,17 @@ const { theme, setTheme } = useTheme()
         <SelectValue placeholder="Choose theme" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="default">Default</SelectItem>
-        <SelectItem value="dark">Dark Theme</SelectItem>
-        <SelectItem value="high-contrast">High Contrast</SelectItem>
-        <SelectItem value="minimal">Minimal Theme</SelectItem>
+        <SelectItem value="classic">Classic Theme</SelectItem>
+        <SelectItem value="pastel">Pastel Theme</SelectItem>
+        <SelectItem value="mono">Mono Theme</SelectItem>
+        <SelectItem value="warm">Warm Theme</SelectItem>
       </SelectContent>
     </Select>
   </div>
 </template>
 ```
 
-### 2.2 Creating a Custom Theme
-
-```typescript
-// themes/custom.ts
-import { createCustomTheme, type ThemeVariables } from 'brutx-ui-vue'
-
-export const customTheme = createCustomTheme('default', {
-  primary: '#8b5cf6',
-  'primary-foreground': '#ffffff',
-  accent: '#f59e0b',
-  'accent-foreground': '#000000',
-  'border-width': '2px',
-  radius: '8px',
-  'shadow-offset-x': '3px',
-  'shadow-offset-y': '3px',
-})
-```
-
-### 2.3 Styling via CSS Theme Classes
+### 2.2 Styling via Custom CSS Theme Classes
 
 ```css
 /* Define custom theme classes */
