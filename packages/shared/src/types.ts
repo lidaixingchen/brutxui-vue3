@@ -25,9 +25,12 @@ export type ComponentKind = 'component' | 'block';
 
 interface RegistryComponentMetaBase {
     title?: string;
+    /** 组件中文名称（作为全库单一事实来源，供文档侧边栏、CLI 与 AI 技能消费） */
+    titleZh: string;
+    description: string;
+    /** 组件所属分类（单一事实来源） */
+    category: ComponentCategory;
     dependencies: string[];
-    description?: string;
-    category?: ComponentCategory;
     examples?: string[];
     sidebarGroup?: SidebarGroup;
     kind?: ComponentKind;
@@ -45,3 +48,4 @@ interface RegistryComponentMetaBase {
 export type RegistryComponentMeta =
     | (RegistryComponentMetaBase & { status?: 'stable'; replacement?: string })
     | (RegistryComponentMetaBase & { status: 'legacy' | 'deprecated'; replacement: string });
+
