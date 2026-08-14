@@ -142,9 +142,16 @@ function checkComponentDocs() {
 // ---------------------------------------------------------------------------
 // 报告输出
 // ---------------------------------------------------------------------------
+const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v')
 const componentKeys = loadComponentKeys()
 const removed = checkRemovedSymbols()
 const docMissing = checkComponentDocs()
+
+const isClean = removed.missingRoots.length === 0 && removed.violations.length === 0 && docMissing.length === 0
+if (isClean && !isVerbose) {
+    console.log(`✓ Guide & skill references: passed (0 deleted symbols, ${componentKeys.length} components documented)`)
+    process.exit(0)
+}
 
 console.log('=== guide/skill 引用校验 ===\n')
 

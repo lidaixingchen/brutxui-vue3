@@ -42,8 +42,11 @@ function main(): void {
         fs.readFileSync(MANIFEST_PATH, 'utf-8'),
     )
 
+    const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v') || process.env.BRUTX_VERBOSE === '1';
     const componentNames = Object.keys(manifest).sort()
-    console.log(`🔧 Generating index.ts for ${componentNames.length} components...`)
+    if (isVerbose) {
+        console.log(`🔧 Generating index.ts for ${componentNames.length} components...`)
+    }
 
     let generated = 0
     let skipped = 0
@@ -61,7 +64,11 @@ function main(): void {
         generated++
     }
 
-    console.log(`✓ Generated ${generated} index.ts files (${skipped} skipped)`)
+    if (skipped > 0) {
+        console.log(`✓ Generated ${generated} component index files (${skipped} skipped)`)
+    } else {
+        console.log(`✓ Generated ${generated} component index files`)
+    }
 }
 
 main()

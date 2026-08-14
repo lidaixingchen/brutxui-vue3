@@ -96,6 +96,12 @@ function main() {
         const vs = scanFile(abs)
         for (const v of vs) all.push({ file: rel, ...v })
     }
+    const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v')
+    if (all.length === 0 && !isVerbose) {
+        console.log(`✓ Guide conventions: 0 violations in ${files.length} guide docs`)
+        process.exit(0)
+    }
+
     console.log(`=== docs/guides 约定守卫（递归扫描 ${files.length} 个 .md，仅代码围栏内）===`)
     if (all.length === 0) {
         console.log('✓ 无 R3/R6/R7 违规')

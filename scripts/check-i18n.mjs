@@ -69,14 +69,14 @@ const enFiles = new Set(walkMd(EN_ROOT))
 const missingInEn = [...zhFiles].filter(f => !enFiles.has(f)).sort()
 const missingInZh = [...enFiles].filter(f => !zhFiles.has(f)).sort()
 
+if (missingInEn.length === 0 && missingInZh.length === 0) {
+    console.log(`✓ i18n: 中英双语文件名完全镜像 (${zhFiles.size} 个文档)`)
+    process.exit(0)
+}
+
 console.log('=== i18n 文件镜像校验 ===\n')
 console.log(`中文目录 (apps/docs/): ${zhFiles.size} 个 .md 文件`)
 console.log(`英文目录 (apps/docs/en/): ${enFiles.size} 个 .md 文件\n`)
-
-if (missingInEn.length === 0 && missingInZh.length === 0) {
-    console.log('✓ 中英双语文件名完全镜像，无缺失')
-    process.exit(0)
-}
 
 if (missingInEn.length > 0) {
     console.log(`⚠ 英文缺失 ${missingInEn.length} 个文件（中文有但英文没有）：`)

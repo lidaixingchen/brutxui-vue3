@@ -916,7 +916,10 @@ export function signManifestFromEnv(manifest: RegistryBuildManifest): RegistryBu
     const privateKeyRaw = process.env[PRIVATE_KEY_ENV];
     const keyId = process.env[KEY_ID_ENV];
     if (!privateKeyRaw || !keyId) {
-        console.log('ℹ Registry manifest left unsigned (BRUTX_REGISTRY_PRIVATE_KEY / BRUTX_REGISTRY_KEY_ID not set).');
+        const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v') || process.env.BRUTX_VERBOSE === '1';
+        if (isVerbose) {
+            console.log('ℹ Registry manifest left unsigned (BRUTX_REGISTRY_PRIVATE_KEY / BRUTX_REGISTRY_KEY_ID not set).');
+        }
         return manifest;
     }
 
@@ -939,7 +942,12 @@ function createPrivateKeyFromInput(raw: string): crypto.KeyObject {
 }
 
 export async function run() {
-    console.log('🚀 Starting registry build...');
+    const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v') || process.env.BRUTX_VERBOSE === '1';
+    const buildStartTime = process.hrtime.bigint();
+
+    if (isVerbose) {
+        console.log('🚀 Starting registry build...');
+    }
 
     if (!fs.existsSync(OUTPUT_DIR)) {
         fs.mkdirSync(OUTPUT_DIR, { recursive: true });
@@ -950,8 +958,12 @@ export async function run() {
     // 字典序遍历：让 registry build 顺序成为稳定契约，doctor 漂移检测重算 integrity 时
     // 可与 manifest 的 files 顺序对齐（manifest 不再 .sort()，按此序存储）。
     const componentNames = Object.keys(REGISTRY).sort();
-    console.log(`📦 Found ${componentNames.length} components to process.`);
+    if (isVerbose) {
+        console.log(`📦 Found ${componentNames.length} components to process.`);
+    }
     let errorCount = 0;
+    let cachedCount = 0;
+    let generatedCount = 0;
     const packageJson = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../package.json'), 'utf-8')) as { version: string };
 
     // P0-4 性能基准：--bench flag 或 BRUTX_BENCH=1 时收集每组件/locale 耗时，末尾写入 bench.json
@@ -1016,7 +1028,10 @@ export async function run() {
                 integrity: existingLocaleItem.integrity
             });
             newCache['locale-zh-cn'] = localeHash;
-            console.log('⊘ Skipped locale-zh-cn (unchanged)');
+            cachedCount++;
+            if (isVerbose) {
+                console.log('⊘ Skipped locale-zh-cn (unchanged)');
+            }
         } catch (cacheErr) {
             console.warn(`⚠ Cache reuse for locale-zh-cn failed, rebuilding: ${cacheErr instanceof Error ? cacheErr.message : cacheErr}`);
         }
@@ -1039,6 +1054,7 @@ export async function run() {
 
         fs.writeFileSync(localeOutputPath, JSON.stringify(localeItem, null, 2), 'utf-8');
         console.log(`✓ Generated locale-zh-cn.json (${localeFiles.length} files)`);
+        generatedCount++;
         newCache['locale-zh-cn'] = localeHash;
 
         registryIndex.items.push({
@@ -1092,7 +1108,10 @@ export async function run() {
                         integrity: existingItem.integrity
                     });
                     newCache[name] = sourceHash;
-                    console.log(`⊘ Skipped ${name} (unchanged)`);
+                    cachedCount++;
+                    if (isVerbose) {
+                        console.log(`⊘ Skipped ${name} (unchanged)`);
+                    }
                     if (benchEnabled) {
                         timings.push({ name, ms: Number(process.hrtime.bigint() - itemStart) / 1e6, fileCount: existingItem.files.length, cached: true });
                     }
@@ -1106,6 +1125,7 @@ export async function run() {
 
             fs.writeFileSync(outputPath, JSON.stringify(registryItem, null, 2), 'utf-8');
             console.log(`✓ Generated ${name}.json (${registryItem.files.length} files, Registry dependencies: [${registryItem.registryDependencies.join(', ')}])`);
+            generatedCount++;
             newCache[name] = sourceHash;
 
             registryIndex.items.push({
@@ -1146,7 +1166,6 @@ export async function run() {
 
     const indexPath = path.join(OUTPUT_DIR, 'index.json');
     fs.writeFileSync(indexPath, JSON.stringify(registryIndex, null, 2), 'utf-8');
-    console.log('✓ Generated index.json');
 
     const manifest = buildRegistryManifest(registryIndex, {
         registryVersion: packageJson.version,
@@ -1158,14 +1177,18 @@ export async function run() {
     const signedManifest = signManifestFromEnv(manifest);
     const manifestPath = path.join(OUTPUT_DIR, 'registry-manifest.json');
     fs.writeFileSync(manifestPath, JSON.stringify(signedManifest, null, 2), 'utf-8');
-    console.log(signedManifest.signature
-        ? `✓ Generated registry-manifest.json (signed by ${signedManifest.keyId})`
-        : '✓ Generated registry-manifest.json (unsigned)');
 
     // P1-6 供应链安全：生成 CycloneDX 格式 SBOM，列出所有组件及 npm 依赖
     const sbom = buildRegistrySbom(registryIndex, manifest.integrity);
     fs.writeFileSync(SBOM_FILE, JSON.stringify(sbom, null, 2), 'utf-8');
-    console.log(`✓ Generated registry-sbom.json (${sbom.components.length} components)`);
+
+    if (isVerbose) {
+        console.log('✓ Generated index.json');
+        console.log(signedManifest.signature
+            ? `✓ Generated registry-manifest.json (signed by ${signedManifest.keyId})`
+            : '✓ Generated registry-manifest.json (unsigned)');
+        console.log(`✓ Generated registry-sbom.json (${sbom.components.length} components)`);
+    }
 
     removeStaleRegistryFiles(new Set([
         'index.json',
@@ -1180,17 +1203,17 @@ export async function run() {
         const totalMs = Number(process.hrtime.bigint() - benchStart) / 1e6;
         // 按耗时降序，便于一眼定位瓶颈组件
         const sortedTimings = [...timings].sort((a, b) => b.ms - a.ms);
-        const cachedCount = sortedTimings.filter(t => t.cached).length;
-        const rebuiltCount = sortedTimings.length - cachedCount;
+        const cachedCountBench = sortedTimings.filter(t => t.cached).length;
+        const rebuiltCountBench = sortedTimings.length - cachedCountBench;
         const benchReport = {
             totalMs,
             itemCount: sortedTimings.length,
-            cachedCount,
-            rebuiltCount,
+            cachedCount: cachedCountBench,
+            rebuiltCount: rebuiltCountBench,
             items: sortedTimings,
         };
         fs.writeFileSync(BENCH_FILE, JSON.stringify(benchReport, null, 2), 'utf-8');
-        console.log(`📊 Bench: ${sortedTimings.length} items, ${cachedCount} cached, ${rebuiltCount} rebuilt, total ${totalMs.toFixed(2)}ms`);
+        console.log(`📊 Bench: ${sortedTimings.length} items, ${cachedCountBench} cached, ${rebuiltCountBench} rebuilt, total ${totalMs.toFixed(2)}ms`);
         console.log(`📊 Slowest 5: ${sortedTimings.slice(0, 5).map(t => `${t.name}=${t.ms.toFixed(1)}ms`).join(', ')}`);
         console.log(`📊 Written to ${path.relative(process.cwd(), BENCH_FILE)}`);
     }
@@ -1202,7 +1225,12 @@ export async function run() {
         }
     }
 
-    console.log('🎉 Registry built!');
+    const totalDurationMs = Number(process.hrtime.bigint() - buildStartTime) / 1e6;
+    if (isVerbose || generatedCount > 0) {
+        console.log(`🎉 Registry built in ${totalDurationMs.toFixed(0)}ms (${generatedCount} updated, ${cachedCount} cached)`);
+    } else {
+        console.log(`✓ Registry up-to-date (${cachedCount} components cached)`);
+    }
 }
 
 /**

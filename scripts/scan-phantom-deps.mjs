@@ -112,6 +112,38 @@ function tokenize(src) {
             i = end === -1 ? n : end + 2
             continue
         }
+        // regex literal (e.g. /pattern/flags)
+        if (c === '/' && c2 !== '/' && c2 !== '*') {
+            const trimmed = buf.trimEnd()
+            const lastChar = trimmed.slice(-1)
+            const isRegexContext = !lastChar || /[=([,{:;!&|?~^%*+\-<>]$/.test(lastChar) || /\b(?:return|case|delete|throw|typeof|void|yield)\b$/.test(trimmed)
+            if (isRegexContext) {
+                flush()
+                i++
+                while (i < n) {
+                    if (src[i] === '\\' && i + 1 < n) {
+                        i += 2
+                        continue
+                    }
+                    if (src[i] === '[') {
+                        i++
+                        while (i < n && src[i] !== ']') {
+                            if (src[i] === '\\' && i + 1 < n) i += 2
+                            else i++
+                        }
+                        if (i < n) i++
+                        continue
+                    }
+                    if (src[i] === '/') {
+                        i++
+                        while (i < n && /[a-z]/i.test(src[i])) i++
+                        break
+                    }
+                    i++
+                }
+                continue
+            }
+        }
         // string literal — capture its body as a 'string' segment
         if (c === '"' || c === "'" || c === '`') {
             flush()
@@ -159,8 +191,8 @@ function extractImports(src) {
         if (seg.t !== 'code') continue
         // Trailing `from` or `import` (possibly followed by whitespace/paren) → next seg is the spec.
         // Use word-boundary regex on the code segment's tail.
-        // Case A: code ends with `from` (export ... from / import ... from)
-        const fromMatch = seg.v.match(/\bfrom\s*$/)
+        // Case A: code has import/export and ends with `from` (export ... from / import ... from)
+        const fromMatch = seg.v.match(/\b(?:import|export)\b[\s\S]*\bfrom\s*$/)
         if (fromMatch && segs[i + 1]?.t === 'string') {
             specs.push(segs[i + 1].v)
             continue
@@ -217,16 +249,30 @@ function scanDir(dir, pkgName) {
     return phantoms
 }
 
-console.log('=== Phantom Dependency Scan ===\n')
+const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v')
+const results = PKG_ROOTS.map(({ dir, pkg }) => ({
+    dir,
+    pkg,
+    phantoms: scanDir(join(ROOT, dir), pkg)
+}))
+
 let totalPhantoms = 0
-for (const { dir, pkg } of PKG_ROOTS) {
-    const phantoms = scanDir(join(ROOT, dir), pkg)
+for (const { phantoms } of results) {
+    totalPhantoms += phantoms.size
+}
+
+if (totalPhantoms === 0 && !isVerbose) {
+    console.log(`✓ Phantom dependencies: 0 detected (${PKG_ROOTS.length} packages clean)`)
+    process.exit(0)
+}
+
+console.log('=== Phantom Dependency Scan ===\n')
+for (const { dir, pkg, phantoms } of results) {
     console.log(`[${pkg}] (${dir})`)
     if (phantoms.size === 0) {
         console.log('  none')
     } else {
         for (const [dep, files] of [...phantoms.entries()].sort()) {
-            totalPhantoms++
             console.log(`  PHANTOM: ${dep}`)
             for (const f of files.slice(0, 10)) {
                 console.log(`    -> ${f}`)

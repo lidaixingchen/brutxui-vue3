@@ -362,9 +362,12 @@ function main(): void {
         PREFLIGHT_PATH,
     );
     const preflightChanged = preflightNext !== preflightOriginal;
+    const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v') || process.env.BRUTX_VERBOSE === '1';
 
     if (!stylesChanged && !preflightChanged) {
-        console.log('✓ styles.css 令牌块与 preflight.css 字体栈已是最新，无需更新');
+        if (isVerbose || isCheckMode) {
+            console.log('✓ styles.css 令牌块与 preflight.css 字体栈已是最新');
+        }
         return;
     }
 

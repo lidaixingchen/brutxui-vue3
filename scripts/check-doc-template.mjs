@@ -124,6 +124,12 @@ for (const f of enFiles) {
     }
 }
 
+const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v')
+if (violations.length === 0 && !isVerbose) {
+    console.log(`✓ Doc template lint: all ${zhFiles.length + enFiles.length} docs satisfy required sections`)
+    process.exit(0)
+}
+
 console.log('=== 组件文档必须章节 lint ===')
 console.log(`中文文档 ${zhFiles.length} 个，英文文档 ${enFiles.length} 个`)
 if (violations.length === 0) {
