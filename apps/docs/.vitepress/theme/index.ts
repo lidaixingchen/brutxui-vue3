@@ -1,206 +1,56 @@
-import DefaultTheme from 'vitepress/theme'
-import type { Theme } from 'vitepress'
-import Layout from './Layout.vue'
-import ComponentPreview from './components/ComponentPreview.vue'
-import ComponentCatalog from './components/ComponentCatalog.vue'
-import CopyButton from './components/CopyButton.vue'
-import HomeCodePreview from './components/HomeCodePreview.vue'
-import HomeComponentShowcase from './components/HomeComponentShowcase.vue'
-import HomeStats from './components/HomeStats.vue'
-import InstallationTabs from './components/InstallationTabs.vue'
-import ThemeToggle from './components/ThemeToggle.vue'
-import ThemePlayground from './components/ThemePlayground.vue'
-import Logo from './components/Logo.vue'
-import TranslationBanner from './components/TranslationBanner.vue'
-import AlertDemo from './components/demos/AlertDemo.vue'
-import AlertDialogDemo from './components/demos/AlertDialogDemo.vue'
-import AvatarDemo from './components/demos/AvatarDemo.vue'
-import BadgeDemo from './components/demos/BadgeDemo.vue'
-import ButtonDemo from './components/demos/ButtonDemo.vue'
-import CalendarDemo from './components/demos/CalendarDemo.vue'
-import CardDemo from './components/demos/CardDemo.vue'
-import CheckboxDemo from './components/demos/CheckboxDemo.vue'
-import ComboboxDemo from './components/demos/ComboboxDemo.vue'
-import CommandDemo from './components/demos/CommandDemo.vue'
-import DialogDemo from './components/demos/DialogDemo.vue'
-import DropdownMenuDemo from './components/demos/DropdownMenuDemo.vue'
-import FormDemo from './components/demos/FormDemo.vue'
-import InputDemo from './components/demos/InputDemo.vue'
-import LabelDemo from './components/demos/LabelDemo.vue'
-import PaginationDemo from './components/demos/PaginationDemo.vue'
-import PopoverDemo from './components/demos/PopoverDemo.vue'
-import ProgressDemo from './components/demos/ProgressDemo.vue'
-import RadioGroupDemo from './components/demos/RadioGroupDemo.vue'
-import ScrollAreaDemo from './components/demos/ScrollAreaDemo.vue'
-import SelectDemo from './components/demos/SelectDemo.vue'
-import SeparatorDemo from './components/demos/SeparatorDemo.vue'
-import SheetDemo from './components/demos/SheetDemo.vue'
-import SkeletonDemo from './components/demos/SkeletonDemo.vue'
-import SliderDemo from './components/demos/SliderDemo.vue'
-import SpinnerDemo from './components/demos/SpinnerDemo.vue'
-import SwitchDemo from './components/demos/SwitchDemo.vue'
-import TableDemo from './components/demos/TableDemo.vue'
-import TabsDemo from './components/demos/TabsDemo.vue'
-import TextareaDemo from './components/demos/TextareaDemo.vue'
-import ToastDemo from './components/demos/ToastDemo.vue'
-import ToggleDemo from './components/demos/ToggleDemo.vue'
-import ToggleGroupDemo from './components/demos/ToggleGroupDemo.vue'
-import TooltipDemo from './components/demos/TooltipDemo.vue'
-import AccordionDemo from './components/demos/AccordionDemo.vue'
-import TagsInputDemo from './components/demos/TagsInputDemo.vue'
-import NumberInputDemo from './components/demos/NumberInputDemo.vue'
-import CopyToClipboardDemo from './components/demos/CopyToClipboardDemo.vue'
-import BreadcrumbDemo from './components/demos/BreadcrumbDemo.vue'
-import MarqueeDemo from './components/demos/MarqueeDemo.vue'
-import BeforeAfterDemo from './components/demos/BeforeAfterDemo.vue'
-import CodeBlockDemo from './components/demos/CodeBlockDemo.vue'
-import TimelineDemo from './components/demos/TimelineDemo.vue'
-import CarouselDemo from './components/demos/CarouselDemo.vue'
-import TreeViewDemo from './components/demos/TreeViewDemo.vue'
-import KanbanBoardDemo from './components/demos/KanbanBoardDemo.vue'
-import ChatBubbleDemo from './components/demos/ChatBubbleDemo.vue'
-import KbdDemo from './components/demos/KbdDemo.vue'
-import CounterDemo from './components/demos/CounterDemo.vue'
-import StepperDemo from './components/demos/StepperDemo.vue'
-import Card3DDemo from './components/demos/Card3DDemo.vue'
-import GlitchTextDemo from './components/demos/GlitchTextDemo.vue'
-import ScratchCardDemo from './components/demos/ScratchCardDemo.vue'
-import SketchyChartDemo from './components/demos/SketchyChartDemo.vue'
-import HardcoreInputDemo from './components/demos/HardcoreInputDemo.vue'
-import BrutalistHeroDemo from './components/demos/BrutalistHeroDemo.vue'
-import PricingSectionDemo from './components/demos/PricingSectionDemo.vue'
-import AuthCardDemo from './components/demos/AuthCardDemo.vue'
-import DashboardShellDemo from './components/demos/DashboardShellDemo.vue'
-import CookieConsentDemo from './components/demos/CookieConsentDemo.vue'
-import HeaderSectionDemo from './components/demos/HeaderSectionDemo.vue'
-import FooterSectionDemo from './components/demos/FooterSectionDemo.vue'
-import FeedbackFormDemo from './components/demos/FeedbackFormDemo.vue'
-import UploadDemo from './components/demos/UploadDemo.vue'
-import DescriptionsDemo from './components/demos/DescriptionsDemo.vue'
-import PopconfirmDemo from './components/demos/PopconfirmDemo.vue'
-import InfiniteScrollDemo from './components/demos/InfiniteScrollDemo.vue'
-import VirtualScrollDemo from './components/demos/VirtualScrollDemo.vue'
-import DatePickerDemo from './components/demos/DatePickerDemo.vue'
-import ColorPickerDemo from './components/demos/ColorPickerDemo.vue'
-import NoiseBackgroundDemo from './components/demos/NoiseBackgroundDemo.vue'
-import TreeSelectDemo from './components/demos/TreeSelectDemo.vue'
-import TypewriterTextDemo from './components/demos/TypewriterTextDemo.vue'
-import ColorModeSwitcherDemo from './components/demos/ColorModeSwitcherDemo.vue'
-import DataTableDemo from './components/demos/DataTableDemo.vue'
-import TransferDemo from './components/demos/TransferDemo.vue'
-import RateDemo from './components/demos/RateDemo.vue'
-import MenuDemo from './components/demos/MenuDemo.vue'
-import CascaderDemo from './components/demos/CascaderDemo.vue'
-import LoadingDemo from './components/demos/LoadingDemo.vue'
-import ResultDemo from './components/demos/ResultDemo.vue'
-import WatermarkDemo from './components/demos/WatermarkDemo.vue'
-import BacktopDemo from './components/demos/BacktopDemo.vue'
-import ImageDemo from './components/demos/ImageDemo.vue'
-import TourDemo from './components/demos/TourDemo.vue'
-import MessageDemo from './components/demos/MessageDemo.vue'
-import 'v-calendar/style.css'
-import './style.css'
+import DefaultTheme from 'vitepress/theme';
+import type { Theme } from 'vitepress';
+import type { Component } from 'vue';
+import Layout from './Layout.vue';
+import ComponentPreview from './components/ComponentPreview.vue';
+import ComponentCatalog from './components/ComponentCatalog.vue';
+import CopyButton from './components/CopyButton.vue';
+import HomeCodePreview from './components/HomeCodePreview.vue';
+import HomeComponentShowcase from './components/HomeComponentShowcase.vue';
+import HomeStats from './components/HomeStats.vue';
+import InstallationTabs from './components/InstallationTabs.vue';
+import ThemeToggle from './components/ThemeToggle.vue';
+import ThemePlayground from './components/ThemePlayground.vue';
+import Logo from './components/Logo.vue';
+import TranslationBanner from './components/TranslationBanner.vue';
+import 'v-calendar/style.css';
+import './style.css';
+
+// 批量动态扫描注册全部 demo 组件（Vite 静态分析，支持 SSR 构建与开发态）
+const demoModules = import.meta.glob<{ default: Component }>(
+    './components/demos/*.vue',
+    { eager: true }
+);
+
+const GLOBAL_COMPONENTS: Record<string, Component> = {
+    ComponentPreview,
+    ComponentCatalog,
+    CopyButton,
+    HomeCodePreview,
+    HomeComponentShowcase,
+    HomeStats,
+    InstallationTabs,
+    ThemeToggle,
+    ThemePlayground,
+    Logo,
+    TranslationBanner,
+};
 
 export default {
     extends: DefaultTheme,
     Layout,
     enhanceApp({ app }) {
-        app.component('ComponentPreview', ComponentPreview)
-        app.component('ComponentCatalog', ComponentCatalog)
-        app.component('CopyButton', CopyButton)
-        app.component('HomeCodePreview', HomeCodePreview)
-        app.component('HomeComponentShowcase', HomeComponentShowcase)
-        app.component('HomeStats', HomeStats)
-        app.component('InstallationTabs', InstallationTabs)
-        app.component('ThemeToggle', ThemeToggle)
-        app.component('ThemePlayground', ThemePlayground)
-        app.component('Logo', Logo)
-        app.component('TranslationBanner', TranslationBanner)
-        app.component('AlertDemo', AlertDemo)
-        app.component('AlertDialogDemo', AlertDialogDemo)
-        app.component('AvatarDemo', AvatarDemo)
-        app.component('BadgeDemo', BadgeDemo)
-        app.component('ButtonDemo', ButtonDemo)
-        app.component('CalendarDemo', CalendarDemo)
-        app.component('CardDemo', CardDemo)
-        app.component('CheckboxDemo', CheckboxDemo)
-        app.component('ComboboxDemo', ComboboxDemo)
-        app.component('CommandDemo', CommandDemo)
-        app.component('DialogDemo', DialogDemo)
-        app.component('DropdownMenuDemo', DropdownMenuDemo)
-        app.component('FormDemo', FormDemo)
-        app.component('InputDemo', InputDemo)
-        app.component('LabelDemo', LabelDemo)
-        app.component('PaginationDemo', PaginationDemo)
-        app.component('PopoverDemo', PopoverDemo)
-        app.component('ProgressDemo', ProgressDemo)
-        app.component('RadioGroupDemo', RadioGroupDemo)
-        app.component('ScrollAreaDemo', ScrollAreaDemo)
-        app.component('SelectDemo', SelectDemo)
-        app.component('SeparatorDemo', SeparatorDemo)
-        app.component('SheetDemo', SheetDemo)
-        app.component('SkeletonDemo', SkeletonDemo)
-        app.component('SliderDemo', SliderDemo)
-        app.component('SpinnerDemo', SpinnerDemo)
-        app.component('SwitchDemo', SwitchDemo)
-        app.component('TableDemo', TableDemo)
-        app.component('TabsDemo', TabsDemo)
-        app.component('TextareaDemo', TextareaDemo)
-        app.component('ToastDemo', ToastDemo)
-        app.component('ToggleDemo', ToggleDemo)
-        app.component('ToggleGroupDemo', ToggleGroupDemo)
-        app.component('TooltipDemo', TooltipDemo)
-        app.component('AccordionDemo', AccordionDemo)
-        app.component('TagsInputDemo', TagsInputDemo)
-        app.component('NumberInputDemo', NumberInputDemo)
-        app.component('CopyToClipboardDemo', CopyToClipboardDemo)
-        app.component('BreadcrumbDemo', BreadcrumbDemo)
-        app.component('MarqueeDemo', MarqueeDemo)
-        app.component('BeforeAfterDemo', BeforeAfterDemo)
-        app.component('CodeBlockDemo', CodeBlockDemo)
-        app.component('TimelineDemo', TimelineDemo)
-        app.component('CarouselDemo', CarouselDemo)
-        app.component('TreeViewDemo', TreeViewDemo)
-        app.component('KanbanBoardDemo', KanbanBoardDemo)
-        app.component('ChatBubbleDemo', ChatBubbleDemo)
-        app.component('KbdDemo', KbdDemo)
-        app.component('CounterDemo', CounterDemo)
-        app.component('StepperDemo', StepperDemo)
-        app.component('Card3DDemo', Card3DDemo)
-        app.component('GlitchTextDemo', GlitchTextDemo)
-        app.component('ScratchCardDemo', ScratchCardDemo)
-        app.component('SketchyChartDemo', SketchyChartDemo)
-        app.component('HardcoreInputDemo', HardcoreInputDemo)
-        app.component('BrutalistHeroDemo', BrutalistHeroDemo)
-        app.component('PricingSectionDemo', PricingSectionDemo)
-        app.component('AuthCardDemo', AuthCardDemo)
-        app.component('DashboardShellDemo', DashboardShellDemo)
-        app.component('CookieConsentDemo', CookieConsentDemo)
-        app.component('HeaderSectionDemo', HeaderSectionDemo)
-        app.component('FooterSectionDemo', FooterSectionDemo)
-        app.component('FeedbackFormDemo', FeedbackFormDemo)
-        app.component('UploadDemo', UploadDemo)
-        app.component('DescriptionsDemo', DescriptionsDemo)
-        app.component('PopconfirmDemo', PopconfirmDemo)
-        app.component('InfiniteScrollDemo', InfiniteScrollDemo)
-        app.component('VirtualScrollDemo', VirtualScrollDemo)
-        app.component('DatePickerDemo', DatePickerDemo)
-        app.component('ColorPickerDemo', ColorPickerDemo)
-        app.component('ColorModeSwitcherDemo', ColorModeSwitcherDemo)
-        app.component('DataTableDemo', DataTableDemo)
-        app.component('NoiseBackgroundDemo', NoiseBackgroundDemo)
-        app.component('TreeSelectDemo', TreeSelectDemo)
-        app.component('TypewriterTextDemo', TypewriterTextDemo)
-        app.component('MenuDemo', MenuDemo)
-        app.component('CascaderDemo', CascaderDemo)
-        app.component('TransferDemo', TransferDemo)
-        app.component('RateDemo', RateDemo)
-        app.component('LoadingDemo', LoadingDemo)
-        app.component('ResultDemo', ResultDemo)
-        app.component('WatermarkDemo', WatermarkDemo)
-        app.component('BacktopDemo', BacktopDemo)
-        app.component('ImageDemo', ImageDemo)
-        app.component('TourDemo', TourDemo)
-        app.component('MessageDemo', MessageDemo)
+        // 注册全局框架组件
+        for (const [name, component] of Object.entries(GLOBAL_COMPONENTS)) {
+            app.component(name, component);
+        }
+
+        // 自动注册全部 Demo 组件（按文件名作为组件名，如 AlertDemo.vue -> AlertDemo）
+        for (const [filePath, mod] of Object.entries(demoModules)) {
+            const componentName = filePath.split('/').pop()?.replace(/\.vue$/, '');
+            if (componentName && mod.default) {
+                app.component(componentName, mod.default);
+            }
+        }
     },
-} satisfies Theme
+} satisfies Theme;
