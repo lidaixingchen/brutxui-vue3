@@ -243,14 +243,7 @@ function getComponentVariantsTemplate(_vars: TemplateVars): string {
     return lines.join('\n')
 }
 
-function getComponentIndexTemplate(_vars: TemplateVars): string {
-    const lines: string[] = [
-        "export { default as {{PascalName}} } from './{{PascalName}}.vue'",
-        "export { {{camelName}}Variants } from './{{kebabName}}-variants'",
-        '',
-    ]
-    return lines.join('\n')
-}
+
 
 function getComponentTestTemplate(_vars: TemplateVars): string {
     const lines: string[] = [
@@ -516,11 +509,7 @@ function getComponentConfig(vars: TemplateVars): GeneratorConfig {
                 content: replaceTemplateVars(getComponentVariantsTemplate(vars), vars),
             },
             {
-                relativePath: 'index.ts',
-                content: replaceTemplateVars(getComponentIndexTemplate(vars), vars),
-            },
-            {
-                relativePath: `${vars.PascalName}.test.ts`,
+                relativePath: `${kebabName}.test.ts`,
                 content: replaceTemplateVars(getComponentTestTemplate(vars), vars),
             },
         ],

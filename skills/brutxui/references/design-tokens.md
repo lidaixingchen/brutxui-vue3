@@ -28,16 +28,38 @@ BrutxUI 使用 CSS 自定义属性定义设计令牌，便于主题切换和自�
 | `--brutal-bg` | `#ffffff` | `#141414` | 背景颜色 |
 | `--brutal-fg` | `#000000` | `#ffffff` | 前景（文本）颜色 |
 | `--brutal-primary` | `#FF6B6B` | `#FF6B6B` | 主色（珊瑚红） |
+| `--brutal-primary-foreground` | `#000000` | `#000000` | 主色前景色 |
 | `--brutal-secondary` | `#4ECDC4` | `#4ECDC4` | 辅助色（薄荷青） |
+| `--brutal-secondary-foreground` | `#000000` | `#000000` | 辅助色前景色 |
 | `--brutal-accent` | `#FFE66D` | `#FFE66D` | 强调色（黄色） |
+| `--brutal-accent-foreground` | `#000000` | `#000000` | 强调色前景色 |
 | `--brutal-destructive` | `#EF476F` | `#EF476F` | 危险/错误颜色 |
+| `--brutal-destructive-foreground` | `#000000` | `#000000` | 危险色前景色 |
 | `--brutal-success` | `#7FB069` | `#7FB069` | 成功颜色 |
+| `--brutal-success-foreground` | `#000000` | `#000000` | 成功色前景色 |
+| `--brutal-info` | `#4A90D9` | `#3B82F6` | 信息颜色 |
+| `--brutal-info-foreground` | `#000000` | `#000000` | 信息色前景色 |
 | `--brutal-muted` | `#f3f4f6` | `#1e1e1e` | 柔和背景 |
 | `--brutal-muted-foreground` | `#4B5563` | `#9CA3AF` | 柔和文本颜色 |
 | `--brutal-ring` | `#000000` | `#ffffff` | 焦点环颜色 |
-| `--brutal-info` | `#4A90D9` | `#3B82F6` | 信息颜色 |
-| `--brutal-overlay` | `rgba(0,0,0,0.5)` | `rgba(0,0,0,0.7)` | 遮罩背景 |
+| `--brutal-status-success` | `#22c55e` | `#22c55e` | 状态指示色（成功） |
+| `--brutal-status-warning` | `#FFE66D` | `#FFE66D` | 状态指示色（警告） |
+| `--brutal-status-info` | `#3b82f6` | `#3b82f6` | 状态指示色（信息） |
+| `--brutal-status-error` | `#EF476F` | `#EF476F` | 状态指示色（错误） |
+| `--brutal-overlay` | `rgba(0, 0, 0, 0.5)` | `rgba(0, 0, 0, 0.7)` | 遮罩背景 |
+| `--brutal-overlay-subtle` | `rgba(0, 0, 0, 0.05)` | `rgba(255, 255, 255, 0.05)` | 微妙遮罩叠色 |
 | `--brutal-placeholder` | `#9CA3AF` | `#6B7280` | 占位符文本颜色 |
+| `--brutal-black` | `#000000` | `#000000` | 品牌黑 |
+| `--brutal-yellow` | `#FFE66D` | `#FFE66D` | 品牌黄 |
+| `--brutal-primary-subtle` | `color-mix(...)` | `color-mix(...)` | 主色浅色衍生背景 |
+| `--brutal-secondary-subtle` | `color-mix(...)` | `color-mix(...)` | 辅助色浅色衍生背景 |
+| `--brutal-accent-subtle` | `color-mix(...)` | `color-mix(...)` | 强调色浅色衍生背景 |
+| `--brutal-destructive-subtle` | `color-mix(...)` | `color-mix(...)` | 危险色浅色衍生背景 |
+| `--brutal-success-subtle` | `color-mix(...)` | `color-mix(...)` | 成功色浅色衍生背景 |
+| `--brutal-info-subtle` | `color-mix(...)` | `color-mix(...)` | 信息色浅色衍生背景 |
+| `--ease-brutal-snap` | `cubic-bezier(0.16, 1, 0.3, 1)` | `cubic-bezier(0.16, 1, 0.3, 1)` | 机械快速定位缓动曲线 |
+| `--ease-brutal-bounce` | `cubic-bezier(0.34, 1.56, 0.64, 1)` | `cubic-bezier(0.34, 1.56, 0.64, 1)` | 机械弹性回弹缓动曲线 |
+
 
 ### 自定义主题
 
