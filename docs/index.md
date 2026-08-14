@@ -79,6 +79,7 @@ draft ──评审通过──▶ active ──落地完成──▶ done ──
 | [死代码与动效预设清理方案](plans/死代码与动效预设清理方案.md) | done | 清理公共死导出与关联类型、移除 13 个死动效与 6 个辅助类、废除 useAnimation 组合式函数 |
 | [组件选中态统一与交互无障碍补齐方案](plans/组件选中态统一与交互无障碍补齐方案.md) | done | 选中态三态正交统一、Menu Roving Focus 键盘导航、Transfer 粗野主义对齐、Canvas 晚挂载自愈 |
 | [共享常量收割与构建校验防漂移方案](plans/共享常量收割与构建校验防漂移方案.md) | **active** | UI 共享常量全面收割、构建脚本单一来源收敛、Fallback 真实值校验升级、文档元数据纠偏 |
+| [CLI样式自动生成与单一信源治理方案](plans/CLI样式自动生成与单一信源治理方案.md) | done | 将 CLI brutalist.css 纳入 generate-styles-tokens 自动化生成管道，实现全库设计令牌单一事实来源闭环 |
 
 ## 归档方案（archive/2026/）
 
