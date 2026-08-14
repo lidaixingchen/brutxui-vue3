@@ -515,6 +515,7 @@
         "audit:fallback": "tsx scripts/audit-brutal-fallback.ts",
         "audit:fallback:check": "tsx scripts/audit-brutal-fallback.ts --check-baseline",
         "audit:fallback:update": "tsx scripts/audit-brutal-fallback.ts --update-baseline",
+        "audit:fallback:fix": "tsx scripts/audit-brutal-fallback.ts --fix",
         "check:class-literals": "tsx scripts/check-class-literals.ts",
         "check:deprecated": "tsx scripts/check-deprecated-utilities.ts",
         "check:deprecated:check": "tsx scripts/check-deprecated-utilities.ts --check-baseline",

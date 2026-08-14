@@ -6,6 +6,8 @@ export {
     AVAILABLE_COMPONENTS,
     COMPONENTS_BY_CATEGORY,
     getComponentsByCategory,
+    CATEGORY_LABELS_ZH,
+    CATEGORY_LABELS_EN,
 } from './component-metadata.js';
 export type {
     ComponentFileManifest,

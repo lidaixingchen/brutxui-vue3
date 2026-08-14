@@ -152,45 +152,30 @@ const EASING_ENTRIES: ThemeEntry[] = [
     },
 ];
 
+const NON_COLOR_TOKEN_KEYS = new Set<keyof ThemeTokens>([
+    'borderWidth',
+    'borderColor',
+    'shadowOffsetX',
+    'shadowOffsetY',
+    'shadowColor',
+    'radius',
+]);
+
+const DYNAMIC_COLOR_ENTRIES: ThemeEntry[] = (Object.keys(TOKEN_TO_CSS_VAR) as Array<keyof ThemeTokens>)
+    .filter(key => !NON_COLOR_TOKEN_KEYS.has(key))
+    .map(key => {
+        const cssVarName = TOKEN_TO_CSS_VAR[key];
+        return {
+            themeVar: `--color-${cssVarName}`,
+            build: (l: ThemeTokens) => `var(--${cssVarName}, ${l[key]})`,
+        };
+    });
+
 const THEME_GROUPS: ThemeGroup[] = [
     {
         comment:
-            'Dynamic: resolve at runtime via --brutal-* for dark mode support.\n       Fallbacks sourced from BASE_THEME.light (see @brutx:root-tokens markers below).',
-        entries: [
-            { themeVar: '--color-brutal-bg', build: l => `var(--brutal-bg, ${l.bg})` },
-            { themeVar: '--color-brutal-fg', build: l => `var(--brutal-fg, ${l.fg})` },
-            { themeVar: '--color-brutal-muted', build: l => `var(--brutal-muted, ${l.muted})` },
-            { themeVar: '--color-brutal-muted-foreground', build: l => `var(--brutal-muted-foreground, ${l.mutedForeground})` },
-            { themeVar: '--color-brutal-ring', build: l => `var(--brutal-ring, ${l.ring})` },
-            { themeVar: '--color-brutal-overlay', build: l => `var(--brutal-overlay, ${l.overlay})` },
-            { themeVar: '--color-brutal-overlay-subtle', build: l => `var(--brutal-overlay-subtle, ${l.overlaySubtle})` },
-            { themeVar: '--color-brutal-placeholder', build: l => `var(--brutal-placeholder, ${l.placeholder})` },
-        ],
-    },
-    {
-        comment: 'Dynamic: resolve at runtime so theme presets can override accents',
-        entries: [
-            { themeVar: '--color-brutal-primary', build: l => `var(--brutal-primary, ${l.primary})` },
-            { themeVar: '--color-brutal-primary-foreground', build: l => `var(--brutal-primary-foreground, ${l.primaryForeground})` },
-            { themeVar: '--color-brutal-secondary', build: l => `var(--brutal-secondary, ${l.secondary})` },
-            { themeVar: '--color-brutal-secondary-foreground', build: l => `var(--brutal-secondary-foreground, ${l.secondaryForeground})` },
-            { themeVar: '--color-brutal-accent', build: l => `var(--brutal-accent, ${l.accent})` },
-            { themeVar: '--color-brutal-accent-foreground', build: l => `var(--brutal-accent-foreground, ${l.accentForeground})` },
-            { themeVar: '--color-brutal-destructive', build: l => `var(--brutal-destructive, ${l.destructive})` },
-            { themeVar: '--color-brutal-destructive-foreground', build: l => `var(--brutal-destructive-foreground, ${l.destructiveForeground})` },
-            { themeVar: '--color-brutal-success', build: l => `var(--brutal-success, ${l.success})` },
-            { themeVar: '--color-brutal-success-foreground', build: l => `var(--brutal-success-foreground, ${l.successForeground})` },
-            { themeVar: '--color-brutal-info', build: l => `var(--brutal-info, ${l.info})` },
-            { themeVar: '--color-brutal-info-foreground', build: l => `var(--brutal-info-foreground, ${l.infoForeground})` },
-            { themeVar: '--color-brutal-status-success', build: l => `var(--brutal-status-success, ${l.statusSuccess})` },
-            { themeVar: '--color-brutal-status-success-foreground', build: l => `var(--brutal-status-success-foreground, ${l.statusSuccessForeground})` },
-            { themeVar: '--color-brutal-status-warning', build: l => `var(--brutal-status-warning, ${l.statusWarning})` },
-            { themeVar: '--color-brutal-status-warning-foreground', build: l => `var(--brutal-status-warning-foreground, ${l.statusWarningForeground})` },
-            { themeVar: '--color-brutal-status-info', build: l => `var(--brutal-status-info, ${l.statusInfo})` },
-            { themeVar: '--color-brutal-status-info-foreground', build: l => `var(--brutal-status-info-foreground, ${l.statusInfoForeground})` },
-            { themeVar: '--color-brutal-status-error', build: l => `var(--brutal-status-error, ${l.statusError})` },
-            { themeVar: '--color-brutal-status-error-foreground', build: l => `var(--brutal-status-error-foreground, ${l.statusErrorForeground})` },
-        ],
+            'Dynamic color tokens derived from design-tokens.ts:\n       Resolve at runtime via --brutal-* for dark mode and theme presets support.\n       Fallbacks sourced from BASE_THEME.light.',
+        entries: DYNAMIC_COLOR_ENTRIES,
     },
     {
         comment: 'Dynamic: subtle backgrounds derived via color-mix',
@@ -198,13 +183,6 @@ const THEME_GROUPS: ThemeGroup[] = [
             themeVar: `--color-${e.varName}`,
             build: l => `var(--${e.varName}, ${e.buildLight(l)})`,
         })),
-    },
-    {
-        comment: 'Static design tokens (not theme-aware)',
-        entries: [
-            { themeVar: '--color-brutal-black', build: l => `var(--brutal-black, ${l.black})` },
-            { themeVar: '--color-brutal-yellow', build: l => `var(--brutal-yellow, ${l.yellow})` },
-        ],
     },
     {
         comment: 'Dynamic: border/radius use --brutal-* for theme support',

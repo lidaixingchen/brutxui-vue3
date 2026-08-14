@@ -354,12 +354,72 @@ function formatBaselineReport(result: AuditResult, check: BaselineCheckResult): 
     return lines.join('\n');
 }
 
+function fixFile(filePath: string): number {
+    let content = fs.readFileSync(filePath, 'utf-8');
+    const relativeFile = path.relative(SCAN_ROOT, filePath).replace(/\\/g, '/');
+    const replacements: Array<{ startIdx: number; endIdx: number; replacement: string }> = [];
+
+    let searchFrom = 0;
+    while (searchFrom < content.length) {
+        const idx = content.indexOf(VAR_BRUTAL_PREFIX, searchFrom);
+        if (idx === -1) break;
+        const parsed = parseVarCall(content, idx);
+        if (!parsed) {
+            searchFrom = idx + VAR_BRUTAL_PREFIX.length;
+            continue;
+        }
+        const varNameMatch = parsed.inner.match(/^--brutal-[a-z0-9-]+/);
+        const varName = varNameMatch ? varNameMatch[0] : null;
+        if (varName && !INTENTIONAL_FALLBACK_OVERRIDES.has(`${relativeFile}:${varName}`)) {
+            const tokenKey = varName.slice(2);
+            const expected = LIGHT_VARS[tokenKey];
+            if (expected !== undefined) {
+                if (!parsed.hasFallback) {
+                    replacements.push({
+                        startIdx: idx,
+                        endIdx: parsed.endIdx,
+                        replacement: `var(${varName}, ${expected})`,
+                    });
+                } else if (normalizeCssValue(parsed.fallback!) !== normalizeCssValue(expected)) {
+                    replacements.push({
+                        startIdx: idx,
+                        endIdx: parsed.endIdx,
+                        replacement: `var(${varName}, ${expected})`,
+                    });
+                }
+            }
+        }
+        searchFrom = parsed.endIdx;
+    }
+
+    if (replacements.length === 0) return 0;
+
+    // 从后往前替换，保持字符索引有效
+    replacements.sort((a, b) => b.startIdx - a.startIdx);
+    for (const rep of replacements) {
+        content = content.slice(0, rep.startIdx) + rep.replacement + content.slice(rep.endIdx);
+    }
+    fs.writeFileSync(filePath, content, 'utf-8');
+    return replacements.length;
+}
+
 function main(): void {
     const args = process.argv.slice(2);
     const jsonMode = args.includes('--json');
     const quietMode = args.includes('--quiet');
     const updateBaseline = args.includes('--update-baseline');
     const checkBaseline = args.includes('--check-baseline');
+    const fixMode = args.includes('--fix');
+
+    if (fixMode) {
+        const files = walkSourceFiles(SCAN_ROOT);
+        let fixedCount = 0;
+        for (const file of files) {
+            fixedCount += fixFile(file);
+        }
+        console.log(`[--fix] 已自动修复 ${fixedCount} 处 fallback 违规。`);
+    }
+
     const result = audit();
 
     // 冗余白名单属配置错误（条目已不再豁免任何引用），始终拦截（含 --check-baseline / --update-baseline 模式）

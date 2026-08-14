@@ -212,4 +212,30 @@ function createComponentsByCategory(): Record<ComponentCategory, readonly string
     return frozen;
 }
 
+export const CATEGORY_LABELS_ZH: Readonly<Record<ComponentCategory, string>> = Object.freeze({
+    action: '操作',
+    form: '表单与输入',
+    'data-display': '数据展示',
+    navigation: '导航',
+    feedback: '反馈与状态',
+    overlay: '弹出层与浮层',
+    layout: '布局与结构',
+    'visual-effect': '交互与可视化',
+    utility: '主题与工具',
+    marketing: '区块',
+});
+
+export const CATEGORY_LABELS_EN: Readonly<Record<ComponentCategory, string>> = Object.freeze({
+    action: 'Actions',
+    form: 'Form & Input',
+    'data-display': 'Data Display',
+    navigation: 'Navigation',
+    feedback: 'Feedback & Status',
+    overlay: 'Overlay & Popup',
+    layout: 'Layout & Structure',
+    'visual-effect': 'Interaction & Visualization',
+    utility: 'Theme & Utilities',
+    marketing: 'Blocks',
+});
+
 export type { RegistryComponentMeta };

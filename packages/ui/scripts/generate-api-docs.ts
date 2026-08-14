@@ -14,6 +14,7 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { COMPONENT_METADATA, CATEGORY_LABELS_ZH } from 'brutx-shared-vue'
 
 // ES 模块中获取 __dirname
 const __filename = fileURLToPath(import.meta.url)
@@ -82,7 +83,7 @@ interface DocGenConfig {
 }
 
 // ============================================================================
-// 常量
+// 常量与分类映射
 // ============================================================================
 
 const DEFAULT_CONFIG: DocGenConfig = {
@@ -91,98 +92,13 @@ const DEFAULT_CONFIG: DocGenConfig = {
     skipTypeDoc: process.argv.includes('--skip-typedoc'),
 }
 
-/** 组件分类映射 */
-const CATEGORY_MAP: Record<string, string> = {
-    button: '基础组件',
-    badge: '基础组件',
-    separator: '基础组件',
-    label: '基础组件',
-    switch: '基础组件',
-    checkbox: '基础组件',
-    radio: '基础组件',
-    input: '表单组件',
-    textarea: '表单组件',
-    select: '表单组件',
-    combobox: '表单组件',
-    'number-input': '表单组件',
-    'tags-input': '表单组件',
-    'hardcore-input': '表单组件',
-    slider: '表单组件',
-    toggle: '表单组件',
-    'toggle-group': '表单组件',
-    form: '表单组件',
-    'date-picker': '表单组件',
-    'color-picker': '表单组件',
-    calendar: '表单组件',
-    feedback: '表单组件',
-    dialog: '弹窗组件',
-    'alert-dialog': '弹窗组件',
-    sheet: '弹窗组件',
-    popover: '弹窗组件',
-    tooltip: '弹窗组件',
-    toast: '弹窗组件',
-    popconfirm: '弹窗组件',
-    dropdown: '导航组件',
-    tabs: '导航组件',
-    breadcrumb: '导航组件',
-    pagination: '导航组件',
-    table: '数据展示',
-    'data-table': '数据展示',
-    card: '数据展示',
-    'card-3d': '数据展示',
-    avatar: '数据展示',
-    progress: '数据展示',
-    skeleton: '数据展示',
-    accordion: '数据展示',
-    timeline: '数据展示',
-    tree: '数据展示',
-    descriptions: '数据展示',
-    kanban: '数据展示',
-    chart: '数据展示',
-    gallery: '数据展示',
-    marquee: '数据展示',
-    'before-after': '数据展示',
-    carousel: '数据展示',
-    counter: '数据展示',
-    'code-block': '数据展示',
-    kbd: '数据展示',
-    stepper: '数据展示',
-    spinner: '反馈组件',
-    alert: '反馈组件',
-    'empty-state': '反馈组件',
-    'not-found-page': '反馈组件',
-    'cookie-consent': '反馈组件',
-    command: '增强组件',
-    'scroll-area': '增强组件',
-    'virtual-scroll': '增强组件',
-    'infinite-scroll': '增强组件',
-    'copy-to-clipboard': '增强组件',
-    'glitch-text': '新粗野主义',
-    'glitch-button': '新粗野主义',
-    'typewriter-text': '新粗野主义',
-    'noise-background': '新粗野主义',
-    'scratch-card': '新粗野主义',
-    'sketchy-chart': '新粗野主义',
-    'color-mode-switcher': '主题组件',
-    layout: '布局组件',
-    header: '布局组件',
-    footer: '布局组件',
-    dashboard: '布局组件',
-    profile: '页面组件',
-    settings: '页面组件',
-    blog: '页面组件',
-    activity: '页面组件',
-    overview: '页面组件',
-    auth: '页面组件',
-    waitlist: '页面组件',
-    pricing: '页面组件',
-    testimonial: '页面组件',
-    'file-card': '页面组件',
-    'quick-actions': '页面组件',
-    search: '页面组件',
-    faq: '页面组件',
-    upload: '页面组件',
-    chat: '页面组件',
+/** 从 shared 单一事实来源解析组件的中文分类名称 */
+function getComponentCategoryLabel(dirName: string): string {
+    const meta = COMPONENT_METADATA[dirName]
+    if (meta && meta.category && CATEGORY_LABELS_ZH[meta.category]) {
+        return CATEGORY_LABELS_ZH[meta.category]
+    }
+    return '其他组件'
 }
 
 // ============================================================================
@@ -478,7 +394,7 @@ function parseVueSFC(filePath: string): ComponentDoc | null {
     const slots = parseSlots(content)
 
     // 确定分类
-    const category = CATEGORY_MAP[dirName] || '其他组件'
+    const category = getComponentCategoryLabel(dirName)
 
     return {
         name: fileName,

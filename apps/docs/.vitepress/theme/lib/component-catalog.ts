@@ -1,4 +1,9 @@
-import { COMPONENT_METADATA, type ComponentMetadataEntry } from '../../../../../packages/shared/src/component-metadata'
+import {
+    COMPONENT_METADATA,
+    CATEGORY_LABELS_ZH,
+    CATEGORY_LABELS_EN,
+    type ComponentMetadataEntry,
+} from '../../../../../packages/shared/src/component-metadata'
 
 export type CatalogLocale = 'zh' | 'en'
 
@@ -31,30 +36,8 @@ const categoryOrder: ComponentMetadataEntry['category'][] = [
 ]
 
 const categoryLabels: Record<CatalogLocale, Record<ComponentMetadataEntry['category'], string>> = {
-    zh: {
-        action: '操作',
-        form: '表单与输入',
-        'data-display': '数据展示',
-        navigation: '导航',
-        feedback: '反馈与状态',
-        overlay: '弹出层与浮层',
-        layout: '布局与结构',
-        'visual-effect': '交互与可视化',
-        utility: '主题与工具',
-        marketing: '区块',
-    },
-    en: {
-        action: 'Actions',
-        form: 'Form & Input',
-        'data-display': 'Data Display',
-        navigation: 'Navigation',
-        feedback: 'Feedback & Status',
-        overlay: 'Overlay & Popup',
-        layout: 'Layout & Structure',
-        'visual-effect': 'Interaction & Visualization',
-        utility: 'Theme & Utilities',
-        marketing: 'Blocks',
-    },
+    zh: CATEGORY_LABELS_ZH,
+    en: CATEGORY_LABELS_EN,
 }
 
 const descriptionLabels: Record<CatalogLocale, Record<string, string>> = {

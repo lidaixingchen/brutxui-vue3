@@ -109,12 +109,6 @@ export function runPrebuildScan(): void {
 
 type RewriteContext = 'component' | 'composable' | 'lib' | 'directive' | 'locale';
 
-// utils.ts is excluded from registry — consumers must create their own lib/utils.ts via CLI init.
-// This file provides the cn() utility (clsx + tailwind-merge) and is project-specific.
-// Excluded files' content is not published or hashed, but their imports are still
-// scanned to discover transitive dependencies.
-const LIB_FILE_EXCLUDE = new Set<string>(['utils.ts']);
-
 const DIR_PREFIX_TO_BASE: Record<string, string> = {
     composables: UI_COMPOSABLES_DIR,
     locales: UI_LOCALES_DIR,
@@ -403,7 +397,7 @@ export function computeSourceHash(name: string, fileMapping: { files: string[]; 
         const rewritten = rewriteImports(code, name, 'lib');
         extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
 
-        if (LIB_FILE_EXCLUDE.has(libName)) continue;
+        if (LIB_EXCLUDE.has(libName)) continue;
         parts.push(code);
     }
 
@@ -715,7 +709,7 @@ export function buildRegistryItem(name: string): RegistryItem {
         assertKnownRegistryDeps(code, name, libName).forEach(d => allRegistryDeps.add(d));
         extractDeps(code, 'lib').forEach(d => libDeps.add(d));
 
-        if (LIB_FILE_EXCLUDE.has(libName)) continue;
+        if (LIB_EXCLUDE.has(libName)) continue;
 
         files.push({
             path: `lib/${libName}`,
