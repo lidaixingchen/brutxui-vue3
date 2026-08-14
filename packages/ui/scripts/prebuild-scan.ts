@@ -63,6 +63,10 @@ function buildExportsManifest(manifest: Record<string, ComponentFileManifest>): 
     };
 }
 
+function readFileIfExists(filePath: string): string {
+    return fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf-8') : '';
+}
+
 function main(): void {
     const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v') || process.env.BRUTX_VERBOSE === '1';
     const options = {
@@ -81,7 +85,7 @@ function main(): void {
     const componentCount = Object.keys(manifest).length;
 
     const output = JSON.stringify(manifest, null, 2) + '\n';
-    const existingOutput = fs.existsSync(OUTPUT_FILE) ? fs.readFileSync(OUTPUT_FILE, 'utf-8') : '';
+    const existingOutput = readFileIfExists(OUTPUT_FILE);
     const manifestChanged = output !== existingOutput;
     if (manifestChanged) {
         fs.writeFileSync(OUTPUT_FILE, output, 'utf-8');
@@ -89,7 +93,7 @@ function main(): void {
 
     const exportsManifest = buildExportsManifest(manifest);
     const exportsOutput = JSON.stringify(exportsManifest, null, 2) + '\n';
-    const existingExports = fs.existsSync(EXPORTS_MANIFEST_FILE) ? fs.readFileSync(EXPORTS_MANIFEST_FILE, 'utf-8') : '';
+    const existingExports = readFileIfExists(EXPORTS_MANIFEST_FILE);
     const exportsChanged = exportsOutput !== existingExports;
     if (exportsChanged) {
         fs.writeFileSync(EXPORTS_MANIFEST_FILE, exportsOutput, 'utf-8');
@@ -106,7 +110,11 @@ function main(): void {
         console.log(`✓ Written to ${path.relative(process.cwd(), EXPORTS_MANIFEST_FILE)}`);
         console.log(`  Components: ${exportsManifest.components.length}, Composables: ${exportsManifest.composables.length}, Directives: ${exportsManifest.directives.length}`);
     } else if (manifestChanged || exportsChanged) {
-        console.log(`✓ Updated registry-manifest.json & exports-manifest.json (${componentCount} components)`);
+        const updatedNames = [
+            manifestChanged ? 'registry-manifest.json' : null,
+            exportsChanged ? 'exports-manifest.json' : null,
+        ].filter(Boolean).join(' & ');
+        console.log(`✓ Updated ${updatedNames} (${componentCount} components)`);
     } else {
         console.log(`✓ Manifests up-to-date (${componentCount} components)`);
     }

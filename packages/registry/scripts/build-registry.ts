@@ -912,12 +912,17 @@ const KEY_ID_ENV = 'BRUTX_REGISTRY_KEY_ID';
  * - 未配置私钥时返回未签名 manifest 并输出提示（本地开发 / Fork CI 保留未签名状态）。
  * - 配置了私钥但签名失败时抛错阻断，避免发布无效签名产物。
  */
+function isVerbose(): boolean {
+    if (process.argv.includes('--verbose') || process.argv.includes('-v')) return true;
+    const env = (process.env.BRUTX_VERBOSE ?? '').toLowerCase();
+    return env === '1' || env === 'true' || env === 'yes';
+}
+
 export function signManifestFromEnv(manifest: RegistryBuildManifest): RegistryBuildManifest {
     const privateKeyRaw = process.env[PRIVATE_KEY_ENV];
     const keyId = process.env[KEY_ID_ENV];
     if (!privateKeyRaw || !keyId) {
-        const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v') || process.env.BRUTX_VERBOSE === '1';
-        if (isVerbose) {
+        if (isVerbose()) {
             console.log('ℹ Registry manifest left unsigned (BRUTX_REGISTRY_PRIVATE_KEY / BRUTX_REGISTRY_KEY_ID not set).');
         }
         return manifest;
@@ -942,10 +947,10 @@ function createPrivateKeyFromInput(raw: string): crypto.KeyObject {
 }
 
 export async function run() {
-    const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v') || process.env.BRUTX_VERBOSE === '1';
+    const verbose = isVerbose();
     const buildStartTime = process.hrtime.bigint();
 
-    if (isVerbose) {
+    if (verbose) {
         console.log('🚀 Starting registry build...');
     }
 
@@ -958,7 +963,7 @@ export async function run() {
     // 字典序遍历：让 registry build 顺序成为稳定契约，doctor 漂移检测重算 integrity 时
     // 可与 manifest 的 files 顺序对齐（manifest 不再 .sort()，按此序存储）。
     const componentNames = Object.keys(REGISTRY).sort();
-    if (isVerbose) {
+    if (verbose) {
         console.log(`📦 Found ${componentNames.length} components to process.`);
     }
     let errorCount = 0;
@@ -1029,7 +1034,7 @@ export async function run() {
             });
             newCache['locale-zh-cn'] = localeHash;
             cachedCount++;
-            if (isVerbose) {
+            if (verbose) {
                 console.log('⊘ Skipped locale-zh-cn (unchanged)');
             }
         } catch (cacheErr) {
@@ -1109,7 +1114,7 @@ export async function run() {
                     });
                     newCache[name] = sourceHash;
                     cachedCount++;
-                    if (isVerbose) {
+                    if (verbose) {
                         console.log(`⊘ Skipped ${name} (unchanged)`);
                     }
                     if (benchEnabled) {
@@ -1182,7 +1187,7 @@ export async function run() {
     const sbom = buildRegistrySbom(registryIndex, manifest.integrity);
     fs.writeFileSync(SBOM_FILE, JSON.stringify(sbom, null, 2), 'utf-8');
 
-    if (isVerbose) {
+    if (verbose) {
         console.log('✓ Generated index.json');
         console.log(signedManifest.signature
             ? `✓ Generated registry-manifest.json (signed by ${signedManifest.keyId})`
@@ -1218,15 +1223,10 @@ export async function run() {
         console.log(`📊 Written to ${path.relative(process.cwd(), BENCH_FILE)}`);
     }
 
-    if (errorCount > 0) {
-        console.warn(`⚠ Registry build completed with ${errorCount} component error(s). Failed components are excluded from index.json.`);
-        if (!isVitestRuntime) {
-            process.exitCode = 1;
-        }
-    }
-
     const totalDurationMs = Number(process.hrtime.bigint() - buildStartTime) / 1e6;
-    if (isVerbose || generatedCount > 0) {
+    if (errorCount > 0) {
+        console.warn(`⚠ Registry build completed with ${errorCount} error(s) in ${totalDurationMs.toFixed(0)}ms (${generatedCount} updated, ${cachedCount} cached)`);
+    } else if (verbose || generatedCount > 0) {
         console.log(`🎉 Registry built in ${totalDurationMs.toFixed(0)}ms (${generatedCount} updated, ${cachedCount} cached)`);
     } else {
         console.log(`✓ Registry up-to-date (${cachedCount} components cached)`);

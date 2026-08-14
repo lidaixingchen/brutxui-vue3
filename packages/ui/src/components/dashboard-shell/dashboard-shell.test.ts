@@ -71,4 +71,21 @@ describe('DashboardShell', () => {
         })
         expect(wrapper.classes()).toContain('my-shell')
     })
+
+    it('applies open/closed classes to sidebar', async () => {
+        const wrapper = mount(DashboardShell, { ...localeProvide })
+        const aside = wrapper.find('aside')
+        expect(aside.classes()).toContain('w-64')
+        expect(aside.classes()).toContain('p-4')
+        expect(aside.classes()).toContain('border-r-3')
+
+        const toggleBtn = wrapper.find('header button')
+        expect(toggleBtn.exists()).toBe(true)
+        await toggleBtn.trigger('click')
+
+        expect(aside.classes()).toContain('w-0')
+        expect(aside.classes()).toContain('p-0')
+        expect(aside.classes()).toContain('overflow-hidden')
+        expect(aside.classes()).toContain('border-r-0')
+    })
 })

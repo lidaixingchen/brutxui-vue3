@@ -6,14 +6,14 @@ export const dashboardShellVariants = cva(
 
 export const dashboardSidebarVariants = cva(
     [
-        'border-r-3 border-brutal bg-brutal-bg p-4 flex flex-col',
+        'border-brutal bg-brutal-bg flex flex-col',
         'transition-all duration-200 ease-brutal-snap',
     ],
     {
         variants: {
             open: {
-                true: 'w-64',
-                false: 'w-0 p-0 overflow-hidden md:w-64 md:p-4',
+                true: 'w-64 p-4 border-r-3',
+                false: 'w-0 p-0 overflow-hidden border-r-0 md:w-64 md:p-4 md:border-r-3',
             },
         },
         defaultVariants: {

@@ -107,39 +107,29 @@ interface SubtleEntry {
     buildDark: (d: ThemeTokens) => string;
 }
 
-// 浅色衍生背景令牌：基于语义色按比例叠加白色/暗黑底色，随运行时主题联动
-const SUBTLE_ENTRIES: SubtleEntry[] = [
-    {
-        varName: 'brutal-primary-subtle',
-        buildLight: l => `color-mix(in srgb, var(--brutal-primary, ${l.primary}) 12%, #ffffff)`,
-        buildDark: d => `color-mix(in srgb, var(--brutal-primary, ${d.primary}) 20%, #141414)`,
-    },
-    {
-        varName: 'brutal-secondary-subtle',
-        buildLight: l => `color-mix(in srgb, var(--brutal-secondary, ${l.secondary}) 12%, #ffffff)`,
-        buildDark: d => `color-mix(in srgb, var(--brutal-secondary, ${d.secondary}) 20%, #141414)`,
-    },
-    {
-        varName: 'brutal-accent-subtle',
-        buildLight: l => `color-mix(in srgb, var(--brutal-accent, ${l.accent}) 20%, #ffffff)`,
-        buildDark: d => `color-mix(in srgb, var(--brutal-accent, ${d.accent}) 20%, #141414)`,
-    },
-    {
-        varName: 'brutal-destructive-subtle',
-        buildLight: l => `color-mix(in srgb, var(--brutal-destructive, ${l.destructive}) 12%, #ffffff)`,
-        buildDark: d => `color-mix(in srgb, var(--brutal-destructive, ${d.destructive}) 20%, #141414)`,
-    },
-    {
-        varName: 'brutal-success-subtle',
-        buildLight: l => `color-mix(in srgb, var(--brutal-success, ${l.success}) 12%, #ffffff)`,
-        buildDark: d => `color-mix(in srgb, var(--brutal-success, ${d.success}) 20%, #141414)`,
-    },
-    {
-        varName: 'brutal-info-subtle',
-        buildLight: l => `color-mix(in srgb, var(--brutal-info, ${l.info}) 12%, #ffffff)`,
-        buildDark: d => `color-mix(in srgb, var(--brutal-info, ${d.info}) 20%, #141414)`,
-    },
+interface SubtleColorDef {
+    key: keyof ThemeTokens;
+    lightPct: number;
+    darkPct: number;
+}
+
+// 浅色衍生背景令牌配置表：
+// 语义色按比例与背景底色 var(--brutal-bg) 融合，自动联动各主题预设（如 .theme-warm/.theme-mono）的实际底色。
+// 注：accent(黄色系) 在浅色模式下混合比例提升至 20%（其余为 12%），以确保浅底上有足够的视觉对比度；暗色统一 20%。
+const SUBTLE_COLOR_DEFS: SubtleColorDef[] = [
+    { key: 'primary', lightPct: 12, darkPct: 20 },
+    { key: 'secondary', lightPct: 12, darkPct: 20 },
+    { key: 'accent', lightPct: 20, darkPct: 20 },
+    { key: 'destructive', lightPct: 12, darkPct: 20 },
+    { key: 'success', lightPct: 12, darkPct: 20 },
+    { key: 'info', lightPct: 12, darkPct: 20 },
 ];
+
+const SUBTLE_ENTRIES: SubtleEntry[] = SUBTLE_COLOR_DEFS.map(({ key, lightPct, darkPct }) => ({
+    varName: `brutal-${key}-subtle`,
+    buildLight: l => `color-mix(in srgb, var(--brutal-${key}, ${l[key]}) ${lightPct}%, var(--brutal-bg, #ffffff))`,
+    buildDark: d => `color-mix(in srgb, var(--brutal-${key}, ${d[key]}) ${darkPct}%, var(--brutal-bg, #141414))`,
+}));
 
 // 机械弹性动效缓动曲线令牌
 const EASING_ENTRIES: ThemeEntry[] = [
