@@ -275,7 +275,7 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions): UseC
     watch(
         [containerRef, canvasRef],
         ([newContainer, newCanvas], [oldContainer]) => {
-            if (oldContainer && resizeObserver) {
+            if (oldContainer && resizeObserver && oldContainer !== newContainer) {
                 resizeObserver.unobserve(oldContainer)
             }
             if (newContainer && newCanvas) {
@@ -285,7 +285,9 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions): UseC
                     if (!resizeObserver) {
                         resizeObserver = new ResizeObserverCtor(syncCanvasSize)
                     }
-                    resizeObserver.observe(newContainer)
+                    if (oldContainer !== newContainer) {
+                        resizeObserver.observe(newContainer)
+                    }
                 }
             }
         },

@@ -1,4 +1,4 @@
-import type { InjectionKey, Ref } from 'vue'
+import type { ComputedRef, InjectionKey, Ref } from 'vue'
 
 export interface MenuItemEntry {
     index: string
@@ -10,6 +10,7 @@ export interface MenuItemEntry {
 export interface MenuContext {
     activeIndex: Ref<string>
     focusedIndex: Ref<string | null>
+    firstEnabledIndex: ComputedRef<string | null>
     mode: Ref<'horizontal' | 'vertical'>
     router: Ref<boolean>
     openedMenus: Ref<Set<string>>

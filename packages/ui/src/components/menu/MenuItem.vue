@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, onMounted, onUnmounted, ref } from 'vue'
+import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue'
 import { MENU_KEY } from './menu-types'
 import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 
@@ -37,10 +37,7 @@ interface BrutxSubMenuContext {
 const parentSubMenu = inject<BrutxSubMenuContext | null>('BrutxSubMenu', null)
 const itemRef = ref<HTMLElement | null>(null)
 
-onMounted(() => {
-    if (parentSubMenu) {
-        parentSubMenu.registerChild(props.index)
-    }
+function registerSelf() {
     if (itemRef.value && context) {
         context.registerItem({
             index: props.index,
@@ -49,6 +46,17 @@ onMounted(() => {
             isSubMenuTrigger: false,
         })
     }
+}
+
+onMounted(() => {
+    if (parentSubMenu) {
+        parentSubMenu.registerChild(props.index)
+    }
+    registerSelf()
+})
+
+watch(() => props.disabled, () => {
+    registerSelf()
 })
 
 onUnmounted(() => {
@@ -65,13 +73,13 @@ const isFocused = computed(() => context?.focusedIndex.value === props.index)
 
 const tabIndex = computed(() => {
     if (props.disabled) return -1
-    if (context?.focusedIndex.value !== null && context?.focusedIndex.value !== undefined) {
+    if (context?.focusedIndex.value != null) {
         return isFocused.value ? 0 : -1
     }
     if (context?.activeIndex.value) {
         return isActive.value ? 0 : -1
     }
-    return 0
+    return context?.firstEnabledIndex.value === props.index ? 0 : -1
 })
 
 const classes = computed(() => {

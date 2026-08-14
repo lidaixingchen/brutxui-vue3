@@ -37,11 +37,6 @@ const childToParent = new Map<string, Set<string>>()
 function registerItem(entry: MenuItemEntry) {
     const list = registeredItems.value.filter((i) => i.index !== entry.index)
     list.push(entry)
-    list.sort((a, b) => {
-        if (a.el === b.el) return 0
-        const pos = a.el.compareDocumentPosition(b.el)
-        return (pos & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1
-    })
     registeredItems.value = list
 }
 
@@ -62,14 +57,26 @@ function isItemVisible(index: string): boolean {
 }
 
 function getAvailableItems(): MenuItemEntry[] {
-    return registeredItems.value.filter((item) => !item.disabled && isItemVisible(item.index))
+    const visible = registeredItems.value.filter((item) => !item.disabled && isItemVisible(item.index))
+    visible.sort((a, b) => {
+        if (a.el === b.el) return 0
+        const pos = a.el.compareDocumentPosition(b.el)
+        return (pos & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1
+    })
+    return visible
 }
+
+const firstEnabledIndex = computed(() => {
+    const items = getAvailableItems()
+    return items.length > 0 ? items[0].index : null
+})
 
 function focusItem(index: string) {
     focusedIndex.value = index
     const target = registeredItems.value.find((i) => i.index === index)
     if (target && target.el) {
         target.el.focus()
+        target.el.scrollIntoView?.({ block: 'nearest' })
     }
 }
 
@@ -213,6 +220,7 @@ function toggleSubMenu(index: string) {
 provide(MENU_KEY, {
     activeIndex,
     focusedIndex,
+    firstEnabledIndex,
     mode: computed(() => props.mode),
     router: computed(() => props.router),
     openedMenus,

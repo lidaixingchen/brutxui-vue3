@@ -20,7 +20,7 @@ export const radioGroupItemVariants = cva(
                 default: formToggleVariantColors.primary,
                 secondary: formToggleVariantColors.secondary,
                 accent: formToggleVariantColors.accent,
-                success: formToggleVariantColors.default,
+                success: formToggleVariantColors.success,
                 danger: formToggleVariantColors.danger,
             },
             size: {

@@ -241,7 +241,8 @@
     "directives": [],
     "lib": [
       "brutal-interaction-variants.ts",
-      "floating-animation-classes.ts"
+      "floating-animation-classes.ts",
+      "floating-content-variants.ts"
     ]
   },
   "chat-bubble": {
@@ -767,6 +768,7 @@
     "directives": [],
     "lib": [
       "brutal-interaction-variants.ts",
+      "defaults.ts",
       "icon-size-variants.ts"
     ]
   },
@@ -890,6 +892,7 @@
     "lib": [
       "brutal-interaction-variants.ts",
       "floating-animation-classes.ts",
+      "floating-content-variants.ts",
       "icon-size-variants.ts"
     ]
   },
@@ -1141,6 +1144,7 @@
     "directives": [],
     "lib": [
       "env.ts",
+      "floating-content-variants.ts",
       "z-index.ts"
     ]
   },

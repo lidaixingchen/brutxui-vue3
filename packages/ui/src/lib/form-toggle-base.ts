@@ -22,6 +22,7 @@ export const formToggleBaseClasses = [
 // 未选中态统一补充背景，避免各消费方（如 switch-variants / radio-group / toggle）重复硬编码
 export const formToggleVariantColors = {
     default: 'data-[state=unchecked]:bg-brutal-bg data-[state=checked]:bg-brutal-success data-[state=indeterminate]:bg-brutal-success data-[state=off]:bg-brutal-bg data-[state=on]:bg-brutal-success',
+    success: 'data-[state=unchecked]:bg-brutal-bg data-[state=checked]:bg-brutal-success data-[state=indeterminate]:bg-brutal-success data-[state=off]:bg-brutal-bg data-[state=on]:bg-brutal-success',
     primary: 'data-[state=unchecked]:bg-brutal-bg data-[state=checked]:bg-brutal-primary data-[state=indeterminate]:bg-brutal-primary data-[state=off]:bg-brutal-bg data-[state=on]:bg-brutal-primary',
     secondary: 'data-[state=unchecked]:bg-brutal-bg data-[state=checked]:bg-brutal-secondary data-[state=indeterminate]:bg-brutal-secondary data-[state=off]:bg-brutal-bg data-[state=on]:bg-brutal-secondary',
     accent: 'data-[state=unchecked]:bg-brutal-bg data-[state=checked]:bg-brutal-accent data-[state=indeterminate]:bg-brutal-accent data-[state=off]:bg-brutal-bg data-[state=on]:bg-brutal-accent',
@@ -29,9 +30,10 @@ export const formToggleVariantColors = {
 } as const
 
 export const formToggleForegroundColors = {
-    default: 'data-[state=checked]:text-brutal-success-foreground data-[state=on]:text-brutal-success-foreground',
-    primary: 'data-[state=checked]:text-brutal-primary-foreground data-[state=on]:text-brutal-primary-foreground',
-    secondary: 'data-[state=checked]:text-brutal-secondary-foreground data-[state=on]:text-brutal-secondary-foreground',
-    accent: 'data-[state=checked]:text-brutal-accent-foreground data-[state=on]:text-brutal-accent-foreground',
-    danger: 'data-[state=checked]:text-brutal-destructive-foreground data-[state=on]:text-brutal-destructive-foreground',
+    default: 'data-[state=checked]:text-brutal-success-foreground data-[state=indeterminate]:text-brutal-success-foreground data-[state=on]:text-brutal-success-foreground',
+    success: 'data-[state=checked]:text-brutal-success-foreground data-[state=indeterminate]:text-brutal-success-foreground data-[state=on]:text-brutal-success-foreground',
+    primary: 'data-[state=checked]:text-brutal-primary-foreground data-[state=indeterminate]:text-brutal-primary-foreground data-[state=on]:text-brutal-primary-foreground',
+    secondary: 'data-[state=checked]:text-brutal-secondary-foreground data-[state=indeterminate]:text-brutal-secondary-foreground data-[state=on]:text-brutal-secondary-foreground',
+    accent: 'data-[state=checked]:text-brutal-accent-foreground data-[state=indeterminate]:text-brutal-accent-foreground data-[state=on]:text-brutal-accent-foreground',
+    danger: 'data-[state=checked]:text-brutal-destructive-foreground data-[state=indeterminate]:text-brutal-destructive-foreground data-[state=on]:text-brutal-destructive-foreground',
 } as const

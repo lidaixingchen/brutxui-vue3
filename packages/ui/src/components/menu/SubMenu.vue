@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, onMounted, onUnmounted, provide, ref } from 'vue'
+import { computed, inject, onMounted, onUnmounted, provide, ref, watch } from 'vue'
 import { ChevronDown } from '@lucide/vue'
 import { MENU_KEY } from './menu-types'
 import { hasDocument, getDocument } from '@/lib/env'
@@ -79,6 +79,7 @@ function unregisterChild(idx: string) {
 function notifyItemSelected() {
     if (!isVertical.value) {
         isOpenClick.value = false
+        context?.focusItem(props.index)
     }
     parentSubMenu?.notifyItemSelected()
 }
@@ -99,11 +100,7 @@ provide('BrutxSubMenu', {
     closeAndFocusTrigger,
 })
 
-onMounted(() => {
-    if (parentSubMenu) {
-        parentSubMenu.registerChild(props.index)
-    }
-    context?.registerSubMenu(props.index, childIndices.value)
+function registerTrigger() {
     if (triggerRef.value && context) {
         context.registerItem({
             index: props.index,
@@ -112,10 +109,22 @@ onMounted(() => {
             isSubMenuTrigger: true,
         })
     }
+}
+
+onMounted(() => {
+    if (parentSubMenu) {
+        parentSubMenu.registerChild(props.index)
+    }
+    context?.registerSubMenu(props.index, childIndices.value)
+    registerTrigger()
     if (hasDocument) {
         getDocument()?.addEventListener('click', handleDocumentClick)
         getDocument()?.addEventListener('keydown', handleDocumentKeydown)
     }
+})
+
+watch(() => props.disabled, () => {
+    registerTrigger()
 })
 
 onUnmounted(() => {
@@ -139,13 +148,13 @@ const isFocused = computed(() => context?.focusedIndex.value === props.index)
 
 const tabIndex = computed(() => {
     if (props.disabled) return -1
-    if (context?.focusedIndex.value !== null && context?.focusedIndex.value !== undefined) {
+    if (context?.focusedIndex.value != null) {
         return isFocused.value ? 0 : -1
     }
     if (context?.activeIndex.value) {
         return isChildActive.value ? 0 : -1
     }
-    return 0
+    return context?.firstEnabledIndex.value === props.index ? 0 : -1
 })
 
 const subMenuClasses = computed(() => {
@@ -255,6 +264,7 @@ function handleDocumentKeydown(event: KeyboardEvent) {
     if (isVertical.value) return
     if (!isOpenClick.value) return
     if (event.key === 'Escape') {
+        if (rootRef.value?.querySelector('.absolute [aria-expanded="true"]')) return
         isOpenClick.value = false
         context?.focusItem(props.index)
     }
@@ -307,6 +317,7 @@ function onAfterLeave(el: Element) {
             role="menuitem"
             aria-haspopup="true"
             :aria-expanded="isOpened"
+            :aria-disabled="disabled"
             :class="triggerClasses"
             :tabindex="tabIndex"
             @click="handleTriggerClick"
