@@ -1,5 +1,5 @@
 /**
- * 从 packages/shared/src/design-tokens.ts 生成样式文件的三处注入块：
+ * 从 packages/shared/src/design-tokens.ts 生成样式文件的四处注入块：
  *
  * 1. styles.css @theme 块内的变量声明（含 fallback，取自 BASE_THEME.light）
  *    标记：/* @brutx:theme-tokens:start *\/ ... /* @brutx:theme-tokens:end *\/
@@ -7,7 +7,10 @@
  * 2. styles.css @layer base 内的 :root / .dark 块（无 fallback，纯运行时值）
  *    标记：/* @brutx:root-tokens:start *\/ ... /* @brutx:root-tokens:end *\/
  *
- * 3. preflight.css body 的 font-family 兜底（源自 FONT_STACK 常量，见下方定义）
+ * 3. styles.css @layer base 内的 .theme-pastel / .theme-mono / .theme-warm 预设块
+ *    标记：/* @brutx:theme-presets:start *\/ ... /* @brutx:theme-presets:end *\/
+ *
+ * 4. preflight.css body 的 font-family 兜底（源自 FONT_STACK 常量，见下方定义）
  *    标记：/* @brutx:font-stack:start *\/ ... /* @brutx:font-stack:end *\/
  *
  * 模式：
@@ -20,7 +23,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { CSS_VARS, BASE_THEME, type ThemeTokens } from 'brutx-shared-vue';
+import {
+    CSS_VARS,
+    BASE_THEME,
+    THEME_PRESETS,
+    TOKEN_TO_CSS_VAR,
+    type ThemeTokens,
+} from 'brutx-shared-vue';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,6 +40,8 @@ const ROOT_START = '/* @brutx:root-tokens:start */';
 const ROOT_END = '/* @brutx:root-tokens:end */';
 const THEME_START = '/* @brutx:theme-tokens:start */';
 const THEME_END = '/* @brutx:theme-tokens:end */';
+const PRESETS_START = '/* @brutx:theme-presets:start */';
+const PRESETS_END = '/* @brutx:theme-presets:end */';
 const FONT_STACK_START = '/* @brutx:font-stack:start */';
 const FONT_STACK_END = '/* @brutx:font-stack:end */';
 
@@ -38,8 +49,6 @@ const FONT_STACK_END = '/* @brutx:font-stack:end */';
  * 全局默认字体栈（单一事实来源）：数组为唯一真相，字符串由数组派生。
  * 下游两处均由本脚本生成、禁止手改：styles.css @theme 的 `--default-font-family`
  * 与 preflight.css body 的 `var(--default-font-family, <FONT_STACK>)` 兜底。
- * 注意：src/lib/theme-variables.ts、src/themes/index.ts 的字体栈是运行时主题预设数据，
- * 不在本常量管辖范围（见审查报告 §11.4 边界说明）。
  */
 const FONT_STACK_PARTS = [
     '"Inter"',
@@ -52,9 +61,9 @@ const FONT_STACK_PARTS = [
     'Arial',
     '"Noto Sans"',
     'sans-serif',
-] as const
+] as const;
 
-const FONT_STACK = FONT_STACK_PARTS.join(', ')
+const FONT_STACK = FONT_STACK_PARTS.join(', ');
 
 interface ThemeEntry {
     themeVar: string;
@@ -265,6 +274,35 @@ function generateThemeBlock(): string {
     return lines.join('\n');
 }
 
+/** 生成主题预设规则块（.theme-pastel / .theme-mono / .theme-warm 的 light 与 dark） */
+function generateThemePresetsBlock(): string {
+    const blocks: string[] = [];
+    for (const preset of Object.values(THEME_PRESETS)) {
+        const lightVars: Record<string, string> = {};
+        for (const [tokenKey, value] of Object.entries(preset.light)) {
+            if (value !== undefined) {
+                const varName = TOKEN_TO_CSS_VAR[tokenKey as keyof ThemeTokens];
+                if (varName) {
+                    lightVars[varName] = value;
+                }
+            }
+        }
+        blocks.push(formatVarsBlock(preset.selector, lightVars));
+
+        const darkVars: Record<string, string> = {};
+        for (const [tokenKey, value] of Object.entries(preset.dark)) {
+            if (value !== undefined) {
+                const varName = TOKEN_TO_CSS_VAR[tokenKey as keyof ThemeTokens];
+                if (varName) {
+                    darkVars[varName] = value;
+                }
+            }
+        }
+        blocks.push(formatVarsBlock(preset.darkSelector, darkVars));
+    }
+    return blocks.join('\n\n');
+}
+
 /** 生成 preflight.css body 的 font-family 声明（含 --default-font-family 兜底），缩进与 body 规则体一致。 */
 function generateFontStackBlock(): string {
     const lines: string[] = [
@@ -321,7 +359,7 @@ function injectBetweenMarkers(
 function main(): void {
     const isCheckMode = process.argv.slice(2).includes('--check');
 
-    // --- styles.css 两处令牌块 ---
+    // --- styles.css 令牌块与预设块 ---
     const stylesOriginal = fs.readFileSync(STYLES_PATH, 'utf-8');
     let stylesContent = stylesOriginal;
 
@@ -339,7 +377,14 @@ function main(): void {
         stylesContent = rootNext;
     }
 
-    const stylesChanged = themeChanged || rootChanged;
+    const presetsBlock = generateThemePresetsBlock();
+    const presetsNext = injectBetweenMarkers(stylesContent, PRESETS_START, PRESETS_END, presetsBlock, STYLES_PATH);
+    const presetsChanged = presetsNext !== stylesContent;
+    if (presetsChanged) {
+        stylesContent = presetsNext;
+    }
+
+    const stylesChanged = themeChanged || rootChanged || presetsChanged;
 
     // --- preflight.css 字体栈 ---
     const preflightOriginal = fs.readFileSync(PREFLIGHT_PATH, 'utf-8');
@@ -368,6 +413,9 @@ function main(): void {
         }
         if (rootChanged) {
             printBlockDiff(stylesOriginal, ROOT_START, ROOT_END, rootBlock, 'styles.css :root/.dark 区块');
+        }
+        if (presetsChanged) {
+            printBlockDiff(stylesOriginal, PRESETS_START, PRESETS_END, presetsBlock, 'styles.css 主题预设区块');
         }
         if (preflightChanged) {
             printBlockDiff(preflightOriginal, FONT_STACK_START, FONT_STACK_END, fontStackBlock, 'preflight.css 字体栈');

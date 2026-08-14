@@ -51,14 +51,14 @@ let startTime = 0
 function startLeave() {
     if (isLeaving.value) return
     isLeaving.value = true
-    leaveTimer.value = setTimeout(() => {
+    leaveTimer.value = window.setTimeout(() => {
         emit('close')
     }, LEAVE_ANIMATION_DELAY)
 }
 
 function startTimer() {
     startTime = performance.now()
-    timer.value = setTimeout(() => {
+    timer.value = window.setTimeout(() => {
         startLeave()
     }, remainingTime.value)
 }

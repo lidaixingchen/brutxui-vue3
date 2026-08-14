@@ -86,7 +86,7 @@ const validate = (value: string) => {
     if (validationState.value === 'error' && props.shakeOnError) {
         if (shakeTimer.value) clearTimeout(shakeTimer.value)
         triggerShake.value = false
-        shakeTimer.value = setTimeout(() => {
+        shakeTimer.value = window.setTimeout(() => {
             shakeTimer.value = undefined
             triggerShake.value = true
         }, HARDCORE_INPUT_SHAKE_DELAY_MS)

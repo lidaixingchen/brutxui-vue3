@@ -39,9 +39,11 @@ export {
     generateComponentsSidebar,
     generateBlocksSidebar,
 } from './sidebar-generator.js';
-export type { ThemeMode, ThemeTokens } from './design-tokens.js';
+export type { ThemeMode, ThemeTokens, ThemePresetOverrides } from './design-tokens.js';
 export {
     BASE_THEME,
+    THEME_PRESETS,
+    TOKEN_TO_CSS_VAR,
     CSS_VARS,
     toCssVars,
 } from './design-tokens.js';
