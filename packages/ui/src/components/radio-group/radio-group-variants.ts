@@ -1,5 +1,6 @@
 import { cva } from 'class-variance-authority'
 import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
+import { formToggleVariantColors } from '@/lib/form-toggle-base'
 import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const radioGroupItemVariants = cva(
@@ -16,11 +17,11 @@ export const radioGroupItemVariants = cva(
     {
         variants: {
             variant: {
-                default: 'data-[state=checked]:bg-brutal-primary',
-                secondary: 'data-[state=checked]:bg-brutal-secondary',
-                accent: 'data-[state=checked]:bg-brutal-accent',
-                success: 'data-[state=checked]:bg-brutal-success',
-                danger: 'data-[state=checked]:bg-brutal-destructive',
+                default: formToggleVariantColors.primary,
+                secondary: formToggleVariantColors.secondary,
+                accent: formToggleVariantColors.accent,
+                success: formToggleVariantColors.default,
+                danger: formToggleVariantColors.danger,
             },
             size: {
                 sm: 'h-5 w-5',

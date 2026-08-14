@@ -1,5 +1,6 @@
 import { cva } from 'class-variance-authority'
 import { brutalHoverLiftSm, brutalPress, brutalPressedStateOn } from '@/lib/brutal-interaction-variants'
+import { formToggleForegroundColors, formToggleVariantColors } from '@/lib/form-toggle-base'
 import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const toggleVariants = cva(
@@ -14,18 +15,17 @@ export const toggleVariants = cva(
         variants: {
             variant: {
                 default: [
-                    'bg-brutal-bg text-brutal-fg shadow-brutal-sm',
+                    'shadow-brutal-sm',
                     `hover:bg-brutal-muted ${brutalHoverLiftSm}`,
-                    // ON 态保持按下：位移+去影（复用 brutalPressedStateOn 共享变体，
-                    // 与 brutalPress 同源派生，避免手抄 fallback 脱同步；translate-x-[阴影偏移] 覆盖 hoverLift 的 X 轴侧滑）
-                    'data-[state=on]:bg-brutal-primary data-[state=on]:text-brutal-primary-foreground',
+                    formToggleVariantColors.primary,
+                    formToggleForegroundColors.primary,
                     brutalPressedStateOn,
                 ],
                 outline: [
                     'bg-transparent text-brutal-fg border-3 border-brutal shadow-brutal-sm',
                     `hover:bg-brutal-muted ${brutalHoverLiftSm}`,
-                    // 同上：ON 态保持按下复用共享变体
-                    'data-[state=on]:bg-brutal-secondary data-[state=on]:text-brutal-secondary-foreground',
+                    formToggleVariantColors.secondary,
+                    formToggleForegroundColors.secondary,
                     brutalPressedStateOn,
                 ],
             },

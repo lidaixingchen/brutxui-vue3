@@ -823,7 +823,8 @@
     "composables": [],
     "directives": [],
     "lib": [
-      "brutal-interaction-variants.ts"
+      "brutal-interaction-variants.ts",
+      "form-toggle-base.ts"
     ]
   },
   "rate": {
@@ -1102,6 +1103,7 @@
     "directives": [],
     "lib": [
       "brutal-interaction-variants.ts",
+      "form-toggle-base.ts",
       "icon-size-variants.ts"
     ]
   },

@@ -41,17 +41,18 @@ export const tabsTriggerVariants = cva(
         FOCUS_RING_CLASSES,
         brutalPress,
         'disabled:pointer-events-none disabled:opacity-50',
-        'data-[state=active]:text-brutal-fg data-[state=active]:border-brutal data-[state=active]:shadow-brutal-sm',
-        'data-[state=inactive]:hover:bg-brutal-muted data-[state=inactive]:shadow-none', /* 组件私有：未激活标签悬停样式，不抽取 */
+        'data-[state=active]:border-brutal data-[state=active]:shadow-brutal-sm',
+        'data-[state=inactive]:text-brutal-fg data-[state=inactive]:hover:bg-brutal-muted data-[state=inactive]:shadow-none',
         brutalHoverLift,
     ],
     {
         variants: {
             variant: {
-                default: 'data-[state=active]:bg-brutal-accent',
-                primary: 'data-[state=active]:bg-brutal-primary',
-                secondary: 'data-[state=active]:bg-brutal-secondary',
-                success: 'data-[state=active]:bg-brutal-success',
+                default: 'data-[state=active]:bg-brutal-primary data-[state=active]:text-brutal-primary-foreground',
+                primary: 'data-[state=active]:bg-brutal-primary data-[state=active]:text-brutal-primary-foreground',
+                secondary: 'data-[state=active]:bg-brutal-secondary data-[state=active]:text-brutal-secondary-foreground',
+                accent: 'data-[state=active]:bg-brutal-accent data-[state=active]:text-brutal-accent-foreground',
+                success: 'data-[state=active]:bg-brutal-success data-[state=active]:text-brutal-success-foreground',
             },
         },
         defaultVariants: {

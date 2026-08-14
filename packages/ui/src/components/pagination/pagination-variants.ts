@@ -38,14 +38,13 @@ export const paginationButtonVariants = cva(
             },
             isActive: {
                 true: [
-                    'bg-brutal-fg text-brutal-bg',
-                    'shadow-brutal-primary',
-                    'hover:shadow-brutal-sm',
+                    'bg-brutal-primary text-brutal-primary-foreground',
+                    'shadow-brutal-sm',
                     brutalPress,
                 ],
                 false: [
                     'bg-brutal-bg text-brutal-fg',
-                    'shadow-brutal',
+                    'shadow-brutal-sm',
                     'hover:bg-brutal-muted',
                     brutalHoverLiftSmNoX,
                     brutalPress,
