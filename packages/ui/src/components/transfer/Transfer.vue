@@ -156,6 +156,14 @@ const addToLeft = () => {
     // 同上：清除整个面板选中态，清理选中后才变为 disabled 的残留键
     removeRightCheckedKeys(rightChecked.value)
 }
+
+function getItemClass(disabled: boolean | undefined, isChecked: boolean) {
+    return cn(
+        'flex items-center gap-3 px-3 py-2 rounded-brutal border-3 border-transparent select-none cursor-pointer transition-all duration-150',
+        disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'hover:bg-brutal-muted',
+        isChecked && 'bg-brutal-muted border-brutal shadow-brutal-sm'
+    )
+}
 </script>
 
 <template>
@@ -199,11 +207,7 @@ const addToLeft = () => {
                 <div
                     v-for="item in filteredSourceData"
                     :key="item.key"
-                    :class="cn(
-                        'flex items-center gap-3 px-2 py-1.5 rounded border border-transparent select-none cursor-pointer transition-colors',
-                        item.disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'hover:bg-brutal-muted',
-                        leftChecked.includes(item.key) && 'bg-brutal-muted border-brutal'
-                    )"
+                    :class="getItemClass(item.disabled, leftChecked.includes(item.key))"
                     @click="toggleLeftChecked(item)"
                 >
                     <Checkbox
@@ -289,11 +293,7 @@ const addToLeft = () => {
                 <div
                     v-for="item in filteredTargetData"
                     :key="item.key"
-                    :class="cn(
-                        'flex items-center gap-3 px-2 py-1.5 rounded border border-transparent select-none cursor-pointer transition-colors',
-                        item.disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'hover:bg-brutal-muted',
-                        rightChecked.includes(item.key) && 'bg-brutal-muted border-brutal'
-                    )"
+                    :class="getItemClass(item.disabled, rightChecked.includes(item.key))"
                     @click="toggleRightChecked(item)"
                 >
                     <Checkbox
