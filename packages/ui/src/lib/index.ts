@@ -80,38 +80,7 @@ export {
     DEFAULT_AUTOPLAY_DELAY_MS,
 } from './defaults'
 
-// 主题变量系统
-export {
-    createThemeVariables,
-    createDarkModeToggle,
-    DEFAULT_THEME,
-    DARK_THEME,
-    PASTEL_THEME,
-    MONO_THEME,
-    WARM_THEME,
-    DEFAULT_THEMES,
-} from './theme-variables'
-export type {
-    ThemeVariables,
-    ThemeColors,
-    ThemeSpacing,
-    ThemeBorder,
-    ThemeShadow,
-    ThemeTypography,
-    ThemeOptions,
-    ThemeApi,
-    ThemeVariablesApi,
-} from './theme-variables'
-// VALID_THEMES 属 useTheme（theme-* class 体系）；DEFAULT_THEMES 属 CSS 变量体系。
-// 命名已对齐：基础主题均为 'classic'，VALID_THEMES 是 DEFAULT_THEMES 键集的非 dark 子集（见 ./theme-names）
+// 主题名称常量与类型
 export { VALID_THEMES } from './theme-names'
 export type { ThemeName } from './theme-names'
 
-// 主题编辑器
-export { createThemeEditor } from './theme-editor'
-export type {
-    PartialThemeVariables,
-    ThemeEditorOptions,
-    CSSGenerateOptions,
-    ThemeEditorReturn,
-} from './theme-editor'
