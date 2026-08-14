@@ -274,30 +274,28 @@ function generateThemeBlock(): string {
     return lines.join('\n');
 }
 
+function collectPresetVars(overrides: Partial<ThemeTokens>, presetName: string): Record<string, string> {
+    const vars: Record<string, string> = {};
+    for (const [tokenKey, value] of Object.entries(overrides)) {
+        if (value === undefined) continue;
+        const varName = TOKEN_TO_CSS_VAR[tokenKey as keyof ThemeTokens];
+        if (!varName) {
+            console.warn(`[generate-styles-tokens] 预设 "${presetName}" 的 token "${tokenKey}" 缺少 CSS 变量映射，已跳过`);
+            continue;
+        }
+        vars[varName] = value;
+    }
+    return vars;
+}
+
 /** 生成主题预设规则块（.theme-pastel / .theme-mono / .theme-warm 的 light 与 dark） */
 function generateThemePresetsBlock(): string {
     const blocks: string[] = [];
     for (const preset of Object.values(THEME_PRESETS)) {
-        const lightVars: Record<string, string> = {};
-        for (const [tokenKey, value] of Object.entries(preset.light)) {
-            if (value !== undefined) {
-                const varName = TOKEN_TO_CSS_VAR[tokenKey as keyof ThemeTokens];
-                if (varName) {
-                    lightVars[varName] = value;
-                }
-            }
-        }
+        const lightVars = collectPresetVars(preset.light, preset.name);
         blocks.push(formatVarsBlock(preset.selector, lightVars));
 
-        const darkVars: Record<string, string> = {};
-        for (const [tokenKey, value] of Object.entries(preset.dark)) {
-            if (value !== undefined) {
-                const varName = TOKEN_TO_CSS_VAR[tokenKey as keyof ThemeTokens];
-                if (varName) {
-                    darkVars[varName] = value;
-                }
-            }
-        }
+        const darkVars = collectPresetVars(preset.dark, preset.name);
         blocks.push(formatVarsBlock(preset.darkSelector, darkVars));
     }
     return blocks.join('\n\n');

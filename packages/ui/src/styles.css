@@ -217,8 +217,11 @@
     }
 
     .dark .theme-pastel, .theme-pastel.dark {
-        --brutal-border-color: #3a3a4a;
-        --brutal-shadow-color: #3a3a4a;
+        --brutal-border-width: 2px;
+        --brutal-border-color: #5c5c72;
+        --brutal-shadow-offset-x: 3px;
+        --brutal-shadow-offset-y: 3px;
+        --brutal-shadow-color: #5c5c72;
         --brutal-radius: 8px;
         --brutal-bg: #16161e;
         --brutal-fg: #f0f0f5;
@@ -270,8 +273,12 @@
     }
 
     .dark .theme-mono, .theme-mono.dark {
+        --brutal-border-width: 4px;
         --brutal-border-color: #ffffff;
+        --brutal-shadow-offset-x: 5px;
+        --brutal-shadow-offset-y: 5px;
         --brutal-shadow-color: #ffffff;
+        --brutal-radius: 0px;
         --brutal-bg: #000000;
         --brutal-fg: #ffffff;
         --brutal-primary: #ffffff;
