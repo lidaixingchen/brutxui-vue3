@@ -89,7 +89,6 @@
   ],
   "composables": [
     "destroyFallbacks.ts",
-    "useAnimation.ts",
     "useAudioEngine.ts",
     "useCanvasInteraction.ts",
     "useCarousel.ts",

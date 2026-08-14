@@ -364,10 +364,6 @@
             "types": "./dist/composables/destroyFallbacks.d.ts",
             "import": "./dist/composables/destroyFallbacks.js"
         },
-        "./useAnimation": {
-            "types": "./dist/composables/useAnimation.d.ts",
-            "import": "./dist/composables/useAnimation.js"
-        },
         "./useAudioEngine": {
             "types": "./dist/composables/useAudioEngine.d.ts",
             "import": "./dist/composables/useAudioEngine.js"

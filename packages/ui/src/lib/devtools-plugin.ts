@@ -588,7 +588,7 @@ function initDevtoolsIntegration(
  * @example
  * ```typescript
  * import { createApp } from 'vue'
- * import { devtoolsPlugin } from 'brutx-ui-vue/devtools-plugin'
+ * import { devtoolsPlugin } from './lib/devtools-plugin'
  *
  * const app = createApp(App)
  *
@@ -635,7 +635,7 @@ export const devtoolsPlugin: Plugin = {
  * @example
  * ```typescript
  * import { createApp } from 'vue'
- * import { setupDevtools } from 'brutx-ui-vue/devtools-plugin'
+ * import { setupDevtools } from './lib/devtools-plugin'
  *
  * const app = createApp(App)
  * setupDevtools(app)
@@ -650,7 +650,7 @@ export function setupDevtools(app: App, options?: DevtoolsPluginOptions): void {
  *
  * @example
  * ```typescript
- * import { useDevtools } from 'brutx-ui-vue/devtools-plugin'
+ * import { useDevtools } from './lib/devtools-plugin'
  *
  * const devtools = useDevtools()
  * if (devtools) {
