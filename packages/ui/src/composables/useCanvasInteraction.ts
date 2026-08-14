@@ -1,4 +1,4 @@
-import { ref, readonly, onMounted, onUnmounted, type Ref } from 'vue'
+import { ref, readonly, watch, onUnmounted, type Ref } from 'vue'
 import { CANVAS_SAMPLE_GRID_SIZE, CANVAS_PROGRESS_CHECK_FRAME_INTERVAL, CANVAS_PROGRESS_THROTTLE_MS, CANVAS_PROGRESS_SAMPLE_WIDTH, CANVAS_PROGRESS_SAMPLE_MAX_HEIGHT, CANVAS_ALPHA_CLEARED_THRESHOLD } from '../lib/defaults'
 import { createCanvasElement, getCanvas2DContext, getDevicePixelRatio, getResizeObserverCtor } from '../lib/env'
 
@@ -272,19 +272,30 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions): UseC
         }
     }
 
-    onMounted(() => {
-        syncCanvasSize()
-        if (containerRef.value) {
-            const ResizeObserverCtor = getResizeObserverCtor()
-            if (!ResizeObserverCtor) return
-            resizeObserver = new ResizeObserverCtor(syncCanvasSize)
-            resizeObserver.observe(containerRef.value)
-        }
-    })
+    watch(
+        [containerRef, canvasRef],
+        ([newContainer, newCanvas], [oldContainer]) => {
+            if (oldContainer && resizeObserver) {
+                resizeObserver.unobserve(oldContainer)
+            }
+            if (newContainer && newCanvas) {
+                syncCanvasSize()
+                const ResizeObserverCtor = getResizeObserverCtor()
+                if (ResizeObserverCtor) {
+                    if (!resizeObserver) {
+                        resizeObserver = new ResizeObserverCtor(syncCanvasSize)
+                    }
+                    resizeObserver.observe(newContainer)
+                }
+            }
+        },
+        { immediate: true, flush: 'post' }
+    )
 
     onUnmounted(() => {
         if (resizeObserver) {
             resizeObserver.disconnect()
+            resizeObserver = null
         }
         if (revealTimerId) {
             clearTimeout(revealTimerId)

@@ -1016,4 +1016,44 @@ describe('useCanvasInteraction', () => {
         // getImageData should NOT be called since w=0 causes early return
         expect(mockGetImageData).not.toHaveBeenCalled()
     })
+
+    // ─── Late mount auto-recovery ───────────────────────────────────────
+
+    it('auto-recovers when containerRef and canvasRef are mounted asynchronously', async () => {
+        const observe = vi.fn()
+        const ROClass = createResizeObserverMock({ observe })
+        vi.stubGlobal('ResizeObserver', ROClass)
+
+        const drawOverlay = vi.fn()
+        const containerRef = ref<HTMLDivElement | null>(null)
+        const canvasRef = ref<HTMLCanvasElement | null>(null)
+
+        mount(
+            defineComponent({
+                setup() {
+                    return useCanvasInteraction(createDefaultOptions({
+                        containerRef,
+                        canvasRef,
+                        drawOverlay,
+                    }) as Parameters<typeof useCanvasInteraction>[0])
+                },
+                render: () => h('div'),
+            }),
+        )
+
+        expect(drawOverlay).not.toHaveBeenCalled()
+        expect(observe).not.toHaveBeenCalled()
+
+        // 模拟条件渲染或延迟挂载
+        const container = createMockContainer()
+        const canvas = createMockCanvas()
+        containerRef.value = container
+        canvasRef.value = canvas
+
+        // 等待 watch flush: 'post'
+        await vi.dynamicImportSettled()
+
+        expect(drawOverlay).toHaveBeenCalled()
+        expect(observe).toHaveBeenCalledWith(container)
+    })
 })
