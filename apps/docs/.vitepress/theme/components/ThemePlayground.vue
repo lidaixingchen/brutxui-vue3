@@ -278,7 +278,7 @@ onBeforeUnmount(() => {
                                 <input
                                     type="text"
                                     :value="currentTokens[control.key]"
-                                    class="h-10 min-w-0 border-3 border-brutal bg-brutal-bg px-2 font-mono text-xs font-black text-brutal-fg shadow-brutal-sm focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
+                                    class="h-10 min-w-0 border-3 border-brutal bg-brutal-bg px-2 font-mono text-xs font-black text-brutal-fg shadow-brutal-sm focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden"
                                     :aria-label="`${control.label} hex value`"
                                     @input="updateColorToken(control.key, ($event.target as HTMLInputElement).value)"
                                 >
@@ -325,7 +325,7 @@ onBeforeUnmount(() => {
                                 :max="control.max"
                                 :step="control.step"
                                 :value="numberFromPx(currentTokens[control.key])"
-                                class="h-10 border-3 border-brutal bg-brutal-bg px-2 text-center font-mono text-sm font-black text-brutal-fg shadow-brutal-sm focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2"
+                                class="h-10 border-3 border-brutal bg-brutal-bg px-2 text-center font-mono text-sm font-black text-brutal-fg shadow-brutal-sm focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden"
                                 :aria-label="`${control.label} value`"
                                 @input="updateLengthToken(control.key, ($event.target as HTMLInputElement).value)"
                             >

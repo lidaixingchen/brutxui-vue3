@@ -181,7 +181,7 @@ BrutxUI 使用 CSS 自定义属性定义设计令牌，便于主题切换和自�
 <div class="bg-brutal-status-error text-brutal-status-error-foreground">   <!-- 状态错误 -->
 ```
 
-> 注意：焦点指示用 outline（`focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2`，即 `FOCUS_OUTLINE_CLASSES`）；禁止使用 ring 系。前景色一律随 `*-foreground` 令牌，禁止 `text-white`/`text-black` 硬编码。
+> 注意：焦点指示用 ring（`focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden`，即 `FOCUS_RING_CLASSES`）。前景色一律随 `*-foreground` 令牌，禁止 `text-white`/`text-black` 硬编码。
 
 ### 交互效果
 

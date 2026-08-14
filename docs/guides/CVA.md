@@ -16,7 +16,7 @@
 import { cva } from 'class-variance-authority'
 import { baseButtonVariants } from './shared-button-variants'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
-import { FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
+import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const buttonVariants = cva(
     [
@@ -25,7 +25,7 @@ export const buttonVariants = cva(
         'rounded-brutal',              // R3
         'font-black tracking-wide',
         'transition-all duration-150', // 过渡规则见 COMPONENT_GUIDE r13
-        FOCUS_OUTLINE_CLASSES,         // R7 焦点类唯一入口
+        FOCUS_RING_CLASSES,            // R7 焦点类唯一入口
         'disabled:opacity-50 disabled:pointer-events-none',
         brutalPress,                   // R4 按压反馈（位移 + 去影）
     ],
@@ -39,7 +39,7 @@ export const buttonVariants = cva(
 )
 ```
 
-**base 层必须遵守**：边框 `border-3 border-brutal`（R1）、阴影 `shadow-brutal*`（R2）、圆角 `rounded-brutal`（R3）、按压 `brutalPress`（R4）、焦点 `FOCUS_OUTLINE_CLASSES`（R7）、颜色走令牌（R6）。
+**base 层必须遵守**：边框 `border-3 border-brutal`（R1）、阴影 `shadow-brutal*`（R2）、圆角 `rounded-brutal`（R3）、按压 `brutalPress`（R4）、焦点 `FOCUS_RING_CLASSES`（R7）、颜色走令牌（R6）。
 
 **前景色令牌对照**（shared-button-variants.ts 的 9 个 variant；键名 `danger` 映射 `brutal-destructive`，勿重命名）：
 

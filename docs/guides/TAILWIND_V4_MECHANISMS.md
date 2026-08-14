@@ -4,7 +4,7 @@
 > 凡规则文本引用本文件的机制，解释一律以本文件为准，其它 guide 只引用、不重复抄写。
 > 新增/修改 Tailwind v4 相关规则措辞前，先核验本文件的机制事实（含各节「实证」），再据此落笔。
 
-## §1 `--tw-outline-style` 是元素级变量（@property inherits:false）
+## §1 `--tw-outline-style` 是元素级变量（@property inherits:false）与焦点体系演进
 
 ```css
 @property --tw-outline-style { syntax: "*"; inherits: false; initial-value: solid; }
@@ -21,17 +21,17 @@ outline 工具类拆写（产物实证）：
 - `outline-<n>` 只写 `outline-style: var(--tw-outline-style)` + `outline-width: <n>`（不重置该变量）；
 - 颜色类只写 `outline-color`。
 
-**陷阱**：同一元素上 `outline-none` 与 `outline-<n>` 并存时，`outline-<n>` 读到被置为 `none` 的变量 → 焦点环静默不渲染；`focus-visible:outline-2` 不把 style 恢复为 solid。twMerge 不帮忙（不同类组，两个都保留，实证见 §2）。
+**旧陷阱**：若使用 outline 表达焦点，同一元素上 `outline-none` 与 `outline-<n>` 并存时，`outline-<n>` 读到被置为 `none` 的变量 → 焦点环静默不渲染；`focus-visible:outline-2` 不把 style 恢复为 solid。twMerge 不帮忙（不同类组，两个都保留，实证见 §2）。
 
-**不跨元素**：内层 `outline-none` 不泄漏到容器，容器 `focus-within:outline-2` 与内层 `focus:outline-none` 互不干扰。
+**现状与方案**：
+随着阴影全面迁移至 `@theme` 组装通道，box-shadow 与 ring（`--tw-ring-shadow`）分层共存、互不顶替。全库焦点体系统一为 `FOCUS_RING_CLASSES`（ring 五件套），焦点指示不再受 `--tw-outline-style` 陷阱影响。
+配套的 `outline-hidden` 工具类在常规模式下抑制 UA 焦点环（`outline-style: none`），同时在 `@media (forced-colors: active)` 下自带 2px solid 恢复块，满足 WCAG 2.4.7 可访问性契约。
 
 **推论规则**：
 
-- 承载焦点 outline 的元素不得带任何 `outline-none`；
-- 合法例外仅一种：容器 focus-within 方案的内层 input/textarea；
-- 不可聚焦元素上的惰性 `outline-none` 属死类，应删除。
-
-**实证**：`node --input-type=module -e "import { twMerge } from 'tailwind-merge'; console.log(twMerge('focus:outline-none','focus-visible:outline-2'))"` → `"focus:outline-none focus-visible:outline-2"`（两保留，twMerge 不帮忙）。
+- 承载焦点指示的元素统一使用 `FOCUS_RING_CLASSES`（或其 focus-within 容器变体）；
+- 禁止在承载焦点指示的元素上误加 `outline-none`（避免丢失 forced-colors 恢复）；
+- focus-within 容器方案内层的 input/textarea 可保留 `outline-none` 抑制自身 UA 焦点环。
 
 ## §2 twMerge 同组静默移除
 
@@ -63,7 +63,7 @@ node --input-type=module -e "import { twMerge } from 'tailwind-merge'; console.l
 
 **规则**：需要变体支持的自定义工具类必须用 `@utility` 或 `@theme` 派生；禁止写带变体的手写 `@layer utilities` 类。
 
-**现状**：`styles.css` 的 `@utility shadow-brutal*` 经工具引擎注册，变体按需生成；`.border-3`、`.border-brutal` 为手写 `@layer utilities` 类，不带变体支持。
+**现状**：`shadow-brutal*` 经 `@theme` 派生（单变量复合投影），进入 Tailwind v4 阴影组装通道（分层支持 `--tw-ring-shadow` 共存），变体按需生成；`.border-3`、`.border-brutal` 为手写 `@layer utilities` 类，不带变体支持。
 
 ## §4 @source 静态扫描字面量要求
 

@@ -118,14 +118,14 @@ Vue 3（`<script setup>`）· TypeScript（strict）· Tailwind CSS v4 · reka-u
 - [视觉系统指南](docs/guides/VISUAL_SYSTEM.md)
 - [CVA 变体声明规范](docs/guides/CVA.md)
 - [组件文档模板](docs/guides/COMPONENT_DOC_TEMPLATE.md)
-- [Tailwind v4 机制说明](docs/guides/tailwind-v4-mechanisms.md)
+- [Tailwind v4 机制说明](docs/guides/TAILWIND_V4_MECHANISMS.md)
 - [AI 技能描述](skills/brutxui/SKILL.md)
 
 ## docs/ 文档落位约定
 
 `docs/` 按生命周期分四类，索引见 [docs/index.md](docs/index.md)：
 
-- **规范 / 操作手册** → `docs/guides/`，英文 kebab-case 命名，标题可保持英文。
+- **规范 / 操作手册** → `docs/guides/`，英文全大写命名（如 `VISUAL_SYSTEM.md`、`TAILWIND_V4_MECHANISMS.md`），标题可保持英文。
 - **方案计划** → `docs/plans/`，中文命名 `<中文主题>方案.md`（功能设计类用 `<主题>设计.md`）；标题下补 frontmatter（`方案类型 / 状态 / 日期 / 关联文档 / 修订记录`），状态取 `draft | active | done`。
 - **审计 / 扫描报告** → `docs/reports/`，快照型命名 `<YYYY-MM-DD>-<中文主题>报告.md`（日期前置便于排序），结论型不带日期。
 - **旧方案被新版本取代** → 立即移入 `docs/archive/YYYY/`，文件名保留版本号。
