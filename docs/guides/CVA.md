@@ -1,16 +1,16 @@
 # 架构蓝图：CVA 组件模式
 
-> 本文件是 CVA 变体声明的**模式蓝图**；视觉规则（边框/阴影/圆角/按压/悬停/颜色/焦点）不在此重复定义，一律以 [VISUAL_SYSTEM.md](VISUAL_SYSTEM.md) 的 R1-R7 为**单一权威**。权威的**活范例**是真实组件 `packages/ui/src/components/button/button-variants.ts` 与 `shared-button-variants.ts`；规则或范例与真实代码冲突时，以真实代码为准并回改本文与规则。
+> 本文件是 CVA 变体声明的**模式蓝图**；视觉规则（边框/阴影/圆角/按压/悬停/颜色/焦点）不在此重复定义，一律以 [VISUAL_SYSTEM.md](VISUAL_SYSTEM.md) 的 R1-R7 为**单一权威**。实际实现以真实组件 [`button-variants.ts`](../../packages/ui/src/components/button/button-variants.ts) 与 [`shared-button-variants.ts`](../../packages/ui/src/components/button/shared-button-variants.ts) 为准；规则或示例与真实代码冲突时，以真实代码为准并回改本文与规则。
 
 ## 模式三要素
 
 1. **变体定义**：独立 `*-variants.ts`、与组件同目录，用 `cva()` 声明。
-2. **类合并**：始终经 `cn(buttonVariants({...}), props.class)`，禁止字符串拼接（见 COMPONENT_GUIDE cn() 规则）。
-3. **动态计算**：`computed(() => cn(...))`，禁止在模板调用 `cn()`（见 COMPONENT_GUIDE computed 规则）。
+2. **类合并**：始终经 `cn(buttonVariants({...}), props.class)`，禁止字符串拼接（见 [COMPONENT_GUIDE.md](COMPONENT_GUIDE.md)「样式与扫描契约」）。
+3. **动态计算**：`computed(() => cn(...))`，禁止在模板调用 `cn()`（见 [COMPONENT_GUIDE.md](COMPONENT_GUIDE.md)「样式与扫描契约」）。
 
 共享变体（variant/size 等跨组件列表）放入 `shared-*-variants.ts`，组件文件用 `...baseButtonVariants.variants` 展开后追加组件私有变体。
 
-## 正确范例（以真实 button-variants.ts 为活范例）
+## 示例代码（以 button-variants.ts 为例）
 
 ```ts
 import { cva } from 'class-variance-authority'
@@ -24,7 +24,7 @@ export const buttonVariants = cva(
         'border-3 border-brutal',      // R1
         'rounded-brutal',              // R3
         'font-black tracking-wide',
-        'transition-all duration-150', // 过渡规则见 COMPONENT_GUIDE r13
+        'transition-all duration-150', // 过渡规则见 COMPONENT_GUIDE「视觉与交互行为」
         FOCUS_RING_CLASSES,            // R7 焦点类唯一入口
         'disabled:opacity-50 disabled:pointer-events-none',
         brutalPress,                   // R4 按压反馈（位移 + 去影）
@@ -52,4 +52,9 @@ export const buttonVariants = cva(
 | danger | `text-brutal-destructive-foreground` |
 | success | `text-brutal-success-foreground` |
 
-> 真实实现对照：`packages/ui/src/components/button/button-variants.ts`、`shared-button-variants.ts`、`packages/ui/src/lib/brutal-interaction-variants.ts`。
+> [!TIP]
+> **参考源码**
+> 如需参考 CVA 变体模式在真实组件中的完整架构，可直接查阅以下代码：
+> - **组件私有变体**：[`button-variants.ts`](../../packages/ui/src/components/button/button-variants.ts)（包含 base 规则与组件私有变体扩展）
+> - **跨组件共享变体**：[`shared-button-variants.ts`](../../packages/ui/src/components/button/shared-button-variants.ts)（公共 variant / size 定义）
+> - **全局交互动效**：[`brutal-interaction-variants.ts`](../../packages/ui/src/lib/brutal-interaction-variants.ts)（按压、悬停等交互底层类）
