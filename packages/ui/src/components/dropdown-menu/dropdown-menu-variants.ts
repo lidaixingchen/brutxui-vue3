@@ -2,7 +2,7 @@ import { cva } from 'class-variance-authority'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { floatingContentAnimationClasses } from '@/lib/floating-animation-classes'
 import { brutalFloatingSurfaceClasses } from '@/lib/floating-content-variants'
-import { FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
+import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 const dropdownMenuContentBaseStyles = [
     'z-50 min-w-[8rem] overflow-hidden p-1',
@@ -20,7 +20,7 @@ export const dropdownMenuItemVariants = cva(
         'font-bold transition-all rounded-brutal',
         'focus:bg-brutal-accent focus:text-brutal-fg',
         'hover:shadow-brutal-sm',
-        FOCUS_OUTLINE_CLASSES,
+        FOCUS_RING_CLASSES,
         brutalPress,
         'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
     ]

@@ -127,11 +127,11 @@ const presetsForPanel = computed<string[] | readonly ColorPreset[] | undefined>(
                     {{ normalizedDisplay ?? resolvedPlaceholder }}
                 </span>
                 <span class="flex items-center gap-1 shrink-0">
-                    <!-- 与 lib/utils FOCUS_OUTLINE_CLASSES 保持一致 -->
+                    <!-- 与 lib/utils FOCUS_RING_CLASSES 保持一致 -->
                     <span
                         v-if="clearable && modelValue && !disabled"
                         role="button"
-                        class="inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2 rounded-brutal"
+                        class="inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden rounded-brutal"
                         :class="ICON_SIZE_CLASSES.clearButton[size]"
                         :aria-label="t('colorPicker.clear')"
                         tabindex="0"

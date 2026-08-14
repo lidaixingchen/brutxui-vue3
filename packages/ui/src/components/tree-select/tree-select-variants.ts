@@ -1,7 +1,7 @@
 import { cva } from 'class-variance-authority'
 import { brutalHoverLiftSm, brutalHoverLiftSmNoX } from '@/lib/brutal-interaction-variants'
 import { treeNodeBaseClasses, treeNodeUnselectedClass } from '@/lib/tree-variants'
-import { FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
+import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const treeSelectTriggerVariants = cva(
     [
@@ -10,7 +10,7 @@ export const treeSelectTriggerVariants = cva(
         'bg-brutal-bg text-brutal-fg font-semibold',
         'transition-all duration-150',
         brutalHoverLiftSmNoX,
-        FOCUS_OUTLINE_CLASSES,
+        FOCUS_RING_CLASSES,
         'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:hover:translate-y-0',
     ],
     {

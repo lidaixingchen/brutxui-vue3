@@ -1,6 +1,6 @@
 import { cva } from 'class-variance-authority'
 import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
-import { FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
+import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const colorPickerTriggerVariants = cva(
     [
@@ -11,7 +11,7 @@ export const colorPickerTriggerVariants = cva(
         'transition-all duration-150',
         brutalHoverLift,
         brutalPress,
-        FOCUS_OUTLINE_CLASSES,
+        FOCUS_RING_CLASSES,
         'disabled:opacity-50 disabled:pointer-events-none',
     ],
     {
@@ -33,7 +33,7 @@ export const colorPickerSwatchVariants = cva(
         'inline-flex items-center justify-center',
         'border-2 border-brutal',
         'cursor-pointer',
-        FOCUS_OUTLINE_CLASSES,
+        FOCUS_RING_CLASSES,
         'transition-transform duration-100',
         'hover:scale-110', /* 组件私有：特定缩放效果，不抽取 */
         'active:scale-95', /* 组件私有：特定缩放效果，不抽取 */
@@ -47,7 +47,7 @@ export const colorPickerSwatchVariants = cva(
                 lg: 'w-8 h-8',
             },
             selected: {
-                true: 'outline-2 outline-brutal-ring outline-offset-2',
+                true: 'ring-2 ring-brutal-ring ring-offset-2 ring-offset-brutal-bg',
                 // 保留 false 分支：defaultVariants 与消费方均显式传入 selected=false，
                 // CVA 的变体类型由此 key 推导，移除会导致类型不匹配或解析异常
                 false: '',
@@ -75,6 +75,6 @@ export const colorPickerInputVariants = cva(
         'bg-brutal-bg text-brutal-fg',
         'shadow-brutal-sm',
         'transition-all duration-150',
-        FOCUS_OUTLINE_CLASSES,
+        FOCUS_RING_CLASSES,
     ]
 )

@@ -300,17 +300,15 @@ describe('BeforeAfter value normalization', () => {
         expect((input.element as HTMLInputElement).value).toBe('75')
     })
 
-    it('applies has-focus-visible outline on root', () => {
+    it('applies has-focus-visible ring on root', () => {
         const wrapper = mount(BeforeAfter, {
             props: baseProps,
             ...localeProvide,
         })
         const classes = wrapper.classes()
-        // 裸 outline（outline-style）会被 twMerge 去重（outline-[3px] 经 @property 初始值 solid 已含样式），
-        // 断言 DOM 实际存活的宽度/颜色/偏移类，并锁定 ring 已移除
-        expect(classes).toContain('has-[:focus-visible]:outline-[3px]')
-        expect(classes).toContain('has-[:focus-visible]:outline-brutal-ring')
-        expect(classes).toContain('has-[:focus-visible]:outline-offset-2')
-        expect(classes).not.toContain('has-[:focus-visible]:ring-3')
+        expect(classes).toContain('has-[:focus-visible]:ring-3')
+        expect(classes).toContain('has-[:focus-visible]:ring-brutal-ring')
+        expect(classes).toContain('has-[:focus-visible]:ring-offset-2')
+        expect(classes).toContain('has-[:focus-visible]:outline-hidden')
     })
 })

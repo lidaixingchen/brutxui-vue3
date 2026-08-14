@@ -1,4 +1,4 @@
-import { FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
+import { FOCUS_RING_CLASSES } from '@/lib/utils'
 import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
 
 // 交互位移说明：brutalHoverLift（悬停上移）与 brutalPress（按下下移）是组件库统一的
@@ -11,7 +11,7 @@ export const formToggleBaseClasses = [
     'shadow-brutal-sm',
     brutalHoverLift,
     brutalPress,
-    FOCUS_OUTLINE_CLASSES,
+    FOCUS_RING_CLASSES,
     // pointer-events-none 会吞掉 disabled 态的光标反馈（cursor-not-allowed 永不生效），
     // 改为 select-none 保留禁用视觉提示；但 Chromium 对 disabled 按钮仍命中 :hover，
     // 需显式抑制 hover/active 位移与阴影，避免禁用态出现交互反馈

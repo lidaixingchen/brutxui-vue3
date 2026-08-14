@@ -406,7 +406,7 @@ describe('ColorPickerSwatch', () => {
             attachTo: document.body,
         })
         const swatch = wrapper.find('button[aria-pressed]')
-        expect(swatch.classes()).toContain('outline-brutal-ring')
+        expect(swatch.classes()).toContain('ring-brutal-ring')
     })
 
     it('sets aria-pressed attribute', () => {
@@ -445,8 +445,8 @@ describe('ColorPickerSwatch', () => {
             attachTo: document.body,
         })
         const swatch = wrapper.find('button[aria-pressed]')
-        expect(swatch.classes()).toContain('focus-visible:outline-2')
-        expect(swatch.classes()).toContain('focus-visible:outline-brutal-ring')
+        expect(swatch.classes()).toContain('focus-visible:ring-2')
+        expect(swatch.classes()).toContain('focus-visible:ring-brutal-ring')
     })
 })
 

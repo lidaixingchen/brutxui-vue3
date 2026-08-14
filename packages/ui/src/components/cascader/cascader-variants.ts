@@ -1,7 +1,7 @@
 import { cva } from 'class-variance-authority'
 import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
 import { floatingContentAnimationClasses } from '@/lib/floating-animation-classes'
-import { FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
+import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const cascaderTriggerVariants = cva(
     [
@@ -11,9 +11,7 @@ export const cascaderTriggerVariants = cva(
         'shadow-brutal',
         'transition-all duration-150',
         brutalHoverLift,
-        // 对齐 select trigger：focus-visible 用可见 outline 表达焦点（取代原 shadow+位移 方案），
-        // focus:shadow/位移 保留为聚焦增强
-        FOCUS_OUTLINE_CLASSES,
+        FOCUS_RING_CLASSES,
         'focus:shadow-brutal-lg focus:-translate-x-0.5 focus:-translate-y-0.5',
         brutalPress,
         'disabled:cursor-not-allowed disabled:opacity-50',

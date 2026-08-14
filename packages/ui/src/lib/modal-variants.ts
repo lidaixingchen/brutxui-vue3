@@ -1,5 +1,5 @@
 import { cva } from 'class-variance-authority'
-import { FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
+import { FOCUS_RING_CLASSES } from '@/lib/utils'
 import { brutalHoverLift, brutalHoverLiftSm, brutalPress } from '@/lib/brutal-interaction-variants'
 
 export const overlayVariants = cva([
@@ -24,7 +24,7 @@ const CLOSE_BUTTON_BASE_CLASSES = [
     'transition-all duration-150',
     'hover:bg-brutal-destructive hover:text-brutal-fg',
     brutalPress,
-    FOCUS_OUTLINE_CLASSES,
+    FOCUS_RING_CLASSES,
 ]
 
 // 关闭按钮的定位类：dialog 与 sheet-right 均为右上角，抽取后单一来源，避免调整时漏改

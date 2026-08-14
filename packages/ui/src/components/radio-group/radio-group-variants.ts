@@ -1,6 +1,6 @@
 import { cva } from 'class-variance-authority'
 import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
-import { FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
+import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const radioGroupItemVariants = cva(
     [
@@ -10,7 +10,7 @@ export const radioGroupItemVariants = cva(
         'transition-all duration-150',
         brutalHoverLift,
         brutalPress,
-        FOCUS_OUTLINE_CLASSES,
+        FOCUS_RING_CLASSES,
         'disabled:cursor-not-allowed disabled:opacity-50 disabled:pointer-events-none',
     ],
     {

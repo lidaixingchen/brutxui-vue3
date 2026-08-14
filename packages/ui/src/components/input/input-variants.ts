@@ -8,7 +8,7 @@ export const inputContainerVariants = cva(
         'border-3 border-brutal rounded-brutal shadow-brutal',
         brutalHoverLift,
         brutalPress,
-        'focus-within:outline-2 focus-within:outline-brutal-ring focus-within:outline-offset-2 focus-within:shadow-brutal-lg focus-within:-translate-x-0.5 focus-within:-translate-y-0.5'
+        'focus-within:ring-2 focus-within:ring-brutal-ring focus-within:ring-offset-2 focus-within:ring-offset-brutal-bg focus-within:outline-hidden focus-within:shadow-brutal-lg focus-within:-translate-x-0.5 focus-within:-translate-y-0.5'
     ],
     {
         variants: {

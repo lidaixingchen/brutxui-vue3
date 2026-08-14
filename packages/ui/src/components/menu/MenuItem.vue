@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, onUnmounted } from 'vue'
 import { MENU_KEY } from './menu-types'
-import { cn, FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
+import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 
 interface MenuItemProps {
     /** Unique key of the menu item */
@@ -52,8 +52,8 @@ const isActive = computed(() => context?.activeIndex.value === props.index)
 const classes = computed(() => {
     return cn(
         'flex items-center gap-2 px-4 py-2.5 rounded-brutal border-3 font-semibold transition-all duration-150 cursor-pointer select-none text-sm',
-        // menuitem 可聚焦（tabindex=0）：聚焦非选中项用可见 outline 表达焦点
-        FOCUS_OUTLINE_CLASSES,
+        // menuitem 可聚焦（tabindex=0）：聚焦非选中项用 ring 表达焦点
+        FOCUS_RING_CLASSES,
         props.inset && 'pl-10',
         isActive.value
             ? 'bg-brutal-primary text-brutal-primary-foreground border-brutal shadow-brutal translate-x-0.5 -translate-y-0.5'

@@ -79,11 +79,11 @@ const iconClasses = computed(() =>
             <slot name="icon" />
         </span>
         <slot />
-        <!-- 与 lib/utils FOCUS_OUTLINE_CLASSES 保持一致 -->
+        <!-- 与 lib/utils FOCUS_RING_CLASSES 保持一致 -->
         <button
             v-if="closable"
             type="button"
-            class="ml-1 inline-flex items-center justify-center transition-opacity hover:opacity-70 focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2 rounded-brutal"
+            class="ml-1 inline-flex items-center justify-center transition-opacity hover:opacity-70 focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden rounded-brutal"
             :aria-label="t('badge.close')"
             @click="handleCloseClick"
         >

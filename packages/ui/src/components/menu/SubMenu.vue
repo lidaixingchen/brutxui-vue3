@@ -3,7 +3,7 @@ import { computed, inject, onMounted, onUnmounted, provide, ref } from 'vue'
 import { ChevronDown } from '@lucide/vue'
 import { MENU_KEY } from './menu-types'
 import { hasDocument, getDocument } from '@/lib/env'
-import { cn, FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
+import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 
 interface SubMenuProps {
     /** Unique key of the sub-menu */
@@ -129,8 +129,8 @@ const subMenuClasses = computed(() => {
 const triggerClasses = computed(() => {
     return cn(
         'flex items-center justify-between gap-4 px-4 py-2.5 rounded-brutal border-3 font-semibold text-sm cursor-pointer select-none transition-all duration-150',
-        // trigger 可聚焦（tabindex=0）：聚焦非选中项用可见 outline 表达焦点
-        FOCUS_OUTLINE_CLASSES,
+        // trigger 可聚焦（tabindex=0）：聚焦非选中项用 ring 表达焦点
+        FOCUS_RING_CLASSES,
         props.inset && 'pl-10',
         isChildActive.value
             ? 'text-brutal-primary-foreground bg-brutal-primary border-brutal shadow-brutal translate-x-0.5 -translate-y-0.5'

@@ -7,7 +7,7 @@ export const commandInputWrapperVariants = cva(
         'border-b-3 border-brutal',
         'bg-brutal-accent',
         // 容器为 div（不可聚焦），内层 input 聚焦须用 focus-within:* 才可见（与 input 容器同模式）
-        'focus-within:outline-2 focus-within:outline-brutal-ring focus-within:outline-offset-2',
+        'focus-within:ring-2 focus-within:ring-brutal-ring focus-within:ring-offset-2 focus-within:ring-offset-brutal-bg focus-within:outline-hidden',
     ]
 )
 

@@ -1,6 +1,6 @@
 import { cva } from 'class-variance-authority'
 import { brutalHoverLiftSmNoX, brutalPress } from '@/lib/brutal-interaction-variants'
-import { FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
+import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const paginationVariants = cva('flex items-center justify-center', {
     variants: {
@@ -26,7 +26,7 @@ export const paginationButtonVariants = cva(
         'inline-flex items-center justify-center font-black',
         'border-3 border-brutal',
         'transition-all duration-150',
-        FOCUS_OUTLINE_CLASSES,
+        FOCUS_RING_CLASSES,
         'disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none',
     ],
     {

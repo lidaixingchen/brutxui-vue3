@@ -6,7 +6,7 @@ export const numberInputRootVariants = cva(
     [
         'flex items-stretch border-3 border-brutal bg-brutal-bg rounded-brutal shadow-brutal overflow-hidden',
         'transition-all duration-150',
-        'focus-within:outline-2 focus-within:outline-brutal-ring focus-within:outline-offset-2 focus-within:shadow-brutal-lg',
+        'focus-within:ring-2 focus-within:ring-brutal-ring focus-within:ring-offset-2 focus-within:ring-offset-brutal-bg focus-within:outline-hidden focus-within:shadow-brutal-lg',
     ],
     {
         variants: {
@@ -16,8 +16,8 @@ export const numberInputRootVariants = cva(
             },
             variant: {
                 default: '',
-                error: `${validationBorderColors.error} focus-within:outline-brutal-destructive`,
-                success: `${validationBorderColors.success} focus-within:outline-brutal-success`,
+                error: `${validationBorderColors.error} focus-within:ring-brutal-destructive`,
+                success: `${validationBorderColors.success} focus-within:ring-brutal-success`,
             },
         },
         defaultVariants: {

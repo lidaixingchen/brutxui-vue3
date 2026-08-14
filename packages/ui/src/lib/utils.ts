@@ -2,24 +2,19 @@ import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
 /**
- * 统一焦点指示类名。
+ * 统一焦点指示类名（FOCUS_RING_CLASSES 五件套）。
  *
- * 用可见 outline 表达焦点，替代原 ring + 透明 outline 降级方案（FOCUS_RING_CLASSES 属
- * 未落地死导出，已废弃）。box-shadow 实现的 ring 在 forced-colors 下会被 UA 禁用，而
- * 可见 outline 在该模式下由 UA 强制渲染为系统前景色，保证焦点指示始终可见（WCAG 2.4.7）。
+ * 经阴影组装化后 box-shadow 争用根因消除，焦点体系采用 ring 表达。
+ * 配套 `outline-hidden` 在普通模式下抑制 UA 默认焦点环（避免双环），
+ * 在 forced-colors 模式下由 `outline-hidden` 自带的恢复块配合 UA 强制渲染系统焦点环（WCAG 2.4.7）。
  *
  * `focus-visible:` 前缀语义：仅在键盘导航（如 Tab）触发时显示焦点指示，鼠标点击不残留
  * 焦点环，兼顾可访问性与鼠标用户体验。
  *
- * 颜色走主题令牌 `--color-brutal-ring`（依赖 styles.css @theme 定义），运行时经
- * `--brutal-*` 变量随 dark 类与替代主题自动翻转，避免硬编码纯黑/纯白出现接缝。
- *
- * 注意：`--tw-outline-style` 是元素级变量（@property inherits:false，不跨元素），本常量
- * 不得与任何 `outline-none` 同元素共存（`outline-<n>` 不重置被置 none 的变量，焦点环静默
- * 不渲染）；机制与合法例外见 docs/guides/tailwind-v4-mechanisms.md §1。
+ * 颜色走主题令牌 `--color-brutal-ring` 与 `--color-brutal-bg`（间隙跟随主题背景，暗色不出现白圈）。
  */
-export const FOCUS_OUTLINE_CLASSES =
-    'focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2'
+export const FOCUS_RING_CLASSES =
+    'focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden'
 
 export function cn(...inputs: ClassValue[]): string {
     return twMerge(clsx(inputs))

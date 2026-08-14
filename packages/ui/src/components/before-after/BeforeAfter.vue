@@ -122,9 +122,8 @@ const rootClasses = computed(() =>
     cn(
         'relative overflow-hidden w-full border-3 border-brutal bg-brutal-bg rounded-brutal shadow-brutal select-none',
         // 焦点态：range input 透明铺满自身无可见焦点，键盘焦点指示经 has- 变体落在容器上。
-        // 用 outline 而非 ring：ring 基于 box-shadow 会整体覆盖 shadow-brutal 偏移投影（聚焦瞬间阴影消失），
-        // outline 不占 box-shadow，可保留偏移投影（同 Button 的焦点态约定）。
-        'has-[:focus-visible]:outline has-[:focus-visible]:outline-[3px] has-[:focus-visible]:outline-brutal-ring has-[:focus-visible]:outline-offset-2',
+        // 组装化后 ring 与 shadow-brutal 阴影共存不互顶；配套 outline-hidden 抑制 UA 环并在 forced-colors 下承接系统环。
+        'has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-brutal-ring has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-brutal-bg has-[:focus-visible]:outline-hidden',
         props.class
     )
 )

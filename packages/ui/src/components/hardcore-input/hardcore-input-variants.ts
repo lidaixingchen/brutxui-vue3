@@ -1,6 +1,6 @@
 import { cva } from 'class-variance-authority'
 import { validationBorderColors } from '../input/shared-input-variants'
-import { FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
+import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const hardcoreInputVariants = cva(
     [
@@ -12,7 +12,7 @@ export const hardcoreInputVariants = cva(
         'px-4 py-2',
         'font-bold',
         'transition-all duration-150',
-        `${FOCUS_OUTLINE_CLASSES} focus-visible:shadow-brutal-lg`,
+        `${FOCUS_RING_CLASSES} focus-visible:shadow-brutal-lg`,
         'placeholder:text-brutal-placeholder placeholder:font-normal',
     ],
     {

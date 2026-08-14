@@ -4,7 +4,7 @@
  * ① 完整类名字面量（@source 契约）：styles.css 的 @source 指令声明扫描 src 下所有 .vue/.ts
  *    源码（含本文件），Tailwind 按源码字面量逐个匹配，每个完整类名必须是可扫描源码中的
  *    字面量；禁止类名内部 ${...} 插值；允许「完整字面量常量 + ${} 组合」（本文件即样板）。
- *    机制见 docs/guides/tailwind-v4-mechanisms.md §4。
+ *    机制见 docs/guides/TAILWIND_V4_MECHANISMS.md §4。
  * ② data-* 复合变体字节序（竞态）：产物字节序 hover:* < focus:* < active:* < data-[highlighted]:*
  *    < data-[state=on]:* 等，同特异度 (0,2,0) 恒后者胜 → data-* 恒压过 brutalPress 的 active:*；
  *    需在持久 data-* 态下保留瞬态按压反馈时写 data-*:active:... 复合变体（特异度 0,3,0）；

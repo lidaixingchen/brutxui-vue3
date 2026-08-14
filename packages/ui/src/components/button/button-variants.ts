@@ -1,7 +1,7 @@
 import { cva } from 'class-variance-authority'
 import { baseButtonVariants } from './shared-button-variants'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
-import { FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
+import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const buttonVariants = cva(
     [
@@ -10,7 +10,7 @@ export const buttonVariants = cva(
         'rounded-brutal',
         'font-black tracking-wide',
         'transition-all duration-150',
-        FOCUS_OUTLINE_CLASSES,
+        FOCUS_RING_CLASSES,
         'disabled:opacity-50 disabled:pointer-events-none',
         brutalPress,
     ],
