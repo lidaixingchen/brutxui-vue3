@@ -38,6 +38,7 @@ const isVertical = computed(() => context?.mode.value === 'vertical')
 const isHovered = ref(false)
 const isOpenClick = ref(false)
 const rootRef = ref<HTMLElement | null>(null)
+const triggerRef = ref<HTMLElement | null>(null)
 
 const isOpened = computed(() => {
     if (isVertical.value) {
@@ -46,12 +47,11 @@ const isOpened = computed(() => {
     return isHovered.value || isOpenClick.value
 })
 
-// Child index registration system to support active state propagation
 interface BrutxSubMenuContext {
     registerChild: (index: string) => void
     unregisterChild: (index: string) => void
-    /** 通知父级：某个子菜单项已被选中，用于收起水平模式的下拉面板 */
     notifyItemSelected: () => void
+    closeAndFocusTrigger?: () => void
 }
 const parentSubMenu = inject<BrutxSubMenuContext | null>('BrutxSubMenu', null)
 const childIndices = ref<Set<string>>(new Set())
@@ -78,17 +78,25 @@ function unregisterChild(idx: string) {
 
 function notifyItemSelected() {
     if (!isVertical.value) {
-        // 点击固定打开的水平面板在选中菜单项后自动收起
         isOpenClick.value = false
     }
-    // 嵌套场景下沿 provide 链向上通知外层 SubMenu 一并收起
     parentSubMenu?.notifyItemSelected()
+}
+
+function closeAndFocusTrigger() {
+    if (isVertical.value) {
+        context?.closeSubMenu(props.index)
+    } else {
+        isOpenClick.value = false
+        context?.focusItem(props.index)
+    }
 }
 
 provide('BrutxSubMenu', {
     registerChild,
     unregisterChild,
     notifyItemSelected,
+    closeAndFocusTrigger,
 })
 
 onMounted(() => {
@@ -96,6 +104,14 @@ onMounted(() => {
         parentSubMenu.registerChild(props.index)
     }
     context?.registerSubMenu(props.index, childIndices.value)
+    if (triggerRef.value && context) {
+        context.registerItem({
+            index: props.index,
+            el: triggerRef.value,
+            disabled: props.disabled,
+            isSubMenuTrigger: true,
+        })
+    }
     if (hasDocument) {
         getDocument()?.addEventListener('click', handleDocumentClick)
         getDocument()?.addEventListener('keydown', handleDocumentKeydown)
@@ -104,6 +120,7 @@ onMounted(() => {
 
 onUnmounted(() => {
     context?.unregisterSubMenu(props.index)
+    context?.unregisterItem(props.index)
     if (parentSubMenu) {
         parentSubMenu.unregisterChild(props.index)
     }
@@ -118,6 +135,19 @@ const isChildActive = computed(() => {
     return childIndices.value.has(context.activeIndex.value)
 })
 
+const isFocused = computed(() => context?.focusedIndex.value === props.index)
+
+const tabIndex = computed(() => {
+    if (props.disabled) return -1
+    if (context?.focusedIndex.value !== null && context?.focusedIndex.value !== undefined) {
+        return isFocused.value ? 0 : -1
+    }
+    if (context?.activeIndex.value) {
+        return isChildActive.value ? 0 : -1
+    }
+    return 0
+})
+
 const subMenuClasses = computed(() => {
     return cn(
         'list-none',
@@ -128,12 +158,11 @@ const subMenuClasses = computed(() => {
 
 const triggerClasses = computed(() => {
     return cn(
-        'flex items-center justify-between gap-4 px-4 py-2.5 rounded-brutal border-3 font-semibold text-sm cursor-pointer select-none transition-all duration-150',
-        // trigger 可聚焦（tabindex=0）：聚焦非选中项用 ring 表达焦点
+        'flex items-center justify-between gap-4 px-4 py-2.5 rounded-brutal border-3 font-semibold text-sm cursor-pointer select-none transition-all duration-150 outline-none',
         FOCUS_RING_CLASSES,
         props.inset && 'pl-10',
         isChildActive.value
-            ? 'text-brutal-primary-foreground bg-brutal-primary border-brutal shadow-brutal translate-x-0.5 -translate-y-0.5'
+            ? 'text-brutal-primary-foreground bg-brutal-primary border-brutal shadow-brutal-sm'
             : isOpened.value && isVertical.value
                 ? 'bg-brutal-muted border-transparent text-brutal-fg'
                 : 'border-transparent text-brutal-fg hover:bg-brutal-muted',
@@ -150,8 +179,6 @@ function handleMouseEnter() {
 function handleMouseLeave() {
     if (isVertical.value) return
     isHovered.value = false
-    // 点击固定打开的菜单由 handleDocumentClick 在外部点击时统一关闭，
-    // 鼠标移出仅清除悬停状态，避免点击固定行为退化为悬停行为。
 }
 
 function handleTriggerClick() {
@@ -160,6 +187,57 @@ function handleTriggerClick() {
         context?.toggleSubMenu(props.index)
     } else {
         isOpenClick.value = !isOpenClick.value
+    }
+    context?.focusItem(props.index)
+}
+
+function handleTriggerKeydown(e: KeyboardEvent) {
+    if (props.disabled) return
+    const isHorizontal = !isVertical.value
+
+    switch (e.key) {
+        case 'ArrowDown':
+            e.preventDefault()
+            if (isHorizontal) {
+                isOpenClick.value = true
+                context?.openSubMenu(props.index)
+            } else {
+                context?.focusNextItem(props.index)
+            }
+            break
+        case 'ArrowUp':
+            e.preventDefault()
+            context?.focusPrevItem(props.index)
+            break
+        case 'ArrowRight':
+            e.preventDefault()
+            if (isHorizontal) {
+                context?.focusNextItem(props.index)
+            } else {
+                context?.openSubMenu(props.index)
+            }
+            break
+        case 'ArrowLeft':
+            e.preventDefault()
+            if (isHorizontal) {
+                context?.focusPrevItem(props.index)
+            } else if (parentSubMenu?.closeAndFocusTrigger) {
+                parentSubMenu.closeAndFocusTrigger()
+            }
+            break
+        case 'Home':
+            e.preventDefault()
+            context?.focusFirstItem()
+            break
+        case 'End':
+            e.preventDefault()
+            context?.focusLastItem()
+            break
+        case 'Enter':
+        case ' ':
+            e.preventDefault()
+            handleTriggerClick()
+            break
     }
 }
 
@@ -173,22 +251,21 @@ function handleDocumentClick(event: MouseEvent) {
     }
 }
 
-// 按 Escape 收起水平模式下点击固定打开的下拉面板
 function handleDocumentKeydown(event: KeyboardEvent) {
     if (isVertical.value) return
     if (!isOpenClick.value) return
     if (event.key === 'Escape') {
         isOpenClick.value = false
+        context?.focusItem(props.index)
     }
 }
 
-// Fold Transition animation hooks for vertical accordion collapsible list
 function onEnter(el: Element) {
     const htmlEl = el as HTMLElement
     htmlEl.style.height = '0'
     htmlEl.style.overflow = 'hidden'
     htmlEl.style.transition = 'height 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-    void htmlEl.offsetHeight // force reflow
+    void htmlEl.offsetHeight
     htmlEl.style.height = `${htmlEl.scrollHeight}px`
 }
 
@@ -204,7 +281,7 @@ function onLeave(el: Element) {
     htmlEl.style.height = `${htmlEl.scrollHeight}px`
     htmlEl.style.overflow = 'hidden'
     htmlEl.style.transition = 'height 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-    void htmlEl.offsetHeight // force reflow
+    void htmlEl.offsetHeight
     htmlEl.style.height = '0'
 }
 
@@ -226,14 +303,14 @@ function onAfterLeave(el: Element) {
     >
         <!-- SubMenu Header Trigger -->
         <div
+            ref="triggerRef"
             role="menuitem"
             aria-haspopup="true"
             :aria-expanded="isOpened"
             :class="triggerClasses"
-            :tabindex="disabled ? -1 : 0"
+            :tabindex="tabIndex"
             @click="handleTriggerClick"
-            @keydown.enter="handleTriggerClick"
-            @keydown.space.prevent="handleTriggerClick"
+            @keydown="handleTriggerKeydown"
         >
             <span class="flex items-center gap-2 truncate">
                 <slot name="title">{{ title }}</slot>
