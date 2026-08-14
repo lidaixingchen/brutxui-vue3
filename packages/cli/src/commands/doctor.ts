@@ -493,18 +493,26 @@ async function findOrphanFiles(cwd: string, entry: InstalledComponentManifest): 
         }
     }
 
-    for (const dir of directories) {
-        if (!(await fs.pathExists(dir))) continue;
-        const entries = await fs.readdir(dir, { withFileTypes: true });
-        for (const e of entries) {
-            if (!e.isFile()) continue;
-            const ext = path.extname(e.name).toLowerCase();
-            if (!ORPHAN_EXTENSIONS.has(ext)) continue;
-            const absPath = path.join(dir, e.name);
-            if (!manifestAbsSet.has(absPath)) {
-                orphans.push(path.relative(cwd, absPath).split(path.sep).join('/'));
+    const dirOrphanLists = await Promise.all(
+        Array.from(directories).map(async (dir) => {
+            if (!(await fs.pathExists(dir))) return [];
+            const entries = await fs.readdir(dir, { withFileTypes: true });
+            const list: string[] = [];
+            for (const e of entries) {
+                if (!e.isFile()) continue;
+                const ext = path.extname(e.name).toLowerCase();
+                if (!ORPHAN_EXTENSIONS.has(ext)) continue;
+                const absPath = path.join(dir, e.name);
+                if (!manifestAbsSet.has(absPath)) {
+                    list.push(path.relative(cwd, absPath).split(path.sep).join('/'));
+                }
             }
-        }
+            return list;
+        }),
+    );
+
+    for (const list of dirOrphanLists) {
+        orphans.push(...list);
     }
 
     return orphans;
