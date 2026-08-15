@@ -141,12 +141,7 @@ export function useDataTableFilter<T extends object>(
                     let start: number | null = null
                     let end: number | null = null
 
-                    if (Array.isArray(filterValue)) {
-                        const s = filterValue[0] as string | null
-                        const e = filterValue[1] as string | null
-                        start = s ? parseDateValue(s) : null
-                        end = e ? parseDateValue(e, true) : null
-                    } else if (filterValue && typeof filterValue === 'object' && !Array.isArray(filterValue)) {
+                    if (filterValue && typeof filterValue === 'object' && !Array.isArray(filterValue)) {
                         const obj = filterValue as { start: string | null; end: string | null }
                         start = obj.start ? parseDateValue(obj.start) : null
                         end = obj.end ? parseDateValue(obj.end, true) : null

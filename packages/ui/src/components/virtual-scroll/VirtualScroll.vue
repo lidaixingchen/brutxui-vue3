@@ -159,7 +159,13 @@ function measureElement(el: any) {
     }
 }
 
-defineExpose({ scrollToIndex, measureElement, virtualizer: virtualizerRef })
+// 重新测量全部已挂载项：dynamic-height 模式下外部内容高度变化后（如展开行）
+// 调用以更新 totalSize 与偏移，避免后续项重叠或裁切
+function measure() {
+    virtualizerRef.value?.measure()
+}
+
+defineExpose({ scrollToIndex, measureElement, measure, virtualizer: virtualizerRef })
 </script>
 
 <template>

@@ -273,6 +273,26 @@ describe('DataTable visual compliance', () => {
         expect(cell.classes()).toContain('py-1.5')
     })
 
+    it('dense overrides size padding on cells', () => {
+        const wrapper = mountDataTable({ data: testData, columns: testColumns, rowKey: 'id', size: 'sm', dense: true })
+        const cell = wrapper.find('tbody td')
+        expect(cell.classes()).toContain('py-1.5')
+        expect(cell.classes()).not.toContain('py-2')
+        expect(cell.classes()).not.toContain('py-3')
+    })
+
+    it('selected rows drop even:bg striping so selection background stays visible', async () => {
+        const wrapper = mountDataTable({ data: testData, columns: testColumns, rowKey: 'id', selectable: true })
+        // 选中偶数行（第一行）：even:bg-* 特异性高于 bg-brutal-primary，
+        // 若条纹类仍存在，偶数行选中态背景会被条纹灰覆盖
+        await wrapper.findAll('[role="checkbox"]')[1].trigger('click')
+        const rows = wrapper.findAll('tbody tr')
+        expect(rows[0].classes()).not.toContain('even:bg-brutal-muted/50')
+        expect(rows[0].classes()).toContain('bg-brutal-primary')
+        // 未选中行保留条纹
+        expect(rows[2].classes()).toContain('even:bg-brutal-muted/50')
+    })
+
     it('highlights active sort column header with bg-brutal-accent', async () => {
         const wrapper = mountDataTable({ data: testData, columns: testColumns, rowKey: 'id', sortable: true })
         await wrapper.findAll('th')[0].trigger('click')
@@ -600,6 +620,132 @@ describe('DataTable programmatic control (defineExpose)', () => {
         await nextTick()
         expect(vm.pagination.pageIndex.value).toBe(1)
         expect(vm.pagination.pageCount.value).toBe(1)
+    })
+})
+
+describe('DataTable regression fixes', () => {
+    const selectCols: DataTableColumn<TestRow>[] = [
+        { id: 'name', header: 'Name', accessorKey: 'name' },
+        { id: 'age', header: 'Age', accessorKey: 'age', filterType: 'select', filterOptions: [{ label: '25', value: 25 }, { label: '30', value: 30 }] },
+    ]
+
+    it('does not emit row-click when clicking interactive elements inside a row', async () => {
+        const wrapper = mount(DataTable as any, {
+            props: { data: testData, columns: testColumns, rowKey: 'id', rowClickable: true },
+            slots: { 'cell-name': '<select aria-label="inline select"><option>X</option></select>' },
+            global: globalProvide,
+        })
+        await wrapper.find('tbody select').trigger('click')
+        expect(wrapper.emitted('row-click')).toBeUndefined()
+        // 点击普通单元格仍触发
+        await wrapper.findAll('tbody td')[1].trigger('click')
+        expect(wrapper.emitted('row-click')).toHaveLength(1)
+        wrapper.unmount()
+    })
+
+    it('keeps selection and page when data reference changes with same row keys', async () => {
+        const largeData: TestRow[] = Array.from({ length: 25 }, (_, i) => ({
+            id: i + 1, name: `User ${i + 1}`, email: `user${i + 1}@example.com`, age: 20 + i,
+        }))
+        const wrapper = mountDataTable({
+            data: largeData,
+            columns: testColumns,
+            rowKey: 'id',
+            paginated: true,
+            pageSize: 10,
+            selectable: true,
+        })
+        await wrapper.findAll('[role="checkbox"]')[1].trigger('click')
+        await wrapper.find('button[aria-label="Next page"]').trigger('click')
+        await nextTick()
+        expect((wrapper.vm as any).pagination.pageIndex.value).toBe(2)
+
+        // 内容重组（引用变化、key 集合相同）：不重置选择与页码
+        const reordered = [...largeData].reverse()
+        await wrapper.setProps({ data: reordered })
+        await nextTick()
+        expect((wrapper.vm as any).selection.getSelectedRows()).toHaveLength(1)
+        expect((wrapper.vm as any).pagination.pageIndex.value).toBe(2)
+    })
+
+    it('resets selection and page when rows are removed', async () => {
+        const largeData: TestRow[] = Array.from({ length: 25 }, (_, i) => ({
+            id: i + 1, name: `User ${i + 1}`, email: `user${i + 1}@example.com`, age: 20 + i,
+        }))
+        const wrapper = mountDataTable({
+            data: largeData,
+            columns: testColumns,
+            rowKey: 'id',
+            paginated: true,
+            pageSize: 10,
+            selectable: true,
+        })
+        await wrapper.findAll('[role="checkbox"]')[1].trigger('click')
+        await wrapper.find('button[aria-label="Next page"]').trigger('click')
+        await nextTick()
+
+        await wrapper.setProps({ data: largeData.slice(0, 20) })
+        await nextTick()
+        expect((wrapper.vm as any).selection.getSelectedRows()).toHaveLength(0)
+        expect((wrapper.vm as any).pagination.pageIndex.value).toBe(1)
+    })
+
+    it('select filter accepts number values (type-preserving filter state)', async () => {
+        // reka-ui SelectItem 在 happy-dom 下渲染抛错（既有环境限制），
+        // 故此处直接验证还原后的 number 值在过滤链路中正常工作
+        const wrapper = mountDataTable({ data: testData, columns: selectCols, rowKey: 'id', filterable: true })
+        ;(wrapper.vm as any).filter.setFilterState({ global: '', columns: { age: 25 } })
+        await nextTick()
+        expect(wrapper.findAll('tbody tr')).toHaveLength(1)
+        expect(wrapper.text()).toContain('Alice')
+    })
+
+    it('text filter input shows stringified value for non-string filter state', async () => {
+        const textCols: DataTableColumn<TestRow>[] = [
+            { id: 'name', header: 'Name', accessorKey: 'name', filterType: 'text' },
+        ]
+        const wrapper = mountDataTable({ data: testData, columns: textCols, rowKey: 'id', filterable: true })
+        ;(wrapper.vm as any).filter.setFilterState({ global: '', columns: { name: 123 } })
+        await nextTick()
+        await wrapper.get('[aria-label="Filter name"]').trigger('click')
+        await nextTick()
+        const content = document.body.querySelector<HTMLElement>('[role="dialog"]')
+        const input = content?.querySelector<HTMLInputElement>('input')
+        expect(input?.value).toBe('123')
+        wrapper.unmount()
+    })
+
+    it('forces dynamic-height on VirtualScroll when expandable is combined with fixed rowHeight', () => {
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns.map(c => ({ ...c, width: 100 })),
+            rowKey: 'id',
+            expandable: true,
+            virtualScroll: { enabled: true, rowHeight: 44 },
+        })
+        const vs = wrapper.findComponent({ name: 'VirtualScroll' })
+        expect(vs.exists()).toBe(true)
+        expect((vs as any).props('dynamicHeight')).toBe(true)
+    })
+})
+
+describe('DataTable virtualScroll + spanMethod warning', () => {
+    it('warns once that spanMethod is ignored in virtual scroll mode', async () => {
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns.map(c => ({ ...c, width: 100 })),
+            rowKey: 'id',
+            virtualScroll: { enabled: true, rowHeight: 'auto' },
+            spanMethod: () => undefined,
+        })
+        await nextTick()
+        const spanWarns = warnSpy.mock.calls.filter(
+            (args: unknown[]) => typeof args[0] === 'string' && (args[0] as string).includes('spanMethod'),
+        )
+        expect(spanWarns.length).toBeGreaterThanOrEqual(1)
+        warnSpy.mockRestore()
+        wrapper.unmount()
     })
 })
 

@@ -11,7 +11,7 @@ export interface DataTableColumnHeaderContext {
     /** 当前列的排序方向（null 表示未排序） */
     direction?: 'asc' | 'desc' | null
     /** 当前列的 accessorKey（如果有） */
-    accessorKey?: PropertyKey
+    accessorKey?: string
     /** 当前列的对齐方式 */
     align?: 'left' | 'center' | 'right'
 }
@@ -76,7 +76,10 @@ export interface DataTableProps<T extends object> {
     stickyHeader?: boolean
     /** 是否启用展开行 */
     expandable?: boolean
-    /** 控制展开的行 */
+    /**
+     * 控制展开的行。元素须与 rowKey 解析结果一致：
+     * 标量字段直接取值，非标量字段（对象等）经 JSON.stringify 兜底序列化为 `json:` 前缀字符串
+     */
     expandRowKeys?: Set<string | number>
     /** 合并单元格方法 */
     spanMethod?: (params: DataTableSpanMethodParams<T>) => [number, number] | void
@@ -91,9 +94,7 @@ export interface DataTableSortState {
 export type DataTableFilterValue =
     | string
     | number
-    | boolean
-    | Array<string | number | boolean>
-    | [string | null, string | null]
+    | Array<string | number>
     | { start: string | null; end: string | null }
     | null
     | undefined

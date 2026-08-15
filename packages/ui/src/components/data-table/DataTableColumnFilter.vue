@@ -27,7 +27,7 @@ const emit = defineEmits<{
 
 const { t } = useLocale()
 
-type MultiSelectValue = Array<string | number | boolean>
+type MultiSelectValue = Array<string | number>
 
 // 同 tick 内连续多选变更时 props 尚未回流（滞后一次更新），以最近一次
 // emit 的本列选区为基准合并；props 回流后经 watch 重置，外部程序化
@@ -45,24 +45,29 @@ function updateFilterValue(val: DataTableFilterValue) {
 const textVal = computed<string>({
     get() {
         const v = props.filterState.columns?.[props.column.id]
-        return typeof v === 'string' ? v : ''
+        // 归一化为字符串：外部 setColumnFilter 传入数字等非字符串值时，
+        // 输入框显示与过滤状态保持一致（过滤逻辑按 String 比较）
+        return v === undefined || v === null ? '' : String(v)
     },
     set(val) {
         updateFilterValue(val)
     }
 })
 
-const selectVal = computed<string>({
-    get() {
-        const v = props.filterState.columns?.[props.column.id]
-        return String(v ?? '')
-    },
-    set(val) {
-        updateFilterValue(val)
-    }
+// SelectItem 的 value 经 String() 展示，过滤状态需还原为选项原始类型
+// （string | number），保证 filterState 类型保真、与 multi-select 一致
+const selectValueMap = computed(() =>
+    new Map<string, string | number>(
+        (props.column.filterOptions ?? []).map((opt) => [String(opt.value), opt.value]),
+    ),
+)
+
+const selectVal = computed<string>(() => {
+    const v = props.filterState.columns?.[props.column.id]
+    return String(v ?? '')
 })
 
-function isMultiSelectChecked(value: string | number | boolean): boolean {
+function isMultiSelectChecked(value: string | number): boolean {
     const vals = props.filterState.columns?.[props.column.id]
     if (!Array.isArray(vals)) return false
     return (vals as MultiSelectValue).includes(value)
@@ -73,7 +78,7 @@ function readCurrentMultiSelect(): MultiSelectValue {
     return Array.isArray(val) ? [...(val as MultiSelectValue)] : []
 }
 
-function handleMultiSelectChange(value: string | number | boolean, checked: boolean | 'indeterminate') {
+function handleMultiSelectChange(value: string | number, checked: boolean | 'indeterminate') {
     const base = pendingMultiSelect ?? readCurrentMultiSelect()
     const vals = [...base]
     if (checked === true || checked === 'indeterminate') {
@@ -175,7 +180,7 @@ function resetColumnFilter() {
             <template v-else-if="column.filterType === 'select'">
                 <SelectRoot
                     :model-value="selectVal"
-                    @update:model-value="val => updateFilterValue(val)"
+                    @update:model-value="val => updateFilterValue(selectValueMap.get(val) ?? val)"
                 >
                     <SelectTrigger size="sm" class="w-full">
                         <SelectValue :placeholder="t('dataTable.filterAll')" />

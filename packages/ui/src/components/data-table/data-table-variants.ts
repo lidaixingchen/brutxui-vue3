@@ -32,7 +32,6 @@ export const dataTableHeaderVariants = cva(
 export const dataTableHeadVariants = cva(
     [
         'px-4 py-3 text-left',
-        'first:border-l-0',
     ],
     {
         variants: {
@@ -98,7 +97,7 @@ export const dataTableCellVariants = cva(
                 lg: 'py-4',
             },
             dense: {
-                true: 'py-1.5',
+                true: '',
                 false: '',
             },
             active: {
@@ -106,6 +105,11 @@ export const dataTableCellVariants = cva(
                 false: '',
             },
         },
+        compoundVariants: [
+            // dense 覆盖 size 的 py-*：compoundVariants 的类恒在变体类之后输出，
+            // cn() 的 tailwind-merge 按序保留最后一个 py-*，不依赖变体声明顺序
+            { dense: true, class: 'py-1.5' },
+        ],
         defaultVariants: {
             align: 'left',
             size: 'default',

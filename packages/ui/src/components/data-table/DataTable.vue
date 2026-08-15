@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends object = Record<string, unknown>">
-import { computed, shallowRef, watch, watchEffect, markRaw, useSlots } from 'vue'
+import { computed, nextTick, ref, shallowRef, watch, watchEffect, markRaw, useSlots } from 'vue'
 import { cn } from '@/lib/utils'
 import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_SIZE_OPTIONS, DATA_TABLE_COLUMN_WIDTH_FALLBACK_PX, DATA_TABLE_EXPAND_COLUMN_WIDTH_PX, DATA_TABLE_SELECT_COLUMN_WIDTH_PX, DATA_TABLE_ROW_HEIGHT_FALLBACK_PX, DATA_TABLE_FIXED_COLUMN_Z_INDEX } from '@/lib/defaults'
 import { useLocale } from '@/composables/useLocale'
@@ -115,6 +115,19 @@ function toggleExpandRow(row: T) {
 function isRowExpanded(row: T): boolean {
     return expandedRowKeys.value.has(getRowKeyValue(row))
 }
+
+const virtualScrollRef = ref<{ measure: () => void } | null>(null)
+
+// 展开/收起会改变行高：虚拟滚动下固定 item-height 无法感知内容高度变化，
+// 展开状态变化后触发重测，避免后续行重叠或内容被裁切
+watch(
+    () => expandedRowKeys.value.size,
+    async () => {
+        if (!props.virtualScroll?.enabled || !props.expandable) return
+        await nextTick()
+        virtualScrollRef.value?.measure()
+    },
+)
 
 // 计算固定列的偏移量
 function getFixedColumnOffset(column: DataTableColumn<T>, side: 'left' | 'right'): number {
@@ -273,7 +286,9 @@ function exportData(format: 'csv' | 'json') {
 function isInteractiveEvent(event: Event): boolean {
     const target = event.target
     if (!(target instanceof HTMLElement)) return false
-    return Boolean(target.closest('button, input, [role="checkbox"], [role="button"], a'))
+    return Boolean(target.closest(
+        'button, input, select, textarea, a, label, summary, details, [contenteditable=""], [contenteditable="true"], [role="button"], [role="checkbox"], [role="switch"], [role="radio"], [role="tab"], [role="menuitem"]',
+    ))
 }
 
 function handleRowClick(row: T, event: Event) {
@@ -281,8 +296,18 @@ function handleRowClick(row: T, event: Event) {
     emit('row-click', row)
 }
 
+// 数据引用变化但行 key 集合未变（内容重组）时保留选择与分页状态；
+// 仅真正增删行（key 集合变化）才重置
 watch(() => props.data, (newData, oldData) => {
-    if (newData !== oldData) {
+    if (newData === oldData) return
+    const keySetOf = (rows: T[]): Set<string | number> =>
+        new Set(rows.map((row) => selection.getRowKey(row)))
+    const newKeys = keySetOf(newData)
+    const oldKeys = keySetOf(oldData)
+    if (
+        newKeys.size !== oldKeys.size
+        || [...newKeys].some((key) => !oldKeys.has(key))
+    ) {
         selection.clearSelection()
         pagination.goToPage(1)
     }
@@ -294,6 +319,7 @@ watch(filter.filterState, (newState) => {
 }, { deep: true })
 
 const warnedColumns = new Set<string>()
+let warnedSpanMethod = false
 
 watchEffect(() => {
     if (!props.virtualScroll?.enabled) return
@@ -309,6 +335,11 @@ watchEffect(() => {
             warnedColumns.add(col.id)
         }
     })
+    // 虚拟滚动布局为固定网格，rowspan/colspan 无法生效：提前告警避免静默失效
+    if (props.spanMethod && !warnedSpanMethod) {
+        warnedSpanMethod = true
+        console.warn('[BrutxUI] spanMethod is not supported when virtualScroll is enabled. Cell merging is ignored in virtual scroll mode.')
+    }
 })
 
 const gridTemplateColumns = computed(() => {
@@ -398,10 +429,13 @@ function getHeadClasses(column: DataTableColumn<T>): string {
 }
 
 function getRowClasses(row: T): string {
+    const selected = selection.selectedRows.value.has(selection.getRowKey(row))
     return cn(
         dataTableRowVariants({
-            selected: selection.selectedRows.value.has(selection.getRowKey(row)),
-            striped: props.striped,
+            selected,
+            // 选中行不叠加条纹：even:bg-* 伪类特异性高于 bg-brutal-primary，
+            // 偶数行选中时条纹灰会覆盖选中态背景，导致选中行外观不一致
+            striped: props.striped && !selected,
         }),
         props.rowClickable && 'cursor-pointer',
     )
@@ -528,9 +562,10 @@ function getCellClasses(column: DataTableColumn<T>): string {
                     <!-- Body with Virtual Scroll -->
                     <VirtualScroll
                         v-if="displayData.length > 0"
+                        ref="virtualScrollRef"
                         :items="displayData"
                         :item-height="props.virtualScroll.rowHeight === 'auto' ? DATA_TABLE_ROW_HEIGHT_FALLBACK_PX : props.virtualScroll.rowHeight"
-                        :dynamic-height="props.virtualScroll.rowHeight === 'auto'"
+                        :dynamic-height="props.virtualScroll.rowHeight === 'auto' || props.expandable"
                         role="rowgroup"
                         item-role="none"
                         class="w-full max-h-[400px] overflow-y-auto border-3 border-t-0 border-brutal"
