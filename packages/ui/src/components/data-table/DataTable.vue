@@ -444,10 +444,10 @@ function getCellClasses(column: DataTableColumn<T>): string {
             <div v-if="filterable" class="flex items-center gap-2">
                 <Input
                     :model-value="filter.filterState.value.global"
-                    @update:model-value="filter.setGlobalFilter"
                     size="sm"
                     :placeholder="filterPlaceholder ?? t('dataTable.filterPlaceholder')"
                     :aria-label="filterPlaceholder ?? t('dataTable.filterPlaceholder')"
+                    @update:model-value="filter.setGlobalFilter"
                 />
             </div>
             <div class="flex items-center gap-2">
@@ -510,9 +510,9 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                     <DataTableColumnFilter
                                         v-if="props.filterable && column.filterType"
                                         :filter-state="filter.filterState.value"
-                                        @update:filter-state="applyColumnFilterPatch"
                                         :column="column"
                                         :header-label="getHeaderLabel(column)"
+                                        @update:filter-state="applyColumnFilterPatch"
                                     />
                                     
                                     <span v-if="sortable && column.sortable !== false" class="inline-flex text-brutal-fg">
@@ -688,9 +688,9 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                 <DataTableColumnFilter
                                     v-if="props.filterable && column.filterType"
                                     :filter-state="filter.filterState.value"
-                                    @update:filter-state="applyColumnFilterPatch"
                                     :column="column"
                                     :header-label="getHeaderLabel(column)"
+                                    @update:filter-state="applyColumnFilterPatch"
                                 />
 
                                 <span v-if="sortable && column.sortable !== false" class="inline-flex text-brutal-fg">

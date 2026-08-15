@@ -22,5 +22,5 @@ const classes = computed(() =>
         data-slot="command-separator"
         role="separator"
         aria-orientation="horizontal"
-    />
+    >
 </template>

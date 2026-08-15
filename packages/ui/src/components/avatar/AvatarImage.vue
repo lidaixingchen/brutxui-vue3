@@ -13,6 +13,8 @@ interface AvatarImageProps {
 // 读屏跳过该图而不会读出文件名；需语义化图片时必须显式传 alt。
 const props = withDefaults(defineProps<AvatarImageProps>(), {
     alt: '',
+    src: undefined,
+    class: undefined,
 })
 
 const classes = computed(() =>

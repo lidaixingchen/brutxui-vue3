@@ -45,7 +45,7 @@ const AvatarWithFallback = defineComponent({
 // 单独 mount 时必须 stub，才能触达 AvatarFallback.vue 自身的 inject 兜底分支。
 const AvatarFallbackStub = defineComponent({
     name: 'AvatarFallbackStub',
-    props: { class: String, delayMs: { type: Number, default: undefined } },
+    props: { class: { type: String, default: undefined }, delayMs: { type: Number, default: undefined } },
     setup(props, { slots }) {
         return () => h('div', { 'data-testid': 'fallback-stub', class: props.class, 'data-delay-ms': props.delayMs }, slots.default?.())
     },

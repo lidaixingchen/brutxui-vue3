@@ -97,7 +97,7 @@ const presetsForPanel = computed<string[] | readonly ColorPreset[] | undefined>(
 <template>
     <!-- 原生表单提交：触发器按钮是 type="button"，name 不随表单提交，
          渲染隐藏 input 携带当前颜色值，值随 modelValue 变化同步 -->
-    <input v-if="name" type="hidden" :name="name" :value="modelValue ?? ''" :disabled="disabled" />
+    <input v-if="name" type="hidden" :name="name" :value="modelValue ?? ''" :disabled="disabled">
     <PopoverRoot v-model:open="open">
         <PopoverTrigger as-child>
             <button

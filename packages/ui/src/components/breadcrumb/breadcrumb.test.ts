@@ -15,8 +15,8 @@ const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 // 模拟 router-link 等自定义组件：inheritAttrs 透传 class 到根元素，验证 asChild class 合并
 const RouterLinkStub = defineComponent({
     name: 'RouterLinkStub',
-    props: { to: { type: String, required: true } },
     inheritAttrs: true,
+    props: { to: { type: String, required: true } },
     template: '<a :href="to"><slot /></a>',
 })
 
