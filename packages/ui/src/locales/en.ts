@@ -74,6 +74,7 @@ export const en: Locale = {
     dashboardShell: {
         sidebarNavigation: 'Sidebar navigation',
         signOut: 'Sign out',
+        brand: 'BrutxUI',
     },
     brutalistHero: {
         title: 'Build Bold Interfaces Faster with BrutxUI',

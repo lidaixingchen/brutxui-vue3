@@ -407,6 +407,7 @@
     ],
     "directives": [],
     "lib": [
+      "env.ts",
       "icon-size-variants.ts"
     ]
   },

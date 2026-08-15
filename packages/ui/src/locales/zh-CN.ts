@@ -74,6 +74,7 @@ export const zhCN: Locale = {
     dashboardShell: {
         sidebarNavigation: '侧边栏导航',
         signOut: '退出登录',
+        brand: 'BrutxUI',
     },
     brutalistHero: {
         title: '用 BrutxUI 更快构建大胆界面',

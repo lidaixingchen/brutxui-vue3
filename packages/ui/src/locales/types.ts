@@ -85,6 +85,7 @@ export interface AuthCardLocale {
 export interface DashboardShellLocale {
     sidebarNavigation: string
     signOut: string
+    brand: string
 }
 
 export interface BrutalistHeroLocale {
