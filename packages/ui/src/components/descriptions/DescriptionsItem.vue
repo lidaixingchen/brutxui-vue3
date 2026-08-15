@@ -23,17 +23,19 @@ const props = withDefaults(defineProps<DescriptionsItemProps>(), {
 const parentBorder = inject(descriptionsBorderKey, ref(false))
 const parentDirection = inject(descriptionsDirectionKey, ref('horizontal'))
 
-// 计算跨列样式
+// 计算跨列样式（归一化为正整数，避免非法 CSS 声明）
+const normalizedSpan = computed(() => Math.max(1, Math.floor(props.span)))
+
 const spanStyle = computed(() => {
-    if (props.span <= 1) return undefined
+    if (normalizedSpan.value <= 1) return undefined
     return {
-        gridColumn: `span ${props.span}`,
+        gridColumn: `span ${normalizedSpan.value}`,
     }
 })
 
 // 计算标签宽度样式
 const labelStyle = computed(() => {
-    if (!props.labelWidth) return undefined
+    if (props.labelWidth === undefined || props.labelWidth === '') return undefined
     const width = typeof props.labelWidth === 'number' ? `${props.labelWidth}px` : props.labelWidth
     return { width }
 })
@@ -45,14 +47,13 @@ const labelStyle = computed(() => {
         <!-- 水平方向 -->
         <template v-if="parentDirection === 'horizontal'">
             <div
-                v-if="span > 1"
-                class="flex border-b-3 border-brutal"
-                :style="{ gridColumn: `span ${Math.max(1, Math.round(span)) * 2}` }"
+                v-if="normalizedSpan > 1"
+                :class="cn('flex border-b-3 border-brutal', props.class)"
+                :style="{ gridColumn: `span ${normalizedSpan * 2}` }"
             >
                 <div
                     :class="cn(
                         'flex items-center px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-r-3 border-brutal w-1/2 min-w-0 truncate',
-                        props.class,
                     )"
                     :style="labelStyle"
                 >
@@ -60,15 +61,19 @@ const labelStyle = computed(() => {
                         {{ label }}
                     </slot>
                 </div>
-                <div :class="cn('flex-1 min-w-0 flex items-center px-3 py-2 text-brutal-fg', props.class)">
+                <div :class="cn('flex-1 min-w-0 flex items-center px-3 py-2 text-brutal-fg')">
                     <slot />
                 </div>
             </div>
-            <template v-else>
+            <!-- span<=1 时包装 label+value 为单个 grid item（占两轨），class 只应用一次 -->
+            <div
+                v-else
+                :class="cn('flex', props.class)"
+                :style="{ gridColumn: 'span 2' }"
+            >
                 <div
                     :class="cn(
-                        'flex items-center px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-b-3 border-brutal',
-                        props.class,
+                        'flex items-center px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-b-3 border-brutal w-1/2 min-w-0 truncate',
                     )"
                     :style="labelStyle"
                 >
@@ -78,13 +83,12 @@ const labelStyle = computed(() => {
                 </div>
                 <div
                     :class="cn(
-                        'flex items-center px-3 py-2 text-brutal-fg border-b-3 border-brutal',
-                        props.class,
+                        'flex-1 min-w-0 flex items-center px-3 py-2 text-brutal-fg border-b-3 border-brutal',
                     )"
                 >
                     <slot />
                 </div>
-            </template>
+            </div>
         </template>
 
         <!-- 垂直方向 -->

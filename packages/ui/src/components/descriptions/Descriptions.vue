@@ -43,9 +43,10 @@ const sizeClasses = computed(() => {
     }
 })
 
-// 计算网格样式
+// 计算网格样式（column 归一化为正整数，避免非法 CSS 声明）
 const gridStyle = computed(() => {
-    const cols = props.border && props.direction === 'horizontal' ? props.column * 2 : props.column
+    const safeColumn = Math.max(1, Math.floor(props.column))
+    const cols = props.border && props.direction === 'horizontal' ? safeColumn * 2 : safeColumn
     return {
         gridTemplateColumns: `repeat(${cols}, 1fr)`,
     }
@@ -54,9 +55,9 @@ const gridStyle = computed(() => {
 
 <template>
     <div :class="cn('w-full', props.class)">
-        <!-- 标题 -->
+        <!-- 标题（title 或 title 插槽实际有内容时才渲染） -->
         <div
-            v-if="title || slots.title"
+            v-if="title || Boolean(slots.title?.().length)"
             class="mb-4"
         >
             <slot name="title">
