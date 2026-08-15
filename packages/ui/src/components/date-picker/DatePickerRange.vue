@@ -55,6 +55,9 @@ let suppressCloseChange = false
 watch(open, (isOpen) => {
     if (isOpen) {
         suppressCloseChange = false
+        // 打开时以 modelValue 重新初始化 displayValue：父组件单向绑定时，
+        // 上次关闭前未确认的选择残留会让下次打开的面板显示过期值
+        displayValue.value = props.modelValue
         emit('open')
     } else {
         emit('close')
@@ -114,6 +117,8 @@ function handlePanelClear() {
     displayValue.value = null
     emit('update:modelValue', null)
     emit('change', null)
+    // 已在此处 emit change(null)，面板随后关闭时不再重复 emit
+    suppressCloseChange = true
 }
 
 function handleClearClick(event: Event) {
@@ -178,6 +183,7 @@ function handleTriggerKeydown(event: KeyboardEvent) {
                     size === 'sm' ? 'right-8 w-4 h-4' : 'right-10 w-5 h-5',
                 ]"
                 :aria-label="t('datePicker.clear')"
+                @pointerdown.stop
                 @click="handleClearClick"
             >
                 <X :class="size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'" class="stroke-[3]" />

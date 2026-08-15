@@ -32,9 +32,14 @@ const emit = defineEmits<{
 
 const { t } = useLocale()
 
-const hourStep = computed(() => Math.max(1, props.timeStep?.hour ?? 1))
-const minuteStep = computed(() => Math.max(1, props.timeStep?.minute ?? 1))
-const secondStep = computed(() => Math.max(1, props.timeStep?.second ?? 1))
+function normalizeStep(step: number | undefined, max: number): number {
+    const s = Math.floor(step ?? 1)
+    return Number.isFinite(s) && s >= 1 ? Math.min(s, max) : 1
+}
+
+const hourStep = computed(() => normalizeStep(props.timeStep?.hour, 24))
+const minuteStep = computed(() => normalizeStep(props.timeStep?.minute, 60))
+const secondStep = computed(() => normalizeStep(props.timeStep?.second, 60))
 
 const currentHour = computed(() => props.modelValue?.getHours() ?? 0)
 const currentMinute = computed(() => props.modelValue?.getMinutes() ?? 0)
@@ -61,7 +66,11 @@ function pad2(value: number): string {
 }
 
 function ensureDate(): Date {
-    if (props.modelValue instanceof Date) return new Date(props.modelValue.getTime())
+    // 校验 getTime() 有效性：Invalid Date 的 instanceof 判断会通过，
+    // 但后续 setHours 会继续产出 NaN 时间
+    if (props.modelValue instanceof Date && !Number.isNaN(props.modelValue.getTime())) {
+        return new Date(props.modelValue.getTime())
+    }
     const now = new Date()
     return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0)
 }

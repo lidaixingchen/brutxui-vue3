@@ -88,12 +88,14 @@ describe('useDatePicker', () => {
     it('closing emits change when displayValue differs from modelValue', async () => {
         const emitted: Array<[string, unknown]> = []
         const modelValue = ref<Date | null>(new Date(2026, 0, 1))
-        const { open, displayValue } = createDatePicker({
+        const { open, handlePanelUpdate } = createDatePicker({
             modelValue,
             emit: (event: string, ...args: unknown[]) => emitted.push([event, args[0]]),
         })
-        displayValue.value = new Date(2026, 5, 26)
         open.value = true
+        await nextTick()
+        // 面板打开后选择新值（真实交互路径）：displayValue 与 modelValue 产生差异
+        handlePanelUpdate(new Date(2026, 5, 26))
         await nextTick()
         open.value = false
         await nextTick()

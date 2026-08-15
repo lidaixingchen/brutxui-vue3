@@ -52,6 +52,9 @@ export function useDatePicker(options: UseDatePickerOptions): UseDatePickerRetur
     watch(open, (isOpen) => {
         if (isOpen) {
             suppressCloseChange = false
+            // 打开时以 modelValue 重新初始化 displayValue：父组件单向绑定时，
+            // 上次关闭前未确认的选择残留会让下次打开的面板显示过期值
+            displayValue.value = toValue(options.modelValue) ?? null
             options.emit('open')
         } else {
             options.emit('close')

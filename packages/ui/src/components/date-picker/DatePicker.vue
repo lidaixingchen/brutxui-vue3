@@ -127,6 +127,7 @@ defineExpose({ open })
                     iconSizeVariants({ size: size === 'sm' ? 'md' : 'lg' }),
                 ]"
                 :aria-label="t('datePicker.clear')"
+                @pointerdown.stop
                 @click="handleClearClick"
             >
                 <X :class="iconSizeVariants({ size: size === 'sm' ? 'sm' : 'md' })" class="stroke-[3]" />

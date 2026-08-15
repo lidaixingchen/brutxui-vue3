@@ -1,14 +1,25 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { cn } from '@/lib/utils'
 import { datePickerFooterVariants } from './date-picker-variants'
 import Button from '../button/Button.vue'
 
 interface DatePickerPanelFooterProps {
-    clearLabel: string
-    confirmLabel: string
+    clearLabel?: string
+    confirmLabel?: string
+    /** 异步提交期间禁用两个按钮，避免重复 emit */
+    disabled?: boolean
 }
 
-defineProps<DatePickerPanelFooterProps>()
+const props = withDefaults(defineProps<DatePickerPanelFooterProps>(), {
+    clearLabel: undefined,
+    confirmLabel: undefined,
+    disabled: false,
+})
+
+// 空字符串与 undefined 都回退默认文案，避免按钮显示空白
+const resolvedClearLabel = computed(() => props.clearLabel || 'Clear')
+const resolvedConfirmLabel = computed(() => props.confirmLabel || 'Confirm')
 
 const emit = defineEmits<{
     clear: []
@@ -20,11 +31,11 @@ const footerClasses = cn(datePickerFooterVariants())
 
 <template>
     <div :class="footerClasses">
-        <Button variant="default" size="sm" type="button" @click="emit('clear')">
-            {{ clearLabel }}
+        <Button variant="default" size="sm" type="button" :disabled="disabled" @click="emit('clear')">
+            {{ resolvedClearLabel }}
         </Button>
-        <Button variant="primary" size="sm" type="button" @click="emit('confirm')">
-            {{ confirmLabel }}
+        <Button variant="primary" size="sm" type="button" :disabled="disabled" @click="emit('confirm')">
+            {{ resolvedConfirmLabel }}
         </Button>
     </div>
 </template>

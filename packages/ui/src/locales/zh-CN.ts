@@ -248,6 +248,7 @@ export const zhCN: Locale = {
         nextWeek: '一周后',
         thisMonth: '本月',
         lastMonth: '上月',
+        shortcuts: '快捷选择',
         confirm: '确认',
         clear: '清除',
         week: '周',

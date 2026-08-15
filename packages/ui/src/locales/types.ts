@@ -292,6 +292,7 @@ export interface DatePickerLocale {
     nextWeek: string
     thisMonth: string
     lastMonth: string
+    shortcuts: string
     confirm: string
     clear: string
     week: string

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, onMounted } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
@@ -33,13 +33,8 @@ const emit = defineEmits<{
 const { locale, t } = useLocale()
 
 const modelYear = props.modelValue?.getFullYear()
-const viewYear = ref<number>(Number.isFinite(modelYear) ? modelYear! : 0)
-
-onMounted(() => {
-    if (!Number.isFinite(props.modelValue?.getFullYear())) {
-        viewYear.value = new Date().getFullYear()
-    }
-})
+// 初始兜底为当前年份：避免 SSR/首帧渲染公元 0 年
+const viewYear = ref<number>(Number.isFinite(modelYear) ? modelYear! : new Date().getFullYear())
 
 watch(() => props.modelValue, (value) => {
     if (value) viewYear.value = value.getFullYear()
@@ -71,15 +66,31 @@ function isMonthDisabled(monthIndex: number): boolean {
 
 function handleMonthSelect(monthIndex: number) {
     if (isMonthDisabled(monthIndex)) return
-    const date = new Date(viewYear.value, monthIndex, 1)
+    let date = new Date(viewYear.value, monthIndex, 1)
+    // 收敛到 [minDate, maxDate] 区间：月份面板的边界判断基于整月，
+    // 选中值本身可能落在区间外（如 minDate 为月中）
+    if (props.minDate && date < props.minDate) date = props.minDate
+    if (props.maxDate && date > props.maxDate) date = props.maxDate
     emit('update:modelValue', date)
 }
 
+const canGoPrevYear = computed(() => {
+    if (!props.minDate) return true
+    return viewYear.value - 1 >= props.minDate.getFullYear()
+})
+
+const canGoNextYear = computed(() => {
+    if (!props.maxDate) return true
+    return viewYear.value + 1 <= props.maxDate.getFullYear()
+})
+
 function handlePrevYear() {
+    if (!canGoPrevYear.value) return
     viewYear.value -= 1
 }
 
 function handleNextYear() {
+    if (!canGoNextYear.value) return
     viewYear.value += 1
 }
 
@@ -118,6 +129,7 @@ function getMonthClasses(monthIndex: number): string {
                     variant="default"
                     size="sm"
                     class="w-7 h-7 p-0"
+                    :disabled="!canGoPrevYear"
                     :aria-label="t('datePicker.previousYear')"
                     @click="handlePrevYear"
                 >
@@ -130,6 +142,7 @@ function getMonthClasses(monthIndex: number): string {
                     variant="default"
                     size="sm"
                     class="w-7 h-7 p-0"
+                    :disabled="!canGoNextYear"
                     :aria-label="t('datePicker.nextYear')"
                     @click="handleNextYear"
                 >

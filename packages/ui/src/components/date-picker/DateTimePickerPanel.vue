@@ -17,7 +17,8 @@ import { cn } from '@/lib/utils'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { useLocale } from '@/composables/useLocale'
 import { datePickerPanelVariants, datePickerShortcutVariants, datePickerFooterVariants } from './date-picker-variants'
-import { type DatePickerShortcut, resolveShortcutValue } from './types'
+import { type DatePickerShortcut } from './types'
+import { resolveShortcutValue } from './date-picker-utils'
 import TimePicker from './TimePicker.vue'
 import Button from '../button/Button.vue'
 import './panel-styles.css'
@@ -55,11 +56,18 @@ const { t } = useLocale()
 const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('datePicker.dateTimePlaceholder'))
 const resolvedClearLabel = computed(() => t('datePicker.clear'))
 const resolvedConfirmLabel = computed(() => t('datePicker.confirm'))
-const resolvedShortcutsLabel = computed(() => t('datePicker.today'))
+const resolvedShortcutsLabel = computed(() => t('datePicker.shortcuts'))
 
 const hasShortcuts = computed(() => props.shortcuts.length > 0)
 
 const panelClasses = computed(() => cn(datePickerPanelVariants()))
+
+// 合并后的结果收敛到 [minDate, maxDate]：日历禁用日期但时间部分可能绕过边界
+function clampToBounds(date: Date): Date {
+    if (props.minDate && date < props.minDate) return new Date(props.minDate)
+    if (props.maxDate && date > props.maxDate) return new Date(props.maxDate)
+    return date
+}
 
 function handleCalendarUpdate(value: Date | null) {
     if (value instanceof Date) {
@@ -70,9 +78,9 @@ function handleCalendarUpdate(value: Date | null) {
                 props.modelValue.getMinutes(),
                 props.modelValue.getSeconds()
             )
-            emit('update:modelValue', merged)
+            emit('update:modelValue', clampToBounds(merged))
         } else {
-            emit('update:modelValue', value)
+            emit('update:modelValue', clampToBounds(value))
         }
     } else if (value === null) {
         emit('update:modelValue', null)
@@ -84,9 +92,9 @@ function handleTimeUpdate(value: Date | null) {
         if (props.modelValue) {
             const merged = new Date(props.modelValue)
             merged.setHours(value.getHours(), value.getMinutes(), value.getSeconds())
-            emit('update:modelValue', merged)
+            emit('update:modelValue', clampToBounds(merged))
         } else {
-            emit('update:modelValue', value)
+            emit('update:modelValue', clampToBounds(value))
         }
     } else {
         emit('update:modelValue', null)
@@ -102,9 +110,9 @@ function handleShortcutSelect(shortcut: DatePickerShortcut) {
             props.modelValue.getMinutes(),
             props.modelValue.getSeconds()
         )
-        emit('update:modelValue', merged)
+        emit('update:modelValue', clampToBounds(merged))
     } else {
-        emit('update:modelValue', value)
+        emit('update:modelValue', clampToBounds(value))
     }
 }
 

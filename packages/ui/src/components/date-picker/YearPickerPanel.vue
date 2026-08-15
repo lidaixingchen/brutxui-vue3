@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, onMounted } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
@@ -37,20 +37,14 @@ const emit = defineEmits<{
 const { t } = useLocale()
 
 const modelYear = props.modelValue?.getFullYear()
+// 初始兜底为当前年份所在年代：避免 SSR/首帧渲染公元 0 年代
 const viewDecadeStart = ref<number>(
-    Number.isFinite(modelYear) ? Math.floor(modelYear! / 10) * 10 : 0
+    Number.isFinite(modelYear) ? Math.floor(modelYear! / 10) * 10 : Math.floor(new Date().getFullYear() / 10) * 10
 )
 
-onMounted(() => {
-    if (!Number.isFinite(props.modelValue?.getFullYear())) {
-        viewDecadeStart.value = Math.floor(new Date().getFullYear() / 10) * 10
-    }
-})
-
 watch(() => props.modelValue, (value) => {
-    if (value) {
-        viewDecadeStart.value = Math.floor(value.getFullYear() / 10) * 10
-    }
+    // 清空（null）时回退到当前年份所在年代，与"回到当前"的预期一致
+    viewDecadeStart.value = Math.floor((value?.getFullYear() ?? new Date().getFullYear()) / 10) * 10
 })
 
 const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('datePicker.yearPlaceholder'))
@@ -59,16 +53,23 @@ const resolvedConfirmLabel = computed(() => t('datePicker.confirm'))
 
 const panelClasses = computed(() => cn(datePickerPanelVariants()))
 
+// yearRange 防御性归一化：0/负数/NaN/Infinity 会导致 years 循环不执行、
+// 翻页方向反转与 decadeRange 区间错乱，统一收敛为有限且 >=1 的整数
+const normalizedYearRange = computed(() => {
+    const range = Math.floor(props.yearRange)
+    return Number.isFinite(range) && range >= 1 ? range : DEFAULT_YEAR_RANGE
+})
+
 const years = computed(() => {
     const result: number[] = []
-    for (let i = 0; i < props.yearRange; i++) {
+    for (let i = 0; i < normalizedYearRange.value; i++) {
         result.push(viewDecadeStart.value + i)
     }
     return result
 })
 
 const decadeRange = computed(() =>
-    t('datePicker.yearRange', { start: viewDecadeStart.value, end: viewDecadeStart.value + props.yearRange - 1 })
+    t('datePicker.yearRange', { start: viewDecadeStart.value, end: viewDecadeStart.value + normalizedYearRange.value - 1 })
 )
 
 function isYearActive(year: number): boolean {
@@ -86,16 +87,20 @@ function isYearDisabled(year: number): boolean {
 
 function handleYearSelect(year: number) {
     if (isYearDisabled(year)) return
-    const date = new Date(year, 0, 1)
+    // 基于原值保留月/日，避免选择年份后日期数据意外改变；
+    // 用 setFullYear 避免 JS 将 0-99 的年份解释为 1900+year
+    const base = props.modelValue ?? new Date()
+    const date = new Date(0)
+    date.setFullYear(year, base.getMonth(), base.getDate())
     emit('update:modelValue', date)
 }
 
 function handlePrevDecade() {
-    viewDecadeStart.value -= props.yearRange
+    viewDecadeStart.value -= normalizedYearRange.value
 }
 
 function handleNextDecade() {
-    viewDecadeStart.value += props.yearRange
+    viewDecadeStart.value += normalizedYearRange.value
 }
 
 function handleConfirm() {

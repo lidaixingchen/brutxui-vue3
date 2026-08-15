@@ -17,7 +17,8 @@ import { cn } from '@/lib/utils'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { useLocale } from '@/composables/useLocale'
 import { datePickerPanelVariants, datePickerShortcutVariants } from './date-picker-variants'
-import { type DatePickerRangeShortcut, type DateRange, resolveRangeShortcutValue } from './types'
+import { type DatePickerRangeShortcut, type DateRange } from './types'
+import { resolveRangeShortcutValue } from './date-picker-utils'
 import DatePickerPanelFooter from './DatePickerPanelFooter.vue'
 import './panel-styles.css'
 
@@ -50,7 +51,7 @@ const { t } = useLocale()
 const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('datePicker.startPlaceholder'))
 const resolvedClearLabel = computed(() => t('datePicker.clear'))
 const resolvedConfirmLabel = computed(() => t('datePicker.confirm'))
-const resolvedShortcutsLabel = computed(() => t('datePicker.today'))
+const resolvedShortcutsLabel = computed(() => t('datePicker.shortcuts'))
 
 const hasShortcuts = computed(() => props.shortcuts.length > 0)
 
@@ -87,9 +88,18 @@ function handleShortcutSelect(shortcut: DatePickerRangeShortcut) {
     emit('update:modelValue', value)
 }
 
+// 解析结果按快捷键缓存：函数型快捷项每次调用会基于当前时间生成新 Date，
+// 面板跨天保持打开时午夜前后会解析出不同日期导致 active 样式闪烁
+const shortcutResolvedValues = computed(() =>
+    new Map<DatePickerRangeShortcut, DateRange>(
+        props.shortcuts.map((shortcut) => [shortcut, resolveRangeShortcutValue(shortcut)]),
+    ),
+)
+
 function isShortcutActive(shortcut: DatePickerRangeShortcut): boolean {
     if (!props.modelValue || props.modelValue.length !== 2 || !props.modelValue[0] || !props.modelValue[1]) return false
-    const value = resolveRangeShortcutValue(shortcut)
+    const value = shortcutResolvedValues.value.get(shortcut)
+    if (!value) return false
     return (
         props.modelValue[0].toDateString() === value[0].toDateString() &&
         props.modelValue[1].toDateString() === value[1].toDateString()

@@ -53,7 +53,9 @@ export const datePickerShortcutVariants = cva(
     {
         variants: {
             active: {
-                true: 'bg-brutal-primary text-brutal-primary-foreground',
+                // 激活态补充 hover:bg-brutal-primary：hover 伪类特异性高于普通类，
+                // 若不覆盖，悬停时激活项背景会被基础类的 hover:bg-brutal-muted 压掉
+                true: 'bg-brutal-primary text-brutal-primary-foreground hover:bg-brutal-primary hover:text-brutal-primary-foreground',
                 false: '', // no-op: inactive state
             },
         },

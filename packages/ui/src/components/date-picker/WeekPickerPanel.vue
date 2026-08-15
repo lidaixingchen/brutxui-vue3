@@ -17,7 +17,8 @@ import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { useLocale } from '@/composables/useLocale'
 import { getWeekStartDate } from '@/lib/date'
 import { datePickerPanelVariants, datePickerShortcutVariants } from './date-picker-variants'
-import { type DatePickerShortcut, resolveShortcutValue } from './types'
+import { type DatePickerShortcut } from './types'
+import { resolveShortcutValue } from './date-picker-utils'
 import DatePickerPanelFooter from './DatePickerPanelFooter.vue'
 import './panel-styles.css'
 
@@ -52,7 +53,7 @@ const { t } = useLocale()
 const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('datePicker.weekPlaceholder'))
 const resolvedClearLabel = computed(() => t('datePicker.clear'))
 const resolvedConfirmLabel = computed(() => t('datePicker.confirm'))
-const resolvedShortcutsLabel = computed(() => t('datePicker.today'))
+const resolvedShortcutsLabel = computed(() => t('datePicker.shortcuts'))
 
 const hasShortcuts = computed(() => props.shortcuts.length > 0)
 

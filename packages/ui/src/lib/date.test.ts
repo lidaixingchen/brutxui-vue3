@@ -2,7 +2,49 @@ import {
     formatDate,
     parseFormattedDate,
     getISOWeekNumber,
+    getWeekStartDate,
 } from './date'
+
+describe('getWeekStartDate', () => {
+    it('returns Monday for a weekday date with weekStartsOn=1', () => {
+        // 2026-06-26 是周五，周一起始的周应为 2026-06-22
+        const start = getWeekStartDate(new Date(2026, 5, 26), 1)
+        expect(start.getFullYear()).toBe(2026)
+        expect(start.getMonth()).toBe(5)
+        expect(start.getDate()).toBe(22)
+    })
+
+    it('handles cross-month boundary (week ending in next month)', () => {
+        // 2026-08-31 是周一，周起始即当天；周结束于 9 月
+        const start = getWeekStartDate(new Date(2026, 7, 31), 1)
+        expect(start.getDate()).toBe(31)
+        const end = new Date(start)
+        end.setDate(end.getDate() + 6)
+        expect(end.getMonth()).toBe(8)
+        expect(end.getDate()).toBe(6)
+    })
+
+    it('handles cross-year boundary (week starting in previous year)', () => {
+        // 2026-01-03 是周六，周一起始的周起始于 2025-12-29
+        const start = getWeekStartDate(new Date(2026, 0, 3), 1)
+        expect(start.getFullYear()).toBe(2025)
+        expect(start.getMonth()).toBe(11)
+        expect(start.getDate()).toBe(29)
+    })
+
+    it('supports weekStartsOn=0 (Sunday)', () => {
+        // 2026-01-03（周六）周日起始的周起始于 2025-12-28
+        const start = getWeekStartDate(new Date(2026, 0, 3), 0)
+        expect(start.getFullYear()).toBe(2025)
+        expect(start.getMonth()).toBe(11)
+        expect(start.getDate()).toBe(28)
+    })
+
+    it('defaults to Monday when weekStartsOn omitted', () => {
+        const start = getWeekStartDate(new Date(2026, 5, 26))
+        expect(start.getDate()).toBe(22)
+    })
+})
 
 describe('formatDate', () => {
     it('returns empty string for null', () => {

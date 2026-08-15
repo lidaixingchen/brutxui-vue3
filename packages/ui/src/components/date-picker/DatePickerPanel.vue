@@ -16,7 +16,8 @@ import { cn } from '@/lib/utils'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { useLocale } from '@/composables/useLocale'
 import { datePickerPanelVariants, datePickerShortcutVariants } from './date-picker-variants'
-import { type DatePickerShortcut, resolveShortcutValue } from './types'
+import { type DatePickerShortcut } from './types'
+import { resolveShortcutValue } from './date-picker-utils'
 import DatePickerPanelFooter from './DatePickerPanelFooter.vue'
 import './panel-styles.css'
 
@@ -49,11 +50,15 @@ const { t } = useLocale()
 const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('datePicker.placeholder'))
 const resolvedClearLabel = computed(() => t('datePicker.clear'))
 const resolvedConfirmLabel = computed(() => t('datePicker.confirm'))
-const resolvedShortcutsLabel = computed(() => t('datePicker.today'))
+const resolvedShortcutsLabel = computed(() => t('datePicker.shortcuts'))
 
 const hasShortcuts = computed(() => props.shortcuts.length > 0)
 
 const panelClasses = computed(() => cn(datePickerPanelVariants()))
+
+// v-calendar first-day-of-week 取值 1-7（1=周日，2=周一）：
+// 此处 2 与 WeekPicker 默认 weekStartsOn=1（周一）语义一致
+const V_CALENDAR_FIRST_DAY_OF_WEEK = 2
 
 function handleUpdate(value: Date | null) {
     if (value instanceof Date) {
@@ -156,7 +161,7 @@ function getShortcutClasses(shortcut: DatePickerShortcut): string {
                     :max-date="maxDate"
                     :select-attribute="selectAttribute"
                     trim-weeks
-                    :first-day-of-week="2"
+                    :first-day-of-week="V_CALENDAR_FIRST_DAY_OF_WEEK"
                     :popover="false"
                     @update:model-value="handleUpdate"
                 >

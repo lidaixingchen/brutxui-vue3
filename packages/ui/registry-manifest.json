@@ -448,6 +448,7 @@
       "WeekPickerPanel.vue",
       "YearPicker.vue",
       "YearPickerPanel.vue",
+      "date-picker-utils.ts",
       "date-picker-variants.ts",
       "panel-styles.css",
       "types.ts"

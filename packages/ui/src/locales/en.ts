@@ -248,6 +248,7 @@ export const en: Locale = {
         nextWeek: 'In a week',
         thisMonth: 'This month',
         lastMonth: 'Last month',
+        shortcuts: 'Shortcuts',
         confirm: 'Confirm',
         clear: 'Clear',
         week: 'Week',

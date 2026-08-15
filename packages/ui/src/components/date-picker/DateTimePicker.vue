@@ -127,12 +127,13 @@ defineExpose({ open })
                     size === 'sm' ? 'right-8 w-4 h-4' : 'right-10 w-5 h-5',
                 ]"
                 :aria-label="t('datePicker.clear')"
+                @pointerdown.stop
                 @click="handleClearClick"
             >
                 <X :class="size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'" class="stroke-[3]" />
             </button>
         </div>
-        <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent" align="start">
+        <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent" align="start" :aria-label="resolvedAriaLabel">
             <DateTimePickerPanel
                 :model-value="displayValue"
                 :min-date="minDate"

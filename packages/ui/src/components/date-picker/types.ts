@@ -31,13 +31,9 @@ export interface DatePickerEmits {
     close: []
 }
 
-export function resolveShortcutValue(shortcut: DatePickerShortcut): Date {
-    return typeof shortcut.value === 'function' ? shortcut.value() : shortcut.value
-}
-
 // ---- DatePickerRange ----
 
-export type DateRange = [Date, Date]
+export type DateRange = readonly [Date, Date]
 
 export interface DatePickerRangeShortcut {
     label: string
@@ -68,10 +64,6 @@ export interface DatePickerRangeEmits {
     change: [value: DateRange | null]
     open: []
     close: []
-}
-
-export function resolveRangeShortcutValue(shortcut: DatePickerRangeShortcut): DateRange {
-    return typeof shortcut.value === 'function' ? shortcut.value() : shortcut.value
 }
 
 // ---- DateTimePicker ----
