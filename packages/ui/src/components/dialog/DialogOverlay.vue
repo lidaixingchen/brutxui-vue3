@@ -25,5 +25,7 @@ const classes = computed(() => cn(overlayVariants(), props.class))
         :class="classes"
         :force-mount="props.forceMount"
         :as-child="props.asChild"
-    />
+    >
+        <slot />
+    </DialogOverlayPrimitive>
 </template>

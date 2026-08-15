@@ -409,7 +409,7 @@ Return values:
 | Property | Type | Description |
 |----------|------|-------------|
 | `close` | `() => void` | Manually close the message box |
-| `promise` | `Promise<{ value: string } \| undefined>` | Resolves on confirm (`undefined` without input, `{ value }` with input); rejects with `'cancel'` on cancel or `'close'` on close |
+| `promise` | `Promise<MessageBoxResult>` | Always resolves `{ action, value? }`: `action='confirm'` on confirm (`value` is the input when `showInput`); `action='cancel'` on cancel/close button/ESC/overlay; `action='destroy'` on manual destroy |
 
 ## Accessibility
 
@@ -453,4 +453,4 @@ function openWithValidation() {
 
 **Q: When does the useMessageBox promise reject?**
 
-A: The promise rejects in two cases: when the user clicks the cancel button (reject value: `'cancel'`), or when the user closes via the close button or overlay click (reject value: `'close'`). Use `try/catch` to distinguish the close reason.
+A: It never rejects. The promise always resolves with `MessageBoxResult`: confirm button → `{ action: 'confirm' }` (`value` included with `showInput`); cancel button / ESC / overlay / close button → `{ action: 'cancel' }`; manual `destroy()` → `{ action: 'destroy' }`. Check `result.action === 'confirm'` (the old `.catch()` branch is deprecated).

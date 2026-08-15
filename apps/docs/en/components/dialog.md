@@ -273,21 +273,23 @@ const instance = showDialog({
 
 ### showMessageBox
 
-Call `showMessageBox` to display a confirmation message box that returns a Promise:
+Call `showMessageBox` to display a confirmation message box that returns a Promise. The promise always resolves (never rejects); inspect `result.action` to distinguish the close path:
 
 ```ts
-import { showMessageBox } from 'brutx-ui-vue'
+import { showMessageBox, type MessageBoxResult } from 'brutx-ui-vue'
 
 async function handleDelete() {
-    const confirmed = await showMessageBox({
+    const result = await showMessageBox({
         title: 'Warning',
         content: 'This action cannot be undone. Are you sure you want to continue?',
         confirmText: 'Confirm',
         cancelText: 'Cancel',
     })
 
-    if (confirmed) {
+    if (result.action === 'confirm') {
         // User clicked confirm
+    } else {
+        // Cancel / ESC / overlay click / close button / manual destroy
     }
 }
 ```
@@ -302,7 +304,7 @@ async function handleDelete() {
 | `cancelText` | `string` | `'Cancel'` | Cancel button text |
 | `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'sm'` | Message box size |
 
-**Return value:** `Promise<boolean>` -- returns `true` if the user clicks confirm, `false` if the user clicks cancel.
+**Return value:** `Promise<MessageBoxResult>` — always resolves with `{ action: 'confirm' | 'cancel' | 'destroy', value?: string }`. `confirm` = confirm button (`value` carries the input when `showInput`); `cancel` = cancel button / ESC / overlay click / close button; `destroy` = manual `destroy()`. **Migration**: replace the old `.catch()` branch with `result.action === 'confirm'`.
 
 ### useDialog (Composable)
 

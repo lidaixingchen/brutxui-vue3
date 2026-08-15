@@ -132,9 +132,13 @@ export function showDialog(options: ShowDialogOptions = {}) {
     }
 
     let destroyTimer: ReturnType<typeof setTimeout> | undefined
+    let isDestroyed = false
 
     const destroy = () => {
-        // 幂等清理：取消已排定的关闭过渡定时器，避免手动 destroy 后定时器再次执行
+        // 幂等守卫：过渡定时器触发后再手动 destroy、或重复调用时跳过重复清理
+        if (isDestroyed) return
+        isDestroyed = true
+        // 取消已排定的关闭过渡定时器，避免手动 destroy 后定时器再次执行
         if (destroyTimer) {
             clearTimeout(destroyTimer)
             destroyTimer = undefined
@@ -268,9 +272,13 @@ export function showMessageBox(options: MessageBoxOptions = {}) {
     }
 
     let destroyTimer: ReturnType<typeof setTimeout> | undefined
+    let isDestroyed = false
 
     const destroy = (action: MessageBoxResult['action'] = 'destroy') => {
-        // 幂等清理：取消已排定的关闭过渡定时器，避免手动 destroy 后定时器再次执行
+        // 幂等守卫：过渡定时器触发后再手动 destroy、或重复调用时跳过重复清理
+        if (isDestroyed) return
+        isDestroyed = true
+        // 取消已排定的关闭过渡定时器，避免手动 destroy 后定时器再次执行
         if (destroyTimer) {
             clearTimeout(destroyTimer)
             destroyTimer = undefined

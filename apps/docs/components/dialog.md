@@ -272,21 +272,23 @@ const instance = showDialog({
 
 ### showMessageBox
 
-调用 `showMessageBox` 弹出一个确认消息框，返回 Promise：
+调用 `showMessageBox` 弹出一个确认消息框，返回 Promise。Promise 恒兑现（不再 reject），通过 `result.action` 区分关闭路径：
 
 ```ts
-import { showMessageBox } from 'brutx-ui-vue'
+import { showMessageBox, type MessageBoxResult } from 'brutx-ui-vue'
 
 async function handleDelete() {
-    const confirmed = await showMessageBox({
+    const result = await showMessageBox({
         title: '警告',
         content: '此操作不可撤销，确定要继续吗？',
         confirmText: '确定',
         cancelText: '取消',
     })
 
-    if (confirmed) {
+    if (result.action === 'confirm') {
         // 用户点击了确认
+    } else {
+        // 取消 / ESC / 点击遮罩 / 关闭按钮 / 手动 destroy
     }
 }
 ```
@@ -301,7 +303,7 @@ async function handleDelete() {
 | `cancelText` | `string` | `'取消'` | 取消按钮文本 |
 | `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'sm'` | 消息框尺寸 |
 
-**返回值：** `Promise<boolean>` — 用户点击确认返回 `true`，点击取消返回 `false`。
+**返回值：** `Promise<MessageBoxResult>` — 恒兑现，`{ action: 'confirm' | 'cancel' | 'destroy', value?: string }`。`confirm` 表示确认按钮（`showInput` 时 `value` 携带输入值）；`cancel` 表示取消按钮 / ESC / 点击遮罩 / 关闭按钮；`destroy` 表示手动调用 `destroy()`。**迁移说明**：旧契约的 `.catch()` 分支改为判断 `result.action === 'confirm'`。
 
 ### useDialog（Composable）
 

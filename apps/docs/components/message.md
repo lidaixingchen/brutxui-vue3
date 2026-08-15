@@ -408,7 +408,7 @@ const {
 | 属性 | 类型 | 说明 |
 |------|------|------|
 | `close` | `() => void` | 手动关闭消息框 |
-| `promise` | `Promise<{ value: string } \| undefined>` | 确认时 resolve（无输入框为 `undefined`，有输入框为 `{ value }`）；取消时 reject `'cancel'`，关闭时 reject `'close'` |
+| `promise` | `Promise<MessageBoxResult>` | 恒兑现 `{ action, value? }`：`action='confirm'` 确认（`showInput` 时 `value` 为输入值）；`action='cancel'` 取消/关闭按钮/ESC/遮罩；`action='destroy'` 手动销毁 |
 
 ## 可访问性
 
@@ -452,4 +452,4 @@ function openWithValidation() {
 
 **Q: useMessageBox 的 promise 什么时候会 reject？**
 
-A: 两种情况会 reject：用户点击取消按钮时 reject 值为 `'cancel'`；用户通过关闭按钮或点击遮罩层关闭时 reject 值为 `'close'`。建议使用 `try/catch` 捕获并区分关闭原因。
+A: 不会 reject。promise 恒兑现 `MessageBoxResult`：确认按钮 → `{ action: 'confirm' }`（`showInput` 时含 `value`）；取消按钮 / ESC / 遮罩 / 关闭按钮 → `{ action: 'cancel' }`；手动 `destroy()` → `{ action: 'destroy' }`。判断确认请用 `result.action === 'confirm'`（旧版本的 `.catch()` 分支已废弃）。
