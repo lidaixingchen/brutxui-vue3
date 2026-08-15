@@ -10,6 +10,8 @@ BrutxUI uses CSS custom properties (design tokens) to control every visual aspec
 
 If you'd like to visually tweak values first and then copy the complete CSS variables, use the [Theme Playground](/en/guide/theme-playground). It displays a product preview, component matrix, contrast checks, and token coverage.
 
+> **Contrast note**: Background/foreground pairs like `--brutal-primary` and `--brutal-primary-foreground` are used for selected/active states with small bold text (e.g. 10px calendar selected-day labels); keep the ratio ≥ 4.5:1 (WCAG AA normal text). When customizing a theme, run the contrast check in the [Theme Playground](/en/guide/theme-playground) to confirm pairs pass. The built-in Dark theme measures ~4.2:1 for this pair — close to but below AA; brighten the foreground color if strict compliance is required.
+
 ## CSS Variables
 
 All tokens are prefixed with `--brutal-` and defined at the `:root` level:
