@@ -93,8 +93,25 @@ function handleDrag(value: DateRangeValue) {
 // handleShortcutSelect 选中后同步刷新对应条目，保证高亮与提交值一致
 const shortcutResolvedValues = ref(new Map<DatePickerRangeShortcut, DateRange>())
 
+function isRangeEqual(a: DateRange, b: DateRange | null | undefined): boolean {
+    if (!b || b.length !== 2) return false
+    return a[0].getTime() === b[0].getTime() && a[1].getTime() === b[1].getTime()
+}
+
 function buildShortcutMap(shortcuts: DatePickerRangeShortcut[]): Map<DatePickerRangeShortcut, DateRange> {
-    return new Map(shortcuts.map((shortcut) => [shortcut, resolveRangeShortcutValue(shortcut)]))
+    const map = new Map<DatePickerRangeShortcut, DateRange>()
+    for (const shortcut of shortcuts) {
+        // 已提交的条目（缓存值 == 当前 modelValue）保留现有实例：
+        // 避免 deep 重建时对函数型快捷项全量重新解析，覆盖掉 handleShortcutSelect 写入的、
+        // 与 emit 值同一实例的缓存条目（父组件收到 update:modelValue 后改 shortcuts 的场景）
+        const existing = shortcutResolvedValues.value.get(shortcut)
+        if (existing && isRangeEqual(existing, props.modelValue)) {
+            map.set(shortcut, existing)
+        } else {
+            map.set(shortcut, resolveRangeShortcutValue(shortcut))
+        }
+    }
+    return map
 }
 
 // deep 监听：父组件原地修改 shortcuts 数组（push/splice）时缓存也能刷新

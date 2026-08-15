@@ -47,6 +47,45 @@ describe('YearPicker', () => {
         expect(trigger.text()).toContain('Select year')
     })
 
+    it('renders hidden input with YYYY value when name and modelValue set', () => {
+        wrapper = mount(YearPicker, {
+            ...localeProvide,
+            props: { name: 'year', modelValue: new Date(2026, 5, 26) },
+            attachTo: document.body,
+        })
+        const input = wrapper.find('input[type="hidden"]')
+        expect(input.exists()).toBe(true)
+        expect(input.attributes('value')).toBe('2026')
+    })
+
+    it('renders hidden input with empty value when modelValue cleared', async () => {
+        wrapper = mount(YearPicker, {
+            ...localeProvide,
+            props: { name: 'year', modelValue: new Date(2026, 5, 26) },
+            attachTo: document.body,
+        })
+        await wrapper.setProps({ modelValue: null })
+        expect(wrapper.find('input[type="hidden"]').attributes('value')).toBe('')
+    })
+
+    it('disables hidden input when disabled', () => {
+        wrapper = mount(YearPicker, {
+            ...localeProvide,
+            props: { name: 'year', modelValue: new Date(2026, 5, 26), disabled: true },
+            attachTo: document.body,
+        })
+        expect(wrapper.find('input[type="hidden"]').attributes('disabled')).toBeDefined()
+    })
+
+    it('does not render hidden input without name', () => {
+        wrapper = mount(YearPicker, {
+            ...localeProvide,
+            props: { modelValue: new Date(2026, 5, 26) },
+            attachTo: document.body,
+        })
+        expect(wrapper.find('input[type="hidden"]').exists()).toBe(false)
+    })
+
     it('shows custom placeholder text', () => {
         wrapper = mount(YearPicker, {
             ...localeProvide,
@@ -670,6 +709,52 @@ describe('YearPickerPanel', () => {
         expect(emitted.getFullYear()).toBe(2023)
         expect(emitted.getMonth()).toBe(5)
         expect(emitted.getDate()).toBe(15)
+    })
+
+    it('collapses leap day when selecting a non-leap year directly', async () => {
+        wrapper = mount(YearPickerPanel, {
+            ...localeProvide,
+            props: { modelValue: new Date(2024, 1, 29), yearRange: 10 },
+            attachTo: document.body,
+        })
+        const gridCells = wrapper.findAll('[role="gridcell"]')
+        // 2020s 视图（yearRange=10）：第 4 个 = 2023（非闰年）→ 2/29 → 2/28
+        await gridCells[3].trigger('click')
+        const emitted = wrapper.emitted('update:modelValue')![0][0] as Date
+        expect(emitted.getFullYear()).toBe(2023)
+        expect(emitted.getMonth()).toBe(1)
+        expect(emitted.getDate()).toBe(28)
+    })
+
+    it('keeps leap day when selecting a leap year', async () => {
+        wrapper = mount(YearPickerPanel, {
+            ...localeProvide,
+            props: { modelValue: new Date(2024, 1, 29), yearRange: 10 },
+            attachTo: document.body,
+        })
+        const gridCells = wrapper.findAll('[role="gridcell"]')
+        // 2020s 视图：第 5 个 = 2024（闰年）→ 2/29 保留
+        await gridCells[4].trigger('click')
+        const emitted = wrapper.emitted('update:modelValue')![0][0] as Date
+        expect(emitted.getFullYear()).toBe(2024)
+        expect(emitted.getMonth()).toBe(1)
+        expect(emitted.getDate()).toBe(29)
+    })
+
+    it('falls back to current date when modelValue is invalid', async () => {
+        wrapper = mount(YearPickerPanel, {
+            ...localeProvide,
+            props: { modelValue: new Date('invalid') },
+            attachTo: document.body,
+        })
+        const gridCells = wrapper.findAll('[role="gridcell"]')
+        await gridCells[0].trigger('click')
+        const emitted = wrapper.emitted('update:modelValue')![0][0] as Date
+        const now = new Date()
+        // 目标年份为视图起始（2020s），月/日按当天兜底
+        expect(emitted.getFullYear()).toBe(2020)
+        expect(emitted.getMonth()).toBe(now.getMonth())
+        expect(emitted.getDate()).toBe(now.getDate())
     })
 
     it('collapses leap day when rebuilt year is not a leap year', async () => {
