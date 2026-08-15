@@ -23,5 +23,16 @@ export const dropdownMenuItemVariants = cva(
         FOCUS_RING_CLASSES,
         brutalPress,
         'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-    ]
+    ],
+    {
+        variants: {
+            inset: {
+                true: 'pl-8',
+                false: '',
+            },
+        },
+        defaultVariants: {
+            inset: false,
+        },
+    }
 )

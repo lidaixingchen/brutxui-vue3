@@ -22,7 +22,7 @@ const classes = computed(() =>
 
 <template>
     <DropdownMenuRadioItemPrimitive :value="value" :class="classes">
-        <span class="absolute left-2 flex h-4 w-4 items-center justify-center">
+        <span class="absolute left-2 flex h-4 w-4 items-center justify-center" aria-hidden="true">
             <DropdownMenuItemIndicatorPrimitive>
                 <Circle class="h-2 w-2 fill-current" />
             </DropdownMenuItemIndicatorPrimitive>

@@ -8,21 +8,22 @@ import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 
 interface DropdownMenuSubTriggerProps {
     inset?: boolean
+    disabled?: boolean
     class?: string
     iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<DropdownMenuSubTriggerProps>(), {
-    inset: undefined,
+    inset: false,
+    disabled: false,
     class: undefined,
     iconSize: 'md',
 })
 
 const classes = computed(() =>
     cn(
-        dropdownMenuItemVariants(),
+        dropdownMenuItemVariants({ inset: props.inset }),
         'data-[state=open]:bg-brutal-accent data-[state=open]:text-brutal-fg',
-        props.inset && 'pl-8',
         props.class
     )
 )
@@ -33,7 +34,7 @@ const iconClasses = computed(() =>
 </script>
 
 <template>
-    <DropdownMenuSubTriggerPrimitive :class="classes">
+    <DropdownMenuSubTriggerPrimitive :class="classes" :disabled="disabled">
         <slot />
         <ChevronRight :class="iconClasses" />
     </DropdownMenuSubTriggerPrimitive>

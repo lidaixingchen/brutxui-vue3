@@ -4,7 +4,7 @@ import {
     DropdownMenuCheckboxItem as DropdownMenuCheckboxItemPrimitive,
     DropdownMenuItemIndicator as DropdownMenuItemIndicatorPrimitive,
 } from 'reka-ui'
-import { Check } from '@lucide/vue'
+import { Check, Minus } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { dropdownMenuItemVariants } from './dropdown-menu-variants'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
@@ -25,6 +25,8 @@ const emit = defineEmits<{
     'update:modelValue': [value: boolean | 'indeterminate']
 }>()
 
+const isIndeterminate = computed(() => props.modelValue === 'indeterminate')
+
 const classes = computed(() =>
     cn(dropdownMenuItemVariants(), 'pl-8', props.class)
 )
@@ -36,9 +38,10 @@ const iconClasses = computed(() =>
 
 <template>
     <DropdownMenuCheckboxItemPrimitive :checked="modelValue" :class="classes" @update:checked="emit('update:modelValue', $event)">
-        <span class="absolute left-2 flex h-4 w-4 items-center justify-center">
+        <span class="absolute left-2 flex h-4 w-4 items-center justify-center" aria-hidden="true">
             <DropdownMenuItemIndicatorPrimitive>
-                <Check :class="iconClasses" />
+                <Minus v-if="isIndeterminate" :class="iconClasses" />
+                <Check v-else :class="iconClasses" />
             </DropdownMenuItemIndicatorPrimitive>
         </span>
         <slot />

@@ -148,7 +148,7 @@ describe('DropdownMenuSeparator', () => {
         const wrapper = mount(DropdownMenuSeparator, {
             global: { stubs: { DropdownMenuSeparator: primitiveStub } },
         })
-        expect(wrapper.classes()).toContain('h-[3px]')
+        expect(wrapper.classes()).toContain('h-[var(--brutal-border-width,3px)]')
         expect(wrapper.classes()).toContain('bg-brutal-fg')
     })
 
@@ -213,5 +213,140 @@ describe('DropdownMenuSubContent', () => {
             global: { stubs: { DropdownMenuSubContent: primitiveStub } },
         })
         expect(wrapper.classes()).toContain('custom-sub-content')
+    })
+
+    it('defaults sideOffset to 6px matching the main menu', () => {
+        const wrapper = mount(DropdownMenuSubContent, {
+            global: { stubs: { DropdownMenuSubContent: primitiveStub } },
+        })
+        expect(wrapper.props('sideOffset')).toBe(6)
+    })
+})
+
+// ── 回归修复测试：inset 变体、attrs 透传、indeterminate 图标、disabled、装饰 aria-hidden ──
+
+describe('DropdownMenu regression fixes', () => {
+    it('item: user class overrides inset padding via twMerge', () => {
+        const wrapper = mount(DropdownMenuItem, {
+            props: { inset: true, class: 'pl-4' },
+            global: { stubs: { DropdownMenuItem: primitiveStub } },
+        })
+        expect(wrapper.classes()).toContain('pl-4')
+        expect(wrapper.classes()).not.toContain('pl-8')
+    })
+
+    it('item: no inset class when inset is false', () => {
+        const wrapper = mount(DropdownMenuItem, {
+            props: { inset: false },
+            global: { stubs: { DropdownMenuItem: primitiveStub } },
+        })
+        expect(wrapper.classes()).not.toContain('pl-8')
+    })
+
+    it('item: disabled passes through to the primitive', () => {
+        const wrapper = mount(DropdownMenuItem, {
+            props: { disabled: true },
+            global: { stubs: { DropdownMenuItem: primitiveStub } },
+        })
+        expect(wrapper.attributes('disabled')).toBeDefined()
+    })
+
+    it('label: applies inset class only when inset is true', () => {
+        const wrapper = mount(DropdownMenuLabel, {
+            props: { inset: true },
+            global: { stubs: { DropdownMenuLabel: primitiveStub } },
+        })
+        expect(wrapper.classes()).toContain('pl-8')
+        const plain = mount(DropdownMenuLabel, {
+            global: { stubs: { DropdownMenuLabel: primitiveStub } },
+        })
+        expect(plain.classes()).not.toContain('pl-8')
+    })
+
+    it('checkbox item: indeterminate renders Minus icon, checked renders Check', () => {
+        const checkboxStubs = {
+            DropdownMenuCheckboxItem: primitiveStub,
+            DropdownMenuItemIndicator: primitiveStub,
+        }
+        const indeterminate = mount(DropdownMenuCheckboxItem, {
+            props: { modelValue: 'indeterminate' },
+            global: { stubs: checkboxStubs },
+        })
+        expect(indeterminate.html()).toContain('lucide-minus')
+        expect(indeterminate.html()).not.toContain('lucide-check')
+
+        const checked = mount(DropdownMenuCheckboxItem, {
+            props: { modelValue: true },
+            global: { stubs: checkboxStubs },
+        })
+        expect(checked.html()).toContain('lucide-check')
+    })
+
+    it('checkbox item: indicator container is aria-hidden (decorative)', () => {
+        const checkboxStubs = {
+            DropdownMenuCheckboxItem: primitiveStub,
+            DropdownMenuItemIndicator: primitiveStub,
+        }
+        const wrapper = mount(DropdownMenuCheckboxItem, {
+            global: { stubs: checkboxStubs },
+        })
+        const indicator = wrapper.find('span[aria-hidden="true"]')
+        expect(indicator.exists()).toBe(true)
+    })
+
+    it('radio item: passes value to the primitive', () => {
+        const radioStubs = {
+            DropdownMenuRadioItem: primitiveStub,
+            DropdownMenuItemIndicator: primitiveStub,
+        }
+        const wrapper = mount(DropdownMenuRadioItem, {
+            props: { value: 'option-42' },
+            global: { stubs: radioStubs },
+        })
+        expect(wrapper.props('value')).toBe('option-42')
+    })
+
+    it('radio item: indicator container is aria-hidden (decorative)', () => {
+        const radioStubs = {
+            DropdownMenuRadioItem: primitiveStub,
+            DropdownMenuItemIndicator: primitiveStub,
+        }
+        const wrapper = mount(DropdownMenuRadioItem, {
+            props: { value: 'option-1' },
+            global: { stubs: radioStubs },
+        })
+        const indicator = wrapper.find('span[aria-hidden="true"]')
+        expect(indicator.exists()).toBe(true)
+    })
+
+    it('separator: thickness follows --brutal-border-width token', () => {
+        const wrapper = mount(DropdownMenuSeparator, {
+            global: { stubs: { DropdownMenuSeparator: primitiveStub } },
+        })
+        expect(wrapper.classes()).toContain('h-[var(--brutal-border-width,3px)]')
+    })
+
+    it('sub trigger: disabled passes through to the primitive', () => {
+        const wrapper = mount(DropdownMenuSubTrigger, {
+            props: { disabled: true },
+            global: { stubs: { DropdownMenuSubTrigger: primitiveStub } },
+        })
+        expect(wrapper.attributes('disabled')).toBeDefined()
+    })
+
+    it('sub trigger: inset class applied via variants', () => {
+        const wrapper = mount(DropdownMenuSubTrigger, {
+            props: { inset: true },
+            global: { stubs: { DropdownMenuSubTrigger: primitiveStub } },
+        })
+        expect(wrapper.classes()).toContain('pl-8')
+    })
+
+    it('content: forwards extra attrs to the content primitive', () => {
+        const wrapper = mount(DropdownMenuContent, {
+            props: { 'data-test-id': 'dd-content' },
+            global: { stubs: { DropdownMenuContent: primitiveStub, DropdownMenuPortal: { template: '<div><slot /></div>' } } },
+        })
+        expect(wrapper.html()).toContain('data-test-id="dd-content"')
     })
 })

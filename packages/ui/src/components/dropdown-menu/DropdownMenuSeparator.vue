@@ -10,7 +10,7 @@ interface DropdownMenuSeparatorProps {
 const props = defineProps<DropdownMenuSeparatorProps>()
 
 const classes = computed(() =>
-    cn('-mx-1 my-1 h-[3px] bg-brutal-fg', props.class)
+    cn('-mx-1 my-1 h-[var(--brutal-border-width,3px)] bg-brutal-fg', props.class)
 )
 </script>
 
