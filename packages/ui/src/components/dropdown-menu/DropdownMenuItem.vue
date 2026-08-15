@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { DropdownMenuItem as DropdownMenuItemPrimitive } from 'reka-ui'
-import type { DropdownMenuItemProps as DropdownMenuItemPrimitiveProps } from 'reka-ui'
 import { cn } from '@/lib/utils'
 import { dropdownMenuItemVariants } from './dropdown-menu-variants'
 
-// 继承原语 props（disabled/textValue 等），获得类型提示与编译期校验
-interface DropdownMenuItemProps extends DropdownMenuItemPrimitiveProps {
+interface DropdownMenuItemProps {
     inset?: boolean
+    /** 显式声明并转发原语 props；其余原语 props（closeOnSelect/as/asChild 等）经 attrs 透传 */
+    disabled?: boolean
+    textValue?: string
     class?: string
 }
 
 const props = withDefaults(defineProps<DropdownMenuItemProps>(), {
     inset: false,
+    disabled: false,
+    textValue: undefined,
     class: undefined,
 })
 

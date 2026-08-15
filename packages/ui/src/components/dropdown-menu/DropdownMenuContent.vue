@@ -19,7 +19,8 @@ interface DropdownMenuContentProps {
 
 const props = withDefaults(defineProps<DropdownMenuContentProps>(), {
     sideOffset: floatingContentSideOffsets.dropdownMenu,
-    align: 'start',
+    // undefined 沿用 reka-ui 默认 'center'：不改变既有下拉菜单的对齐行为
+    align: undefined,
     to: undefined,
     class: undefined,
 })

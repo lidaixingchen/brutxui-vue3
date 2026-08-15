@@ -35,3 +35,14 @@ export function getCellValue<T extends object>(row: T, column: DataTableColumn<T
     }
     return ''
 }
+
+/**
+ * Select 过滤选项的 String(value) → 原始值映射：SelectItem 的 value 经 String() 展示，
+ * 选中后需还原为选项原始类型（string | number），保证 filterState 类型保真。
+ * 独立纯函数便于单测（含 value=0、空字符串等边界）。
+ */
+export function createSelectValueMap(
+    options: Array<{ label: string; value: string | number }>,
+): Map<string, string | number> {
+    return new Map(options.map((opt) => [String(opt.value), opt.value]))
+}

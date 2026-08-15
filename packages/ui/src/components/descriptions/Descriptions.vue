@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, useSlots, provide, toRef } from 'vue'
+import { Comment } from 'vue'
 import { cn } from '@/lib/utils'
 import { descriptionsBorderKey, descriptionsDirectionKey } from './descriptions-key'
 
@@ -43,9 +44,19 @@ const sizeClasses = computed(() => {
     }
 })
 
-// 计算网格样式（column 归一化为正整数，避免非法 CSS 声明）
+// 标题是否实际有内容：title 文本或 title 插槽渲染出非注释节点。
+// 单独 computed 避免 v-if 与真实渲染各调用一次插槽（双创建副作用），
+// 并排除仅含注释节点的插槽（被误判为有内容会渲染空标题块）
+const hasTitle = computed(() => {
+    if (props.title) return true
+    const nodes = slots.title?.()
+    return Boolean(nodes?.some((node) => (node.type as unknown) !== Comment))
+})
+
+// 计算网格样式（column 归一化为正整数，避免非法 CSS 声明；非有限值兜底为 1）
 const gridStyle = computed(() => {
-    const safeColumn = Math.max(1, Math.floor(props.column))
+    const n = Number(props.column)
+    const safeColumn = Number.isFinite(n) && n >= 1 ? Math.floor(n) : 1
     const cols = props.border && props.direction === 'horizontal' ? safeColumn * 2 : safeColumn
     return {
         gridTemplateColumns: `repeat(${cols}, 1fr)`,
@@ -57,7 +68,7 @@ const gridStyle = computed(() => {
     <div :class="cn('w-full', props.class)">
         <!-- 标题（title 或 title 插槽实际有内容时才渲染） -->
         <div
-            v-if="title || Boolean(slots.title?.().length)"
+            v-if="hasTitle"
             class="mb-4"
         >
             <slot name="title">

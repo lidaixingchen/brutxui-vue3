@@ -122,8 +122,12 @@ export function useDatePicker(options: UseDatePickerOptions): UseDatePickerRetur
 
     function handleTriggerKeydown(event: KeyboardEvent) {
         // 键盘激活移交 reka-ui PopoverTrigger 原生处理（Enter/Space 打开）；
-        // 此处仅拦截 disabled/readonly 场景，避免打开后由 open setter 拒绝造成状态回弹
-        if (toValue(options.disabled) || toValue(options.readonly)) {
+        // 此处仅拦截 disabled/readonly 场景的 Enter/Space，避免打开后由 open setter 拒绝造成状态回弹；
+        // 其余按键（如 Tab）不拦截，防止 readonly 聚焦时形成键盘焦点陷阱
+        if (
+            (toValue(options.disabled) || toValue(options.readonly))
+            && (event.key === 'Enter' || event.key === ' ')
+        ) {
             event.preventDefault()
         }
     }

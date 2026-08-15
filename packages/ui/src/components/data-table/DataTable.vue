@@ -119,9 +119,11 @@ function isRowExpanded(row: T): boolean {
 const virtualScrollRef = ref<{ measure: () => void } | null>(null)
 
 // 展开/收起会改变行高：虚拟滚动下固定 item-height 无法感知内容高度变化，
-// 展开状态变化后触发重测，避免后续行重叠或内容被裁切
+// 展开状态变化后触发重测，避免后续行重叠或内容被裁切。
+// 监听引用而非 .size：受控 expandRowKeys 在同一次更新里"收一行展一行"时集合大小不变，
+// 但引用已替换（shallowRef 重新赋值），仍能触发重测
 watch(
-    () => expandedRowKeys.value.size,
+    () => expandedRowKeys.value,
     async () => {
         if (!props.virtualScroll?.enabled || !props.expandable) return
         await nextTick()
@@ -297,7 +299,10 @@ function handleRowClick(row: T, event: Event) {
 }
 
 // 数据引用变化但行 key 集合未变（内容重组）时保留选择与分页状态；
-// 仅真正增删行（key 集合变化）才重置
+// 仅真正增删行（key 集合变化）才重置。
+// 性能权衡：data 引用变化时需遍历新旧数据构建 key 集合（O(n)）；
+// 已先比较集合大小短路，非标量 rowKey 的 JSON.stringify 有 WeakMap 缓存，
+// 仅整体替换对象引用时缓存失效触发重新序列化——大数据集下可接受，不做进一步优化
 watch(() => props.data, (newData, oldData) => {
     if (newData === oldData) return
     const keySetOf = (rows: T[]): Set<string | number> =>

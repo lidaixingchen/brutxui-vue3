@@ -12,7 +12,7 @@ import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 interface DropdownMenuCheckboxItemProps {
     modelValue?: boolean | 'indeterminate'
     /** 非受控模式（不传 modelValue）下的初始选中态 */
-    defaultChecked?: boolean
+    defaultChecked?: boolean | 'indeterminate'
     class?: string
     iconSize?: IconSize
 }
@@ -37,11 +37,10 @@ const checked = computed<boolean | 'indeterminate' | undefined>(() =>
 )
 
 function handleCheckedChange(value: boolean | 'indeterminate') {
-    if (isControlled.value) {
-        emit('update:modelValue', value)
-    } else {
-        internalChecked.value = value
-    }
+    // 无论受控与否都更新内部状态并 emit：兼容「初始 modelValue 为 undefined、
+    // 随后由 v-model/事件接管」的消费方，避免点击后 ref 停留在 undefined 看似绑定失效
+    internalChecked.value = value
+    emit('update:modelValue', value)
 }
 
 const isIndeterminate = computed(() => checked.value === 'indeterminate')

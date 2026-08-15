@@ -520,7 +520,7 @@
         "check:deprecated": "tsx scripts/check-deprecated-utilities.ts",
         "check:deprecated:check": "tsx scripts/check-deprecated-utilities.ts --check-baseline",
         "check:deprecated:update": "tsx scripts/check-deprecated-utilities.ts --update-baseline",
-        "typecheck": "pnpm prebuild:scan && pnpm prebuild:component-index && vue-tsc --noEmit",
+        "typecheck": "pnpm prebuild:scan && pnpm prebuild:component-index && tsx scripts/check-twmerge-colors.ts && vue-tsc --noEmit",
         "lint": "pnpm prebuild:scan && pnpm prebuild:component-index && eslint src",
         "test": "vitest run",
         "test:browser": "vitest run --config vitest.browser.config.ts",

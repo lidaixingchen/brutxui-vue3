@@ -2,6 +2,7 @@
 import { computed, watch, type DeepReadonly } from 'vue'
 import { useLocale } from '@/composables/useLocale'
 import type { DataTableColumn, DataTableFilterState, DataTableFilterValue } from './types'
+import { createSelectValueMap } from '@/lib/data-table-utils'
 import Input from '../input/Input.vue'
 import Button from '../button/Button.vue'
 import Checkbox from '../checkbox/Checkbox.vue'
@@ -45,9 +46,9 @@ function updateFilterValue(val: DataTableFilterValue) {
 const textVal = computed<string>({
     get() {
         const v = props.filterState.columns?.[props.column.id]
-        // 归一化为字符串：外部 setColumnFilter 传入数字等非字符串值时，
-        // 输入框显示与过滤状态保持一致（过滤逻辑按 String 比较）
-        return v === undefined || v === null ? '' : String(v)
+        // 仅对标量（string/number）归一化：数组/date-range 对象等非标量显示无意义，
+        // 回退为空字符串避免输出 '[object Object]' 之类的占位
+        return v === undefined || v === null || (typeof v !== 'string' && typeof v !== 'number') ? '' : String(v)
     },
     set(val) {
         updateFilterValue(val)
@@ -56,11 +57,7 @@ const textVal = computed<string>({
 
 // SelectItem 的 value 经 String() 展示，过滤状态需还原为选项原始类型
 // （string | number），保证 filterState 类型保真、与 multi-select 一致
-const selectValueMap = computed(() =>
-    new Map<string, string | number>(
-        (props.column.filterOptions ?? []).map((opt) => [String(opt.value), opt.value]),
-    ),
-)
+const selectValueMap = computed(() => createSelectValueMap(props.column.filterOptions ?? []))
 
 const selectVal = computed<string>(() => {
     const v = props.filterState.columns?.[props.column.id]

@@ -23,8 +23,11 @@ const props = withDefaults(defineProps<DescriptionsItemProps>(), {
 const parentBorder = inject(descriptionsBorderKey, ref(false))
 const parentDirection = inject(descriptionsDirectionKey, ref('horizontal'))
 
-// 计算跨列样式（归一化为正整数，避免非法 CSS 声明）
-const normalizedSpan = computed(() => Math.max(1, Math.floor(props.span)))
+// 计算跨列样式（归一化为正整数，避免非法 CSS 声明；NaN/Infinity 等非有限值兜底为 1）
+const normalizedSpan = computed(() => {
+    const n = Number(props.span)
+    return Number.isFinite(n) && n >= 1 ? Math.floor(n) : 1
+})
 
 const spanStyle = computed(() => {
     if (normalizedSpan.value <= 1) return undefined
