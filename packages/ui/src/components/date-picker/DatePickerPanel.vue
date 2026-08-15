@@ -13,7 +13,7 @@ const DatePicker = defineAsyncComponent(async () => {
             name: 'CalendarUnavailable',
             render: () =>
                 h('div', { class: 'p-4 text-sm font-bold text-brutal-destructive' },
-                    '[BrutxUI] v-calendar 未安装：pnpm add v-calendar'),
+                    '[BrutxUI] v-calendar is not installed: pnpm add v-calendar'),
         }
     }
 })

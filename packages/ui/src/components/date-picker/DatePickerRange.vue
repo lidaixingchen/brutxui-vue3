@@ -113,6 +113,9 @@ const triggerClasses = computed(() =>
 
 function handlePanelUpdate(value: DateRange | null) {
     displayValue.value = value
+    // 新值非空时取消抑制：清除后重新选择并关闭面板时仍需触发 change
+    // （与单日期 useDatePicker 的语义一致）
+    if (value !== null) suppressCloseChange = false
     emit('update:modelValue', value)
 }
 
@@ -176,7 +179,7 @@ function handleTriggerKeydown(event: KeyboardEvent) {
                     </span>
                     <span class="flex items-center gap-1 shrink-0">
                         <span
-                            v-if="clearable && hasValue && !disabled"
+                            v-if="clearable && hasValue && !disabled && !readonly"
                             aria-hidden="true"
                             class="inline-flex items-center justify-center opacity-0 pointer-events-none"
                             :class="size === 'sm' ? 'w-4 h-4' : 'w-5 h-5'"

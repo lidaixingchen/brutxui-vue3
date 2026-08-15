@@ -54,10 +54,15 @@ const resolvedDisplayFormat = computed(() =>
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('datePicker.dateTimePlaceholder'))
 const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('datePicker.dateTimePlaceholder'))
 
-// 原生表单集成：name 经 hidden input 随表单提交（ISO 日期序列化）
+// 原生表单集成：name 经 hidden input 随表单提交；
+// DateTimePicker 的值含时分（及秒），序列化需保留时间部分，避免静默丢失
 const hiddenInputValue = computed(() => {
-    if (!props.name || !props.modelValue) return undefined
-    return formatDate(props.modelValue, 'YYYY-MM-DD')
+    if (!props.name) return undefined
+    if (!props.modelValue) return ''
+    return formatDate(
+        props.modelValue,
+        props.showSeconds ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD HH:mm',
+    )
 })
 
 const {
@@ -92,7 +97,7 @@ defineExpose({ open })
 
 <template>
     <PopoverRoot v-model:open="open">
-        <input v-if="hiddenInputValue !== undefined" type="hidden" :name="name" :value="hiddenInputValue">
+        <input v-if="hiddenInputValue !== undefined" type="hidden" :name="name" :value="hiddenInputValue" :disabled="disabled">
         <div class="relative w-full">
             <PopoverTrigger as-child>
                 <button

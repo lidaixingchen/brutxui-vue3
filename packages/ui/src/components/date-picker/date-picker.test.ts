@@ -32,6 +32,49 @@ describe('DatePicker', () => {
         expect(trigger.exists()).toBe(true)
     })
 
+    it('renders hidden input with ISO value when name and modelValue set', () => {
+        wrapper = mount(DatePicker, {
+            ...localeProvide,
+            props: { name: 'date', modelValue: new Date(2026, 0, 5) },
+            attachTo: document.body,
+        })
+        const input = wrapper.find('input[type="hidden"]')
+        expect(input.exists()).toBe(true)
+        expect(input.attributes('name')).toBe('date')
+        expect(input.attributes('value')).toBe('2026-01-05')
+    })
+
+    it('renders hidden input with empty value when modelValue cleared', async () => {
+        wrapper = mount(DatePicker, {
+            ...localeProvide,
+            props: { name: 'date', modelValue: new Date(2026, 0, 5) },
+            attachTo: document.body,
+        })
+        await wrapper.setProps({ modelValue: null })
+        const input = wrapper.find('input[type="hidden"]')
+        expect(input.exists()).toBe(true)
+        expect(input.attributes('value')).toBe('')
+    })
+
+    it('does not render hidden input without name', () => {
+        wrapper = mount(DatePicker, {
+            ...localeProvide,
+            props: { modelValue: new Date(2026, 0, 5) },
+            attachTo: document.body,
+        })
+        expect(wrapper.find('input[type="hidden"]').exists()).toBe(false)
+    })
+
+    it('disables hidden input when disabled (not submitted with form)', () => {
+        wrapper = mount(DatePicker, {
+            ...localeProvide,
+            props: { name: 'date', modelValue: new Date(2026, 0, 5), disabled: true },
+            attachTo: document.body,
+        })
+        const input = wrapper.find('input[type="hidden"]')
+        expect(input.attributes('disabled')).toBeDefined()
+    })
+
     it('applies custom class', () => {
         wrapper = mount(DatePicker, {
             ...localeProvide,

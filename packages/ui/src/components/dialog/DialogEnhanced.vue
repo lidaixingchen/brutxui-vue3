@@ -163,7 +163,7 @@ watch(
     (open, prevOpen) => {
         if (!dialogContext) {
             // 无 DialogRoot 上下文（如测试挂载路径）时与初始值保持同一优先级规则
-            isSlotPresent.value = !props.destroyOnClose || props.forceMount
+            isSlotPresent.value = !props.destroyOnClose || props.forceMount === true
             return
         }
         if (open) {

@@ -611,4 +611,82 @@ describe('YearPickerPanel', () => {
         await gridCells[0].trigger('click')
         expect(wrapper.emitted('update:modelValue')).toBeFalsy()
     })
+
+    it('normalizes invalid yearRange to default 12', () => {
+        wrapper = mount(YearPickerPanel, {
+            ...localeProvide,
+            props: { yearRange: 0 },
+            attachTo: document.body,
+        })
+        expect(wrapper.findAll('[role="gridcell"]')).toHaveLength(12)
+        wrapper = mount(YearPickerPanel, {
+            ...localeProvide,
+            props: { yearRange: NaN },
+            attachTo: document.body,
+        })
+        expect(wrapper.findAll('[role="gridcell"]')).toHaveLength(12)
+    })
+
+    it('falls back to current decade when modelValue cleared', async () => {
+        wrapper = mount(YearPickerPanel, {
+            ...localeProvide,
+            props: { modelValue: new Date(2035, 5, 1) },
+            attachTo: document.body,
+        })
+        expect(wrapper.text()).toContain('2030')
+        await wrapper.setProps({ modelValue: null })
+        const currentDecadeStart = Math.floor(new Date().getFullYear() / 10) * 10
+        expect(wrapper.text()).toContain(String(currentDecadeStart))
+    })
+
+    it('rebuilds confirm value to the viewed decade when modelValue is out of view', async () => {
+        wrapper = mount(YearPickerPanel, {
+            ...localeProvide,
+            props: { modelValue: new Date(2025, 5, 15) },
+            attachTo: document.body,
+        })
+        const buttons = wrapper.findAll('button')
+        const prevBtn = buttons.find((b) => b.attributes('aria-label') === 'Previous decade')
+        await prevBtn!.trigger('click')
+        const confirmBtn = buttons.find((b) => b.text().trim() === 'Confirm')
+        await confirmBtn!.trigger('click')
+        const emitted = wrapper.emitted('confirm')![0][0] as Date
+        // 2025 在 2020s 视图（yearRange=12）：翻一代到 2008 后确认应重建为视图起始年代并保留月/日
+        expect(emitted.getFullYear()).toBe(2008)
+        expect(emitted.getMonth()).toBe(5)
+        expect(emitted.getDate()).toBe(15)
+    })
+
+    it('preserves month/day when selecting a year', async () => {
+        wrapper = mount(YearPickerPanel, {
+            ...localeProvide,
+            props: { modelValue: new Date(2025, 5, 15) },
+            attachTo: document.body,
+        })
+        const gridCells = wrapper.findAll('[role="gridcell"]')
+        await gridCells[3].trigger('click')
+        const emitted = wrapper.emitted('update:modelValue')![0][0] as Date
+        // 2020s 视图第 4 个 = 2023，保留 6 月 15 日
+        expect(emitted.getFullYear()).toBe(2023)
+        expect(emitted.getMonth()).toBe(5)
+        expect(emitted.getDate()).toBe(15)
+    })
+
+    it('collapses leap day when rebuilt year is not a leap year', async () => {
+        wrapper = mount(YearPickerPanel, {
+            ...localeProvide,
+            props: { modelValue: new Date(2024, 1, 29), yearRange: 10 },
+            attachTo: document.body,
+        })
+        const buttons = wrapper.findAll('button')
+        const prevBtn = buttons.find((b) => b.attributes('aria-label') === 'Previous decade')
+        await prevBtn!.trigger('click')
+        const confirmBtn = buttons.find((b) => b.text().trim() === 'Confirm')
+        await confirmBtn!.trigger('click')
+        const emitted = wrapper.emitted('confirm')![0][0] as Date
+        // yearRange=10 翻一代到 2010（非闰年）：2/29 → 2/28
+        expect(emitted.getFullYear()).toBe(2010)
+        expect(emitted.getMonth()).toBe(1)
+        expect(emitted.getDate()).toBe(28)
+    })
 })

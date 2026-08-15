@@ -78,9 +78,12 @@ const triggerClasses = computed(() =>
 
 const contentId = `date-picker-content-${useId()}`
 
-// 原生表单集成：name 经 hidden input 随表单提交（ISO 日期序列化）
+// 原生表单集成：name 经 hidden input 随表单提交（ISO 日期序列化）；
+// 空值提交空串（与原生 date input 语义一致，服务端可区分"清空"与"未提供"）；
+// disabled 时不参与表单提交（原生表单语义）
 const hiddenInputValue = computed(() => {
-    if (!props.name || !props.modelValue) return undefined
+    if (!props.name) return undefined
+    if (!props.modelValue) return ''
     return formatDate(props.modelValue, 'YYYY-MM-DD')
 })
 
@@ -89,7 +92,7 @@ defineExpose({ open })
 
 <template>
     <PopoverRoot v-model:open="open">
-        <input v-if="hiddenInputValue !== undefined" type="hidden" :name="name" :value="hiddenInputValue">
+        <input v-if="hiddenInputValue !== undefined" type="hidden" :name="name" :value="hiddenInputValue" :disabled="disabled">
         <div class="relative w-full">
             <PopoverTrigger as-child>
                 <button

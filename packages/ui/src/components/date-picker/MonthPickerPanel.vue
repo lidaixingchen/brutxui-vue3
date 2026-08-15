@@ -100,12 +100,15 @@ function handleConfirm() {
         return
     }
     // 确认时校验 modelValue 与 viewYear 一致：翻年未选月份时按 viewYear 重新生成，
-    // 保证提交值与面板可视状态一致
+    // 保证提交值与面板可视状态一致；生成值需与 handleMonthSelect 相同地收敛到 [minDate, maxDate]
     if (props.modelValue.getFullYear() === viewYear.value) {
         emit('confirm', props.modelValue)
         return
     }
-    emit('confirm', new Date(viewYear.value, props.modelValue.getMonth(), 1))
+    let nextDate = new Date(viewYear.value, props.modelValue.getMonth(), 1)
+    if (props.minDate && nextDate < props.minDate) nextDate = props.minDate
+    if (props.maxDate && nextDate > props.maxDate) nextDate = props.maxDate
+    emit('confirm', nextDate)
 }
 
 function handleClear() {

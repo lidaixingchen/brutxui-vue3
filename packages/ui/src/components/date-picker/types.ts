@@ -17,15 +17,15 @@ export interface DatePickerBaseProps {
     class?: string
 }
 
+export interface DatePickerShortcut {
+    label: string
+    value: Date | (() => Date)
+}
+
 export interface DatePickerProps extends DatePickerBaseProps {
     modelValue?: Date | null
     placeholder?: string
     shortcuts?: DatePickerShortcut[]
-}
-
-export interface DatePickerShortcut {
-    label: string
-    value: Date | (() => Date)
 }
 
 export interface DatePickerEmits {

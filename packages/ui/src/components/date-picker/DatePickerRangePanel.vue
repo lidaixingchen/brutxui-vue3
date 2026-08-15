@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, h } from 'vue'
+import { computed, defineAsyncComponent, h, ref, watch } from 'vue'
 
 const DatePicker = defineAsyncComponent(async () => {
     try {
@@ -13,7 +13,7 @@ const DatePicker = defineAsyncComponent(async () => {
             name: 'CalendarUnavailable',
             render: () =>
                 h('div', { class: 'p-4 text-sm font-bold text-brutal-destructive' },
-                    '[BrutxUI] v-calendar 未安装：pnpm add v-calendar'),
+                    '[BrutxUI] v-calendar is not installed: pnpm add v-calendar'),
         }
     }
 })
@@ -88,18 +88,30 @@ function handleDrag(value: DateRangeValue) {
     emitRange(value)
 }
 
-function handleShortcutSelect(shortcut: DatePickerRangeShortcut) {
-    const value = resolveRangeShortcutValue(shortcut)
-    emit('update:modelValue', value)
+// 解析结果按快捷键缓存：函数型快捷项每次调用会基于当前时间生成新 Date，
+// 面板跨天保持打开时午夜前后会解析出不同日期导致 active 样式闪烁；
+// handleShortcutSelect 选中后同步刷新对应条目，保证高亮与提交值一致
+const shortcutResolvedValues = ref(new Map<DatePickerRangeShortcut, DateRange>(
+    props.shortcuts.map((shortcut) => [shortcut, resolveRangeShortcutValue(shortcut)]),
+))
+
+watch(() => props.shortcuts, () => {
+    shortcutResolvedValues.value = new Map(
+        props.shortcuts.map((shortcut) => [shortcut, resolveRangeShortcutValue(shortcut)]),
+    )
+})
+
+function refreshShortcutValue(shortcut: DatePickerRangeShortcut): void {
+    const next = new Map(shortcutResolvedValues.value)
+    next.set(shortcut, resolveRangeShortcutValue(shortcut))
+    shortcutResolvedValues.value = next
 }
 
-// 解析结果按快捷键缓存：函数型快捷项每次调用会基于当前时间生成新 Date，
-// 面板跨天保持打开时午夜前后会解析出不同日期导致 active 样式闪烁
-const shortcutResolvedValues = computed(() =>
-    new Map<DatePickerRangeShortcut, DateRange>(
-        props.shortcuts.map((shortcut) => [shortcut, resolveRangeShortcutValue(shortcut)]),
-    ),
-)
+function handleShortcutSelect(shortcut: DatePickerRangeShortcut) {
+    const value = resolveRangeShortcutValue(shortcut)
+    refreshShortcutValue(shortcut)
+    emit('update:modelValue', value)
+}
 
 function isShortcutActive(shortcut: DatePickerRangeShortcut): boolean {
     if (!props.modelValue || props.modelValue.length !== 2 || !props.modelValue[0] || !props.modelValue[1]) return false

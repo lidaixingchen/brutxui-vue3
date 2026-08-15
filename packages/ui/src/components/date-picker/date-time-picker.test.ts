@@ -692,4 +692,52 @@ describe('DateTimePickerPanel', () => {
         expect(value.getMonth()).toBe(5)
         expect(value.getDate()).toBe(26)
     })
+
+    it('clamps time earlier than minDate to the boundary', async () => {
+        wrapper = mount(DateTimePickerPanel, {
+            ...localeProvide,
+            props: {
+                modelValue: new Date(2026, 5, 20, 9, 0, 0),
+                minDate: new Date(2026, 5, 21, 14, 0, 0),
+            },
+            attachTo: document.body,
+        })
+        const timePicker = wrapper.findComponent({ name: 'TimePicker' })
+        timePicker.vm.$emit('update:modelValue', new Date(2026, 5, 20, 8, 0, 0))
+        const value = wrapper.emitted('update:modelValue')![0][0] as Date
+        // 日期早于 minDate：整体收敛到 minDate（含时分）
+        expect(value.getTime()).toBe(new Date(2026, 5, 21, 14, 0, 0).getTime())
+    })
+
+    it('keeps user time on the boundary day when maxDate is midnight', async () => {
+        wrapper = mount(DateTimePickerPanel, {
+            ...localeProvide,
+            props: {
+                modelValue: new Date(2026, 11, 31, 10, 0, 0),
+                maxDate: new Date(2026, 11, 31),
+            },
+            attachTo: document.body,
+        })
+        const timePicker = wrapper.findComponent({ name: 'TimePicker' })
+        timePicker.vm.$emit('update:modelValue', new Date(2026, 11, 31, 14, 0, 0))
+        const value = wrapper.emitted('update:modelValue')![0][0] as Date
+        // 同日且 maxDate 为午夜：保留用户时分（14:00），不被钳制为 00:00
+        expect(value.getHours()).toBe(14)
+        expect(value.getDate()).toBe(31)
+    })
+
+    it('clamps time later than maxDate to the boundary', async () => {
+        wrapper = mount(DateTimePickerPanel, {
+            ...localeProvide,
+            props: {
+                modelValue: new Date(2026, 11, 31, 10, 0, 0),
+                maxDate: new Date(2026, 11, 30, 18, 0, 0),
+            },
+            attachTo: document.body,
+        })
+        const timePicker = wrapper.findComponent({ name: 'TimePicker' })
+        timePicker.vm.$emit('update:modelValue', new Date(2026, 11, 31, 14, 0, 0))
+        const value = wrapper.emitted('update:modelValue')![0][0] as Date
+        expect(value.getTime()).toBe(new Date(2026, 11, 30, 18, 0, 0).getTime())
+    })
 })

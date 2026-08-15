@@ -41,9 +41,18 @@ const hourStep = computed(() => normalizeStep(props.timeStep?.hour, 24))
 const minuteStep = computed(() => normalizeStep(props.timeStep?.minute, 60))
 const secondStep = computed(() => normalizeStep(props.timeStep?.second, 60))
 
-const currentHour = computed(() => props.modelValue?.getHours() ?? 0)
-const currentMinute = computed(() => props.modelValue?.getMinutes() ?? 0)
-const currentSecond = computed(() => props.modelValue?.getSeconds() ?? 0)
+const currentHour = computed(() => {
+    const date = props.modelValue
+    return date instanceof Date && !Number.isNaN(date.getTime()) ? date.getHours() : 0
+})
+const currentMinute = computed(() => {
+    const date = props.modelValue
+    return date instanceof Date && !Number.isNaN(date.getTime()) ? date.getMinutes() : 0
+})
+const currentSecond = computed(() => {
+    const date = props.modelValue
+    return date instanceof Date && !Number.isNaN(date.getTime()) ? date.getSeconds() : 0
+})
 
 function buildOptions(max: number, step: number, currentValue?: number): number[] {
     const options: number[] = []

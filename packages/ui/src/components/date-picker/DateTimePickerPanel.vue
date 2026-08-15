@@ -13,7 +13,7 @@ const DatePicker = defineAsyncComponent(async () => {
             name: 'CalendarUnavailable',
             render: () =>
                 h('div', { class: 'p-4 text-sm font-bold text-brutal-destructive' },
-                    '[BrutxUI] v-calendar 未安装：pnpm add v-calendar'),
+                    '[BrutxUI] v-calendar is not installed: pnpm add v-calendar'),
         }
     }
 })
@@ -67,11 +67,35 @@ const hasShortcuts = computed(() => props.shortcuts.length > 0)
 
 const panelClasses = computed(() => cn(datePickerPanelVariants()))
 
-// 合并后的结果收敛到 [minDate, maxDate]：日历禁用日期但时间部分可能绕过边界
+// 合并后的结果收敛到 [minDate, maxDate]：日历禁用日期但时间部分可能绕过边界。
+// 天粒度边界（时分秒为 00:00）时按"日"钳制：仅日期跨界才收敛到边界日，
+// 保留用户选中的时分秒，避免边界日的时间选择被静默丢弃
 function clampToBounds(date: Date): Date {
-    if (props.minDate && date < props.minDate) return new Date(props.minDate)
-    if (props.maxDate && date > props.maxDate) return new Date(props.maxDate)
+    if (props.minDate && date < props.minDate) {
+        if (isMidnightBoundary(props.minDate) && isSameCalendarDay(date, props.minDate)) {
+            return new Date(date.getTime())
+        }
+        return new Date(props.minDate)
+    }
+    if (props.maxDate && date > props.maxDate) {
+        if (isMidnightBoundary(props.maxDate) && isSameCalendarDay(date, props.maxDate)) {
+            return new Date(date.getTime())
+        }
+        return new Date(props.maxDate)
+    }
     return date
+}
+
+function isMidnightBoundary(boundary: Date): boolean {
+    return boundary.getHours() === 0 && boundary.getMinutes() === 0 && boundary.getSeconds() === 0
+}
+
+function isSameCalendarDay(a: Date, b: Date): boolean {
+    return (
+        a.getFullYear() === b.getFullYear()
+        && a.getMonth() === b.getMonth()
+        && a.getDate() === b.getDate()
+    )
 }
 
 function handleCalendarUpdate(value: Date | null) {

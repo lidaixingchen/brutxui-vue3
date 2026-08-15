@@ -1,5 +1,9 @@
 import { mount } from '@vue/test-utils'
+import { en } from '@/locales/en'
+import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import DatePickerPanelFooter from './DatePickerPanelFooter.vue'
+
+const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
 describe('DatePickerPanelFooter', () => {
     it('emits clear and confirm actions', async () => {
@@ -8,6 +12,7 @@ describe('DatePickerPanelFooter', () => {
                 clearLabel: 'Clear',
                 confirmLabel: 'Confirm',
             },
+            ...localeProvide,
         })
 
         const buttons = wrapper.findAll('button')
@@ -22,20 +27,23 @@ describe('DatePickerPanelFooter', () => {
         expect(wrapper.emitted('confirm')).toHaveLength(1)
     })
 
-    it('falls back to default labels when empty strings provided', () => {
+    it('falls back to locale texts when empty strings provided', () => {
         const wrapper = mount(DatePickerPanelFooter, {
             props: {
                 clearLabel: '',
                 confirmLabel: '',
             },
+            ...localeProvide,
         })
         const buttons = wrapper.findAll('button')
         expect(buttons[0].text()).toBe('Clear')
         expect(buttons[1].text()).toBe('Confirm')
     })
 
-    it('uses defaults when labels omitted', () => {
-        const wrapper = mount(DatePickerPanelFooter)
+    it('uses locale defaults when labels omitted', () => {
+        const wrapper = mount(DatePickerPanelFooter, {
+            ...localeProvide,
+        })
         const buttons = wrapper.findAll('button')
         expect(buttons[0].text()).toBe('Clear')
         expect(buttons[1].text()).toBe('Confirm')
@@ -44,6 +52,7 @@ describe('DatePickerPanelFooter', () => {
     it('disables both buttons when disabled', async () => {
         const wrapper = mount(DatePickerPanelFooter, {
             props: { disabled: true },
+            ...localeProvide,
         })
         const buttons = wrapper.findAll('button')
         buttons.forEach((btn) => {

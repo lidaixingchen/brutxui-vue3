@@ -43,8 +43,11 @@ const viewDecadeStart = ref<number>(
 )
 
 watch(() => props.modelValue, (value) => {
-    // 清空（null）时回退到当前年份所在年代，与"回到当前"的预期一致
-    viewDecadeStart.value = Math.floor((value?.getFullYear() ?? new Date().getFullYear()) / 10) * 10
+    // 清空（null）时回退到当前年份所在年代，与"回到当前"的预期一致；
+    // Invalid Date 的 getFullYear() 返回 NaN，统一按当前年份兜底
+    const year = value?.getFullYear()
+    const baseYear = Number.isFinite(year) ? year! : new Date().getFullYear()
+    viewDecadeStart.value = Math.floor(baseYear / 10) * 10
 })
 
 const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('datePicker.yearPlaceholder'))
@@ -87,11 +90,12 @@ function isYearDisabled(year: number): boolean {
 
 function handleYearSelect(year: number) {
     if (isYearDisabled(year)) return
-    // 基于原值保留月/日，避免选择年份后日期数据意外改变；
-    // 用 setFullYear 避免 JS 将 0-99 的年份解释为 1900+year
+    // 基于原值保留月/日：先用基础值的年月日构造本地零点，再 setFullYear 改年份，
+    // 避免 new Date(0) 的 UTC 纪元时间残留（负时区下 UTC 序列化会跳到次日）；
+    // setFullYear 同时规避 JS 将 0-99 的年份解释为 1900+year
     const base = props.modelValue ?? new Date()
-    const date = new Date(0)
-    date.setFullYear(year, base.getMonth(), base.getDate())
+    const date = new Date(base.getFullYear(), base.getMonth(), base.getDate())
+    date.setFullYear(year)
     emit('update:modelValue', date)
 }
 
@@ -115,8 +119,12 @@ function handleConfirm() {
         emit('confirm', props.modelValue)
         return
     }
-    const date = new Date(0)
-    date.setFullYear(viewDecadeStart.value, props.modelValue.getMonth(), props.modelValue.getDate())
+    const date = new Date(props.modelValue.getFullYear(), props.modelValue.getMonth(), props.modelValue.getDate())
+    date.setFullYear(viewDecadeStart.value)
+    // 闰日收敛：2/29 落在非闰年时 JS 会滚动到 3/1，回退到 2/28 保持日期稳定
+    if (date.getDate() !== props.modelValue.getDate()) {
+        date.setDate(0)
+    }
     emit('confirm', date)
 }
 

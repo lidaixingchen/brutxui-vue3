@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { cn } from '@/lib/utils'
+import { useLocale } from '@/composables/useLocale'
 import { datePickerFooterVariants } from './date-picker-variants'
 import Button from '../button/Button.vue'
 
@@ -17,9 +18,11 @@ const props = withDefaults(defineProps<DatePickerPanelFooterProps>(), {
     disabled: false,
 })
 
-// 空字符串与 undefined 都回退默认文案，避免按钮显示空白
-const resolvedClearLabel = computed(() => props.clearLabel || 'Clear')
-const resolvedConfirmLabel = computed(() => props.confirmLabel || 'Confirm')
+const { t } = useLocale()
+
+// 空字符串与 undefined 都回退语言包文案，避免按钮显示空白且保持 i18n 体系一致
+const resolvedClearLabel = computed(() => props.clearLabel || t('datePicker.clear'))
+const resolvedConfirmLabel = computed(() => props.confirmLabel || t('datePicker.confirm'))
 
 const emit = defineEmits<{
     clear: []
