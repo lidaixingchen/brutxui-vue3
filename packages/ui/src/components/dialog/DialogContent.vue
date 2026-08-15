@@ -35,20 +35,19 @@ const contentClasses = computed(() =>
     cn(dialogContentVariants({ size: props.size }), props.class)
 )
 
-const closeClasses = computed(() =>
-    cn(dialogCloseVariants())
-)
+// 无响应式依赖：普通常量（与 closeIconClasses 一致）
+const closeClasses = cn(dialogCloseVariants())
 
 const closeIconClasses = cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
 </script>
 
 <template>
     <DialogPortalPrimitive>
-        <DialogOverlay />
-        <DialogContentPrimitive :class="contentClasses" :force-mount="props.forceMount === true ? true : undefined">
+        <DialogOverlay :force-mount="props.forceMount" />
+        <DialogContentPrimitive :class="contentClasses" :force-mount="props.forceMount">
             <slot />
             <DialogClosePrimitive v-if="showCloseButton" :class="closeClasses">
-                <X :class="closeIconClasses" />
+                <X :class="closeIconClasses" aria-hidden="true" />
                 <span class="sr-only">{{ t('dialog.close') }}</span>
             </DialogClosePrimitive>
         </DialogContentPrimitive>

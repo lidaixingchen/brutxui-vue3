@@ -131,7 +131,14 @@ export function showDialog(options: ShowDialogOptions = {}) {
         isOpen.value = false
     }
 
+    let destroyTimer: ReturnType<typeof setTimeout> | undefined
+
     const destroy = () => {
+        // 幂等清理：取消已排定的关闭过渡定时器，避免手动 destroy 后定时器再次执行
+        if (destroyTimer) {
+            clearTimeout(destroyTimer)
+            destroyTimer = undefined
+        }
         stopWatch()
         render(null, container)
         container.remove()
@@ -140,7 +147,7 @@ export function showDialog(options: ShowDialogOptions = {}) {
 
     const stopWatch = watch(isOpen, (newVal) => {
         if (!newVal) {
-            setTimeout(destroy, DEFAULT_DIALOG_TRANSITION_MS)
+            destroyTimer = setTimeout(destroy, DEFAULT_DIALOG_TRANSITION_MS)
         }
     })
 
@@ -160,8 +167,7 @@ export function showDialog(options: ShowDialogOptions = {}) {
 
     const component = defineComponent({
         setup() {
-            const { locale } = useLocale()
-            const isZh = computed(() => locale.value.dialog.close === '关闭')
+            const { t } = useLocale()
 
             return () => {
                 // 当未显式传入 footer 但提供了 onConfirm/onCancel 时，自动生成确认/取消按钮
@@ -175,7 +181,7 @@ export function showDialog(options: ShowDialogOptions = {}) {
                                 close()
                             }
                         }, {
-                            default: () => isZh.value ? '取消' : 'Cancel'
+                            default: () => t('dialog.cancel')
                         }) : null,
                         options.onConfirm ? h(Button, {
                             variant: 'default',
@@ -184,7 +190,7 @@ export function showDialog(options: ShowDialogOptions = {}) {
                                 close()
                             }
                         }, {
-                            default: () => locale.value.dialog.confirm
+                            default: () => t('dialog.confirm')
                         }) : null,
                     ]
                 }) : null
@@ -223,12 +229,7 @@ export function showDialog(options: ShowDialogOptions = {}) {
     return {
         close,
         promise,
-        destroy: () => {
-            stopWatch()
-            render(null, container)
-            container.remove()
-            resolvePromise()
-        }
+        destroy,
     }
 }
 
@@ -248,7 +249,6 @@ export function showMessageBox(options: MessageBoxOptions = {}) {
     const isOpen = ref(true)
     const inputValue = ref(options.inputValue || '')
     const hasValidationError = ref(false)
-    const errorMessage = ref(options.inputErrorMessage || '')
 
     let resolvePromise: (value: { value: string } | undefined) => void
     let rejectPromise: (reason?: unknown) => void
@@ -262,7 +262,14 @@ export function showMessageBox(options: MessageBoxOptions = {}) {
         isOpen.value = false
     }
 
+    let destroyTimer: ReturnType<typeof setTimeout> | undefined
+
     const destroy = () => {
+        // 幂等清理：取消已排定的关闭过渡定时器，避免手动 destroy 后定时器再次执行
+        if (destroyTimer) {
+            clearTimeout(destroyTimer)
+            destroyTimer = undefined
+        }
         stopWatch()
         render(null, container)
         container.remove()
@@ -271,7 +278,7 @@ export function showMessageBox(options: MessageBoxOptions = {}) {
 
     const stopWatch = watch(isOpen, (newVal) => {
         if (!newVal) {
-            setTimeout(destroy, DEFAULT_DIALOG_TRANSITION_MS)
+            destroyTimer = setTimeout(destroy, DEFAULT_DIALOG_TRANSITION_MS)
         }
     })
 
@@ -297,12 +304,11 @@ export function showMessageBox(options: MessageBoxOptions = {}) {
         setup() {
             const { t } = useLocale()
 
+            // 默认校验错误文案保持响应式：语言切换时跟随更新（仅未自定义时使用）
+            const errorMessage = computed(() => options.inputErrorMessage || t('dialog.inputError'))
+
             const defaultConfirmText = computed(() => t('dialog.confirm'))
             const defaultCancelText = computed(() => t('dialog.cancel'))
-
-            if (!options.inputErrorMessage) {
-                errorMessage.value = t('dialog.inputError')
-            }
 
             return () => {
                 return h(DialogRoot, {
@@ -372,11 +378,6 @@ export function showMessageBox(options: MessageBoxOptions = {}) {
     return {
         close,
         promise,
-        destroy: () => {
-            stopWatch()
-            render(null, container)
-            container.remove()
-            rejectPromise('destroy')
-        }
+        destroy,
     }
 }

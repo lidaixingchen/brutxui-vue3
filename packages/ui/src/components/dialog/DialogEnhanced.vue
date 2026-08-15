@@ -97,7 +97,7 @@ void contentRef
 const contentClasses = computed(() =>
     cn(
         dialogContentVariants(),
-        props.draggable && 'cursor-move',
+        props.draggable && !props.fullscreen && 'cursor-move',
         // 触屏上若不加 touch-action: none，手指按下拖动会被浏览器判定为滚动手势，
         // 触发 pointercancel 打断 pointer 事件流（拖拽/缩放均依赖 pointer 事件）
         (props.draggable || props.resizable) && 'touch-none',
@@ -107,9 +107,7 @@ const contentClasses = computed(() =>
     )
 )
 
-const closeClasses = computed(() =>
-    cn(dialogCloseVariants())
-)
+const closeClasses = cn(dialogCloseVariants())
 
 const closeIconClasses = cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
 
@@ -126,7 +124,7 @@ const contentStyle = computed(() => {
         Object.assign(style, composableContentStyle.value)
     }
 
-    if (props.zIndex) {
+    if (props.zIndex !== undefined) {
         style.zIndex = String(props.zIndex)
     }
 
@@ -187,12 +185,12 @@ onBeforeUnmount(() => {
 
 <template>
     <DialogPortalPrimitive>
-        <DialogOverlay />
+        <DialogOverlay :force-mount="props.forceMount" />
         <DialogContentPrimitive
             ref="contentRef"
             :class="contentClasses"
             :style="contentStyle"
-            :force-mount="props.forceMount === true ? true : undefined"
+            :force-mount="props.forceMount"
             @pointerdown="onDragStart"
             @escape-key-down="handleEscapeKeyDown"
             @pointer-down-outside="handlePointerDownOutside"
@@ -203,12 +201,12 @@ onBeforeUnmount(() => {
                 :class="closeClasses"
                 @click.prevent="handleClose"
             >
-                <X :class="closeIconClasses" />
+                <X :class="closeIconClasses" aria-hidden="true" />
                 <span class="sr-only">{{ t('dialog.close') }}</span>
             </DialogClosePrimitive>
 
-            <!-- Resize Handles -->
-            <template v-if="resizable">
+            <!-- Resize Handles（全屏模式下缩放无效，隐藏手柄） -->
+            <template v-if="resizable && !fullscreen">
                 <div
                     class="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize"
                     @pointerdown="(e: PointerEvent) => onResizeStart(e, 'se' as ResizeCorner)"

@@ -130,13 +130,15 @@ describe('DialogContent', () => {
             expect(content.attributes('force-mount')).toBeDefined()
         })
 
-        it('does not pass force-mount when forceMount is false', () => {
+        it('passes force-mount as false explicitly when forceMount is false', () => {
+            // forceMount=false 直接透传：与 reka-ui 默认（不强制挂载）行为等价，
+            // 但保留显式 false 的语义表达，避免与未传参混淆
             const wrapper = mount(DialogContent, {
                 props: { forceMount: false },
                 global: { stubs: contentStubs },
             })
             const content = wrapper.find('[data-testid="dialog-content"]')
-            expect(content.attributes('force-mount')).toBeUndefined()
+            expect(content.attributes('force-mount')).toBe('false')
         })
     })
 
@@ -984,10 +986,10 @@ describe('DialogEnhanced', () => {
             expect(content.attributes('force-mount')).toBeDefined()
         })
 
-        it('does not pass force-mount attribute when forceMount is false', () => {
+        it('passes force-mount as false explicitly when forceMount is false', () => {
             const wrapper = mountDialog({ forceMount: false })
             const content = wrapper.find('[data-testid="content-primitive"]')
-            expect(content.attributes('force-mount')).toBeUndefined()
+            expect(content.attributes('force-mount')).toBe('false')
         })
 
         it('does not pass force-mount attribute when forceMount is undefined', () => {
