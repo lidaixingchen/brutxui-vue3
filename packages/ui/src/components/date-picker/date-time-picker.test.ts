@@ -370,6 +370,57 @@ describe('DateTimePicker', () => {
         expect(timeGroup).not.toBeNull()
     })
 
+    it('renders hidden input with time value when name and modelValue set', () => {
+        wrapper = mount(DateTimePicker, {
+            ...localeProvide,
+            props: { name: 'datetime', modelValue: new Date(2026, 0, 5, 14, 30) },
+            attachTo: document.body,
+        })
+        const input = wrapper.find('input[type="hidden"]')
+        expect(input.exists()).toBe(true)
+        expect(input.attributes('name')).toBe('datetime')
+        expect(input.attributes('value')).toBe('2026-01-05 14:30')
+    })
+
+    it('includes seconds in hidden input when showSeconds is true', () => {
+        wrapper = mount(DateTimePicker, {
+            ...localeProvide,
+            props: { name: 'datetime', modelValue: new Date(2026, 0, 5, 14, 30, 45), showSeconds: true },
+            attachTo: document.body,
+        })
+        expect(wrapper.find('input[type="hidden"]').attributes('value')).toBe('2026-01-05 14:30:45')
+    })
+
+    it('renders hidden input with empty value when modelValue cleared', async () => {
+        wrapper = mount(DateTimePicker, {
+            ...localeProvide,
+            props: { name: 'datetime', modelValue: new Date(2026, 0, 5, 14, 30) },
+            attachTo: document.body,
+        })
+        await wrapper.setProps({ modelValue: null })
+        const input = wrapper.find('input[type="hidden"]')
+        expect(input.exists()).toBe(true)
+        expect(input.attributes('value')).toBe('')
+    })
+
+    it('disables hidden input when disabled', () => {
+        wrapper = mount(DateTimePicker, {
+            ...localeProvide,
+            props: { name: 'datetime', modelValue: new Date(2026, 0, 5, 14, 30), disabled: true },
+            attachTo: document.body,
+        })
+        expect(wrapper.find('input[type="hidden"]').attributes('disabled')).toBeDefined()
+    })
+
+    it('does not render hidden input without name', () => {
+        wrapper = mount(DateTimePicker, {
+            ...localeProvide,
+            props: { modelValue: new Date(2026, 0, 5, 14, 30) },
+            attachTo: document.body,
+        })
+        expect(wrapper.find('input[type="hidden"]').exists()).toBe(false)
+    })
+
     it('renders confirm button in panel when clearable', async () => {
         wrapper = mount(DateTimePicker, {
             ...localeProvide,

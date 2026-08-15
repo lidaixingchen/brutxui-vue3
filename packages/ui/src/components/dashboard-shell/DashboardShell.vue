@@ -49,7 +49,6 @@ const onDesktopChange = (event: MediaQueryListEvent): void => {
 // 视口状态在挂载后初始化：SSR 输出桌面默认态与 hydration 首帧保持一致，
 // 避免 setup 阶段同步改写产生 hydration mismatch 警告（移动端首帧会先显示展开态再收起）
 onMounted(() => {
-    if (!isClient) return
     const mq = matchMedia(DESKTOP_MEDIA_QUERY)
     if (mq) {
         desktopQuery = mq
@@ -71,6 +70,15 @@ const closeSidebar = (): void => {
 const isInert = computed(() => !isDesktop.value && !sidebarOpen.value)
 
 const overlayVisible = computed(() => !isDesktop.value && sidebarOpen.value)
+
+// Escape 仅当移动端且侧边栏实际展开时关闭：
+// 桌面端侧边栏常驻且切换按钮隐藏，关闭无意义；嵌套组件（Dialog/DropdownMenu）
+// 已处理的 Escape（defaultPrevented）不连带关闭侧边栏
+const onEscapeKeydown = (event: KeyboardEvent): void => {
+    if (event.defaultPrevented) return
+    if (isDesktop.value || !sidebarOpen.value) return
+    closeSidebar()
+}
 
 // 移动端展开后把焦点移入侧边栏；收起时若焦点在侧边栏内则归还给触发按钮
 watch(sidebarOpen, async (open) => {
@@ -111,7 +119,7 @@ const iconClasses = computed(() =>
 </script>
 
 <template>
-    <div :class="rootClasses" @keydown.escape="closeSidebar">
+    <div :class="rootClasses" @keydown.escape="onEscapeKeydown">
         <aside
             :id="sidebarId"
             ref="sidebarElement"

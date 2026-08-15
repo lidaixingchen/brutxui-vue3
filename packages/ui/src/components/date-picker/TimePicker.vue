@@ -41,18 +41,14 @@ const hourStep = computed(() => normalizeStep(props.timeStep?.hour, 24))
 const minuteStep = computed(() => normalizeStep(props.timeStep?.minute, 60))
 const secondStep = computed(() => normalizeStep(props.timeStep?.second, 60))
 
-const currentHour = computed(() => {
-    const date = props.modelValue
-    return date instanceof Date && !Number.isNaN(date.getTime()) ? date.getHours() : 0
-})
-const currentMinute = computed(() => {
-    const date = props.modelValue
-    return date instanceof Date && !Number.isNaN(date.getTime()) ? date.getMinutes() : 0
-})
-const currentSecond = computed(() => {
-    const date = props.modelValue
-    return date instanceof Date && !Number.isNaN(date.getTime()) ? date.getSeconds() : 0
-})
+// Invalid Date 校验（instanceof 判断对 new Date('invalid') 会通过，但 getTime() 为 NaN）
+function isValidDate(value: Date | null | undefined): value is Date {
+    return value instanceof Date && !Number.isNaN(value.getTime())
+}
+
+const currentHour = computed(() => (isValidDate(props.modelValue) ? props.modelValue.getHours() : 0))
+const currentMinute = computed(() => (isValidDate(props.modelValue) ? props.modelValue.getMinutes() : 0))
+const currentSecond = computed(() => (isValidDate(props.modelValue) ? props.modelValue.getSeconds() : 0))
 
 function buildOptions(max: number, step: number, currentValue?: number): number[] {
     const options: number[] = []
@@ -77,9 +73,8 @@ function pad2(value: number): string {
 }
 
 function ensureDate(): Date {
-    // 校验 getTime() 有效性：Invalid Date 的 instanceof 判断会通过，
-    // 但后续 setHours 会继续产出 NaN 时间
-    if (props.modelValue instanceof Date && !Number.isNaN(props.modelValue.getTime())) {
+    // 复用 isValidDate：Invalid Date 的 instanceof 判断会通过，但后续 setHours 会继续产出 NaN 时间
+    if (isValidDate(props.modelValue)) {
         return new Date(props.modelValue.getTime())
     }
     const now = new Date()

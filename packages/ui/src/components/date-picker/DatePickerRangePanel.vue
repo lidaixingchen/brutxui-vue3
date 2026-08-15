@@ -91,25 +91,32 @@ function handleDrag(value: DateRangeValue) {
 // 解析结果按快捷键缓存：函数型快捷项每次调用会基于当前时间生成新 Date，
 // 面板跨天保持打开时午夜前后会解析出不同日期导致 active 样式闪烁；
 // handleShortcutSelect 选中后同步刷新对应条目，保证高亮与提交值一致
-const shortcutResolvedValues = ref(new Map<DatePickerRangeShortcut, DateRange>(
-    props.shortcuts.map((shortcut) => [shortcut, resolveRangeShortcutValue(shortcut)]),
-))
+const shortcutResolvedValues = ref(new Map<DatePickerRangeShortcut, DateRange>())
 
-watch(() => props.shortcuts, () => {
-    shortcutResolvedValues.value = new Map(
-        props.shortcuts.map((shortcut) => [shortcut, resolveRangeShortcutValue(shortcut)]),
-    )
-})
+function buildShortcutMap(shortcuts: DatePickerRangeShortcut[]): Map<DatePickerRangeShortcut, DateRange> {
+    return new Map(shortcuts.map((shortcut) => [shortcut, resolveRangeShortcutValue(shortcut)]))
+}
 
-function refreshShortcutValue(shortcut: DatePickerRangeShortcut): void {
+// deep 监听：父组件原地修改 shortcuts 数组（push/splice）时缓存也能刷新
+watch(
+    () => props.shortcuts,
+    () => {
+        shortcutResolvedValues.value = buildShortcutMap(props.shortcuts)
+    },
+    { deep: true, immediate: true },
+)
+
+function refreshShortcutValue(shortcut: DatePickerRangeShortcut, value: DateRange): void {
     const next = new Map(shortcutResolvedValues.value)
-    next.set(shortcut, resolveRangeShortcutValue(shortcut))
+    next.set(shortcut, value)
     shortcutResolvedValues.value = next
 }
 
 function handleShortcutSelect(shortcut: DatePickerRangeShortcut) {
+    // 只解析一次：缓存值（决定 active 高亮）与 emit 的提交值必须是同一实例，
+    // 避免函数型快捷项两次解析跨午夜产生不同日期
     const value = resolveRangeShortcutValue(shortcut)
-    refreshShortcutValue(shortcut)
+    refreshShortcutValue(shortcut, value)
     emit('update:modelValue', value)
 }
 

@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { computed, useSlots, provide, toRef } from 'vue'
-import { Comment } from 'vue'
+import { Comment, computed, provide, toRef, useSlots } from 'vue'
 import { cn } from '@/lib/utils'
 import { descriptionsBorderKey, descriptionsDirectionKey } from './descriptions-key'
 

@@ -108,6 +108,45 @@ describe('MonthPicker', () => {
         expect(trigger.attributes('aria-haspopup')).toBe('dialog')
     })
 
+    it('renders hidden input with YYYY-MM value when name and modelValue set', () => {
+        wrapper = mount(MonthPicker, {
+            ...localeProvide,
+            props: { name: 'month', modelValue: new Date(2026, 5, 26) },
+            attachTo: document.body,
+        })
+        const input = wrapper.find('input[type="hidden"]')
+        expect(input.exists()).toBe(true)
+        expect(input.attributes('value')).toBe('2026-06')
+    })
+
+    it('renders hidden input with empty value when modelValue cleared', async () => {
+        wrapper = mount(MonthPicker, {
+            ...localeProvide,
+            props: { name: 'month', modelValue: new Date(2026, 5, 26) },
+            attachTo: document.body,
+        })
+        await wrapper.setProps({ modelValue: null })
+        expect(wrapper.find('input[type="hidden"]').attributes('value')).toBe('')
+    })
+
+    it('disables hidden input when disabled', () => {
+        wrapper = mount(MonthPicker, {
+            ...localeProvide,
+            props: { name: 'month', modelValue: new Date(2026, 5, 26), disabled: true },
+            attachTo: document.body,
+        })
+        expect(wrapper.find('input[type="hidden"]').attributes('disabled')).toBeDefined()
+    })
+
+    it('does not render hidden input without name', () => {
+        wrapper = mount(MonthPicker, {
+            ...localeProvide,
+            props: { modelValue: new Date(2026, 5, 26) },
+            attachTo: document.body,
+        })
+        expect(wrapper.find('input[type="hidden"]').exists()).toBe(false)
+    })
+
     it('is disabled when disabled prop is true', () => {
         wrapper = mount(MonthPicker, {
             ...localeProvide,
@@ -518,6 +557,42 @@ describe('MonthPickerPanel', () => {
         const emitted = wrapper.emitted('confirm')
         expect(emitted).toBeTruthy()
         expect(emitted![0]).toEqual([value])
+    })
+
+    it('rebuilds confirm value to the viewed year after navigating without selecting', async () => {
+        wrapper = mount(MonthPickerPanel, {
+            ...localeProvide,
+            props: { modelValue: new Date(2026, 5, 1) },
+            attachTo: document.body,
+        })
+        const buttons = wrapper.findAll('button')
+        const prevBtn = buttons.find((b) => b.attributes('aria-label') === 'Previous year')
+        await prevBtn!.trigger('click')
+        const confirmBtn = buttons.find((b) => b.text().trim() === 'Confirm')
+        await confirmBtn!.trigger('click')
+        const emitted = wrapper.emitted('confirm')![0][0] as Date
+        expect(emitted.getFullYear()).toBe(2025)
+        expect(emitted.getMonth()).toBe(5)
+        expect(emitted.getDate()).toBe(1)
+    })
+
+    it('clamps rebuilt confirm value to maxDate when out of bounds', async () => {
+        wrapper = mount(MonthPickerPanel, {
+            ...localeProvide,
+            props: {
+                modelValue: new Date(2026, 5, 1),
+                maxDate: new Date(2025, 2, 31),
+            },
+            attachTo: document.body,
+        })
+        const buttons = wrapper.findAll('button')
+        const prevBtn = buttons.find((b) => b.attributes('aria-label') === 'Previous year')
+        await prevBtn!.trigger('click')
+        const confirmBtn = buttons.find((b) => b.text().trim() === 'Confirm')
+        await confirmBtn!.trigger('click')
+        const emitted = wrapper.emitted('confirm')![0][0] as Date
+        // 重建值 2025-06-01 晚于 maxDate 2025-03-31 → 收敛到边界
+        expect(emitted.getTime()).toBe(new Date(2025, 2, 31).getTime())
     })
 
     it('emits clear and update:modelValue null when clear clicked', async () => {

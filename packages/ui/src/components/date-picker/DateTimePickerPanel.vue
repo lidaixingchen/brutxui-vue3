@@ -68,13 +68,11 @@ const hasShortcuts = computed(() => props.shortcuts.length > 0)
 const panelClasses = computed(() => cn(datePickerPanelVariants()))
 
 // 合并后的结果收敛到 [minDate, maxDate]：日历禁用日期但时间部分可能绕过边界。
-// 天粒度边界（时分秒为 00:00）时按"日"钳制：仅日期跨界才收敛到边界日，
-// 保留用户选中的时分秒，避免边界日的时间选择被静默丢弃
+// 天粒度边界（maxDate 时分秒为 00:00）时按"日"钳制：仅日期跨界才收敛到边界日，
+// 保留用户选中的时分秒，避免边界日的时间选择被静默丢弃。
+// minDate 无需特判：同日且边界为午夜时，当天任意时刻天然满足 >= minDate
 function clampToBounds(date: Date): Date {
     if (props.minDate && date < props.minDate) {
-        if (isMidnightBoundary(props.minDate) && isSameCalendarDay(date, props.minDate)) {
-            return new Date(date.getTime())
-        }
         return new Date(props.minDate)
     }
     if (props.maxDate && date > props.maxDate) {

@@ -92,10 +92,18 @@ function handleYearSelect(year: number) {
     if (isYearDisabled(year)) return
     // 基于原值保留月/日：先用基础值的年月日构造本地零点，再 setFullYear 改年份，
     // 避免 new Date(0) 的 UTC 纪元时间残留（负时区下 UTC 序列化会跳到次日）；
-    // setFullYear 同时规避 JS 将 0-99 的年份解释为 1900+year
-    const base = props.modelValue ?? new Date()
+    // setFullYear 同时规避 JS 将 0-99 的年份解释为 1900+year；
+    // Invalid Date 的基础值按当天兜底
+    const base = props.modelValue && Number.isFinite(props.modelValue.getTime())
+        ? props.modelValue
+        : new Date()
     const date = new Date(base.getFullYear(), base.getMonth(), base.getDate())
     date.setFullYear(year)
+    // 闰日收敛：2/29 落在非闰年时 JS 会滚动到 3/1，回退到 2/28 保持日期稳定
+    // （与 handleConfirm 重建分支的行为一致）
+    if (date.getDate() !== base.getDate()) {
+        date.setDate(0)
+    }
     emit('update:modelValue', date)
 }
 

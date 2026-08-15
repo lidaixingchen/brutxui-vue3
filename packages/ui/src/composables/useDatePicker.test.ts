@@ -247,6 +247,22 @@ describe('useDatePicker', () => {
         expect(open.value).toBe(false)
     })
 
+    it('handleTriggerKeydown does not intercept Tab in readonly mode (no focus trap)', () => {
+        const { handleTriggerKeydown } = createDatePicker({
+            readonly: () => true,
+            emit: () => {},
+        })
+        const tabEvent = new KeyboardEvent('keydown', { key: 'Tab' })
+        vi.spyOn(tabEvent, 'preventDefault')
+        handleTriggerKeydown(tabEvent)
+        expect(tabEvent.preventDefault).not.toHaveBeenCalled()
+        // Enter/Space 仍被拦截
+        const enterEvent = new KeyboardEvent('keydown', { key: 'Enter' })
+        vi.spyOn(enterEvent, 'preventDefault')
+        handleTriggerKeydown(enterEvent)
+        expect(enterEvent.preventDefault).toHaveBeenCalled()
+    })
+
     it('displayValue syncs when modelValue changes', async () => {
         const modelValue = ref<Date | null>(new Date(2026, 0, 1))
         const { displayValue } = createDatePicker({

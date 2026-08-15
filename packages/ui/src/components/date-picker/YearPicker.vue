@@ -48,12 +48,12 @@ const { t } = useLocale()
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('datePicker.yearPlaceholder'))
 const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('datePicker.yearPlaceholder'))
 
-// 原生表单集成：name 经 hidden input 随表单提交（ISO 日期序列化）；
-// 空值提交空串、disabled 不参与提交
+// 原生表单集成：name 经 hidden input 随表单提交；
+// 年选择语义是 YYYY（月/日分量来自选中当天的任意日期，不稳定，不纳入提交值）
 const hiddenInputValue = computed(() => {
     if (!props.name) return undefined
     if (!props.modelValue) return ''
-    return formatDate(props.modelValue, 'YYYY-MM-DD')
+    return formatDate(props.modelValue, 'YYYY')
 })
 
 const {

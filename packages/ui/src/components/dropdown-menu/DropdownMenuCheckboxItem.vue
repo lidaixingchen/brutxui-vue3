@@ -37,9 +37,12 @@ const checked = computed<boolean | 'indeterminate' | undefined>(() =>
 )
 
 function handleCheckedChange(value: boolean | 'indeterminate') {
-    // 无论受控与否都更新内部状态并 emit：兼容「初始 modelValue 为 undefined、
-    // 随后由 v-model/事件接管」的消费方，避免点击后 ref 停留在 undefined 看似绑定失效
-    internalChecked.value = value
+    // 仅在非受控时写内部状态（emit 始终保持）：受控阶段不落内部值，
+    // 避免消费方后续把 modelValue 重置为 undefined（切回非受控）时
+    // 回落到"最后一次点击值"而非初始 defaultChecked
+    if (!isControlled.value) {
+        internalChecked.value = value
+    }
     emit('update:modelValue', value)
 }
 
