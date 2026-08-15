@@ -104,7 +104,20 @@ function handleNextDecade() {
 }
 
 function handleConfirm() {
-    emit('confirm', props.modelValue)
+    if (!props.modelValue) {
+        emit('confirm', null)
+        return
+    }
+    // 确认时校验 modelValue 与 viewDecadeStart 一致：翻年代未选年份时按当前视图重新生成，
+    // 保证提交值与面板可视状态一致（保留月/日）
+    if (props.modelValue.getFullYear() >= viewDecadeStart.value
+        && props.modelValue.getFullYear() < viewDecadeStart.value + normalizedYearRange.value) {
+        emit('confirm', props.modelValue)
+        return
+    }
+    const date = new Date(0)
+    date.setFullYear(viewDecadeStart.value, props.modelValue.getMonth(), props.modelValue.getDate())
+    emit('confirm', date)
 }
 
 function handleClear() {
@@ -125,7 +138,7 @@ function getYearClasses(year: number): string {
 </script>
 
 <template>
-    <div :class="panelClasses" role="dialog" aria-modal="true" :aria-label="resolvedAriaLabel">
+    <div :class="panelClasses" role="dialog" :aria-label="resolvedAriaLabel">
         <div class="flex flex-col">
             <div class="flex items-center justify-between p-2 border-b-3 border-brutal bg-brutal-bg">
                 <Button

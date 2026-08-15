@@ -51,6 +51,8 @@ function buildOptions(max: number, step: number, currentValue?: number): number[
         options.push(i)
     }
     if (currentValue !== undefined && !options.includes(currentValue)) {
+        // 保留原值插入而非就近对齐网格点：用于回显当前选中项（如 step=15 时分钟为 7），
+        // 是刻意取舍——固定步长列表只约束可选项，不强制选项落在网格上
         options.push(currentValue)
         options.sort((a, b) => a - b)
     }

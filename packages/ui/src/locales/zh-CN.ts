@@ -242,6 +242,7 @@ export const zhCN: Locale = {
         timePlaceholder: '选择时间',
         startPlaceholder: '开始日期',
         endPlaceholder: '结束日期',
+        rangeLabel: '日期范围',
         separator: '至',
         today: '今天',
         tomorrow: '明天',

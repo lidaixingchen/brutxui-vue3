@@ -286,6 +286,7 @@ export interface DatePickerLocale {
     timePlaceholder: string
     startPlaceholder: string
     endPlaceholder: string
+    rangeLabel: string
     separator: string
     today: string
     tomorrow: string

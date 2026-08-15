@@ -212,27 +212,7 @@ describe('useDatePicker', () => {
         expect(emitted).toContainEqual(['update:modelValue', null])
     })
 
-    it('handleTriggerKeydown opens panel on Enter', () => {
-        const { handleTriggerKeydown, open } = createDatePicker({
-            emit: () => {},
-        })
-        const event = new KeyboardEvent('keydown', { key: 'Enter' })
-        vi.spyOn(event, 'preventDefault')
-        handleTriggerKeydown(event)
-        expect(open.value).toBe(true)
-    })
-
-    it('handleTriggerKeydown opens panel on Space', () => {
-        const { handleTriggerKeydown, open } = createDatePicker({
-            emit: () => {},
-        })
-        const event = new KeyboardEvent('keydown', { key: ' ' })
-        vi.spyOn(event, 'preventDefault')
-        handleTriggerKeydown(event)
-        expect(open.value).toBe(true)
-    })
-
-    it('handleTriggerKeydown does not open when disabled', () => {
+    it('handleTriggerKeydown prevents default when disabled', () => {
         const { handleTriggerKeydown, open } = createDatePicker({
             disabled: () => true,
             emit: () => {},
@@ -240,10 +220,11 @@ describe('useDatePicker', () => {
         const event = new KeyboardEvent('keydown', { key: 'Enter' })
         vi.spyOn(event, 'preventDefault')
         handleTriggerKeydown(event)
+        expect(event.preventDefault).toHaveBeenCalled()
         expect(open.value).toBe(false)
     })
 
-    it('handleTriggerKeydown does not open when readonly', () => {
+    it('handleTriggerKeydown prevents default when readonly', () => {
         const { handleTriggerKeydown, open } = createDatePicker({
             readonly: () => true,
             emit: () => {},
@@ -251,18 +232,19 @@ describe('useDatePicker', () => {
         const event = new KeyboardEvent('keydown', { key: 'Enter' })
         vi.spyOn(event, 'preventDefault')
         handleTriggerKeydown(event)
+        expect(event.preventDefault).toHaveBeenCalled()
         expect(open.value).toBe(false)
     })
 
-    it('handleTriggerKeydown does not open when already open', () => {
+    it('handleTriggerKeydown is a no-op when enabled (keyboard activation handled by reka-ui)', () => {
         const { handleTriggerKeydown, open } = createDatePicker({
             emit: () => {},
         })
-        open.value = true
         const event = new KeyboardEvent('keydown', { key: 'Enter' })
         vi.spyOn(event, 'preventDefault')
         handleTriggerKeydown(event)
         expect(event.preventDefault).not.toHaveBeenCalled()
+        expect(open.value).toBe(false)
     })
 
     it('displayValue syncs when modelValue changes', async () => {

@@ -5,6 +5,7 @@ import { Calendar as CalendarIcon, ChevronDown, X } from '@lucide/vue'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { cn } from '@/lib/utils'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
+import { formatDate } from '@/lib/date'
 import { useLocale } from '@/composables/useLocale'
 import { useDatePicker } from '@/composables/useDatePicker'
 import PopoverContent from '../popover/PopoverContent.vue'
@@ -47,6 +48,12 @@ const { t } = useLocale()
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('datePicker.yearPlaceholder'))
 const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('datePicker.yearPlaceholder'))
 
+// 原生表单集成：name 经 hidden input 随表单提交（ISO 日期序列化）
+const hiddenInputValue = computed(() => {
+    if (!props.name || !props.modelValue) return undefined
+    return formatDate(props.modelValue, 'YYYY-MM-DD')
+})
+
 const {
     open,
     displayValue,
@@ -79,6 +86,7 @@ defineExpose({ open })
 
 <template>
     <PopoverRoot v-model:open="open">
+        <input v-if="hiddenInputValue !== undefined" type="hidden" :name="name" :value="hiddenInputValue">
         <div class="relative w-full">
             <PopoverTrigger as-child>
                 <button

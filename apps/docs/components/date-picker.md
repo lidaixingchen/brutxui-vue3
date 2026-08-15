@@ -150,6 +150,8 @@ const week = ref(null)
 
 `weekStartsOn`：`0` = 周日起始，`1` = 周一起始（默认）。选中任意日期后，`modelValue` 会自动对齐到当周起始日，并整周高亮。
 
+> **注意**：`weekStartsOn` 默认值（`1`，周一起始）不随 `useLocale` 区域设置自动推导，是设计限制。ISO 8601 与中文地区习惯均为周一起始，若业务需要周日起始（如 en-US 习惯），请显式传入 `weekStartsOn: 0`。
+
 ### MonthPicker 月份选择
 
 ```vue

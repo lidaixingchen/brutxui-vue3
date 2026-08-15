@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from 'vue'
+import { computed, defineAsyncComponent, h } from 'vue'
 
 const DatePicker = defineAsyncComponent(async () => {
     try {
@@ -8,7 +8,13 @@ const DatePicker = defineAsyncComponent(async () => {
         return mod.DatePicker
     } catch {
         console.warn('[BrutxUI] Calendar component requires v-calendar. Install it: pnpm add v-calendar')
-        return { template: '<div/>' }
+        // 可见错误占位：避免静默渲染空白日历区域
+        return {
+            name: 'CalendarUnavailable',
+            render: () =>
+                h('div', { class: 'p-4 text-sm font-bold text-brutal-destructive' },
+                    '[BrutxUI] v-calendar 未安装：pnpm add v-calendar'),
+        }
     }
 })
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
@@ -144,7 +150,7 @@ function getShortcutClasses(shortcut: DatePickerShortcut): string {
 </script>
 
 <template>
-    <div :class="panelClasses" role="dialog" aria-modal="true" :aria-label="resolvedAriaLabel">
+    <div :class="panelClasses" role="dialog" :aria-label="resolvedAriaLabel">
         <div
             v-if="hasShortcuts"
             role="listbox"
@@ -213,13 +219,13 @@ function getShortcutClasses(shortcut: DatePickerShortcut): string {
 </template>
 
 <style>
-.brutal-week-range {
-    background-color: var(--brutal-accent) !important;
-    border-radius: var(--brutal-radius) !important;
+.brutx-calendar .brutal-week-range {
+    background-color: var(--brutal-accent);
+    border-radius: var(--brutal-radius);
 }
 
-.brutal-week-range-content {
-    color: var(--brutal-accent-foreground) !important;
+.brutx-calendar .brutal-week-range-content {
+    color: var(--brutal-accent-foreground);
 }
 
 .brutx-calendar .vc-container {

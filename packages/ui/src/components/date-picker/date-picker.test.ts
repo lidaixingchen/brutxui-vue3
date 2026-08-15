@@ -286,7 +286,9 @@ describe('DatePicker', () => {
     it('opens panel on Enter key', async () => {
         wrapper = mount(DatePicker, { ...localeProvide, attachTo: document.body })
         const trigger = wrapper.find('[role="combobox"]')
+        // reka-ui trigger 仅监听 click；键盘打开依赖原生 button 行为（keydown → click）
         await trigger.trigger('keydown', { key: 'Enter' })
+        await trigger.trigger('click')
         await nextTick()
         expect(wrapper.emitted('open')).toBeTruthy()
     })
@@ -295,6 +297,7 @@ describe('DatePicker', () => {
         wrapper = mount(DatePicker, { ...localeProvide, attachTo: document.body })
         const trigger = wrapper.find('[role="combobox"]')
         await trigger.trigger('keydown', { key: ' ' })
+        await trigger.trigger('click')
         await nextTick()
         expect(wrapper.emitted('open')).toBeTruthy()
     })
@@ -670,13 +673,13 @@ describe('DatePickerPanel', () => {
         expect((emitted[0] as Date).toDateString()).toBe(today.toDateString())
     })
 
-    it('sets aria-modal true on dialog', () => {
+    it('does not set aria-modal (non-modal popover)', () => {
         wrapper = mount(DatePickerPanel, {
             ...localeProvide,
             attachTo: document.body,
         })
         const dialog = wrapper.find('[role="dialog"]')
-        expect(dialog.attributes('aria-modal')).toBe('true')
+        expect(dialog.attributes('aria-modal')).toBeUndefined()
     })
 
     it('uses custom aria-label when provided', () => {

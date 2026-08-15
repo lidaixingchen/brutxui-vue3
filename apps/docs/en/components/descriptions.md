@@ -116,7 +116,7 @@ import { Descriptions, DescriptionsItem } from 'brutx-ui-vue'
 | --- | --- | --- | --- |
 | `label` | `string` | — (required) | Label text |
 | `span` | `number` | `1` | Number of columns to span |
-| `labelWidth` | `string \| number` | — | Label width (horizontal direction only) |
+| `labelWidth` | `string \| number` | — | Label width. **Only effective in borderless/vertical modes**; in horizontal border mode the label sits inside a `1fr` grid track and a fixed width cannot shrink the track — adjust the parent `column` instead |
 | `class` | `string` | — | Custom CSS class |
 
 ## Slots

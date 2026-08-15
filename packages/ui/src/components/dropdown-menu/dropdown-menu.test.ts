@@ -294,6 +294,42 @@ describe('DropdownMenu regression fixes', () => {
         expect(indicator.exists()).toBe(true)
     })
 
+    it('checkbox item: unchecked state renders a persistent empty checkbox frame', () => {
+        const checkboxStubs = {
+            DropdownMenuCheckboxItem: primitiveStub,
+            DropdownMenuItemIndicator: primitiveStub,
+        }
+        const wrapper = mount(DropdownMenuCheckboxItem, {
+            global: { stubs: checkboxStubs },
+        })
+        expect(wrapper.html()).toContain('border-2 border-brutal')
+        const checked = mount(DropdownMenuCheckboxItem, {
+            props: { modelValue: true },
+            global: { stubs: checkboxStubs },
+        })
+        expect(checked.html()).not.toContain('border-2 border-brutal')
+    })
+
+    it('checkbox item: defaultChecked seeds the initial unchecked-state value', () => {
+        const checkboxStubs = {
+            DropdownMenuCheckboxItem: primitiveStub,
+            DropdownMenuItemIndicator: primitiveStub,
+        }
+        // 非受控模式：defaultChecked=true → 初始渲染选中态图标
+        const wrapper = mount(DropdownMenuCheckboxItem, {
+            props: { defaultChecked: true },
+            global: { stubs: checkboxStubs },
+        })
+        expect(wrapper.html()).toContain('lucide-check')
+        expect(wrapper.html()).not.toContain('border-2 border-brutal')
+        // defaultChecked=false → 初始渲染未选中空框
+        const unchecked = mount(DropdownMenuCheckboxItem, {
+            props: { defaultChecked: false },
+            global: { stubs: checkboxStubs },
+        })
+        expect(unchecked.html()).toContain('border-2 border-brutal')
+    })
+
     it('radio item: passes value to the primitive', () => {
         const radioStubs = {
             DropdownMenuRadioItem: primitiveStub,

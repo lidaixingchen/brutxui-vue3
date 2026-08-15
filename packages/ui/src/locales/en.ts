@@ -242,6 +242,7 @@ export const en: Locale = {
         timePlaceholder: 'Select time',
         startPlaceholder: 'Start date',
         endPlaceholder: 'End date',
+        rangeLabel: 'Date range',
         separator: 'to',
         today: 'Today',
         tomorrow: 'Tomorrow',

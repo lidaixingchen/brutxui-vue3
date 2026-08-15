@@ -1,11 +1,11 @@
-.brutal-selected {
-    background-color: var(--brutal-primary, #FF6B6B) !important;
-    border: var(--brutal-border-width, 3px) solid var(--brutal-border-color, #000000) !important;
-    border-radius: var(--brutal-radius, 0px) !important;
-    box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0 var(--brutal-shadow-color, #000000) !important;
+.brutx-calendar .brutal-selected {
+    background-color: var(--brutal-primary, #FF6B6B);
+    border: var(--brutal-border-width, 3px) solid var(--brutal-border-color, #000000);
+    border-radius: var(--brutal-radius, 0px);
+    box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0 var(--brutal-shadow-color, #000000);
 }
 
-.brutal-selected-content {
-    color: var(--brutal-primary-foreground, #000000) !important;
-    font-weight: 900 !important;
+.brutx-calendar .brutal-selected-content {
+    color: var(--brutal-primary-foreground, #000000);
+    font-weight: 900;
 }

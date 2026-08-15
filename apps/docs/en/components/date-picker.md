@@ -151,6 +151,8 @@ const week = ref(null)
 
 `weekStartsOn`: `0` = week starts on Sunday, `1` = week starts on Monday (default). After selecting any date, `modelValue` automatically aligns to the start of that week, and the entire week is highlighted.
 
+> **Note**: The `weekStartsOn` default (`1`, Monday) is not derived from the `useLocale` regional setting — a known limitation. ISO 8601 and Chinese regional conventions both start weeks on Monday; if your business needs Sunday as the week start (e.g. en-US convention), pass `weekStartsOn: 0` explicitly.
+
 ### MonthPicker - Month Selection
 
 ```vue

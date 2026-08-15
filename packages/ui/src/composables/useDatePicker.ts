@@ -121,10 +121,10 @@ export function useDatePicker(options: UseDatePickerOptions): UseDatePickerRetur
     }
 
     function handleTriggerKeydown(event: KeyboardEvent) {
-        if (toValue(options.disabled) || toValue(options.readonly)) return
-        if ((event.key === 'Enter' || event.key === ' ') && !open.value) {
+        // 键盘激活移交 reka-ui PopoverTrigger 原生处理（Enter/Space 打开）；
+        // 此处仅拦截 disabled/readonly 场景，避免打开后由 open setter 拒绝造成状态回弹
+        if (toValue(options.disabled) || toValue(options.readonly)) {
             event.preventDefault()
-            open.value = true
         }
     }
 

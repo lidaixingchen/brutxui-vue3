@@ -95,7 +95,17 @@ function handleNextYear() {
 }
 
 function handleConfirm() {
-    emit('confirm', props.modelValue)
+    if (!props.modelValue) {
+        emit('confirm', null)
+        return
+    }
+    // 确认时校验 modelValue 与 viewYear 一致：翻年未选月份时按 viewYear 重新生成，
+    // 保证提交值与面板可视状态一致
+    if (props.modelValue.getFullYear() === viewYear.value) {
+        emit('confirm', props.modelValue)
+        return
+    }
+    emit('confirm', new Date(viewYear.value, props.modelValue.getMonth(), 1))
 }
 
 function handleClear() {
@@ -122,7 +132,7 @@ function getMonthClasses(monthIndex: number): string {
 </script>
 
 <template>
-    <div :class="panelClasses" role="dialog" aria-modal="true" :aria-label="resolvedAriaLabel">
+    <div :class="panelClasses" role="dialog" :aria-label="resolvedAriaLabel">
         <div class="flex flex-col">
             <div class="flex items-center justify-between p-2 border-b-3 border-brutal bg-brutal-bg">
                 <Button

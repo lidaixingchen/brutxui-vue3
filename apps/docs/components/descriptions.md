@@ -116,7 +116,7 @@ import { Descriptions, DescriptionsItem } from 'brutx-ui-vue'
 | --- | --- | --- | --- |
 | `label` | `string` | —（必填） | 标签文本 |
 | `span` | `number` | `1` | 跨列数 |
-| `labelWidth` | `string \| number` | — | 标签宽度（仅水平方向有效） |
+| `labelWidth` | `string \| number` | — | 标签宽度。**仅无边框/垂直方向生效**；水平有边框模式下标签位于 1fr 网格轨道内，固定宽度无法缩小轨道，如需控制列宽请调整父级 `column` |
 | `class` | `string` | — | 自定义 CSS 类 |
 
 ## 插槽

@@ -1,9 +1,9 @@
-import { showMessageBox, type MessageBoxOptions } from '@/components/dialog/functional'
+import { showMessageBox, type MessageBoxOptions, type MessageBoxResult } from '@/components/dialog/functional'
 import { canUseDocumentBody } from '@/lib/env'
 
 export type { MessageBoxOptions }
 
-type MessageBoxInstance = { close: () => void; promise: Promise<{ value: string } | undefined>; destroy: () => void }
+type MessageBoxInstance = { close: () => void; promise: Promise<MessageBoxResult>; destroy: () => void }
 
 export interface UseMessageBoxReturn {
     show: (options?: MessageBoxOptions) => MessageBoxInstance
@@ -21,12 +21,10 @@ export function useMessageBox(): UseMessageBoxReturn {
 
         const instance = showMessageBox(options)
         try {
-            // showMessageBox 契约：promise 兑现即表示用户点击了确认（有/无输入均兑现），reject 表示取消或关闭
-            await instance.promise
-            return true
-        } catch {
-            // 用户点击取消或关闭
-            return false
+            // showMessageBox 契约：promise 兑现 { action }；仅 action='confirm' 视为确认，
+            // 取消/关闭/销毁均兑现 { action: 'cancel' | 'destroy' }（不再 reject，无 unhandledrejection）
+            const result = await instance.promise
+            return result.action === 'confirm'
         } finally {
             // 显式清理 DOM 容器，不依赖底层 close→过渡动画→自动 destroy 的定时机制
             // （对已销毁的实例幂等）

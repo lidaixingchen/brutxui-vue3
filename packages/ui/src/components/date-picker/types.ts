@@ -1,15 +1,9 @@
 export type DatePickerSize = 'sm' | 'default' | 'lg'
 export type DatePickerVariant = 'default' | 'error' | 'success'
 
-export interface DatePickerShortcut {
-    label: string
-    value: Date | (() => Date)
-}
-
-export interface DatePickerProps {
-    modelValue?: Date | null
+/** 六个 Picker 共享的基础字段（避免接口间字段漂移） */
+export interface DatePickerBaseProps {
     displayFormat?: string
-    placeholder?: string
     minDate?: Date
     maxDate?: Date
     disabled?: boolean
@@ -17,11 +11,21 @@ export interface DatePickerProps {
     clearable?: boolean
     size?: DatePickerSize
     variant?: DatePickerVariant
-    shortcuts?: DatePickerShortcut[]
     name?: string
     id?: string
     ariaLabel?: string
     class?: string
+}
+
+export interface DatePickerProps extends DatePickerBaseProps {
+    modelValue?: Date | null
+    placeholder?: string
+    shortcuts?: DatePickerShortcut[]
+}
+
+export interface DatePickerShortcut {
+    label: string
+    value: Date | (() => Date)
 }
 
 export interface DatePickerEmits {
@@ -40,23 +44,12 @@ export interface DatePickerRangeShortcut {
     value: DateRange | (() => DateRange)
 }
 
-export interface DatePickerRangeProps {
+export interface DatePickerRangeProps extends DatePickerBaseProps {
     modelValue?: DateRange | null
-    displayFormat?: string
     startPlaceholder?: string
     endPlaceholder?: string
     separator?: string
-    minDate?: Date
-    maxDate?: Date
-    disabled?: boolean
-    clearable?: boolean
-    size?: DatePickerSize
-    variant?: DatePickerVariant
     shortcuts?: DatePickerRangeShortcut[]
-    name?: string
-    id?: string
-    ariaLabel?: string
-    class?: string
 }
 
 export interface DatePickerRangeEmits {
@@ -68,24 +61,12 @@ export interface DatePickerRangeEmits {
 
 // ---- DateTimePicker ----
 
-export interface DateTimePickerProps {
+export interface DateTimePickerProps extends DatePickerBaseProps {
     modelValue?: Date | null
-    displayFormat?: string
     showSeconds?: boolean
     timeStep?: { hour?: number; minute?: number; second?: number }
     placeholder?: string
-    minDate?: Date
-    maxDate?: Date
-    disabled?: boolean
-    readonly?: boolean
-    clearable?: boolean
-    size?: DatePickerSize
-    variant?: DatePickerVariant
     shortcuts?: DatePickerShortcut[]
-    name?: string
-    id?: string
-    ariaLabel?: string
-    class?: string
 }
 
 export interface DateTimePickerEmits {
@@ -97,23 +78,11 @@ export interface DateTimePickerEmits {
 
 // ---- WeekPicker ----
 
-export interface WeekPickerProps {
+export interface WeekPickerProps extends DatePickerBaseProps {
     modelValue?: Date | null
-    displayFormat?: string
     weekStartsOn?: 0 | 1
     placeholder?: string
-    minDate?: Date
-    maxDate?: Date
-    disabled?: boolean
-    readonly?: boolean
-    clearable?: boolean
-    size?: DatePickerSize
-    variant?: DatePickerVariant
     shortcuts?: DatePickerShortcut[]
-    name?: string
-    id?: string
-    ariaLabel?: string
-    class?: string
 }
 
 export interface WeekPickerEmits {
@@ -125,21 +94,9 @@ export interface WeekPickerEmits {
 
 // ---- MonthPicker ----
 
-export interface MonthPickerProps {
+export interface MonthPickerProps extends DatePickerBaseProps {
     modelValue?: Date | null
-    displayFormat?: string
     placeholder?: string
-    minDate?: Date
-    maxDate?: Date
-    disabled?: boolean
-    readonly?: boolean
-    clearable?: boolean
-    size?: DatePickerSize
-    variant?: DatePickerVariant
-    name?: string
-    id?: string
-    ariaLabel?: string
-    class?: string
 }
 
 export interface MonthPickerEmits {
@@ -151,21 +108,9 @@ export interface MonthPickerEmits {
 
 // ---- YearPicker ----
 
-export interface YearPickerProps {
+export interface YearPickerProps extends DatePickerBaseProps {
     modelValue?: Date | null
-    displayFormat?: string
     placeholder?: string
-    minDate?: Date
-    maxDate?: Date
-    disabled?: boolean
-    readonly?: boolean
-    clearable?: boolean
-    size?: DatePickerSize
-    variant?: DatePickerVariant
-    name?: string
-    id?: string
-    ariaLabel?: string
-    class?: string
 }
 
 export interface YearPickerEmits {

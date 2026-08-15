@@ -28,6 +28,7 @@ const props = withDefaults(defineProps<Props>(), {
     minDate: undefined,
     maxDate: undefined,
     disabled: false,
+    readonly: false,
     clearable: false,
     size: 'default',
     variant: 'default',
@@ -45,10 +46,20 @@ const { t } = useLocale()
 const resolvedStartPlaceholder = computed(() => props.startPlaceholder ?? t('datePicker.startPlaceholder'))
 const resolvedEndPlaceholder = computed(() => props.endPlaceholder ?? t('datePicker.endPlaceholder'))
 const resolvedSeparator = computed(() => props.separator ?? t('datePicker.separator'))
-const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('datePicker.startPlaceholder'))
+// 控件可访问名称与 placeholder 提示分离（placeholder 是示例文本，非控件名）
+const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('datePicker.rangeLabel'))
 
 const open = ref(false)
 const displayValue = ref<DateRange | null>(props.modelValue)
+
+// readonly 时拒绝打开（与 useDatePicker 的 setter 拦截语义一致）
+const openModel = computed<boolean>({
+    get: () => open.value,
+    set: (val) => {
+        if (val && props.readonly) return
+        open.value = val
+    },
+})
 
 let suppressCloseChange = false
 
@@ -129,16 +140,16 @@ function handleClearClick(event: Event) {
 }
 
 function handleTriggerKeydown(event: KeyboardEvent) {
-    if (props.disabled) return
-    if ((event.key === 'Enter' || event.key === ' ') && !open.value) {
+    // 键盘激活移交 reka-ui PopoverTrigger 原生处理（Enter/Space 打开）；
+    // 此处仅拦截 disabled/readonly 场景，避免打开后由 open 拒绝造成状态回弹
+    if (props.disabled || props.readonly) {
         event.preventDefault()
-        open.value = true
     }
 }
 </script>
 
 <template>
-    <PopoverRoot v-model:open="open">
+    <PopoverRoot v-model:open="openModel">
         <div class="relative w-full">
             <PopoverTrigger as-child>
                 <button
@@ -150,6 +161,7 @@ function handleTriggerKeydown(event: KeyboardEvent) {
                     :aria-label="resolvedAriaLabel"
                     aria-haspopup="dialog"
                     :disabled="disabled"
+                    :aria-disabled="readonly"
                     :class="triggerClasses"
                     @keydown="handleTriggerKeydown"
                 >
@@ -176,7 +188,7 @@ function handleTriggerKeydown(event: KeyboardEvent) {
                 </button>
             </PopoverTrigger>
             <button
-                v-if="clearable && hasValue && !disabled"
+                v-if="clearable && hasValue && !disabled && !readonly"
                 type="button"
                 class="absolute top-1/2 z-10 -translate-y-1/2 inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors"
                 :class="[
