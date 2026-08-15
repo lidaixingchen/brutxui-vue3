@@ -2,11 +2,9 @@ import { describe, expect, it, afterEach } from 'vitest';
 import crypto from 'crypto';
 import {
     AVAILABLE_COMPONENTS,
-    COMPONENT_METADATA,
     COMPONENTS_BY_CATEGORY,
     computeRegistryIntegrity,
     validateRegistryIndex,
-    getComponentsByCategory,
     validateRegistryItem,
 } from 'brutx-shared-vue';
 import { extractModuleSpecifiers, extractClassifiedModuleSpecifiers } from 'brutx-shared-vue/scan';
@@ -385,7 +383,6 @@ describe('computeSourceHash (P0-4 cache key)', () => {
 
     it('changes when file mapping differs (files list extended)', () => {
         const button = registry.button;
-        const originalHash = computeSourceHash('button', button);
         const modifiedMapping = {
             ...button,
             files: [...button.files, 'NonExistentExtra.vue'],

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -9,9 +9,6 @@ const __dirname = path.dirname(__filename);
 // 导入待测模块（延迟导入以便 mock）
 const buildRegistry = await import('../scripts/build-registry.js');
 const { runPrebuildScan, reloadRegistry, runWatch } = buildRegistry;
-
-// 备份原始 run 函数
-const originalRun = buildRegistry.run;
 
 describe('build-registry watch mode (P2.3)', () => {
     describe('reloadRegistry', () => {
@@ -54,7 +51,7 @@ describe('build-registry watch mode (P2.3)', () => {
             // 应该有多个组件条目
             expect(Object.keys(manifest).length).toBeGreaterThan(0);
             // 每个条目应该有 files 数组
-            for (const [name, entry] of Object.entries(manifest)) {
+            for (const [, entry] of Object.entries(manifest)) {
                 expect(Array.isArray((entry as any).files)).toBe(true);
                 expect((entry as any).files.length).toBeGreaterThan(0);
             }
