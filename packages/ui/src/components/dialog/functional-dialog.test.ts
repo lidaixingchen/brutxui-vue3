@@ -87,16 +87,16 @@ describe('Functional Dialog APIs', () => {
             expect(resolved).toBe(true)
         })
 
-        it('handles click cancel and rejects promise', async () => {
-            let rejectedReason = ''
+        it('handles click cancel and resolves with action cancel', async () => {
+            let resolvedResult: any = null
             const { promise } = showMessageBox({
                 title: 'Cancel Title',
                 message: 'Cancel message text',
                 showCancelButton: true,
             })
 
-            promise.catch((reason) => {
-                rejectedReason = reason
+            promise.then((result) => {
+                resolvedResult = result
             })
 
             await nextTick()
@@ -113,7 +113,7 @@ describe('Functional Dialog APIs', () => {
             vi.advanceTimersByTime(300)
             await nextTick()
 
-            expect(rejectedReason).toBe('cancel')
+            expect(resolvedResult).toEqual({ action: 'cancel' })
         })
 
         it('supports prompt input box and validates pattern matching', async () => {
@@ -160,7 +160,7 @@ describe('Functional Dialog APIs', () => {
             vi.advanceTimersByTime(300)
             await nextTick()
 
-            expect(resolvedVal).toEqual({ value: '12345' })
+            expect(resolvedVal).toEqual({ action: 'confirm', value: '12345' })
         })
     })
 })

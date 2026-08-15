@@ -18,6 +18,7 @@ export const centeredModalAnimationClasses = [
     'data-[state=open]:animate-in data-[state=closed]:animate-out',
     'duration-200',
     ...fadeZoomAnimationClasses,
-    'data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]',
-    'data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]',
+    // v4 下 translate-x/y 编译为独立 translate 属性（不再写入 transform），
+    // 居中位移与动画 transform 叠加，slide-in/out 补偿会产生偏移；
+    // 仅保留 fade/zoom，居中由 translate 属性本身保证
 ] as const

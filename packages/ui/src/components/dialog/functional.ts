@@ -233,11 +233,18 @@ export function showDialog(options: ShowDialogOptions = {}) {
     }
 }
 
+export type MessageBoxResult = {
+    /** 关闭路径：confirm=确认按钮；cancel=取消/ESC/遮罩/关闭按钮；destroy=手动销毁 */
+    action: 'confirm' | 'cancel' | 'destroy'
+    /** 输入框确认时的值（showInput 场景） */
+    value?: string
+}
+
 export function showMessageBox(options: MessageBoxOptions = {}) {
     if (!canUseDocumentBody()) {
         return {
             close: () => {},
-            promise: Promise.resolve(undefined),
+            promise: Promise.resolve({ action: 'cancel' as const }),
             destroy: () => {},
         }
     }
@@ -250,12 +257,10 @@ export function showMessageBox(options: MessageBoxOptions = {}) {
     const inputValue = ref(options.inputValue || '')
     const hasValidationError = ref(false)
 
-    let resolvePromise: (value: { value: string } | undefined) => void
-    let rejectPromise: (reason?: unknown) => void
+    let resolvePromise: (result: MessageBoxResult) => void
 
-    const promise = new Promise<{ value: string } | undefined>((resolve, reject) => {
+    const promise = new Promise<MessageBoxResult>((resolve) => {
         resolvePromise = resolve
-        rejectPromise = reject
     })
 
     const close = () => {
@@ -264,7 +269,7 @@ export function showMessageBox(options: MessageBoxOptions = {}) {
 
     let destroyTimer: ReturnType<typeof setTimeout> | undefined
 
-    const destroy = () => {
+    const destroy = (action: MessageBoxResult['action'] = 'destroy') => {
         // 幂等清理：取消已排定的关闭过渡定时器，避免手动 destroy 后定时器再次执行
         if (destroyTimer) {
             clearTimeout(destroyTimer)
@@ -273,12 +278,12 @@ export function showMessageBox(options: MessageBoxOptions = {}) {
         stopWatch()
         render(null, container)
         container.remove()
-        rejectPromise('close')
+        resolvePromise({ action })
     }
 
     const stopWatch = watch(isOpen, (newVal) => {
         if (!newVal) {
-            destroyTimer = setTimeout(destroy, DEFAULT_DIALOG_TRANSITION_MS)
+            destroyTimer = setTimeout(() => destroy('cancel'), DEFAULT_DIALOG_TRANSITION_MS)
         }
     })
 
@@ -288,15 +293,15 @@ export function showMessageBox(options: MessageBoxOptions = {}) {
                 hasValidationError.value = true
                 return
             }
-            resolvePromise({ value: inputValue.value })
+            resolvePromise({ action: 'confirm', value: inputValue.value })
         } else {
-            resolvePromise(undefined)
+            resolvePromise({ action: 'confirm' })
         }
         close()
     }
 
     const handleCancel = () => {
-        rejectPromise('cancel')
+        resolvePromise({ action: 'cancel' })
         close()
     }
 
@@ -322,7 +327,7 @@ export function showMessageBox(options: MessageBoxOptions = {}) {
                         'onUpdate:open': (val: boolean) => {
                             isOpen.value = val
                             if (!val) {
-                                rejectPromise('close')
+                                resolvePromise({ action: 'cancel' })
                             }
                         }
                     }, {

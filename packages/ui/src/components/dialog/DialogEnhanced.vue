@@ -34,6 +34,8 @@ interface DialogEnhancedProps {
     beforeClose?: () => boolean | Promise<boolean>
     /** 关闭后销毁内容 */
     destroyOnClose?: boolean
+    /** 关闭后延迟销毁内容的时长（默认与关闭过渡时长一致） */
+    destroyDelay?: number
     /** 自定义层级 */
     zIndex?: number
     class?: string
@@ -55,6 +57,7 @@ const props = withDefaults(defineProps<DialogEnhancedProps>(), {
     fullscreen: false,
     beforeClose: undefined,
     destroyOnClose: false,
+    destroyDelay: DEFAULT_DIALOG_TRANSITION_MS,
     zIndex: undefined,
     class: undefined,
 })
@@ -141,7 +144,11 @@ function handlePointerDownOutside(event: Event) {
     handleClose()
 }
 
-const isSlotPresent = ref(!props.destroyOnClose || !!dialogContext?.open.value)
+// forceMount 优先于 destroyOnClose：forceMount 旨在保持内容挂载（如保留输入状态），
+// destroyOnClose 的销毁语义与其冲突，二者同时启用时忽略 destroyOnClose
+const isSlotPresent = ref(
+    !props.destroyOnClose || props.forceMount || !!dialogContext?.open.value
+)
 let destroySlotTimer: ReturnType<typeof setTimeout> | null = null
 
 function clearDestroySlotTimer() {
@@ -161,13 +168,13 @@ watch(
         if (open) {
             clearDestroySlotTimer()
             isSlotPresent.value = true
-        } else if (props.destroyOnClose) {
+        } else if (props.destroyOnClose && !props.forceMount) {
             if (prevOpen === true) {
                 clearDestroySlotTimer()
                 destroySlotTimer = setTimeout(() => {
                     isSlotPresent.value = false
                     destroySlotTimer = null
-                }, DEFAULT_DIALOG_TRANSITION_MS)
+                }, props.destroyDelay)
             } else {
                 isSlotPresent.value = false
             }
