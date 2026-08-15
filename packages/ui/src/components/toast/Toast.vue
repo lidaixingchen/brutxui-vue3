@@ -43,22 +43,22 @@ const { t } = useLocale()
 
 const isLeaving = ref(false)
 const isPaused = ref(false)
-const timer = ref<number | undefined>(undefined)
-const leaveTimer = ref<number | undefined>(undefined)
+const timer = ref<ReturnType<typeof setTimeout> | undefined>(undefined)
+const leaveTimer = ref<ReturnType<typeof setTimeout> | undefined>(undefined)
 const remainingTime = ref(props.duration)
 let startTime = 0
 
 function startLeave() {
     if (isLeaving.value) return
     isLeaving.value = true
-    leaveTimer.value = window.setTimeout(() => {
+    leaveTimer.value = setTimeout(() => {
         emit('close')
     }, LEAVE_ANIMATION_DELAY)
 }
 
 function startTimer() {
     startTime = performance.now()
-    timer.value = window.setTimeout(() => {
+    timer.value = setTimeout(() => {
         startLeave()
     }, remainingTime.value)
 }

@@ -42,7 +42,7 @@ const emit = defineEmits<{
 const errorId = `input-error-${useId().replace(/:/g, '-')}`
 
 const triggerShake = ref(false)
-const shakeTimer = ref<number | undefined>(undefined)
+const shakeTimer = ref<ReturnType<typeof setTimeout> | undefined>(undefined)
 const isComposing = ref(false)
 // IME 组合结束兜底 emit 后，用于跳过浏览器随后触发的那次携带相同值的 input 事件，避免重复 emit
 let skipNextInput = false
@@ -86,7 +86,7 @@ const validate = (value: string) => {
     if (validationState.value === 'error' && props.shakeOnError) {
         if (shakeTimer.value) clearTimeout(shakeTimer.value)
         triggerShake.value = false
-        shakeTimer.value = window.setTimeout(() => {
+        shakeTimer.value = setTimeout(() => {
             shakeTimer.value = undefined
             triggerShake.value = true
         }, HARDCORE_INPUT_SHAKE_DELAY_MS)
