@@ -41,23 +41,22 @@ const sidebarOpen = ref(true)
 const isDesktop = ref(true)
 let desktopQuery: MediaQueryList | null = null
 
-// 客户端同步视口：移动端默认收起、桌面端默认展开；SSR 无法获知视口（isClient=false 时跳过）
-if (isClient) {
-    const mq = matchMedia(DESKTOP_MEDIA_QUERY)
-    if (mq) {
-        desktopQuery = mq
-        isDesktop.value = mq.matches
-        sidebarOpen.value = mq.matches
-    }
-}
-
 const onDesktopChange = (event: MediaQueryListEvent): void => {
     isDesktop.value = event.matches
     sidebarOpen.value = event.matches
 }
 
+// 视口状态在挂载后初始化：SSR 输出桌面默认态与 hydration 首帧保持一致，
+// 避免 setup 阶段同步改写产生 hydration mismatch 警告（移动端首帧会先显示展开态再收起）
 onMounted(() => {
-    desktopQuery?.addEventListener('change', onDesktopChange)
+    if (!isClient) return
+    const mq = matchMedia(DESKTOP_MEDIA_QUERY)
+    if (mq) {
+        desktopQuery = mq
+        isDesktop.value = mq.matches
+        sidebarOpen.value = mq.matches
+        mq.addEventListener('change', onDesktopChange)
+    }
 })
 
 onUnmounted(() => {
@@ -76,16 +75,20 @@ const overlayVisible = computed(() => !isDesktop.value && sidebarOpen.value)
 // 移动端展开后把焦点移入侧边栏；收起时若焦点在侧边栏内则归还给触发按钮
 watch(sidebarOpen, async (open) => {
     if (!isClient) return
+    // await 前同步捕获 activeElement：收起后 aside 立即进入 inert，
+    // 浏览器会把焦点移出侧边栏，await 之后再读取将永远拿不到侧边栏内的旧焦点
+    const previousActive = getDocument()?.activeElement ?? null
     await nextTick()
+    // 状态守卫：快速连续切换时跳过，避免把焦点移入已关闭（inert）的侧边栏
+    if (sidebarOpen.value !== open) return
     if (open) {
         if (isDesktop.value) return
         sidebarElement.value
-            ?.querySelector<HTMLElement>('a[href], button, [tabindex]:not([tabindex="-1"])')
+            ?.querySelector<HTMLElement>('a[href]:not([disabled]), button:not([disabled]), [tabindex]:not([tabindex="-1"])')
             ?.focus()
         return
     }
-    const activeElement = getDocument()?.activeElement ?? null
-    if (sidebarElement.value?.contains(activeElement)) {
+    if (sidebarElement.value?.contains(previousActive)) {
         headerElement.value?.querySelector<HTMLElement>('button')?.focus()
     }
 })
@@ -108,7 +111,7 @@ const iconClasses = computed(() =>
 </script>
 
 <template>
-    <div :class="rootClasses">
+    <div :class="rootClasses" @keydown.escape="closeSidebar">
         <aside
             :id="sidebarId"
             ref="sidebarElement"
@@ -138,6 +141,7 @@ const iconClasses = computed(() =>
                     variant="default"
                     size="icon"
                     class="md:hidden h-8 w-8 shadow-brutal-sm"
+                    :aria-label="sidebarOpen ? t('dashboardShell.closeNavigation') : t('dashboardShell.openNavigation')"
                     :aria-expanded="sidebarOpen"
                     :aria-controls="sidebarId"
                     @click="sidebarOpen = !sidebarOpen"

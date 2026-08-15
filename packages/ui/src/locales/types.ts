@@ -86,6 +86,8 @@ export interface DashboardShellLocale {
     sidebarNavigation: string
     signOut: string
     brand: string
+    openNavigation: string
+    closeNavigation: string
 }
 
 export interface BrutalistHeroLocale {

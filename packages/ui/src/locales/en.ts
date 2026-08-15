@@ -75,6 +75,8 @@ export const en: Locale = {
         sidebarNavigation: 'Sidebar navigation',
         signOut: 'Sign out',
         brand: 'BrutxUI',
+        openNavigation: 'Open navigation',
+        closeNavigation: 'Close navigation',
     },
     brutalistHero: {
         title: 'Build Bold Interfaces Faster with BrutxUI',

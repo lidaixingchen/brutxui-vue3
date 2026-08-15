@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
@@ -132,8 +133,9 @@ describe('DashboardShell', () => {
             mockMatchMedia(false)
         })
 
-        it('starts closed on mobile and marks sidebar inert', () => {
+        it('starts closed on mobile and marks sidebar inert', async () => {
             const wrapper = mount(DashboardShell, { ...localeProvide })
+            await nextTick()
             const aside = wrapper.find('aside')
             expect(aside.classes()).toContain('w-0')
             expect(aside.attributes('inert')).toBeDefined()
@@ -141,6 +143,7 @@ describe('DashboardShell', () => {
 
         it('removes inert and shows overlay when opened on mobile', async () => {
             const wrapper = mount(DashboardShell, { ...localeProvide })
+            await nextTick()
             const aside = wrapper.find('aside')
             await wrapper.find('header button').trigger('click')
             expect(aside.attributes('inert')).toBeUndefined()
@@ -149,6 +152,7 @@ describe('DashboardShell', () => {
 
         it('closes sidebar when overlay is clicked', async () => {
             const wrapper = mount(DashboardShell, { ...localeProvide })
+            await nextTick()
             await wrapper.find('header button').trigger('click')
             const overlay = wrapper.find('.bg-brutal-overlay')
             expect(overlay.exists()).toBe(true)
