@@ -327,20 +327,75 @@ describe('Image Component', () => {
 
         await wrapper.find('img').trigger('click')
         const previewImg = document.body.querySelector('img[alt="预览图片"]') as HTMLImageElement
+        const overlay = document.body.querySelector('.fixed.inset-0') as HTMLElement
 
         // ArrowRight 切下一张
-        window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }))
+        overlay.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }))
         await nextTick()
         expect(previewImg.src).toBe('https://example.com/img2.jpg')
 
         // ArrowLeft 切上一张
-        window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }))
+        overlay.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }))
         await nextTick()
         expect(previewImg.src).toBe('https://example.com/img1.jpg')
 
         // Escape 关闭
-        window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+        overlay.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
         await nextTick()
         expect(document.body.querySelector('[data-testid="image-viewer-canvas"]')).toBeNull()
+    })
+
+    it('resets error state and reloads when fallback changes', async () => {
+        wrapper = mount(Image, {
+            props: {
+                src: 'https://example.com/fail1.jpg',
+                fallback: 'https://example.com/fb1.jpg',
+            },
+        })
+
+        // 主图失败 → fallback 显示
+        await wrapper.find('img').trigger('error')
+        expect(wrapper.find('img').attributes('src')).toBe('https://example.com/fb1.jpg')
+
+        // fallback 也失败 → 错误状态
+        await wrapper.find('img').trigger('error')
+        expect(wrapper.find('img').exists()).toBe(false)
+
+        // 更换为可用 fallback → 状态复位，主图重新加载；主图再次失败后使用新 fallback
+        await wrapper.setProps({ fallback: 'https://example.com/fb2.jpg' })
+        expect(wrapper.find('img').exists()).toBe(true)
+        expect(wrapper.find('img').attributes('src')).toBe('https://example.com/fail1.jpg')
+
+        await wrapper.find('img').trigger('error')
+        expect(wrapper.find('img').attributes('src')).toBe('https://example.com/fb2.jpg')
+    })
+
+    it('closes viewer when preview prop becomes false', async () => {
+        wrapper = mount(Image, {
+            props: {
+                src: 'https://example.com/img1.jpg',
+                preview: true,
+            },
+        })
+
+        await wrapper.find('img').trigger('click')
+        expect(document.body.querySelector('[data-testid="image-viewer-canvas"]')).not.toBeNull()
+
+        await wrapper.setProps({ preview: false })
+        expect(document.body.querySelector('[data-testid="image-viewer-canvas"]')).toBeNull()
+    })
+
+    it('initializes lazy observer when loading changes to lazy', async () => {
+        wrapper = mount(Image, {
+            props: {
+                src: 'https://example.com/img.jpg',
+                loading: 'eager',
+            },
+        })
+
+        expect(observeMock).not.toHaveBeenCalled()
+
+        await wrapper.setProps({ loading: 'lazy' })
+        expect(observeMock).toHaveBeenCalled()
     })
 })

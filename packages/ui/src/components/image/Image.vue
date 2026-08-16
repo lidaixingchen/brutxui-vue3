@@ -4,7 +4,7 @@ import { FocusScope } from 'reka-ui'
 import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCw, RotateCcw, FlipHorizontal } from '@lucide/vue'
 import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 import { Z_INDEX } from '@/lib/z-index'
-import { hasIntersectionObserver, getDocument, getWindow, getIntersectionObserverCtor } from '@/lib/env'
+import { hasIntersectionObserver, getDocument, getIntersectionObserverCtor } from '@/lib/env'
 import { brutalHoverLiftNoX, brutalPress } from '@/lib/brutal-interaction-variants'
 
 // 预览大按钮共享交互类（hover 悬浮 / 按压反馈 / 焦点环）：
@@ -61,7 +61,9 @@ let observer: IntersectionObserver | null = null
 
 // 大图预览状态
 const showViewer = ref(false)
-const currentIndex = ref(props.initialIndex)
+// 初始化即钳制到合法范围，避免越界 initialIndex 导致切换取模与展示不一致
+const getMaxIndex = () => Math.max((props.previewSrcList?.length ?? 1) - 1, 0)
+const currentIndex = ref(Math.min(Math.max(props.initialIndex, 0), getMaxIndex()))
 
 // 变换状态
 const scale = ref(1)
@@ -122,9 +124,11 @@ const resetTransform = () => {
     offset.value = { x: 0, y: 0 }
 }
 
-// 观察 src 的变化，重置状态
+// 观察 src/fallback 的变化，重置状态：
+// fallback 变更（主图失败后更换可用 fallback）同样需要复位，否则 v-if="!hasError" 会
+// 隐藏 img 导致新 fallback 永不加载、错误插槽永久显示
 watch(
-    () => props.src,
+    () => [props.src, props.fallback],
     () => {
         isLoaded.value = false
         hasError.value = false
@@ -190,6 +194,7 @@ const handlePreview = () => {
 }
 
 const closeViewer = () => {
+    endDrag()
     showViewer.value = false
     resetTransform()
     emit('close')
@@ -201,10 +206,11 @@ const handleMaskClick = () => {
     }
 }
 
-// 切换图片
+// 切换图片（切换前清理拖拽监听，避免基于过期基线继续更新 offset）
 const prevImage = () => {
     const list = props.previewSrcList.length > 0 ? props.previewSrcList : [props.src]
     if (list.length <= 1) return
+    endDrag()
     const len = list.length
     currentIndex.value = (currentIndex.value - 1 + len) % len
     resetTransform()
@@ -214,6 +220,7 @@ const prevImage = () => {
 const nextImage = () => {
     const list = props.previewSrcList.length > 0 ? props.previewSrcList : [props.src]
     if (list.length <= 1) return
+    endDrag()
     const len = list.length
     currentIndex.value = (currentIndex.value + 1) % len
     resetTransform()
@@ -263,15 +270,18 @@ const handleDragMove = (e: MouseEvent) => {
     }
 }
 
-const handleDragEnd = () => {
+// 统一清理拖拽监听：closeViewer/prevImage/nextImage 中断拖拽时也须调用，
+// 否则 document 级监听残留会基于过期基线继续更新 offset
+const endDrag = () => {
     isDragging = false
     getDocument()?.removeEventListener('mousemove', handleDragMove)
     getDocument()?.removeEventListener('mouseup', handleDragEnd)
 }
 
-// 键盘事件
+const handleDragEnd = endDrag
+
+// 键盘事件（绑定在预览遮罩层上，随 viewer 卸载自动失效）
 const handleKeyDown = (e: KeyboardEvent) => {
-    if (!showViewer.value) return
     if (e.key === 'Escape') {
         closeViewer()
     } else if (e.key === 'ArrowLeft') {
@@ -281,15 +291,16 @@ const handleKeyDown = (e: KeyboardEvent) => {
     }
 }
 
-// 绑定/解绑键盘事件
-watch(showViewer, (val) => {
-    const win = getWindow()
-    if (val) {
-        win?.addEventListener('keydown', handleKeyDown)
-    } else {
-        win?.removeEventListener('keydown', handleKeyDown)
+// 父组件将 preview 置为 false 时强制关闭（权限撤销/条件渲染失效场景），
+// 避免已打开的模态框残留并继续响应键盘
+watch(
+    () => props.preview,
+    (val) => {
+        if (!val && showViewer.value) {
+            closeViewer()
+        }
     }
-})
+)
 
 // 懒加载初始化
 const initObserver = () => {
@@ -325,11 +336,27 @@ onMounted(() => {
     }
 })
 
+// loading 运行时变化（eager ↔ lazy）时同步重建/销毁 observer：
+// eager→lazy 不初始化的话，srcToShow 会因 isInView=false 返回空串，图片永久停在占位符
+watch(
+    () => props.loading,
+    (val) => {
+        if (val === 'lazy') {
+            initObserver()
+        } else {
+            if (observer) {
+                observer.disconnect()
+                observer = null
+            }
+            isInView.value = false
+        }
+    }
+)
+
 onUnmounted(() => {
     if (observer) {
         observer.disconnect()
     }
-    getWindow()?.removeEventListener('keydown', handleKeyDown)
     getDocument()?.removeEventListener('mousemove', handleDragMove)
     getDocument()?.removeEventListener('mouseup', handleDragEnd)
 })
@@ -373,6 +400,7 @@ onUnmounted(() => {
             class="fixed inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm select-none"
             :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_OVERLAY }"
             @click.self="handleMaskClick"
+            @keydown="handleKeyDown"
         >
             <FocusScope trapped loop>
                 <!-- 关闭按钮 -->
