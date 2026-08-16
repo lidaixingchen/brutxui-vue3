@@ -8,6 +8,7 @@ import { useReducedMotion } from '@/composables/useReducedMotion'
 type MarqueeContainerVariantProps = VariantProps<typeof marqueeContainerVariants>
 
 const DEFAULT_SPEED = 20
+const MIN_SPEED_SECONDS = 0.1
 
 interface MarqueeProps {
     direction?: 'left' | 'right'
@@ -45,13 +46,16 @@ const containerClasses = computed(() =>
 const trackClasses = computed(() =>
     cn(
         marqueeTrackVariants({ direction: props.direction, pauseOnHover: props.pauseOnHover || undefined }),
-        prefersReducedMotion.value && '[animation:none]',
+        prefersReducedMotion.value && '!animation-none',
     )
 )
 
-const containerStyle = computed(() => ({
-    '--speed': `${props.speed}s`,
-}))
+const containerStyle = computed(() => {
+    const validSpeed = typeof props.speed === 'number' && Number.isFinite(props.speed) ? props.speed : DEFAULT_SPEED
+    return {
+        '--speed': `${Math.max(validSpeed, MIN_SPEED_SECONDS)}s`,
+    }
+})
 </script>
 
 <template>

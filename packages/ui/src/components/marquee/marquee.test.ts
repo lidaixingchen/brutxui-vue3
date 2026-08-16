@@ -92,6 +92,38 @@ describe('Marquee', () => {
         expect(style).toContain('--speed: 30s')
     })
 
+    it('clamps speed to minimum 0.1s when non-positive or invalid', () => {
+        const wrapper0 = mount(Marquee, {
+            props: { speed: 0 },
+            slots: { default: 'Item' },
+        })
+        expect(wrapper0.find('div').attributes('style')).toContain('--speed: 0.1s')
+
+        const wrapperNeg = mount(Marquee, {
+            props: { speed: -5 },
+            slots: { default: 'Item' },
+        })
+        expect(wrapperNeg.find('div').attributes('style')).toContain('--speed: 0.1s')
+
+        const wrapperNaN = mount(Marquee, {
+            props: { speed: Number.NaN },
+            slots: { default: 'Item' },
+        })
+        expect(wrapperNaN.find('div').attributes('style')).toContain('--speed: 20s')
+    })
+
+    it('applies group class to container and group-hover pause class when pauseOnHover is true', () => {
+        const wrapper = mount(Marquee, {
+            props: { pauseOnHover: true },
+            slots: { default: 'Item' },
+        })
+        const container = wrapper.find('div')
+        expect(container.classes()).toContain('group')
+        const tracks = wrapper.findAll('[class*="animate-marquee"]')
+        expect(tracks[0].classes()).toContain('group-hover:[animation-play-state:paused]')
+        expect(tracks[1].classes()).toContain('group-hover:[animation-play-state:paused]')
+    })
+
     it('renders slot content in both tracks', () => {
         const wrapper = mount(Marquee, {
             slots: { default: 'MarqueeItem' },

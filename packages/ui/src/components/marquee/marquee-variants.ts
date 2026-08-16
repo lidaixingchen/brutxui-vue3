@@ -2,7 +2,7 @@ import { cva } from 'class-variance-authority'
 
 export const marqueeContainerVariants = cva(
     [
-        'relative flex overflow-hidden w-full',
+        'group relative flex overflow-hidden w-full',
         'border-y-3 border-brutal',
         'font-black uppercase select-none',
     ],
@@ -43,7 +43,7 @@ export const marqueeTrackVariants = cva(
                 right: 'animate-marquee-right',
             },
             pauseOnHover: {
-                true: 'hover:[animation-play-state:paused]', /* 组件私有：特定悬停暂停动画，不抽取 */
+                true: 'group-hover:[animation-play-state:paused]', /* 组件私有：容器悬停同步暂停所有轨道（含 inert 副本） */
                 false: '',
             },
         },
