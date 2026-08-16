@@ -187,7 +187,7 @@ function handleSuccessConfirm() {
                                     v-model="name"
                                     :placeholder="nameLabel"
                                     :variant="errors.name ? 'error' : 'default'"
-                                    :disabled="loading"
+                                    :disabled="loading || submitting"
                                     :aria-invalid="!!errors.name"
                                     :aria-errormessage="errors.name ? fieldId('name-error') : undefined"
                                     :aria-required="true"
@@ -206,7 +206,7 @@ function handleSuccessConfirm() {
                                     type="email"
                                     :placeholder="emailLabel"
                                     :variant="errors.email ? 'error' : 'default'"
-                                    :disabled="loading"
+                                    :disabled="loading || submitting"
                                     :aria-invalid="!!errors.email"
                                     :aria-errormessage="errors.email ? fieldId('email-error') : undefined"
                                     :aria-required="true"
@@ -219,7 +219,7 @@ function handleSuccessConfirm() {
                                 <Label :for="fieldId('subject')">
                                     {{ subjectLabel }}
                                 </Label>
-                                <Input :id="fieldId('subject')" v-model="subject" :placeholder="subjectLabel" :disabled="loading" />
+                                <Input :id="fieldId('subject')" v-model="subject" :placeholder="subjectLabel" :disabled="loading || submitting" />
                             </div>
                             <div class="space-y-2">
                                 <Label :for="fieldId('message')" required>
@@ -230,7 +230,7 @@ function handleSuccessConfirm() {
                                     v-model="message"
                                     :placeholder="messageLabel"
                                     :variant="errors.message ? 'error' : 'default'"
-                                    :disabled="loading"
+                                    :disabled="loading || submitting"
                                     :aria-invalid="!!errors.message"
                                     :aria-errormessage="errors.message ? fieldId('message-error') : undefined"
                                     :aria-required="true"

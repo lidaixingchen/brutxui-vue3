@@ -39,7 +39,8 @@ const { isGlitching, onMouseEnter, onMouseLeave, onClick, play, stop } = useGlit
 })
 
 // 毛刺由伪元素 content: attr(data-text) 渲染：优先 text prop，
-// 缺失时取插槽文本，保证效果与页面实际展示内容一致
+// 缺失时取插槽文本，保证效果与页面实际展示内容一致。
+// 注意：useSlots() 本身非响应式，插槽文本需来自响应式数据源（与 CodeBlock 同约束）
 const dataText = computed(() => {
     if (props.text) return props.text
     return (slots.default?.() ?? []).map(extractText).join('')
@@ -49,9 +50,11 @@ function extractText(node: VNodeChild): string {
     if (typeof node === 'string' || typeof node === 'number') return String(node)
     if (Array.isArray(node)) return node.map(extractText).join('')
     if (node && typeof node === 'object' && 'children' in node) {
+        // 单 VNode 子节点（children 为字符串/数组）与组件型 VNode（children 为插槽函数）均递归提取
         const children = node.children
         if (typeof children === 'string') return children
         if (Array.isArray(children)) return children.map(extractText).join('')
+        if (typeof children === 'function') return extractText((children as () => VNodeChild)())
     }
     return ''
 }
@@ -78,6 +81,7 @@ defineExpose({
         :data-text="dataText"
         :role="trigger === 'click' ? 'button' : undefined"
         :tabindex="trigger === 'click' ? '0' : undefined"
+        :aria-pressed="trigger === 'click' ? (isGlitching ? 'true' : 'false') : undefined"
         @mouseenter="onMouseEnter"
         @mouseleave="onMouseLeave"
         @click="onClick"

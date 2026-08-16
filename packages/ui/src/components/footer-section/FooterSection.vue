@@ -67,12 +67,13 @@ const isSafeHref = (href?: string): boolean =>
 
             <slot>
                 <div v-if="linkGroups.length > 0" class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
-                    <div v-for="(group, groupIndex) in linkGroups" :key="group.title">
+                    <!-- 复合 key 保证唯一性：title 未约束不重复 -->
+                    <div v-for="(group, groupIndex) in linkGroups" :key="`${group.title}-${groupIndex}`">
                         <h3 class="font-black text-sm tracking-wide text-brutal-fg mb-3">
                             {{ group.title }}
                         </h3>
                         <ul class="space-y-2 list-none">
-                            <li v-for="(link, linkIndex) in group.links" :key="link.href ?? link.label" class="flex items-center gap-2">
+                            <li v-for="(link, linkIndex) in group.links" :key="`${link.href ?? link.label}-${linkIndex}`" class="flex items-center gap-2">
                                 <span class="h-1.5 w-1.5 bg-brutal-fg flex-shrink-0" />
                                 <a
                                     v-if="link.href && isSafeHref(link.href)"

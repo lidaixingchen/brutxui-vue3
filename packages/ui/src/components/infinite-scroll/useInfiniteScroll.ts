@@ -10,8 +10,8 @@ export interface UseInfiniteScrollOptions {
     disabled?: boolean
     /** 是否立即检查 */
     immediate?: boolean
-    /** 加载回调 */
-    onLoad: () => void
+    /** 加载回调（可为异步；抛错或 reject 时自动复位 isLoading 并记录日志） */
+    onLoad: () => void | Promise<void>
 }
 
 const DEFAULT_DISTANCE = 100
@@ -46,17 +46,11 @@ export function useInfiniteScroll(
             clearTimeout(loadTimer.value)
         }
 
-        loadTimer.value = setTimeout(() => {
+        loadTimer.value = setTimeout(async () => {
             isLoading.value = true
             try {
-                const result = options.onLoad()
-                // async onLoad 的 reject 不会被 try/catch 捕获，须显式处理 Promise 拒绝
-                if ((result as unknown) instanceof Promise) {
-                    ;(result as unknown as Promise<void>).catch((error) => {
-                        isLoading.value = false
-                        console.error('[useInfiniteScroll] onLoad 执行失败:', error)
-                    })
-                }
+                // async 回调的同步抛错与 Promise reject 统一由 catch 捕获
+                await options.onLoad()
             } catch (error) {
                 // onLoad 抛错时复位 isLoading，避免 shouldLoad 永久返回 false 导致加载卡死
                 isLoading.value = false
@@ -106,7 +100,7 @@ export function useInfiniteScroll(
                 stopTargetWatch?.()
                 stopTargetWatch = undefined
                 const observerResult = setupObserver()
-                if (observerResult === 'unsupported') {
+                if (observerResult === 'unsupported' && (options.immediate ?? true)) {
                     triggerLoad()
                 }
             }
@@ -163,7 +157,7 @@ export function useInfiniteScroll(
                 // 导致组件一直无法加载直到外部手动 resetLoading
                 isLoading.value = false
                 const observerResult = setupObserver()
-                if (observerResult === 'unsupported') {
+                if (observerResult === 'unsupported' && (options.immediate ?? true)) {
                     triggerLoad()
                 } else if (observerResult === 'missing-target') {
                     watchForTarget()

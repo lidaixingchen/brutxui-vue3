@@ -278,7 +278,7 @@ const endDrag = () => {
     getDocument()?.removeEventListener('mouseup', handleDragEnd)
 }
 
-const handleDragEnd = endDrag
+const handleDragEnd = () => endDrag()
 
 // 键盘事件（绑定在预览遮罩层上，随 viewer 卸载自动失效）
 const handleKeyDown = (e: KeyboardEvent) => {
@@ -302,9 +302,10 @@ watch(
     }
 )
 
-// 懒加载初始化
+// 懒加载初始化（幂等：已有 observer 时直接复用，避免重复创建泄漏实例）
 const initObserver = () => {
     if (props.loading !== 'lazy') return
+    if (observer) return
     if (!hasIntersectionObserver) {
         isInView.value = true
         return
@@ -399,6 +400,7 @@ onUnmounted(() => {
             v-if="preview && showViewer"
             class="fixed inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm select-none"
             :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_OVERLAY }"
+            tabindex="-1"
             @click.self="handleMaskClick"
             @keydown="handleKeyDown"
         >

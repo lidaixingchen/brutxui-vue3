@@ -43,6 +43,9 @@ const errorId = `input-error-${useId().replace(/:/g, '-')}`
 
 const triggerShake = ref(false)
 const shakeTimer = ref<ReturnType<typeof setTimeout> | undefined>(undefined)
+// 兜底复位定时器独立保存：连续触发 error 时先清除旧定时器，避免旧定时器
+// 在新动画播放期间把 triggerShake 提前置回 false 截断动画；卸载时一并清理
+const shakeResetTimer = ref<ReturnType<typeof setTimeout> | undefined>(undefined)
 const isComposing = ref(false)
 // IME 组合结束兜底 emit 后，用于跳过浏览器随后触发的那次携带相同值的 input 事件，避免重复 emit
 let skipNextInput = false
@@ -60,11 +63,13 @@ const { validationState, errorMessage, validate: validateField } = useFormFieldV
 
 onBeforeUnmount(() => {
     if (shakeTimer.value) clearTimeout(shakeTimer.value)
+    if (shakeResetTimer.value) clearTimeout(shakeResetTimer.value)
 })
 
 const validate = (value: string): boolean => {
     const rulesEmpty = props.rules.length === 0
     const prevState = validationState.value
+    const prevErrorMessage = errorMessage.value
     const result = validateField(value)
 
     if (rulesEmpty) {
@@ -85,6 +90,7 @@ const validate = (value: string): boolean => {
 
     if (validationState.value === 'error' && props.shakeOnError) {
         if (shakeTimer.value) clearTimeout(shakeTimer.value)
+        if (shakeResetTimer.value) clearTimeout(shakeResetTimer.value)
         triggerShake.value = false
         shakeTimer.value = setTimeout(() => {
             shakeTimer.value = undefined
@@ -92,7 +98,8 @@ const validate = (value: string): boolean => {
             // 兜底复位：animationend/animationcancel 可能不触发
             // （prefers-reduced-motion 下动画被禁用、类被中断移除等），
             // 与 CSS 中 animate-shake 的 0.35s 动画时长对齐
-            setTimeout(() => {
+            shakeResetTimer.value = setTimeout(() => {
+                shakeResetTimer.value = undefined
                 triggerShake.value = false
             }, HARDCORE_INPUT_SHAKE_ANIMATION_MS)
         }, HARDCORE_INPUT_SHAKE_DELAY_MS)
@@ -102,6 +109,10 @@ const validate = (value: string): boolean => {
             clearTimeout(shakeTimer.value)
             shakeTimer.value = undefined
         }
+        if (shakeResetTimer.value) {
+            clearTimeout(shakeResetTimer.value)
+            shakeResetTimer.value = undefined
+        }
         triggerShake.value = false
     }
 
@@ -109,8 +120,12 @@ const validate = (value: string): boolean => {
         formField.setError(validationState.value === 'error' ? errorMessage.value : undefined)
     }
 
-    // 仅在状态迁移时发射，与音效播放条件一致，避免每次输入重复通知
-    if (prevState !== validationState.value) {
+    // 状态迁移或 error 文案变化时发射（与 useFormFieldValidation 的 onValidationChange 语义一致：
+    // 连续失败但失败规则变化时也要通知，避免外部展示过期错误文案），避免每次输入重复通知
+    if (
+        prevState !== validationState.value ||
+        (validationState.value === 'error' && errorMessage.value !== prevErrorMessage)
+    ) {
         if (validationState.value === 'error') {
             emit('validation-change', 'error', errorMessage.value)
         } else if (validationState.value === 'success') {
@@ -211,6 +226,8 @@ const inputClasses = computed(() =>
 const faceClasses = computed(() =>
     cn(
         hardcoreInputFaceVariants({ variant: validationState.value }),
+        // 动画类依赖组件内 scoped 关键帧（animate-bounce-short），在此应用
+        validationState.value === 'error' ? 'animate-bounce-short' : ''
     )
 )
 </script>

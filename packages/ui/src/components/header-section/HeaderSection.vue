@@ -47,6 +47,18 @@ const menuLabel = computed(() => t('headerSection.menuLabel'))
 
 const mobileMenuOpen = ref(false)
 
+// 移动端抽屉内的导航/CTA：先关闭抽屉再通知父组件，
+// 父级监听器同步抛错也不会让用户卡在打开状态
+function handleNavClick(index: number) {
+    mobileMenuOpen.value = false
+    emit('nav-click', index)
+}
+
+function handleCtaClick() {
+    mobileMenuOpen.value = false
+    emit('cta-click')
+}
+
 const rootClasses = computed(() =>
     cn(
         'sticky top-0 z-40 w-full',
@@ -123,7 +135,7 @@ const menuIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }
                         type="button"
                         variant="ghost"
                         class="justify-start"
-                        @click="mobileMenuOpen = false; emit('nav-click', index)"
+                        @click="handleNavClick(index)"
                     >
                         {{ item.label }}
                     </Button>
@@ -134,7 +146,7 @@ const menuIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }
                         type="button"
                         variant="primary"
                         class="w-full"
-                        @click="mobileMenuOpen = false; emit('cta-click')"
+                        @click="handleCtaClick"
                     >
                         {{ resolvedCtaText }}
                     </Button>

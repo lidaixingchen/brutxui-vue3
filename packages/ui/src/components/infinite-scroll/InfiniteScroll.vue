@@ -147,8 +147,8 @@ watch(() => props.disabled, (disabled) => {
         // 重新启用时复位 isLoading：禁用期间残留的 true 会拦截本次 setupObserver 产生的初始回调，
         // 导致组件一直无法加载，直到外部手动 resetLoading
         isLoading.value = false
-        const observerResult = setupObserver()
-        if (props.immediate || observerResult === 'unsupported') {
+        setupObserver()
+        if (props.immediate) {
             triggerLoad()
         }
     }
@@ -156,10 +156,11 @@ watch(() => props.disabled, (disabled) => {
 
 onMounted(() => {
     if (!props.disabled) {
-        const observerResult = setupObserver()
+        setupObserver()
 
-        // 立即检查；无 Observer 时保守触发一次，避免永久不加载。
-        if (props.immediate || observerResult === 'unsupported') {
+        // 严格遵循 immediate 语义：immediate 为 false 时挂载不触发加载
+        //（unsupported 环境同样不触发，加载依赖父组件主动 resetLoading）
+        if (props.immediate) {
             triggerLoad()
         }
     }

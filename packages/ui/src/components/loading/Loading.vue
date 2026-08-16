@@ -89,7 +89,7 @@ const clampedProgress = computed(() =>
         </div>
     </div>
 
-    <div v-else :class="localRootClasses">
+    <div v-else-if="!isPageMode" :class="localRootClasses">
         <slot />
 
         <Transition
