@@ -9,7 +9,7 @@ interface MenuItemProps {
     /** Whether the item is disabled */
     disabled?: boolean
     /** Route object or path for router push */
-    route?: string | object
+    route?: string | Record<string, unknown>
     /** Whether to indent the item to align with icon-bearing items */
     inset?: boolean
     /** Custom class list */
@@ -58,6 +58,21 @@ onMounted(() => {
 watch(() => props.disabled, () => {
     registerSelf()
 })
+
+watch(
+    () => props.index,
+    (newIndex, oldIndex) => {
+        if (newIndex === oldIndex) return
+        if (parentSubMenu) {
+            parentSubMenu.unregisterChild(oldIndex)
+            parentSubMenu.registerChild(newIndex)
+        }
+        if (context) {
+            context.unregisterItem(oldIndex)
+            registerSelf()
+        }
+    }
+)
 
 onUnmounted(() => {
     if (parentSubMenu) {

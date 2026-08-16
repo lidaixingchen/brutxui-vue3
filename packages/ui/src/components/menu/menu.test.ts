@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { nextTick } from 'vue'
+import { nextTick, ref } from 'vue'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import Menu from './Menu.vue'
 import MenuItem from './MenuItem.vue'
 import SubMenu from './SubMenu.vue'
@@ -215,5 +216,53 @@ describe('Menu', () => {
         
         const subHeader = wrapper.find('#sub-trigger > div')
         expect(subHeader.classes()).toContain('bg-brutal-primary')
+    })
+
+    it('updates registration when MenuItem index changes dynamically', async () => {
+        const dynamicIndex = ref('dynamic-1')
+        wrapper = mount({
+            components: { Menu, MenuItem },
+            setup() {
+                return { dynamicIndex }
+            },
+            template: `
+                <Menu default-active="dynamic-2">
+                    <MenuItem :index="dynamicIndex" id="dyn-item">Dynamic Item</MenuItem>
+                </Menu>
+            `
+        })
+
+        const item = wrapper.find('#dyn-item')
+        expect(item.classes()).not.toContain('bg-brutal-primary')
+
+        dynamicIndex.value = 'dynamic-2'
+        await nextTick()
+        expect(item.classes()).toContain('bg-brutal-primary')
+    })
+
+    it('catches and suppresses router.push rejections when router is enabled', async () => {
+        const pushMock = vi.fn().mockRejectedValue(new Error('Navigation cancelled'))
+        wrapper = mount({
+            components: { Menu, MenuItem },
+            template: `
+                <Menu router default-active="1">
+                    <MenuItem index="/home" id="home-item">Home</MenuItem>
+                </Menu>
+            `
+        }, {
+            global: {
+                config: {
+                    globalProperties: {
+                        $router: {
+                            push: pushMock,
+                        },
+                    },
+                },
+            },
+        })
+
+        await wrapper.find('#home-item').trigger('click')
+        await nextTick()
+        expect(pushMock).toHaveBeenCalledWith('/home')
     })
 })

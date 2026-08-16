@@ -182,7 +182,7 @@ watch(() => props.defaultActive, (val) => {
     if (val) expandActiveSubMenuChain(val)
 })
 
-function selectItem(index: string, route?: string | object) {
+function selectItem(index: string, route?: string | Record<string, unknown>) {
     activeIndex.value = index
     emit('select', index)
 
@@ -193,13 +193,13 @@ function selectItem(index: string, route?: string | object) {
         if (to) {
             interface GlobalRouterProperties {
                 $router?: {
-                    push: (to: string | object) => void
+                    push: (to: string | Record<string, unknown>) => Promise<unknown> | void
                 }
             }
             const router = (instance?.proxy as unknown as GlobalRouterProperties)?.$router ||
                            (instance?.appContext.config.globalProperties as unknown as GlobalRouterProperties).$router
             if (router) {
-                router.push(to)
+                Promise.resolve(router.push(to)).catch(() => {})
             } else {
                 console.warn('[BrutxUI Menu] router is true but vue-router was not found or is not available.')
             }

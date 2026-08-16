@@ -127,6 +127,23 @@ watch(() => props.disabled, () => {
     registerTrigger()
 })
 
+watch(
+    () => props.index,
+    (newIndex, oldIndex) => {
+        if (newIndex === oldIndex) return
+        if (parentSubMenu) {
+            parentSubMenu.unregisterChild(oldIndex)
+            parentSubMenu.registerChild(newIndex)
+        }
+        if (context) {
+            context.unregisterSubMenu(oldIndex)
+            context.unregisterItem(oldIndex)
+            context.registerSubMenu(newIndex, childIndices.value)
+            registerTrigger()
+        }
+    }
+)
+
 onUnmounted(() => {
     context?.unregisterSubMenu(props.index)
     context?.unregisterItem(props.index)

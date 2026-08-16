@@ -21,7 +21,7 @@ export interface MenuContext {
     focusPrevItem: (current: string) => void
     focusFirstItem: () => void
     focusLastItem: () => void
-    selectItem: (index: string, route?: string | object) => void
+    selectItem: (index: string, route?: string | Record<string, unknown>) => void
     toggleSubMenu: (index: string) => void
     openSubMenu: (index: string) => void
     closeSubMenu: (index: string) => void
@@ -29,4 +29,4 @@ export interface MenuContext {
     unregisterSubMenu: (index: string) => void
 }
 
-export const MENU_KEY: InjectionKey<MenuContext> = Symbol('BrutxMenu')
+export const MENU_KEY: InjectionKey<MenuContext> = Symbol.for('BrutxMenu')
