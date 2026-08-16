@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<FooterSectionProps>(), {
 })
 
 const emit = defineEmits<{
-    'link-click': [payload: { groupIndex: number; linkIndex: number }]
+    'link-click': [payload: { groupIndex: number; linkIndex: number; event: MouseEvent }]
 }>()
 
 const { t } = useLocale()
@@ -67,18 +67,18 @@ const isSafeHref = (href?: string): boolean =>
 
             <slot>
                 <div v-if="linkGroups.length > 0" class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
-                    <div v-for="(group, groupIndex) in linkGroups" :key="groupIndex">
+                    <div v-for="(group, groupIndex) in linkGroups" :key="group.title">
                         <h3 class="font-black text-sm tracking-wide text-brutal-fg mb-3">
                             {{ group.title }}
                         </h3>
                         <ul class="space-y-2 list-none">
-                            <li v-for="(link, linkIndex) in group.links" :key="linkIndex" class="flex items-center gap-2">
+                            <li v-for="(link, linkIndex) in group.links" :key="link.href ?? link.label" class="flex items-center gap-2">
                                 <span class="h-1.5 w-1.5 bg-brutal-fg flex-shrink-0" />
                                 <a
                                     v-if="link.href && isSafeHref(link.href)"
                                     :href="link.href"
                                     class="px-0 text-brutal-muted-foreground hover:text-brutal-fg text-sm font-medium cursor-pointer active:translate-y-[2px] active:shadow-none transition-all"
-                                    @click="emit('link-click', { groupIndex, linkIndex })"
+                                    @click="(event) => emit('link-click', { groupIndex, linkIndex, event })"
                                 >
                                     {{ link.label }}
                                 </a>
@@ -87,7 +87,7 @@ const isSafeHref = (href?: string): boolean =>
                                     variant="ghost"
                                     size="sm"
                                     class="px-0 text-brutal-muted-foreground hover:text-brutal-fg"
-                                    @click="emit('link-click', { groupIndex, linkIndex })"
+                                    @click="(event: MouseEvent) => emit('link-click', { groupIndex, linkIndex, event })"
                                 >
                                     {{ link.label }}
                                 </Button>

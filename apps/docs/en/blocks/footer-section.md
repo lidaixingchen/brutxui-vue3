@@ -92,7 +92,7 @@ interface FooterLink {
 
 | Event         | Payload                                        | Description               |
 | ------------ | ------------------------------------------- | ------------------ |
-| `link-click` | `{ groupIndex: number; linkIndex: number }` | Triggered when a link is clicked   |
+| `link-click` | `{ groupIndex: number; linkIndex: number; event: MouseEvent }` | Triggered when a link is clicked; call `event.preventDefault()` in the callback to intercept native navigation |
 
 ## Slots
 

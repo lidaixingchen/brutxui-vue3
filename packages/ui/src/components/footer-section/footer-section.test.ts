@@ -2,10 +2,11 @@ import { mount } from '@vue/test-utils'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import FooterSection from './FooterSection.vue'
+import type { FooterLinkGroup } from './types'
 
 const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
-const mockLinkGroups = [
+const mockLinkGroups: FooterLinkGroup[] = [
     {
         title: 'Product',
         links: [

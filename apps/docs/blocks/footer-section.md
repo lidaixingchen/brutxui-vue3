@@ -91,7 +91,7 @@ interface FooterLink {
 
 | 事件         | 参数                                        | 说明               |
 | ------------ | ------------------------------------------- | ------------------ |
-| `link-click` | `{ groupIndex: number; linkIndex: number }` | 链接被点击时触发   |
+| `link-click` | `{ groupIndex: number; linkIndex: number; event: MouseEvent }` | 链接被点击时触发，可在回调中调用 `event.preventDefault()` 拦截原生导航 |
 
 ## 插槽
 
