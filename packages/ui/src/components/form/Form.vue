@@ -93,9 +93,13 @@ function scrollToField(field: string) {
     if (!formRef.value) return
 
     // 用 namedItem 按 name 精确获取控件，避免字段名拼入 CSS 选择器时注入/解析失败；
-    // 同名单选组等场景返回 RadioNodeList，需取第一个元素
+    // 同名单选组等场景返回 RadioNodeList，需取第一个元素；
+    // typeof 防御非浏览器环境（单测）中 RadioNodeList 全局不存在时 instanceof 抛错
     const namedItem = formRef.value.elements.namedItem(field)
-    const fieldElement = namedItem instanceof RadioNodeList ? namedItem[0] : namedItem
+    const fieldElement =
+        typeof RadioNodeList !== 'undefined' && namedItem instanceof RadioNodeList
+            ? (namedItem[0] as Element | undefined) ?? null
+            : (namedItem as Element | null)
     if (!fieldElement) return
 
     fieldElement.scrollIntoView({

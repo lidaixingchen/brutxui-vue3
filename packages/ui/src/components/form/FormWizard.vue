@@ -103,6 +103,14 @@ function validateCurrentStep(): boolean {
     return true
 }
 
+// 跳转步骤的统一入口：goToStep（线性拦截后）与 complete（失败回跳）共用，
+// 避免跳转语义在两处漂移
+function setCurrentStep(step: number) {
+    const previousStep = currentStep.value
+    currentStep.value = step
+    emit('step-change', step, previousStep)
+}
+
 function goToStep(step: number) {
     if (step < 0 || step >= props.steps.length) return
 
@@ -115,9 +123,7 @@ function goToStep(step: number) {
         }
     }
 
-    const previousStep = currentStep.value
-    currentStep.value = step
-    emit('step-change', step, previousStep)
+    setCurrentStep(step)
 }
 
 function nextStep() {
@@ -148,9 +154,7 @@ function complete() {
                 // 跳转到第一个失败步骤，让错误面板展示该步骤错误，
                 // 避免用户停留在最后一步却看不到失败原因
                 if (i !== currentStep.value) {
-                    const previousStep = currentStep.value
-                    currentStep.value = i
-                    emit('step-change', i, previousStep)
+                    setCurrentStep(i)
                 }
                 return
             }
