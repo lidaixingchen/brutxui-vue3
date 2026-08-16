@@ -102,6 +102,27 @@ describe('NoiseBackground', () => {
         expect(svg.attributes('aria-hidden')).toBe('true')
     })
 
+    it('applies rounded-lg variant when rounded is lg', () => {
+        wrapper = mount(NoiseBackground, {
+            props: { rounded: 'lg' },
+        })
+        expect(wrapper.classes()).toContain('rounded-lg')
+    })
+
+    it('resets baseFrequency back to initial frequency prop when animation stops', async () => {
+        wrapper = mount(NoiseBackground, {
+            props: {
+                frequency: 0.5,
+                animated: true,
+                animationDuration: 1,
+            },
+        })
+
+        const turbulence = wrapper.find('feTurbulence')
+        await wrapper.setProps({ animated: false })
+        expect(turbulence.attributes('baseFrequency') ?? turbulence.attributes('basefrequency')).toBe('0.5')
+    })
+
     it('renders content with relative z-10', () => {
         wrapper = mount(NoiseBackground, {
             slots: {

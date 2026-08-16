@@ -88,6 +88,10 @@ function stopAnimation() {
         cancelAnimationFrame(animationFrame)
         animationFrame = null
     }
+    currentFrequency.value = props.frequency
+    if (turbulenceRef.value) {
+        turbulenceRef.value.setAttribute('baseFrequency', props.frequency.toString())
+    }
 }
 
 // 响应 animated 属性变化
@@ -99,10 +103,12 @@ watch(() => props.animated, (newVal) => {
     }
 })
 
-// 响应 frequency 和 animationDuration 属性变化
-watch(() => [props.frequency, props.animationDuration], () => {
+// 响应 frequency、animationDuration 和 animationRange 属性变化
+watch(() => [props.frequency, props.animationDuration, props.animationRange], () => {
     if (props.animated) {
         startAnimation()
+    } else {
+        stopAnimation()
     }
 })
 
