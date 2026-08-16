@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, reactive } from 'vue'
+import { computed, ref, reactive, useId, watch } from 'vue'
 import { Send } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
@@ -45,6 +45,9 @@ const emit = defineEmits<{
 
 const { t } = useLocale()
 
+const uid = useId()
+const fieldId = (suffix: string) => `feedback-${uid}-${suffix}`
+
 const resolvedTitle = computed(() => props.title ?? t('feedbackForm.defaultTitle'))
 const resolvedDescription = computed(() => props.description ?? t('feedbackForm.defaultDescription'))
 const resolvedSubmitText = computed(() => props.submitText ?? t('feedbackForm.defaultSubmitText'))
@@ -73,20 +76,45 @@ const errors = reactive({
     message: '',
 })
 
+const submitting = ref(false)
+
+// 输入修正时即时清除对应错误，避免旧错误滞留误导
+watch(name, () => {
+    errors.name = ''
+})
+watch(email, () => {
+    errors.email = ''
+})
+watch(message, () => {
+    errors.message = ''
+})
+
+// 父组件 loading 结束或进入成功态时复位防重锁，允许下一次提交
+watch(
+    () => [props.loading, props.success],
+    ([loading, success]) => {
+        if (!loading || success) submitting.value = false
+    },
+)
+
 function validate(): boolean {
     errors.name = ''
     errors.email = ''
     errors.message = ''
 
-    if (!name.value.trim()) {
+    const trimmedName = name.value.trim()
+    const trimmedEmail = email.value.trim()
+    const trimmedMessage = message.value.trim()
+
+    if (!trimmedName) {
         errors.name = t('feedbackForm.nameRequired')
     }
-    if (!email.value.trim()) {
+    if (!trimmedEmail) {
         errors.email = t('feedbackForm.emailRequired')
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
         errors.email = t('feedbackForm.emailInvalid')
     }
-    if (!message.value.trim()) {
+    if (!trimmedMessage) {
         errors.message = t('feedbackForm.messageRequired')
     }
 
@@ -94,14 +122,15 @@ function validate(): boolean {
 }
 
 function handleSubmit() {
-    if (props.loading) return
+    if (props.loading || submitting.value) return
     if (!validate()) return
 
+    submitting.value = true
     emit('submit', {
-        name: name.value,
-        email: email.value,
-        subject: subject.value,
-        message: message.value,
+        name: name.value.trim(),
+        email: email.value.trim(),
+        subject: subject.value.trim(),
+        message: message.value.trim(),
     })
 }
 
@@ -150,60 +179,63 @@ function handleSuccessConfirm() {
                     <CardContent class="pt-6">
                         <form class="space-y-4" novalidate @submit.prevent="handleSubmit">
                             <div class="space-y-2">
-                                <Label for="feedback-name" required>
+                                <Label :for="fieldId('name')" required>
                                     {{ nameLabel }}
                                 </Label>
                                 <Input
-                                    id="feedback-name"
+                                    :id="fieldId('name')"
                                     v-model="name"
                                     :placeholder="nameLabel"
                                     :variant="errors.name ? 'error' : 'default'"
+                                    :disabled="loading"
                                     :aria-invalid="!!errors.name"
-                                    :aria-errormessage="errors.name ? 'feedback-name-error' : undefined"
-                                    aria-required="true"
+                                    :aria-errormessage="errors.name ? fieldId('name-error') : undefined"
+                                    :aria-required="true"
                                 />
-                                <p v-if="errors.name" id="feedback-name-error" class="text-sm text-red-500 font-medium" role="alert">
+                                <p v-if="errors.name" :id="fieldId('name-error')" class="text-sm text-red-500 font-medium" role="alert">
                                     {{ errors.name }}
                                 </p>
                             </div>
                             <div class="space-y-2">
-                                <Label for="feedback-email" required>
+                                <Label :for="fieldId('email')" required>
                                     {{ emailLabel }}
                                 </Label>
                                 <Input
-                                    id="feedback-email"
+                                    :id="fieldId('email')"
                                     v-model="email"
                                     type="email"
                                     :placeholder="emailLabel"
                                     :variant="errors.email ? 'error' : 'default'"
+                                    :disabled="loading"
                                     :aria-invalid="!!errors.email"
-                                    :aria-errormessage="errors.email ? 'feedback-email-error' : undefined"
-                                    aria-required="true"
+                                    :aria-errormessage="errors.email ? fieldId('email-error') : undefined"
+                                    :aria-required="true"
                                 />
-                                <p v-if="errors.email" id="feedback-email-error" class="text-sm text-red-500 font-medium" role="alert">
+                                <p v-if="errors.email" :id="fieldId('email-error')" class="text-sm text-red-500 font-medium" role="alert">
                                     {{ errors.email }}
                                 </p>
                             </div>
                             <div class="space-y-2">
-                                <Label for="feedback-subject">
+                                <Label :for="fieldId('subject')">
                                     {{ subjectLabel }}
                                 </Label>
-                                <Input id="feedback-subject" v-model="subject" :placeholder="subjectLabel" />
+                                <Input :id="fieldId('subject')" v-model="subject" :placeholder="subjectLabel" :disabled="loading" />
                             </div>
                             <div class="space-y-2">
-                                <Label for="feedback-message" required>
+                                <Label :for="fieldId('message')" required>
                                     {{ messageLabel }}
                                 </Label>
                                 <Textarea
-                                    id="feedback-message"
+                                    :id="fieldId('message')"
                                     v-model="message"
                                     :placeholder="messageLabel"
                                     :variant="errors.message ? 'error' : 'default'"
+                                    :disabled="loading"
                                     :aria-invalid="!!errors.message"
-                                    :aria-errormessage="errors.message ? 'feedback-message-error' : undefined"
-                                    aria-required="true"
+                                    :aria-errormessage="errors.message ? fieldId('message-error') : undefined"
+                                    :aria-required="true"
                                 />
-                                <p v-if="errors.message" id="feedback-message-error" class="text-sm text-red-500 font-medium" role="alert">
+                                <p v-if="errors.message" :id="fieldId('message-error')" class="text-sm text-red-500 font-medium" role="alert">
                                     {{ errors.message }}
                                 </p>
                             </div>
