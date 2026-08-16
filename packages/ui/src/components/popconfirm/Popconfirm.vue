@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, type Component } from 'vue'
+import type { Component } from 'vue'
 import { TriangleAlert } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/popover'
@@ -36,7 +36,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useLocale()
-const isOpen = ref(false)
+const isOpen = defineModel<boolean>('open', { default: false })
 
 function handleConfirm() {
     isOpen.value = false
