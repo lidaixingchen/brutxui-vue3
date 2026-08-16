@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { FocusScope } from 'reka-ui'
 import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCw, RotateCcw, FlipHorizontal } from '@lucide/vue'
 import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
@@ -61,6 +61,7 @@ let observer: IntersectionObserver | null = null
 
 // 大图预览状态
 const showViewer = ref(false)
+const viewerRef = ref<HTMLElement | null>(null)
 // 初始化即钳制到合法范围，避免越界 initialIndex 导致切换取模与展示不一致
 const getMaxIndex = () => Math.max((props.previewSrcList?.length ?? 1) - 1, 0)
 const currentIndex = ref(Math.min(Math.max(props.initialIndex, 0), getMaxIndex()))
@@ -190,6 +191,11 @@ const handlePreview = () => {
     }
     resetTransform()
     showViewer.value = true
+    // 打开后把焦点移入遮罩层（tabindex=-1 可编程聚焦）：
+    // 否则键盘事件（Escape/方向键）无法通过焦点元素冒泡到遮罩层
+    nextTick(() => {
+        viewerRef.value?.focus()
+    })
     emit('show')
 }
 
@@ -398,6 +404,7 @@ onUnmounted(() => {
     <Teleport to="body">
         <div
             v-if="preview && showViewer"
+            ref="viewerRef"
             class="fixed inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm select-none"
             :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_OVERLAY }"
             tabindex="-1"

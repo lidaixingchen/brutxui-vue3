@@ -35,7 +35,6 @@ const isLoading = ref(false)
 // 使用 shallowRef 存储原生对象，避免不必要的深层响应式追踪
 const observer = shallowRef<IntersectionObserver | null>(null)
 const loadTimer = shallowRef<ReturnType<typeof setTimeout> | null>(null)
-type ObserverSetupResult = 'observed' | 'unsupported' | 'missing-target'
 
 // 检查是否应该加载
 function shouldLoad(): boolean {
@@ -59,13 +58,13 @@ function triggerLoad() {
     }, props.delay)
 }
 
-// 设置 IntersectionObserver
-function setupObserver(): ObserverSetupResult {
-    if (!sentinelRef.value) return 'missing-target'
-    if (!hasIntersectionObserver) return 'unsupported'
+// 设置 IntersectionObserver（返回值已无消费方，仅内部副作用）
+function setupObserver(): void {
+    if (!sentinelRef.value) return
+    if (!hasIntersectionObserver) return
 
     const Ctor = getIntersectionObserverCtor()
-    if (!Ctor) return 'unsupported'
+    if (!Ctor) return
 
     observer.value = new Ctor(
         (entries) => {
@@ -82,7 +81,6 @@ function setupObserver(): ObserverSetupResult {
     )
 
     observer.value.observe(sentinelRef.value)
-    return 'observed'
 }
 
 // 清理 Observer

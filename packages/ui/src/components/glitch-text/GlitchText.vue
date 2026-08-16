@@ -33,7 +33,7 @@ const slots = useSlots()
 // - interval 自动钳制到激活时长，避免 interval 过短时毛刺退化为持续动画
 // - 切出 autoplay 时复位激活态，避免 isActive 卡死在 true
 // - prefers-reduced-motion 变化时启停定时器，避免空转
-const { isGlitching, onMouseEnter, onMouseLeave, onClick, play, stop } = useGlitchEffect({
+const { isActive, isGlitching, onMouseEnter, onMouseLeave, onClick, play, stop } = useGlitchEffect({
     trigger: () => props.trigger,
     interval: () => props.interval,
 })
@@ -50,11 +50,16 @@ function extractText(node: VNodeChild): string {
     if (typeof node === 'string' || typeof node === 'number') return String(node)
     if (Array.isArray(node)) return node.map(extractText).join('')
     if (node && typeof node === 'object' && 'children' in node) {
-        // 单 VNode 子节点（children 为字符串/数组）与组件型 VNode（children 为插槽函数）均递归提取
         const children = node.children
         if (typeof children === 'string') return children
         if (Array.isArray(children)) return children.map(extractText).join('')
+        // 组件型 VNode：Vue normalizeChildren 会把函数 children 归一化为插槽对象
+        // { default: fn, _ctx }，两个形态都需处理
         if (typeof children === 'function') return extractText((children as () => VNodeChild)())
+        if (children && typeof children === 'object') {
+            const defaultSlot = (children as { default?: () => VNodeChild }).default
+            if (typeof defaultSlot === 'function') return extractText(defaultSlot())
+        }
     }
     return ''
 }
@@ -81,7 +86,7 @@ defineExpose({
         :data-text="dataText"
         :role="trigger === 'click' ? 'button' : undefined"
         :tabindex="trigger === 'click' ? '0' : undefined"
-        :aria-pressed="trigger === 'click' ? (isGlitching ? 'true' : 'false') : undefined"
+        :aria-pressed="trigger === 'click' ? (isActive ? 'true' : 'false') : undefined"
         @mouseenter="onMouseEnter"
         @mouseleave="onMouseLeave"
         @click="onClick"

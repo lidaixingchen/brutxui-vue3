@@ -190,10 +190,19 @@ const onBlur = () => {
 }
 
 const onAnimationEnd = () => {
+    // 动画自然结束：复位状态并清理兜底定时器（避免其再触发一次冗余复位）
+    if (shakeResetTimer.value) {
+        clearTimeout(shakeResetTimer.value)
+        shakeResetTimer.value = undefined
+    }
     triggerShake.value = false
 }
 
 const onAnimationCancel = () => {
+    if (shakeResetTimer.value) {
+        clearTimeout(shakeResetTimer.value)
+        shakeResetTimer.value = undefined
+    }
     triggerShake.value = false
 }
 

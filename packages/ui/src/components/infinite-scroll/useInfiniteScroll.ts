@@ -26,6 +26,7 @@ export function useInfiniteScroll(
     const getDistance = (): number => options.distance ?? DEFAULT_DISTANCE
     const getDelay = (): number => options.delay ?? DEFAULT_DELAY
     const getDisabled = (): boolean => options.disabled ?? false
+    const getImmediate = (): boolean => options.immediate ?? true
 
     const isLoading = ref(false)
     const observer = ref<IntersectionObserver | null>(null)
@@ -100,7 +101,7 @@ export function useInfiniteScroll(
                 stopTargetWatch?.()
                 stopTargetWatch = undefined
                 const observerResult = setupObserver()
-                if (observerResult === 'unsupported' && (options.immediate ?? true)) {
+                if (observerResult === 'unsupported' && getImmediate()) {
                     triggerLoad()
                 }
             }
@@ -109,6 +110,15 @@ export function useInfiniteScroll(
 
     function resetLoading() {
         isLoading.value = false
+        if (loadTimer.value) {
+            clearTimeout(loadTimer.value)
+            loadTimer.value = null
+        }
+        // unsupported（无 IntersectionObserver）环境回退：与 InfiniteScroll.vue 组件版
+        // 的 resetLoading 语义一致，保守触发一次，避免该环境下完全没有加载入口
+        if (targetRef.value && !getDisabled() && !hasIntersectionObserver && getImmediate()) {
+            triggerLoad()
+        }
     }
 
     onMounted(() => {
@@ -120,7 +130,7 @@ export function useInfiniteScroll(
 
             // 严格遵循 immediate 语义：immediate 为 false 时挂载不触发加载
             //（unsupported 环境同样不触发，加载依赖调用方后续主动 resetLoading/滚动触发）
-            if (options.immediate ?? true) {
+            if (getImmediate()) {
                 triggerLoad()
             }
         }
@@ -157,7 +167,7 @@ export function useInfiniteScroll(
                 // 导致组件一直无法加载直到外部手动 resetLoading
                 isLoading.value = false
                 const observerResult = setupObserver()
-                if (observerResult === 'unsupported' && (options.immediate ?? true)) {
+                if (observerResult === 'unsupported' && getImmediate()) {
                     triggerLoad()
                 } else if (observerResult === 'missing-target') {
                     watchForTarget()
