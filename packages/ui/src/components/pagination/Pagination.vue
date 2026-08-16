@@ -225,7 +225,7 @@ function onPageSizeChange(size: number) {
     // 重新计算当前页，与 computedTotalPages 的优先级保持一致
     const newTotalPages = props.totalPages !== undefined
         ? props.totalPages
-        : props.total !== undefined
+        : props.total !== undefined && size > 0
             ? Math.max(1, Math.ceil(props.total / size))
             : computedTotalPages.value
     if (props.modelValue > newTotalPages) {

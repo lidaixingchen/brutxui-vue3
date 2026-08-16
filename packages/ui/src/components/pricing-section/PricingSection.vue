@@ -189,7 +189,9 @@ function getPlanPrice(plan: BrutalistPricingPlan) {
 function getPriceLabel(plan: BrutalistPricingPlan) {
     if (!showBillingToggle.value) return t('pricingSection.perLifetime')
     if (billing.value === 'monthly') {
-        return plan.priceMonthly !== undefined ? t('pricingSection.perMonth') : t('pricingSection.perLifetime')
+        if (plan.priceMonthly !== undefined) return t('pricingSection.perMonth')
+        if (plan.priceAnnually !== undefined) return t('pricingSection.perMonthBilledAnnually')
+        return t('pricingSection.perLifetime')
     }
     return plan.priceAnnually !== undefined ? t('pricingSection.perMonthBilledAnnually') : t('pricingSection.perMonth')
 }

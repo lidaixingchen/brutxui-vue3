@@ -5,7 +5,7 @@ import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const radioGroupItemVariants = cva(
     [
-        'aspect-square flex items-center justify-center',
+        'peer aspect-square flex items-center justify-center',
         'border-3 border-brutal bg-brutal-bg text-brutal-fg',
         'shadow-brutal-sm',
         'transition-all duration-150',

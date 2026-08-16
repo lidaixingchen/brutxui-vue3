@@ -50,7 +50,7 @@ function handleClose(id: string): void {
 
 <template>
     <div
-        class="fixed top-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none max-h-[calc(100vh-3rem)] overflow-y-auto"
+        class="fixed top-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none max-h-[calc(100vh_-_3rem)] overflow-y-auto"
         :style="{ zIndex: Z_INDEX.MESSAGE }"
     >
         <TransitionGroup name="brutx-message">

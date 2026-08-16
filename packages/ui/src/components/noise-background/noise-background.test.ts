@@ -102,11 +102,11 @@ describe('NoiseBackground', () => {
         expect(svg.attributes('aria-hidden')).toBe('true')
     })
 
-    it('applies rounded-lg variant when rounded is lg', () => {
+    it('applies rounded-brutal variant when rounded is lg', () => {
         wrapper = mount(NoiseBackground, {
             props: { rounded: 'lg' },
         })
-        expect(wrapper.classes()).toContain('rounded-lg')
+        expect(wrapper.classes()).toContain('rounded-brutal')
     })
 
     it('resets baseFrequency back to initial frequency prop when animation stops', async () => {

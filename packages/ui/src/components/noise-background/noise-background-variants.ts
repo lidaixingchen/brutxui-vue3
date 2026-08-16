@@ -9,7 +9,7 @@ export const noiseBackgroundVariants = cva(
             rounded: {
                 none: 'rounded-none',
                 default: 'rounded-brutal',
-                lg: 'rounded-lg',
+                lg: 'rounded-brutal',
                 full: 'rounded-full',
             },
         },

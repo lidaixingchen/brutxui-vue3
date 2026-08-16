@@ -140,6 +140,18 @@ watch(
             context.unregisterItem(oldIndex)
             context.registerSubMenu(newIndex, childIndices.value)
             registerTrigger()
+            if (context.openedMenus.value.has(oldIndex)) {
+                const opened = new Set(context.openedMenus.value)
+                opened.delete(oldIndex)
+                opened.add(newIndex)
+                context.openedMenus.value = opened
+            }
+            if (context.activeIndex.value === oldIndex) {
+                context.activeIndex.value = newIndex
+            }
+            if (context.focusedIndex.value === oldIndex) {
+                context.focusedIndex.value = newIndex
+            }
         }
     }
 )

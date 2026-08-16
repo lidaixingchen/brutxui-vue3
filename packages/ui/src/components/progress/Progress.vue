@@ -44,14 +44,20 @@ const indicatorStyle = computed(() => {
     return { transform: `translateX(-${100 - percentage.value}%)` }
 })
 
+const sanitizedMax = computed(() =>
+    typeof props.max === 'number' && Number.isFinite(props.max) && props.max > 0 ? props.max : 100
+)
+
+const sanitizedValue = computed(() =>
+    typeof props.modelValue === 'number' && Number.isFinite(props.modelValue) ? props.modelValue : 0
+)
+
 const percentage = computed(() => {
-    const max = typeof props.max === 'number' && Number.isFinite(props.max) && props.max > 0 ? props.max : 100
-    const value = typeof props.modelValue === 'number' && Number.isFinite(props.modelValue) ? props.modelValue : 0
-    const raw = (value / max) * 100
+    const raw = (sanitizedValue.value / sanitizedMax.value) * 100
     return Math.min(100, Math.max(0, raw))
 })
 
-const rootModelValue = computed(() => props.indeterminate ? null : props.modelValue)
+const rootModelValue = computed(() => props.indeterminate ? null : sanitizedValue.value)
 
 const labelClasses = 'absolute inset-0 flex items-center justify-center text-xs font-bold text-white mix-blend-difference pointer-events-none'
 </script>
@@ -60,7 +66,7 @@ const labelClasses = 'absolute inset-0 flex items-center justify-center text-xs 
     <ProgressRoot
         :class="classes"
         :model-value="rootModelValue"
-        :max="max"
+        :max="sanitizedMax"
         :aria-valuetext="showLabel && !indeterminate ? `${Math.round(percentage)}%` : undefined"
     >
         <ProgressIndicator

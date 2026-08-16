@@ -70,6 +70,12 @@ watch(
         if (context) {
             context.unregisterItem(oldIndex)
             registerSelf()
+            if (context.activeIndex.value === oldIndex) {
+                context.activeIndex.value = newIndex
+            }
+            if (context.focusedIndex.value === oldIndex) {
+                context.focusedIndex.value = newIndex
+            }
         }
     }
 )
