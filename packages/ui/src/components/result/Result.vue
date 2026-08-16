@@ -61,8 +61,8 @@ const iconClasses = computed(() => cn(props.iconSize ? iconSizeVariants({ size: 
 </script>
 
 <template>
-    <div :class="rootClasses">
-        <div class="mb-6 select-none">
+    <div :class="rootClasses" role="status">
+        <div class="mb-6 select-none" aria-hidden="true">
             <slot name="icon">
                 <div
                     :class="cn(
@@ -80,7 +80,7 @@ const iconClasses = computed(() => cn(props.iconSize ? iconSizeVariants({ size: 
 
         <component
             :is="titleAs"
-            v-if="title || $slots.title" 
+            v-if="title !== undefined || $slots.title" 
             class="text-2xl font-black text-brutal-fg mb-2 uppercase tracking-wide"
         >
             <slot name="title">
@@ -89,7 +89,7 @@ const iconClasses = computed(() => cn(props.iconSize ? iconSizeVariants({ size: 
         </component>
 
         <p 
-            v-if="subTitle || $slots.subTitle" 
+            v-if="subTitle !== undefined || $slots.subTitle" 
             class="text-sm font-bold text-brutal-muted-foreground max-w-md mb-6 leading-relaxed"
         >
             <slot name="subTitle">

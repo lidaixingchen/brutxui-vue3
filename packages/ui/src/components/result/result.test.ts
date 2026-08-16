@@ -85,4 +85,13 @@ describe('Result.vue', () => {
         expect(wrapper.find('h3').text()).toBe('No results')
         expect(wrapper.find('.w-16.h-16').classes()).toContain('bg-brutal-accent')
     })
+
+    it('has role status on root and aria-hidden on icon wrapper', () => {
+        const wrapper = mount(Result, {
+            props: { title: 'Loaded' },
+            global: { provide: localeProvide },
+        })
+        expect(wrapper.attributes('role')).toBe('status')
+        expect(wrapper.find('[aria-hidden="true"]').exists()).toBe(true)
+    })
 })
