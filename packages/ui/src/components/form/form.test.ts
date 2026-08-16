@@ -408,9 +408,9 @@ describe('Form', () => {
                 scrollToError: true,
             })
 
-            // Mock querySelector to return null (field not found in DOM)
+            // Mock namedItem to return null (field not found in DOM)
             const formEl = wrapper.find('form').element
-            vi.spyOn(formEl, 'querySelector').mockReturnValue(null)
+            vi.spyOn(formEl.elements, 'namedItem').mockReturnValue(null)
 
             const result = await ((wrapper.vm as unknown) as Record<string, Function>).validate()
             await flushPromises()
@@ -540,11 +540,11 @@ describe('Form', () => {
             const wrapper = mount(Form)
             const formEl = wrapper.find('form').element
             const mockElement = { scrollIntoView: scrollIntoViewMock }
-            vi.spyOn(formEl, 'querySelector').mockReturnValue(mockElement as unknown as Element)
+            vi.spyOn(formEl.elements, 'namedItem').mockReturnValue(mockElement as unknown as Element)
 
             ;((wrapper.vm as unknown) as Record<string, Function>).scrollToField('username')
 
-            expect(formEl.querySelector).toHaveBeenCalledWith('[name="username"]')
+            expect(formEl.elements.namedItem).toHaveBeenCalledWith('username')
             expect(scrollIntoViewMock).toHaveBeenCalledWith({
                 behavior: 'smooth',
                 block: 'start',
@@ -554,7 +554,7 @@ describe('Form', () => {
         it('scrollToField does nothing when field element not found', () => {
             const wrapper = mount(Form)
             const formEl = wrapper.find('form').element
-            vi.spyOn(formEl, 'querySelector').mockReturnValue(null)
+            vi.spyOn(formEl.elements, 'namedItem').mockReturnValue(null)
 
             expect(() => {
                 ((wrapper.vm as unknown) as Record<string, Function>).scrollToField('nonexistent')
@@ -769,19 +769,27 @@ describe('FormDescription', () => {
     })
 
     it('applies custom class', () => {
-        const wrapper = mountFormDescription({ props: { class: 'custom-desc' } })
+        const wrapper = mountFormDescription({
+            props: { class: 'custom-desc' },
+            slots: { default: 'description text' },
+        })
         expect(wrapper.classes()).toContain('custom-desc')
     })
 
     it('has default styling classes', () => {
-        const wrapper = mountFormDescription()
+        const wrapper = mountFormDescription({ slots: { default: 'description text' } })
         expect(wrapper.classes()).toContain('text-sm')
         expect(wrapper.classes()).toContain('font-medium')
     })
 
     it('renders as paragraph element', () => {
-        const wrapper = mountFormDescription()
+        const wrapper = mountFormDescription({ slots: { default: 'description text' } })
         expect(wrapper.element.tagName).toBe('P')
+    })
+
+    it('does not render when no default slot content', () => {
+        const wrapper = mountFormDescription()
+        expect(wrapper.find('p').exists()).toBe(false)
     })
 })
 

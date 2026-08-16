@@ -12,7 +12,6 @@ const props = defineProps<FormItemProps>()
 const id = useId()
 
 provide(formItemKey, {
-    id,
     formItemId: `${id}-form-item`,
     formDescriptionId: `${id}-form-item-description`,
     formMessageId: `${id}-form-item-message`,

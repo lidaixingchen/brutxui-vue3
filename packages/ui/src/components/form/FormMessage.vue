@@ -9,10 +9,23 @@ interface FormMessageProps {
 
 const props = defineProps<FormMessageProps>()
 
-const fieldContext = inject(formFieldKey, { name: computed(() => ''), error: ref<string | undefined>(undefined), value: ref<unknown>(undefined), setValue: () => {}, setError: () => {} })
-const itemContext = inject(formItemKey, { id: '', formItemId: '', formDescriptionId: '', formMessageId: '' })
+const defaultFieldContext = {
+    name: ref(''),
+    error: ref<string | undefined>(undefined),
+    value: ref<unknown>(undefined),
+    setValue: () => {},
+    setError: () => {},
+}
+const defaultItemContext = { formItemId: '', formDescriptionId: '', formMessageId: '' }
 
-const body = computed(() => fieldContext.error.value)
+const fieldContext = inject(formFieldKey, defaultFieldContext)
+const itemContext = inject(formItemKey, defaultItemContext)
+
+if (fieldContext === defaultFieldContext || itemContext === defaultItemContext) {
+    console.warn('[BrutxUI FormMessage] Must be used inside FormItem/FormField components.')
+}
+
+const body = computed(() => fieldContext.error.value?.trim())
 
 const classes = computed(() =>
     cn('text-sm font-black text-brutal-destructive', props.class)
@@ -20,7 +33,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <p v-if="body" :id="itemContext.formMessageId" role="alert" :class="classes">
+    <p v-if="body" :id="itemContext.formMessageId || undefined" role="alert" :class="classes">
         {{ body }}
     </p>
 </template>

@@ -92,7 +92,8 @@ async function validateField(field: string): Promise<boolean> {
 function scrollToField(field: string) {
     if (!formRef.value) return
 
-    const fieldElement = formRef.value.querySelector(`[name="${field}"]`)
+    // 用 namedItem 按 name 精确获取控件，避免字段名拼入 CSS 选择器时注入/解析失败
+    const fieldElement = formRef.value.elements.namedItem(field) as HTMLElement | null
     if (!fieldElement) return
 
     fieldElement.scrollIntoView({
@@ -116,6 +117,8 @@ async function validate(): Promise<boolean> {
     return valid
 }
 
+// 引用级监听 initialValues：deep 监听会在父组件传入同值新对象或大对象逐字段变化时
+// 无谓地重置表单并清空错误状态；引用不变（或表单已 dirty）时不重置
 watch(
     () => props.initialValues,
     (newValues) => {
@@ -123,7 +126,6 @@ watch(
             form.resetForm({ values: newValues })
         }
     },
-    { deep: true }
 )
 
 provide(formContextKey, formContext)

@@ -69,11 +69,12 @@ watch(() => props.modelValue, () => {
         completedSteps.value.delete(i)
         stepErrors.value.delete(i)
     }
-}, { deep: true })
+    // flush: 'post' 合并同一帧内的多次输入更新，避免每次击键都执行下游步骤清理
+}, { deep: true, flush: 'post' })
 
-watch(currentStep, () => {
-    stepErrors.value.delete(currentStep.value)
-})
+// 注意：进入步骤时不清除该步骤历史错误（删除原 watch(currentStep)）——
+// 错误保留到该步骤被重新校验（validateCurrentStep 成功时清除），
+// 否则返回再进入时 canGoNext 会提前变为 true，下一步按钮被错误启用
 
 // steps 动态收窄（如父组件移除尾部步骤）时，将 currentStep 重新钳制到合法区间 [0, steps.length - 1]，
 // 与初始化钳制逻辑保持一致（steps 为空钳制为 0），保证模板 v-show 展示与步骤计数器一致
@@ -134,14 +135,28 @@ function previousStep() {
 }
 
 function complete() {
-    if (validateCurrentStep()) {
-        completedSteps.value.add(currentStep.value)
-        emit('complete', props.modelValue)
+    // 提交前对所有带 validator 的步骤做一次校验（不只当前步骤）：
+    // 防止依赖 modelValue 之外状态或过期 completedSteps 的数据绕过重新校验直接提交
+    if (props.validateOnNext) {
+        for (let i = 0; i < props.steps.length; i++) {
+            const step = props.steps[i]
+            if (!step.validator) continue
+            const result = step.validator(props.modelValue)
+            if (!result.valid) {
+                stepErrors.value.set(i, result.errors)
+                emit('validation-error', i, result.errors)
+                return
+            }
+            stepErrors.value.delete(i)
+            completedSteps.value.add(i)
+        }
     }
+    emit('complete', props.modelValue)
 }
 
 function updateValues(values: Record<string, unknown>) {
-    emit('update:modelValue', values)
+    // 浅合并后发出，避免各步骤只提交自身字段时覆盖其他步骤已录入的数据
+    emit('update:modelValue', { ...props.modelValue, ...values })
 }
 
 function getStepErrors(step: number): Record<string, string> | undefined {

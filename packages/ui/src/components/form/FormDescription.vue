@@ -9,7 +9,13 @@ interface FormDescriptionProps {
 
 const props = defineProps<FormDescriptionProps>()
 
-const itemContext = inject(formItemKey, { id: '', formItemId: '', formDescriptionId: '', formMessageId: '' })
+const defaultItemContext = { formItemId: '', formDescriptionId: '', formMessageId: '' }
+
+const itemContext = inject(formItemKey, defaultItemContext)
+
+if (itemContext === defaultItemContext) {
+    console.warn('[BrutxUI FormDescription] Must be used inside a FormItem component.')
+}
 
 const classes = computed(() =>
     cn('text-sm text-brutal-muted-foreground font-medium', props.class)
@@ -17,7 +23,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <p :id="itemContext.formDescriptionId" :class="classes">
+    <p v-if="$slots.default" :id="itemContext.formDescriptionId || undefined" :class="classes">
         <slot />
     </p>
 </template>

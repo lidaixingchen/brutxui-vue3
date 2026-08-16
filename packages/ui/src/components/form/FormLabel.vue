@@ -10,19 +10,32 @@ interface FormLabelProps {
 
 const props = defineProps<FormLabelProps>()
 
-const fieldContext = inject(formFieldKey, { name: computed(() => ''), error: ref<string | undefined>(undefined), value: ref<unknown>(undefined), setValue: () => {}, setError: () => {} })
-const itemContext = inject(formItemKey, { id: '', formItemId: '', formDescriptionId: '', formMessageId: '' })
+const defaultFieldContext = {
+    name: ref(''),
+    error: ref<string | undefined>(undefined),
+    value: ref<unknown>(undefined),
+    setValue: () => {},
+    setError: () => {},
+}
+const defaultItemContext = { formItemId: '', formDescriptionId: '', formMessageId: '' }
+
+const fieldContext = inject(formFieldKey, defaultFieldContext)
+const itemContext = inject(formItemKey, defaultItemContext)
+
+if (fieldContext === defaultFieldContext || itemContext === defaultItemContext) {
+    console.warn('[BrutxUI FormLabel] Must be used inside FormItem/FormField components.')
+}
 
 const classes = computed(() =>
     cn(
-        fieldContext.error.value && 'text-brutal-destructive',
+        fieldContext.error.value?.trim() && 'text-brutal-destructive',
         props.class
     )
 )
 </script>
 
 <template>
-    <LabelRoot :class="classes" :for="itemContext.formItemId">
+    <LabelRoot :class="classes" :for="itemContext.formItemId || undefined">
         <slot />
     </LabelRoot>
 </template>
