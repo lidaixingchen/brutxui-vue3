@@ -48,7 +48,20 @@ export function useInfiniteScroll(
 
         loadTimer.value = setTimeout(() => {
             isLoading.value = true
-            options.onLoad()
+            try {
+                const result = options.onLoad()
+                // async onLoad 的 reject 不会被 try/catch 捕获，须显式处理 Promise 拒绝
+                if ((result as unknown) instanceof Promise) {
+                    ;(result as unknown as Promise<void>).catch((error) => {
+                        isLoading.value = false
+                        console.error('[useInfiniteScroll] onLoad 执行失败:', error)
+                    })
+                }
+            } catch (error) {
+                // onLoad 抛错时复位 isLoading，避免 shouldLoad 永久返回 false 导致加载卡死
+                isLoading.value = false
+                console.error('[useInfiniteScroll] onLoad 执行失败:', error)
+            }
         }, getDelay())
     }
 
@@ -111,7 +124,9 @@ export function useInfiniteScroll(
                 watchForTarget()
             }
 
-            if ((options.immediate ?? true) || observerResult === 'unsupported') {
+            // 严格遵循 immediate 语义：immediate 为 false 时挂载不触发加载
+            //（unsupported 环境同样不触发，加载依赖调用方后续主动 resetLoading/滚动触发）
+            if (options.immediate ?? true) {
                 triggerLoad()
             }
         }
@@ -138,7 +153,15 @@ export function useInfiniteScroll(
                 cleanupObserver()
                 stopTargetWatch?.()
                 stopTargetWatch = undefined
+                // 清理已排队的加载定时器，禁用后 onLoad 不应再被执行
+                if (loadTimer.value) {
+                    clearTimeout(loadTimer.value)
+                    loadTimer.value = null
+                }
             } else if (!observer.value) {
+                // 重新启用时复位 isLoading：禁用前残留的 true 会拦截 observer 初始回调，
+                // 导致组件一直无法加载直到外部手动 resetLoading
+                isLoading.value = false
                 const observerResult = setupObserver()
                 if (observerResult === 'unsupported') {
                     triggerLoad()

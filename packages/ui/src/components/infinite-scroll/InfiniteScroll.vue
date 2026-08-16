@@ -120,10 +120,20 @@ function resetLoading() {
         observer.value.unobserve(sentinelRef.value)
         observer.value.observe(sentinelRef.value)
     } else {
-        // unsupported（无 IntersectionObserver）环境回退：保守触发一次，避免永久不加载
+        // unsupported（无 IntersectionObserver）环境回退：保守触发一次，避免永久不加载。
+        // 限制：该环境无 observer 回调，滚动/复位均无法再次触发加载，
+        // 持续加载需依赖父组件主动调用 resetLoading（此处会再保守触发一次）
         triggerLoad()
     }
 }
+
+// 监听 distance 变化：IntersectionObserver 的 rootMargin 不支持原位更新，须重建 observer
+watch(() => props.distance, () => {
+    if (!props.disabled) {
+        cleanupObserver()
+        setupObserver()
+    }
+})
 
 // 监听 disabled 变化
 watch(() => props.disabled, (disabled) => {

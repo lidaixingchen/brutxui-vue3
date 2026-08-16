@@ -117,4 +117,15 @@ describe('InfiniteScroll', () => {
         await advanceOneLoadCycle()
         expect(wrapper.emitted('load')).toHaveLength(2)
     })
+
+    it('distance 变化时重建 observer 应用新阈值', async () => {
+        const wrapper = mountComponent()
+        await advanceOneLoadCycle()
+        const initialInstances = mocks.MockIntersectionObserver.instances.length
+
+        await wrapper.setProps({ distance: 200 })
+        await advanceOneLoadCycle()
+
+        expect(mocks.MockIntersectionObserver.instances.length).toBe(initialInstances + 1)
+    })
 })
