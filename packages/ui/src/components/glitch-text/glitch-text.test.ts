@@ -117,4 +117,41 @@ describe('GlitchText', () => {
         expect(wrapper.classes()).toContain('[--glitch-duration:100ms]')
         expect(wrapper.classes()).toContain('custom-class')
     })
+
+    it('exposes button role and tabindex in click trigger mode', () => {
+        const wrapper = mount(GlitchText, {
+            props: { trigger: 'click', text: 'Click' }
+        })
+        expect(wrapper.attributes('role')).toBe('button')
+        expect(wrapper.attributes('tabindex')).toBe('0')
+    })
+
+    it('does not expose button role in non-click trigger modes', () => {
+        const wrapper = mount(GlitchText, {
+            props: { trigger: 'hover', text: 'Hover' }
+        })
+        expect(wrapper.attributes('role')).toBeUndefined()
+        expect(wrapper.attributes('tabindex')).toBeUndefined()
+    })
+
+    it('toggles glitch on Enter key in click trigger mode', async () => {
+        const wrapper = mount(GlitchText, {
+            props: { trigger: 'click', text: 'Keyboard' }
+        })
+        expect(wrapper.classes()).not.toContain('is-glitching')
+
+        await wrapper.trigger('keydown.enter')
+        expect(wrapper.classes()).toContain('is-glitching')
+
+        await wrapper.trigger('keydown.enter')
+        expect(wrapper.classes()).not.toContain('is-glitching')
+    })
+
+    it('uses slot text for data-text when text prop is empty', () => {
+        const wrapper = mount(GlitchText, {
+            props: { text: '' },
+            slots: { default: 'Slot Only' }
+        })
+        expect(wrapper.attributes('data-text')).toBe('Slot Only')
+    })
 })

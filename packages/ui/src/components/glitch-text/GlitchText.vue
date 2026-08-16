@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, shallowRef, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { computed, useSlots, type VNodeChild } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
-import { DEFAULT_AUTOPLAY_INTERVAL_MS, GLITCH_AUTOPLAY_ACTIVE_DURATION_MS, GLITCH_MIN_INTERVAL_MS } from '@/lib/defaults'
-import { useReducedMotion } from '@/composables/useReducedMotion'
+import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '@/lib/defaults'
+import { useGlitchEffect } from '@/composables/useGlitchEffect'
 import { glitchTextVariants } from './glitch-text-variants'
 
 type GlitchTextVariantProps = VariantProps<typeof glitchTextVariants>
@@ -26,113 +26,63 @@ const props = withDefaults(defineProps<GlitchTextProps>(), {
     class: undefined,
 })
 
-const isActive = ref(false)
-const prefersReducedMotion = useReducedMotion()
+const slots = useSlots()
 
-const autoplayTimer = shallowRef<ReturnType<typeof setInterval> | null>(null)
-const autoplayStopTimer = shallowRef<ReturnType<typeof setTimeout> | null>(null)
-
-const startAutoplay = () => {
-    stopAutoplay()
-    autoplayTimer.value = setInterval(() => {
-        if (prefersReducedMotion.value) return
-        isActive.value = true
-        if (autoplayStopTimer.value) {
-            clearTimeout(autoplayStopTimer.value)
-        }
-        autoplayStopTimer.value = setTimeout(() => {
-            isActive.value = false
-        }, GLITCH_AUTOPLAY_ACTIVE_DURATION_MS)
-    }, Math.max(props.interval, GLITCH_MIN_INTERVAL_MS))
-}
-
-const stopAutoplay = () => {
-    if (autoplayTimer.value) {
-        clearInterval(autoplayTimer.value)
-        autoplayTimer.value = null
-    }
-    if (autoplayStopTimer.value) {
-        clearTimeout(autoplayStopTimer.value)
-        autoplayStopTimer.value = null
-    }
-}
-
-onMounted(() => {
-    if (props.trigger === 'autoplay') {
-        startAutoplay()
-    }
+// 复用 useGlitchEffect（autoplay 调度统一实现）：
+// - interval 动态变化会重建定时器（无需额外 watcher）
+// - interval 自动钳制到激活时长，避免 interval 过短时毛刺退化为持续动画
+// - 切出 autoplay 时复位激活态，避免 isActive 卡死在 true
+// - prefers-reduced-motion 变化时启停定时器，避免空转
+const { isGlitching, onMouseEnter, onMouseLeave, onClick, play, stop } = useGlitchEffect({
+    trigger: () => props.trigger,
+    interval: () => props.interval,
 })
 
-watch(() => props.trigger, (newTrigger, oldTrigger) => {
-    if (oldTrigger === 'autoplay') {
-        stopAutoplay()
-    }
-    if (newTrigger === 'autoplay') {
-        startAutoplay()
-    }
+// 毛刺由伪元素 content: attr(data-text) 渲染：优先 text prop，
+// 缺失时取插槽文本，保证效果与页面实际展示内容一致
+const dataText = computed(() => {
+    if (props.text) return props.text
+    return (slots.default?.() ?? []).map(extractText).join('')
 })
 
-onBeforeUnmount(() => {
-    stopAutoplay()
-})
-
-const onMouseEnter = () => {
-    if (props.trigger === 'hover') {
-        isActive.value = true
-    } else if (props.trigger === 'autoplay') {
-        // Autoplay 模式下，hover 时暂停
-        isActive.value = false
-        stopAutoplay()
+function extractText(node: VNodeChild): string {
+    if (typeof node === 'string' || typeof node === 'number') return String(node)
+    if (Array.isArray(node)) return node.map(extractText).join('')
+    if (node && typeof node === 'object' && 'children' in node) {
+        const children = node.children
+        if (typeof children === 'string') return children
+        if (Array.isArray(children)) return children.map(extractText).join('')
     }
+    return ''
 }
 
-const onMouseLeave = () => {
-    if (props.trigger === 'hover') {
-        isActive.value = false
-    } else if (props.trigger === 'autoplay') {
-        // 离开后重新开启
-        startAutoplay()
-    }
-}
-
-const onClick = () => {
-    if (props.trigger === 'click') {
-        isActive.value = !isActive.value
-    }
-}
-
-// 暴露 API 供外部程序化控制
-const play = () => {
-    isActive.value = true
-}
-
-const stop = () => {
-    isActive.value = false
-}
+// play/stop 为无条件编程接口（与 useGlitchEffect 契约一致）：autoplay 模式下不联动定时器，
+// 停止自动播放请将 trigger 切换为非 autoplay
+const classes = computed(() =>
+    cn(
+        glitchTextVariants({ speed: props.speed, direction: props.direction }),
+        isGlitching.value ? 'is-glitching' : '',
+        props.class
+    )
+)
 
 defineExpose({
     play,
     stop,
 })
-
-const classes = computed(() =>
-    cn(
-        glitchTextVariants({ speed: props.speed, direction: props.direction }),
-        isActive.value && !prefersReducedMotion.value ? 'is-glitching' : '',
-        props.class
-    )
-)
 </script>
 
 <template>
     <span
         :class="classes"
-        :data-text="text"
-        role="status"
-        aria-live="polite"
+        :data-text="dataText"
+        :role="trigger === 'click' ? 'button' : undefined"
+        :tabindex="trigger === 'click' ? '0' : undefined"
         @mouseenter="onMouseEnter"
         @mouseleave="onMouseLeave"
         @click="onClick"
+        @keydown.enter.prevent="onClick"
+        @keydown.space.prevent="onClick"
     >
         <slot>{{ text }}</slot>
     </span>

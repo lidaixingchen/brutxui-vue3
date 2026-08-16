@@ -572,7 +572,7 @@
       "glitch-text-variants.ts"
     ],
     "composables": [
-      "useReducedMotion.ts"
+      "useGlitchEffect.ts"
     ],
     "directives": [],
     "lib": [
