@@ -28,9 +28,10 @@ if (fieldContext === defaultFieldContext || itemContext === defaultItemContext) 
     console.warn('[BrutxUI FormControl] Must be used inside FormItem/FormField components.')
 }
 
-// 组装 aria-describedby，过滤空 id，避免无上下文时拼出无效空白值
+// 组装 aria-describedby，过滤空 id；error 判空与 FormMessage 的 trim 一致，
+// 避免纯空白错误时引用不存在的 messageId 造成悬空引用
 const describedBy = computed(() => {
-    const ids = fieldContext.error.value
+    const ids = fieldContext.error.value?.trim()
         ? [itemContext.formDescriptionId, itemContext.formMessageId]
         : [itemContext.formDescriptionId]
     return ids.filter(Boolean).join(' ') || undefined

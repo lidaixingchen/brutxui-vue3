@@ -92,8 +92,10 @@ async function validateField(field: string): Promise<boolean> {
 function scrollToField(field: string) {
     if (!formRef.value) return
 
-    // 用 namedItem 按 name 精确获取控件，避免字段名拼入 CSS 选择器时注入/解析失败
-    const fieldElement = formRef.value.elements.namedItem(field) as HTMLElement | null
+    // 用 namedItem 按 name 精确获取控件，避免字段名拼入 CSS 选择器时注入/解析失败；
+    // 同名单选组等场景返回 RadioNodeList，需取第一个元素
+    const namedItem = formRef.value.elements.namedItem(field)
+    const fieldElement = namedItem instanceof RadioNodeList ? namedItem[0] : namedItem
     if (!fieldElement) return
 
     fieldElement.scrollIntoView({

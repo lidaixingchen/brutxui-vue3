@@ -25,7 +25,9 @@ if (fieldContext === defaultFieldContext || itemContext === defaultItemContext) 
     console.warn('[BrutxUI FormMessage] Must be used inside FormItem/FormField components.')
 }
 
-const body = computed(() => fieldContext.error.value?.trim())
+// 判空基于 trim 后的结果（纯空白不渲染，避免空 role=alert 播报），
+// 展示仍用原始 errorMessage，不改变错误提示内容
+const body = computed(() => fieldContext.error.value?.trim() ? fieldContext.error.value : '')
 
 const classes = computed(() =>
     cn('text-sm font-black text-brutal-destructive', props.class)

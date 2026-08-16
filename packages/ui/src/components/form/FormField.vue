@@ -14,7 +14,10 @@ const fieldName = toRef(props, 'name')
 const { errorMessage, value, setValue, setErrors } = useField(fieldName)
 
 function setError(message: string | undefined) {
-    setErrors(message ? [message] : [])
+    // 空白归一化：空串/纯空白与 undefined 一视同仁（清错而非进入无文案错误态），
+    // 与 FormMessage 的 trim 判空保持一致
+    const normalized = message?.trim()
+    setErrors(normalized ? [normalized] : [])
 }
 
 provide(formFieldKey, {

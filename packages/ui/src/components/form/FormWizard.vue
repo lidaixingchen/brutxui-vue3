@@ -145,6 +145,13 @@ function complete() {
             if (!result.valid) {
                 stepErrors.value.set(i, result.errors)
                 emit('validation-error', i, result.errors)
+                // 跳转到第一个失败步骤，让错误面板展示该步骤错误，
+                // 避免用户停留在最后一步却看不到失败原因
+                if (i !== currentStep.value) {
+                    const previousStep = currentStep.value
+                    currentStep.value = i
+                    emit('step-change', i, previousStep)
+                }
                 return
             }
             stepErrors.value.delete(i)
