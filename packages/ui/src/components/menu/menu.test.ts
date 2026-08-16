@@ -265,4 +265,26 @@ describe('Menu', () => {
         await nextTick()
         expect(pushMock).toHaveBeenCalledWith('/home')
     })
+
+    it('migrates activeIndex when active MenuItem index changes dynamically', async () => {
+        const itemIndex = ref('old-key')
+        wrapper = mount({
+            components: { Menu, MenuItem },
+            setup() {
+                return { itemIndex }
+            },
+            template: `
+                <Menu default-active="old-key">
+                    <MenuItem :index="itemIndex" id="test-item">Item</MenuItem>
+                </Menu>
+            `
+        })
+
+        const item = wrapper.find('#test-item')
+        expect(item.classes()).toContain('bg-brutal-primary')
+
+        itemIndex.value = 'new-key'
+        await nextTick()
+        expect(item.classes()).toContain('bg-brutal-primary')
+    })
 })

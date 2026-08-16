@@ -46,7 +46,7 @@ const containerClasses = computed(() =>
 const trackClasses = computed(() =>
     cn(
         marqueeTrackVariants({ direction: props.direction, pauseOnHover: props.pauseOnHover || undefined }),
-        prefersReducedMotion.value && '!animate-none',
+        prefersReducedMotion.value && 'animate-none!',
     )
 )
 

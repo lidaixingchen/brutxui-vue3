@@ -48,9 +48,10 @@ const sanitizedMax = computed(() =>
     typeof props.max === 'number' && Number.isFinite(props.max) && props.max > 0 ? props.max : 100
 )
 
-const sanitizedValue = computed(() =>
-    typeof props.modelValue === 'number' && Number.isFinite(props.modelValue) ? props.modelValue : 0
-)
+const sanitizedValue = computed(() => {
+    const value = typeof props.modelValue === 'number' && Number.isFinite(props.modelValue) ? props.modelValue : 0
+    return Math.min(sanitizedMax.value, Math.max(0, value))
+})
 
 const percentage = computed(() => {
     const raw = (sanitizedValue.value / sanitizedMax.value) * 100

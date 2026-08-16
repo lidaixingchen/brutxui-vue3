@@ -136,6 +136,7 @@ watch(
             parentSubMenu.registerChild(newIndex)
         }
         if (context) {
+            const wasFocused = context.focusedIndex.value === oldIndex
             context.unregisterSubMenu(oldIndex)
             context.unregisterItem(oldIndex)
             context.registerSubMenu(newIndex, childIndices.value)
@@ -149,7 +150,7 @@ watch(
             if (context.activeIndex.value === oldIndex) {
                 context.activeIndex.value = newIndex
             }
-            if (context.focusedIndex.value === oldIndex) {
+            if (wasFocused) {
                 context.focusedIndex.value = newIndex
             }
         }

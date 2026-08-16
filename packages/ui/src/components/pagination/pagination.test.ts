@@ -401,5 +401,16 @@ describe('Pagination', () => {
             expect(wrapper.emitted('update:modelValue')).toBeTruthy()
             expect(wrapper.emitted('update:modelValue')![0]).toEqual([5])
         })
+
+        it('safely handles non-positive pageSize on change without emitting Infinity', () => {
+            const wrapper = mount(Pagination, {
+                props: { total: 100, modelValue: 10 },
+                ...globalProvide,
+            })
+            const vm = wrapper.vm as any
+            vm.onPageSizeChange(0)
+            // 不会发出基于 Infinity 的非法页码更新
+            expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+        })
     })
 })
