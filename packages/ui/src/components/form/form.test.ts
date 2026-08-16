@@ -688,6 +688,11 @@ describe('FormLabel', () => {
         expect(wrapper.classes()).not.toContain('text-brutal-destructive')
     })
 
+    it('does not show destructive class for whitespace-only error', () => {
+        const wrapper = mountFormLabel({}, '   ')
+        expect(wrapper.classes()).not.toContain('text-brutal-destructive')
+    })
+
     it('renders as label element', () => {
         const wrapper = mountFormLabel()
         expect(wrapper.element.tagName).toBe('LABEL')
@@ -825,5 +830,17 @@ describe('FormMessage', () => {
     it('renders empty when error is empty string', () => {
         const wrapper = mountFormMessage('')
         expect(wrapper.find('p').exists()).toBe(false)
+    })
+
+    it('does not render for whitespace-only error', () => {
+        const wrapper = mountFormMessage('   ')
+        expect(wrapper.find('p').exists()).toBe(false)
+    })
+
+    it('renders original error text including inner whitespace', () => {
+        // happy-dom 会折叠文本节点首尾空白，用中间空白验证展示原始文案而非 trim 结果
+        const wrapper = mountFormMessage('Error  text')
+        expect(wrapper.find('p').exists()).toBe(true)
+        expect(wrapper.text()).toBe('Error  text')
     })
 })

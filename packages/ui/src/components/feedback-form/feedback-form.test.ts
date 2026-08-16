@@ -207,4 +207,64 @@ describe('FeedbackForm', () => {
         expect(wrapper.text()).toContain(en.feedbackForm.nameRequired)
         expect(wrapper.text()).toContain(en.feedbackForm.messageRequired)
     })
+
+    it('emits submit only once on rapid double submit', async () => {
+        const wrapper = mount(FeedbackForm, {
+            ...localeProvide,
+        })
+        const inputs = wrapper.findAll('input')
+        await inputs[0].setValue('Alice')
+        await inputs[1].setValue('alice@example.com')
+        await wrapper.find('textarea').setValue('Great work!')
+
+        const form = wrapper.find('form')
+        await form.trigger('submit.prevent')
+        await form.trigger('submit.prevent')
+
+        expect(wrapper.emitted('submit')).toHaveLength(1)
+    })
+
+    it('emits trimmed payload values', async () => {
+        const wrapper = mount(FeedbackForm, {
+            ...localeProvide,
+        })
+        const inputs = wrapper.findAll('input')
+        await inputs[0].setValue('  Alice  ')
+        await inputs[1].setValue('  alice@example.com  ')
+        await wrapper.find('textarea').setValue('  Great work!  ')
+        await wrapper.find('form').trigger('submit.prevent')
+
+        const [payload] = wrapper.emitted('submit')![0] as [{ name: string; email: string; subject: string; message: string }]
+        expect(payload.name).toBe('Alice')
+        expect(payload.email).toBe('alice@example.com')
+        expect(payload.message).toBe('Great work!')
+    })
+
+    it('clears field error when input is corrected', async () => {
+        const wrapper = mount(FeedbackForm, {
+            ...localeProvide,
+        })
+        await wrapper.find('form').trigger('submit.prevent')
+        expect(wrapper.text()).toContain(en.feedbackForm.nameRequired)
+
+        await wrapper.findAll('input')[0].setValue('Alice')
+        expect(wrapper.text()).not.toContain(en.feedbackForm.nameRequired)
+    })
+
+    it('disables inputs while submitting', async () => {
+        const wrapper = mount(FeedbackForm, {
+            ...localeProvide,
+        })
+        const inputs = wrapper.findAll('input')
+        await inputs[0].setValue('Alice')
+        await inputs[1].setValue('alice@example.com')
+        await wrapper.find('textarea').setValue('Great work!')
+        await wrapper.find('form').trigger('submit.prevent')
+
+        // 父组件未维护 loading/success 时 submitting 保持 true，控件禁用防数据漂移
+        for (const input of wrapper.findAll('input')) {
+            expect(input.attributes('disabled')).toBeDefined()
+        }
+        expect(wrapper.find('textarea').attributes('disabled')).toBeDefined()
+    })
 })

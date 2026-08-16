@@ -1,7 +1,9 @@
 import { mount } from '@vue/test-utils'
+import { h } from 'vue'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import FormWizard from './FormWizard.vue'
+import { useFormWizard } from './form-wizard-utils'
 import type { FormStep } from './form-wizard-types'
 
 const globalProvide = { provide: { [LOCALE_INJECTION_KEY]: en } }
@@ -256,6 +258,85 @@ describe('FormWizard', () => {
             // 动态收窄为 1 步：currentStep 应被 watch 重新钳制到 0
             await wrapper.setProps({ steps: [testSteps[0]] })
             expect(wrapper.text()).toContain('Step 1 of 1')
+        })
+    })
+
+    describe('complete 全量校验与错误保留', () => {
+        it('complete 校验失败时跳转到第一个失败步骤', async () => {
+            const steps: FormStep[] = [
+                { id: 's1', title: 'S1', validator: () => ({ valid: false, errors: { n: 'Err' } }) },
+                { id: 's2', title: 'S2' },
+            ]
+            const wrapper = mount(FormWizard, {
+                props: { steps, validateOnNext: true, linear: false },
+                global: globalProvide,
+            })
+
+            // 经指示器直接跳到最后一步（linear=false 不检查 completedSteps）
+            const stepButtons = wrapper.findAll('[role="listitem"] button')
+            await stepButtons[1].trigger('click')
+            const completeButton = wrapper.findAll('button').find(b => b.text() === 'Complete')
+            await completeButton!.trigger('click')
+
+            // 步骤 0 校验失败 → 不 emit complete，跳回步骤 0
+            expect(wrapper.emitted('complete')).toBeFalsy()
+            expect(wrapper.emitted('step-change')!.slice(-1)[0]).toEqual([0, 1])
+        })
+
+        it('返回再进入校验失败的步骤时错误保留、Next 保持禁用', async () => {
+            const steps: FormStep[] = [
+                { id: 's1', title: 'S1', validator: () => ({ valid: true, errors: {} }) },
+                {
+                    id: 's2',
+                    title: 'S2',
+                    validator: () => ({ valid: false, errors: { n: 'Req' } }),
+                },
+                { id: 's3', title: 'S3' },
+            ]
+            const wrapper = mount(FormWizard, {
+                props: { steps, validateOnNext: true, linear: true, modelValue: {} },
+                global: globalProvide,
+            })
+
+            // 前进到步骤 1（index 1）：离开步骤 0 时校验通过
+            let nextButton = wrapper.findAll('button').find(b => b.text() === 'Next')!
+            await nextButton.trigger('click')
+            // 尝试离开步骤 1：校验失败 → 停留，错误记录，Next 禁用
+            nextButton = wrapper.findAll('button').find(b => b.text() === 'Next')!
+            await nextButton.trigger('click')
+            expect(wrapper.text()).toContain('Req')
+            expect((nextButton.element as HTMLButtonElement).disabled).toBe(true)
+
+            // 返回步骤 0 再重新进入步骤 1：错误保留（不随进入步骤被清除），Next 仍禁用
+            const prevButton = wrapper.findAll('button').find(b => b.text() === 'Previous')!
+            await prevButton.trigger('click')
+            nextButton = wrapper.findAll('button').find(b => b.text() === 'Next')!
+            await nextButton.trigger('click')
+            nextButton = wrapper.findAll('button').find(b => b.text() === 'Next')!
+            await nextButton.trigger('click')
+            expect(wrapper.text()).toContain('Req')
+            expect((nextButton.element as HTMLButtonElement).disabled).toBe(true)
+        })
+
+        it('updateValues 浅合并而非覆盖既有字段', async () => {
+            const Consumer = {
+                template: '<button @click="merge">merge</button>',
+                setup() {
+                    const { updateValues } = useFormWizard()
+                    return { merge: () => updateValues({ b: 2 }) }
+                },
+            }
+            const wrapper = mount(FormWizard, {
+                props: { steps: testSteps, modelValue: { a: 1 }, validateOnNext: false },
+                global: globalProvide,
+                slots: {
+                    'step-step1': () => h(Consumer),
+                },
+            })
+
+            await wrapper.findAll('button').find(b => b.text() === 'merge')!.trigger('click')
+            const emitted = wrapper.emitted('update:modelValue')!
+            expect(emitted[0][0]).toEqual({ a: 1, b: 2 })
         })
     })
 })

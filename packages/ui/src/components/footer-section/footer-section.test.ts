@@ -127,4 +127,43 @@ describe('FooterSection', () => {
         expect(footer.classes()).toContain('border-t-3')
         expect(footer.classes()).toContain('border-brutal')
     })
+
+    it('emits link-click with indexes and event for anchor links', async () => {
+        const wrapper = mount(FooterSection, {
+            props: { linkGroups: mockLinkGroups },
+            ...localeProvide,
+        })
+        const link = wrapper.find('a[href="/features"]')
+        await link.trigger('click')
+
+        const events = wrapper.emitted('link-click')
+        expect(events).toHaveLength(1)
+        const payload = events![0][0] as { groupIndex: number; linkIndex: number; event: MouseEvent }
+        expect(payload).toMatchObject({ groupIndex: 0, linkIndex: 0 })
+        expect(payload.event).toBeInstanceOf(MouseEvent)
+    })
+
+    it('emits link-click for links without href (button branch)', async () => {
+        const linkGroups: FooterLinkGroup[] = [
+            {
+                title: 'Actions',
+                links: [
+                    { label: 'No Href Link' },
+                    { label: 'Href Link', href: '/go' },
+                ],
+            },
+        ]
+        const wrapper = mount(FooterSection, {
+            props: { linkGroups },
+            ...localeProvide,
+        })
+        const button = wrapper.findAll('button').find(b => b.text() === 'No Href Link')!
+        await button.trigger('click')
+
+        const events = wrapper.emitted('link-click')
+        expect(events).toHaveLength(1)
+        const payload = events![0][0] as { groupIndex: number; linkIndex: number; event: MouseEvent }
+        expect(payload).toMatchObject({ groupIndex: 0, linkIndex: 0 })
+        expect(payload.event).toBeInstanceOf(MouseEvent)
+    })
 })
