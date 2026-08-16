@@ -78,6 +78,8 @@ let startY = 0
 let initialX = 0
 let initialY = 0
 let isDragging = false
+// 触发预览的元素：关闭时归还焦点（键盘/读屏用户不丢失浏览位置）
+let lastFocusedElement: HTMLElement | null = null
 
 const srcToShow = computed(() => {
     if (isFallbackActive.value && props.fallback) {
@@ -190,6 +192,10 @@ const handlePreview = () => {
         currentIndex.value = 0
     }
     resetTransform()
+    // 记录触发元素，关闭预览时归还焦点，避免键盘/读屏用户丢失浏览位置
+    lastFocusedElement = getDocument()?.activeElement instanceof HTMLElement
+        ? getDocument()?.activeElement
+        : null
     showViewer.value = true
     // 打开后把焦点移入遮罩层（tabindex=-1 可编程聚焦）：
     // 否则键盘事件（Escape/方向键）无法通过焦点元素冒泡到遮罩层
@@ -203,6 +209,14 @@ const closeViewer = () => {
     endDrag()
     showViewer.value = false
     resetTransform()
+    // 遮罩（含 FocusScope）卸载后再归还焦点：其 unmount 清理会覆盖同步 focus 调用
+    if (lastFocusedElement) {
+        const target = lastFocusedElement
+        lastFocusedElement = null
+        nextTick(() => {
+            if (target.isConnected) target.focus()
+        })
+    }
     emit('close')
 }
 

@@ -58,7 +58,14 @@ function extractText(node: VNodeChild): string {
         if (typeof children === 'function') return extractText((children as () => VNodeChild)())
         if (children && typeof children === 'object') {
             const defaultSlot = (children as { default?: () => VNodeChild }).default
-            if (typeof defaultSlot === 'function') return extractText(defaultSlot())
+            if (typeof defaultSlot === 'function') {
+                // 作用域插槽无参调用会解构 props 抛错，兜底避免文本提取破坏整体渲染
+                try {
+                    return extractText(defaultSlot())
+                } catch {
+                    return ''
+                }
+            }
         }
     }
     return ''

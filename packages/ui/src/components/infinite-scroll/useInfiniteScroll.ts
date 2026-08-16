@@ -115,8 +115,11 @@ export function useInfiniteScroll(
             loadTimer.value = null
         }
         // unsupported（无 IntersectionObserver）环境回退：与 InfiniteScroll.vue 组件版
-        // 的 resetLoading 语义一致，保守触发一次，避免该环境下完全没有加载入口
-        if (targetRef.value && !getDisabled() && !hasIntersectionObserver && getImmediate()) {
+        // 的 resetLoading 语义一致，无条件保守触发一次（不查 immediate——immediate=false
+        // 仅约束挂载时机，不约束调用方主动复位）。
+        // 契约：unsupported 环境下每次 resetLoading 都会触发一次加载，数据耗尽时须同步
+        // 置 disabled=true，否则会形成「加载→复位→再加载」的自动循环
+        if (targetRef.value && !getDisabled() && !hasIntersectionObserver) {
             triggerLoad()
         }
     }
