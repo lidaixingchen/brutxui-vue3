@@ -99,10 +99,12 @@ const handleKeydown = (event: KeyboardEvent) => {
         nextValue = props.max
     }
 
-    if (nextValue !== null && nextValue !== props.modelValue) {
+    if (nextValue !== null) {
         event.preventDefault()
-        emit('update:modelValue', nextValue)
-        emit('change', nextValue)
+        if (nextValue !== props.modelValue) {
+            emit('update:modelValue', nextValue)
+            emit('change', nextValue)
+        }
     }
 }
 </script>
@@ -111,9 +113,10 @@ const handleKeydown = (event: KeyboardEvent) => {
     <div
         :class="cn('inline-flex items-center select-none', gapClass)"
         role="slider"
-        :aria-valuenow="modelValue"
+        :aria-valuenow="displayValue"
         :aria-valuemin="0"
         :aria-valuemax="max"
+        :aria-valuetext="`${displayValue} / ${max}`"
         :aria-readonly="readonly"
         :tabindex="readonly ? -1 : 0"
         @mouseleave="handleMouseLeave"

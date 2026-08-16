@@ -97,4 +97,25 @@ describe('Rate', () => {
         await star.trigger('click')
         expect(wrapper.emitted('update:modelValue')).toBeFalsy()
     })
+
+    it('handles keyboard navigation and ARIA attributes', async () => {
+        const wrapper = mount(Rate, {
+            props: {
+                max: 5,
+                modelValue: 2,
+            },
+            attachTo: document.body,
+        })
+
+        const slider = wrapper.find('[role="slider"]')
+        expect(slider.attributes('aria-valuenow')).toBe('2')
+        expect(slider.attributes('aria-valuetext')).toBe('2 / 5')
+
+        await slider.trigger('keydown', { key: 'ArrowRight' })
+        expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+        expect(wrapper.emitted('update:modelValue')![0]).toEqual([3])
+
+        await slider.trigger('keydown', { key: 'Home' })
+        expect(wrapper.emitted('update:modelValue')![1]).toEqual([0])
+    })
 })
