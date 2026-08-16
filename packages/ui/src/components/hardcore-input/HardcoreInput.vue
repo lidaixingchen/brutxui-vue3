@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import { useAudioEngine } from '@/composables/useAudioEngine'
 import { useFormFieldValidation } from '@/composables/useFormFieldValidation'
 import { useLocale } from '@/composables/useLocale'
-import { HARDCORE_INPUT_SHAKE_DELAY_MS } from '@/lib/defaults'
+import { HARDCORE_INPUT_SHAKE_DELAY_MS, HARDCORE_INPUT_SHAKE_ANIMATION_MS } from '@/lib/defaults'
 import { hardcoreInputVariants, hardcoreInputFaceVariants } from './hardcore-input-variants'
 import { formFieldKey, type FormFieldContext } from '../form/form-context'
 
@@ -62,17 +62,17 @@ onBeforeUnmount(() => {
     if (shakeTimer.value) clearTimeout(shakeTimer.value)
 })
 
-const validate = (value: string) => {
+const validate = (value: string): boolean => {
     const rulesEmpty = props.rules.length === 0
     const prevState = validationState.value
-    validateField(value)
+    const result = validateField(value)
 
     if (rulesEmpty) {
         formField?.setError(undefined)
         if (prevState !== 'default' && validationState.value === 'default') {
             emit('validation-change', 'default')
         }
-        return
+        return result
     }
 
     if (prevState !== validationState.value) {
@@ -89,18 +89,36 @@ const validate = (value: string) => {
         shakeTimer.value = setTimeout(() => {
             shakeTimer.value = undefined
             triggerShake.value = true
+            // 兜底复位：animationend/animationcancel 可能不触发
+            // （prefers-reduced-motion 下动画被禁用、类被中断移除等），
+            // 与 CSS 中 animate-shake 的 0.35s 动画时长对齐
+            setTimeout(() => {
+                triggerShake.value = false
+            }, HARDCORE_INPUT_SHAKE_ANIMATION_MS)
         }, HARDCORE_INPUT_SHAKE_DELAY_MS)
+    } else {
+        // 非 error（或未启用 shake）：立即复位，避免动画类残留
+        if (shakeTimer.value) {
+            clearTimeout(shakeTimer.value)
+            shakeTimer.value = undefined
+        }
+        triggerShake.value = false
     }
 
     if (formField) {
         formField.setError(validationState.value === 'error' ? errorMessage.value : undefined)
     }
 
-    if (validationState.value === 'error') {
-        emit('validation-change', 'error', errorMessage.value)
-    } else if (validationState.value === 'success') {
-        emit('validation-change', 'success')
+    // 仅在状态迁移时发射，与音效播放条件一致，避免每次输入重复通知
+    if (prevState !== validationState.value) {
+        if (validationState.value === 'error') {
+            emit('validation-change', 'error', errorMessage.value)
+        } else if (validationState.value === 'success') {
+            emit('validation-change', 'success')
+        }
     }
+
+    return result
 }
 
 const onInput = (e: Event) => {
@@ -157,12 +175,20 @@ const onBlur = () => {
 }
 
 const onAnimationEnd = () => {
-    if (shakeTimer.value) return
     triggerShake.value = false
 }
 
-const triggerValidate = () => {
-    validate(props.modelValue ?? '')
+const onAnimationCancel = () => {
+    triggerShake.value = false
+}
+
+const triggerValidate = (): boolean => {
+    // 触发校验前同步表单上下文（vee-validate）中的值，
+    // 避免父组件编程式更新 modelValue 后表单保存的值滞后
+    if (formField) {
+        formField.setValue(props.modelValue ?? '')
+    }
+    return validate(props.modelValue ?? '')
 }
 
 defineExpose({
@@ -184,9 +210,7 @@ const inputClasses = computed(() =>
 
 const faceClasses = computed(() =>
     cn(
-        hardcoreInputFaceVariants(),
-        validationState.value === 'success' ? 'bg-brutal-success' : '',
-        validationState.value === 'error' ? 'bg-brutal-destructive text-brutal-fg animate-bounce-short' : ''
+        hardcoreInputFaceVariants({ variant: validationState.value }),
     )
 )
 </script>
@@ -206,6 +230,7 @@ const faceClasses = computed(() =>
                 @input="onInput"
                 @blur="onBlur"
                 @animationend="onAnimationEnd"
+                @animationcancel="onAnimationCancel"
                 @compositionstart="isComposing = true"
                 @compositionend="onCompositionEnd"
                 @compositioncancel="onCompositionCancel"

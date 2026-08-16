@@ -34,5 +34,19 @@ export const hardcoreInputFaceVariants = cva(
         'text-lg',
         'bg-brutal-accent',
         'transition-transform duration-300',
-    ]
+    ],
+    {
+        variants: {
+            // 状态样式集中于此（背景/边框/文字色/动画），消费方通过 variant 表达状态，
+            // 不再用 cn() 外部覆盖
+            variant: {
+                default: '',
+                success: 'bg-brutal-success border-brutal-success',
+                error: 'bg-brutal-destructive border-brutal-destructive text-brutal-fg animate-bounce-short',
+            },
+        },
+        defaultVariants: {
+            variant: 'default',
+        },
+    }
 )

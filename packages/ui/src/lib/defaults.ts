@@ -182,6 +182,9 @@ export const AUDIO_FAIL_DURATION = 0.2
 /** Delay (ms) before triggering the shake animation reset */
 export const HARDCORE_INPUT_SHAKE_DELAY_MS = 10
 
+/** Shake animation duration (ms)，与 HardcoreInput.vue 样式中的 input-shake 0.35s 对齐 */
+export const HARDCORE_INPUT_SHAKE_ANIMATION_MS = 350
+
 // ── Carousel ──────────────────────────────────────────────────
 
 /**

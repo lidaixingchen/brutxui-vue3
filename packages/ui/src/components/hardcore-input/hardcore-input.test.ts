@@ -94,6 +94,42 @@ describe('HardcoreInput', () => {
         expect(wrapper.emitted('validation-change')?.[1]).toEqual(['success'])
     })
 
+    it('emits validation-change only on state transitions', async () => {
+        const checkRule = (val: string) => val.length >= 5 || 'Too short!'
+        const wrapper = mount(HardcoreInput, {
+            props: {
+                modelValue: '123',
+                rules: [checkRule],
+                validateOn: 'input'
+            }
+        })
+
+        // 持续输入非法值：状态保持 error，不应重复发射 validation-change
+        await wrapper.find('input').setValue('1234')
+        await wrapper.find('input').setValue('123')
+        await wrapper.find('input').setValue('1')
+
+        expect(wrapper.emitted('validation-change')).toHaveLength(1)
+        expect(wrapper.emitted('validation-change')![0]).toEqual(['error', 'Too short!'])
+    })
+
+    it('exposed validate returns validation result and syncs form context', async () => {
+        const checkRule = (val: string) => val.length >= 5 || 'Too short!'
+        const wrapper = mount(HardcoreInput, {
+            props: {
+                modelValue: '123',
+                rules: [checkRule],
+                validateOn: 'blur'
+            }
+        })
+
+        const vm = wrapper.vm as unknown as { validate: () => boolean }
+        expect(vm.validate()).toBe(false)
+
+        await wrapper.setProps({ modelValue: '12345' })
+        expect(vm.validate()).toBe(true)
+    })
+
     it('does not create multiple AudioContext instances', () => {
         const mockPlaySound = vi.fn()
         const mockDispose = vi.fn()
