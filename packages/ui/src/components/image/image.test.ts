@@ -398,4 +398,29 @@ describe('Image Component', () => {
         await wrapper.setProps({ loading: 'lazy' })
         expect(observeMock).toHaveBeenCalled()
     })
+
+    it('moves focus into overlay on open and restores it on close', async () => {
+        wrapper = mount(Image, {
+            props: {
+                src: 'https://example.com/img1.jpg',
+                preview: true,
+            },
+            attachTo: document.body,
+        })
+
+        const trigger = wrapper.find('img')
+        trigger.element.focus()
+        await trigger.trigger('click')
+        await nextTick()
+
+        // 打开后焦点移入遮罩层内（FocusScope 会进一步圈定到首个可聚焦控件）
+        const overlay = document.body.querySelector('.fixed.inset-0') as HTMLElement
+        expect(overlay.contains(document.activeElement)).toBe(true)
+
+        // Escape 关闭后焦点归还触发元素
+        overlay.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+        await nextTick()
+        expect(document.body.querySelector('[data-testid="image-viewer-canvas"]')).toBeNull()
+        expect(document.activeElement).toBe(trigger.element)
+    })
 })

@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, it, expect, vi } from 'vitest'
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, h, defineComponent } from 'vue'
 import GlitchText from './GlitchText.vue'
 
 vi.mock('../../composables/useReducedMotion', () => ({
@@ -156,6 +156,41 @@ describe('GlitchText', () => {
             slots: { default: 'Slot Only' }
         })
         expect(wrapper.attributes('data-text')).toBe('Slot Only')
+    })
+
+    it('extracts text from component slot children via slots object form', async () => {
+        const Inner = defineComponent({
+            setup(_, { slots }) {
+                return () => h('span', slots.default?.())
+            },
+        })
+        const wrapper = mount(GlitchText, {
+            props: { text: '' },
+            slots: {
+                default: () => h(Inner, null, { default: () => 'Inner Text' }),
+            },
+        })
+        await nextTick()
+        expect(wrapper.attributes('data-text')).toBe('Inner Text')
+    })
+
+    it('keeps data-text intact when scoped slot cannot be invoked without props', async () => {
+        const Scoped = defineComponent({
+            setup(_, { slots }) {
+                return () => slots.default?.({ item: 'x' })
+            },
+        })
+        // 直接构造带作用域插槽的组件型 VNode：无参调用 defaultSlot 会抛错，
+        // data-text 应回退为空串而不破坏整体渲染
+        const wrapper = mount(GlitchText, {
+            props: { text: 'Fallback Text' },
+            slots: {
+                default: () => h(Scoped, null, { default: () => 'scoped' }),
+            },
+        })
+        await nextTick()
+        expect(wrapper.attributes('data-text')).toBe('Fallback Text')
+        expect(wrapper.find('.glitch-text').exists()).toBe(true)
     })
 
     it('aria-pressed reflects active state even under reduced motion', async () => {
