@@ -32,10 +32,11 @@ const iconColorClasses: Record<MessageType, string> = {
 }
 
 function messageClasses(msg: MessageItem): string {
+    const typeClass = typeClasses[msg.type] ?? typeClasses.info
     return cn(
         'pointer-events-auto min-w-[320px] max-w-[480px]',
         'border-3 shadow-brutal',
-        typeClasses[msg.type],
+        typeClass,
     )
 }
 
@@ -49,7 +50,7 @@ function handleClose(id: string): void {
 
 <template>
     <div
-        class="fixed top-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none"
+        class="fixed top-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none max-h-[calc(100vh-3rem)] overflow-y-auto"
         :style="{ zIndex: Z_INDEX.MESSAGE }"
     >
         <TransitionGroup name="brutx-message">
@@ -57,12 +58,15 @@ function handleClose(id: string): void {
                 v-for="msg in messageStore"
                 :key="msg.id"
                 :class="messageClasses(msg)"
-                role="status"
-                aria-live="polite"
+                :role="msg.type === 'error' ? 'alert' : 'status'"
+                :aria-live="msg.type === 'error' ? 'assertive' : 'polite'"
             >
                 <div class="flex items-start gap-3 p-4">
                     <div class="flex-shrink-0 mt-0.5">
-                        <component :is="iconMap[msg.type]" :class="[iconClasses, iconColorClasses[msg.type]]" />
+                        <component
+                            :is="iconMap[msg.type] ?? Info"
+                            :class="[iconClasses, iconColorClasses[msg.type] ?? iconColorClasses.info]"
+                        />
                     </div>
 
                     <div class="flex-1 min-w-0">
