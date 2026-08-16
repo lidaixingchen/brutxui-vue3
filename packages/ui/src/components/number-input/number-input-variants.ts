@@ -49,7 +49,7 @@ export const numberInputButtonVariants = cva(
         compoundVariants: [
             { position: 'decrement', layout: 'split', class: 'border-r-3' },
             { position: 'increment', layout: 'split', class: 'border-l-3' },
-            { position: 'decrement', layout: 'stacked', class: 'border-b-3' },
+            { position: 'decrement', layout: 'stacked', class: 'border-t-3' },
         ],
         defaultVariants: {
             position: 'decrement',

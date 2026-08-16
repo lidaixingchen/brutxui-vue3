@@ -58,6 +58,8 @@ describe('NumberInput', () => {
         const increment = wrapper.find('[aria-label="Increase"]')
         expect(decrement.exists()).toBe(true)
         expect(increment.exists()).toBe(true)
+        expect(decrement.classes()).toContain('border-t-3')
+        expect(decrement.classes()).not.toContain('border-b-3')
     })
 
     it('applies root variant classes', () => {

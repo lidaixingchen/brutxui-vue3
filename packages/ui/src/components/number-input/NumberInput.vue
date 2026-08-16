@@ -44,9 +44,18 @@ const errorTextId = computed(() =>
     props.variant === 'error' && props.errorMessage ? `number-input-error-${errorId}` : undefined
 )
 
+const DELEGATED_OMIT_KEYS = new Set([
+    'class',
+    'layout',
+    'variant',
+    'errorMessage',
+    'placeholder',
+    'iconSize',
+])
+
 const delegatedProps = computed(() => {
-    const { class: _, layout: __, variant: ___, errorMessage: ____, placeholder: _____, iconSize: ______, ...delegated } = props
-    return delegated
+    const entries = Object.entries(props).filter(([key]) => !DELEGATED_OMIT_KEYS.has(key))
+    return Object.fromEntries(entries) as Partial<NumberFieldRootProps>
 })
 
 const forwarded = useForwardPropsEmits(delegatedProps, emit)
