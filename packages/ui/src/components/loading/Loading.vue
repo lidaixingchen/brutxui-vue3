@@ -38,15 +38,27 @@ const maskStyles = computed(() => {
     return {}
 })
 
+// page：文档流内占满视口高度的页面级加载；
+// fullscreen：fixed 定位真正铺满视口并提升层级，嵌套在普通容器中也能覆盖全屏
 const isPageMode = computed(() => props.page || props.fullscreen)
-const rootClasses = computed(() =>
-    cn(isPageMode.value ? 'min-h-screen flex items-center justify-center bg-brutal-bg p-4' : 'relative', props.class)
+const isFullscreen = computed(() => props.fullscreen)
+const pageRootClasses = computed(() => {
+    if (isFullscreen.value) {
+        return cn('fixed inset-0 z-50 flex items-center justify-center bg-brutal-bg p-4 overflow-y-auto', props.class)
+    }
+    return cn('min-h-screen flex items-center justify-center bg-brutal-bg p-4', props.class)
+})
+// 局部模式容器提供默认最小高度，保证 loading=false 时无内容也有可感知的遮罩区域
+const localRootClasses = computed(() => cn('relative min-h-24', props.class))
+// null/undefined 均视为无进度；取值在组件边界 clamp 到 0-100
+const hasProgress = computed(() => props.progress != null)
+const clampedProgress = computed(() =>
+    props.progress != null ? Math.min(Math.max(props.progress, 0), 100) : undefined
 )
-const hasProgress = computed(() => props.progress !== undefined)
 </script>
 
 <template>
-    <div v-if="isPageMode" :class="rootClasses">
+    <div v-if="isPageMode && loading" :class="pageRootClasses">
         <div class="w-full max-w-lg text-center relative">
             <slot name="header" />
 
@@ -58,8 +70,8 @@ const hasProgress = computed(() => props.progress !== undefined)
                     <Spinner size="lg" variant="primary" />
                 </div>
 
-                <h1 v-if="title" class="text-2xl sm:text-3xl font-black tracking-tight text-brutal-fg">
-                    {{ title }}
+                <h1 v-if="title || text" class="text-2xl sm:text-3xl font-black tracking-tight text-brutal-fg">
+                    {{ title ?? text }}
                 </h1>
 
                 <p v-if="description" class="mt-3 text-brutal-muted-foreground font-medium">
@@ -69,7 +81,7 @@ const hasProgress = computed(() => props.progress !== undefined)
                 <slot />
 
                 <div v-if="hasProgress" class="mt-6">
-                    <Progress :model-value="progress" />
+                    <Progress :model-value="clampedProgress" />
                 </div>
 
                 <slot name="footer" />
@@ -77,7 +89,7 @@ const hasProgress = computed(() => props.progress !== undefined)
         </div>
     </div>
 
-    <div v-else :class="rootClasses">
+    <div v-else :class="localRootClasses">
         <slot />
 
         <Transition

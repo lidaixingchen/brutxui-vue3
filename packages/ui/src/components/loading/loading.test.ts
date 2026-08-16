@@ -44,7 +44,7 @@ describe('Loading.vue (声明式组件)', () => {
 
     it('renders page mode with title and description', () => {
         const wrapper = mount(Loading, {
-            props: { page: true, title: 'Loading Data', description: 'Please wait' },
+            props: { page: true, loading: true, title: 'Loading Data', description: 'Please wait' },
             global: { provide: localeProvide },
         })
 
@@ -53,9 +53,18 @@ describe('Loading.vue (声明式组件)', () => {
         expect(wrapper.text()).toContain('Please wait')
     })
 
+    it('does not render page mode when loading is false', () => {
+        const wrapper = mount(Loading, {
+            props: { page: true, loading: false, title: 'Loading Data' },
+            global: { provide: localeProvide },
+        })
+
+        expect(wrapper.classes()).not.toContain('min-h-screen')
+    })
+
     it('renders progress in page mode when progress is provided', () => {
         const wrapper = mount(Loading, {
-            props: { page: true, progress: 30 },
+            props: { page: true, loading: true, progress: 30 },
             global: { provide: localeProvide },
         })
 
