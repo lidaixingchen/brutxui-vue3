@@ -186,5 +186,24 @@ describe('Progress', () => {
             const label = wrapper.find('span.absolute.inset-0')
             expect(label.classes()).toContain('pointer-events-none')
         })
+
+        it('sets aria-valuetext on ProgressRoot when showLabel is true', () => {
+            const wrapper = mount(Progress, {
+                props: { showLabel: true, modelValue: 42.6 },
+                attachTo: document.body,
+            })
+            expect(wrapper.attributes('aria-valuetext')).toBe('43%')
+        })
+
+        it('safely handles non-finite NaN modelValue and max', () => {
+            const wrapper = mount(Progress, {
+                props: { showLabel: true, modelValue: Number.NaN, max: Number.NaN },
+                attachTo: document.body,
+            })
+            const indicator = wrapper.find('.bg-brutal-primary')
+            expect(indicator.attributes('style')).toContain('translateX(-100%)')
+            const label = wrapper.find('span.absolute.inset-0')
+            expect(label.text()).toBe('0%')
+        })
     })
 })

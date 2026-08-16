@@ -22,7 +22,7 @@ export const progressRootVariants = cva(
 
 export const progressIndicatorVariants = cva(
     [
-        'h-full w-full flex-1 transition-all duration-300 ease-out',
+        'h-full w-full transition-all duration-300 ease-out',
     ],
     {
         variants: {

@@ -45,9 +45,9 @@ const indicatorStyle = computed(() => {
 })
 
 const percentage = computed(() => {
-    const max = props.max ?? 100
-    const value = props.modelValue ?? 0
-    const raw = max > 0 ? (value / max) * 100 : 0
+    const max = typeof props.max === 'number' && Number.isFinite(props.max) && props.max > 0 ? props.max : 100
+    const value = typeof props.modelValue === 'number' && Number.isFinite(props.modelValue) ? props.modelValue : 0
+    const raw = (value / max) * 100
     return Math.min(100, Math.max(0, raw))
 })
 
@@ -57,7 +57,12 @@ const labelClasses = 'absolute inset-0 flex items-center justify-center text-xs 
 </script>
 
 <template>
-    <ProgressRoot :class="classes" :model-value="rootModelValue" :max="max">
+    <ProgressRoot
+        :class="classes"
+        :model-value="rootModelValue"
+        :max="max"
+        :aria-valuetext="showLabel && !indeterminate ? `${Math.round(percentage)}%` : undefined"
+    >
         <ProgressIndicator
             :class="indicatorClasses"
             :style="indicatorStyle"
