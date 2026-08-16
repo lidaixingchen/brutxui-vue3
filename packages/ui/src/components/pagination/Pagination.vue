@@ -75,10 +75,14 @@ const emit = defineEmits<{
 const computedTotalPages = computed(() => {
     if (props.totalPages !== undefined) return props.totalPages
     if (props.total !== undefined && props.pageSize > 0) {
-        return Math.ceil(props.total / props.pageSize)
+        return Math.max(1, Math.ceil(props.total / props.pageSize))
     }
     return 1
 })
+
+const safeCurrentPage = computed(() =>
+    Math.min(Math.max(props.modelValue, FIRST_PAGE), Math.max(computedTotalPages.value, FIRST_PAGE))
+)
 
 // 解析布局
 const layoutComponents = computed(() => {
@@ -89,6 +93,7 @@ const layoutComponents = computed(() => {
 const jumpValue = ref('')
 
 function range(start: number, end: number) {
+    if (end < start) return []
     const length = end - start + 1
     return Array.from({ length }, (_, idx) => idx + start)
 }
@@ -102,8 +107,8 @@ const paginationRange = computed(() => {
         return range(FIRST_PAGE, computedTotalPages.value)
     }
 
-    const leftSiblingIndex = Math.max(props.modelValue - props.siblingCount, FIRST_PAGE)
-    const rightSiblingIndex = Math.min(props.modelValue + props.siblingCount, computedTotalPages.value)
+    const leftSiblingIndex = Math.max(safeCurrentPage.value - props.siblingCount, FIRST_PAGE)
+    const rightSiblingIndex = Math.min(safeCurrentPage.value + props.siblingCount, computedTotalPages.value)
 
     const shouldShowLeftDots = leftSiblingIndex > MIN_PAGE_THRESHOLD
     const shouldShowRightDots = rightSiblingIndex < computedTotalPages.value - MIN_PAGE_THRESHOLD
@@ -136,10 +141,6 @@ const navClasses = computed(() =>
         props.disabled && 'opacity-50 pointer-events-none',
         props.class,
     )
-)
-
-const safeCurrentPage = computed(() =>
-    Math.min(Math.max(props.modelValue, FIRST_PAGE), Math.max(computedTotalPages.value, FIRST_PAGE))
 )
 
 const PAGINATION_SIZE_TO_ICON: Record<NonNullable<PaginationVariantProps['size']>, IconSize> = {
@@ -221,10 +222,12 @@ function onPageChange(page: number) {
 
 function onPageSizeChange(size: number) {
     emit('update:pageSize', size)
-    // 重新计算当前页
-    const newTotalPages = props.total !== undefined
-        ? Math.max(1, Math.ceil(props.total / size))
-        : computedTotalPages.value
+    // 重新计算当前页，与 computedTotalPages 的优先级保持一致
+    const newTotalPages = props.totalPages !== undefined
+        ? props.totalPages
+        : props.total !== undefined
+            ? Math.max(1, Math.ceil(props.total / size))
+            : computedTotalPages.value
     if (props.modelValue > newTotalPages) {
         emit('update:modelValue', newTotalPages)
     }

@@ -378,4 +378,28 @@ describe('Pagination', () => {
             expect(wrapper.emitted('update:modelValue')).toBeFalsy()
         })
     })
+
+    describe('total edge cases & onPageSizeChange', () => {
+        it('computes totalPages as at least 1 when total is 0', () => {
+            const wrapper = mount(Pagination, {
+                props: { total: 0, pageSize: 10, modelValue: 1 },
+                ...globalProvide,
+            })
+            const pageButtons = wrapper.findAll('button[aria-label^="Go to page"]')
+            expect(pageButtons.length).toBe(1)
+            expect(pageButtons[0].text()).toBe('1')
+        })
+
+        it('clamps modelValue correctly on pageSize change when totalPages is provided', async () => {
+            const wrapper = mount(Pagination, {
+                props: { totalPages: 5, modelValue: 8, layout: 'sizes, pager' },
+                ...globalProvide,
+            })
+            // pageSize 改变，由于 modelValue (8) > totalPages (5)，应发出 update:modelValue 5
+            const vm = wrapper.vm as any
+            vm.onPageSizeChange(20)
+            expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+            expect(wrapper.emitted('update:modelValue')![0]).toEqual([5])
+        })
+    })
 })

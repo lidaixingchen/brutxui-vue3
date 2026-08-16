@@ -27,7 +27,7 @@ export const paginationButtonVariants = cva(
         'border-3 border-brutal',
         'transition-all duration-150',
         FOCUS_RING_CLASSES,
-        'disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none',
+        'disabled:opacity-40 disabled:cursor-not-allowed disabled:translate-none disabled:transform-none disabled:shadow-none',
     ],
     {
         variants: {
