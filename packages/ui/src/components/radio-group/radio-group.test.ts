@@ -92,4 +92,22 @@ describe('RadioGroupItem', () => {
         })
         expect(wrapper.find('[role="radio"]').exists()).toBe(true)
     })
+
+    it('renders indicator when selected with corresponding size', () => {
+        const wrapper = mount(RadioGroup, {
+            props: { modelValue: 'option1' },
+            slots: {
+                default: () => [
+                    h(RadioGroupItem, { value: 'option1', size: 'lg' }),
+                ],
+            },
+            attachTo: document.body,
+        })
+        const selectedRadio = wrapper.find('[data-state="checked"]')
+        expect(selectedRadio.exists()).toBe(true)
+        const svg = selectedRadio.find('svg')
+        expect(svg.exists()).toBe(true)
+        expect(svg.classes()).toContain('h-3.5')
+        expect(svg.classes()).toContain('w-3.5')
+    })
 })

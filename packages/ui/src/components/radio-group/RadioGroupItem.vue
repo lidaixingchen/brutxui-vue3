@@ -26,12 +26,18 @@ const props = withDefaults(defineProps<RadioGroupItemProps>(), {
 const classes = computed(() =>
     cn(radioGroupItemVariants({ variant: props.variant, size: props.size }), props.class)
 )
+
+const iconSizeClasses = computed(() => {
+    if (props.size === 'sm') return 'h-2 w-2'
+    if (props.size === 'lg') return 'h-3.5 w-3.5'
+    return 'h-2.5 w-2.5'
+})
 </script>
 
 <template>
     <RadioGroupItemPrimitive :value="value" :disabled="disabled" :class="classes">
         <RadioGroupIndicatorPrimitive class="flex items-center justify-center">
-            <Square class="h-2.5 w-2.5 fill-current stroke-none" />
+            <Square :class="cn(iconSizeClasses, 'fill-current stroke-none')" />
         </RadioGroupIndicatorPrimitive>
     </RadioGroupItemPrimitive>
 </template>

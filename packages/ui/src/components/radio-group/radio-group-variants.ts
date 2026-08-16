@@ -5,14 +5,14 @@ import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const radioGroupItemVariants = cva(
     [
-        'peer aspect-square',
+        'aspect-square flex items-center justify-center',
         'border-3 border-brutal bg-brutal-bg text-brutal-fg',
         'shadow-brutal-sm',
         'transition-all duration-150',
         brutalHoverLift,
         brutalPress,
         FOCUS_RING_CLASSES,
-        'disabled:cursor-not-allowed disabled:opacity-50 disabled:pointer-events-none',
+        'disabled:opacity-50 disabled:pointer-events-none',
     ],
     {
         variants: {
