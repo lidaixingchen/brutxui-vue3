@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { DialogRoot } from 'reka-ui'
+import { DialogRoot, DialogTrigger } from 'reka-ui'
 import { Menu } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
@@ -60,55 +60,57 @@ const menuIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }
 
 <template>
     <header :class="rootClasses">
-        <div class="flex h-16 items-center justify-between px-4 md:px-6 max-w-7xl mx-auto">
-            <slot name="header">
-                <span class="text-xl font-black tracking-tight text-brutal-fg">
-                    {{ resolvedLogoText }}
-                </span>
-            </slot>
-
-            <slot>
-                <nav class="hidden md:flex items-center gap-1">
-                    <Button
-                        v-for="(item, index) in navItems"
-                        :key="index"
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        @click="emit('nav-click', index)"
-                    >
-                        {{ item.label }}
-                    </Button>
-                </nav>
-            </slot>
-
-            <div class="flex items-center gap-3">
-                <slot name="footer">
-                    <Button
-                        type="button"
-                        variant="primary"
-                        size="sm"
-                        class="hidden md:inline-flex"
-                        @click="emit('cta-click')"
-                    >
-                        {{ resolvedCtaText }}
-                    </Button>
+        <DialogRoot v-model:open="mobileMenuOpen">
+            <div class="flex h-16 items-center justify-between px-4 md:px-6 max-w-7xl mx-auto">
+                <slot name="header">
+                    <span class="text-xl font-black tracking-tight text-brutal-fg">
+                        {{ resolvedLogoText }}
+                    </span>
                 </slot>
 
-                <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    class="md:hidden"
-                    @click="mobileMenuOpen = true"
-                >
-                    <Menu :class="menuIconClasses" />
-                    <span class="sr-only">{{ menuLabel }}</span>
-                </Button>
-            </div>
-        </div>
+                <slot>
+                    <nav class="hidden md:flex items-center gap-1">
+                        <Button
+                            v-for="(item, index) in navItems"
+                            :key="index"
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            @click="emit('nav-click', index)"
+                        >
+                            {{ item.label }}
+                        </Button>
+                    </nav>
+                </slot>
 
-        <DialogRoot v-model:open="mobileMenuOpen">
+                <div class="flex items-center gap-3">
+                    <slot name="footer">
+                        <Button
+                            type="button"
+                            variant="primary"
+                            size="sm"
+                            class="hidden md:inline-flex"
+                            @click="emit('cta-click')"
+                        >
+                            {{ resolvedCtaText }}
+                        </Button>
+                    </slot>
+
+                    <!-- DialogTrigger 位于 DialogRoot 内，自动获得 aria-haspopup/aria-expanded/aria-controls 与焦点管理 -->
+                    <DialogTrigger as-child>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            class="md:hidden"
+                        >
+                            <Menu :class="menuIconClasses" />
+                            <span class="sr-only">{{ menuLabel }}</span>
+                        </Button>
+                    </DialogTrigger>
+                </div>
+            </div>
+
             <SheetContent side="right">
                 <SheetHeader>
                     <SheetTitle>{{ resolvedLogoText }}</SheetTitle>
@@ -121,7 +123,7 @@ const menuIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }
                         type="button"
                         variant="ghost"
                         class="justify-start"
-                        @click="emit('nav-click', index); mobileMenuOpen = false"
+                        @click="mobileMenuOpen = false; emit('nav-click', index)"
                     >
                         {{ item.label }}
                     </Button>
@@ -132,7 +134,7 @@ const menuIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }
                         type="button"
                         variant="primary"
                         class="w-full"
-                        @click="emit('cta-click'); mobileMenuOpen = false"
+                        @click="mobileMenuOpen = false; emit('cta-click')"
                     >
                         {{ resolvedCtaText }}
                     </Button>
