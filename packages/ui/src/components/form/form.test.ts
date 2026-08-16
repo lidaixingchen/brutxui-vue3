@@ -1,5 +1,5 @@
 import { mount, flushPromises } from '@vue/test-utils'
-import { nextTick, ref, defineComponent } from 'vue'
+import { nextTick, ref, defineComponent, inject } from 'vue'
 import { useField } from 'vee-validate'
 import Form from './Form.vue'
 import FormField from './FormField.vue'
@@ -630,6 +630,40 @@ describe('FormField', () => {
             slots: { default: '<span class="field-slot">content</span>' },
         })
         expect(wrapper.find('.field-slot').exists()).toBe(true)
+    })
+
+    it('setError 空白归一化：纯空白/空串/undefined 清错，首尾空白裁剪后存入', async () => {
+        let fieldCtx: FormFieldContext | undefined
+        const Consumer = defineComponent({
+            setup() {
+                fieldCtx = inject(formFieldKey)
+                return () => null
+            },
+        })
+        mount(FormField, {
+            props: { name: 'name' },
+            slots: { default: Consumer },
+        })
+
+        fieldCtx!.setError('  msg  ')
+        await nextTick()
+        expect(fieldCtx!.error.value).toBe('msg')
+
+        fieldCtx!.setError('   ')
+        await nextTick()
+        expect(fieldCtx!.error.value).toBeUndefined()
+
+        fieldCtx!.setError('')
+        await nextTick()
+        expect(fieldCtx!.error.value).toBeUndefined()
+
+        fieldCtx!.setError(undefined)
+        await nextTick()
+        expect(fieldCtx!.error.value).toBeUndefined()
+
+        fieldCtx!.setError('normal message')
+        await nextTick()
+        expect(fieldCtx!.error.value).toBe('normal message')
     })
 })
 

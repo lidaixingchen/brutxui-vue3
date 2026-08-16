@@ -130,6 +130,30 @@ describe('HardcoreInput', () => {
         expect(vm.validate()).toBe(true)
     })
 
+    it('emits validation-change when error message changes while staying in error state', async () => {
+        const rules = [
+            (val: string) => val.length >= 5 || 'Too short!',
+            (val: string) => /^\d+$/.test(val) || 'Numbers only',
+        ]
+        const wrapper = mount(HardcoreInput, {
+            props: {
+                modelValue: 'abc',
+                rules,
+                validateOn: 'blur',
+            },
+        })
+        const input = wrapper.find('input')
+
+        // 'abc' 命中长度规则失败
+        await input.trigger('blur')
+        expect(wrapper.emitted('validation-change')![0]).toEqual(['error', 'Too short!'])
+
+        // 'abcde' 长度通过但非纯数字：状态仍为 error，文案变化应再次发射
+        await wrapper.setProps({ modelValue: 'abcde' })
+        await input.trigger('blur')
+        expect(wrapper.emitted('validation-change')![1]).toEqual(['error', 'Numbers only'])
+    })
+
     it('does not create multiple AudioContext instances', () => {
         const mockPlaySound = vi.fn()
         const mockDispose = vi.fn()

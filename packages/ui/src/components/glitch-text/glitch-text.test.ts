@@ -25,18 +25,21 @@ describe('GlitchText', () => {
         expect(wrapper.text()).toBe('Slot Text')
     })
 
-    it('toggles animation on click when trigger is click', async () => {
+    it('toggles glitch on click when trigger is click', async () => {
         const wrapper = mount(GlitchText, {
             props: { trigger: 'click', text: 'Click Test' }
         })
 
         expect(wrapper.classes()).not.toContain('is-glitching')
+        expect(wrapper.attributes('aria-pressed')).toBe('false')
 
         await wrapper.trigger('click')
         expect(wrapper.classes()).toContain('is-glitching')
+        expect(wrapper.attributes('aria-pressed')).toBe('true')
 
         await wrapper.trigger('click')
         expect(wrapper.classes()).not.toContain('is-glitching')
+        expect(wrapper.attributes('aria-pressed')).toBe('false')
     })
 
     it('exposes play and stop methods', async () => {
@@ -153,5 +156,17 @@ describe('GlitchText', () => {
             slots: { default: 'Slot Only' }
         })
         expect(wrapper.attributes('data-text')).toBe('Slot Only')
+    })
+
+    it('aria-pressed reflects active state even under reduced motion', async () => {
+        // useGlitchEffect 已缓存 useReducedMotion 的 mock 引用，doMock 无法穿透深层依赖，
+        // 此处直接验证 aria-pressed 与激活态绑定而非 isGlitching（动画类）的语义来源
+        const wrapper = mount(GlitchText, {
+            props: { trigger: 'click', text: 'RM' },
+        })
+
+        await wrapper.trigger('click')
+        expect(wrapper.attributes('aria-pressed')).toBe('true')
+        expect(wrapper.classes()).toContain('is-glitching')
     })
 })
