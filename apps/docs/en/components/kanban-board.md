@@ -137,7 +137,7 @@ interface KanbanColumn {
 | Event | Payload | Description |
 |-------|---------|-------------|
 | `update:modelValue` | `KanbanColumn[]` | Emitted when column data is updated (after card move or column reorder) |
-| `card-move` | `(cardId: string, fromColumn: string, toColumn: string)` | Emitted when a card is moved across columns |
+| `card-move` | `(cardId: string, fromColumn: string, toColumn: string)` | Emitted when a card is moved (both mouse drag and keyboard actions) |
 | `card-click` | `(card: KanbanCard, columnId: string)` | Emitted when a card is clicked (not triggered during drag) |
 | `column-move` | `(columnId: string, fromIndex: number, toIndex: number)` | Emitted when a column header drag reorder is completed |
 | `add-card` | `columnId: string` | Emitted when the default "Add card" button is clicked |
@@ -195,7 +195,7 @@ const columns = ref([
 | `moveColumn` | `(fromId, toId)` | Swap two columns |
 | `addCard` | `(columnId)` | Trigger add card event |
 | `getColumn` | `(columnId)` | Get specific column data |
-| `getAllColumns` | — | Get all column data (computed) |
+| `getAllColumns` | `() => KanbanColumn[]` | Get all column data (returns an array) |
 
 ```vue
 <script setup>

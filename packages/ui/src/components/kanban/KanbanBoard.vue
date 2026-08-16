@@ -137,6 +137,8 @@ function moveCardInColumn(cardId: string, columnId: string, direction: number) {
         return { ...c, cards: newCards };
     });
     emit('update:modelValue', newColumns);
+    // 与鼠标拖拽路径（onDrop）一致补发 card-move，供持久化/审计统一消费
+    emit('card-move', cardId, columnId, columnId);
     ariaLiveMessage.value = t('kanban.cardMoved');
 }
 
@@ -150,6 +152,7 @@ function moveCardToAdjacentColumn(cardId: string, columnId: string, direction: n
     const card = col.cards.find(c => c.id === cardId);
     if (!card) return;
 
+    const targetColumnId = columns.value[newColIndex].id;
     const newColumns = columns.value.map((c, i) => {
         if (i === colIndex) {
             return { ...c, cards: c.cards.filter(cc => cc.id !== cardId) };
@@ -160,7 +163,9 @@ function moveCardToAdjacentColumn(cardId: string, columnId: string, direction: n
         return c;
     });
     emit('update:modelValue', newColumns);
-    grabbedCard.value = { cardId, columnId: columns.value[newColIndex].id };
+    // 与鼠标拖拽路径（onDrop）一致补发 card-move
+    emit('card-move', cardId, columnId, targetColumnId);
+    grabbedCard.value = { cardId, columnId: targetColumnId };
     ariaLiveMessage.value = t('kanban.cardMovedToColumn', { column: columns.value[newColIndex].title });
 }
 
@@ -178,8 +183,17 @@ function onDrop(e: DragEvent, toColumnId: string) {
     }
 
     const columnEl = e.currentTarget
-    if (!(columnEl instanceof HTMLElement)) return
+    if (!(columnEl instanceof HTMLElement)) {
+        // 无法计算插入位置时同样清理拖拽状态，避免高亮与 isDragging 残留
+        draggingCard.value = null;
+        dragOverColumn.value = null;
+        return;
+    }
+    // 排除被拖卡片自身：同列拖拽时其仍在 DOM 中，且 DOM 顺序可能与数据顺序错位
+    // （过滤/排序/过渡），几何索引只基于剩余卡片，插入位置与数据模型一致，
+    // 因此无需再做 originalIndex 补偿
     const cardEls = Array.from(columnEl.querySelectorAll('[data-card-id]'))
+        .filter((el) => el.getAttribute('data-card-id') !== cardId)
     let insertIndex = cardEls.length
     const mouseY = e.clientY
     for (let i = 0; i < cardEls.length; i++) {
@@ -190,19 +204,10 @@ function onDrop(e: DragEvent, toColumnId: string) {
         }
     }
 
-    const isSameColumn = fromColumn === toColumnId
-
     const newColumns = columns.value.map((col) => {
         if (col.id === toColumnId) {
             const newCards = col.cards.filter((c) => c.id !== cardId)
-            let adjustedIndex = insertIndex
-            if (isSameColumn) {
-                const originalIndex = col.cards.findIndex((c) => c.id === cardId)
-                if (originalIndex !== -1 && originalIndex < insertIndex) {
-                    adjustedIndex = insertIndex - 1
-                }
-            }
-            newCards.splice(adjustedIndex, 0, card)
+            newCards.splice(insertIndex, 0, card)
             return { ...col, cards: newCards }
         }
         if (col.id === fromColumn) {
@@ -317,7 +322,7 @@ defineExpose({
     },
     addCard: (columnId: string) => emit('add-card', columnId),
     getColumn: (columnId: string) => columns.value.find(c => c.id === columnId),
-    getAllColumns: computed(() => props.modelValue),
+    getAllColumns: () => columns.value,
 });
 </script>
 

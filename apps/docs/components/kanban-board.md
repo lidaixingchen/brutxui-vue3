@@ -136,7 +136,7 @@ interface KanbanColumn {
 | 事件 | 参数 | 说明 |
 |------|------|------|
 | `update:modelValue` | `KanbanColumn[]` | 列数据更新（卡片移动或列排序后） |
-| `card-move` | `(cardId: string, fromColumn: string, toColumn: string)` | 卡片跨列移动完成时触发 |
+| `card-move` | `(cardId: string, fromColumn: string, toColumn: string)` | 卡片移动完成时触发（鼠标拖拽与键盘操作均触发） |
 | `card-click` | `(card: KanbanCard, columnId: string)` | 点击卡片时触发（拖拽过程中不会触发） |
 | `column-move` | `(columnId: string, fromIndex: number, toIndex: number)` | 拖拽列标题完成排序时触发 |
 | `add-card` | `columnId: string` | 点击默认「添加卡片」按钮时触发 |
@@ -196,7 +196,7 @@ const columns = ref([
 | `moveColumn` | `(fromId: string, toId: string)` | 交换两列位置 |
 | `addCard` | `(columnId: string)` | 触发添加卡片事件 |
 | `getColumn` | `(columnId: string)` | 获取指定列数据 |
-| `getAllColumns` | — | 获取所有列数据（计算属性） |
+| `getAllColumns` | `() => KanbanColumn[]` | 获取所有列数据（返回数组） |
 
 ```vue
 <script setup>

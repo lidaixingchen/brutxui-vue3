@@ -26,6 +26,8 @@ export const kanbanColumnHeaderVariants = cva(
         'flex items-center justify-between mb-1',
         'select-none',
         'transition-opacity duration-150',
+        // 预留透明边框占位：dragOver 时仅切换颜色，避免 3px 边框出现造成尺寸跳变与内容位移
+        'border-3 border-transparent',
     ],
     {
         variants: {
@@ -34,7 +36,7 @@ export const kanbanColumnHeaderVariants = cva(
                 false: '',
             },
             dragOver: {
-                true: 'border-3 border-brutal-primary rounded-brutal',
+                true: 'border-brutal-primary rounded-brutal',
                 false: '',
             },
         },
@@ -57,7 +59,9 @@ export const kanbanCardVariants = cva(
     {
         variants: {
             dragging: {
-                true: 'opacity-40 shadow-none',
+                // 抵消基础类 brutalHoverLift/brutalPress 的 hover/active 位移与阴影，
+                // 拖拽中鼠标悬停/按下时卡片保持静止，与 opacity-40 拖拽态视觉一致
+                true: 'opacity-40 shadow-none hover:shadow-none hover:translate-x-0 hover:translate-y-0 active:translate-x-0 active:translate-y-0',
                 false: '',
             },
         },
