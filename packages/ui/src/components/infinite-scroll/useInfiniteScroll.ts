@@ -114,12 +114,22 @@ export function useInfiniteScroll(
             clearTimeout(loadTimer.value)
             loadTimer.value = null
         }
-        // unsupported（无 IntersectionObserver）环境回退：与 InfiniteScroll.vue 组件版
-        // 的 resetLoading 语义一致，无条件保守触发一次（不查 immediate——immediate=false
-        // 仅约束挂载时机，不约束调用方主动复位）。
-        // 契约：unsupported 环境下每次 resetLoading 都会触发一次加载，数据耗尽时须同步
-        // 置 disabled=true，否则会形成「加载→复位→再加载」的自动循环
-        if (targetRef.value && !getDisabled() && !hasIntersectionObserver) {
+
+        if (!targetRef.value || getDisabled()) return
+
+        if (observer.value) {
+            // 解除并重新观察目标，触发一次携带当前相交状态的初始回调。
+            // IntersectionObserver 仅在交叉状态变化时回调，若数据加载后目标元素
+            // 仍处于（含 distance 阈值扩展的）视口内，resetLoading 后不会产生新回调导致停滞；
+            // 重新 observe 会触发 observer 初始回调重新拉取
+            observer.value.unobserve(targetRef.value)
+            observer.value.observe(targetRef.value)
+        } else if (!hasIntersectionObserver) {
+            // unsupported（无 IntersectionObserver）环境回退：与 InfiniteScroll.vue 组件版
+            // 的 resetLoading 语义一致，无条件保守触发一次（不查 immediate——immediate=false
+            // 仅约束挂载时机，不约束调用方主动复位）。
+            // 契约：unsupported 环境下每次 resetLoading 都会触发一次加载，数据耗尽时须同步
+            // 置 disabled=true，否则会形成「加载→复位→再加载」的自动循环
             triggerLoad()
         }
     }

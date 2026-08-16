@@ -193,6 +193,24 @@ describe('GlitchText', () => {
         expect(wrapper.find('.glitch-text').exists()).toBe(true)
     })
 
+    it('keeps data-text intact when functional children cannot be invoked without props', async () => {
+        const functionalChild = ({ item }: { item: string }) => item
+        const vnodeWithFnChildren = {
+            __v_isVNode: true,
+            type: 'div',
+            children: functionalChild as any,
+        }
+        const wrapper = mount(GlitchText, {
+            props: { text: 'Fallback Text' },
+            slots: {
+                default: () => vnodeWithFnChildren as any,
+            },
+        })
+        await nextTick()
+        expect(wrapper.attributes('data-text')).toBe('Fallback Text')
+        expect(wrapper.find('.glitch-text').exists()).toBe(true)
+    })
+
     it('aria-pressed reflects active state even under reduced motion', async () => {
         // useGlitchEffect 已缓存 useReducedMotion 的 mock 引用，doMock 无法穿透深层依赖，
         // 此处直接验证 aria-pressed 与激活态绑定而非 isGlitching（动画类）的语义来源

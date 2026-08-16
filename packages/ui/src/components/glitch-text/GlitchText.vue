@@ -55,7 +55,13 @@ function extractText(node: VNodeChild): string {
         if (Array.isArray(children)) return children.map(extractText).join('')
         // 组件型 VNode：Vue normalizeChildren 会把函数 children 归一化为插槽对象
         // { default: fn, _ctx }，两个形态都需处理
-        if (typeof children === 'function') return extractText((children as () => VNodeChild)())
+        if (typeof children === 'function') {
+            try {
+                return extractText((children as () => VNodeChild)())
+            } catch {
+                return ''
+            }
+        }
         if (children && typeof children === 'object') {
             const defaultSlot = (children as { default?: () => VNodeChild }).default
             if (typeof defaultSlot === 'function') {

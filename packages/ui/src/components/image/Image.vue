@@ -193,9 +193,8 @@ const handlePreview = () => {
     }
     resetTransform()
     // 记录触发元素，关闭预览时归还焦点，避免键盘/读屏用户丢失浏览位置
-    lastFocusedElement = getDocument()?.activeElement instanceof HTMLElement
-        ? getDocument()?.activeElement
-        : null
+    const activeEl = getDocument()?.activeElement
+    lastFocusedElement = activeEl instanceof HTMLElement ? activeEl : null
     showViewer.value = true
     // 打开后把焦点移入遮罩层（tabindex=-1 可编程聚焦）：
     // 否则键盘事件（Escape/方向键）无法通过焦点元素冒泡到遮罩层
