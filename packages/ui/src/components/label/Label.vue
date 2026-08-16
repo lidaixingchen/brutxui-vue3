@@ -15,6 +15,9 @@ interface LabelProps {
     class?: string
 }
 
+// 必填语义由关联控件承担（原生 required / aria-required）：
+// label 角色不支持 aria-required，读屏会忽略；此处仅渲染视觉星号（aria-hidden）
+// for/class 的 undefined 默认值为 vue/require-default-prop 规则要求，与全库约定一致
 const props = withDefaults(defineProps<LabelProps>(), {
     variant: 'default',
     size: 'default',
@@ -29,7 +32,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <LabelRoot :class="classes" :for="props.for" :aria-required="required || undefined">
+    <LabelRoot :class="classes" :for="props.for">
         <slot />
         <span v-if="required" class="text-brutal-destructive ml-0.5" aria-hidden="true">*</span>
     </LabelRoot>

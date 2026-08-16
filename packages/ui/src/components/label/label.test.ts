@@ -113,12 +113,14 @@ describe('Label', () => {
         expect(wrapper.find('span.text-brutal-destructive').attributes('aria-hidden')).toBe('true')
     })
 
-    it('sets aria-required when required is true', () => {
+    // WAI-ARIA：label 角色不支持 aria-required（读屏忽略），必填语义由关联控件承担，
+    // 组件仅渲染视觉星号；required 为 true 时也不应在 label 上设置该属性
+    it('does not set aria-required even when required is true', () => {
         const wrapper = mount(Label, {
             props: { required: true },
             attachTo: document.body,
         })
-        expect(wrapper.attributes('aria-required')).toBe('true')
+        expect(wrapper.attributes('aria-required')).toBeUndefined()
     })
 
     it('does not set aria-required by default', () => {
