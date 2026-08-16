@@ -105,4 +105,34 @@ describe('Kbd', () => {
         expect(classes).toContain('px-3')
         expect(classes).toContain('text-base')
     })
+
+    it('merges conflicting classes with tailwind-merge (custom class wins)', () => {
+        const wrapper = mount(Kbd, {
+            props: { class: 'text-red-500' },
+        })
+        const classes = wrapper.classes()
+        expect(classes).toContain('text-red-500')
+        expect(classes).not.toContain('text-brutal-fg')
+    })
+
+    it('keeps variant class when custom class does not conflict', () => {
+        const wrapper = mount(Kbd, {
+            props: { variant: 'primary', class: 'custom-kbd' },
+        })
+        const classes = wrapper.classes()
+        expect(classes).toContain('bg-brutal-primary')
+        expect(classes).toContain('custom-kbd')
+    })
+
+    it('handles undefined and empty class props', () => {
+        const wrapper = mount(Kbd, {
+            props: { class: undefined },
+        })
+        expect(wrapper.classes()).toContain('bg-brutal-muted')
+
+        const wrapper2 = mount(Kbd, {
+            props: { class: '' },
+        })
+        expect(wrapper2.classes()).toContain('bg-brutal-muted')
+    })
 })

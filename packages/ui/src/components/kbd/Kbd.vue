@@ -12,6 +12,7 @@ interface KbdProps {
     class?: string;
 }
 
+// 默认值与 kbd-variants.ts 的 defaultVariants 保持一致，修改时须同步两处
 const props = withDefaults(defineProps<KbdProps>(), {
     variant: 'default',
     size: 'md',

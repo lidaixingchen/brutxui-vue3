@@ -1,6 +1,9 @@
 import { cva } from 'class-variance-authority'
 import { chipBaseClasses, chipColorVariants } from '@/lib/chip-variants'
 
+// 有意复用 chip 的强描边基础类（border-3 + rounded-brutal）：粗描边是 Neo-Brutalist
+// 设计语言的一部分，kbd 观感与 Button/Badge 保持一致；若未来需要更轻的按键样式，
+// 应在此处独立定义 base 类而非改 chipBaseClasses（会影响 Badge 等共享消费方）
 export const kbdVariants = cva(
     [
         ...chipBaseClasses,
@@ -12,7 +15,7 @@ export const kbdVariants = cva(
     {
         variants: {
             variant: {
-                default: 'bg-brutal-muted text-brutal-fg',
+                default: chipColorVariants.default,
                 primary: chipColorVariants.primary,
                 secondary: chipColorVariants.secondary,
                 accent: chipColorVariants.accent,
