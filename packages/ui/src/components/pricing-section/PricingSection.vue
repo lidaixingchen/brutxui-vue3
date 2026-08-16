@@ -54,7 +54,7 @@ const emit = defineEmits<{
 const { t } = useLocale()
 const internalBilling = ref<BillingPeriod>(props.modelValue ?? props.defaultBilling)
 
-watch(() => props.modelValue ?? props.defaultBilling, (val) => {
+watch(() => props.modelValue, (val) => {
     if (val) internalBilling.value = val
 })
 
@@ -118,7 +118,7 @@ const saasDefaultPlans = computed<PricingPlan[]>(() => [
 ])
 
 const resolvedPlans = computed<BrutalistPricingPlan[]>(() => {
-    if (props.plans) return props.plans
+    if (props.plans && props.plans.length > 0) return props.plans
     if (isSaasPreset.value) return saasDefaultPlans.value
     return []
 })
@@ -188,7 +188,9 @@ function getPlanPrice(plan: BrutalistPricingPlan) {
 
 function getPriceLabel(plan: BrutalistPricingPlan) {
     if (!showBillingToggle.value) return t('pricingSection.perLifetime')
-    if (billing.value === 'monthly') return t('pricingSection.perMonth')
+    if (billing.value === 'monthly') {
+        return plan.priceMonthly !== undefined ? t('pricingSection.perMonth') : t('pricingSection.perLifetime')
+    }
     return plan.priceAnnually !== undefined ? t('pricingSection.perMonthBilledAnnually') : t('pricingSection.perMonth')
 }
 
@@ -258,7 +260,7 @@ function getButtonVariant(plan: BrutalistPricingPlan): ButtonVariant {
 
         <template v-if="resolvedPlans.length > 0">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div v-for="plan in resolvedPlans" :key="plan.name" class="relative">
+                <div v-for="(plan, index) in resolvedPlans" :key="plan.name ?? index" class="relative">
                     <div v-if="plan.popular" :class="popularBadgeWrapClasses">
                         <Badge variant="primary" class="animate-pulse">
 {{ resolvedPopularText }}
@@ -277,7 +279,7 @@ function getButtonVariant(plan: BrutalistPricingPlan): ButtonVariant {
                                 <span class="text-sm font-bold text-brutal-muted-foreground">{{ getPriceLabel(plan) }}</span>
                             </div>
                             <ul class="space-y-3">
-                                <li v-for="(feature, index) in plan.features" :key="index" class="flex items-center gap-2">
+                                <li v-for="(feature, fIndex) in plan.features" :key="fIndex" class="flex items-center gap-2">
                                     <div v-if="isFeatureIncluded(feature)" class="flex h-5 w-5 items-center justify-center bg-brutal-success text-brutal-fg">
                                         <Check class="h-3 w-3 stroke-[3]" />
                                     </div>
