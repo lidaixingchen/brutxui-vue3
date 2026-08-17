@@ -3,13 +3,13 @@ import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
-import { blockSpinnerVariants, getSpinnerColorClasses } from './spinner-variants'
+import { blockSpinnerVariants, getSpinnerColorClasses, type SpinnerColor } from './spinner-variants'
 
 type BlockSpinnerSize = NonNullable<VariantProps<typeof blockSpinnerVariants>['size']>
 
 interface BlockSpinnerProps {
     size?: BlockSpinnerSize
-    color?: 'default' | 'primary' | 'secondary' | 'accent' | 'mixed'
+    color?: SpinnerColor
     label?: string
     class?: string
 }
@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<BlockSpinnerProps>(), {
 
 const { t } = useLocale()
 
-const resolvedLabel = computed(() => props.label ?? t('spinner.loading'))
+const resolvedLabel = computed(() => props.label?.trim() || t('spinner.loading'))
 
 const BLOCK_ANIMATION_DELAY_INCREMENT_MS = 150
 const BLOCK_ANIMATION_DURATION_MS = 600

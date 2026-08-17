@@ -5,6 +5,7 @@ import Spinner from './Spinner.vue'
 import BlockSpinner from './BlockSpinner.vue'
 import DotsSpinner from './DotsSpinner.vue'
 import BarsSpinner from './BarsSpinner.vue'
+import { getSpinnerColorClasses } from './spinner-variants'
 
 const globalProvide = { provide: { [LOCALE_INJECTION_KEY]: en } }
 
@@ -178,5 +179,36 @@ describe('BarsSpinner', () => {
             global: globalProvide,
         })
         expect(wrapper.classes()).toContain('custom-bars')
+    })
+
+    it('applies primary and mixed colors', () => {
+        const primaryWrapper = mount(BarsSpinner, { props: { color: 'primary' }, global: globalProvide })
+        const primaryBars = primaryWrapper.findAll('div.animate-pulse')
+        expect(primaryBars[0].classes()).toContain('bg-brutal-primary')
+
+        const mixedWrapper = mount(BarsSpinner, { props: { color: 'mixed' }, global: globalProvide })
+        const mixedBars = mixedWrapper.findAll('div.animate-pulse')
+        expect(mixedBars.length).toBe(5)
+        expect(mixedBars[0].classes()).toContain('bg-brutal-primary')
+        expect(mixedBars[1].classes()).toContain('bg-brutal-secondary')
+    })
+
+    it('falls back to default label when label prop is empty string', () => {
+        const wrapper = mount(BarsSpinner, { props: { label: '' }, global: globalProvide })
+        expect(wrapper.attributes('aria-label')).toBe('Loading...')
+        expect(wrapper.find('.sr-only').text()).toBe('Loading...')
+    })
+})
+
+describe('getSpinnerColorClasses helper', () => {
+    it('returns empty array for non-positive or non-integer count', () => {
+        expect(getSpinnerColorClasses('primary', 0)).toEqual([])
+        expect(getSpinnerColorClasses('primary', -2)).toEqual([])
+        expect(getSpinnerColorClasses('primary', 2.5)).toEqual([])
+    })
+
+    it('returns fallback color for unknown color or prototype properties', () => {
+        expect(getSpinnerColorClasses('unknown', 2)).toEqual(['bg-brutal-fg', 'bg-brutal-fg'])
+        expect(getSpinnerColorClasses('toString', 2)).toEqual(['bg-brutal-fg', 'bg-brutal-fg'])
     })
 })

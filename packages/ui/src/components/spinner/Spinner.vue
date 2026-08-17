@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<SpinnerProps>(), {
 
 const { t } = useLocale()
 
-const resolvedLabel = computed(() => props.label ?? t('spinner.loading'))
+const resolvedLabel = computed(() => props.label?.trim() || t('spinner.loading'))
 
 const classes = computed(() =>
     cn(spinnerVariants({ size: props.size, variant: props.variant }), props.class)

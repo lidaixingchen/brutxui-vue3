@@ -23,9 +23,9 @@ const props = withDefaults(defineProps<DotsSpinnerProps>(), {
 
 const { t } = useLocale()
 
-const resolvedLabel = computed(() => props.label ?? t('spinner.loading'))
+const resolvedLabel = computed(() => props.label?.trim() || t('spinner.loading'))
 
-const sizeMap: Record<string, string> = {
+const sizeMap: Record<DotsSpinnerSize, string> = {
     sm: 'h-1.5 w-1.5',
     default: 'h-2.5 w-2.5',
     lg: 'h-3.5 w-3.5',

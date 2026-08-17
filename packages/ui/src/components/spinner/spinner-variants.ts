@@ -66,22 +66,31 @@ export const dotsSpinnerVariants = cva('flex items-center', {
     },
 })
 
-export const SPINNER_COLOR_CLASSES: Record<string, string> = {
+export const SPINNER_COLOR_CLASSES = {
     default: 'bg-brutal-fg',
     primary: 'bg-brutal-primary',
     secondary: 'bg-brutal-secondary',
     accent: 'bg-brutal-accent',
     info: 'bg-brutal-info',
-}
+} as const
 
-const MIXED_COLOR_ORDER = ['primary', 'secondary', 'accent', 'info']
+export type SpinnerColor = keyof typeof SPINNER_COLOR_CLASSES | 'mixed'
+
+const MIXED_COLOR_ORDER: (keyof typeof SPINNER_COLOR_CLASSES)[] = ['primary', 'secondary', 'accent', 'info']
 
 export function getSpinnerColorClasses(color: string, count: number): string[] {
-    if (color === 'mixed') {
-        return Array.from({ length: count }, (_, i) =>
-            SPINNER_COLOR_CLASSES[MIXED_COLOR_ORDER[i % MIXED_COLOR_ORDER.length]]
-        )
+    if (!Number.isInteger(count) || count <= 0) {
+        return []
     }
-    return Array(count).fill(SPINNER_COLOR_CLASSES[color] ?? SPINNER_COLOR_CLASSES.default)
+    if (color === 'mixed') {
+        return Array.from({ length: count }, (_, i) => {
+            const colorKey = MIXED_COLOR_ORDER[i % MIXED_COLOR_ORDER.length] ?? 'default'
+            return SPINNER_COLOR_CLASSES[colorKey]
+        })
+    }
+    const resolved = Object.hasOwn(SPINNER_COLOR_CLASSES, color)
+        ? SPINNER_COLOR_CLASSES[color as keyof typeof SPINNER_COLOR_CLASSES]
+        : SPINNER_COLOR_CLASSES.default
+    return Array(count).fill(resolved)
 }
 
