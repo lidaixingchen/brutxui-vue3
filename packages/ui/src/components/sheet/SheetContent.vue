@@ -14,6 +14,10 @@ import { iconSizeVariants } from '@/lib/icon-size-variants'
 import { modalCloseButtonVariants, overlayVariants } from '@/lib/modal-variants'
 import { useLocale } from '@/composables/useLocale'
 
+defineOptions({
+    inheritAttrs: false,
+})
+
 type SheetVariantProps = VariantProps<typeof sheetVariants>
 
 interface SheetContentProps {
@@ -28,6 +32,13 @@ const props = withDefaults(defineProps<SheetContentProps>(), {
 
 const { t } = useLocale()
 
+const CLOSE_BUTTON_PLACEMENT_MAP: Record<NonNullable<SheetVariantProps['side']>, 'sheet-left' | 'sheet-right'> = {
+    left: 'sheet-left',
+    right: 'sheet-right',
+    top: 'sheet-right',
+    bottom: 'sheet-right',
+}
+
 const overlayClasses = computed(() => overlayVariants())
 
 const contentClasses = computed(() =>
@@ -36,7 +47,7 @@ const contentClasses = computed(() =>
 
 const closeClasses = computed(() =>
     modalCloseButtonVariants({
-        placement: props.side === 'left' ? 'sheet-left' : 'sheet-right',
+        placement: CLOSE_BUTTON_PLACEMENT_MAP[props.side],
         motion: 'sm',
     })
 )
@@ -47,7 +58,7 @@ const closeIconClasses = cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
 <template>
     <DialogPortalPrimitive>
         <DialogOverlayPrimitive :class="overlayClasses" />
-        <DialogContentPrimitive :class="contentClasses">
+        <DialogContentPrimitive :class="contentClasses" v-bind="$attrs">
             <slot />
             <DialogClosePrimitive :class="closeClasses">
                 <X :class="closeIconClasses" />

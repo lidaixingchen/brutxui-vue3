@@ -14,7 +14,7 @@ describe('SheetContent', () => {
         DialogPortal: primitiveStub,
         DialogOverlay: primitiveStub,
         DialogContent: {
-            template: '<div data-testid="sheet-content"><slot /></div>',
+            template: '<div data-testid="sheet-content" v-bind="$attrs"><slot /></div>',
         },
         DialogClose: {
             template: '<button data-testid="sheet-close" v-bind="$attrs"><slot /></button>',
@@ -111,6 +111,19 @@ describe('SheetContent', () => {
         const content = wrapper.find('[data-testid="sheet-content"]')
         expect(content.classes()).toContain('custom-sheet')
     })
+
+    it('forwards non-class attrs to DialogContent', () => {
+        const wrapper = mount(SheetContent, {
+            attrs: {
+                'data-custom': 'my-sheet-attr',
+                'aria-label': 'My Sheet Label',
+            },
+            global: { stubs: contentStubs },
+        })
+        const content = wrapper.find('[data-testid="sheet-content"]')
+        expect(content.attributes('data-custom')).toBe('my-sheet-attr')
+        expect(content.attributes('aria-label')).toBe('My Sheet Label')
+    })
 })
 
 describe('SheetHeader', () => {
@@ -157,9 +170,25 @@ describe('SheetTitle', () => {
     it('applies custom class', () => {
         const wrapper = mount(SheetTitle, {
             props: { class: 'custom-title' },
+            slots: { default: 'Title text' },
             global: { stubs: { DialogTitle: primitiveStub } },
         })
         expect(wrapper.classes()).toContain('custom-title')
+    })
+
+    it('does not render when slot is empty', () => {
+        const wrapper = mount(SheetTitle, {
+            global: { stubs: { DialogTitle: primitiveStub } },
+        })
+        expect(wrapper.find('div').exists()).toBe(false)
+    })
+
+    it('does not render when slot contains only whitespace', () => {
+        const wrapper = mount(SheetTitle, {
+            slots: { default: '   \n  \t  ' },
+            global: { stubs: { DialogTitle: primitiveStub } },
+        })
+        expect(wrapper.find('div').exists()).toBe(false)
     })
 })
 
@@ -175,8 +204,16 @@ describe('SheetDescription', () => {
     it('applies custom class', () => {
         const wrapper = mount(SheetDescription, {
             props: { class: 'custom-desc' },
+            slots: { default: 'Description text' },
             global: { stubs: { DialogDescription: primitiveStub } },
         })
         expect(wrapper.classes()).toContain('custom-desc')
+    })
+
+    it('does not render when slot is empty', () => {
+        const wrapper = mount(SheetDescription, {
+            global: { stubs: { DialogDescription: primitiveStub } },
+        })
+        expect(wrapper.find('div').exists()).toBe(false)
     })
 })
