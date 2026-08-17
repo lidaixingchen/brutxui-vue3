@@ -30,9 +30,14 @@ const props = withDefaults(defineProps<ToggleGroupProps>(), {
 
 const emit = defineEmits<{ 'update:modelValue': [value: string | string[]] }>()
 
-/** 类型守卫：将 reka-ui 的 AcceptableValue 缩窄为 string | string[] */
-function isStringOrStringArray(val: unknown): val is string | string[] {
-    return typeof val === 'string' || (Array.isArray(val) && val.every(v => typeof v === 'string'))
+function handleUpdateModelValue(val: unknown) {
+    if (typeof val === 'string') {
+        emit('update:modelValue', val)
+    } else if (Array.isArray(val) && val.every(v => typeof v === 'string')) {
+        emit('update:modelValue', val)
+    } else if (val === undefined || val === null) {
+        emit('update:modelValue', (props.type === 'multiple' ? [] : '') as string | string[])
+    }
 }
 
 const classes = computed(() =>
@@ -57,7 +62,7 @@ provide(toggleGroupKey, {
         :disabled="disabled"
         :orientation="orientation"
         :class="classes"
-        @update:model-value="(val) => { if (isStringOrStringArray(val)) emit('update:modelValue', val) }"
+        @update:model-value="handleUpdateModelValue"
     >
         <slot />
     </ToggleGroupRoot>
