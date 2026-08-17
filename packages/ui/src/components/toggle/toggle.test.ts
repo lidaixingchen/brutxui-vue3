@@ -80,12 +80,14 @@ describe('Toggle', () => {
         expect(wrapper.find('button').attributes('aria-label')).toBe('加粗')
     })
 
-    it('renders Loader2 spinner when loading=true', () => {
+    it('renders Loader2 spinner and hides slot content when loading=true', () => {
         const wrapper = mount(Toggle, {
             props: { loading: true },
+            slots: { default: '<span>Bold</span>' },
             attachTo: document.body,
         })
         expect(wrapper.findComponent(Loader2).exists()).toBe(true)
+        expect(wrapper.text()).not.toContain('Bold')
     })
 
     it('disables button when loading=true', () => {
@@ -97,11 +99,13 @@ describe('Toggle', () => {
         expect(wrapper.find('button').attributes('aria-busy')).toBe('true')
     })
 
-    it('does not render spinner when loading=false', () => {
+    it('renders slot content when loading=false', () => {
         const wrapper = mount(Toggle, {
             props: { loading: false },
+            slots: { default: '<span>Bold</span>' },
             attachTo: document.body,
         })
         expect(wrapper.findComponent(Loader2).exists()).toBe(false)
+        expect(wrapper.text()).toContain('Bold')
     })
 })

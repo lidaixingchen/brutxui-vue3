@@ -16,14 +16,14 @@ export const toggleVariants = cva(
             variant: {
                 default: [
                     'text-brutal-fg shadow-brutal-sm',
-                    `hover:bg-brutal-muted ${brutalHoverLiftSm}`,
+                    `data-[state=off]:hover:bg-brutal-muted data-[state=off]:${brutalHoverLiftSm}`,
                     formToggleVariantColors.primary,
                     formToggleForegroundColors.primary,
                     brutalPressedStateOn,
                 ],
                 outline: [
-                    'text-brutal-fg border-3 border-brutal shadow-brutal-sm',
-                    `hover:bg-brutal-muted ${brutalHoverLiftSm}`,
+                    'text-brutal-fg shadow-brutal-sm',
+                    `data-[state=off]:hover:bg-brutal-muted data-[state=off]:${brutalHoverLiftSm}`,
                     formToggleVariantColors.secondary,
                     'data-[state=off]:bg-transparent',
                     formToggleForegroundColors.secondary,

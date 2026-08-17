@@ -62,6 +62,6 @@ const loaderClasses = computed(() =>
         @update:model-value="emit('update:modelValue', $event)"
     >
         <Loader2 v-if="loading" :class="loaderClasses" />
-        <slot />
+        <slot v-else />
     </Toggle>
 </template>
