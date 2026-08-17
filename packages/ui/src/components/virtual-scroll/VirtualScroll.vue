@@ -25,7 +25,7 @@ const { t } = useLocale()
 
 const parentRef = ref<HTMLElement | null>(null)
 
-const isAvailable = ref(true)
+const isAvailable = ref<boolean | null>(null)
 
 const virtualizerRef = shallowRef<VirtualizerInstance | null>(null)
 
@@ -34,7 +34,7 @@ let stopWatchScrollElement: (() => void) | null = null
 let stopWatchOptions: (() => void) | null = null
 let isUnmounted = false
 
-// 使用 .then()/.catch() 模式而非顶层 await
+// 使用 .then()/.catch() 模式动态加载
 import('@tanstack/vue-virtual')
     .then((mod) => {
         if (isUnmounted) return
@@ -67,20 +67,27 @@ import('@tanstack/vue-virtual')
         )
 
         stopWatchOptions = watch(
-            () => [props.items.length, props.itemHeight, props.overscan, props.dynamicHeight],
-            () => {
+            () => [props.items.length, props.itemHeight, props.overscan, props.dynamicHeight] as const,
+            (newVals, oldVals) => {
                 virtualizer.setOptions({
                     ...getOptions(),
                     onChange: () => {
                         triggerRef(virtualizerRef)
                     }
                 })
+                const oldDynamicHeight = oldVals?.[3]
+                const newDynamicHeight = newVals[3]
+                if (oldDynamicHeight !== undefined && newDynamicHeight !== oldDynamicHeight) {
+                    virtualizer.measure()
+                }
                 virtualizer._willUpdate()
                 triggerRef(virtualizerRef)
+                isScrollEndEmitting.value = false
             },
             { immediate: true }
         )
 
+        isAvailable.value = true
         virtualizer._willUpdate()
         triggerRef(virtualizerRef)
     })
@@ -111,11 +118,6 @@ function handleScroll() {
         isScrollEndEmitting.value = false
     }
 }
-
-watch(() => props.items.length, () => {
-    virtualizerRef.value?.measure()
-    isScrollEndEmitting.value = false
-})
 
 onMounted(() => {
     if (parentRef.value) {
@@ -152,15 +154,19 @@ function scrollToIndex(index: number) {
     virtualizerRef.value.scrollToIndex(clampedIndex)
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function measureElement(el: any) {
-    if (virtualizerRef.value && 'measureElement' in virtualizerRef.value) {
+function measureElement(el: Element | null) {
+    if (el && virtualizerRef.value && 'measureElement' in virtualizerRef.value) {
         virtualizerRef.value.measureElement(el)
     }
 }
 
-// 重新测量全部已挂载项：dynamic-height 模式下外部内容高度变化后（如展开行）
-// 调用以更新 totalSize 与偏移，避免后续项重叠或裁切
+function onItemRef(el: unknown) {
+    if (el instanceof Element && props.dynamicHeight) {
+        measureElement(el)
+    }
+}
+
+// 重新测量全部已挂载项：dynamic-height 模式下外部内容高度变化后调用
 function measure() {
     virtualizerRef.value?.measure()
 }
@@ -170,7 +176,7 @@ defineExpose({ scrollToIndex, measureElement, measure, virtualizer: virtualizerR
 
 <template>
     <div
-        v-if="!isAvailable"
+        v-if="isAvailable === false"
         :class="rootClasses"
         role="list"
         :aria-label="t('virtualScroll.label')"
@@ -179,6 +185,16 @@ defineExpose({ scrollToIndex, measureElement, measure, virtualizer: virtualizerR
             <p class="font-bold">
                 [BrutxUI] VirtualScroll component requires @tanstack/vue-virtual. Install it: pnpm add @tanstack/vue-virtual
             </p>
+        </div>
+    </div>
+    <div
+        v-else-if="isAvailable === null && slots.loading"
+        :class="rootClasses"
+        :role="props.role"
+        :aria-label="t('virtualScroll.label')"
+    >
+        <div class="flex items-center justify-center p-8">
+            <slot name="loading" />
         </div>
     </div>
     <div
@@ -205,8 +221,8 @@ defineExpose({ scrollToIndex, measureElement, measure, virtualizer: virtualizerR
         >
             <div
                 v-for="virtualRow in virtualItems"
-                :key="Number(virtualRow.key)"
-                :ref="el => { if (el && props.dynamicHeight) measureElement(el) }"
+                :key="virtualRow.key"
+                :ref="onItemRef"
                 :data-index="virtualRow.index"
                 :class="cn(
                     virtualScrollItemVariants({ variant: props.variant }),

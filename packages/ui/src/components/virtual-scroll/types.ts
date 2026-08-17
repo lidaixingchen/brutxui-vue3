@@ -1,16 +1,16 @@
 export interface VirtualScrollItem {
-    id: string | number
+    id?: string | number
     [key: string]: unknown
 }
 
 export interface VirtualScrollProps<T = unknown> {
     /** 数据列表 */
     items: T[]
-    /** 每项高度（像素） */
+    /** 每项估算高度（像素） */
     itemHeight?: number
     /** 是否启用动态高度测量 */
     dynamicHeight?: boolean
-    /** 尺寸变体 */
+    /** 尺寸变体；使用 'full' 时要求父容器提供确定高度（如 h-full/h-screen） */
     size?: 'sm' | 'default' | 'lg' | 'xl' | 'full'
     /** 列表项样式变体 */
     variant?: 'default' | 'striped' | 'bordered'
@@ -34,7 +34,7 @@ export interface VirtualScrollEmits {
 }
 
 export interface VirtualizerVirtualItem {
-    key: unknown
+    key: string | number
     index: number
     size: number
     start: number
@@ -45,6 +45,6 @@ export interface VirtualizerInstance {
     getTotalSize: () => number
     scrollToIndex: (index: number) => void
     measure: () => void
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    measureElement: (el: any) => void
+    measureElement: (el: Element | null) => void
 }
+

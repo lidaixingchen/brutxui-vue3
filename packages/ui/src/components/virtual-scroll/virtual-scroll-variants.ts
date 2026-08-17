@@ -16,6 +16,7 @@ export const virtualScrollRootVariants = cva(
                 default: 'max-h-96',
                 lg: 'max-h-[32rem]',
                 xl: 'max-h-[48rem]',
+                // full 模式依赖父容器具有确定高度约束（如 h-screen/h-96）
                 full: 'max-h-full',
             },
         },
@@ -38,8 +39,9 @@ export const virtualScrollItemVariants = cva(
         variants: {
             variant: {
                 default: '',
+                // striped 变体背景由组件根据 virtualRow.index % 2 === 1 动态附加 bg-brutal-muted/50
                 striped: '',
-                bordered: 'border-b-2 border-brutal',
+                bordered: 'border-b-3 border-brutal',
             },
         },
         defaultVariants: {

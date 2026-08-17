@@ -194,4 +194,35 @@ describe('VirtualScroll', () => {
         expect(items[0].classes()).not.toContain('bg-brutal-muted/50')
         expect(items[1].classes()).toContain('bg-brutal-muted/50')
     })
+
+    it('applies bordered variant classes with border-b-3', async () => {
+        const wrapper = mountComponent({
+            props: {
+                items: mockItems,
+                variant: 'bordered',
+            },
+        })
+        await flushPromises()
+
+        const items = wrapper.findAll('[role="listitem"]')
+        expect(items.length).toBe(2)
+        expect(items[0].classes()).toContain('border-b-3')
+        expect(items[0].classes()).toContain('border-brutal')
+    })
+
+    it('exposes measure and measureElement methods', async () => {
+        const wrapper = mountComponent({
+            props: {
+                items: mockItems,
+            },
+        })
+        await flushPromises()
+
+        const vm = wrapper.vm as unknown as {
+            measure: () => void
+            measureElement: (el: Element | null) => void
+        }
+        expect(typeof vm.measure).toBe('function')
+        expect(typeof vm.measureElement).toBe('function')
+    })
 })
