@@ -179,4 +179,40 @@ describe('Separator', () => {
             expect(line.classes()).toContain('my-text-sep')
         })
     })
+
+    it('does not render text separator when slot content is only whitespace', () => {
+        const wrapper = mount(Separator, {
+            slots: { default: '   \n  \t  ' },
+            attachTo: document.body,
+        })
+        expect(wrapper.findAll('div.flex-1').length).toBe(0)
+    })
+
+    it('does not render text separator when slot content is empty string', () => {
+        const wrapper = mount(Separator, {
+            slots: { default: '' },
+            attachTo: document.body,
+        })
+        expect(wrapper.findAll('div.flex-1').length).toBe(0)
+    })
+
+    it('text separator sets aria-hidden when decorative is true', () => {
+        const wrapper = mount(Separator, {
+            props: { decorative: true },
+            slots: { default: 'OR' },
+            attachTo: document.body,
+        })
+        expect(wrapper.attributes('aria-hidden')).toBe('true')
+        expect(wrapper.attributes('aria-orientation')).toBeUndefined()
+    })
+
+    it('text separator sets aria-orientation when decorative is false', () => {
+        const wrapper = mount(Separator, {
+            props: { decorative: false },
+            slots: { default: 'OR' },
+            attachTo: document.body,
+        })
+        expect(wrapper.attributes('aria-orientation')).toBe('horizontal')
+        expect(wrapper.attributes('aria-hidden')).toBeUndefined()
+    })
 })
