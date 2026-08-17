@@ -30,6 +30,14 @@ export const DIALOG_MIN_HEIGHT_PX = 150
 /** Default transition duration (ms) for dialog open/close animations */
 export const DEFAULT_DIALOG_TRANSITION_MS = 300
 
+// ── Imperative Overlay ────────────────────────────────────────
+
+/** 命令式弹层基础 z-index */
+export const DEFAULT_OVERLAY_Z_INDEX = 1000
+
+/** 多层弹窗嵌套时的 z-index 步进步长 */
+export const OVERLAY_Z_INDEX_STEP = 10
+
 // ── Toast ─────────────────────────────────────────────────────
 
 /**
