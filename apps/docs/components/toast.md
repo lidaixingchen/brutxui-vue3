@@ -232,6 +232,7 @@ async function handleSave() {
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 尺寸 |
 | `title` | `string` | — | 标题文本 |
 | `description` | `string` | — | 描述文本 |
+| `count` | `number` | `1` | 聚合计数，大于 1 时显示为 (N) |
 | `duration` | `number` | `5000` | 显示时长（毫秒），设为 `0` 则不自动关闭 |
 | `pauseOnHover` | `boolean` | `true` | 鼠标悬停时暂停倒计时与进度条动画，移出后从剩余时间继续 |
 | `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'xl'` | 主图标尺寸 |

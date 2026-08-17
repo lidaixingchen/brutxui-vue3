@@ -178,6 +178,7 @@ import {
 | Prop | Type | Default | Description |
 |------|------|--------|------|
 | `modelValue` | `string` | — | Value of the currently active tab (controlled mode) |
+| `tabs` | `TabItem[]` | — | Tab data array for auto rendering TabsList/TabsTrigger/TabsContent |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Tab arrangement direction |
 | `class` | `string` | — | Custom CSS class name |
 
@@ -203,6 +204,7 @@ import {
 | Prop | Type | Default | Description |
 |------|------|--------|------|
 | `value` | `string` | — (required) | Corresponding tab value |
+| `forceMount` | `boolean` | `false` | Force mount content for custom transition control |
 | `class` | `string` | — | Custom CSS class name |
 
 ## Events

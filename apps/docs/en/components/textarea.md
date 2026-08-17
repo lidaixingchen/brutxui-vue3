@@ -123,6 +123,7 @@ Set different sizes via the `size` prop:
 | `modelValue` | `string` | — | Binding value, supports v-model |
 | `variant` | `'default' \| 'error' \| 'success'` | `'default'` | Border style variant |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Size |
+| `resize` | `'none' \| 'vertical' \| 'horizontal' \| 'both'` | `'none'` | Resize mode |
 | `disabled` | `boolean` | `false` | Whether disabled |
 | `readonly` | `boolean` | `false` | Whether readonly (not editable but selectable/copyable, cursor is `cursor-default`, opacity not reduced) |
 | `placeholder` | `string` | Internationalized fallback text | Placeholder text |

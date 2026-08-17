@@ -170,6 +170,7 @@ Tooltip content panel with neo-brutalist styling. Rendered via Portal to `body` 
 | `side` | `'top' \| 'right' \| 'bottom' \| 'left'` | `'top'` | Display direction |
 | `align` | `'start' \| 'center' \| 'end'` | `'center'` | Alignment relative to the trigger |
 | `alignOffset` | `number` | — | Alignment offset (in pixels) |
+| `to` | `string \| HTMLElement` | — | Custom Portal mount target container |
 | `avoidCollisions` | `boolean` | — | Whether to automatically avoid collisions |
 | `collisionBoundary` | `Element \| Element[]` | — | Collision detection boundary |
 | `collisionPadding` | `number \| Record<string, number>` | — | Collision detection padding |

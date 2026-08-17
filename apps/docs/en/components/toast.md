@@ -233,6 +233,7 @@ async function handleSave() {
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Size |
 | `title` | `string` | — | Title text |
 | `description` | `string` | — | Description text |
+| `count` | `number` | `1` | Aggregated count, displayed as (N) when > 1 |
 | `duration` | `number` | `5000` | Display duration (in milliseconds); set to `0` to disable auto-close |
 | `pauseOnHover` | `boolean` | `true` | Pause the countdown timer and progress bar animation on hover; resume from remaining time when the mouse leaves |
 | `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'xl'` | Main icon size |

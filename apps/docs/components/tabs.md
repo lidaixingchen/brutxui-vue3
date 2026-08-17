@@ -223,6 +223,7 @@ import type { TabItem } from 'brutx-ui-vue/tabs'
 interface TabItem {
     label: string
     value: string
+    disabled?: boolean
 }
 ```
 
@@ -230,6 +231,7 @@ interface TabItem {
 | --- | --- | --- |
 | `label` | `string` | 标签显示文本 |
 | `value` | `string` | 标签唯一标识 |
+| `disabled` | `boolean` | 是否禁用此标签（可选） |
 
 ## 组合式函数
 

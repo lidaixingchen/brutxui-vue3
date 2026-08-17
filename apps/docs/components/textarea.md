@@ -144,6 +144,7 @@ const message = ref('')
 | `modelValue` | `string` | — | 绑定值，支持 v-model |
 | `variant` | `'default' \| 'error' \| 'success'` | `'default'` | 边框样式变体 |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 尺寸 |
+| `resize` | `'none' \| 'vertical' \| 'horizontal' \| 'both'` | `'none'` | 尺寸调整模式 |
 | `disabled` | `boolean` | `false` | 是否禁用 |
 | `readonly` | `boolean` | `false` | 是否只读（不可编辑但可选中复制，光标为 `cursor-default`，不降低透明度） |
 | `placeholder` | `string` | 国际化回退文本 | 占位符文本 |

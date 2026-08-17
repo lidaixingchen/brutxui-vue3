@@ -169,6 +169,7 @@ const isOpen = ref(false)
 | `side` | `'top' \| 'right' \| 'bottom' \| 'left'` | `'top'` | 显示方向 |
 | `align` | `'start' \| 'center' \| 'end'` | `'center'` | 相对触发器的对齐方式 |
 | `alignOffset` | `number` | — | 对齐偏移量（像素） |
+| `to` | `string \| HTMLElement` | — | 自定义 Portal 挂载目标容器 |
 | `avoidCollisions` | `boolean` | — | 是否自动避开碰撞 |
 | `collisionBoundary` | `Element \| Element[]` | — | 碰撞检测边界 |
 | `collisionPadding` | `number \| Record<string, number>` | — | 碰撞检测内边距 |
