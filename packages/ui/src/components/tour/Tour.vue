@@ -58,6 +58,11 @@ const currentStepVal = computed<TourStep | undefined>(() => {
     return props.steps[currentStep.value]
 })
 
+const showMask = computed(() => {
+    const step = props.steps[currentStep.value]
+    return (step?.mask ?? props.mask) ?? true
+})
+
 const popoverClasses = computed(() =>
     cn(
         'fixed p-5 flex flex-col gap-4 max-w-sm min-w-[280px] select-none',
@@ -89,18 +94,23 @@ const drawCanvas = (): void => {
     const dpr = getDevicePixelRatio()
     const { width, height } = getViewportSize()
 
-    canvas.width = width * dpr
-    canvas.height = height * dpr
-    canvas.style.width = `${width}px`
-    canvas.style.height = `${height}px`
+    const nextW = width * dpr
+    const nextH = height * dpr
+    if (canvas.width !== nextW || canvas.height !== nextH) {
+        canvas.width = nextW
+        canvas.height = nextH
+    }
+    if (canvas.style.width !== `${width}px`) canvas.style.width = `${width}px`
+    if (canvas.style.height !== `${height}px`) canvas.style.height = `${height}px`
 
-    ctx.scale(dpr, dpr)
+    if (ctx.setTransform) {
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    } else {
+        ctx.scale(dpr, dpr)
+    }
     ctx.clearRect(0, 0, width, height)
 
-    const step = props.steps[currentStep.value]
-    const showMask = (step?.mask ?? props.mask) ?? true
-
-    if (showMask) {
+    if (showMask.value) {
         ctx.fillStyle = CANVAS_ALPHA_FILL
         ctx.fillRect(0, 0, width, height)
     }
@@ -108,7 +118,7 @@ const drawCanvas = (): void => {
     if (highlightRect.value) {
         const { left, top, width: rectW, height: rectH } = highlightRect.value
 
-        if (showMask) {
+        if (showMask.value) {
             ctx.clearRect(left, top, rectW, rectH)
         }
 
@@ -219,6 +229,8 @@ const recalculatePosition = (): void => {
 }
 
 let positionRequestId = 0
+let isUnmounted = false
+
 const updatePosition = async (): Promise<void> => {
     const requestId = ++positionRequestId
     const step = props.steps[currentStep.value]
@@ -238,7 +250,7 @@ const updatePosition = async (): Promise<void> => {
 
     await nextTick()
 
-    if (requestId !== positionRequestId) return
+    if (requestId !== positionRequestId || isUnmounted || !isOpen.value) return
 
     const rect = el.getBoundingClientRect()
     highlightRect.value = {
@@ -253,8 +265,6 @@ const updatePosition = async (): Promise<void> => {
 }
 
 let resizeObserver: ResizeObserver | null = null
-// 防止 async watch 在 await 期间组件卸载后继续创建新的 ResizeObserver
-let isUnmounted = false
 
 const initResizeObserver = (): void => {
     const ResizeObserverCtor = getResizeObserverCtor()
@@ -282,6 +292,12 @@ const setupResizeObserver = (): void => {
         const el = getTargetElement(step.target)
         if (el && resizeObserver) {
             resizeObserver.observe(el)
+        }
+    }
+    if (resizeObserver && hasDocument) {
+        const body = getDocument()?.body
+        if (body) {
+            resizeObserver.observe(body)
         }
     }
 }
@@ -325,7 +341,7 @@ const handleKeyDown = (e: KeyboardEvent): void => {
     const target = e.target as HTMLElement
     if (target) {
         const tag = target.tagName
-        if (tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable) {
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'BUTTON' || tag === 'A' || tag === 'SELECT' || target.isContentEditable) {
             return
         }
     }
@@ -360,7 +376,6 @@ watch(
             return
         }
         await nextTick()
-        // 卸载发生在 await 期间时停止后续操作，避免泄漏 ResizeObserver
         if (isUnmounted) return
         await updatePosition()
         if (isUnmounted) return
@@ -390,11 +405,15 @@ onBeforeUnmount((): void => {
     <div v-if="isOpen && steps.length > 0" class="brutx-tour">
         <canvas
             ref="canvasRef"
-            class="fixed inset-0 pointer-events-auto"
+            class="fixed inset-0"
+            :class="showMask ? 'pointer-events-auto' : 'pointer-events-none'"
             :style="{ zIndex: Z_INDEX.TOUR_CANVAS }"
         />
         <div
             ref="popoverRef"
+            role="dialog"
+            aria-modal="true"
+            :aria-label="currentStepVal?.title || t('tour.dialog')"
             :style="[popoverStyle, { zIndex: Z_INDEX.TOUR_POPOVER }]"
             :class="popoverClasses"
         >
