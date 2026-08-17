@@ -1,10 +1,21 @@
 import { mount } from '@vue/test-utils'
 import { cn } from '@/lib/utils'
-import { scrollAreaScrollbarVariants, scrollAreaThumbVariants } from './scroll-area-variants'
+import {
+    SCROLL_THICKNESS,
+    scrollAreaRootVariants,
+    scrollAreaScrollbarVariants,
+    scrollAreaThumbVariants,
+} from './scroll-area-variants'
 import ScrollArea from './ScrollArea.vue'
 import ScrollBar from './ScrollBar.vue'
 
 describe('ScrollArea', () => {
+    it('computes root variant classes', () => {
+        const classes = scrollAreaRootVariants()
+        expect(classes).toContain('relative')
+        expect(classes).toContain('overflow-hidden')
+    })
+
     it('renders with default props', () => {
         const wrapper = mount(ScrollArea, {
             attachTo: document.body,
@@ -30,6 +41,18 @@ describe('ScrollArea', () => {
             props: { class: 'my-scroll' },
         })
         expect(wrapper.classes()).toContain('my-scroll')
+        wrapper.unmount()
+    })
+
+    it('applies custom viewportClass', () => {
+        const wrapper = mount(ScrollArea, {
+            attachTo: document.body,
+            props: { viewportClass: 'custom-viewport-padding' },
+        })
+        const viewport = wrapper.find('[data-reka-scroll-area-viewport]')
+        expect(viewport.classes()).toContain('custom-viewport-padding')
+        expect(viewport.classes()).toContain('h-full')
+        expect(viewport.classes()).toContain('w-full')
         wrapper.unmount()
     })
 
@@ -67,14 +90,14 @@ describe('ScrollBar', () => {
     it('computes vertical orientation classes', () => {
         const classes = scrollAreaScrollbarVariants({ orientation: 'vertical' })
         expect(classes).toContain('h-full')
-        expect(classes).toContain('w-[var(--scroll-thickness,0.75rem)]')
+        expect(classes).toContain(`w-[var(--scroll-thickness,${SCROLL_THICKNESS.default})]`)
         expect(classes).toContain('border-l-3')
         expect(classes).toContain('touch-none')
     })
 
     it('computes horizontal orientation classes', () => {
         const classes = scrollAreaScrollbarVariants({ orientation: 'horizontal' })
-        expect(classes).toContain('h-[var(--scroll-thickness,0.75rem)]')
+        expect(classes).toContain(`h-[var(--scroll-thickness,${SCROLL_THICKNESS.default})]`)
         expect(classes).toContain('flex-col')
         expect(classes).toContain('border-t-3')
     })
@@ -105,17 +128,17 @@ describe('ScrollBar', () => {
 
     it('applies sm size thickness variable', () => {
         const classes = scrollAreaScrollbarVariants({ size: 'sm', orientation: 'vertical' })
-        expect(classes).toContain('[--scroll-thickness:0.5rem]')
+        expect(classes).toContain(`[--scroll-thickness:${SCROLL_THICKNESS.sm}]`)
     })
 
     it('applies default size thickness variable', () => {
         const classes = scrollAreaScrollbarVariants({ size: 'default', orientation: 'vertical' })
-        expect(classes).toContain('[--scroll-thickness:0.75rem]')
+        expect(classes).toContain(`[--scroll-thickness:${SCROLL_THICKNESS.default}]`)
     })
 
     it('applies lg size thickness variable', () => {
         const classes = scrollAreaScrollbarVariants({ size: 'lg', orientation: 'vertical' })
-        expect(classes).toContain('[--scroll-thickness:1rem]')
+        expect(classes).toContain(`[--scroll-thickness:${SCROLL_THICKNESS.lg}]`)
     })
 })
 
@@ -135,3 +158,4 @@ describe('ScrollAreaThumb', () => {
         expect(classes).toContain('bg-brutal-accent')
     })
 })
+

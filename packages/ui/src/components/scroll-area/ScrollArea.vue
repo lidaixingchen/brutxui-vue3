@@ -16,22 +16,28 @@ interface ScrollAreaProps {
     variant?: NonNullable<ScrollAreaVariantProps['variant']>
     size?: NonNullable<ScrollAreaVariantProps['size']>
     class?: string
+    viewportClass?: string
 }
 
 const props = withDefaults(defineProps<ScrollAreaProps>(), {
     variant: 'default',
     size: 'default',
     class: undefined,
+    viewportClass: undefined,
 })
 
 const classes = computed(() =>
     cn(scrollAreaRootVariants(), props.class)
 )
+
+const viewportClasses = computed(() =>
+    cn('h-full w-full rounded-[inherit]', props.viewportClass)
+)
 </script>
 
 <template>
     <ScrollAreaRootPrimitive :class="classes">
-        <ScrollAreaViewportPrimitive class="h-full w-full rounded-[inherit]">
+        <ScrollAreaViewportPrimitive :class="viewportClasses">
             <slot />
         </ScrollAreaViewportPrimitive>
         <ScrollBar :variant="variant" :size="size" />
