@@ -114,6 +114,13 @@ export interface DialogLocale {
     cancel: string
 }
 
+export interface MessageBoxLocale {
+    confirm: string
+    cancel: string
+    inputError: string
+    defaultTitle: string
+}
+
 export interface SheetLocale {
     close: string
 }
@@ -472,6 +479,7 @@ export interface Locale {
     toast: ToastLocale
     message: MessageLocale
     dialog: DialogLocale
+    messageBox: MessageBoxLocale
     sheet: SheetLocale
     breadcrumb: BreadcrumbLocale
     treeView: TreeViewLocale

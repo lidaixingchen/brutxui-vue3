@@ -41,7 +41,7 @@ export interface OverlayInstanceHandle<R = unknown> {
     promise: Promise<R>
 }
 
-export type OverlayPropsFactory<P extends Record<string, unknown> = Record<string, unknown>, R = unknown> = (context: {
+export type OverlayPropsFactory<P extends object = Record<string, unknown>, R = unknown> = (context: {
     isOpen: Ref<boolean>
     zIndex: number
     close: (result?: R) => void
@@ -114,7 +114,7 @@ function popStack(id: number): void {
  * 3. 自动 AppContext 继承：优先级为 options.appContext ?? getCurrentInstance()?.appContext ?? getGlobalAppContext()。
  * 4. 确定性非拒绝 Promise 契约与 SSR 安全守卫。
  */
-export function mountOverlay<P extends Record<string, unknown> = Record<string, unknown>, R = unknown>(
+export function mountOverlay<P extends object = Record<string, unknown>, R = unknown>(
     component: Component,
     propsOrFactory: P | OverlayPropsFactory<P, R> = {} as P,
     options: MountOverlayOptions = {}

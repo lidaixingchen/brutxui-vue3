@@ -310,6 +310,12 @@ export const COMPONENTS: Record<string, RegistryComponentMeta> = {
         dependencies: ['@lucide/vue'],
         description: 'Imperative message notification system with singleton container, TransitionGroup stacking, and auto GC.',
     },
+    'message-box': {
+        titleZh: '消息对话框',
+        category: 'feedback',
+        dependencies: ['reka-ui', '@lucide/vue'],
+        description: 'Imperative feedback modal with variants for info, success, warning, error, and prompt validation.',
+    },
     'noise-background': {
         titleZh: '噪点背景',
         category: 'visual-effect',

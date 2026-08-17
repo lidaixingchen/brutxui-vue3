@@ -98,6 +98,12 @@ export const zhCN: Locale = {
         confirm: '确认',
         cancel: '取消',
     },
+    messageBox: {
+        confirm: '确认',
+        cancel: '取消',
+        inputError: '输入格式不正确',
+        defaultTitle: '提示',
+    },
     sheet: {
         close: '关闭',
     },

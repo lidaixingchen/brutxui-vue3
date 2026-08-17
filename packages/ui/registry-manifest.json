@@ -732,6 +732,22 @@
       "z-index.ts"
     ]
   },
+  "message-box": {
+    "files": [
+      "MessageBox.vue",
+      "functional.ts",
+      "message-box-variants.ts"
+    ],
+    "composables": [
+      "useLocale.ts"
+    ],
+    "directives": [],
+    "lib": [
+      "env.ts",
+      "icon-size-variants.ts",
+      "render-imperative.ts"
+    ]
+  },
   "noise-background": {
     "files": [
       "NoiseBackground.vue",

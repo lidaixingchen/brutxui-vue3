@@ -98,6 +98,12 @@ export const en: Locale = {
         confirm: 'Confirm',
         cancel: 'Cancel',
     },
+    messageBox: {
+        confirm: 'Confirm',
+        cancel: 'Cancel',
+        inputError: 'Invalid input format',
+        defaultTitle: 'Prompt',
+    },
     sheet: {
         close: 'Close',
     },
