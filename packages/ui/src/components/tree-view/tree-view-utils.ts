@@ -95,6 +95,13 @@ function insertNode(
     return false
 }
 
+export function cloneTree(nodes: TreeNode[]): TreeNode[] {
+    return nodes.map((node: TreeNode) => ({
+        ...node,
+        children: node.children ? cloneTree(node.children) : undefined,
+    }))
+}
+
 export function moveNode(
     nodes: TreeNode[],
     dragId: string,
@@ -102,7 +109,7 @@ export function moveNode(
     dropType: 'before' | 'after' | 'inner'
 ): TreeNode[] {
     if (dragId === dropId) {
-        return nodes
+        return cloneTree(nodes)
     }
 
     const [treeWithoutDrag, dragNode] = cloneTreeAndExtract(nodes, dragId)
@@ -113,22 +120,13 @@ export function moveNode(
 
     const descendantIds = getAllDescendantIds(dragNode)
     if (descendantIds.includes(dropId)) {
-        return cloneTreeAndExtract(nodes, '')[0]
+        return cloneTree(nodes)
     }
 
     const inserted = insertNode(treeWithoutDrag, dropId, dragNode, dropType)
     if (!inserted) {
-        return cloneTreeAndExtract(nodes, '')[0]
+        return cloneTree(nodes)
     }
 
     return treeWithoutDrag
 }
-
-export function cloneTree(nodes: TreeNode[]): TreeNode[] {
-    return nodes.map((node: TreeNode) => ({
-        ...node,
-        children: node.children ? cloneTree(node.children) : undefined,
-    }))
-}
-
-

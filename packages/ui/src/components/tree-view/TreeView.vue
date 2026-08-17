@@ -124,13 +124,14 @@ const expandedIds = shallowRef<Set<string>>(new Set(props.defaultExpanded));
 const checkedSet = computed(() => new Set(props.checkedIds));
 
 function toggleExpand(id: string) {
+    const node = findNodeById(localNodes.value, id);
+    if (node?.disabled) return;
     const nextSet = new Set(expandedIds.value)
     if (nextSet.has(id)) {
         nextSet.delete(id)
     } else {
         nextSet.add(id)
         
-        const node = findNodeById(localNodes.value, id);
         if (node && props.lazy && props.load && !node.loaded && !node.isLeaf) {
             triggerLoad(node);
         }
@@ -141,6 +142,7 @@ function toggleExpand(id: string) {
 }
 
 function selectNode(node: TreeNode) {
+    if (node.disabled) return;
     emit('update:modelValue', node.id);
     emit('select', node);
 }
@@ -166,6 +168,7 @@ function getVisibleTreeItems(): HTMLElement[] {
     const root = treeRootRef.value
     if (!root) return []
     return Array.from(root.querySelectorAll<HTMLElement>('[role="treeitem"]'))
+        .filter((el) => el.getClientRects().length > 0)
 }
 
 function focusAdjacent(direction: -1 | 1) {
@@ -361,6 +364,8 @@ function onNodeDrop(event: DragEvent, node: TreeNode) {
     dropType.value = null;
 }
 
+let filterExpandedSnapshot: Set<string> | null = null
+
 function filter(query: string) {
     if (!props.filterable) return;
     
@@ -374,8 +379,17 @@ function filter(query: string) {
             }
         }
         resetHidden(localNodes.value);
+        if (filterExpandedSnapshot !== null) {
+            expandedIds.value = filterExpandedSnapshot;
+            emit('update:expanded', Array.from(filterExpandedSnapshot));
+            filterExpandedSnapshot = null;
+        }
         emitNodesUpdate();
         return;
+    }
+    
+    if (filterExpandedSnapshot === null) {
+        filterExpandedSnapshot = new Set(expandedIds.value);
     }
     
     const method = props.filterMethod || ((q: string, n: TreeNode) => 
