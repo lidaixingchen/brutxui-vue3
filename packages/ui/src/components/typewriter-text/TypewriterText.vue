@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, shallowRef, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, shallowRef, computed, watch, onBeforeUnmount } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { useReducedMotion } from '@/composables/useReducedMotion'
@@ -49,6 +49,8 @@ const isTyping = ref(false)
 const typeTimer = shallowRef<ReturnType<typeof setTimeout> | null>(null)
 const startTimer = shallowRef<ReturnType<typeof setTimeout> | null>(null)
 
+const chars = computed(() => Array.from(props.text || ''))
+
 function clearAllTimers() {
     if (typeTimer.value) {
         clearTimeout(typeTimer.value)
@@ -68,8 +70,8 @@ function reset() {
 }
 
 function typeNextChar() {
-    if (currentIndex.value < props.text.length) {
-        displayedText.value += props.text[currentIndex.value]
+    if (currentIndex.value < chars.value.length) {
+        displayedText.value += chars.value[currentIndex.value]
         currentIndex.value++
         typeTimer.value = setTimeout(typeNextChar, props.speed)
     } else {
@@ -90,7 +92,7 @@ function startTyping() {
         isTyping.value = true
         emit('start')
         displayedText.value = props.text
-        currentIndex.value = props.text.length
+        currentIndex.value = chars.value.length
         isTyping.value = false
         emit('complete')
         return
@@ -110,18 +112,23 @@ function init() {
     }
 }
 
-// 监听 text 变化重新开始
-watch(() => props.text, () => {
-    if (props.text) {
+// 监听 text 变化并初始化
+watch(() => props.text, (newText) => {
+    if (newText) {
         init()
     } else {
         reset()
+        emit('complete')
     }
-})
+}, { immediate: true })
 
-onMounted(() => {
-    if (props.text) {
-        init()
+watch(prefersReducedMotion, (reduced) => {
+    if (reduced && isTyping.value) {
+        clearAllTimers()
+        displayedText.value = props.text
+        currentIndex.value = chars.value.length
+        isTyping.value = false
+        emit('complete')
     }
 })
 
