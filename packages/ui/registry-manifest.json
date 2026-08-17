@@ -493,10 +493,10 @@
     "directives": [],
     "lib": [
       "defaults.ts",
-      "env.ts",
       "floating-animation-classes.ts",
       "icon-size-variants.ts",
-      "modal-variants.ts"
+      "modal-variants.ts",
+      "render-imperative.ts"
     ]
   },
   "dropdown-menu": {

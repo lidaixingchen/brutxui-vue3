@@ -1,4 +1,4 @@
-import { showMessageBox, type MessageBoxOptions, type MessageBoxResult } from '@/components/dialog/functional'
+import { showMessageBox, type MessageBoxOptions, type MessageBoxResult } from '@/components/message-box/functional'
 import { canUseDocumentBody } from '@/lib/env'
 
 export type { MessageBoxOptions }
