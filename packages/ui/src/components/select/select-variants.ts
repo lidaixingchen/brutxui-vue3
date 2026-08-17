@@ -15,7 +15,7 @@ export const selectTriggerVariants = cva(
         FOCUS_RING_CLASSES,
         'focus:shadow-brutal-lg focus:-translate-x-0.5 focus:-translate-y-0.5',
         brutalPress,
-        'disabled:cursor-not-allowed disabled:opacity-50',
+        'disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:shadow-none disabled:hover:translate-x-0 disabled:hover:translate-y-0',
         '[&>span]:line-clamp-1',
     ],
     {

@@ -19,7 +19,7 @@ interface SelectTriggerProps {
     /** 是否可清除 */
     clearable?: boolean
     /** 当前选中的值 */
-    modelValue?: string | number | null | undefined
+    modelValue?: unknown
     class?: string
     iconClass?: string
 }
@@ -81,9 +81,10 @@ function handleClear(e: Event) {
 
 function handleKeyDown(e: KeyboardEvent) {
     const isClearableEnabled = props.clearable && !props.disabled && hasValue.value
-    if (isClearableEnabled && (e.key === 'Backspace' || e.key === 'Delete')) {
+    const target = e.target as HTMLElement | null
+    const isSelf = !target || target === e.currentTarget
+    if (isClearableEnabled && isSelf && (e.key === 'Backspace' || e.key === 'Delete')) {
         e.preventDefault()
-        e.stopPropagation()
         handleClear(e)
     }
 }
@@ -101,6 +102,8 @@ function handleKeyDown(e: KeyboardEvent) {
             :id="id"
             :class="classes"
             :disabled="disabled"
+            :aria-invalid="variant === 'error' && !!errorMessage ? 'true' : undefined"
+            :aria-describedby="variant === 'error' && errorMessage && id ? `${id}-error` : undefined"
             aria-haspopup="listbox"
             @keydown="handleKeyDown"
         >
@@ -116,7 +119,7 @@ function handleKeyDown(e: KeyboardEvent) {
                         aria-hidden="true"
                         @click.stop="handleClear"
                     >
-                        <X :class="cn(iconSizeVariants({ size: 'sm' }), 'stroke-3')" />
+                        <X :class="cn(iconSizeVariants({ size: 'sm' }), 'stroke-[3]')" />
                     </span>
                     <ChevronDown v-else :class="iconClasses" />
                 </div>
@@ -124,6 +127,7 @@ function handleKeyDown(e: KeyboardEvent) {
         </SelectTriggerPrimitive>
         <p
             v-if="variant === 'error' && errorMessage"
+            :id="id ? `${id}-error` : undefined"
             class="text-sm text-brutal-destructive mt-1"
             role="alert"
         >

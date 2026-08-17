@@ -10,6 +10,7 @@ import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 type SelectItemVariantProps = VariantProps<typeof selectItemVariants>
 
 interface SelectItemProps {
+    /** 选项值，必须为非空唯一字符串 */
     value: string
     disabled?: boolean
     variant?: NonNullable<SelectItemVariantProps['variant']>

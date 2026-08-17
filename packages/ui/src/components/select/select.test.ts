@@ -76,6 +76,34 @@ describe('SelectTrigger', () => {
         expect(icon.classes()).toContain('w-3')
         expect(icon.classes()).not.toContain('h-5')
     })
+
+    it('applies ARIA invalid and describedby attributes on error with message', () => {
+        const wrapper = mount(SelectTrigger, {
+            props: {
+                id: 'test-select',
+                variant: 'error',
+                errorMessage: 'This field is required',
+            },
+            global: { stubs: { SelectTrigger: primitiveStub, SelectIcon: primitiveStub } },
+        })
+        const trigger = wrapper.find('[aria-haspopup="listbox"]')
+        expect(trigger.attributes('aria-invalid')).toBe('true')
+        expect(trigger.attributes('aria-describedby')).toBe('test-select-error')
+        const errorP = wrapper.find('p[role="alert"]')
+        expect(errorP.attributes('id')).toBe('test-select-error')
+        expect(errorP.text()).toBe('This field is required')
+    })
+
+    it('applies disabled hover suppression classes', () => {
+        const wrapper = mount(SelectTrigger, {
+            props: { disabled: true },
+            global: { stubs: { SelectTrigger: primitiveStub, SelectIcon: primitiveStub } },
+        })
+        const trigger = wrapper.find('[aria-haspopup="listbox"]')
+        expect(trigger.classes()).toContain('disabled:hover:shadow-none')
+        expect(trigger.classes()).toContain('disabled:hover:translate-x-0')
+        expect(trigger.classes()).toContain('disabled:hover:translate-y-0')
+    })
 })
 
 describe('SelectContent', () => {
@@ -204,7 +232,7 @@ describe('SelectSeparator', () => {
         const wrapper = mount(SelectSeparator, {
             global: { stubs: { SelectSeparator: primitiveStub } },
         })
-        expect(wrapper.classes()).toContain('h-[var(--brutal-border-width,3px)]')
+        expect(wrapper.classes()).toContain('h-[var(--sep-thickness,var(--brutal-border-width,3px))]')
         expect(wrapper.classes()).toContain('bg-brutal-fg')
     })
 
@@ -277,7 +305,8 @@ describe('Select.vue', () => {
             template: '<div data-testid="select-root"><slot /></div>',
         },
         SelectTrigger: {
-            template: '<button data-testid="select-trigger"><slot /></button>',
+            props: ['id', 'disabled', 'clearable'],
+            template: '<button data-testid="select-trigger" :id="id" :disabled="disabled" :data-clearable="clearable"><slot /></button>',
         },
         SelectValue: {
             props: ['placeholder'],
@@ -528,6 +557,19 @@ describe('Select.vue', () => {
             })
 
             expect(wrapper.find('[data-testid="select-trigger"]').exists()).toBe(false)
+        })
+
+        it('disables clearable when required is true', () => {
+            const wrapper = mount(Select, {
+                props: {
+                    options: defaultOptions,
+                    required: true,
+                    clearable: true,
+                },
+                global: { stubs: selectStubs },
+            })
+            const trigger = wrapper.findComponent(SelectTrigger)
+            expect(trigger.props('clearable')).toBe(false)
         })
     })
 })

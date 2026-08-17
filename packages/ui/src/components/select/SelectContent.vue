@@ -33,7 +33,7 @@ const viewportClasses = computed(() =>
     cn(
         'p-1',
         props.position === 'popper' &&
-            'h-[var(--reka-select-trigger-height)] w-full min-w-[var(--reka-select-trigger-width)]'
+            'h-[var(--reka-select-trigger-height,auto)] w-full min-w-[var(--reka-select-trigger-width,auto)]'
     )
 )
 </script>

@@ -4,16 +4,20 @@ import { SelectSeparator as SelectSeparatorPrimitive } from 'reka-ui'
 import { cn } from '@/lib/utils'
 
 interface SelectSeparatorProps {
+    decorative?: boolean
     class?: string
 }
 
-const props = defineProps<SelectSeparatorProps>()
+const props = withDefaults(defineProps<SelectSeparatorProps>(), {
+    decorative: true,
+    class: undefined,
+})
 
 const classes = computed(() =>
-    cn('-mx-1 my-1 h-[var(--brutal-border-width,3px)] bg-brutal-fg', props.class)
+    cn('-mx-1 my-1 h-[var(--sep-thickness,var(--brutal-border-width,3px))] bg-brutal-fg', props.class)
 )
 </script>
 
 <template>
-    <SelectSeparatorPrimitive :class="classes" />
+    <SelectSeparatorPrimitive :decorative="decorative" :class="classes" />
 </template>

@@ -17,6 +17,7 @@ export interface SelectOption {
 export interface SelectProps {
     options?: SelectOption[]
     groupField?: string
+    /** 分组选项中承载分组显示名称的字段名（如 'categoryName'） */
     groupLabel?: string
     placeholder?: string
     disabled?: boolean
@@ -74,7 +75,7 @@ const grouped = computed<GroupedItems[]>(() => {
     const list = normalizedOptions.value
 
     if (!groupField) {
-        return [{ key: 'all', label: '', options: list }]
+        return []
     }
     const groups: Record<string, SelectOption[]> = {}
     const noGroup: SelectOption[] = []
@@ -138,7 +139,7 @@ const grouped = computed<GroupedItems[]>(() => {
                 :variant="variant"
                 :error-message="errorMessage"
                 :disabled="disabled"
-                :clearable="clearable"
+                :clearable="required ? false : clearable"
                 :model-value="modelValue"
                 :class="cn(className, triggerClass)"
                 @clear="modelValue = undefined"
