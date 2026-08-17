@@ -61,14 +61,17 @@ const panelStyle = computed(() => ({
     height: `${props.panelHeight}px`,
 }))
 
+const dataMap = computed(() => new Map(props.data.map(item => [item.key, item])))
+
 // 源列表（左侧）和目标列表（右侧）的所有项
 const sourceData = computed<TransferDataItem[]>(() => {
-    return props.data.filter(item => !props.modelValue.includes(item.key))
+    const selectedSet = new Set(props.modelValue)
+    return props.data.filter(item => !selectedSet.has(item.key))
 })
 
 const targetData = computed<TransferDataItem[]>(() => {
-    const keyMap = new Map(props.data.map(item => [item.key, item]))
-    return props.modelValue.map(key => keyMap.get(key)).filter((item): item is TransferDataItem => !!item)
+    const uniqueKeys = Array.from(new Set(props.modelValue))
+    return uniqueKeys.map(key => dataMap.value.get(key)).filter((item): item is TransferDataItem => !!item)
 })
 
 // 默认过滤方法
@@ -133,10 +136,10 @@ const rightToLeftDisabled = computed(() => rightChecked.value.length === 0)
 const addToRight = () => {
     if (leftToRightDisabled.value) return
     const keysToMove = leftChecked.value.filter(key => {
-        const item = props.data.find(d => d.key === key)
+        const item = dataMap.value.get(key)
         return item && !item.disabled
     })
-    const newValue = [...props.modelValue, ...keysToMove]
+    const newValue = Array.from(new Set([...props.modelValue, ...keysToMove]))
     emit('update:modelValue', newValue)
     emit('change', newValue, 'right', keysToMove)
     // 清除整个面板选中态：选中后才变为 disabled 的键无法进入 keysToMove，需一并清理，否则计数虚高
@@ -147,10 +150,11 @@ const addToRight = () => {
 const addToLeft = () => {
     if (rightToLeftDisabled.value) return
     const keysToMove = rightChecked.value.filter(key => {
-        const item = props.data.find(d => d.key === key)
+        const item = dataMap.value.get(key)
         return item && !item.disabled
     })
-    const newValue = props.modelValue.filter(key => !keysToMove.includes(key))
+    const moveSet = new Set(keysToMove)
+    const newValue = props.modelValue.filter(key => !moveSet.has(key))
     emit('update:modelValue', newValue)
     emit('change', newValue, 'left', keysToMove)
     // 同上：清除整个面板选中态，清理选中后才变为 disabled 的残留键
