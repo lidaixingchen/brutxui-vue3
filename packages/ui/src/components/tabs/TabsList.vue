@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, inject, type ComputedRef } from 'vue'
+import { computed, inject } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { TabsList as TabsListPrimitive } from 'reka-ui'
 import { cn } from '@/lib/utils'
 import { tabsListVariants } from './tabs-variants'
+import { TABS_ORIENTATION_KEY } from './types'
 
 type TabsListVariantProps = VariantProps<typeof tabsListVariants>
 
@@ -19,7 +20,7 @@ const props = withDefaults(defineProps<TabsListProps>(), {
     class: undefined,
 })
 
-const injectedOrientation = inject<ComputedRef<'horizontal' | 'vertical'> | null>('brutx-tabs-orientation', null)
+const injectedOrientation = inject(TABS_ORIENTATION_KEY, null)
 
 const resolvedOrientation = computed(() => props.orientation ?? injectedOrientation?.value ?? 'horizontal')
 
@@ -29,7 +30,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <TabsListPrimitive :class="classes">
+    <TabsListPrimitive :class="classes" :data-orientation="resolvedOrientation">
         <slot />
     </TabsListPrimitive>
 </template>

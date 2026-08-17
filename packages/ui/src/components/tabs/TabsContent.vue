@@ -6,10 +6,14 @@ import { tabsContentVariants } from './tabs-variants'
 
 interface TabsContentProps {
     value: string
+    forceMount?: boolean
     class?: string
 }
 
-const props = defineProps<TabsContentProps>()
+const props = withDefaults(defineProps<TabsContentProps>(), {
+    forceMount: undefined,
+    class: undefined,
+})
 
 const classes = computed(() =>
     cn(tabsContentVariants(), props.class)
@@ -17,7 +21,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <TabsContentPrimitive :value="value" :class="classes">
+    <TabsContentPrimitive :value="value" :force-mount="forceMount" :class="classes">
         <slot />
     </TabsContentPrimitive>
 </template>

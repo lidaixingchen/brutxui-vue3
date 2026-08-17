@@ -1,5 +1,5 @@
 import { cva } from 'class-variance-authority'
-import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
+import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const tabsListVariants = cva(
@@ -23,6 +23,9 @@ export const tabsListVariants = cva(
             { size: 'sm', orientation: 'horizontal', class: 'h-9' },
             { size: 'default', orientation: 'horizontal', class: 'h-11' },
             { size: 'lg', orientation: 'horizontal', class: 'h-14' },
+            { size: 'sm', orientation: 'vertical', class: 'min-w-28' },
+            { size: 'default', orientation: 'vertical', class: 'min-w-36' },
+            { size: 'lg', orientation: 'vertical', class: 'min-w-44' },
         ],
         defaultVariants: {
             size: 'default',
@@ -42,8 +45,8 @@ export const tabsTriggerVariants = cva(
         brutalPress,
         'disabled:pointer-events-none disabled:opacity-50',
         'data-[state=active]:border-brutal data-[state=active]:shadow-brutal-sm',
+        'data-[state=active]:hover:-translate-x-0.5 data-[state=active]:hover:-translate-y-0.5 data-[state=active]:hover:shadow-brutal',
         'data-[state=inactive]:text-brutal-fg data-[state=inactive]:hover:bg-brutal-muted data-[state=inactive]:shadow-none',
-        brutalHoverLift,
     ],
     {
         variants: {

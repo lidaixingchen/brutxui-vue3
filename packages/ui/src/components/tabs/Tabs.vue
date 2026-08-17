@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, provide, ref, watch, type ComputedRef } from 'vue'
+import { computed, provide, ref, watch } from 'vue'
 import { TabsRoot } from 'reka-ui'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
@@ -8,7 +8,7 @@ import TabsTrigger from './TabsTrigger.vue'
 import TabsContent from './TabsContent.vue'
 import Card from '../card/Card.vue'
 import Result from '../result/Result.vue'
-import type { TabItem } from './types'
+import { type TabItem, TABS_ORIENTATION_KEY } from './types'
 
 export type { TabItem }
 
@@ -31,7 +31,7 @@ const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 const { t } = useLocale()
 
 const orientation = computed(() => props.orientation)
-provide<ComputedRef<'horizontal' | 'vertical'>>('brutx-tabs-orientation', orientation)
+provide(TABS_ORIENTATION_KEY, orientation)
 
 const internalValue = ref<string>('')
 
@@ -60,7 +60,9 @@ watch(() => props.tabs, (tabs) => {
 })
 
 function handleUpdateModelValue(value: string) {
-    internalValue.value = value
+    if (props.modelValue === undefined) {
+        internalValue.value = value
+    }
     emit('update:modelValue', value)
 }
 
@@ -82,6 +84,7 @@ const wrapperClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class
                     v-for="tab in tabs"
                     :key="tab.value"
                     :value="tab.value"
+                    :disabled="tab.disabled"
                     class="flex-1"
                 >
                     {{ tab.label }}
@@ -117,7 +120,7 @@ const wrapperClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class
         :model-value="modelValue"
         :orientation="orientation"
         :class="cn(props.class)"
-        @update:model-value="(val) => { if (typeof val === 'string') emit('update:modelValue', val) }"
+        @update:model-value="(val) => { if (typeof val === 'string') handleUpdateModelValue(val) }"
     >
         <slot />
     </TabsRoot>

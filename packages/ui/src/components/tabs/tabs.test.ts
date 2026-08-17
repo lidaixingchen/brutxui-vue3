@@ -1,9 +1,10 @@
 import { mount } from '@vue/test-utils'
-import { nextTick } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import Tabs from './Tabs.vue'
 import TabsList from './TabsList.vue'
 import TabsTrigger from './TabsTrigger.vue'
 import TabsContent from './TabsContent.vue'
+import { TABS_ORIENTATION_KEY, type TabItem } from './types'
 
 const primitiveStub = {
     template: '<div><slot /></div>',
@@ -18,7 +19,7 @@ const tabsRootStub = {
     template: '<div><slot /></div>',
 }
 
-const mockTabs = [
+const mockTabs: TabItem[] = [
     { label: 'Overview', value: 'overview' },
     { label: 'Features', value: 'features' },
     { label: 'Pricing', value: 'pricing' },
@@ -49,10 +50,80 @@ describe('TabsList', () => {
         })
         expect(wrapper.classes()).toContain('custom-list')
     })
+
+    it('applies horizontal size variant classes', () => {
+        const wrapperSm = mount(TabsList, {
+            props: { size: 'sm', orientation: 'horizontal' },
+            global: { stubs: { TabsList: primitiveStub } },
+        })
+        expect(wrapperSm.classes()).toContain('h-9')
+
+        const wrapperDefault = mount(TabsList, {
+            props: { size: 'default', orientation: 'horizontal' },
+            global: { stubs: { TabsList: primitiveStub } },
+        })
+        expect(wrapperDefault.classes()).toContain('h-11')
+
+        const wrapperLg = mount(TabsList, {
+            props: { size: 'lg', orientation: 'horizontal' },
+            global: { stubs: { TabsList: primitiveStub } },
+        })
+        expect(wrapperLg.classes()).toContain('h-14')
+    })
+
+    it('applies vertical size variant classes', () => {
+        const wrapperSm = mount(TabsList, {
+            props: { size: 'sm', orientation: 'vertical' },
+            global: { stubs: { TabsList: primitiveStub } },
+        })
+        expect(wrapperSm.classes()).toContain('flex-col')
+        expect(wrapperSm.classes()).toContain('min-w-28')
+
+        const wrapperDefault = mount(TabsList, {
+            props: { size: 'default', orientation: 'vertical' },
+            global: { stubs: { TabsList: primitiveStub } },
+        })
+        expect(wrapperDefault.classes()).toContain('flex-col')
+        expect(wrapperDefault.classes()).toContain('min-w-36')
+
+        const wrapperLg = mount(TabsList, {
+            props: { size: 'lg', orientation: 'vertical' },
+            global: { stubs: { TabsList: primitiveStub } },
+        })
+        expect(wrapperLg.classes()).toContain('flex-col')
+        expect(wrapperLg.classes()).toContain('min-w-44')
+    })
+
+    it('inherits orientation from TABS_ORIENTATION_KEY injection', () => {
+        const wrapper = mount(TabsList, {
+            global: {
+                provide: {
+                    [TABS_ORIENTATION_KEY as unknown as string]: computed(() => 'vertical'),
+                },
+                stubs: { TabsList: primitiveStub },
+            },
+        })
+        expect(wrapper.classes()).toContain('flex-col')
+        expect(wrapper.attributes('data-orientation')).toBe('vertical')
+    })
+
+    it('prefers props orientation over injection', () => {
+        const wrapper = mount(TabsList, {
+            props: { orientation: 'horizontal' },
+            global: {
+                provide: {
+                    [TABS_ORIENTATION_KEY as unknown as string]: computed(() => 'vertical'),
+                },
+                stubs: { TabsList: primitiveStub },
+            },
+        })
+        expect(wrapper.classes()).not.toContain('flex-col')
+        expect(wrapper.attributes('data-orientation')).toBe('horizontal')
+    })
 })
 
 describe('TabsTrigger', () => {
-    it('renders with variant classes', () => {
+    it('renders with default variant classes', () => {
         const wrapper = mount(TabsTrigger, {
             props: { value: 'tab1' },
             global: { stubs: { TabsTrigger: primitiveStub } },
@@ -61,6 +132,47 @@ describe('TabsTrigger', () => {
         expect(wrapper.classes()).toContain('border-3')
         expect(wrapper.classes()).toContain('border-transparent')
         expect(wrapper.classes()).toContain('h-full')
+        expect(wrapper.classes()).toContain('data-[state=active]:bg-brutal-primary')
+    })
+
+    it('supports primary variant', () => {
+        const wrapper = mount(TabsTrigger, {
+            props: { value: 'tab1', variant: 'primary' },
+            global: { stubs: { TabsTrigger: primitiveStub } },
+        })
+        expect(wrapper.classes()).toContain('data-[state=active]:bg-brutal-primary')
+    })
+
+    it('supports secondary variant', () => {
+        const wrapper = mount(TabsTrigger, {
+            props: { value: 'tab1', variant: 'secondary' },
+            global: { stubs: { TabsTrigger: primitiveStub } },
+        })
+        expect(wrapper.classes()).toContain('data-[state=active]:bg-brutal-secondary')
+    })
+
+    it('supports accent variant', () => {
+        const wrapper = mount(TabsTrigger, {
+            props: { value: 'tab1', variant: 'accent' },
+            global: { stubs: { TabsTrigger: primitiveStub } },
+        })
+        expect(wrapper.classes()).toContain('data-[state=active]:bg-brutal-accent')
+    })
+
+    it('supports success variant', () => {
+        const wrapper = mount(TabsTrigger, {
+            props: { value: 'tab1', variant: 'success' },
+            global: { stubs: { TabsTrigger: primitiveStub } },
+        })
+        expect(wrapper.classes()).toContain('data-[state=active]:bg-brutal-success')
+    })
+
+    it('handles disabled prop', () => {
+        const wrapper = mount(TabsTrigger, {
+            props: { value: 'tab1', disabled: true },
+            global: { stubs: { TabsTrigger: primitiveStub } },
+        })
+        expect(wrapper.attributes('disabled')).toBeDefined()
     })
 
     it('applies custom class', () => {
@@ -97,54 +209,20 @@ describe('TabsContent', () => {
         })
         const classes = wrapper.classes().join(' ')
         expect(classes).toContain('focus-visible:ring-2')
-    })
-})
-
-describe('TabsList', () => {
-    it('applies size variant classes', () => {
-        const wrapperSm = mount(TabsList, {
-            props: { size: 'sm' },
-            global: { stubs: { TabsList: primitiveStub } },
-        })
-        expect(wrapperSm.classes()).toContain('h-9')
-
-        const wrapperDefault = mount(TabsList, {
-            global: { stubs: { TabsList: primitiveStub } },
-        })
-        expect(wrapperDefault.classes()).toContain('h-11')
+        expect(classes).toContain('border-3')
+        expect(classes).toContain('border-brutal')
     })
 
-    it('defaults to horizontal orientation', () => {
-        const wrapper = mount(TabsList, {
-            global: { stubs: { TabsList: primitiveStub } },
+    it('passes forceMount prop to primitive', () => {
+        const customPrimitive = {
+            props: ['value', 'forceMount'],
+            template: '<div :data-force="forceMount"><slot /></div>',
+        }
+        const wrapper = mount(TabsContent, {
+            props: { value: 'tab1', forceMount: true },
+            global: { stubs: { TabsContent: customPrimitive } },
         })
-        expect(wrapper.classes()).not.toContain('flex-col')
-    })
-
-    it('applies flex-col when orientation is vertical', () => {
-        const wrapper = mount(TabsList, {
-            props: { orientation: 'vertical' },
-            global: { stubs: { TabsList: primitiveStub } },
-        })
-        expect(wrapper.classes()).toContain('flex-col')
-    })
-})
-
-describe('TabsTrigger', () => {
-    it('handles disabled state', () => {
-        const wrapper = mount(TabsTrigger, {
-            props: { value: 'tab1', disabled: true },
-            global: { stubs: { TabsTrigger: primitiveStub } },
-        })
-        expect(wrapper.attributes('disabled')).toBeDefined()
-    })
-
-    it('supports variant prop', () => {
-        const wrapper = mount(TabsTrigger, {
-            props: { value: 'tab1', variant: 'primary' },
-            global: { stubs: { TabsTrigger: primitiveStub } },
-        })
-        expect(wrapper.classes()).toContain('data-[state=active]:bg-brutal-primary')
+        expect(wrapper.attributes('data-force')).toBe('true')
     })
 })
 
@@ -157,6 +235,29 @@ describe('Tabs (tabs prop array mode)', () => {
         expect(wrapper.text()).toContain('Overview')
         expect(wrapper.text()).toContain('Features')
         expect(wrapper.text()).toContain('Pricing')
+    })
+
+    it('passes disabled flag from TabItem to TabsTrigger', () => {
+        const tabsWithDisabled: TabItem[] = [
+            { label: 'Active', value: 'active' },
+            { label: 'Disabled', value: 'disabled', disabled: true },
+        ]
+        const triggerStub = {
+            props: ['value', 'disabled'],
+            template: '<button :disabled="disabled"><slot /></button>',
+        }
+        const wrapper = mount(Tabs, {
+            props: { tabs: tabsWithDisabled },
+            global: {
+                stubs: {
+                    ...tabsGlobalStubs,
+                    TabsTrigger: triggerStub,
+                },
+            },
+        })
+        const buttons = wrapper.findAll('button')
+        expect(buttons[0].attributes('disabled')).toBeUndefined()
+        expect(buttons[1].attributes('disabled')).toBeDefined()
     })
 
     it('renders default Card content for each tab when no default slot', () => {
@@ -234,6 +335,24 @@ describe('Tabs (tabs prop array mode)', () => {
         expect(wrapper.emitted('update:modelValue')![0]).toEqual(['features'])
     })
 
+    it('does not mutate uncontrolled state when modelValue is controlled', async () => {
+        const controlledVal = ref('overview')
+        const wrapper = mount(Tabs, {
+            props: {
+                tabs: mockTabs,
+                modelValue: controlledVal.value,
+                'onUpdate:modelValue': (val: string) => {
+                    controlledVal.value = val
+                },
+            },
+            global: { stubs: tabsGlobalStubs },
+        })
+        const root = wrapper.findComponent({ name: 'TabsRoot' })
+        root.vm.$emit('update:modelValue', 'features')
+        await nextTick()
+        expect(wrapper.emitted('update:modelValue')![0]).toEqual(['features'])
+    })
+
     it('falls back to first tab and syncs internalValue when active tab is removed', async () => {
         const wrapper = mount(Tabs, {
             props: { tabs: mockTabs },
@@ -282,5 +401,14 @@ describe('Tabs (slot mode, no tabs prop)', () => {
         })
         const root = wrapper.findComponent({ name: 'TabsRoot' })
         expect(root.props('orientation')).toBe('vertical')
+    })
+
+    it('emits update:modelValue on TabsRoot change in slot mode', () => {
+        const wrapper = mount(Tabs, {
+            global: { stubs: tabsGlobalStubs },
+        })
+        const root = wrapper.findComponent({ name: 'TabsRoot' })
+        root.vm.$emit('update:modelValue', 'tab2')
+        expect(wrapper.emitted('update:modelValue')![0]).toEqual(['tab2'])
     })
 })
