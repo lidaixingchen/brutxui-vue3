@@ -9,7 +9,10 @@ const sliderTrackSizeVariants = {
 }
 
 export const sliderRootVariants = cva(
-    ['relative flex touch-none select-none'],
+    [
+        'relative flex touch-none select-none',
+        'data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed',
+    ],
     {
         variants: {
             orientation: {
@@ -51,7 +54,7 @@ export const sliderThumbVariants = cva(
         'shadow-brutal-sm',
         'transition-colors duration-150',
         FOCUS_RING_CLASSES,
-        'disabled:pointer-events-none disabled:opacity-50',
+        'data-[disabled]:pointer-events-none',
         brutalHoverLiftSmNoX,
         brutalPress,
         'cursor-grab active:cursor-grabbing', /* 组件私有：拖拽抓取状态语义，不抽取 */

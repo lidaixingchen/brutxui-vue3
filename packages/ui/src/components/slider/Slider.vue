@@ -97,7 +97,8 @@ const tooltipClasses = computed(() =>
 function valueToPercentage(value: number): number {
     const range = props.max - props.min
     if (range <= 0) return 0
-    return ((value - props.min) / range) * 100
+    const pct = ((value - props.min) / range) * 100
+    return Math.min(100, Math.max(0, pct))
 }
 
 function markStyle(mark: number): Record<string, string> {
@@ -166,11 +167,9 @@ function handleThumbFocus(index: number) {
     focusedThumb.value = index
 }
 function handleThumbBlur(index: number) {
-    Promise.resolve().then(() => {
-        if (focusedThumb.value === index) {
-            focusedThumb.value = -1
-        }
-    })
+    if (focusedThumb.value === index) {
+        focusedThumb.value = -1
+    }
 }
 function handleThumbPointerEnter(index: number) {
     hoveredThumb.value = index
@@ -209,6 +208,7 @@ function handleThumbPointerLeave(index: number) {
                 v-for="(_, index) in thumbCount"
                 :key="index"
                 :class="thumbClasses"
+                :aria-label="ariaLabel ? (thumbCount > 1 ? `${ariaLabel} ${index + 1}` : ariaLabel) : undefined"
                 :aria-describedby="showTooltip && activeThumb === index ? tooltipId : undefined"
                 @focus="handleThumbFocus(index)"
                 @blur="handleThumbBlur(index)"

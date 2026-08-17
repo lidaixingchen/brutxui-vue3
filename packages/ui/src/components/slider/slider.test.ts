@@ -152,6 +152,38 @@ describe('Slider', () => {
             expect(marks[0].attributes('style')).toContain('left: 25%')
             expect(marks[1].attributes('style')).toContain('left: 75%')
         })
+
+        it('clamps out-of-bound marks to 0% and 100%', () => {
+            const wrapper = mount(Slider, {
+                props: { marks: [-20, 150], min: 0, max: 100 },
+                attachTo: document.body,
+            })
+            const marks = wrapper.findAll('[aria-hidden="true"]')
+            expect(marks[0].attributes('style')).toContain('left: 0%')
+            expect(marks[1].attributes('style')).toContain('left: 100%')
+        })
+    })
+
+    describe('multi-thumb aria-label', () => {
+        it('assigns numbered aria-labels when multiple thumbs exist', () => {
+            const wrapper = mount(Slider, {
+                props: { ariaLabel: 'Range', modelValue: [20, 80] },
+                attachTo: document.body,
+            })
+            const thumbs = wrapper.findAll('[role="slider"]')
+            expect(thumbs.length).toBe(2)
+            expect(thumbs[0].attributes('aria-label')).toBe('Range 1')
+            expect(thumbs[1].attributes('aria-label')).toBe('Range 2')
+        })
+
+        it('assigns single aria-label when single thumb exists', () => {
+            const wrapper = mount(Slider, {
+                props: { ariaLabel: 'Volume', modelValue: [50] },
+                attachTo: document.body,
+            })
+            const thumb = wrapper.find('[role="slider"]')
+            expect(thumb.attributes('aria-label')).toBe('Volume')
+        })
     })
 
     describe('tooltip', () => {
