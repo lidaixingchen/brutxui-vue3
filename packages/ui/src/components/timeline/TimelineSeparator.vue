@@ -12,11 +12,12 @@ const props = withDefaults(defineProps<TimelineSeparatorProps>(), {
 })
 
 const orientation = inject(timelineOrientationKey, computed(() => 'vertical' as const))
+const isVertical = computed(() => orientation.value !== 'horizontal')
 
 const classes = computed(() =>
     cn(
         'relative flex items-center shrink-0',
-        orientation.value === 'vertical' ? 'flex-col' : 'flex-row w-full justify-center',
+        isVertical.value ? 'flex-col' : 'flex-row w-full justify-center',
         props.class
     )
 )

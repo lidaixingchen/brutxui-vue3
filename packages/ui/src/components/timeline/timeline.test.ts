@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { computed } from 'vue'
+import { computed, Fragment, h } from 'vue'
 import Timeline from './Timeline.vue'
 import TimelineItem from './TimelineItem.vue'
 import TimelineSeparator from './TimelineSeparator.vue'
@@ -88,6 +88,27 @@ describe('Timeline alternate', () => {
         expect(items[0].classes()).toContain('flex-col')
         expect(items[1].classes()).toContain('flex-col')
     })
+
+    it('correctly handles Fragment children and preserves explicit index', () => {
+        const wrapper = mount(Timeline, {
+            props: { alternate: true },
+            slots: {
+                default: () => [
+                    h(Fragment, [
+                        h(TimelineItem, { index: 1 }, () => 'Custom Odd Index'),
+                        h(TimelineItem, () => 'Auto Index Item'),
+                    ]),
+                ],
+            },
+        })
+        const items = wrapper.findAllComponents(TimelineItem)
+        expect(items).toHaveLength(2)
+        expect(items[0].props('index')).toBe(1)
+        expect(items[0].classes()).toContain('flex-row')
+        expect(items[0].classes()).not.toContain('flex-row-reverse')
+        expect(items[1].props('index')).toBe(0)
+        expect(items[1].classes()).toContain('flex-row-reverse')
+    })
 })
 
 describe('TimelineItem', () => {
@@ -162,13 +183,14 @@ describe('TimelineSeparator', () => {
 })
 
 describe('TimelineDot', () => {
-    it('renders with default accent variant and circle shape', () => {
+    it('renders with default accent variant and circle shape with aria-hidden', () => {
         const wrapper = mount(TimelineDot)
         const classes = wrapper.classes()
         expect(classes).toContain('border-3')
         expect(classes).toContain('border-brutal')
         expect(classes).toContain('bg-brutal-accent')
         expect(classes).toContain('rounded-full')
+        expect(wrapper.attributes('aria-hidden')).toBe('true')
     })
 
     it('applies primary variant classes', () => {
@@ -220,6 +242,7 @@ describe('TimelineDot', () => {
         })
         const classes = wrapper.classes()
         expect(classes).toContain('rotate-45')
+        expect(classes).toContain('[&_*]:-rotate-45')
     })
 
     it('renders slot content', () => {
@@ -244,6 +267,7 @@ describe('TimelineConnector', () => {
         expect(classes).toContain('bg-brutal-fg')
         expect(classes).toContain('w-[3px]')
         expect(classes).toContain('flex-1')
+        expect(classes).toContain('transition-colors')
     })
 
     it('applies horizontal orientation classes when injected', () => {

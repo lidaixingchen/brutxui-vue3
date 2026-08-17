@@ -24,7 +24,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <div :class="classes">
+    <div :class="classes" aria-hidden="true">
         <span class="inline-flex items-center justify-center font-black">
             <slot />
         </span>

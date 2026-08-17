@@ -17,7 +17,7 @@ export const timelineDotVariants = cva(
             shape: {
                 circle: 'rounded-full h-8 w-8',
                 square: 'rounded-none h-8 w-8',
-                diamond: 'rotate-45 h-7 w-7 [&>*]:-rotate-45',
+                diamond: 'rotate-45 h-7 w-7 [&_*]:-rotate-45',
             },
         },
         defaultVariants: {

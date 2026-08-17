@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { provide, computed, useSlots, cloneVNode, type VNode } from 'vue'
+import { provide, computed, useSlots, cloneVNode, Fragment, type VNode } from 'vue'
 import { cn } from '@/lib/utils'
 import { timelineOrientationKey, timelineAlternateKey, type TimelineOrientation } from './timeline-key'
 import { useLocale } from '@/composables/useLocale'
@@ -24,12 +24,30 @@ provide(timelineAlternateKey, computed(() => props.alternate && props.orientatio
 
 const slots = useSlots()
 
+function flattenVNodes(vnodes: VNode[]): VNode[] {
+    const result: VNode[] = []
+    for (const vnode of vnodes) {
+        if (vnode.type === Fragment || vnode.type === Symbol.for('v-fgt')) {
+            if (Array.isArray(vnode.children)) {
+                result.push(...flattenVNodes(vnode.children as VNode[]))
+            }
+        } else {
+            result.push(vnode)
+        }
+    }
+    return result
+}
+
 const RenderItems = () => {
-    const vnodes = slots.default?.() ?? []
+    const raw = slots.default?.() ?? []
+    const vnodes = flattenVNodes(Array.isArray(raw) ? raw : [raw])
     let itemIndex = 0
     return vnodes.map((vnode: VNode) => {
         if (vnode.type === TimelineItem) {
-            return cloneVNode(vnode, { index: itemIndex++ })
+            const explicitIndex = vnode.props?.index
+            return cloneVNode(vnode, {
+                index: explicitIndex !== undefined ? explicitIndex : itemIndex++,
+            })
         }
         return vnode
     })
