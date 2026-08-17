@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { TagsInputItemText, type TagsInputItemTextProps } from 'reka-ui'
+import {
+    TagsInputItemText as TagsInputItemTextPrimitive,
+    type TagsInputItemTextProps,
+    useForwardProps,
+} from 'reka-ui'
 import { computed } from 'vue'
 import { cn } from '@/lib/utils'
 
@@ -10,13 +14,15 @@ const delegatedProps = computed(() => {
     return delegated
 })
 
+const forwarded = useForwardProps(delegatedProps)
+
 const classes = computed(() =>
     cn('text-xs font-black uppercase tracking-wide', props.class)
 )
 </script>
 
 <template>
-    <TagsInputItemText v-bind="delegatedProps" :class="classes">
+    <TagsInputItemTextPrimitive v-bind="forwarded" :class="classes">
         <slot />
-    </TagsInputItemText>
+    </TagsInputItemTextPrimitive>
 </template>

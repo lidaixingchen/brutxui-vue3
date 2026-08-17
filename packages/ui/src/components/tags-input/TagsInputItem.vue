@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { TagsInputItem, type TagsInputItemProps as RekaTagsInputItemProps } from 'reka-ui'
+import {
+    TagsInputItem as TagsInputItemPrimitive,
+    type TagsInputItemProps as RekaTagsInputItemProps,
+    useForwardProps,
+} from 'reka-ui'
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
@@ -22,13 +26,15 @@ const delegatedProps = computed(() => {
     return delegated
 })
 
+const forwarded = useForwardProps(delegatedProps)
+
 const classes = computed(() =>
     cn(tagsInputItemVariants({ variant: props.variant }), props.class)
 )
 </script>
 
 <template>
-    <TagsInputItem v-bind="delegatedProps" :class="classes">
+    <TagsInputItemPrimitive v-bind="forwarded" :class="classes">
         <slot />
-    </TagsInputItem>
+    </TagsInputItemPrimitive>
 </template>

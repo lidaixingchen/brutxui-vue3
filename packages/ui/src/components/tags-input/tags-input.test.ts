@@ -11,6 +11,11 @@ const primitiveStub = {
     template: '<div><slot /></div>',
 }
 
+const buttonStub = {
+    props: ['type', 'ariaLabel'],
+    template: '<button :type="type" :aria-label="ariaLabel"><slot /></button>',
+}
+
 describe('TagsInput', () => {
     it('renders with default classes', () => {
         const wrapper = mount(TagsInput, {
@@ -208,9 +213,9 @@ describe('TagsInputItemText', () => {
 })
 
 describe('TagsInputItemDelete', () => {
-    it('renders with default classes', () => {
+    it('renders with default classes and hover contrast', () => {
         const wrapper = mount(TagsInputItemDelete, {
-            global: { stubs: { TagsInputItemDelete: primitiveStub } },
+            global: { stubs: { TagsInputItemDelete: buttonStub } },
         })
         const classes = wrapper.classes()
         expect(classes).toContain('h-4')
@@ -224,7 +229,25 @@ describe('TagsInputItemDelete', () => {
         expect(classes).toContain('text-brutal-fg')
         expect(classes).toContain('shadow-brutal-sm')
         expect(classes).toContain('transition-all')
+        expect(classes).toContain('hover:bg-brutal-destructive')
+        expect(classes).toContain('hover:text-brutal-destructive-foreground')
+        expect(classes).toContain('cursor-pointer')
         expect(classes).toContain('rounded-brutal')
+    })
+
+    it('defaults type to "button" to prevent form submission', () => {
+        const wrapper = mount(TagsInputItemDelete, {
+            global: { stubs: { TagsInputItemDelete: buttonStub } },
+        })
+        expect(wrapper.attributes('type')).toBe('button')
+    })
+
+    it('allows overriding type', () => {
+        const wrapper = mount(TagsInputItemDelete, {
+            props: { type: 'submit' },
+            global: { stubs: { TagsInputItemDelete: buttonStub } },
+        })
+        expect(wrapper.attributes('type')).toBe('submit')
     })
 
     it('renders default slot with X icon', () => {
@@ -252,7 +275,7 @@ describe('TagsInputItemDelete', () => {
 
     it('provides a default aria-label from locale on the delete button', () => {
         const wrapper = mount(TagsInputItemDelete, {
-            global: { stubs: { TagsInputItemDelete: primitiveStub } },
+            global: { stubs: { TagsInputItemDelete: buttonStub } },
         })
         expect(wrapper.attributes('aria-label')).toBe('删除标签')
     })
@@ -260,7 +283,7 @@ describe('TagsInputItemDelete', () => {
     it('uses the en locale default aria-label when English locale is injected', () => {
         const wrapper = mount(TagsInputItemDelete, {
             global: {
-                stubs: { TagsInputItemDelete: primitiveStub },
+                stubs: { TagsInputItemDelete: buttonStub },
                 provide: { [LOCALE_INJECTION_KEY]: en },
             },
         })
@@ -270,7 +293,7 @@ describe('TagsInputItemDelete', () => {
     it('allows overriding the aria-label', () => {
         const wrapper = mount(TagsInputItemDelete, {
             props: { ariaLabel: '移除标签' },
-            global: { stubs: { TagsInputItemDelete: primitiveStub } },
+            global: { stubs: { TagsInputItemDelete: buttonStub } },
         })
         expect(wrapper.attributes('aria-label')).toBe('移除标签')
     })
