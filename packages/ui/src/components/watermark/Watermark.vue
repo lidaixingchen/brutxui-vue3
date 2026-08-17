@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { createCanvasElement, getCanvas2DContext, getDevicePixelRatio, getMutationObserverCtor, isClient } from '@/lib/env'
 
 interface WatermarkFont {
@@ -50,8 +50,29 @@ let isRecreating = false
 let renderVersion = 0
 let isUnmounted = false
 
-function getMarkSize() {
+const normalizedOffset = computed<[number, number]>(() => [
+    props.offset?.[0] ?? 0,
+    props.offset?.[1] ?? 0,
+])
+
+const normalizedGap = computed<[number, number]>(() => [
+    props.gap?.[0] ?? 100,
+    props.gap?.[1] ?? 100,
+])
+
+function getMarkSize(): [number, number] {
     return [props.width, props.height]
+}
+
+function getFontSizePx(size: number | string): number {
+    if (typeof size === 'number') return size
+    const str = String(size).trim()
+    const pxMatch = /^([\d.]+)px$/i.exec(str)
+    if (pxMatch) return parseFloat(pxMatch[1])
+    const remMatch = /^([\d.]+)rem$/i.exec(str)
+    if (remMatch) return parseFloat(remMatch[1]) * 16
+    const num = parseFloat(str)
+    return isNaN(num) || num <= 0 ? 14 : num
 }
 
 function escapeXml(str: string): string {
@@ -74,26 +95,28 @@ function toBase64(str: string): string {
 
 function drawSvgFallback() {
     const [markWidth, markHeight] = getMarkSize()
-    const canvasWidth = markWidth + props.gap[0]
-    const canvasHeight = markHeight + props.gap[1]
+    const [gapX, gapY] = normalizedGap.value
+    const canvasWidth = markWidth + gapX
+    const canvasHeight = markHeight + gapY
     const { font } = props
     const color = font.color || 'rgba(0, 0, 0, 0.15)'
     const fontSize = font.fontSize || 14
+    const fontSizePx = getFontSizePx(fontSize)
     const fontWeight = font.fontWeight || 'normal'
     const fontStyle = font.fontStyle || 'normal'
     const fontFamily = font.fontFamily || 'sans-serif'
     
     const contents = Array.isArray(props.content) ? props.content : [props.content]
-    const lineHeight = typeof fontSize === 'number' ? fontSize + 4 : parseInt(String(fontSize)) + 4
+    const lineHeight = fontSizePx + 4
     
     const textNodes = contents.map((text, index) => {
         const yOffset = (index - (contents.length - 1) / 2) * lineHeight
-        return `<text x="50%" y="50%" dy="${yOffset}" font-size="${fontSize}" font-weight="${fontWeight}" font-style="${fontStyle}" font-family="${fontFamily}" fill="${color}" text-anchor="middle" dominant-baseline="middle">${escapeXml(text)}</text>`
+        return `<text x="50%" y="50%" dy="${escapeXml(String(yOffset))}" font-size="${escapeXml(String(fontSizePx))}" font-weight="${escapeXml(String(fontWeight))}" font-style="${escapeXml(String(fontStyle))}" font-family="${escapeXml(String(fontFamily))}" fill="${escapeXml(color)}" text-anchor="middle" dominant-baseline="middle">${escapeXml(text || '')}</text>`
     }).join('')
     
     const svg = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth}" height="${canvasHeight}">
-            <g transform="rotate(${props.rotate} ${canvasWidth / 2} ${canvasHeight / 2})">
+        <svg xmlns="http://www.w3.org/2000/svg" width="${escapeXml(String(canvasWidth))}" height="${escapeXml(String(canvasHeight))}">
+            <g transform="rotate(${escapeXml(String(props.rotate))} ${escapeXml(String(canvasWidth / 2))} ${escapeXml(String(canvasHeight / 2))})">
                 ${textNodes}
             </g>
         </svg>
@@ -129,8 +152,9 @@ function renderWatermark() {
     }
 
     const [markWidth, markHeight] = getMarkSize()
-    const canvasWidth = markWidth + props.gap[0]
-    const canvasHeight = markHeight + props.gap[1]
+    const [gapX, gapY] = normalizedGap.value
+    const canvasWidth = markWidth + gapX
+    const canvasHeight = markHeight + gapY
 
     const ratio = getDevicePixelRatio()
     canvas.width = canvasWidth * ratio
@@ -151,7 +175,14 @@ function renderWatermark() {
             if (isStale()) return
             ctx.drawImage(img, -markWidth / 2, -markHeight / 2, markWidth, markHeight)
             if (isStale()) return
-            watermarkUrl.value = canvas.toDataURL()
+            let dataUrl: string
+            try {
+                dataUrl = canvas.toDataURL()
+            } catch {
+                drawSvgFallback()
+                return
+            }
+            watermarkUrl.value = dataUrl
             nextTick(() => {
                 if (isStale()) return
                 initObserver()
@@ -173,24 +204,32 @@ function drawTextWatermark(
     const { font } = props
     const color = font.color || 'rgba(0, 0, 0, 0.15)'
     const fontSize = font.fontSize || 14
+    const fontSizePx = getFontSizePx(fontSize)
     const fontWeight = font.fontWeight || 'normal'
     const fontStyle = font.fontStyle || 'normal'
     const fontFamily = font.fontFamily || 'sans-serif'
 
     ctx.fillStyle = color
-    ctx.font = `${fontStyle} normal ${fontWeight} ${typeof fontSize === 'number' ? `${fontSize}px` : fontSize} ${fontFamily}`
+    ctx.font = `${fontStyle} normal ${fontWeight} ${fontSizePx}px ${fontFamily}`
     ctx.textBaseline = 'middle'
     ctx.textAlign = 'center'
 
     const contents = Array.isArray(props.content) ? props.content : [props.content]
-    const lineHeight = typeof fontSize === 'number' ? fontSize + 4 : parseInt(String(fontSize)) + 4
+    const lineHeight = fontSizePx + 4
 
     contents.forEach((text, index) => {
         const yOffset = (index - (contents.length - 1) / 2) * lineHeight
         ctx.fillText(text || '', 0, yOffset)
     })
 
-    watermarkUrl.value = canvas.toDataURL()
+    let dataUrl: string
+    try {
+        dataUrl = canvas.toDataURL()
+    } catch {
+        drawSvgFallback()
+        return
+    }
+    watermarkUrl.value = dataUrl
     nextTick(() => initObserver())
 }
 
@@ -297,12 +336,12 @@ watch(
                 ref="watermarkRef"
                 class="absolute pointer-events-none"
                 :style="{
-                    left: `${offset[0]}px`,
-                    top: `${offset[1]}px`,
-                    width: `calc(100% - ${offset[0]}px)`,
-                    height: `calc(100% - ${offset[1]}px)`,
+                    left: `${normalizedOffset[0]}px`,
+                    top: `${normalizedOffset[1]}px`,
+                    width: `calc(100% - ${normalizedOffset[0]}px)`,
+                    height: `calc(100% - ${normalizedOffset[1]}px)`,
                     backgroundImage: `url(${watermarkUrl})`,
-                    backgroundSize: `${width + gap[0]}px ${height + gap[1]}px`,
+                    backgroundSize: `${width + normalizedGap[0]}px ${height + normalizedGap[1]}px`,
                     backgroundRepeat: 'repeat',
                     zIndex: zIndex
                 }"

@@ -270,4 +270,74 @@ describe('Watermark.vue', () => {
         wrapper.unmount()
         createElementSpy.mockRestore()
     })
+
+    it('handles incomplete offset or gap arrays safely', async () => {
+        const wrapper = mount(Watermark, {
+            props: {
+                content: 'SAFE_OFFSET',
+                offset: [10] as unknown as [number, number],
+                gap: [] as unknown as [number, number],
+            },
+            attachTo: document.body
+        })
+
+        await nextTick()
+
+        const watermarkDiv = wrapper.find('.absolute')
+        expect(watermarkDiv.exists()).toBe(true)
+        const style = watermarkDiv.element.getAttribute('style') || ''
+        expect(style).not.toContain('undefined')
+        expect(style).toContain('left: 10px')
+        expect(style).toContain('top: 0px')
+
+        wrapper.unmount()
+    })
+
+    it('safely parses string fontSize units and escapes special SVG attributes', async () => {
+        const getContextSpy = vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null)
+
+        const wrapper = mount(Watermark, {
+            props: {
+                content: '<script>alert("xss")</script>',
+                font: {
+                    fontSize: '18px',
+                    fontFamily: 'Arial" onmouseover="alert(1)',
+                    color: 'rgba(0,0,0,0.2)" onload="',
+                },
+            },
+            attachTo: document.body
+        })
+
+        await nextTick()
+
+        const watermarkDiv = wrapper.find('.absolute')
+        expect(watermarkDiv.exists()).toBe(true)
+        const style = watermarkDiv.element.getAttribute('style') || ''
+        expect(style).toContain('data:image/svg+xml;base64,')
+
+        wrapper.unmount()
+        getContextSpy.mockRestore()
+    })
+
+    it('falls back to SVG when canvas.toDataURL throws SecurityError', async () => {
+        const toDataURLSpy = vi.spyOn(HTMLCanvasElement.prototype, 'toDataURL').mockImplementation(() => {
+            throw new Error('SecurityError: The operation is insecure.')
+        })
+
+        const wrapper = mount(Watermark, {
+            props: { content: 'TEST_TAINT' },
+            attachTo: document.body
+        })
+
+        await nextTick()
+
+        const watermarkDiv = wrapper.find('.absolute')
+        expect(watermarkDiv.exists()).toBe(true)
+        const style = watermarkDiv.element.getAttribute('style') || ''
+        expect(style).toContain('data:image/svg+xml;base64,')
+
+        wrapper.unmount()
+        toDataURLSpy.mockRestore()
+    })
 })
+
