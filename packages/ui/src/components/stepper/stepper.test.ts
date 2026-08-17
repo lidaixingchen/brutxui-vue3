@@ -261,7 +261,7 @@ describe('Stepper', () => {
             expect(buttons[0].classes()).toContain('cursor-pointer')
         })
 
-        it('applies pointer-events-none when clickable=false', () => {
+        it('applies pointer-events-none and disabled attribute when clickable=false', () => {
             const wrapper = mount(Stepper, {
                 props: { steps, modelValue: 0, clickable: false },
                 global: { provide: localeProvide },
@@ -269,6 +269,7 @@ describe('Stepper', () => {
             const buttons = wrapper.findAll('button')
             expect(buttons[0].classes()).toContain('pointer-events-none')
             expect(buttons[0].classes()).not.toContain('cursor-pointer')
+            expect(buttons[0].attributes('disabled')).toBeDefined()
         })
 
         it('does not emit update:modelValue when clickable=false', async () => {

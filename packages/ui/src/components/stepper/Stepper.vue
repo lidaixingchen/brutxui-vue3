@@ -229,6 +229,7 @@ const connectorClasses = computed(() =>
                         :class="dotClasses[index]"
                         type="button"
                         data-step-button
+                        :disabled="!clickable"
                         :aria-label="t('stepper.step', { index: index + 1, title: step.title })"
                         @click="clickStep(index)"
                     >
@@ -266,6 +267,7 @@ const connectorClasses = computed(() =>
                             :class="dotClasses[index]"
                             type="button"
                             data-step-button
+                            :disabled="!clickable"
                             :aria-label="t('stepper.step', { index: index + 1, title: step.title })"
                             @click="clickStep(index)"
                         >

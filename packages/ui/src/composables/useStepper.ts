@@ -1,10 +1,8 @@
 import { type Ref, ref, readonly, computed, watch, type ComputedRef } from 'vue'
+import type { StepperStep } from '@/components/stepper/types'
 
-export interface Step {
-    id: string | number
-    title: string
-    description?: string
-}
+export type Step = StepperStep
+export type { StepperStep }
 
 export interface UseStepperOptions {
     steps: Ref<Step[]>
