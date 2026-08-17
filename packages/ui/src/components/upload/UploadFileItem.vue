@@ -36,7 +36,7 @@ const emit = defineEmits<{
 
 // 根据文件类型获取图标
 const fileIcon = computed(() => {
-    const type = props.file.type
+    const type = props.file.type ?? ''
     if (type.startsWith('image/')) return Image
     if (type.startsWith('video/')) return Video
     if (type.startsWith('audio/')) return Music
@@ -69,7 +69,8 @@ const showImagePreview = computed(() => {
 const objectUrl = ref<string | undefined>()
 
 watchEffect((onCleanup) => {
-    if (props.file.url || !props.file.raw || !props.file.type.startsWith('image/')) {
+    const isImage = (props.file.type ?? '').startsWith('image/')
+    if (!showImagePreview.value || props.file.url || !props.file.raw || !isImage) {
         return
     }
     const url = URL.createObjectURL(props.file.raw)
@@ -142,17 +143,19 @@ const previewUrl = computed(() => props.file.url ?? objectUrl.value)
                 size="sm"
                 variant="ghost"
                 class="h-6 w-6 p-0"
+                aria-label="重试上传"
                 @click.stop="emit('retry')"
             >
-                <RefreshCw class="h-3 w-3" />
+                <RefreshCw class="h-3 w-3" aria-hidden="true" />
             </Button>
             <Button
                 size="sm"
                 variant="ghost"
                 class="h-6 w-6 p-0"
+                aria-label="删除文件"
                 @click.stop="emit('remove')"
             >
-                <X class="h-3 w-3" />
+                <X class="h-3 w-3" aria-hidden="true" />
             </Button>
         </div>
 
@@ -213,7 +216,7 @@ const previewUrl = computed(() => props.file.url ?? objectUrl.value)
                 v-if="file.status === 'error' && file.error"
                 class="text-sm text-brutal-destructive mt-1"
             >
-                {{ file.error.message }}
+                {{ file.error?.message }}
             </p>
         </div>
 
@@ -230,9 +233,10 @@ const previewUrl = computed(() => props.file.url ?? objectUrl.value)
                 v-if="file.status === 'error'"
                 size="sm"
                 variant="outline"
+                aria-label="重试上传"
                 @click.stop="emit('retry')"
             >
-                <RefreshCw class="h-3 w-3 mr-1" />
+                <RefreshCw class="h-3 w-3 mr-1" aria-hidden="true" />
                 重试
             </Button>
 
@@ -241,9 +245,10 @@ const previewUrl = computed(() => props.file.url ?? objectUrl.value)
                 size="sm"
                 variant="ghost"
                 class="h-8 w-8 p-0"
+                aria-label="删除文件"
                 @click.stop="emit('remove')"
             >
-                <X class="h-4 w-4" />
+                <X class="h-4 w-4" aria-hidden="true" />
             </Button>
         </div>
     </div>

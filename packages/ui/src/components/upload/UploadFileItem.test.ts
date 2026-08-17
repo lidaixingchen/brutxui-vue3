@@ -121,4 +121,57 @@ describe('UploadFileItem previewUrl object URL lifecycle', () => {
         expect(wrapper.find('img').exists()).toBe(false)
         wrapper.unmount()
     })
+
+    it('does not create object URL when listType is text', async () => {
+        const wrapper = mount(UploadFileItem, {
+            props: {
+                file: createUploadFile(),
+                listType: 'text',
+            },
+        })
+        await nextTick()
+        expect(createSpy).not.toHaveBeenCalled()
+        wrapper.unmount()
+    })
+
+    it('handles undefined or empty file.type gracefully without throwing', () => {
+        const wrapper = mount(UploadFileItem, {
+            props: {
+                file: createUploadFile({ type: '' as unknown as string }),
+                listType: 'text',
+            },
+        })
+        expect(wrapper.find('p').text()).toBe('a.png')
+    })
+
+    it('safely renders when file.error is partially populated', () => {
+        const wrapper = mount(UploadFileItem, {
+            props: {
+                file: createUploadFile({
+                    status: 'error',
+                    error: {} as unknown as { message: string },
+                }),
+                listType: 'text',
+            },
+        })
+        expect(wrapper.text()).toContain('a.png')
+    })
+
+    it('provides accessible aria-label on action buttons in picture-card mode', () => {
+        const wrapper = mount(UploadFileItem, {
+            props: {
+                file: createUploadFile({
+                    status: 'error',
+                    error: { message: 'Failed' },
+                }),
+                listType: 'picture-card',
+            },
+        })
+        const buttons = wrapper.findAll('button')
+        const retryBtn = buttons.find(b => b.attributes('aria-label') === '重试上传')
+        const removeBtn = buttons.find(b => b.attributes('aria-label') === '删除文件')
+        expect(retryBtn).toBeTruthy()
+        expect(removeBtn).toBeTruthy()
+    })
 })
+

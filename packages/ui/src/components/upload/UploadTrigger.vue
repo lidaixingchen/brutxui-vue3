@@ -50,15 +50,14 @@ function handleFileChange(event: Event) {
 
 // 拖拽处理
 function handleDragEnter(event: DragEvent) {
-    // drag=false 时不再绑定拖拽行为，保持浏览器默认拖放语义
-    if (!props.drag) return
+    // drag=false 或 disabled 时不再绑定拖拽行为
+    if (!props.drag || props.disabled) return
     event.preventDefault()
-    if (props.disabled) return
     isDragging.value = true
 }
 
 function handleDragLeave(event: DragEvent) {
-    if (!props.drag) {
+    if (!props.drag || props.disabled) {
         // drag 在拖拽过程中变 false 时，需复位高亮态，避免残留
         isDragging.value = false
         return
@@ -73,12 +72,12 @@ function handleDragLeave(event: DragEvent) {
 }
 
 function handleDragOver(event: DragEvent) {
-    if (!props.drag) return
+    if (!props.drag || props.disabled) return
     event.preventDefault()
 }
 
 function handleDrop(event: DragEvent) {
-    if (!props.drag) {
+    if (!props.drag || props.disabled) {
         // drag 在拖拽过程中变 false 时，需复位高亮态，避免残留
         isDragging.value = false
         return
@@ -86,11 +85,12 @@ function handleDrop(event: DragEvent) {
     event.preventDefault()
     isDragging.value = false
 
-    if (props.disabled) return
-
     // dataTransfer.files 同样是实时 FileList，拷贝成数组后再 emit
-    const files = Array.from(event.dataTransfer?.files ?? [])
+    let files = Array.from(event.dataTransfer?.files ?? [])
     if (files.length > 0) {
+        if (!props.multiple && files.length > 1) {
+            files = files.slice(0, 1)
+        }
         emit('select', files, 'drop')
     }
 }
@@ -103,7 +103,12 @@ function handleDrop(event: DragEvent) {
             disabled && 'cursor-not-allowed opacity-50',
             props.class,
         )"
+        role="button"
+        :tabindex="disabled ? -1 : 0"
+        :aria-disabled="disabled"
         @click="triggerFileInput"
+        @keydown.enter="triggerFileInput"
+        @keydown.space.prevent="triggerFileInput"
         @dragenter="handleDragEnter"
         @dragleave="handleDragLeave"
         @dragover="handleDragOver"
@@ -117,6 +122,7 @@ function handleDrop(event: DragEvent) {
             :accept="accept"
             :multiple="multiple"
             :disabled="disabled"
+            @click.stop
             @change="handleFileChange"
         >
 

@@ -65,12 +65,23 @@ const internalFileList = ref<UploadFile[]>([...props.fileList])
 // 生成唯一 ID
 let fileIdCounter = 0
 function generateId(): string {
-    return `file-${Date.now()}-${++fileIdCounter}`
+    return `file-${Date.now()}-${++fileIdCounter}-${Math.random().toString(36).slice(2, 9)}`
 }
 
-// 同步外部 fileList（引用变化时同步，避免 deep 监听在进度更新时频繁触发）
+// 同步外部 fileList，按 id 保留已有对象引用，避免覆盖进行中的上传状态
 watch(() => props.fileList, (newList) => {
-    internalFileList.value = [...newList]
+    if (!newList) {
+        internalFileList.value = []
+        return
+    }
+    const currentMap = new Map(internalFileList.value.map(f => [f.id, f]))
+    internalFileList.value = newList.map((newFile) => {
+        const existing = currentMap.get(newFile.id)
+        if (existing) {
+            return Object.assign(existing, newFile)
+        }
+        return newFile
+    })
 })
 
 const { validateFileSize, matchesAccept } = useUpload({
@@ -78,11 +89,6 @@ const { validateFileSize, matchesAccept } = useUpload({
     accept: () => props.accept,
 })
 
-// 检查文件数量
-function validateFileCount(count: number): boolean {
-    if (props.limit === undefined) return true
-    return internalFileList.value.length + count <= props.limit
-}
 
 // 创建 UploadFile 对象
 function createUploadFile(file: File): UploadFile {
@@ -112,11 +118,17 @@ async function doUpload(file: UploadFile): Promise<void> {
     // 文件被移除后中止上传，回调中跳过已取消的文件，避免触发 file-success/file-error
     const isCancelled = () => abortController.signal.aborted
 
+    const cleanup = () => {
+        if (file.abortController === abortController) {
+            file.abortController = undefined
+        }
+    }
+
     try {
         await props.httpRequest({
             file: file.raw!,
             signal: abortController.signal,
-            onProgress: (percent) => {
+            onProgress: (percent: number) => {
                 if (isCancelled()) return
                 file.progress = percent
             },
@@ -125,13 +137,15 @@ async function doUpload(file: UploadFile): Promise<void> {
                 settled = true
                 file.status = 'success'
                 file.progress = 100
+                cleanup()
                 emit('file-success', file)
             },
-            onError: (error) => {
+            onError: (error: UploadError) => {
                 if (settled || isCancelled()) return
                 settled = true
                 file.status = 'error'
                 file.error = error
+                cleanup()
                 emit('file-error', file, error)
                 props.onError?.(error, file)
             },
@@ -144,6 +158,7 @@ async function doUpload(file: UploadFile): Promise<void> {
         }
         file.status = 'error'
         file.error = uploadError
+        cleanup()
         emit('file-error', file, uploadError)
         props.onError?.(uploadError, file)
     }
@@ -151,11 +166,18 @@ async function doUpload(file: UploadFile): Promise<void> {
 
 // 重试上传
 async function retryUpload(file: UploadFile): Promise<void> {
-    if (props.maxRetries !== undefined && (file.retryCount ?? 0) >= props.maxRetries) {
+    if (file.status === 'success' || file.status === 'uploading') {
         return
     }
-    if (file.status === 'uploading') {
-        file.abortController?.abort()
+    if (props.maxRetries !== undefined && (file.retryCount ?? 0) >= props.maxRetries) {
+        const error: UploadError = {
+            message: `已达到最大重试次数 (${props.maxRetries})`,
+        }
+        file.status = 'error'
+        file.error = error
+        emit('file-error', file, error)
+        props.onError?.(error, file)
+        return
     }
     file.retryCount = (file.retryCount ?? 0) + 1
     file.error = undefined
@@ -165,24 +187,6 @@ async function retryUpload(file: UploadFile): Promise<void> {
 // 处理文件选择
 async function handleFileSelect(files: FileList | File[]): Promise<void> {
     const fileArray = Array.from(files)
-
-    // 验证文件数量
-    if (!validateFileCount(fileArray.length)) {
-        const error: UploadError = {
-            message: `最多只能上传 ${props.limit} 个文件`,
-        }
-        props.onError?.(error, {
-            id: '',
-            name: '',
-            size: 0,
-            type: '',
-            status: 'error',
-            progress: 0,
-            error,
-        })
-        return
-    }
-
     const pendingUploads: UploadFile[] = []
 
     for (const file of fileArray) {
@@ -219,6 +223,23 @@ async function handleFileSelect(files: FileList | File[]): Promise<void> {
             continue
         }
 
+        // 验证剩余数量额度
+        if (props.limit !== undefined && internalFileList.value.length >= props.limit) {
+            const error: UploadError = {
+                message: `最多只能上传 ${props.limit} 个文件`,
+            }
+            props.onError?.(error, {
+                id: '',
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                status: 'error',
+                progress: 0,
+                error,
+            })
+            continue
+        }
+
         // 执行 beforeUpload 钩子
         if (props.beforeUpload) {
             const result = await props.beforeUpload(file)
@@ -232,11 +253,9 @@ async function handleFileSelect(files: FileList | File[]): Promise<void> {
         pendingUploads.push(uploadFile)
     }
 
-    // 统一启动上传，不阻塞列表渲染
-    if (props.autoUpload) {
-        for (const uploadFile of pendingUploads) {
-            await doUpload(uploadFile)
-        }
+    // 统一并发启动上传
+    if (props.autoUpload && pendingUploads.length > 0) {
+        await Promise.allSettled(pendingUploads.map((uploadFile) => doUpload(uploadFile)))
     }
 }
 
