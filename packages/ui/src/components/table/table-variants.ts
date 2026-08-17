@@ -1,5 +1,11 @@
 import { cva } from 'class-variance-authority'
 
+const headerColorVariants = {
+    default: 'bg-brutal-accent text-brutal-accent-foreground',
+    primary: 'bg-brutal-primary text-brutal-primary-foreground',
+    secondary: 'bg-brutal-secondary text-brutal-secondary-foreground',
+} as const
+
 export const tableVariants = cva(
     [
         'w-full caption-bottom text-sm',
@@ -13,11 +19,7 @@ export const tableHeaderVariants = cva(
     ],
     {
         variants: {
-            variant: {
-                default: 'bg-brutal-accent text-brutal-accent-foreground',
-                primary: 'bg-brutal-primary text-brutal-primary-foreground',
-                secondary: 'bg-brutal-secondary text-brutal-secondary-foreground',
-            },
+            variant: headerColorVariants,
         },
         defaultVariants: {
             variant: 'default',
@@ -33,11 +35,7 @@ export const tableHeadVariants = cva(
     ],
     {
         variants: {
-            variant: {
-                default: 'bg-brutal-accent text-brutal-accent-foreground',
-                primary: 'bg-brutal-primary text-brutal-primary-foreground',
-                secondary: 'bg-brutal-secondary text-brutal-secondary-foreground',
-            },
+            variant: headerColorVariants,
         },
         defaultVariants: {
             variant: 'default',
@@ -45,9 +43,16 @@ export const tableHeadVariants = cva(
     }
 )
 
+export const tableBodyVariants = cva(
+    [
+        '[&>tr:last-child]:border-0',
+        '[&>tr:nth-child(even)]:bg-brutal-muted',
+    ]
+)
+
 export const tableFooterVariants = cva(
     [
-        'border-t-3 border-brutal font-bold [&>tr]:last:border-b-0',
+        'border-t-3 border-brutal font-bold [&>tr:last-child]:border-b-0',
     ],
     {
         variants: {
@@ -76,5 +81,11 @@ export const tableCellVariants = cva(
         'p-4 align-middle font-medium',
         '[&:has([role=checkbox])]:pr-0',
         'border-r-3 border-brutal last:border-r-0',
+    ]
+)
+
+export const tableCaptionVariants = cva(
+    [
+        'mt-4 text-sm font-bold text-brutal-muted-foreground',
     ]
 )

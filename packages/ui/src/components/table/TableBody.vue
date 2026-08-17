@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { cn } from '@/lib/utils'
+import { tableBodyVariants } from './table-variants'
 
 interface TableBodyProps {
     class?: string
@@ -9,11 +10,7 @@ interface TableBodyProps {
 const props = defineProps<TableBodyProps>()
 
 const classes = computed(() =>
-    cn(
-        '[&>tr:last-child]:border-0',
-        '[&>tr:nth-child(even)]:bg-brutal-muted',
-        props.class
-    )
+    cn(tableBodyVariants(), props.class)
 )
 </script>
 

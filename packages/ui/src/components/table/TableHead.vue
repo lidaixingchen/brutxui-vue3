@@ -22,7 +22,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <th :class="classes">
+    <th :class="classes" scope="col">
         <slot />
     </th>
 </template>
