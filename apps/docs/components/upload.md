@@ -181,11 +181,13 @@ interface UploadFile {
     name: string
     size: number
     type: string
-    status: 'ready' | 'uploading' | 'success' | 'error'
+    status: 'ready' | 'uploading' | 'success' | 'error' | 'canceled'
     progress: number
     url?: string
     raw?: File
     error?: UploadError
+    retryCount?: number
+    abortController?: AbortController
 }
 ```
 
@@ -204,6 +206,7 @@ interface UploadError {
 ```typescript
 interface UploadRequestOptions {
     file: File
+    signal: AbortSignal
     onProgress: (percent: number) => void
     onSuccess: (response: unknown) => void
     onError: (error: UploadError) => void
@@ -226,7 +229,8 @@ interface UploadRequestOptions {
 
 | 事件 | 参数 | 说明 |
 | --- | --- | --- |
-| `select` | `FileList` | 选择文件时触发 |
+| `select` | `[files: File[], source: 'browse' \| 'drop']` | 选择或拖拽文件时触发 |
+
 
 ## 暴露的方法
 

@@ -122,13 +122,13 @@ const items = Array.from({ length: 10000 }, (_, i) => ({
 | `default` | `max-h-96` (24rem) |
 | `lg` | `max-h-[32rem]` |
 | `xl` | `max-h-[48rem]` |
-| `full` | `max-h-full` |
+| `full` | `max-h-full` (requires parent container to have a definite height, e.g. `h-screen`/`h-96`) |
 
 ## Data Types
 
 ```ts
 interface VirtualScrollItem {
-    id: string | number
+    id?: string | number
     [key: string]: unknown
 }
 ```
@@ -165,18 +165,22 @@ function jumpToMiddle() {
 | Method | Parameter | Description |
 |------|------|------|
 | `scrollToIndex` | `index: number` | Scroll to the list item at the specified index |
+| `measure` | — | Re-measure all mounted items' sizes |
+| `measureElement` | `el: Element \| null` | Measure the actual size of the given DOM element |
 
 ## Props
 
 | Prop | Type | Default | Description |
 |------|------|--------|------|
-| `items` | `VirtualScrollItem[]` | — | Data array (required), each item must have an `id` field |
-| `itemHeight` | `number` | `48` | Height of each item (in pixels) |
+| `items` | `T[]` | — | Data array (required) |
+| `itemHeight` | `number` | `48` | Estimated height of each item (in pixels) |
+| `dynamicHeight` | `boolean` | `false` | Whether to enable dynamic height measurement for variable item heights |
 | `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'default'` | Container size variant |
 | `variant` | `'default' \| 'striped' \| 'bordered'` | `'default'` | List item style variant |
 | `overscan` | `number` | `5` | Number of items to pre-render outside the visible area |
 | `scrollEndThreshold` | `number` | `50` | Scroll-to-bottom detection threshold (in pixels) |
 | `class` | `string` | — | External CSS class override |
+
 
 ## Events
 

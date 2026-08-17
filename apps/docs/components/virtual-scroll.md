@@ -121,13 +121,13 @@ const items = Array.from({ length: 10000 }, (_, i) => ({
 | `default` | `max-h-96` (24rem) |
 | `lg` | `max-h-[32rem]` |
 | `xl` | `max-h-[48rem]` |
-| `full` | `max-h-full` |
+| `full` | `max-h-full`（依赖父容器提供确定高度，如 `h-screen`/`h-96`） |
 
 ## 数据类型
 
 ```ts
 interface VirtualScrollItem {
-    id: string | number
+    id?: string | number
     [key: string]: unknown
 }
 ```
@@ -164,18 +164,22 @@ function jumpToMiddle() {
 | 方法 | 参数 | 说明 |
 |------|------|------|
 | `scrollToIndex` | `index: number` | 滚动到指定索引位置的列表项 |
+| `measure` | — | 重新测量全部已挂载项的尺寸 |
+| `measureElement` | `el: Element \| null` | 测量指定 DOM 元素的真实尺寸 |
 
 ## Props
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `items` | `VirtualScrollItem[]` | — | 数据数组（必填），每项必须有 `id` 字段 |
-| `itemHeight` | `number` | `48` | 每项高度（像素） |
+| `items` | `T[]` | — | 数据数组（必填） |
+| `itemHeight` | `number` | `48` | 每项估算高度（像素） |
+| `dynamicHeight` | `boolean` | `false` | 是否启用动态高度测量（高度不固定时使用） |
 | `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'default'` | 容器尺寸变体 |
 | `variant` | `'default' \| 'striped' \| 'bordered'` | `'default'` | 列表项样式变体 |
 | `overscan` | `number` | `5` | 可视区域外预渲染的项目数量 |
 | `scrollEndThreshold` | `number` | `50` | 滚动到底部检测阈值（像素） |
 | `class` | `string` | — | 外部类覆盖 |
+
 
 ## 事件
 

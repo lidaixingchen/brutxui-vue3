@@ -66,7 +66,7 @@ import { Watermark } from 'brutx-ui-vue'
 | `width` | `number` | `120` | 单个水印图形的宽度 |
 | `height` | `number` | `64` | 单个水印图形的高度 |
 | `rotate` | `number` | `-22` | 水印文本/图片的倾斜角度（逆时针旋转度数） |
-| `zIndex` | `number` | `9` | 水印图层的 z-index 深度层级 |
+| `zIndex` | `number` | `9999` | 水印图层的 z-index 深度层级 |
 | `image` | `string` | `undefined` | 水印图片的数据源 (DataURL / URL)，图片模式下文本内容不再生效 |
 | `content` | `string \| string[]` | `''` | 水印的文本内容，支持数组形式排布多行文本 |
 | `gap` | `[number, number]` | `[100, 100]` | 水印横纵向平铺的网格空隙间隔 (gapX, gapY) |
@@ -77,11 +77,11 @@ import { Watermark } from 'brutx-ui-vue'
 
 ```typescript
 interface WatermarkFont {
-    color?: string       // 文本颜色，默认 'rgba(0, 0, 0, 0.15)'
-    fontSize?: number    // 字体大小，默认 14
-    fontWeight?: string  // 字体粗细，默认 'normal'
-    fontStyle?: string   // 字体风格，默认 'normal'
-    fontFamily?: string  // 字体族，默认 'sans-serif'
+    color?: string                  // 文本颜色，默认 'rgba(0, 0, 0, 0.15)'
+    fontSize?: number | string      // 字体大小，支持数字或带单位字符串（如 14, '16px', '1.2rem'），默认 14
+    fontWeight?: 'normal' | 'light' | 'weight' | 'bold' | number  // 字体粗细，默认 'normal'
+    fontStyle?: 'normal' | 'italic' | 'oblique'                   // 字体风格，默认 'normal'
+    fontFamily?: string             // 字体族，默认 'sans-serif'
 }
 ```
 

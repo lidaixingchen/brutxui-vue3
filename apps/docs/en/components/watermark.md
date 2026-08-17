@@ -66,7 +66,7 @@ Pass an array to render multi-line text, and customize font sizing, angles, and 
 | `width` | `number` | `120` | Single watermark box width |
 | `height` | `number` | `64` | Single watermark box height |
 | `rotate` | `number` | `-22` | Counter-clockwise angle rotation degrees |
-| `zIndex` | `number` | `9` | Z-index layer depth |
+| `zIndex` | `number` | `9999` | Z-index layer depth |
 | `image` | `string` | `undefined` | Source Image URL (Image takes precedence over text content) |
 | `content` | `string \| string[]` | `''` | Text content (Supports array of strings for multi-lines) |
 | `gap` | `[number, number]` | `[100, 100]` | Mesh grid gaps (gapX, gapY) |
@@ -77,11 +77,11 @@ Pass an array to render multi-line text, and customize font sizing, angles, and 
 
 ```typescript
 interface WatermarkFont {
-    color?: string       // Color, defaults to 'rgba(0, 0, 0, 0.15)'
-    fontSize?: number    // Font size, defaults to 14
-    fontWeight?: string  // Font weight, defaults to 'normal'
-    fontStyle?: string   // Font style, defaults to 'normal'
-    fontFamily?: string  // Font family, defaults to 'sans-serif'
+    color?: string                  // Color, defaults to 'rgba(0, 0, 0, 0.15)'
+    fontSize?: number | string      // Font size, supports numbers or units like '16px', '1.2rem', defaults to 14
+    fontWeight?: 'normal' | 'light' | 'weight' | 'bold' | number  // Font weight, defaults to 'normal'
+    fontStyle?: 'normal' | 'italic' | 'oblique'                   // Font style, defaults to 'normal'
+    fontFamily?: string             // Font family, defaults to 'sans-serif'
 }
 ```
 
