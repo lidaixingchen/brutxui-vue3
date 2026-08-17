@@ -141,14 +141,15 @@ const PIE_COLORS = [
 
 const pieSlices = computed(() => {
     if (processedData.value.length === 0) return []
-    const total = processedData.value.reduce((sum, d) => sum + d.value, 0)
+    const total = processedData.value.reduce((sum, d) => sum + Math.max(0, d.value), 0)
     if (total === 0) return []
     const cx = props.width / 2
     const cy = props.height / 2
     const radius = Math.min(cx, cy) * WIDTH_RATIO
     let currentAngle = -Math.PI / 2
     return processedData.value.map((d, i) => {
-        const sliceAngle = (d.value / total) * Math.PI * 2
+        const positiveVal = Math.max(0, d.value)
+        const sliceAngle = (positiveVal / total) * Math.PI * 2
         const startAngle = currentAngle
         const endAngle = currentAngle + sliceAngle
         const x1 = cx + radius * Math.cos(startAngle)
@@ -156,7 +157,7 @@ const pieSlices = computed(() => {
         const x2 = cx + radius * Math.cos(endAngle)
         const y2 = cy + radius * Math.sin(endAngle)
         let path: string
-        if (sliceAngle >= Math.PI * 2) {
+        if (sliceAngle >= Math.PI * 2 - 1e-6) {
             // 完整圆需拆为两段半圆：A 命令在起止点重合时不渲染
             const midX = cx + radius * Math.cos(startAngle + Math.PI)
             const midY = cy + radius * Math.sin(startAngle + Math.PI)
@@ -189,25 +190,26 @@ const pieSlices = computed(() => {
     })
 })
 
-// 自动生成 Y 轴 5 等分刻度
+// 自动生成 Y 轴 5 等分刻度（使用 index 作为唯一标识，y 坐标使用未取整的精确值）
 const yTicks = computed(() => {
     const ticks = []
     const step = maxValue.value / 4
     for (let i = 0; i <= 4; i++) {
-        const val = Math.round(step * i)
+        const rawVal = step * i
         ticks.push({
-            value: val,
-            y: dataToSvgY(val)
+            index: i,
+            value: Math.round(rawVal),
+            y: dataToSvgY(rawVal),
         })
     }
     return ticks
 })
 
-const isEmpty = computed(() =>
-    props.type === 'pie'
-        ? pieSlices.value.length === 0
-        : processedData.value.length === 0
-)
+const isEmpty = computed(() => {
+    if (processedData.value.length === 0) return true
+    if (props.type === 'pie') return pieSlices.value.length === 0
+    return processedData.value.every(d => d.value === 0)
+})
 
 const containerClasses = computed(() =>
     cn(sketchyChartVariants(), props.class)
@@ -265,7 +267,7 @@ const containerClasses = computed(() =>
             <g v-if="grid && type !== 'pie'" class="chart-grid">
                 <line
                     v-for="tick in yTicks"
-                    :key="'grid-' + tick.value"
+                    :key="'grid-' + tick.index"
                     :x1="CHART_PADDING.left"
                     :y1="tick.y"
                     :x2="width - CHART_PADDING.right"
@@ -370,7 +372,7 @@ const containerClasses = computed(() =>
                 <!-- Y 轴刻度标签 -->
                 <text
                     v-for="tick in yTicks"
-                    :key="'lbl-y-' + tick.value"
+                    :key="'lbl-y-' + tick.index"
                     :x="CHART_PADDING.left - 12"
                     :y="tick.y + LABEL_OFFSET"
                     text-anchor="end"

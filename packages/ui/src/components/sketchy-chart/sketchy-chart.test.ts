@@ -105,4 +105,29 @@ describe('SketchyChart', () => {
         const secondBarX = Number(barRects[1].attributes('x'))
         expect(secondBarX).toBeGreaterThan(firstBarX)
     })
+
+    it('renders yTicks without duplicate keys when maxValue is small', () => {
+        const wrapper = mount(SketchyChart, {
+            props: { type: 'line', data: [{ label: 'A', value: 1 }] }
+        })
+        const gridLines = wrapper.findAll('.chart-grid line')
+        expect(gridLines.length).toBe(5)
+    })
+
+    it('renders pie chart with single 100% slice without error', () => {
+        const wrapper = mount(SketchyChart, {
+            props: { type: 'pie', data: [{ label: 'Only', value: 100 }] }
+        })
+        const paths = wrapper.findAll('.chart-data path')
+        expect(paths.length).toBe(1)
+        expect(paths[0].attributes('d')).toContain('M')
+    })
+
+    it('renders empty state for line chart when all data values are 0', () => {
+        const wrapper = mount(SketchyChart, {
+            props: { type: 'line', data: [{ label: 'A', value: 0 }, { label: 'B', value: 0 }] }
+        })
+        const emptyState = wrapper.find('.chart-empty-state')
+        expect(emptyState.exists()).toBe(true)
+    })
 })
