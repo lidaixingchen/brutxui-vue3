@@ -130,6 +130,7 @@ const tags = Array.from({ length: 20 }, (_, i) => `Tag ${i + 1}`)
 | `variant` | `'default' \| 'primary' \| 'accent'` | `'default'` | Scrollbar color variant, passed to internal `ScrollBar` |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Scrollbar thickness, passed to internal `ScrollBar` |
 | `class` | `string` | — | Custom style class |
+| `viewportClass` | `string` | — | Custom style class for scroll viewport |
 
 ### ScrollBar
 

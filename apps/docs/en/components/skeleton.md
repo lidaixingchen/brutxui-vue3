@@ -160,7 +160,7 @@ When `shape="circle"`, width matches height (`w-8`/`w-10`/`w-14`/`w-20`).
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | Color variant |
 | `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | Controls height (also controls width for `circle`) |
 | `shape` | `'rect' \| 'circle'` | `'rect'` | Shape; `circle` uses `rounded-full` with equal width and height |
-| `width` | `string` | — | Custom width, supports percentages like `'100%'`; also sets height for `circle` |
+| `width` | `string \| number` | — | Custom width, supports numeric pixels (e.g. `64`) or strings (e.g. `'100%'`, `'200px'`); also sets height for `circle` |
 | `class` | `string` | — | Custom style class |
 
 ### SkeletonText

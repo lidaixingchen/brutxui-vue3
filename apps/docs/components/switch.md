@@ -85,7 +85,9 @@ const sync = ref(false)
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `modelValue` | `boolean` | — | 当前值，支持 `v-model` |
+| `modelValue` | `boolean` | — | 当前值，支持 `v-model`（受控模式） |
+| `defaultValue` | `boolean` | — | 非受控模式下的初始选中状态 |
+| `defaultChecked` | `boolean` | — | `defaultValue` 的别名（非受控模式初始选中状态） |
 | `disabled` | `boolean` | `false` | 是否禁用 |
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger'` | `'default'` | 颜色变体 |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 尺寸 |

@@ -86,7 +86,9 @@ const sync = ref(false)
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| `modelValue` | `boolean` | — | Current value, supports `v-model` |
+| `modelValue` | `boolean` | — | Current value, supports `v-model` (controlled mode) |
+| `defaultValue` | `boolean` | — | Initial checked state in uncontrolled mode |
+| `defaultChecked` | `boolean` | — | Alias for `defaultValue` (initial checked state in uncontrolled mode) |
 | `disabled` | `boolean` | `false` | Whether disabled |
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger'` | `'default'` | Color variant |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Size |

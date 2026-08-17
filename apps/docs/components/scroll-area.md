@@ -129,6 +129,7 @@ const tags = Array.from({ length: 20 }, (_, i) => `标签 ${i + 1}`)
 | `variant` | `'default' \| 'primary' \| 'accent'` | `'default'` | 滚动条颜色变体，下发给内部 `ScrollBar` |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 滚动条粗细，下发给内部 `ScrollBar` |
 | `class` | `string` | — | 自定义样式类 |
+| `viewportClass` | `string` | — | 滚动视口（Viewport）自定义样式类 |
 
 ### ScrollBar
 

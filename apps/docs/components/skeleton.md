@@ -159,7 +159,7 @@ import { SkeletonTable } from 'brutx-ui-vue'
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 颜色变体 |
 | `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | 控制高度（`circle` 时同步控制宽度） |
 | `shape` | `'rect' \| 'circle'` | `'rect'` | 形状；`circle` 时 `rounded-full` 且宽高相等 |
-| `width` | `string` | — | 自定义宽度，支持百分比如 `'100%'`；`circle` 时同时设置高度 |
+| `width` | `string \| number` | — | 自定义宽度，支持数字像素（如 `64`）或字符串（如 `'100%'`、`'200px'`）；`circle` 时同时设置高度 |
 | `class` | `string` | — | 自定义样式类 |
 
 ### SkeletonText

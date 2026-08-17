@@ -275,6 +275,7 @@ const selectedFruit = ref('')
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
+| `decorative` | `boolean` | `true` | 是否为纯装饰性元素（为 true 时在无障碍树中隐藏） |
 | `class` | `string` | — | 自定义样式类 |
 
 ### SelectScrollUpButton

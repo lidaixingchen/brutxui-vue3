@@ -224,6 +224,7 @@ Displays the selected value, inherits all props from reka-ui `SelectValue`.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
+| `decorative` | `boolean` | `true` | Whether it is purely decorative (hidden from accessibility tree when true) |
 | `class` | `string` | — | Custom CSS class |
 
 ### SelectScrollUpButton
