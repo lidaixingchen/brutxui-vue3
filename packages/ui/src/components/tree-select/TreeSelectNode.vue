@@ -176,7 +176,7 @@ function handleKeydown(e: KeyboardEvent) {
         role="treeitem"
         :tabindex="!node.disabled && focusedId === node.id ? 0 : -1"
         :aria-expanded="!isLeaf ? isExpanded : undefined"
-        :aria-controls="!isLeaf ? contentId : undefined"
+        :aria-controls="!isLeaf && isExpanded ? contentId : undefined"
         :aria-selected="isSelected"
         :aria-disabled="node.disabled ? true : undefined"
         @focus="handleFocus"

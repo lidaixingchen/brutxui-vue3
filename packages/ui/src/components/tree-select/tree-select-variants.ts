@@ -30,8 +30,9 @@ export const treeSelectTriggerVariants = cva(
 export const treeSelectNodeVariants = cva(
     [
         ...treeNodeBaseClasses,
-        `hover:border-brutal ${brutalHoverLiftSm}`,
-        'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-transparent disabled:hover:shadow-none disabled:hover:translate-x-0 disabled:hover:translate-y-0',
+        'hover:border-brutal',
+        brutalHoverLiftSm,
+        'disabled:opacity-50 disabled:cursor-not-allowed disabled:border-transparent disabled:shadow-none disabled:translate-x-0 disabled:translate-y-0',
     ],
     {
         variants: {

@@ -124,9 +124,17 @@ function flattenNodes(nodes: TreeNode[]): TreeNode[] {
 
 const allNodes = computed(() => flattenNodes(props.nodes))
 
-// 查找节点
+const nodeMap = computed(() => {
+    const map = new Map<string, TreeNode>()
+    for (const node of allNodes.value) {
+        map.set(node.id, node)
+    }
+    return map
+})
+
+// 查找节点 (O(1))
 function findNodeById(id: string): TreeNode | undefined {
-    return allNodes.value.find((n) => n.id === id)
+    return nodeMap.value.get(id)
 }
 
 // 单选模式：选中的节点
@@ -355,14 +363,12 @@ const contentId = `tree-select-content-${useId()}`
 <template>
     <PopoverRoot v-model:open="open">
         <PopoverTrigger as-child>
-            <!-- 修复：使用 div 替代嵌套 button -->
             <div
                 role="combobox"
                 :aria-expanded="open"
                 :aria-controls="open ? contentId : undefined"
                 :aria-label="ariaLabel"
-                aria-haspopup="listbox"
-                :aria-multiselectable="multiple ? 'true' : undefined"
+                aria-haspopup="tree"
                 :tabindex="disabled ? -1 : 0"
                 :aria-disabled="disabled"
                 :class="triggerClasses"
@@ -374,17 +380,16 @@ const contentId = `tree-select-content-${useId()}`
             >
                 <span class="truncate">{{ displayText }}</span>
                 <span class="flex items-center gap-1">
-                    <!-- 修复：清除按钮使用 span + role="button" -->
-                    <!-- 与 lib/utils FOCUS_RING_CLASSES 保持一致 -->
+                    <!-- 清除按钮使用 span + role="button" -->
                     <span
                         v-if="showClear"
                         role="button"
                         :tabindex="disabled ? -1 : 0"
                         class="p-0.5 hover:bg-brutal-muted rounded-brutal focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden"
                         :aria-label="t('treeSelect.clear')"
-                        @click="handleClear"
-                        @keydown.enter="handleClear"
-                        @keydown.space.prevent="handleClear"
+                        @click.stop="handleClear"
+                        @keydown.enter.stop="handleClear"
+                        @keydown.space.prevent.stop="handleClear"
                     >
                         <X :class="clearIconClasses" />
                     </span>
@@ -393,7 +398,7 @@ const contentId = `tree-select-content-${useId()}`
             </div>
         </PopoverTrigger>
         <PopoverContent class="w-(--reka-popover-trigger-width) p-0" align="start">
-          <div :id="contentId" class="flex flex-col">
+            <div :id="contentId" class="flex flex-col">
                 <!-- 搜索框 -->
                 <div v-if="searchable" class="border-b-3 border-brutal p-2">
                     <Input
