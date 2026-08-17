@@ -1,12 +1,13 @@
 # 命令式弹层宿主深化与MessageBox解耦方案
 
 > 方案类型：底层架构重构与模块深化
-> 状态：**active**
+> 状态：**done**
 > 日期：2026-08-17
 > 关联文档：[架构优化方案-v3](架构优化方案-v3.md)；[CONTEXT.md](../../CONTEXT.md)；[VISUAL_SYSTEM.md](../guides/VISUAL_SYSTEM.md)
 > 修订记录：
 > - 2026-08-17：初稿定稿。确立全生命周期 Imperative Overlay Host 核心模块、剥离独立 MessageBox 组件、规范确定性 Promise 句柄契约与自动 AppContext 继承机制。
 > - 2026-08-17：审查修订。补充两阶段受控关闭（Two-Phase Controlled Closing）时序与 GC 调度机制；收敛 `z-index` 步进常量至 `defaults.ts`；明确 ESC 路由与 Reka UI 事件协同策略；纠偏 `message-box/index.ts` 自动生成规则；补齐 `MessageBoxLocale` 多语言与 Composable 状态只读（Readonly）契约。
+> - 2026-08-17：方案实施完成。全部 4 个 Tickets 交付并通过全量单测与 CI 门禁。
 
 ---
 

@@ -1,17 +1,18 @@
-import { ref, onUnmounted, type Ref } from 'vue'
-import { showDialog, type ShowDialogOptions } from '@/components/dialog/functional'
+import { ref, readonly, onUnmounted, getCurrentInstance, type Ref, type DeepReadonly } from 'vue'
+import { showDialog, type ShowDialogOptions, type DialogInstance } from '@/components/dialog/functional'
 
-export type { ShowDialogOptions }
-
-type DialogInstance = { close: () => void; promise: Promise<void>; destroy: () => void }
+export type { ShowDialogOptions, DialogInstance }
 
 export interface UseDialogReturn {
     show: (options?: ShowDialogOptions) => DialogInstance
     open: (options?: ShowDialogOptions) => DialogInstance
     close: () => void
-    isOpen: Ref<boolean>
+    isOpen: DeepReadonly<Ref<boolean>> | Readonly<Ref<boolean>>
 }
 
+/**
+ * 组合式 Dialog 管理接口
+ */
 export function useDialog(): UseDialogReturn {
     const isOpen = ref(false)
     let currentInstance: DialogInstance | null = null
@@ -24,8 +25,7 @@ export function useDialog(): UseDialogReturn {
         try {
             instance = showDialog(options)
         } catch (error) {
-            // showDialog 同步抛错（如渲染/组件 setup 失败）时恢复状态：
-            // 旧实例已被 close，调用方拿不到新实例，isOpen 不应停留在 true
+            // showDialog 同步抛错时恢复状态
             currentInstance = null
             isOpen.value = false
             throw error
@@ -38,26 +38,27 @@ export function useDialog(): UseDialogReturn {
                 currentInstance = null
             }
         }
-        // then(onFulfilled, onRejected) 显式处理两种终态：
-        // .finally() 返回的新 Promise 在 reject 时会产生未处理的 rejection
         instance.promise.then(cleanup, cleanup)
         return instance
     }
 
     const close = (): void => {
         if (currentInstance) {
+            isOpen.value = false
             currentInstance.close()
         }
     }
 
-    onUnmounted(() => {
-        currentInstance?.close()
-    })
+    if (getCurrentInstance()) {
+        onUnmounted(() => {
+            currentInstance?.close()
+        })
+    }
 
     return {
         show,
         open: show,
         close,
-        isOpen,
+        isOpen: readonly(isOpen),
     }
 }
