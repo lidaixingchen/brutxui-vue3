@@ -19,6 +19,7 @@ describe('Toast', () => {
         expect(wrapper.classes()).toContain('border-brutal')
         expect(wrapper.classes()).toContain('bg-brutal-bg')
         expect(wrapper.classes()).toContain('text-brutal-fg')
+        expect(wrapper.classes()).toContain('shadow-brutal-lg')
     })
 
     it('shows title and description', () => {
@@ -31,6 +32,25 @@ describe('Toast', () => {
         })
         expect(wrapper.text()).toContain('Test Title')
         expect(wrapper.text()).toContain('Test Description')
+    })
+
+    it('renders count when provided with title or without title', async () => {
+        const wrapperWithTitle = mount(Toast, {
+            props: {
+                title: 'Message',
+                count: 3,
+            },
+            global: globalProvide,
+        })
+        expect(wrapperWithTitle.text()).toContain('Message (3)')
+
+        const wrapperWithoutTitle = mount(Toast, {
+            props: {
+                count: 2,
+            },
+            global: globalProvide,
+        })
+        expect(wrapperWithoutTitle.text()).toContain('(2)')
     })
 
     it('has role="status" for default variant', () => {
@@ -218,12 +238,13 @@ describe('Toast', () => {
         })
     })
 
-    it('renders size variants', () => {
+    it('renders size variants with responsive constraints', () => {
         const wrapper = mount(Toast, {
             props: { size: 'sm' },
             global: globalProvide,
         })
         expect(wrapper.classes()).toContain('w-72')
+        expect(wrapper.classes()).toContain('max-w-[calc(100vw-2rem)]')
     })
 
     it('renders slot content', () => {
@@ -303,6 +324,20 @@ describe('ToastContainer', () => {
         expect(wrapper.classes()).toContain('items-center')
     })
 
+    it('supports custom object position with anchors', () => {
+        const wrapperTopLeft = mount(ToastContainer, {
+            props: { position: { x: 20, y: 30, anchor: 'top-left' } },
+        })
+        expect(wrapperTopLeft.attributes('style')).toContain('left: 20px')
+        expect(wrapperTopLeft.attributes('style')).toContain('top: 30px')
+
+        const wrapperBottomRight = mount(ToastContainer, {
+            props: { position: { x: 15, y: 25, anchor: 'bottom-right' } },
+        })
+        expect(wrapperBottomRight.attributes('style')).toContain('right: 15px')
+        expect(wrapperBottomRight.attributes('style')).toContain('bottom: 25px')
+    })
+
     it('renders slot content', () => {
         const wrapper = mount(ToastContainer, {
             slots: { default: '<div class="toast-item">Toast</div>' },
@@ -328,16 +363,13 @@ describe('ToastContainer', () => {
             }
         })
 
-        // 初始无 toast
         expect(wrapper.findAllComponents(Toast).length).toBe(0)
 
-        // 添加 toast 后应自动渲染
         toastStore.addToast({ title: 'Auto rendered', variant: 'success' })
         await nextTick()
         expect(wrapper.findAllComponents(Toast).length).toBe(1)
         expect(wrapper.text()).toContain('Auto rendered')
 
-        // close 事件应触发 removeToast
         const toastComponent = wrapper.findComponent(Toast)
         await toastComponent.vm.$emit('close')
         await nextTick()
@@ -387,4 +419,3 @@ describe('ToastContainer', () => {
         expect(wrapper.findAllComponents(Toast).length).toBe(3)
     })
 })
-

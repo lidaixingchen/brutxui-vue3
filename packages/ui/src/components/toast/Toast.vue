@@ -50,6 +50,10 @@ let startTime = 0
 
 function startLeave() {
     if (isLeaving.value) return
+    if (timer.value) {
+        clearTimeout(timer.value)
+        timer.value = undefined
+    }
     isLeaving.value = true
     leaveTimer.value = setTimeout(() => {
         emit('close')
@@ -96,7 +100,8 @@ watch(() => props.duration, (newDuration) => {
         timer.value = undefined
     }
     remainingTime.value = newDuration
-    if (newDuration > 0 && !isPaused.value) {
+    if (newDuration > 0) {
+        isPaused.value = false
         startTimer()
     }
 })
@@ -150,8 +155,8 @@ const ariaRole = computed(() => isUrgentVariant.value ? 'alert' : 'status')
 const ariaLive = computed(() => isUrgentVariant.value ? 'assertive' : 'polite')
 
 const progressBarStyle = computed(() => ({
-    animationDuration: `${props.duration}ms`,
-    animationPlayState: isPaused.value ? 'paused' as const : 'running' as const,
+    animationDuration: `${Math.max(remainingTime.value, 0)}ms`,
+    animationPlayState: isPaused.value ? ('paused' as const) : ('running' as const),
 }))
 </script>
 
@@ -171,11 +176,14 @@ const progressBarStyle = computed(() => ({
 
             <div class="flex-1 min-w-0">
                 <p v-if="title" class="font-black text-base leading-tight">
-{{ title }}{{ count && count > 1 ? ` (${count})` : '' }}
-</p>
+                    {{ title }}{{ count && count > 1 ? ` (${count})` : '' }}
+                </p>
+                <p v-else-if="count && count > 1" class="font-black text-base leading-tight">
+                    ({{ count }})
+                </p>
                 <p v-if="description" class="font-medium text-sm mt-1 opacity-80 leading-snug">
-{{ description }}
-</p>
+                    {{ description }}
+                </p>
                 <slot />
             </div>
 

@@ -53,26 +53,28 @@ const positionClasses = computed(() => {
 })
 
 const positionStyle = computed(() => {
-    if (typeof props.position === 'object') {
+    if (props.position && typeof props.position === 'object') {
         const { x, y, anchor = 'top-left' } = props.position
         const style: Record<string, string> = {}
+        const validX = Number.isFinite(x) ? `${x}px` : '0px'
+        const validY = Number.isFinite(y) ? `${y}px` : '0px'
 
         switch (anchor) {
             case 'top-left':
-                style.left = `${x}px`
-                style.top = `${y}px`
+                style.left = validX
+                style.top = validY
                 break
             case 'top-right':
-                style.right = `${x}px`
-                style.top = `${y}px`
+                style.right = validX
+                style.top = validY
                 break
             case 'bottom-left':
-                style.left = `${x}px`
-                style.bottom = `${y}px`
+                style.left = validX
+                style.bottom = validY
                 break
             case 'bottom-right':
-                style.right = `${x}px`
-                style.bottom = `${y}px`
+                style.right = validX
+                style.bottom = validY
                 break
         }
 
@@ -101,13 +103,17 @@ const gapStyle = computed(() => ({
 }))
 
 const maxVisible = computed(() => {
-    return Math.max(1, props.stack?.maxVisible ?? DEFAULT_TOAST_MAX_VISIBLE)
+    const configured = props.stack?.maxVisible
+    if (typeof configured === 'number' && Number.isFinite(configured)) {
+        return Math.max(0, configured)
+    }
+    return DEFAULT_TOAST_MAX_VISIBLE
 })
 
 watch(
     [() => toasts.value.length, maxVisible],
     ([newLength, maxVal]) => {
-        if (newLength > maxVal) {
+        if (maxVal > 0 && newLength > maxVal) {
             const overflowCount = newLength - maxVal
             const toRemove = toasts.value.slice(0, overflowCount)
             toRemove.forEach((toast) => {
