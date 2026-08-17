@@ -67,7 +67,7 @@ const drawOverlay = (ctxVal: CanvasRenderingContext2D, w: number, h: number) => 
 
         ctxVal.strokeStyle = primary
         ctxVal.lineWidth = PRIMARY_STRIPE_WIDTH
-        for (let i = -h; i < w + h; i += STRIPE_SPACING) {
+        for (let i = -h; i < w + h + STRIPE_SPACING; i += STRIPE_SPACING) {
             ctxVal.beginPath()
             ctxVal.moveTo(i, 0)
             ctxVal.lineTo(i + h, h)
@@ -76,7 +76,7 @@ const drawOverlay = (ctxVal: CanvasRenderingContext2D, w: number, h: number) => 
 
         ctxVal.strokeStyle = fg
         ctxVal.lineWidth = SECONDARY_STRIPE_WIDTH
-        for (let i = -h; i < w + h; i += STRIPE_SPACING) {
+        for (let i = -h; i < w + h + STRIPE_SPACING; i += STRIPE_SPACING) {
             ctxVal.beginPath()
             ctxVal.moveTo(i + SECONDARY_STRIPE_OFFSET, 0)
             ctxVal.lineTo(i + SECONDARY_STRIPE_OFFSET + h, h)
@@ -127,6 +127,7 @@ function resetCanvasOverlay() {
     const ctxVal = getCanvas2DContext(canvas)
     if (!ctxVal) return
     const dpr = getDevicePixelRatio()
+    ctxVal.setTransform(dpr, 0, 0, dpr, 0, 0)
     const w = canvas.width / dpr
     const h = canvas.height / dpr
     drawOverlay(ctxVal, w, h)
