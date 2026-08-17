@@ -21,7 +21,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <div :class="classes">
+    <div :class="classes" role="status" aria-busy="true">
         <div class="space-y-4">
             <Skeleton :variant="variant" class="h-32 w-full" />
             <Skeleton :variant="variant" class="h-6 w-3/4" />

@@ -18,17 +18,20 @@ const props = withDefaults(defineProps<SkeletonTextProps>(), {
     class: undefined,
 })
 
+const MAX_LINES = 100
+const safeLines = computed(() => Math.min(Math.max(Math.trunc(props.lines), 0), MAX_LINES))
+
 const classes = computed(() => cn('space-y-2', props.class))
 </script>
 
 <template>
     <div :class="classes">
         <Skeleton
-            v-for="index in props.lines"
+            v-for="index in safeLines"
             :key="index"
             :variant="variant"
             class="h-4"
-            :style="{ width: index === props.lines ? props.lastLineWidth : '100%' }"
+            :style="{ width: index === safeLines ? props.lastLineWidth : '100%' }"
         />
     </div>
 </template>

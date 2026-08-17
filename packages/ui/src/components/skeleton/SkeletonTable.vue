@@ -18,39 +18,42 @@ const props = withDefaults(defineProps<SkeletonTableProps>(), {
     class: undefined,
 })
 
+const MAX_ROWS = 100
+const MAX_COLUMNS = 20
+const safeRows = computed(() => Math.min(Math.max(Math.trunc(props.rows), 0), MAX_ROWS))
+const safeColumns = computed(() => Math.min(Math.max(Math.trunc(props.columns), 0), MAX_COLUMNS))
+
 const DEFAULT_CELL_WIDTH_RATIOS = [0.85, 0.7, 0.9, 0.65]
-const FALLBACK_CELL_WIDTH_RATIO = 0.75
 
 const containerClasses = computed(() =>
     cn('border-3 border-brutal overflow-hidden', props.class)
 )
 
-const headerCellClasses = computed(() =>
-    Array.from({ length: props.columns }, (_, i) =>
-        cn('flex-1 p-3', i < props.columns - 1 && 'border-r-3 border-brutal')
-    )
-)
-
 const rowClasses = computed(() =>
-    Array.from({ length: props.rows }, (_, i) =>
-        cn('flex', i < props.rows - 1 && 'border-b-3 border-brutal', i % 2 === 0 && 'bg-brutal-muted')
+    Array.from({ length: safeRows.value }, (_, i) =>
+        cn('flex', i < safeRows.value - 1 && 'border-b-3 border-brutal', i % 2 === 0 && 'bg-brutal-muted')
     )
 )
 
 const cellClasses = computed(() =>
-    Array.from({ length: props.columns }, (_, i) =>
-        cn('flex-1 p-3', i < props.columns - 1 && 'border-r-3 border-brutal')
+    Array.from({ length: safeColumns.value }, (_, i) =>
+        cn('flex-1 p-3', i < safeColumns.value - 1 && 'border-r-3 border-brutal')
     )
 )
+
+function getCellWidth(colIndex: number): string {
+    const ratio = DEFAULT_CELL_WIDTH_RATIOS[colIndex % DEFAULT_CELL_WIDTH_RATIOS.length] ?? 0.75
+    return `${ratio * 100}%`
+}
 </script>
 
 <template>
     <div :class="containerClasses" role="table" aria-busy="true">
-        <div class="flex bg-brutal-accent border-b-3 border-brutal" role="row">
+        <div v-if="safeColumns > 0" class="flex bg-brutal-accent border-b-3 border-brutal" role="row">
             <div
-                v-for="(headerClass, colIndex) in headerCellClasses"
+                v-for="(cellClass, colIndex) in cellClasses"
                 :key="`header-${colIndex}`"
-                :class="headerClass"
+                :class="cellClass"
                 role="columnheader"
             >
                 <Skeleton :variant="variant" class="h-5 w-3/4 bg-brutal-fg/20" />
@@ -71,7 +74,7 @@ const cellClasses = computed(() =>
                 <Skeleton
                     :variant="variant"
                     class="h-4"
-                    :style="{ width: `${(DEFAULT_CELL_WIDTH_RATIOS[colIndex % DEFAULT_CELL_WIDTH_RATIOS.length] ?? FALLBACK_CELL_WIDTH_RATIO) * 100}%` }"
+                    :style="{ width: getCellWidth(colIndex) }"
                 />
             </div>
         </div>

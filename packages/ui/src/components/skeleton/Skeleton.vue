@@ -10,7 +10,7 @@ interface SkeletonProps {
     variant?: NonNullable<SkeletonVariantProps['variant']>
     size?: NonNullable<SkeletonVariantProps['size']>
     shape?: NonNullable<SkeletonVariantProps['shape']>
-    width?: string
+    width?: string | number
     class?: string
 }
 
@@ -34,12 +34,18 @@ const classes = computed(() => {
     return cn(variantClasses, circleWidth, props.class)
 })
 
+const normalizedWidth = computed(() => {
+    if (props.width === undefined || props.width === null || props.width === '') return undefined
+    return typeof props.width === 'number' ? `${props.width}px` : props.width
+})
+
 const style = computed(() => {
-    if (!props.width) return undefined
+    const w = normalizedWidth.value
+    if (!w) return undefined
     if (props.shape === 'circle') {
-        return { width: props.width, height: props.width }
+        return { width: w, height: w }
     }
-    return { width: props.width }
+    return { width: w }
 })
 </script>
 

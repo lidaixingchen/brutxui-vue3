@@ -105,20 +105,20 @@ describe('Skeleton', () => {
         expect(wrapper.attributes('style')).toContain('width: 100%')
     })
 
-    it('applies pixel width via style', () => {
+    it('applies number width via style normalized with px', () => {
         const wrapper = mount(Skeleton, {
-            props: { width: '200px' },
+            props: { width: 150 },
         })
-        expect(wrapper.attributes('style')).toContain('width: 200px')
+        expect(wrapper.attributes('style')).toContain('width: 150px')
     })
 
-    it('circle shape applies width as both width and height to keep circle', () => {
+    it('circle shape applies number width as both width and height', () => {
         const wrapper = mount(Skeleton, {
-            props: { shape: 'circle', width: '200px' },
+            props: { shape: 'circle', width: 64 },
         })
         const style = wrapper.attributes('style')
-        expect(style).toContain('width: 200px')
-        expect(style).toContain('height: 200px')
+        expect(style).toContain('width: 64px')
+        expect(style).toContain('height: 64px')
     })
 })
 
@@ -134,6 +134,14 @@ describe('SkeletonText', () => {
         const wrapper = mount(SkeletonText, { props: { lines: 5 } })
         const skeletons = wrapper.findAllComponents(Skeleton)
         expect(skeletons.length).toBe(5)
+    })
+
+    it('handles zero or negative lines safely', () => {
+        const wrapper = mount(SkeletonText, { props: { lines: 0 } })
+        expect(wrapper.findAllComponents(Skeleton).length).toBe(0)
+
+        const negWrapper = mount(SkeletonText, { props: { lines: -3 } })
+        expect(negWrapper.findAllComponents(Skeleton).length).toBe(0)
     })
 
     it('applies variant to child skeletons', () => {
@@ -206,6 +214,16 @@ describe('SkeletonCard', () => {
         expect(classes).toContain('border-brutal')
         expect(classes).toContain('shadow-brutal')
         expect(classes).toContain('bg-brutal-bg')
+        expect(wrapper.attributes('role')).toBe('status')
+        expect(wrapper.attributes('aria-busy')).toBe('true')
+    })
+
+    it('forwards variant to internal skeleton components', () => {
+        const wrapper = mount(SkeletonCard, { props: { variant: 'primary' } })
+        const skeletons = wrapper.findAllComponents(Skeleton)
+        skeletons.forEach(sk => {
+            expect(sk.classes()).toContain('bg-brutal-primary/30')
+        })
     })
 
     it('contains skeleton elements inside', () => {
@@ -247,6 +265,13 @@ describe('SkeletonTable', () => {
         const headerSkeletons = 2
         const bodySkeletons = 3 * 2
         expect(skeletons.length).toBe(headerSkeletons + bodySkeletons)
+    })
+
+    it('handles zero or negative rows and columns safely', () => {
+        const wrapper = mount(SkeletonTable, {
+            props: { rows: 0, columns: 0 },
+        })
+        expect(wrapper.findAllComponents(Skeleton).length).toBe(0)
     })
 
     it('merges custom class prop', () => {
