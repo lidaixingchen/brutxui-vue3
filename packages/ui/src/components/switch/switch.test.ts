@@ -91,4 +91,32 @@ describe('Switch', () => {
         })
         expect(wrapper.find('[role="switch"]').attributes('aria-label')).toBe('通知开关')
     })
+
+    it('falls back to default aria-label when ariaLabel is empty string', () => {
+        const wrapper = mount(Switch, {
+            props: { ariaLabel: '   ' },
+            attachTo: document.body,
+        })
+        expect(wrapper.find('[role="switch"]').attributes('aria-label')).toBe('开关')
+    })
+
+    it('emits false when clicking on checked switch (modelValue=true)', async () => {
+        const wrapper = mount(Switch, {
+            props: { modelValue: true },
+            attachTo: document.body,
+        })
+        const el = wrapper.find('[role="switch"]')
+        await el.trigger('click')
+        expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+        expect(wrapper.emitted('update:modelValue')![0]).toEqual([false])
+    })
+
+    it('supports defaultChecked in uncontrolled mode', () => {
+        const wrapper = mount(Switch, {
+            props: { defaultChecked: true },
+            attachTo: document.body,
+        })
+        const el = wrapper.find('[role="switch"]')
+        expect(el.attributes('aria-checked')).toBe('true')
+    })
 })
