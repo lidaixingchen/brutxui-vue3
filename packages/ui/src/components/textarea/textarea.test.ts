@@ -4,7 +4,13 @@ import Textarea from './Textarea.vue'
 describe('Textarea', () => {
     it('renders with default props', () => {
         const wrapper = mount(Textarea)
-        expect(wrapper.find('textarea').exists()).toBe(true)
+        const textarea = wrapper.find('textarea')
+        expect(textarea.exists()).toBe(true)
+        expect(textarea.classes()).toContain('border-3')
+        expect(textarea.classes()).toContain('border-brutal')
+        expect(textarea.classes()).toContain('focus:shadow-brutal')
+        expect(textarea.classes()).toContain('resize-none')
+        expect(textarea.classes()).not.toContain('active:translate-x-0.5')
     })
 
     it('applies variant classes', async () => {
@@ -12,12 +18,15 @@ describe('Textarea', () => {
 
         await wrapper.setProps({ variant: 'default' } as any)
         expect(wrapper.find('textarea').classes()).toContain('border-brutal')
+        expect(wrapper.find('textarea').classes()).toContain('focus:shadow-brutal')
 
         await wrapper.setProps({ variant: 'error' } as any)
         expect(wrapper.find('textarea').classes()).toContain('border-brutal-destructive')
+        expect(wrapper.find('textarea').classes()).toContain('focus:shadow-brutal-destructive')
 
         await wrapper.setProps({ variant: 'success' } as any)
         expect(wrapper.find('textarea').classes()).toContain('border-brutal-success')
+        expect(wrapper.find('textarea').classes()).toContain('focus:shadow-brutal-success')
     })
 
     it('applies size classes via size prop', async () => {
@@ -31,6 +40,22 @@ describe('Textarea', () => {
 
         await wrapper.setProps({ size: 'lg' } as any)
         expect(wrapper.find('textarea').classes()).toContain('text-lg')
+    })
+
+    it('applies resize classes via resize prop', async () => {
+        const wrapper = mount(Textarea)
+
+        await wrapper.setProps({ resize: 'vertical' } as any)
+        expect(wrapper.find('textarea').classes()).toContain('resize-y')
+
+        await wrapper.setProps({ resize: 'horizontal' } as any)
+        expect(wrapper.find('textarea').classes()).toContain('resize-x')
+
+        await wrapper.setProps({ resize: 'both' } as any)
+        expect(wrapper.find('textarea').classes()).toContain('resize')
+
+        await wrapper.setProps({ resize: 'none' } as any)
+        expect(wrapper.find('textarea').classes()).toContain('resize-none')
     })
 
     it('has v-model support (emits update:modelValue on input)', async () => {
@@ -78,13 +103,34 @@ describe('Textarea', () => {
         expect(wrapper.find('textarea').classes()).not.toContain('opacity-50')
     })
 
-    it('shows error message when variant is error and errorMessage is provided', () => {
+    it('shows error message and automatically links aria-errormessage and aria-invalid', () => {
         const wrapper = mount(Textarea, {
             props: { variant: 'error', errorMessage: 'This field is required' },
         })
         const errorMsg = wrapper.find('[role="alert"]')
         expect(errorMsg.exists()).toBe(true)
         expect(errorMsg.text()).toBe('This field is required')
+
+        const errorId = errorMsg.attributes('id')
+        expect(errorId).toBeDefined()
+        expect(wrapper.find('textarea').attributes('aria-errormessage')).toBe(errorId)
+        expect(wrapper.find('textarea').attributes('aria-invalid')).toBe('true')
+        expect(wrapper.find('textarea').attributes('aria-describedby')).toBe(errorId)
+    })
+
+    it('allows custom ariaErrormessage and ariaInvalid to override default derivation', () => {
+        const wrapper = mount(Textarea, {
+            props: {
+                variant: 'error',
+                errorMessage: 'Error info',
+                ariaErrormessage: 'my-custom-error-id',
+                ariaInvalid: false,
+            },
+        })
+        const errorMsg = wrapper.find('[role="alert"]')
+        expect(errorMsg.attributes('id')).toBe('my-custom-error-id')
+        expect(wrapper.find('textarea').attributes('aria-errormessage')).toBe('my-custom-error-id')
+        expect(wrapper.find('textarea').attributes('aria-invalid')).toBe('false')
     })
 
     it('exposes ref, focus, blur, select methods', () => {
@@ -95,7 +141,6 @@ describe('Textarea', () => {
         expect(typeof wrapper.vm.select).toBe('function')
     })
 
-    // 新增测试：IME 组合处理
     describe('IME composition', () => {
         it('does not emit update:modelValue while composing', async () => {
             const wrapper = mount(Textarea, {
@@ -103,7 +148,6 @@ describe('Textarea', () => {
             })
 
             await wrapper.find('textarea').trigger('compositionstart')
-            // 组合期间的 input 事件应被守卫拦截，不 emit
             await wrapper.find('textarea').setValue('中')
 
             expect(wrapper.emitted('update:modelValue')).toBeUndefined()
@@ -117,9 +161,7 @@ describe('Textarea', () => {
             await wrapper.find('textarea').trigger('compositionstart')
             await wrapper.find('textarea').setValue('中')
             await wrapper.find('textarea').setValue('中文')
-            // compositionend 兜底 emit 最终值
             await wrapper.find('textarea').trigger('compositionend')
-            // 浏览器随后再次触发携带相同值的 input，应被 skipNextInput 去重，不再重复 emit
             await wrapper.find('textarea').trigger('input')
 
             const emitted = wrapper.emitted('update:modelValue')
@@ -134,7 +176,6 @@ describe('Textarea', () => {
 
             await wrapper.find('textarea').trigger('compositionstart')
             await wrapper.find('textarea').trigger('compositioncancel')
-            // 取消组合后 isComposing 已复位，后续普通 input 应正常 emit
             await wrapper.find('textarea').setValue('hello')
 
             expect(wrapper.emitted('update:modelValue')![0]).toEqual(['hello'])

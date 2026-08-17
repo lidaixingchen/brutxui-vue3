@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, useId } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { textareaVariants } from './textarea-variants'
@@ -11,6 +11,7 @@ interface TextareaProps {
     modelValue?: string
     variant?: NonNullable<TextareaVariantProps['variant']>
     size?: NonNullable<TextareaVariantProps['size']>
+    resize?: NonNullable<TextareaVariantProps['resize']>
     disabled?: boolean
     readonly?: boolean
     placeholder?: string
@@ -35,6 +36,7 @@ const props = withDefaults(defineProps<TextareaProps>(), {
     modelValue: undefined,
     variant: 'default',
     size: 'default',
+    resize: 'none',
     disabled: false,
     readonly: false,
     placeholder: undefined,
@@ -51,16 +53,27 @@ const props = withDefaults(defineProps<TextareaProps>(), {
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 
 const { t } = useLocale()
+const defaultErrorId = useId()
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
 const isComposing = ref(false)
 // IME 组合结束兜底 emit 后，用于跳过浏览器随后触发的那次携带相同值的 input 事件，避免重复 emit
 let skipNextInput = false
 
+const hasError = computed(() => props.variant === 'error' && !!props.errorMessage)
+const resolvedErrorId = computed(() => props.ariaErrormessage ?? defaultErrorId)
+const resolvedAriaInvalid = computed(() => props.ariaInvalid ?? (hasError.value ? true : undefined))
+const resolvedAriaErrormessage = computed(() => (hasError.value ? resolvedErrorId.value : props.ariaErrormessage))
+const resolvedAriaDescribedby = computed(() => props.ariaDescribedby ?? (hasError.value ? resolvedErrorId.value : undefined))
+
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('textarea.placeholder'))
 
 const classes = computed(() =>
     cn(
-        textareaVariants({ variant: props.variant, size: props.size }),
+        textareaVariants({
+            variant: props.variant,
+            size: props.size,
+            resize: props.resize,
+        }),
         props.readonly && 'cursor-default',
         props.class
     )
@@ -111,9 +124,9 @@ function handleCompositionCancel() {
             :class="classes"
             :aria-label="ariaLabel"
             :aria-labelledby="ariaLabelledby"
-            :aria-describedby="ariaDescribedby"
-            :aria-invalid="ariaInvalid"
-            :aria-errormessage="ariaErrormessage"
+            :aria-describedby="resolvedAriaDescribedby"
+            :aria-invalid="resolvedAriaInvalid"
+            :aria-errormessage="resolvedAriaErrormessage"
             :aria-required="ariaRequired"
             @compositionstart="isComposing = true"
             @compositionend="handleCompositionEnd"
@@ -121,8 +134,9 @@ function handleCompositionCancel() {
             @input="handleInput"
         />
         <p
-            v-if="variant === 'error' && errorMessage"
-            class="text-sm text-brutal-destructive mt-1"
+            v-if="hasError"
+            :id="resolvedErrorId"
+            class="text-sm font-bold text-brutal-destructive mt-1"
             role="alert"
         >
             {{ errorMessage }}

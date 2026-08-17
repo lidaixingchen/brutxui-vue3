@@ -1062,9 +1062,7 @@
       "useLocale.ts"
     ],
     "directives": [],
-    "lib": [
-      "brutal-interaction-variants.ts"
-    ]
+    "lib": []
   },
   "timeline": {
     "files": [
