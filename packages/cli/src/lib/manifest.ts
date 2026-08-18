@@ -174,11 +174,14 @@ export function getManifestPath(cwd: string): string {
  * 既有 manifest 的 installedContentHash 由旧算法生成，doctor 会报一次漂移警告，
  * 执行 update 后以新算法重写。
  */
-export async function computeInstalledContentHash(files: string[]): Promise<string> {
-    // 文件相互独立，并行读取（数组顺序由映射结果保持，不影响本函数的顺序敏感）；
-    // 读取失败时带上文件路径，便于 doctor 定位具体组件而非静默跳过
+import type { FileSystemAdapter } from './fs/file-system-adapter.js';
+
+export async function computeInstalledContentHash(files: string[], fsAdapter?: FileSystemAdapter): Promise<string> {
     const contents = await Promise.all(files.map(async (filePath) => {
         try {
+            if (fsAdapter) {
+                return await fsAdapter.readFile(filePath, 'utf-8');
+            }
             return await fs.readFile(filePath, 'utf-8');
         } catch (error) {
             const detail = error instanceof Error ? error.message : String(error);
@@ -189,20 +192,18 @@ export async function computeInstalledContentHash(files: string[]): Promise<stri
     return 'sha256-' + crypto.createHash('sha256').update(allContent).digest('hex');
 }
 
-export async function readManifest(cwd: string): Promise<BrutxManifest | null> {
+export async function readManifest(cwd: string, fsAdapter?: FileSystemAdapter): Promise<BrutxManifest | null> {
     const manifestPath = getManifestPath(cwd);
+    const exists = fsAdapter ? await fsAdapter.pathExists(manifestPath) : await fs.pathExists(manifestPath);
 
-    if (!await fs.pathExists(manifestPath)) {
+    if (!exists) {
         return null;
     }
 
     try {
-        return validateManifest(await fs.readJson(manifestPath));
+        const data = fsAdapter ? await fsAdapter.readJson(manifestPath) : await fs.readJson(manifestPath);
+        return validateManifest(data);
     } catch (error) {
-        // 损坏清单（非法 JSON / 校验失败）带上文件路径与原因，避免用户无法定位。
-        // 手动挂载 code 与 cause：调用方（diff.ts）依赖 ENOENT 等原始错误码把
-        // "读取瞬间文件被删"的竞态降级为 null；且 Node <16.9 会静默忽略 Error
-        // 构造器第二参数（约定见 error.ts），故不用 new Error(msg, { cause })
         const detail = error instanceof Error ? error.message : String(error);
         const wrapped = new Error(`Failed to read manifest at ${manifestPath}: ${detail}`);
         if (error instanceof Error && 'code' in error) {
@@ -216,12 +217,19 @@ export async function readManifest(cwd: string): Promise<BrutxManifest | null> {
 async function writeManifest(
     cwd: string,
     manifest: BrutxManifest,
-    options: ManifestWriteOptions = {}
+    options: ManifestWriteOptions = {},
+    fsAdapter?: FileSystemAdapter
 ): Promise<void> {
     const manifestPath = getManifestPath(cwd);
 
     if (options.transaction) {
         await options.transaction.writeJson(manifestPath, manifest, { spaces: 4 });
+        return;
+    }
+
+    if (fsAdapter) {
+        await fsAdapter.ensureDir(path.dirname(manifestPath));
+        await fsAdapter.writeJson(manifestPath, manifest, { spaces: 4 });
         return;
     }
 
@@ -232,13 +240,14 @@ async function writeManifest(
 export async function updateInstalledComponents(
     cwd: string,
     entries: InstalledManifestEntryInput[],
-    options: ManifestWriteOptions = {}
+    options: ManifestWriteOptions = {},
+    fsAdapter?: FileSystemAdapter
 ): Promise<void> {
     if (entries.length === 0) {
         return;
     }
 
-    const manifest = await readManifest(cwd) ?? createEmptyManifest();
+    const manifest = await readManifest(cwd, fsAdapter) ?? createEmptyManifest();
     const installedAt = new Date().toISOString();
 
     for (const entry of entries) {
@@ -249,11 +258,7 @@ export async function updateInstalledComponents(
             installedContentHash: entry.installedContentHash,
             version: entry.version,
             installedAt,
-            // files 顺序必须与 registry build 顺序一致（来自 add-service 的 filesByComponent，
-            // 该顺序源于 item.files 数组顺序），不可 .sort()——否则 doctor 重算 computeRegistryIntegrity
-            // 会因顺序不同而误报漂移（computeRegistryIntegrity 对数组顺序敏感）。
             files: entry.files.map(file => toPortableRelativePath(cwd, file)),
-            // dependencies/registryDependencies/examples 不参与 integrity 计算，保留 .sort() 以稳定可读。
             dependencies: [...entry.item.dependencies].sort(),
             registryDependencies: [...entry.item.registryDependencies].sort(),
             category: entry.item.category,
@@ -263,19 +268,20 @@ export async function updateInstalledComponents(
         };
     }
 
-    await writeManifest(cwd, manifest, options);
+    await writeManifest(cwd, manifest, options, fsAdapter);
 }
 
 export async function removeInstalledComponents(
     cwd: string,
     componentNames: string[],
-    options: ManifestWriteOptions = {}
+    options: ManifestWriteOptions = {},
+    fsAdapter?: FileSystemAdapter
 ): Promise<void> {
     if (componentNames.length === 0) {
         return;
     }
 
-    const manifest = await readManifest(cwd);
+    const manifest = await readManifest(cwd, fsAdapter);
     if (!manifest) {
         return;
     }
@@ -289,6 +295,6 @@ export async function removeInstalledComponents(
     }
 
     if (changed) {
-        await writeManifest(cwd, manifest, options);
+        await writeManifest(cwd, manifest, options, fsAdapter);
     }
 }

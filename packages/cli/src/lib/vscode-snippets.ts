@@ -352,15 +352,17 @@ export function generateSnippetsForComponents(components: string[]): string {
     return generateSnippets(components);
 }
 
-/**
- * 统一写 VS Code snippets 文件：ensureDir + writeFile，失败包装为 WRITE_FAILED。
- * 注意：不在此函数内生成/序列化内容——内容生成（generateSnippets 等）在调用方先行完成，
- * 其抛出的业务错误（如 INVALID_COMPONENT_NAME）应透传，不能被包装成 WRITE_FAILED 掩盖。
- */
-async function writeSnippetFile(snippetPath: string, content: string): Promise<void> {
+import type { FileSystemAdapter } from './fs/file-system-adapter.js';
+
+async function writeSnippetFile(snippetPath: string, content: string, fsAdapter?: FileSystemAdapter): Promise<void> {
     try {
-        await fs.ensureDir(path.dirname(snippetPath));
-        await fs.writeFile(snippetPath, content, 'utf-8');
+        if (fsAdapter) {
+            await fsAdapter.ensureDir(path.dirname(snippetPath));
+            await fsAdapter.writeFile(snippetPath, content, 'utf-8');
+        } else {
+            await fs.ensureDir(path.dirname(snippetPath));
+            await fs.writeFile(snippetPath, content, 'utf-8');
+        }
     } catch (error) {
         throw new CliError(
             `Failed to write VS Code snippets file "${snippetPath}": ${error instanceof Error ? error.message : String(error)}`,
@@ -372,14 +374,13 @@ async function writeSnippetFile(snippetPath: string, content: string): Promise<v
 export async function writeSnippetsFile(
     cwd: string,
     components?: string[],
+    fsAdapter?: FileSystemAdapter
 ): Promise<string> {
     const vscodeDir = path.join(cwd, '.vscode');
     const snippetPath = path.join(vscodeDir, 'brutx.code-snippets');
 
-    // 内容生成在 try 之外：组件名校验失败抛出的 CliError(INVALID_COMPONENT_NAME)
-    // 应透传给调用方，不被 WRITE_FAILED 包装掩盖（与 mergeSnippetsFile 的 CliError 透传一致）
     const snippetContent = generateSnippets(components);
-    await writeSnippetFile(snippetPath, snippetContent);
+    await writeSnippetFile(snippetPath, snippetContent, fsAdapter);
 
     return snippetPath;
 }
@@ -387,25 +388,33 @@ export async function writeSnippetsFile(
 export async function mergeSnippetsFile(
     cwd: string,
     newComponents: string[],
+    fsAdapter?: FileSystemAdapter
 ): Promise<string> {
     const vscodeDir = path.join(cwd, '.vscode');
     const snippetPath = path.join(vscodeDir, 'brutx.code-snippets');
 
     let existingSnippets: VscodeSnippetFile = {};
-    if (await fs.pathExists(snippetPath)) {
+    const exists = fsAdapter ? await fsAdapter.pathExists(snippetPath) : await fs.pathExists(snippetPath);
+    if (exists) {
         let parsed: unknown;
         try {
-            parsed = await fs.readJson(snippetPath);
+            parsed = fsAdapter ? await fsAdapter.readJson(snippetPath) : await fs.readJson(snippetPath);
         } catch (error) {
-            // 解析失败：先备份原文件，再抛出带路径信息的明确错误，
-            // 避免静默清空 existingSnippets 后用新组件覆写导致用户自定义片段永久丢失
-            await fs.copy(snippetPath, `${snippetPath}.bak`).catch(() => {});
+            const backupPath = `${snippetPath}.bak`;
+            if (fsAdapter) {
+                await fsAdapter.copy(snippetPath, backupPath).catch(() => {});
+            } else {
+                await fs.copy(snippetPath, backupPath).catch(() => {});
+            }
             throw new Error(`Failed to read existing snippets file "${snippetPath}": ${error instanceof Error ? error.message : String(error)}. The original file was backed up to .bak.`, { cause: error });
         }
-        // 结构校验移出 try/catch：与解析失败各走独立分支，避免结构错误被包装成"读取失败"、
-        // 且不再对同一文件执行两次 .bak 备份
         if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
-            await fs.copy(snippetPath, `${snippetPath}.bak`).catch(() => {});
+            const backupPath = `${snippetPath}.bak`;
+            if (fsAdapter) {
+                await fsAdapter.copy(snippetPath, backupPath).catch(() => {});
+            } else {
+                await fs.copy(snippetPath, backupPath).catch(() => {});
+            }
             throw new Error(`"${snippetPath}" is not a valid snippets file (expected a JSON object). The original file was backed up to .bak.`);
         }
         existingSnippets = parsed as VscodeSnippetFile;
@@ -416,11 +425,12 @@ export async function mergeSnippetsFile(
         existingSnippets[snippetKey] = buildSnippetForComponent(componentName);
     }
 
-    await writeSnippetFile(snippetPath, JSON.stringify(existingSnippets, null, 4));
+    await writeSnippetFile(snippetPath, JSON.stringify(existingSnippets, null, 4), fsAdapter);
 
     return snippetPath;
 }
 
-export async function hasVscodeDir(cwd: string): Promise<boolean> {
-    return fs.pathExists(path.join(cwd, '.vscode'));
+export async function hasVscodeDir(cwd: string, fsAdapter?: FileSystemAdapter): Promise<boolean> {
+    const p = path.join(cwd, '.vscode');
+    return fsAdapter ? fsAdapter.pathExists(p) : fs.pathExists(p);
 }

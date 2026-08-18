@@ -7,6 +7,7 @@ import type { ProjectType, TsConfig, AliasConfig, PackageManager, BrutalistConfi
 import { CONFIG_FILES, CSS_LOCATIONS, DEFAULT_ALIASES } from './constants.js';
 import { CliError } from './error.js';
 import { logger } from './logger.js';
+import { assertSafePath, isSafePath, verifyWrittenPath } from './security.js';
 
 initSync();
 
@@ -489,70 +490,4 @@ export function resolveImportAlias(content: string, config: BrutalistConfig): st
     return result;
 }
 
-/**
- * 断言路径位于项目目录内，不安全时抛出 PATH_UNSAFE 的 CliError。
- * add-service 的解析期预检与写入前复检共用，避免校验逻辑与错误文案漂移。
- */
-export async function assertSafePath(targetPath: string, cwd: string): Promise<void> {
-    if (!(await isSafePath(targetPath, cwd))) {
-        throw new CliError(`Security Error: Resolved path "${targetPath}" is outside the project directory.`, {
-            code: 'PATH_UNSAFE',
-            exitCode: 2,
-        });
-    }
-}
-
-export async function isSafePath(targetPath: string, cwd: string): Promise<boolean> {
-    const normalize = process.platform === 'win32'
-        ? (s: string) => s.toLowerCase()
-        : (s: string) => s;
-
-    let resolvedCwd: string;
-    try {
-        resolvedCwd = normalize(await fs.promises.realpath(path.resolve(cwd)));
-    } catch {
-        resolvedCwd = normalize(path.resolve(cwd));
-    }
-
-    if (resolvedCwd === normalize(path.parse(resolvedCwd).root)) {
-        return false;
-    }
-
-    let resolvedTarget: string;
-    try {
-        resolvedTarget = normalize(await fs.promises.realpath(path.resolve(targetPath)));
-    } catch {
-        resolvedTarget = normalize(path.resolve(targetPath));
-        let current = path.resolve(targetPath);
-        const root = path.parse(current).root;
-
-        while (current !== root) {
-            const parent = path.dirname(current);
-            try {
-                const realParent = await fs.promises.realpath(parent);
-                const relative = path.relative(parent, path.resolve(targetPath));
-                resolvedTarget = normalize(path.join(realParent, relative));
-                break;
-            } catch {
-                current = parent;
-            }
-        }
-    }
-
-    return resolvedTarget.startsWith(resolvedCwd + path.sep) || resolvedTarget === resolvedCwd;
-}
-
-export async function verifyWrittenPath(targetPath: string, cwd: string): Promise<void> {
-    const safe = await isSafePath(targetPath, cwd);
-    if (!safe) {
-        try {
-            await fs.promises.rm(targetPath, { force: true });
-        } catch {
-            // best effort cleanup
-        }
-        throw new Error(
-            `Security Error: Written path "${targetPath}" resolved outside project directory after write. ` +
-            `This may indicate a symlink attack. The file has been removed.`
-        );
-    }
-}
+export { assertSafePath, isSafePath, verifyWrittenPath } from './security.js';

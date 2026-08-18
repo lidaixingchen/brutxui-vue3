@@ -82,14 +82,26 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
         }
         visited.add(normalizedPath);
 
-        const node = this.nodes.get(normalizedPath);
-        if (node && node.type === 'symlink') {
-            const resolvedTarget = path.isAbsolute(node.target)
-                ? this.normalizePath(node.target)
-                : this.normalizePath(path.join(this.getParentDir(normalizedPath), node.target));
-            return this.resolveSymlinkTarget(resolvedTarget, visited);
+        const segments = normalizedPath.split('/');
+        let current = segments[0];
+
+        for (let i = 1; i < segments.length; i++) {
+            const segment = segments[i];
+            if (!segment) continue;
+            const next = current ? `${current}/${segment}` : segment;
+            const node = this.nodes.get(next);
+            if (node && node.type === 'symlink') {
+                const target = path.isAbsolute(node.target)
+                    ? this.normalizePath(node.target)
+                    : this.normalizePath(path.join(current, node.target));
+                const remaining = segments.slice(i + 1).join('/');
+                const fullTarget = remaining ? `${target}/${remaining}` : target;
+                return this.resolveSymlinkTarget(fullTarget, visited);
+            }
+            current = next;
         }
-        return normalizedPath;
+
+        return current;
     }
 
     async readFile(filePath: string, encoding: BufferEncoding = 'utf-8'): Promise<string> {
@@ -113,11 +125,11 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
     }
 
     async writeFile(filePath: string, content: string | Uint8Array, _encoding: BufferEncoding = 'utf-8'): Promise<void> {
-        const normalized = this.normalizePath(filePath);
+        const normalized = await this.resolveSymlinkTarget(this.normalizePath(filePath));
         const parent = this.getParentDir(normalized);
         this.ensureDirSync(parent);
 
-        const size = typeof content === 'string' ? Buffer.byteLength(content) : content.byteLength;
+        const size = typeof content === 'string' ? Buffer.byteLength(content) : (content as Uint8Array).byteLength;
         this.nodes.set(normalized, {
             type: 'file',
             content,
