@@ -27,7 +27,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <div :class="classes" role="status" aria-busy="true" :aria-label="resolvedLabel">
+    <div :class="classes" role="status" :aria-label="resolvedLabel">
         <span class="sr-only">{{ resolvedLabel }}</span>
         <div class="space-y-4" aria-hidden="true">
             <Skeleton :variant="variant" class="h-32 w-full" />

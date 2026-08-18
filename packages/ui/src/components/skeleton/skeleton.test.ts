@@ -215,7 +215,7 @@ describe('SkeletonCard', () => {
         expect(classes).toContain('shadow-brutal')
         expect(classes).toContain('bg-brutal-bg')
         expect(wrapper.attributes('role')).toBe('status')
-        expect(wrapper.attributes('aria-busy')).toBe('true')
+        expect(wrapper.attributes('aria-busy')).toBeUndefined()
         expect(wrapper.attributes('aria-label')).toBe('加载中...')
         expect(wrapper.find('.sr-only').text()).toBe('加载中...')
         expect(wrapper.find('[aria-hidden="true"]').exists()).toBe(true)

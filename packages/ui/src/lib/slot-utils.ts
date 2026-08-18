@@ -8,6 +8,9 @@ export function hasSlotContent(nodes: VNode[] | undefined): boolean {
     if (!nodes || nodes.length === 0) return false
     return nodes.some((node) => {
         if (!node) return false
+        if (typeof (node as unknown) === 'string') {
+            return (node as unknown as string).trim().length > 0
+        }
         if (node.type === Comment) return false
         if (node.type === Fragment && Array.isArray(node.children)) {
             return hasSlotContent(node.children as VNode[])

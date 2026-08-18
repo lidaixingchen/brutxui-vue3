@@ -11,21 +11,24 @@ interface SkeletonTableProps {
     class?: string
 }
 
+const DEFAULT_ROWS = 5
+const DEFAULT_COLUMNS = 4
+const MAX_ROWS = 100
+const MAX_COLUMNS = 20
+
 const props = withDefaults(defineProps<SkeletonTableProps>(), {
     variant: 'default',
-    rows: 5,
-    columns: 4,
+    rows: DEFAULT_ROWS,
+    columns: DEFAULT_COLUMNS,
     class: undefined,
 })
 
-const MAX_ROWS = 100
-const MAX_COLUMNS = 20
 const safeRows = computed(() => {
-    const r = Number.isFinite(props.rows) ? Math.trunc(props.rows) : 5
+    const r = Number.isFinite(props.rows) ? Math.trunc(props.rows) : DEFAULT_ROWS
     return Math.min(Math.max(r, 0), MAX_ROWS)
 })
 const safeColumns = computed(() => {
-    const c = Number.isFinite(props.columns) ? Math.trunc(props.columns) : 4
+    const c = Number.isFinite(props.columns) ? Math.trunc(props.columns) : DEFAULT_COLUMNS
     return Math.min(Math.max(c, 0), MAX_COLUMNS)
 })
 

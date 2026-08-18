@@ -48,4 +48,9 @@ describe('hasSlotContent', () => {
         const img = h('img', { src: 'icon.png' })
         expect(hasSlotContent([img])).toBe(true)
     })
+
+    it('handles raw string entries in VNode array', () => {
+        expect(hasSlotContent(['   ' as unknown as import('vue').VNode])).toBe(false)
+        expect(hasSlotContent(['Hello' as unknown as import('vue').VNode])).toBe(true)
+    })
 })
