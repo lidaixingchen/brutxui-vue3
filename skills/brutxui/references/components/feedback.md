@@ -629,3 +629,76 @@ import { Result, Button } from 'brutx-ui-vue'
 | `sub-title` | 自定义副标题 |
 | `extra` | 自定义操作按钮/控制按钮扩展区 |
 
+---
+
+## MessageBox
+
+结构化反馈对话框，基于 reka-ui 的 Dialog 原语构建，用于确认提示、状态通知与输入校验。
+
+```vue
+<script setup lang="ts">
+import { MessageBox, showConfirm, showAlert, showPrompt, useMessageBox } from 'brutx-ui-vue'
+
+// 1. 声明式用法
+const isOpen = ref(false)
+
+// 2. 命令式便捷方法
+async function handleAction() {
+    const isConfirmed = await showConfirm('确认删除选中的项目吗？')
+    if (isConfirmed) {
+        await showAlert('删除成功！')
+    }
+}
+
+// 3. 组合式用法
+const { prompt } = useMessageBox()
+async function rename() {
+    const res = await prompt('请输入新名称', {
+        inputPattern: /^[a-zA-Z0-9_-]+$/,
+        inputErrorMessage: '格式不合规',
+    })
+    if (res.action === 'confirm') {
+        console.log(res.value)
+    }
+}
+</script>
+
+<template>
+  <MessageBox
+    v-model:open="isOpen"
+    title="操作确认"
+    message="确定要执行该操作吗？"
+    type="warning"
+    @confirm="handleAction"
+  />
+</template>
+```
+
+### MessageBox Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `open` | `boolean` | `false` | 控制对话框显示（支持 `v-model:open`） |
+| `title` | `string` | `t('messageBox.defaultTitle')` | 对话框标题 |
+| `message` | `string` | — | 正文消息文案 |
+| `type` | `'info' \| 'success' \| 'warning' \| 'error'` | `'info'` | 状态类型变体 |
+| `showCloseButton` | `boolean` | `true` | 是否显示右上角关闭按钮 |
+| `showCancelButton` | `boolean` | `true` | 是否显示取消按钮 |
+| `confirmButtonText` | `string` | `t('messageBox.confirm')` | 确认按钮文案 |
+| `cancelButtonText` | `string` | `t('messageBox.cancel')` | 取消按钮文案 |
+| `showInput` | `boolean` | `false` | 是否开启输入框（Prompt 模式） |
+| `inputValue` | `string` | `''` | 输入框初始值 |
+| `inputPattern` | `RegExp` | — | 正则校验表达式 |
+| `inputErrorMessage` | `string` | `t('messageBox.inputError')` | 校验失败错误文案 |
+| `zIndex` | `number` | — | 自定义弹层层级 |
+| `class` | `string` | — | 自定义样式类 |
+
+### MessageBox 事件
+
+| 事件 | 参数 | 说明 |
+| --- | --- | --- |
+| `update:open` | `(value: boolean)` | 打开/关闭状态变化时触发 |
+| `confirm` | `(value?: string)` | 点击确认并通过校验时触发，携带输入框文本 |
+| `cancel` | — | 点击取消、关闭按钮、遮罩或按 ESC 时触发 |
+
+

@@ -237,123 +237,75 @@ Close button re-exported from reka-ui.
 
 ## Functional API
 
-In addition to the declarative component approach, Dialog also provides functional invocation methods for quickly creating dialogs in business logic.
+In addition to declarative components, Dialog also provides imperative calling and Composable methods for quickly creating custom modal containers in business logic. For structured confirmations, status icons, or input prompt dialogs, please refer to the standalone [MessageBox](./message-box.md) component.
 
 ### showDialog
 
-Call `showDialog` to programmatically create and open a dialog:
+Call `showDialog` to imperatively mount a generic Dialog container:
 
 ```ts
 import { showDialog } from 'brutx-ui-vue'
 
 const instance = showDialog({
-    title: 'Confirm Action',
-    content: 'Are you sure you want to delete this record?',
-    size: 'sm',
-    onConfirm: () => {
-        // Handle confirmation logic
-    },
+    title: 'System Settings',
+    content: 'Custom modal body content...',
+    size: 'default',
+    draggable: true,
+    showCloseButton: true,
     onCancel: () => {
-        // Handle cancellation logic
+        console.log('Dialog closed')
     },
 })
+
+// Close manually
+// instance.close()
 ```
 
-**Parameters:**
+**Common Parameters:**
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `title` | `string` | — | Dialog title |
-| `content` | `string` | — | Dialog content |
+| `description` | `string` | — | Dialog description |
+| `content` | `string \| Component \| VNode \| (() => ...)` | — | Custom content slot |
+| `footer` | `string \| Component \| VNode \| (() => ...)` | — | Custom footer slot |
 | `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'default'` | Dialog size |
-| `onConfirm` | `() => void` | — | Confirmation callback |
-| `onCancel` | `() => void` | — | Cancellation callback |
+| `draggable` | `boolean` | `false` | Enable drag functionality |
+| `resizable` | `boolean` | `false` | Enable resize functionality |
+| `fullscreen` | `boolean` | `false` | Fullscreen display |
+| `zIndex` | `number` | — | Custom overlay layer z-index |
+| `onCancel` | `() => void` | — | Close callback hook |
 
-**Return value:** Returns a dialog instance with a `close()` method for manual closing.
-
-### showMessageBox
-
-Call `showMessageBox` to display a confirmation message box that returns a Promise. The promise always resolves (never rejects); inspect `result.action` to distinguish the close path:
-
-```ts
-import { showMessageBox, type MessageBoxResult } from 'brutx-ui-vue'
-
-async function handleDelete() {
-    const result = await showMessageBox({
-        title: 'Warning',
-        content: 'This action cannot be undone. Are you sure you want to continue?',
-        confirmText: 'Confirm',
-        cancelText: 'Cancel',
-    })
-
-    if (result.action === 'confirm') {
-        // User clicked confirm
-    } else {
-        // Cancel / ESC / overlay click / close button / manual destroy
-    }
-}
-```
-
-**Parameters:**
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `title` | `string` | — | Message box title |
-| `content` | `string` | — | Message box content |
-| `confirmText` | `string` | `'Confirm'` | Confirm button text |
-| `cancelText` | `string` | `'Cancel'` | Cancel button text |
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'sm'` | Message box size |
-
-**Return value:** `Promise<MessageBoxResult>` — always resolves with `{ action: 'confirm' | 'cancel' | 'destroy', value?: string }`. `confirm` = confirm button (`value` carries the input when `showInput`); `cancel` = cancel button / ESC / overlay click / close button; `destroy` = manual `destroy()`. **Migration**: replace the old `.catch()` branch with `result.action === 'confirm'`.
+**Return value:** `OverlayInstanceHandle<void>` — contains `close()`, `destroy()` methods and `promise` handle.
 
 ### useDialog (Composable)
 
-Use the `useDialog` composable within a component to gain reactive dialog control:
+Use the `useDialog` composable within a component to gain reactive status and singleton instance management:
 
 ```vue
 <script setup>
 import { useDialog } from 'brutx-ui-vue'
 
-const { open, close, isOpen } = useDialog()
+const { show, close, isOpen } = useDialog()
 
 function showMyDialog() {
-    open({
+    show({
         title: 'Notice',
-        content: 'This dialog was opened via a Composable',
+        content: 'This custom dialog was opened via a Composable',
     })
 }
 </script>
 
 <template>
-    <button @click="showMyDialog">Open Dialog</button>
+    <div class="flex items-center gap-3">
+        <button @click="showMyDialog">Open Dialog</button>
+        <span v-if="isOpen" class="text-sm font-bold text-brutal-accent">Dialog is open</span>
+    </div>
 </template>
 ```
 
-### useMessageBox (Composable)
-
-Use the `useMessageBox` composable within a component to gain reactive message box control:
-
-```vue
-<script setup>
-import { useMessageBox } from 'brutx-ui-vue'
-
-const { confirm } = useMessageBox()
-
-async function handleAction() {
-    const result = await confirm({
-        title: 'Confirm',
-        content: 'Are you sure you want to perform this action?',
-    })
-    if (result) {
-        // User confirmed
-    }
-}
-</script>
-
-<template>
-    <button @click="handleAction">Perform Action</button>
-</template>
-```
+> [!TIP]
+> The `isOpen` property returned by `useDialog` is a `Readonly<Ref<boolean>>` view, strictly managed by the composable internally.
 
 ## FAQ
 

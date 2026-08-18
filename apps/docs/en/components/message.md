@@ -1,12 +1,12 @@
 ---
 title: Message
 translated: true
-description: Functional message APIs covering useMessage, useDialog, and useMessageBox.
+description: Functional lightweight global message notification system supporting auto GC, TransitionGroup stacking animations, and singleton container.
 ---
 
 # Message
 
-A neo-brutalist functional message system providing three APIs: `useMessage` (lightweight notifications), `useDialog` (modal dialogs), and `useMessageBox` (confirm/input prompts). All APIs use a singleton pattern that mounts on demand — no component declaration needed in templates.
+A neo-brutalist functional message notification system (`useMessage`). Built with singleton container dynamic mounting on demand and TransitionGroup stacking animations — no component declaration needed in templates. For modal dialog containers, please refer to [Dialog](./dialog.md). For confirmation / prompt feedback dialogs, please refer to [MessageBox](./message-box.md).
 
 ## Demo
 
@@ -20,7 +20,7 @@ A neo-brutalist functional message system providing three APIs: `useMessage` (li
 
 ## Usage
 
-### useMessage Basics
+### Basics
 
 Use the `info`, `success`, `warning`, and `error` shortcut methods to display different types of messages.
 
@@ -39,7 +39,7 @@ const { info, success, warning, error } = useMessage()
 </template>
 ```
 
-### useMessage Custom Configuration
+### Custom Configuration
 
 Use the `show` method with a full options object to customize duration, closability, and more.
 
@@ -75,7 +75,7 @@ function showPersistent() {
 </template>
 ```
 
-### useMessage Manual Close
+### Manual Close
 
 Every method returns a `close` function. Call it to manually dismiss the corresponding message.
 
@@ -99,102 +99,6 @@ function close() {
 <template>
     <button @click="open">Open Message</button>
     <button @click="close">Close Manually</button>
-</template>
-```
-
-### useDialog Programmatic Dialog
-
-Open a modal dialog programmatically with `useDialog` — no need to declare a `Dialog` component in the template.
-
-```vue
-<script setup>
-import { useDialog } from 'brutx-ui-vue'
-
-const { show } = useDialog()
-
-async function openDialog() {
-    const { close, promise } = show({
-        title: 'Terms of Service',
-        content: 'Please read and agree to the following terms...',
-        draggable: true,
-    })
-
-    await promise
-    console.log('Dialog closed')
-}
-</script>
-
-<template>
-    <button @click="openDialog">Open Dialog</button>
-</template>
-```
-
-### useMessageBox Confirmation
-
-Display a confirmation dialog with `useMessageBox`, supporting cancel button and custom button labels.
-
-```vue
-<script setup>
-import { useMessageBox } from 'brutx-ui-vue'
-
-const { show } = useMessageBox()
-
-async function confirmDelete() {
-    try {
-        const { close, promise } = show({
-            title: 'Confirm Deletion',
-            message: 'This action cannot be undone. Are you sure?',
-            type: 'warning',
-            showCancelButton: true,
-            cancelButtonText: 'Cancel',
-            confirmButtonText: 'Delete',
-        })
-
-        await promise
-        console.log('User confirmed')
-    } catch (reason) {
-        console.log('User cancelled:', reason)
-    }
-}
-</script>
-
-<template>
-    <button @click="confirmDelete">Delete</button>
-</template>
-```
-
-### useMessageBox with Input Validation
-
-Enable `showInput` to display an input field, combined with `inputPattern` for regex validation.
-
-```vue
-<script setup>
-import { useMessageBox } from 'brutx-ui-vue'
-
-const { show } = useMessageBox()
-
-async function promptEmail() {
-    try {
-        const { close, promise } = show({
-            title: 'Enter Email',
-            message: 'Please enter your email address to receive notifications.',
-            showInput: true,
-            inputPlaceholder: 'example@domain.com',
-            inputPattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-            inputErrorMessage: 'Please enter a valid email address',
-            showCancelButton: true,
-        })
-
-        const result = await promise
-        console.log('Email:', result.value)
-    } catch (reason) {
-        console.log('User cancelled:', reason)
-    }
-}
-</script>
-
-<template>
-    <button @click="promptEmail">Enter Email</button>
 </template>
 ```
 

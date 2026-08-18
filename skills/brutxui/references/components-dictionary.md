@@ -88,7 +88,8 @@
 
 | 组件 | 中文名 | 说明 |
 | --- | --- | --- |
-| `Dialog` | 对话框 | 支持 Header/Footer/Title/Description、size 变体（sm/default/lg/xl/full）、fullscreen 全屏、beforeClose 关闭前钩子（须返回 `boolean \| Promise<boolean>`，不支持 done 回调）、destroyOnClose 关闭后销毁；函数式 API：showDialog/showMessageBox 命令式调用，useDialog/useMessageBox composable 封装 |
+| `Dialog` | 对话框 | 通用模态对话框容器，支持 Header/Footer/Title/Description、size 变体（sm/default/lg/xl/full）、fullscreen 全屏、beforeClose 关闭前钩子、destroyOnClose 关闭后销毁；函数式 API：showDialog 命令式挂载，useDialog composable 响应式管理（isOpen 为只读 ref） |
+| `MessageBox` | 消息对话框 | 独立结构化反馈组件，支持确认/取消、info/success/warning/error 状态图标、Prompt 输入正则校验、两阶段受控关闭与 LIFO 活动栈调度；函数式 API：showMessageBox / showConfirm / showAlert / showPrompt，useMessageBox composable 封装 |
 | `AlertDialog` | 确认弹窗 | 支持 Action/Cancel |
 | `Alert` | 提示 | 7 种变体、closable、actions 插槽 |
 | `Toast` | 通知 | 搭配 useToast 组合式函数、pauseOnHover 悬停暂停 |

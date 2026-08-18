@@ -29,8 +29,8 @@
 | `useDataTablePagination` | DataTable 逻辑分页及页码变动管理 | 默认导出 |
 | `useUpload` | 文件上传核心逻辑，支持 AbortController 强行取消上传，所有参数响应式更新 | 默认导出 |
 | `useMessage` | 函数式消息提示调用（info/success/warning/error），支持垂直堆叠与单例销毁 | 默认导出 |
-| `useDialog` | 函数式对话框管理器，优化 DOM 生命周期防御泄露，返回 `{ close, promise }` | 默认导出 |
-| `useMessageBox` | 函数式确认框管理器，支持输入校验和 Promise 异步拦截 | 默认导出 |
+| `useDialog` | 通用对话框响应式管理器，支持单例调度与 `isOpen: Readonly<Ref<boolean>>` 只读视图 | 默认导出 |
+| `useMessageBox` | 函数式消息对话框管理器，提供 `show/confirm/alert/prompt` 与确定性非拒绝 Promise 交互 | 默认导出 |
 
 ---
 

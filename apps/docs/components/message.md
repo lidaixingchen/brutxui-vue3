@@ -1,11 +1,11 @@
 ---
 title: Message 消息提示
-description: 函数式消息提示 API，覆盖 useMessage、useDialog、useMessageBox 三种调用方式。
+description: 函数式轻量全局消息提示系统，支持自动销毁、TransitionGroup 堆叠动效与单例容器。
 ---
 
 # Message 消息提示
 
-新粗野主义风格的函数式消息提示系统，提供 `useMessage`（轻量通知）、`useDialog`（模态对话框）和 `useMessageBox`（确认/输入框）三种 API。所有 API 均采用单例模式按需挂载，无需在模板中声明组件，调用即显示。
+新粗野主义风格的全局轻量消息提示系统（`useMessage`）。基于单例容器按需动态挂载与 TransitionGroup 堆叠动画，无需在模板中声明组件，调用即显示。如需模态对话框容器请参阅 [Dialog 对话框](./dialog.md)，如需确认/输入反馈对话框请参阅 [MessageBox 消息对话框](./message-box.md)。
 
 ## 预览
 
@@ -19,7 +19,7 @@ description: 函数式消息提示 API，覆盖 useMessage、useDialog、useMess
 
 ## 用法
 
-### useMessage 基础用法
+### 基础用法
 
 通过 `info`、`success`、`warning`、`error` 四个快捷方法显示不同类型的消息提示。
 
@@ -38,7 +38,7 @@ const { info, success, warning, error } = useMessage()
 </template>
 ```
 
-### useMessage 自定义配置
+### 自定义配置
 
 使用 `show` 方法传入完整配置项，自定义持续时间、是否显示关闭按钮等。
 
@@ -74,7 +74,7 @@ function showPersistent() {
 </template>
 ```
 
-### useMessage 手动关闭
+### 手动关闭
 
 每个方法均返回一个 `close` 函数，调用即可手动关闭对应消息。
 
@@ -98,102 +98,6 @@ function close() {
 <template>
     <button @click="open">打开消息</button>
     <button @click="close">手动关闭</button>
-</template>
-```
-
-### useDialog 函数式对话框
-
-通过 `useDialog` 以编程方式打开模态对话框，无需在模板中声明 `Dialog` 组件。
-
-```vue
-<script setup>
-import { useDialog } from 'brutx-ui-vue'
-
-const { show } = useDialog()
-
-async function openDialog() {
-    const { close, promise } = show({
-        title: '用户协议',
-        content: '请阅读并同意以下条款...',
-        draggable: true,
-    })
-
-    await promise
-    console.log('对话框已关闭')
-}
-</script>
-
-<template>
-    <button @click="openDialog">打开对话框</button>
-</template>
-```
-
-### useMessageBox 确认框
-
-通过 `useMessageBox` 显示确认对话框，支持取消按钮和自定义按钮文本。
-
-```vue
-<script setup>
-import { useMessageBox } from 'brutx-ui-vue'
-
-const { show } = useMessageBox()
-
-async function confirmDelete() {
-    try {
-        const { close, promise } = show({
-            title: '确认删除',
-            message: '此操作不可撤销，确定要继续吗？',
-            type: 'warning',
-            showCancelButton: true,
-            cancelButtonText: '取消',
-            confirmButtonText: '确认删除',
-        })
-
-        await promise
-        console.log('用户已确认')
-    } catch (reason) {
-        console.log('用户取消:', reason)
-    }
-}
-</script>
-
-<template>
-    <button @click="confirmDelete">删除</button>
-</template>
-```
-
-### useMessageBox 带输入验证
-
-启用 `showInput` 显示输入框，配合 `inputPattern` 进行正则验证。
-
-```vue
-<script setup>
-import { useMessageBox } from 'brutx-ui-vue'
-
-const { show } = useMessageBox()
-
-async function promptEmail() {
-    try {
-        const { close, promise } = show({
-            title: '输入邮箱',
-            message: '请输入您的邮箱地址以接收通知。',
-            showInput: true,
-            inputPlaceholder: 'example@domain.com',
-            inputPattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-            inputErrorMessage: '请输入有效的邮箱地址',
-            showCancelButton: true,
-        })
-
-        const result = await promise
-        console.log('邮箱:', result.value)
-    } catch (reason) {
-        console.log('用户取消:', reason)
-    }
-}
-</script>
-
-<template>
-    <button @click="promptEmail">输入邮箱</button>
 </template>
 ```
 

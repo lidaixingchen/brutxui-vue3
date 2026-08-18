@@ -236,123 +236,75 @@ import { DialogEnhanced, DialogHeader, DialogTitle } from 'brutx-ui-vue'
 
 ## 函数式 API
 
-除了声明式组件，Dialog 还提供函数式调用方式，适合在业务逻辑中快速弹出对话框。
+除了声明式组件，Dialog 还提供命令式调用与 Composable 方式，适合在业务逻辑中快速弹出自定义对话框容器。如需结构化确认框、状态图标或输入提示，请参阅独立的 [MessageBox 消息对话框](./message-box.md)。
 
 ### showDialog
 
-直接调用 `showDialog` 以编程方式创建并打开一个对话框：
+调用 `showDialog` 以命令式挂载通用的 Dialog 对话框容器：
 
 ```ts
 import { showDialog } from 'brutx-ui-vue'
 
 const instance = showDialog({
-    title: '确认操作',
-    content: '确定要删除这条记录吗？',
-    size: 'sm',
-    onConfirm: () => {
-        // 处理确认逻辑
-    },
+    title: '系统设置',
+    content: '自定义弹层正文内容...',
+    size: 'default',
+    draggable: true,
+    showCloseButton: true,
     onCancel: () => {
-        // 处理取消逻辑
+        console.log('对话框已关闭')
     },
 })
+
+// 手动关闭
+// instance.close()
 ```
 
-**参数：**
+**常用参数：**
 
 | 参数 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `title` | `string` | — | 对话框标题 |
-| `content` | `string` | — | 对话框内容 |
+| `description` | `string` | — | 对话框描述 |
+| `content` | `string \| Component \| VNode \| (() => ...)` | — | 自定义正文内容 |
+| `footer` | `string \| Component \| VNode \| (() => ...)` | — | 自定义底部插槽内容 |
 | `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'default'` | 对话框尺寸 |
-| `onConfirm` | `() => void` | — | 确认回调 |
-| `onCancel` | `() => void` | — | 取消回调 |
+| `draggable` | `boolean` | `false` | 是否开启拖拽 |
+| `resizable` | `boolean` | `false` | 是否开启缩放 |
+| `fullscreen` | `boolean` | `false` | 是否全屏展示 |
+| `zIndex` | `number` | — | 自定义弹层层级 |
+| `onCancel` | `() => void` | — | 关闭时的回调钩子 |
 
-**返回值：** 返回对话框实例，包含 `close()` 方法用于手动关闭。
-
-### showMessageBox
-
-调用 `showMessageBox` 弹出一个确认消息框，返回 Promise。Promise 恒兑现（不再 reject），通过 `result.action` 区分关闭路径：
-
-```ts
-import { showMessageBox, type MessageBoxResult } from 'brutx-ui-vue'
-
-async function handleDelete() {
-    const result = await showMessageBox({
-        title: '警告',
-        content: '此操作不可撤销，确定要继续吗？',
-        confirmText: '确定',
-        cancelText: '取消',
-    })
-
-    if (result.action === 'confirm') {
-        // 用户点击了确认
-    } else {
-        // 取消 / ESC / 点击遮罩 / 关闭按钮 / 手动 destroy
-    }
-}
-```
-
-**参数：**
-
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `title` | `string` | — | 消息框标题 |
-| `content` | `string` | — | 消息框内容 |
-| `confirmText` | `string` | `'确认'` | 确认按钮文本 |
-| `cancelText` | `string` | `'取消'` | 取消按钮文本 |
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'sm'` | 消息框尺寸 |
-
-**返回值：** `Promise<MessageBoxResult>` — 恒兑现，`{ action: 'confirm' | 'cancel' | 'destroy', value?: string }`。`confirm` 表示确认按钮（`showInput` 时 `value` 携带输入值）；`cancel` 表示取消按钮 / ESC / 点击遮罩 / 关闭按钮；`destroy` 表示手动调用 `destroy()`。**迁移说明**：旧契约的 `.catch()` 分支改为判断 `result.action === 'confirm'`。
+**返回值：** `OverlayInstanceHandle<void>` — 包含 `close()`、`destroy()` 方法及 `promise` 句柄。
 
 ### useDialog（Composable）
 
-在组件中使用 `useDialog` 组合式函数，获得对话框的响应式控制能力：
+在组件中使用 `useDialog` 组合式函数，获得响应式的状态与单例实例管理：
 
 ```vue
 <script setup>
 import { useDialog } from 'brutx-ui-vue'
 
-const { open, close, isOpen } = useDialog()
+const { show, close, isOpen } = useDialog()
 
 function showMyDialog() {
-    open({
+    show({
         title: '提示',
-        content: '这是一个通过 Composable 打开的对话框',
+        content: '这是一个通过 Composable 打开的自定义对话框',
     })
 }
 </script>
 
 <template>
-    <button @click="showMyDialog">打开对话框</button>
+    <div class="flex items-center gap-3">
+        <button @click="showMyDialog">打开对话框</button>
+        <span v-if="isOpen" class="text-sm font-bold text-brutal-accent">对话框开启中</span>
+    </div>
 </template>
 ```
 
-### useMessageBox（Composable）
-
-在组件中使用 `useMessageBox` 组合式函数，获得消息框的响应式控制能力：
-
-```vue
-<script setup>
-import { useMessageBox } from 'brutx-ui-vue'
-
-const { confirm } = useMessageBox()
-
-async function handleAction() {
-    const result = await confirm({
-        title: '确认',
-        content: '确定要执行此操作吗？',
-    })
-    if (result) {
-        // 用户确认
-    }
-}
-</script>
-
-<template>
-    <button @click="handleAction">执行操作</button>
-</template>
-```
+> [!TIP]
+> `useDialog` 返回的 `isOpen` 属性为 `Readonly<Ref<boolean>>` 只读响应式视图，状态仅由 Composable 内部统一调度。
 
 ## 常见问题
 
