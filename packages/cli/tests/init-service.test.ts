@@ -201,6 +201,18 @@ describe('injectNuxtConfig root-key detection', () => {
         expect(result).toBe(content);
     });
 
+    it('handles comments before colon without ReDoS vulnerability', () => {
+        const pathological = `export default defineNuxtConfig({
+    components ${'/* *//* */'.repeat(25)}
+})
+`;
+        const start = Date.now();
+        const result = injectNuxtConfig(pathological, 'assets/css/main.css', 'components');
+        const duration = Date.now() - start;
+        expect(duration).toBeLessThan(100);
+        expect(result).toContain("components: ['~/components']");
+    });
+
     it('returns null when defineNuxtConfig is absent', () => {
         const result = injectNuxtConfig('export default {}', 'assets/css/main.css', 'components');
         expect(result).toBeNull();

@@ -231,6 +231,27 @@ function findNuxtRootBlock(content: string, start: number): { start: number; end
     return null;
 }
 
+function isColonNext(str: string, startIndex: number): boolean {
+    let j = startIndex;
+    while (j < str.length) {
+        const ch = str[j];
+        if (ch === ' ' || ch === '\t' || ch === '\n' || ch === '\r') {
+            j++;
+            continue;
+        }
+        if (ch === '/' && str[j + 1] === '*') {
+            const end = str.indexOf('*/', j + 2);
+            if (end === -1) {
+                return false;
+            }
+            j = end + 2;
+            continue;
+        }
+        return ch === ':';
+    }
+    return false;
+}
+
 /**
  * 检测 rootBlock（形如 `{ ... }` 的根对象文本）第一层是否存在指定键。
  * 跳过字符串、注释与嵌套对象，避免 /\bkey\s*:/ 因 \s* 跨行而误命中
@@ -272,9 +293,8 @@ function hasRootObjectKey(rootBlock: string, key: string): boolean {
         if (depth === 1 && ch === key[0] && rootBlock.startsWith(key, i)) {
             const prev = i > 0 ? rootBlock[i - 1] : '';
             const isWordBoundary = prev === '' || !/[a-zA-Z0-9_$]/.test(prev);
-            const after = rootBlock.slice(i + key.length);
             // 允许键名与冒号之间存在空白或块注释（如 `components /* 目录 */ :` 这类合法写法）
-            if (isWordBoundary && /^(?:\s|\/\*[\s\S]*?\*\/)*:/.test(after)) {
+            if (isWordBoundary && isColonNext(rootBlock, i + key.length)) {
                 return true;
             }
         }
