@@ -372,9 +372,47 @@ describe('Watermark.vue', () => {
         await nextTick()
         expect(wrapper.find('.absolute').exists()).toBe(true)
 
+        // 切换为前置点的小数格式（如 .5rem）
+        await wrapper.setProps({
+            font: { fontSize: '.5rem' },
+        })
+        await nextTick()
+        expect(wrapper.find('.absolute').exists()).toBe(true)
+
         wrapper.unmount()
         getContextSpy.mockRestore()
     })
+
+    it('dynamically converts rem font size based on document root fontSize', async () => {
+        const getContextSpy = vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null)
+        const computedStyleSpy = vi.spyOn(window, 'getComputedStyle').mockImplementation((elt: Element) => {
+            if (elt === document.documentElement) {
+                return { fontSize: '10px' } as CSSStyleDeclaration
+            }
+            return window.getComputedStyle(elt)
+        })
+
+        const wrapper = mount(Watermark, {
+            props: {
+                content: 'TEST_REM',
+                font: {
+                    fontSize: '1.6rem',
+                },
+            },
+            attachTo: document.body
+        })
+
+        await nextTick()
+
+        const watermarkDiv = wrapper.find('.absolute')
+        expect(watermarkDiv.exists()).toBe(true)
+        expect(watermarkDiv.element.getAttribute('style') || '').toContain('data:image/svg+xml;base64,')
+
+        wrapper.unmount()
+        computedStyleSpy.mockRestore()
+        getContextSpy.mockRestore()
+    })
 })
+
 
 
