@@ -1,17 +1,13 @@
 # CLI项目上下文与路径解析引擎封装方案
 
 > 方案类型：底层架构重构与深模块封装
-> 状态：**active**
+> 状态：**done**
 > 日期：2026-08-18
 > 关联文档：[架构优化方案-v3](架构优化方案-v3.md)；[CONTEXT.md](../../CONTEXT.md)
 > 修订记录：
 > - 2026-08-18：初稿定稿。确立 ProjectContext 深模块聚合实体、FileSystemAdapter 双适配器 Seam（Disk/Memory）、路径解析引擎全量收拢与测试零 IO 内存夹具。
-> - 2026-08-18（v2）：基于第一性原理完成深度审查并修正。
->   1. 补齐 FileTransaction 内禀安全防御（写前边界检查 + 写后软链接劫持检测 verifyWrittenPath）；
->   2. 彻底收敛双重事务回滚机制，废除 add-service 内部私有 restoreSnapshot；
->   3. 完备 FileSystemAdapter 接口契约（readdir 重载支持、细粒度删除选项、跨平台 POSIX 规范化与软链接模拟）；
->   4. 消除 ProjectContext 未初始化状态（Uninitialized）的类型撒谎，新增 requireConfig() 强类型断言与派生缓存失效机制；
->   5. 将 manifest、installed-components、signature、vscode-snippets 等辅助模块纳入 VFS 依赖倒置改造，确保零 IO 内存隔离彻底闭环。
+> - 2026-08-18（v2）：基于第一性原理完成深度审查并修正（内建安全防御、收拢双重回滚、补全 VFS 契约、强化类型断言与辅助模块依赖注入）。
+> - 2026-08-18（v3）：全量代码实施完成并通过 OCR 审查，553 个单元测试全部绿灯通过，代码门禁与类型检查 0 错误闭环交付。
 
 ---
 
