@@ -14,6 +14,7 @@ import {
 } from '../constants.js';
 import { FileTransaction } from '../file-transaction.js';
 import { isSafePath } from '../project.js';
+import { CliError } from '../error.js';
 
 import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
 import { ProjectContext } from '../project-context.js';
@@ -392,10 +393,32 @@ export async function initializeProjectFiles(options: ProjectInitializationOptio
     const { cwd, projectType, settings, callbacks } = options;
     let context = options.context;
     if (!context) {
+        const fallbackConfig: BrutalistConfig = {
+            $schema: SCHEMA_URL,
+            $version: CURRENT_CONFIG_VERSION,
+            style: 'brutalism',
+            tailwind: settings.tailwind,
+            aliases: settings.aliases,
+            ...(settings.sharedBase ? { sharedBase: settings.sharedBase } : {}),
+        };
+
         try {
             context = await ProjectContext.loadUninitialized(cwd, { fs: options.fs });
-        } catch {
-            context = await ProjectContext.loadUninitialized(cwd, { fs: options.fs, configOverride: settings as unknown as BrutalistConfig });
+        } catch (error) {
+            if (error instanceof CliError && error.code === 'CONFIG_INVALID') {
+                try {
+                    context = await ProjectContext.loadUninitialized(cwd, {
+                        fs: options.fs,
+                        configOverride: fallbackConfig,
+                    });
+                } catch (fallbackError) {
+                    throw new CliError(`Failed to initialize project context: ${fallbackError instanceof Error ? fallbackError.message : String(fallbackError)}`, {
+                        cause: error,
+                    });
+                }
+            } else {
+                throw error;
+            }
         }
     }
     const transaction = options.transaction ?? context.createTransaction();

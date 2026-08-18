@@ -5,7 +5,7 @@ import { removeInstalledComponents } from '../manifest.js';
 import { getInstalledComponentNames } from '../installed-components.js';
 import { logger } from '../logger.js';
 import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
-import { ProjectContext } from '../project-context.js';
+import type { ProjectContext } from '../project-context.js';
 
 const SCRIPT_EXTENSIONS = ['.ts', '.js', '.mts', '.mjs'] as const;
 const COMPONENT_FILE_EXTENSIONS = [...SCRIPT_EXTENSIONS, '.vue', '.tsx', '.jsx'] as const;
@@ -144,16 +144,21 @@ function importerComponentName(componentsPath: string, importerFile: string): st
     return relative.split(path.sep)[0];
 }
 
-/** 相对 import 解析结果缓存：结果只取决于 (importerFile, specifier)，组件路径固定时进程内稳定（#D）。 */
-const relativeImportResolveCache = new Map<string, Map<string, Promise<string | null>>>();
+/** 相对 import 解析结果缓存：按 FileSystemAdapter 分桶隔离，避免内存 VFS 与物理磁盘跨适配器缓存错位。 */
+const relativeImportResolveCache = new WeakMap<FileSystemAdapter, Map<string, Map<string, Promise<string | null>>>>();
 
 /** 把以 importer 文件所在目录为基准的相对 import 解析为绝对路径，无法解析时返回 null。 */
-/** 把以 importer 文件所在目录为基准的相对 import 解析为绝对路径，无法解析时返回 null。 */
 function resolveRelativeImport(importerFile: string, specifier: string, fsAdapter: FileSystemAdapter): Promise<string | null> {
-    let importerEntries = relativeImportResolveCache.get(importerFile);
+    let adapterCache = relativeImportResolveCache.get(fsAdapter);
+    if (!adapterCache) {
+        adapterCache = new Map<string, Map<string, Promise<string | null>>>();
+        relativeImportResolveCache.set(fsAdapter, adapterCache);
+    }
+
+    let importerEntries = adapterCache.get(importerFile);
     if (!importerEntries) {
         importerEntries = new Map<string, Promise<string | null>>();
-        relativeImportResolveCache.set(importerFile, importerEntries);
+        adapterCache.set(importerFile, importerEntries);
     }
     const cached = importerEntries.get(specifier);
     if (cached) {
