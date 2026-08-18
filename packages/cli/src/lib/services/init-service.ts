@@ -15,6 +15,9 @@ import {
 import { FileTransaction } from '../file-transaction.js';
 import { isSafePath, resolveAliasPath, resolveUtilsFilePath } from '../project.js';
 
+import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
+import { ProjectContext } from '../project-context.js';
+
 export interface ProjectInitializationSettings {
     tailwind: TailwindConfig;
     aliases: AliasConfig;
@@ -60,6 +63,9 @@ export interface ProjectInitializationOptions {
     projectType: ProjectType;
     settings: ProjectInitializationSettings;
     callbacks?: ProjectInitializationCallbacks;
+    context?: ProjectContext;
+    fs?: FileSystemAdapter;
+    transaction?: FileTransaction;
 }
 
 async function createConfigFile(
@@ -80,10 +86,15 @@ async function createConfigFile(
     return config;
 }
 
-async function addBrutalistStyles(cwd: string, cssPath: string, transaction: FileTransaction): Promise<boolean> {
+async function addBrutalistStyles(
+    cwd: string,
+    cssPath: string,
+    transaction: FileTransaction,
+    fsAdapter?: FileSystemAdapter
+): Promise<boolean> {
     const fullPath = path.join(cwd, cssPath);
 
-    if (!(await isSafePath(fullPath, cwd))) {
+    if (!(await isSafePath(fullPath, cwd, fsAdapter))) {
         throw new Error(`Security Error: CSS path traversal detected. Access denied to path "${fullPath}".`);
     }
 
@@ -93,15 +104,12 @@ async function addBrutalistStyles(cwd: string, cssPath: string, transaction: Fil
     const brutxBlock = `${BRUTX_CSS_START_MARKER}\n${brutalistCss}\n${BRUTX_CSS_END_MARKER}`;
 
     let content: string;
-    if (await fs.pathExists(fullPath)) {
-        content = await fs.readFile(fullPath, 'utf-8');
-        // 是否已注入的判据与 doctor 共用（constants.hasBrutxCssBlock）：
-        // START → END 按序出现才算已注入，顺序颠倒或分散时视为未注入，走追加分支
+    const exists = fsAdapter ? await fsAdapter.pathExists(fullPath) : await fs.pathExists(fullPath);
+    if (exists) {
+        content = fsAdapter ? await fsAdapter.readFile(fullPath, 'utf-8') : await fs.readFile(fullPath, 'utf-8');
         if (hasBrutxCssBlock(content)) {
             content = replaceBrutxCssBlock(content, brutxBlock);
         } else {
-            // markers 是"是否已注入"的唯一判据：无 markers 即视为未注入，
-            // 即使内容含 --color-brutal-bg 等旧版 token 也一律追加。
             if (!content.endsWith('\n') && content.length > 0) {
                 content += '\n';
             }
@@ -115,10 +123,11 @@ async function addBrutalistStyles(cwd: string, cssPath: string, transaction: Fil
     return true;
 }
 
-async function findNuxtConfig(cwd: string): Promise<string | null> {
+async function findNuxtConfig(cwd: string, fsAdapter?: FileSystemAdapter): Promise<string | null> {
     for (const file of CONFIG_FILES.nuxt) {
         const fullPath = path.join(cwd, file);
-        if (await fs.pathExists(fullPath)) {
+        const exists = fsAdapter ? await fsAdapter.pathExists(fullPath) : await fs.pathExists(fullPath);
+        if (exists) {
             return fullPath;
         }
     }
@@ -319,9 +328,10 @@ async function configureNuxtConfig(
     cwd: string,
     cssPath: string,
     componentsDir: string,
-    transaction: FileTransaction
+    transaction: FileTransaction,
+    fsAdapter?: FileSystemAdapter
 ): Promise<NuxtConfigResult> {
-    const configPath = await findNuxtConfig(cwd);
+    const configPath = await findNuxtConfig(cwd, fsAdapter);
     const componentsRelDir = path.relative(cwd, componentsDir).replace(/\\/g, '/');
 
     if (!configPath) {
@@ -333,7 +343,7 @@ async function configureNuxtConfig(
         };
     }
 
-    const original = await fs.readFile(configPath, 'utf-8');
+    const original = fsAdapter ? await fsAdapter.readFile(configPath, 'utf-8') : await fs.readFile(configPath, 'utf-8');
     const result = injectNuxtConfig(original, cssPath, componentsRelDir);
     const configFile = path.basename(configPath);
 
@@ -367,8 +377,6 @@ async function configureNuxtConfig(
             configFile,
         };
     } catch (error) {
-        // 携带底层失败原因（权限/磁盘空间等），避免外层只报固定文案；
-        // 非 Error 值（普通对象/字符串）不产生 '[object Object]' 这类无意义信息
         return {
             configured: false,
             status: 'write-failed',
@@ -382,14 +390,16 @@ async function configureNuxtConfig(
 
 export async function initializeProjectFiles(options: ProjectInitializationOptions): Promise<ProjectInitializationResult> {
     const { cwd, projectType, settings, callbacks } = options;
-    const transaction = new FileTransaction();
+    const context = options.context ?? await ProjectContext.loadUninitialized(cwd, { fs: options.fs });
+    const transaction = options.transaction ?? context.createTransaction();
 
     try {
         const config = await createConfigFile(cwd, settings, transaction);
+        context.bindConfig(config);
 
-        const utilsPath = await resolveUtilsFilePath(settings, cwd);
+        const utilsPath = await context.resolveUtilsFilePath();
         await transaction.ensureDir(path.dirname(utilsPath));
-        const utilsCreated = !(await fs.pathExists(utilsPath));
+        const utilsCreated = !(await context.fs.pathExists(utilsPath));
         if (utilsCreated) {
             await transaction.writeFile(utilsPath, UTILS_TEMPLATE);
         }
@@ -399,15 +409,15 @@ export async function initializeProjectFiles(options: ProjectInitializationOptio
             created: utilsCreated,
         });
 
-        const componentsDir = await resolveAliasPath(settings.aliases.components, cwd);
+        const componentsDir = await context.resolveComponentsDir();
         await transaction.ensureDir(path.join(componentsDir, 'ui'));
         callbacks?.onComponentsDirectory?.({ path: componentsDir });
 
-        const stylesAdded = await addBrutalistStyles(cwd, settings.tailwind.css, transaction);
+        const stylesAdded = await addBrutalistStyles(cwd, settings.tailwind.css, transaction, context.fs);
         callbacks?.onStyles?.({ cssPath: settings.tailwind.css, added: stylesAdded });
 
         const nuxt = projectType === 'nuxt'
-            ? await configureNuxtConfig(cwd, settings.tailwind.css, componentsDir, transaction)
+            ? await configureNuxtConfig(cwd, settings.tailwind.css, componentsDir, transaction, context.fs)
             : {
                 configured: false,
                 status: 'skipped' as const,

@@ -204,6 +204,11 @@ export class ProjectContext {
 
     async resolveComponentDir(componentName: string): Promise<string> {
         const componentsDir = await this.resolveComponentsDir();
+        const uiTarget = path.join(componentsDir, 'ui', componentName);
+        if (await this.fs.pathExists(uiTarget)) {
+            await this.assertSafePath(uiTarget);
+            return uiTarget;
+        }
         const target = path.join(componentsDir, componentName);
         await this.assertSafePath(target);
         return target;

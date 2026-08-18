@@ -5,6 +5,10 @@ export * from './constants.js';
 export { CliError } from './error.js';
 export { getCliErrorAdvice } from './error-advice.js';
 
+export * from './fs/index.js';
+export { ProjectContext } from './project-context.js';
+export type { ProjectEnvironmentInfo, ProjectContextOptions } from './project-context.js';
+
 export {
     detectProjectType,
     detectPackageManager,

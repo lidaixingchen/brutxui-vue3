@@ -29,14 +29,15 @@ import {
     type ComponentFileWriteFailure,
     mergeDryRun,
     withAuditLog,
+    ProjectContext,
 } from '../lib/index.js';
 
-async function ensureInitialized(cwd: string): Promise<BrutalistConfig> {
+async function ensureInitialized(cwd: string): Promise<ProjectContext> {
     try {
-        return await readConfig(cwd);
+        return await ProjectContext.load(cwd);
     } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        if (message.includes('not found')) {
+        if (message.includes('not found') || (error instanceof CliError && error.code === 'CONFIG_NOT_FOUND')) {
             throw new CliError('Brutx-Vue is not initialized. Run: npx brutx-vue@latest init', {
                 code: 'CONFIG_NOT_FOUND',
                 cause: error,
@@ -204,7 +205,8 @@ async function addInner(
     targetCwd: string,
     useCache: boolean,
 ): Promise<void> {
-    const config = await ensureInitialized(cwd);
+    const context = await ensureInitialized(cwd);
+    const config = context.requireConfig();
 
     await validateComponents(components, options.registry);
 
@@ -215,8 +217,6 @@ async function addInner(
         return;
     }
 
-    // 多源解析（基础设施闭环 P0）：--registry 覆盖整个源列表，否则用 config.registries，
-    // 未配置时回退到官方默认源（GitHub Release 资产，releases/latest/download）。
     const sources = resolveRegistrySources(config, options.registry);
 
     const spinner = options.silent ? null : ora('Resolving components and checking dependencies...').start();
@@ -271,16 +271,15 @@ async function addInner(
         }
 
         if (!options.dryRun) {
-            const utils = await ensureUtilsFile(targetCwd, config);
+            const utils = await ensureUtilsFile(context);
             if (utils.created) {
                 spinner?.info(`Created utility file at ${utils.path}`);
             }
         }
 
-        const { added, skipped, filesWritten, filesByComponent, rollback } = await writeComponentFiles(
+        const { added, skipped, filesWritten, filesByComponent, rollback, transaction } = await writeComponentFiles(
+            context,
             registryItems,
-            config,
-            targetCwd,
             {
                 overwrite: options.overwrite,
                 dryRun: options.dryRun,
@@ -380,6 +379,7 @@ async function addInner(
                             })
                     );
                     await updateInstalledComponents(targetCwd, manifestEntries);
+                    await transaction?.commit();
                     manifestUpdated = true;
 
                     const shouldUpdateSnippets = options.vscode === true

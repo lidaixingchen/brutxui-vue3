@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { confirm } from '@inquirer/prompts';
 import type { RemoveOptions } from '../lib/types.js';
-import { readConfigSafe, CliError, readManifest, mergeDryRun, withAuditLog } from '../lib/index.js';
+import { readConfigSafe, CliError, readManifest, mergeDryRun, withAuditLog, ProjectContext } from '../lib/index.js';
 import {
     countComponentFiles,
     prepareRemoveComponents,
@@ -47,17 +47,19 @@ async function removeInner(components: string[], options: RemoveOptions, cwd: st
         throw new CliError('Please specify at least one component to remove.');
     }
 
-    const config = await readConfigSafe(cwd);
-
-    if (!config) {
+    let context: ProjectContext;
+    try {
+        context = await ProjectContext.load(cwd);
+    } catch (error) {
         throw new CliError('No components.json found. Run `brutx-vue init` first.', {
             code: 'CONFIG_NOT_FOUND',
+            cause: error,
         });
     }
 
     const manifest = await readManifest(cwd).catch(() => null);
     const useCache = options.cache !== false;
-    const removal = await prepareRemoveComponents(cwd, config, components, manifest, useCache);
+    const removal = await prepareRemoveComponents(context, components, manifest, useCache);
 
     if (removal.notFound.length > 0) {
         logger.warn(`Component(s) not installed: ${removal.notFound.join(', ')}`);
@@ -68,16 +70,15 @@ async function removeInner(components: string[], options: RemoveOptions, cwd: st
         return;
     }
 
-    if (removal.dependents.size > 0) {
-        logger.newLine();
-        for (const [comp, deps] of removal.dependents) {
-            logger.warn(`Warning: ${deps.join(', ')} depends on ${comp}`);
-        }
+    // 依赖告警
+    for (const [comp, depList] of removal.dependents.entries()) {
+        logger.warn(`Warning: "${comp}" is required by: ${depList.join(', ')}.`);
+        logger.warn(`Removing it may break these components.`);
         logger.newLine();
     }
 
+    // 依赖检查失败告警（#102：registry 不可达降级提示）
     if (removal.dependencyCheckFailures.length > 0) {
-        logger.newLine();
         logger.warn(`Warning: dependency check failed for ${removal.dependencyCheckFailures.length} component(s) — registry may be unreachable. Hidden dependencies could exist for the components being removed: ${removal.dependencyCheckFailures.join(', ')}`);
         logger.newLine();
     }
@@ -92,7 +93,7 @@ async function removeInner(components: string[], options: RemoveOptions, cwd: st
         const fileCounts = await Promise.all(
             removal.toRemove.map(async (comp) => ({
                 comp,
-                fileCount: await countComponentFiles(cwd, config, comp).catch(() => null),
+                fileCount: await countComponentFiles(context, comp).catch(() => null),
             })),
         );
 
@@ -142,8 +143,7 @@ async function removeInner(components: string[], options: RemoveOptions, cwd: st
 
     try {
         const result = await removeComponents(
-            cwd,
-            config,
+            context,
             removal.toRemove,
             removal.orphanedFiles,
             {

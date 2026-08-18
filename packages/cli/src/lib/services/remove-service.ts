@@ -503,28 +503,57 @@ async function getDependents(
     return { dependents, failures: Array.from(failures).sort() };
 }
 
+import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
+import { ProjectContext } from '../project-context.js';
+
+export async function countComponentFiles(
+    context: ProjectContext,
+    componentName: string
+): Promise<number | null>;
 export async function countComponentFiles(
     cwd: string,
     config: BrutalistConfig,
-    componentName: string
+    componentName: string,
+    fsAdapter?: FileSystemAdapter
+): Promise<number | null>;
+export async function countComponentFiles(
+    cwdOrContext: string | ProjectContext,
+    configOrComponentName?: BrutalistConfig | string,
+    componentName?: string,
+    fsAdapter?: FileSystemAdapter
 ): Promise<number | null> {
-    const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
-    const componentPath = path.join(componentsPath, componentName);
+    let context: ProjectContext;
+    let name: string;
+    if (cwdOrContext instanceof ProjectContext) {
+        context = cwdOrContext;
+        name = configOrComponentName as string;
+    } else {
+        context = await ProjectContext.loadUninitialized(cwdOrContext, {
+            configOverride: configOrComponentName as BrutalistConfig,
+            fs: fsAdapter,
+        });
+        name = componentName!;
+    }
 
-    if (!await fs.pathExists(componentPath)) {
+    const componentPath = await context.resolveComponentDir(name);
+
+    if (!await context.fs.pathExists(componentPath)) {
         return null;
     }
 
-    return countFilesRecursive(componentPath);
+    return countFilesRecursive(componentPath, context.fs);
 }
 
-async function countFilesRecursive(dir: string): Promise<number> {
-    const entries = await fs.readdir(dir, { withFileTypes: true });
+async function countFilesRecursive(dir: string, fsAdapter?: FileSystemAdapter): Promise<number> {
+    const entries = fsAdapter
+        ? await fsAdapter.readdir(dir, { withFileTypes: true })
+        : await fs.readdir(dir, { withFileTypes: true });
+
     let count = 0;
     for (const entry of entries) {
         const fullPath = path.join(dir, entry.name);
         if (entry.isDirectory()) {
-            count += await countFilesRecursive(fullPath);
+            count += await countFilesRecursive(fullPath, fsAdapter);
         } else if (entry.isFile()) {
             count++;
         }
@@ -533,30 +562,48 @@ async function countFilesRecursive(dir: string): Promise<number> {
 }
 
 export async function prepareRemoveComponents(
-    cwd: string,
-    config: BrutalistConfig,
-    components: string[],
-    manifest: BrutxManifest | null,
+    cwdOrContext: string | ProjectContext,
+    configOrComponents: BrutalistConfig | string[],
+    componentsOrManifest?: string[] | BrutxManifest | null,
+    manifestOrUseCache?: BrutxManifest | null | boolean,
     useCache: boolean = true
 ): Promise<RemovePreparation> {
-    const installed = await getInstalledComponentNames(cwd, config);
+    let context: ProjectContext;
+    let components: string[];
+    let manifest: BrutxManifest | null;
+    let shouldCache = useCache;
+
+    if (cwdOrContext instanceof ProjectContext) {
+        context = cwdOrContext;
+        components = configOrComponents as string[];
+        manifest = componentsOrManifest as BrutxManifest | null;
+        shouldCache = typeof manifestOrUseCache === 'boolean' ? manifestOrUseCache : useCache;
+    } else {
+        const cwd = cwdOrContext;
+        const config = configOrComponents as BrutalistConfig;
+        context = await ProjectContext.loadUninitialized(cwd, { configOverride: config });
+        components = componentsOrManifest as string[];
+        manifest = manifestOrUseCache as BrutxManifest | null;
+    }
+
+    const config = context.requireConfig();
+    const installed = await getInstalledComponentNames(context.cwd, config, context.fs);
     const toRemove = components.filter(c => installed.includes(c));
     const notFound = components.filter(c => !installed.includes(c));
     const remaining = installed.filter(c => !toRemove.includes(c));
-    // 组件间 import 图只需构建一次，供依赖检查（#102）与孤立文件判定（#103）共用，
-    // 避免多次全量扫描组件目录；相对导入另按 importer 文件路径记录（#B）
+
     const emptyImportGraph: ImportGraph = { byComponent: new Map(), byImporterFile: new Map() };
     const importGraph = toRemove.length > 0
-        ? await scanAllImports(await resolveAliasPath(config.aliases.components, cwd))
+        ? await scanAllImports(await context.resolveComponentsDir())
         : emptyImportGraph;
     const { dependents, failures: dependencyCheckFailures } = toRemove.length > 0
-        ? await getDependents(cwd, config, toRemove, manifest, useCache, importGraph.byComponent)
+        ? await getDependents(context.cwd, config, toRemove, manifest, shouldCache, importGraph.byComponent)
         : { dependents: new Map<string, string[]>(), failures: [] as string[] };
     const orphanedFiles = toRemove.length > 0
         ? [
             ...new Set([
-                ...await findOrphanedFiles(cwd, config, remaining, toRemove, importGraph.byComponent),
-                ...await findManifestKnownFiles(cwd, config, manifest, toRemove, remaining, importGraph),
+                ...await findOrphanedFiles(context.cwd, config, remaining, toRemove, importGraph.byComponent),
+                ...await findManifestKnownFiles(context.cwd, config, manifest, toRemove, remaining, importGraph),
             ]),
         ]
         : [];
@@ -573,25 +620,41 @@ export async function prepareRemoveComponents(
 }
 
 export async function removeComponents(
-    cwd: string,
-    config: BrutalistConfig,
-    componentsToRemove: string[],
-    orphanedFiles: string[],
-    options: RemoveExecutionOptions
+    cwdOrContext: string | ProjectContext,
+    configOrComponentsToRemove: BrutalistConfig | string[],
+    componentsToRemoveOrOrphaned?: string[],
+    orphanedFilesOrOptions?: string[] | RemoveExecutionOptions,
+    optionsOrLegacy?: RemoveExecutionOptions
 ): Promise<RemoveExecutionResult> {
-    const transaction = new FileTransaction();
+    let context: ProjectContext;
+    let componentsToRemove: string[];
+    let orphanedFiles: string[];
+    let options: RemoveExecutionOptions;
+
+    if (cwdOrContext instanceof ProjectContext) {
+        context = cwdOrContext;
+        componentsToRemove = configOrComponentsToRemove as string[];
+        orphanedFiles = componentsToRemoveOrOrphaned!;
+        options = orphanedFilesOrOptions as RemoveExecutionOptions;
+    } else {
+        const cwd = cwdOrContext;
+        const config = configOrComponentsToRemove as BrutalistConfig;
+        context = await ProjectContext.loadUninitialized(cwd, { configOverride: config });
+        componentsToRemove = componentsToRemoveOrOrphaned!;
+        orphanedFiles = orphanedFilesOrOptions as string[];
+        options = optionsOrLegacy!;
+    }
+
+    const transaction = context.createTransaction();
     let totalRemoved = 0;
     let orphanedRemoved = 0;
 
     try {
-        // #104：resolveAliasPath 涉及 tsconfig 解析与异步 IO 且结果与迭代无关，
-        // 提升到循环外只解析一次
-        const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
         for (const comp of componentsToRemove) {
-            const componentPath = path.join(componentsPath, comp);
+            const componentPath = await context.resolveComponentDir(comp);
 
-            if (await fs.pathExists(componentPath)) {
-                const fileCount = await countFilesRecursive(componentPath);
+            if (await context.fs.pathExists(componentPath)) {
+                const fileCount = await countFilesRecursive(componentPath, context.fs);
                 options.onRemoveComponent?.(comp, fileCount);
                 await transaction.remove(componentPath);
                 totalRemoved += fileCount;
@@ -600,16 +663,15 @@ export async function removeComponents(
 
         if (options.removeOrphaned) {
             for (const f of orphanedFiles) {
-                // 统一安全路径校验：拒绝任何解析到 cwd 之外的路径，防止删除目录外文件
-                if (!await isSafePath(f, cwd)) continue;
-                if (await fs.pathExists(f)) {
+                if (!await context.isSafePath(f)) continue;
+                if (await context.fs.pathExists(f)) {
                     await transaction.remove(f);
                     orphanedRemoved++;
                 }
             }
         }
 
-        await removeInstalledComponents(cwd, componentsToRemove, { transaction });
+        await removeInstalledComponents(context.cwd, componentsToRemove, { transaction }, context.fs);
         await transaction.commit();
     } catch (error) {
         const rollbackFailures = await transaction.rollback();

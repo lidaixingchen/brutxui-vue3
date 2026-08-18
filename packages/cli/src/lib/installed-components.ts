@@ -178,7 +178,7 @@ export async function getInstalledComponentNames(
 ): Promise<string[]> {
     const manifest = await readManifest(cwd, fsAdapter).catch(() => null);
     const manifestNames = Object.keys(manifest?.components ?? {});
-    const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
+    const componentsPath = await resolveAliasPath(config.aliases.components, cwd, fsAdapter);
     const scannedNames = await getScannedComponentNames(componentsPath, fsAdapter);
 
     return [...new Set([...manifestNames, ...scannedNames])].sort();
@@ -190,7 +190,7 @@ export async function getInstalledComponentInfos(
     fsAdapter?: FileSystemAdapter
 ): Promise<InstalledComponentInfo[]> {
     const manifest = await readManifest(cwd, fsAdapter).catch(() => null);
-    const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
+    const componentsPath = await resolveAliasPath(config.aliases.components, cwd, fsAdapter);
     const componentNames = await getInstalledComponentNames(cwd, config, fsAdapter);
 
     const infos = await mapWithConcurrency(componentNames, SCAN_CONCURRENCY, async (name) => {

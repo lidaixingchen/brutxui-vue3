@@ -1,10 +1,11 @@
 import fs from 'fs-extra';
+import { promises as nodeFs } from 'node:fs';
 import path from 'path';
 import type {
     FileEntry,
     FileStat,
     FileSystemAdapter,
-    RemoveOptions,
+    FsRemoveOptions,
 } from './file-system-adapter.js';
 
 export class DiskFileSystemAdapter implements FileSystemAdapter {
@@ -34,7 +35,7 @@ export class DiskFileSystemAdapter implements FileSystemAdapter {
         await fs.ensureDir(dirPath);
     }
 
-    async remove(targetPath: string, options: RemoveOptions = {}): Promise<void> {
+    async remove(targetPath: string, options: FsRemoveOptions = {}): Promise<void> {
         if (options.recursive === false) {
             await fs.promises.rm(targetPath, { recursive: false, force: options.force ?? false });
         } else {

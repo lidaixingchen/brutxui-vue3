@@ -70,44 +70,35 @@ function generateUnifiedDiff(
     return diffLines_.join('\n');
 }
 
-export async function getInstalledComponents(cwd: string, config: BrutalistConfig): Promise<string[]> {
-    return getInstalledComponentNames(cwd, config);
+import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
+import { ProjectContext } from '../project-context.js';
+
+export async function getInstalledComponents(
+    cwdOrContext: string | ProjectContext,
+    config?: BrutalistConfig,
+    fsAdapter?: FileSystemAdapter
+): Promise<string[]> {
+    if (cwdOrContext instanceof ProjectContext) {
+        return getInstalledComponentNames(cwdOrContext.cwd, cwdOrContext.requireConfig(), cwdOrContext.fs);
+    }
+    const context = await ProjectContext.loadUninitialized(cwdOrContext, { configOverride: config, fs: fsAdapter });
+    return getInstalledComponentNames(context.cwd, context.requireConfig(), context.fs);
 }
 
 async function getLocalComponentFiles(
-    cwd: string,
-    config: BrutalistConfig,
+    context: ProjectContext,
     componentName: string
 ): Promise<Array<{ relativePath: string; absolutePath: string }>> {
-    const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
-    const componentPath = path.join(componentsPath, componentName);
+    const componentPath = await context.resolveComponentDir(componentName);
 
-    // componentName 来自命令行/调用方，可能含 ../ 或绝对路径：静态校验组件目录边界
-    //（resolve 后必须仍位于 componentsPath 内），isSafePath 再解符号链接确认不越出项目
-    const normalize = process.platform === 'win32'
-        ? (s: string) => s.toLowerCase()
-        : (s: string) => s;
-    const resolvedComponents = normalize(path.resolve(componentsPath));
-    const resolvedComponent = normalize(path.resolve(componentPath));
-    const withinComponents = resolvedComponent === resolvedComponents
-        || resolvedComponent.startsWith(resolvedComponents + path.sep);
-    if (!withinComponents) {
-        // ../ 等字面穿越：静态解析即越出组件目录
-        throw new Error(`Security Error: Component path "${componentPath}" is outside the components directory "${componentsPath}".`);
-    }
-    if (!(await isSafePath(componentPath, cwd))) {
-        // 静态路径在目录内但 realpath 解链后越出项目：符号链接攻击
-        throw new Error(`Security Error: Component path "${componentPath}" resolves outside the project directory "${cwd}" (possible symlink attack).`);
-    }
-
-    if (!await fs.pathExists(componentPath)) {
+    if (!await context.fs.pathExists(componentPath)) {
         return [];
     }
 
     const files: Array<{ relativePath: string; absolutePath: string }> = [];
 
     async function walkDir(dir: string, relativeBase: string): Promise<void> {
-        const entries = await fs.readdir(dir, { withFileTypes: true });
+        const entries = await context.fs.readdir(dir, { withFileTypes: true });
         for (const entry of entries) {
             const fullPath = path.join(dir, entry.name);
             const relativePath = path.join(relativeBase, entry.name);
@@ -133,7 +124,6 @@ function getIntegrityMetadata(
         ? registryItem.integrity
         : undefined;
 
-    // 非空字符串双方齐全才比较；空字符串（缺失信号）归入 unknown，避免 truthiness 误判
     let integrityStatus: DiffIntegrityStatus = 'unknown';
     if (typeof installedIntegrity === 'string' && installedIntegrity.length > 0
         && typeof latestIntegrity === 'string' && latestIntegrity.length > 0) {
@@ -150,19 +140,41 @@ function getIntegrityMetadata(
 }
 
 export async function diffComponent(
-    cwd: string,
-    config: BrutalistConfig,
-    componentName: string,
-    registryOverride?: string,
-    manifestEntry?: InstalledComponentManifest,
+    cwdOrContext: string | ProjectContext,
+    configOrComponentName: BrutalistConfig | string,
+    componentNameOrRegistryOverride?: string,
+    registryOverrideOrManifest?: string | InstalledComponentManifest,
+    manifestEntryOrCache?: InstalledComponentManifest | boolean,
     useCache: boolean = true
 ): Promise<DiffResult> {
+    let context: ProjectContext;
+    let componentName: string;
+    let registryOverride: string | undefined;
+    let manifestEntry: InstalledComponentManifest | undefined;
+    let shouldCache = useCache;
+
+    if (cwdOrContext instanceof ProjectContext) {
+        context = cwdOrContext;
+        componentName = configOrComponentName as string;
+        registryOverride = componentNameOrRegistryOverride;
+        manifestEntry = registryOverrideOrManifest as InstalledComponentManifest | undefined;
+        shouldCache = typeof manifestEntryOrCache === 'boolean' ? manifestEntryOrCache : useCache;
+    } else {
+        const cwd = cwdOrContext;
+        const config = configOrComponentName as BrutalistConfig;
+        context = await ProjectContext.loadUninitialized(cwd, { configOverride: config });
+        componentName = componentNameOrRegistryOverride as string;
+        registryOverride = registryOverrideOrManifest as string | undefined;
+        manifestEntry = manifestEntryOrCache as InstalledComponentManifest | undefined;
+    }
+
+    const config = context.requireConfig();
     let registryItem: RegistryItem | null;
     let registryError: Error | null = null;
 
     const sources = resolveRegistrySources(config, registryOverride);
     try {
-        const { item } = await getItemFromSources(componentName, sources, useCache);
+        const { item } = await getItemFromSources(componentName, sources, shouldCache);
         registryItem = item;
     } catch (error) {
         registryItem = null;
@@ -170,8 +182,7 @@ export async function diffComponent(
     }
 
     if (!registryItem) {
-        const localFiles = await getLocalComponentFiles(cwd, config, componentName);
-        // 三种互斥状态：registry 不可达 > 本地有文件 > 未安装
+        const localFiles = await getLocalComponentFiles(context, componentName);
         let status: DiffComponentStatus;
         if (registryError) {
             status = 'registry-unreachable';
@@ -189,15 +200,12 @@ export async function diffComponent(
         };
     }
 
-    const localFiles = await getLocalComponentFiles(cwd, config, componentName);
+    const localFiles = await getLocalComponentFiles(context, componentName);
     const fileDiffs: FileDiff[] = [];
 
     for (const registryFile of registryItem.files) {
         const localFile = localFiles.find((f) => matchFileByPath(registryFile.path, f.relativePath, componentName));
 
-        // 语义说明：status 是"以 registry 为基准的同步视角"——registry 有而本地缺失的文件
-        // 标记为 added（本地需要新增），与下方 patch 方向（old=registry, new=local）相反；
-        // path 使用 registry 路径（相对 cwd，如 components/ui/button/index.ts）。
         if (!localFile) {
             fileDiffs.push({
                 path: registryFile.path,
@@ -206,11 +214,9 @@ export async function diffComponent(
             continue;
         }
 
-        // 文件本已来自 readdir 结果，无需 pathExists 预检（其与 readFile 之间存在 TOCTOU
-        // 窗口）；读取失败时仅将 ENOENT 降级为 added，其他错误上抛
         let localContent: string;
         try {
-            localContent = await fs.readFile(localFile.absolutePath, 'utf-8');
+            localContent = await context.fs.readFile(localFile.absolutePath, 'utf-8');
         } catch (error) {
             if ((error as NodeJS.ErrnoException)?.code === 'ENOENT') {
                 fileDiffs.push({
@@ -221,7 +227,7 @@ export async function diffComponent(
             }
             throw error;
         }
-        const normalizedRegistryContent = resolveImportAlias(registryFile.content, config);
+        const normalizedRegistryContent = context.resolveImportAlias(registryFile.content);
 
         if (normalizeLineEndings(localContent) === normalizeLineEndings(normalizedRegistryContent)) {
             fileDiffs.push({
@@ -245,9 +251,6 @@ export async function diffComponent(
         const isInRegistry = registryItem.files.some((f) => matchFileByPath(f.path, localFile.relativePath, componentName));
 
         if (!isInRegistry) {
-            // 本地多余文件：registry 中无对应物，path 使用相对组件目录的路径（如 local-only.ts），
-            // 与其他状态（registry 路径，相对 cwd）基准不同——这是有意的：该文件仅存在于本地，
-            // 无法表达为 registry 路径；消费方如需按 path 关联需自行区分
             fileDiffs.push({
                 path: localFile.relativePath,
                 status: 'removed',
@@ -266,13 +269,36 @@ export async function diffComponent(
 }
 
 export async function diffComponents(
-    cwd: string,
-    config: BrutalistConfig,
-    componentNames: string[],
-    getRegistrySource: (componentName: string) => string | undefined,
-    getManifestEntry: (componentName: string) => InstalledComponentManifest | undefined,
+    cwdOrContext: string | ProjectContext,
+    configOrComponentNames: BrutalistConfig | string[],
+    componentNamesOrGetRegistry?: string[] | ((componentName: string) => string | undefined),
+    getRegistrySourceOrGetManifest?: ((componentName: string) => string | undefined) | ((componentName: string) => InstalledComponentManifest | undefined),
+    getManifestEntryOrCache?: ((componentName: string) => InstalledComponentManifest | undefined) | boolean,
     useCache: boolean = true
 ): Promise<DiffResult[]> {
+    if (cwdOrContext instanceof ProjectContext) {
+        const context = cwdOrContext;
+        const componentNames = configOrComponentNames as string[];
+        const getRegistrySource = componentNamesOrGetRegistry as (componentName: string) => string | undefined;
+        const getManifestEntry = getRegistrySourceOrGetManifest as (componentName: string) => InstalledComponentManifest | undefined;
+        const shouldCache = typeof getManifestEntryOrCache === 'boolean' ? getManifestEntryOrCache : useCache;
+        return Promise.all(
+            componentNames.map(component => diffComponent(
+                context,
+                component,
+                getRegistrySource(component),
+                getManifestEntry(component),
+                shouldCache
+            ))
+        );
+    }
+
+    const cwd = cwdOrContext;
+    const config = configOrComponentNames as BrutalistConfig;
+    const componentNames = componentNamesOrGetRegistry as string[];
+    const getRegistrySource = getRegistrySourceOrGetManifest as (componentName: string) => string | undefined;
+    const getManifestEntry = getManifestEntryOrCache as (componentName: string) => InstalledComponentManifest | undefined;
+
     return Promise.all(
         componentNames.map(component => diffComponent(
             cwd,

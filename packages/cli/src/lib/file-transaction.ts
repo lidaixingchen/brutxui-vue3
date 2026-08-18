@@ -1,6 +1,6 @@
 import os from 'os';
 import path from 'path';
-import type { FileSystemAdapter, RemoveOptions } from './fs/file-system-adapter.js';
+import type { FileSystemAdapter, FsRemoveOptions } from './fs/file-system-adapter.js';
 import { DiskFileSystemAdapter } from './fs/disk-fs.js';
 import { assertSafePath, verifyWrittenPath } from './security.js';
 
@@ -53,7 +53,7 @@ export class FileTransaction {
         await verifyWrittenPath(filePath, this.projectCwd, this.fs);
     }
 
-    async remove(targetPath: string, options: RemoveOptions = {}): Promise<void> {
+    async remove(targetPath: string, options: FsRemoveOptions = {}): Promise<void> {
         this.assertActive();
         await this.snapshot(targetPath);
         await this.fs.remove(targetPath, options);

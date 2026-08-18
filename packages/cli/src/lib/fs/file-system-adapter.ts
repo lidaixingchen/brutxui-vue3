@@ -13,7 +13,7 @@ export interface FileStat {
     size: number;
 }
 
-export interface RemoveOptions {
+export interface FsRemoveOptions {
     recursive?: boolean;
     force?: boolean;
 }
@@ -25,7 +25,7 @@ export interface FileSystemAdapter {
     writeJson(filePath: string, data: unknown, options?: { spaces?: number }): Promise<void>;
     pathExists(filePath: string): Promise<boolean>;
     ensureDir(dirPath: string): Promise<void>;
-    remove(targetPath: string, options?: RemoveOptions): Promise<void>;
+    remove(targetPath: string, options?: FsRemoveOptions): Promise<void>;
     copy(src: string, dest: string): Promise<void>;
     stat(filePath: string): Promise<FileStat>;
     lstat?(filePath: string): Promise<FileStat>;

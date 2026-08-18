@@ -3,7 +3,7 @@ import type {
     FileEntry,
     FileStat,
     FileSystemAdapter,
-    RemoveOptions,
+    FsRemoveOptions,
 } from './file-system-adapter.js';
 
 interface MemoryFileNode {
@@ -158,13 +158,9 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
         this.ensureDirSync(dirPath);
     }
 
-    async remove(targetPath: string, options: RemoveOptions = {}): Promise<void> {
+    async remove(targetPath: string, options: FsRemoveOptions = {}): Promise<void> {
         const normalized = this.normalizePath(targetPath);
         const node = this.nodes.get(normalized);
-        if (!node && !options.force) {
-            return;
-        }
-
         if (node?.type === 'dir' && options.recursive === false) {
             // 检查是否有子文件/目录
             const prefix = `${normalized}/`;

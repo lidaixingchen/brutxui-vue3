@@ -268,6 +268,23 @@ export async function findCssFile(cwd: string, projectType: ProjectType): Promis
     return findFirstExisting(cwd, locations);
 }
 
+import type { FileSystemAdapter } from './fs/file-system-adapter.js';
+import { ProjectContext } from './project-context.js';
+
+export async function resolveAliasPath(alias: string, cwd: string, fsAdapter?: FileSystemAdapter): Promise<string> {
+    const ctx = await ProjectContext.loadUninitialized(cwd, { fs: fsAdapter });
+    return ctx.resolveAliasPath(alias);
+}
+
+export async function resolveUtilsFilePath(
+    config: { sharedBase?: string; aliases: { utils: string } },
+    cwd: string,
+    fsAdapter?: FileSystemAdapter
+): Promise<string> {
+    const ctx = await ProjectContext.loadUninitialized(cwd, { configOverride: config as BrutalistConfig, fs: fsAdapter });
+    return ctx.resolveUtilsFilePath();
+}
+
 /** 常见别名约定前缀，按优先级顺序匹配（registry 内容以 @/ 书写，@ 最优先） */
 const CONVENTIONAL_ALIAS_PREFIXES = ['@', '~', '#'] as const;
 
@@ -294,94 +311,7 @@ export async function getAliasFromTsConfig(cwd: string): Promise<AliasConfig | n
     };
 }
 
-export async function resolveAliasPath(alias: string, cwd: string): Promise<string> {
-    const match = alias.match(/^(@[^/]*|~)\/(.*)/);
 
-    let resolvedPath: string;
-
-    if (!match) {
-        resolvedPath = path.join(cwd, alias);
-    } else {
-        const [, aliasPrefix, relativePath] = match;
-        const resolvedFromConfig = await resolveFromTsConfig(cwd, aliasPrefix, relativePath);
-        resolvedPath = resolvedFromConfig ?? await resolveByProjectType(cwd, relativePath);
-    }
-
-    if (!await isSafePath(resolvedPath, cwd)) {
-        throw new Error(
-            `Security Error: Resolved path "${resolvedPath}" is outside the project directory "${cwd}". This may be a path traversal attack.`
-        );
-    }
-
-    return resolvedPath;
-}
-
-async function resolveFromTsConfig(
-    cwd: string,
-    aliasPrefix: string,
-    relativePath: string
-): Promise<string | null> {
-    const tsConfig = await readTsConfig(cwd);
-    const paths = tsConfig?.compilerOptions?.paths;
-
-    if (!paths) return null;
-
-    const aliasPattern = `${aliasPrefix}/*`;
-    const baseUrl = tsConfig?.compilerOptions?.baseUrl || '.';
-    // baseUrl 允许为绝对路径（TypeScript 语义）；绝对路径时直接以它为基准，
-    // 避免 path.join 把 cwd 与绝对路径简单拼接出 cwd/绝对路径的错误结果
-    const baseDir = path.isAbsolute(baseUrl) ? baseUrl : path.join(cwd, baseUrl);
-
-    if (paths[aliasPattern]) {
-        const targets = paths[aliasPattern];
-        // TypeScript `paths` arrays are ordered fallbacks. Return the first
-        // target whose resolved path actually exists on disk; if none match
-        // (e.g. file not yet created, or no-extension file path), fall back
-        // to the first target to preserve prior single-target behavior.
-        for (const targetPath of targets) {
-            const resolvedBase = targetPath.replace('/*', '');
-            const candidate = path.join(baseDir, resolvedBase, relativePath);
-            if (await fs.pathExists(candidate)) {
-                return candidate;
-            }
-        }
-        const firstBase = targets[0].replace('/*', '');
-        return path.join(baseDir, firstBase, relativePath);
-    }
-
-    return null;
-}
-
-async function resolveByProjectType(cwd: string, relativePath: string): Promise<string> {
-    const projectType = await detectProjectType(cwd);
-
-    const projectTypeToBase: Record<ProjectType, string> = {
-        'vite-vue-src': 'src',
-        'vite-vue': '',
-        nuxt: '',
-        unknown: await fs.pathExists(path.join(cwd, 'src')) ? 'src' : '',
-    };
-
-    const base = projectTypeToBase[projectType];
-    return path.join(cwd, base, relativePath);
-}
-
-/**
- * 解析 utils 文件完整路径（add-service / init-service 共用，避免两处实现漂移）。
- * - sharedBase 存在时：<sharedBase>/utils.ts
- * - 否则：aliases.utils 解析路径 + '.ts'（幂等：配置已带 .ts 扩展名时不再拼接，
- *   避免 `@/lib/utils.ts` 这类配置被拼成 utils.ts.ts）
- */
-export async function resolveUtilsFilePath(
-    config: Pick<BrutalistConfig, 'aliases' | 'sharedBase'>,
-    cwd: string
-): Promise<string> {
-    if (config.sharedBase) {
-        return path.join(await resolveAliasPath(config.sharedBase, cwd), 'utils.ts');
-    }
-    const resolved = await resolveAliasPath(config.aliases.utils, cwd);
-    return resolved.endsWith('.ts') ? resolved : `${resolved}.ts`;
-}
 
 export async function getDefaultAliases(cwd: string): Promise<AliasConfig> {
     return await getAliasFromTsConfig(cwd) ?? { ...DEFAULT_ALIASES };
