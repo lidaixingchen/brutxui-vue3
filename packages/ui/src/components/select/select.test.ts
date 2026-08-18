@@ -104,6 +104,60 @@ describe('SelectTrigger', () => {
         expect(trigger.classes()).toContain('disabled:hover:translate-x-0')
         expect(trigger.classes()).toContain('disabled:hover:translate-y-0')
     })
+
+    it('emits clear on Backspace or Delete keydown when clearable and has value', async () => {
+        const wrapper = mount(SelectTrigger, {
+            props: {
+                clearable: true,
+                modelValue: 'apple',
+            },
+            global: { stubs: { SelectTrigger: primitiveStub, SelectIcon: primitiveStub } },
+        })
+        const trigger = wrapper.find('[aria-haspopup="listbox"]')
+
+        await trigger.trigger('keydown', { key: 'Backspace' })
+        expect(wrapper.emitted('clear')).toBeTruthy()
+        expect(wrapper.emitted('clear')!.length).toBe(1)
+
+        await trigger.trigger('keydown', { key: 'Delete' })
+        expect(wrapper.emitted('clear')!.length).toBe(2)
+    })
+
+    it('does not emit clear on other keys or when disabled / empty', async () => {
+        const wrapper = mount(SelectTrigger, {
+            props: {
+                clearable: true,
+                modelValue: 'apple',
+            },
+            global: { stubs: { SelectTrigger: primitiveStub, SelectIcon: primitiveStub } },
+        })
+        const trigger = wrapper.find('[aria-haspopup="listbox"]')
+
+        await trigger.trigger('keydown', { key: 'Enter' })
+        await trigger.trigger('keydown', { key: 'Space' })
+        expect(wrapper.emitted('clear')).toBeFalsy()
+
+        const disabledWrapper = mount(SelectTrigger, {
+            props: {
+                clearable: true,
+                modelValue: 'apple',
+                disabled: true,
+            },
+            global: { stubs: { SelectTrigger: primitiveStub, SelectIcon: primitiveStub } },
+        })
+        await disabledWrapper.find('[aria-haspopup="listbox"]').trigger('keydown', { key: 'Backspace' })
+        expect(disabledWrapper.emitted('clear')).toBeFalsy()
+
+        const emptyWrapper = mount(SelectTrigger, {
+            props: {
+                clearable: true,
+                modelValue: '',
+            },
+            global: { stubs: { SelectTrigger: primitiveStub, SelectIcon: primitiveStub } },
+        })
+        await emptyWrapper.find('[aria-haspopup="listbox"]').trigger('keydown', { key: 'Backspace' })
+        expect(emptyWrapper.emitted('clear')).toBeFalsy()
+    })
 })
 
 describe('SelectContent', () => {

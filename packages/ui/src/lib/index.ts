@@ -78,3 +78,7 @@ export {
 export { VALID_THEMES } from './theme-names'
 export type { ThemeName } from './theme-names'
 
+// 插槽工具
+export { hasSlotContent } from './slot-utils'
+
+

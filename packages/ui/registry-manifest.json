@@ -921,7 +921,9 @@
     ],
     "composables": [],
     "directives": [],
-    "lib": []
+    "lib": [
+      "slot-utils.ts"
+    ]
   },
   "sheet": {
     "files": [
@@ -938,7 +940,8 @@
     "directives": [],
     "lib": [
       "icon-size-variants.ts",
-      "modal-variants.ts"
+      "modal-variants.ts",
+      "slot-utils.ts"
     ]
   },
   "skeleton": {
@@ -950,7 +953,9 @@
       "SkeletonText.vue",
       "skeleton-variants.ts"
     ],
-    "composables": [],
+    "composables": [
+      "useLocale.ts"
+    ],
     "directives": [],
     "lib": []
   },

@@ -10,8 +10,17 @@ type SwitchRootVariantProps = VariantProps<typeof switchRootVariants>
 
 interface SwitchProps {
     class?: string
+    /**
+     * 绑定值，支持 v-model（受控模式）。传入 null 时视作 false 关闭状态。
+     */
     modelValue?: boolean | null
+    /**
+     * 非受控模式下的初始选中状态；优先级高于 defaultChecked。
+     */
     defaultValue?: boolean
+    /**
+     * 非受控模式下的初始选中状态（defaultValue 的别名）。
+     */
     defaultChecked?: boolean
     disabled?: boolean
     variant?: NonNullable<SwitchRootVariantProps['variant']>
@@ -40,7 +49,7 @@ const { t } = useLocale()
 const resolvedAriaLabel = computed(() => props.ariaLabel?.trim() || t('switch.toggle'))
 
 const internalValue = ref(props.defaultValue ?? props.defaultChecked ?? false)
-const isControlled = computed(() => props.modelValue !== undefined && props.modelValue !== null)
+const isControlled = computed(() => props.modelValue !== undefined)
 const currentValue = computed({
     get: () => (isControlled.value ? Boolean(props.modelValue) : internalValue.value),
     set: (val: boolean) => {

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, useSlots, Comment, Text, type VNode } from 'vue'
+import { computed, useSlots } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
+import { hasSlotContent } from '@/lib/slot-utils'
 import { Separator as SeparatorPrimitive } from 'reka-ui'
 import { separatorVariants, separatorLineVariants } from './separator-variants'
 
@@ -25,25 +26,11 @@ const props = withDefaults(defineProps<SeparatorProps>(), {
 
 const slots = useSlots()
 
-function hasSlotContent(nodes: VNode[]): boolean {
-    return nodes.some((node) => {
-        if (node.type === Comment) return false
-        if (node.type === Text && typeof node.children === 'string') {
-            return node.children.trim().length > 0
-        }
-        if (Array.isArray(node.children)) {
-            return hasSlotContent(node.children as VNode[])
-        }
-        return true
-    })
-}
-
 // 检查 slot 是否实际包含内容，过滤空文本、空白字符和注释节点
 const hasLabel = computed(() => {
     const defaultSlot = slots.default
     if (!defaultSlot) return false
-    const vnodes = defaultSlot()
-    return hasSlotContent(vnodes)
+    return hasSlotContent(defaultSlot())
 })
 
 const isTextSeparator = computed(() => props.orientation === 'horizontal' && hasLabel.value)
@@ -67,12 +54,11 @@ const wrapperClasses = 'flex items-center gap-3 w-full'
         :class="wrapperClasses"
         :role="decorative ? 'none' : 'separator'"
         :aria-orientation="decorative ? undefined : 'horizontal'"
-        :aria-hidden="decorative ? 'true' : undefined"
         data-orientation="horizontal"
     >
-        <div :class="lineClasses" />
+        <div :class="lineClasses" aria-hidden="true" />
         <slot />
-        <div :class="lineClasses" />
+        <div :class="lineClasses" aria-hidden="true" />
     </div>
     <SeparatorPrimitive
         v-else

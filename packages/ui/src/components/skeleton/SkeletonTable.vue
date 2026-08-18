@@ -20,8 +20,14 @@ const props = withDefaults(defineProps<SkeletonTableProps>(), {
 
 const MAX_ROWS = 100
 const MAX_COLUMNS = 20
-const safeRows = computed(() => Math.min(Math.max(Math.trunc(props.rows), 0), MAX_ROWS))
-const safeColumns = computed(() => Math.min(Math.max(Math.trunc(props.columns), 0), MAX_COLUMNS))
+const safeRows = computed(() => {
+    const r = Number.isFinite(props.rows) ? Math.trunc(props.rows) : 5
+    return Math.min(Math.max(r, 0), MAX_ROWS)
+})
+const safeColumns = computed(() => {
+    const c = Number.isFinite(props.columns) ? Math.trunc(props.columns) : 4
+    return Math.min(Math.max(c, 0), MAX_COLUMNS)
+})
 
 const DEFAULT_CELL_WIDTH_RATIOS = [0.85, 0.7, 0.9, 0.65]
 

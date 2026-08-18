@@ -206,7 +206,7 @@ describe('SkeletonAvatar', () => {
 })
 
 describe('SkeletonCard', () => {
-    it('renders with default props', () => {
+    it('renders with default props and accessibility attributes', () => {
         const wrapper = mount(SkeletonCard)
         const classes = wrapper.classes()
         expect(classes).toContain('p-4')
@@ -216,6 +216,17 @@ describe('SkeletonCard', () => {
         expect(classes).toContain('bg-brutal-bg')
         expect(wrapper.attributes('role')).toBe('status')
         expect(wrapper.attributes('aria-busy')).toBe('true')
+        expect(wrapper.attributes('aria-label')).toBe('加载中...')
+        expect(wrapper.find('.sr-only').text()).toBe('加载中...')
+        expect(wrapper.find('[aria-hidden="true"]').exists()).toBe(true)
+    })
+
+    it('supports custom label for accessibility', () => {
+        const wrapper = mount(SkeletonCard, {
+            props: { label: '卡片加载中' },
+        })
+        expect(wrapper.attributes('aria-label')).toBe('卡片加载中')
+        expect(wrapper.find('.sr-only').text()).toBe('卡片加载中')
     })
 
     it('forwards variant to internal skeleton components', () => {
@@ -272,6 +283,27 @@ describe('SkeletonTable', () => {
             props: { rows: 0, columns: 0 },
         })
         expect(wrapper.findAllComponents(Skeleton).length).toBe(0)
+    })
+
+    it('clamps upper bounds for rows and columns (MAX_ROWS=100, MAX_COLUMNS=20)', () => {
+        const wrapper = mount(SkeletonTable, {
+            props: { rows: 1000, columns: 50 },
+        })
+        const headerCells = wrapper.findAll('[role="columnheader"]')
+        expect(headerCells.length).toBe(20)
+        const dataRows = wrapper.findAll('[role="row"]')
+        // 1 header row + 100 data rows = 101 rows total
+        expect(dataRows.length).toBe(101)
+    })
+
+    it('handles NaN gracefully by falling back to defaults', () => {
+        const wrapper = mount(SkeletonTable, {
+            props: { rows: Number.NaN, columns: Number.NaN },
+        })
+        const headerCells = wrapper.findAll('[role="columnheader"]')
+        expect(headerCells.length).toBe(4)
+        const dataRows = wrapper.findAll('[role="row"]')
+        expect(dataRows.length).toBe(6) // 1 header + 5 body
     })
 
     it('merges custom class prop', () => {

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, useSlots, Comment, Text, type VNode } from 'vue'
+import { computed, useSlots } from 'vue'
 import { DialogDescription as DialogDescriptionPrimitive } from 'reka-ui'
 import { cn } from '@/lib/utils'
+import { hasSlotContent } from '@/lib/slot-utils'
 
 interface SheetDescriptionProps {
     class?: string
@@ -9,19 +10,6 @@ interface SheetDescriptionProps {
 
 const props = defineProps<SheetDescriptionProps>()
 const slots = useSlots()
-
-function hasSlotContent(nodes: VNode[]): boolean {
-    return nodes.some((node) => {
-        if (node.type === Comment) return false
-        if (node.type === Text && typeof node.children === 'string') {
-            return node.children.trim().length > 0
-        }
-        if (Array.isArray(node.children)) {
-            return hasSlotContent(node.children as VNode[])
-        }
-        return true
-    })
-}
 
 const hasDescriptionContent = computed(() => {
     const defaultSlot = slots.default

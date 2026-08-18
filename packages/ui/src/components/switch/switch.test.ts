@@ -119,4 +119,35 @@ describe('Switch', () => {
         const el = wrapper.find('[role="switch"]')
         expect(el.attributes('aria-checked')).toBe('true')
     })
+
+    it('supports defaultValue in uncontrolled mode', () => {
+        const wrapper = mount(Switch, {
+            props: { defaultValue: true },
+            attachTo: document.body,
+        })
+        const el = wrapper.find('[role="switch"]')
+        expect(el.attributes('aria-checked')).toBe('true')
+    })
+
+    it('prioritizes defaultValue over defaultChecked', () => {
+        const wrapper = mount(Switch, {
+            props: { defaultValue: true, defaultChecked: false },
+            attachTo: document.body,
+        })
+        const el = wrapper.find('[role="switch"]')
+        expect(el.attributes('aria-checked')).toBe('true')
+    })
+
+    it('handles modelValue: null as controlled false state and resets properly', async () => {
+        const wrapper = mount(Switch, {
+            props: { modelValue: true },
+            attachTo: document.body,
+        })
+        const el = wrapper.find('[role="switch"]')
+        expect(el.attributes('aria-checked')).toBe('true')
+
+        // 父组件重置表单传入 null
+        await wrapper.setProps({ modelValue: null })
+        expect(el.attributes('aria-checked')).toBe('false')
+    })
 })

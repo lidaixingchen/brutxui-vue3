@@ -196,14 +196,18 @@ describe('Separator', () => {
         expect(wrapper.findAll('div.flex-1').length).toBe(0)
     })
 
-    it('text separator sets aria-hidden when decorative is true', () => {
+    it('text separator sets aria-hidden on decorative lines while keeping wrapper accessible', () => {
         const wrapper = mount(Separator, {
             props: { decorative: true },
             slots: { default: 'OR' },
             attachTo: document.body,
         })
-        expect(wrapper.attributes('aria-hidden')).toBe('true')
-        expect(wrapper.attributes('aria-orientation')).toBeUndefined()
+        expect(wrapper.attributes('role')).toBe('none')
+        expect(wrapper.attributes('aria-hidden')).toBeUndefined()
+        const lines = wrapper.findAll('div.flex-1')
+        lines.forEach(line => {
+            expect(line.attributes('aria-hidden')).toBe('true')
+        })
     })
 
     it('text separator sets aria-orientation when decorative is false', () => {
@@ -212,7 +216,7 @@ describe('Separator', () => {
             slots: { default: 'OR' },
             attachTo: document.body,
         })
+        expect(wrapper.attributes('role')).toBe('separator')
         expect(wrapper.attributes('aria-orientation')).toBe('horizontal')
-        expect(wrapper.attributes('aria-hidden')).toBeUndefined()
     })
 })
