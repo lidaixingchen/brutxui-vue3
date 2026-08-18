@@ -276,7 +276,7 @@ export function mountOverlay<P extends object = Record<string, unknown>, R = unk
     }
 }
 
-export interface RenderImperativeOptions extends MountOverlayOptions {}
+export type RenderImperativeOptions = MountOverlayOptions
 
 export interface RenderImperativeReturn {
     destroy: () => void

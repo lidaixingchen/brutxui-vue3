@@ -54,7 +54,8 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
 
     private getParentDir(p: string): string {
         const lastSlash = p.lastIndexOf('/');
-        if (lastSlash <= 0) return p;
+        if (lastSlash === -1) return p;
+        if (lastSlash === 0) return '/';
         if (/^[a-zA-Z]:$/.test(p.slice(0, lastSlash))) {
             return `${p.slice(0, lastSlash)}/`;
         }
@@ -82,26 +83,32 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
         }
         visited.add(normalizedPath);
 
-        const segments = normalizedPath.split('/');
-        let current = segments[0];
+        const isPosixAbsolute = normalizedPath.startsWith('/');
+        const rawSegments = normalizedPath.split('/');
+        const segments = rawSegments.filter((s, idx) => !(idx === 0 && s === '' && isPosixAbsolute));
 
-        for (let i = 1; i < segments.length; i++) {
+        let current = '';
+        for (let i = 0; i < segments.length; i++) {
             const segment = segments[i];
-            if (!segment) continue;
-            const next = current ? `${current}/${segment}` : segment;
-            const node = this.nodes.get(next);
+            if (i === 0) {
+                current = isPosixAbsolute ? `/${segment}` : segment;
+            } else {
+                current = `${current}/${segment}`;
+            }
+
+            const node = this.nodes.get(current);
             if (node && node.type === 'symlink') {
+                const baseDir = this.getParentDir(current);
                 const target = path.isAbsolute(node.target)
                     ? this.normalizePath(node.target)
-                    : this.normalizePath(path.join(current, node.target));
+                    : this.normalizePath(path.join(baseDir, node.target));
                 const remaining = segments.slice(i + 1).join('/');
                 const fullTarget = remaining ? `${target}/${remaining}` : target;
                 return this.resolveSymlinkTarget(fullTarget, visited);
             }
-            current = next;
         }
 
-        return current;
+        return current || (isPosixAbsolute ? '/' : '.');
     }
 
     async readFile(filePath: string, encoding: BufferEncoding = 'utf-8'): Promise<string> {

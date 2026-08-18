@@ -8,7 +8,7 @@ interface SkeletonAvatarProps {
     class?: string
 }
 
-withDefaults(defineProps<SkeletonAvatarProps>(), {
+const props = withDefaults(defineProps<SkeletonAvatarProps>(), {
     variant: 'default',
     size: 'default',
     class: undefined,
@@ -16,5 +16,5 @@ withDefaults(defineProps<SkeletonAvatarProps>(), {
 </script>
 
 <template>
-    <Skeleton shape="circle" :variant="variant" :size="size" :class="class" />
+    <Skeleton shape="circle" :variant="props.variant" :size="props.size" :class="props.class" />
 </template>

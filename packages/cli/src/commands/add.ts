@@ -203,8 +203,14 @@ async function addInner(
     targetCwd: string,
     useCache: boolean,
 ): Promise<void> {
-    const context = await ensureInitialized(cwd);
+    let context = await ensureInitialized(cwd);
     const config = context.requireConfig();
+    if (targetCwd !== cwd) {
+        context = await ProjectContext.loadUninitialized(targetCwd, {
+            fs: context.fs,
+            configOverride: config,
+        });
+    }
 
     await validateComponents(components, options.registry);
 

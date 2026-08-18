@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import { createCanvasElement, getCanvas2DContext, getDevicePixelRatio, getMutationObserverCtor, isClient } from '@/lib/env'
+import { createCanvasElement, getCanvas2DContext, getDevicePixelRatio, getMutationObserverCtor, isClient, getDocument, getComputedStyle } from '@/lib/env'
 
 interface WatermarkFont {
     color?: string
@@ -74,7 +74,8 @@ function getFontSizePx(size: number | string): number {
     }
     const remMatch = /^(\d+(?:\.\d+)?|\.\d+)rem$/i.exec(str)
     if (remMatch) {
-        const base = isClient ? (parseFloat(getComputedStyle(document.documentElement).fontSize) || 16) : 16
+        const rootEl = getDocument()?.documentElement
+        const base = rootEl ? (parseFloat(getComputedStyle(rootEl)?.fontSize ?? '') || 16) : 16
         const val = parseFloat(remMatch[1]) * base
         return val > 0 ? val : 14
     }
