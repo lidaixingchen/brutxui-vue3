@@ -181,6 +181,13 @@ async function renameFile() {
 | `confirm` | `(value?: string)` | 点击确认按钮并通过校验时触发，携带输入框文本 |
 | `cancel` | — | 点击取消按钮、右上角关闭、遮罩层或按 ESC 时触发 |
 
+## 可访问性
+
+- **键盘导航**：按 `Escape` 键可快速退出并关闭对话框，在多层弹层叠加时优先分发至活动栈顶层实例。
+- **焦点捕获与锁定**：对话框打开时，焦点自动锁定在弹窗内部（优先聚焦确认按钮或 Prompt 输入框），关闭后自动恢复失焦前 DOM 节点的焦点。
+- **ARIA 语义**：内置 `role="alertdialog"` / `role="dialog"` 语义角色，支持屏幕阅读器完整朗读标题与正文。
+- **高对比度可见性**：严格基于 Neo-Brutalism 3px 高反差黑边框与明晰的主题状态色板，满足 WCAG AAA 级色彩对比度标准。
+
 ## 命令式与 Composable API
 
 ### showMessageBox(options)

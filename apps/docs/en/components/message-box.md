@@ -181,6 +181,13 @@ async function renameFile() {
 | `confirm` | `(value?: string)` | Triggered on successful confirmation with input value |
 | `cancel` | — | Triggered on cancel, close button, backdrop click, or ESC |
 
+## Accessibility
+
+- **Keyboard Navigation**: Press `Escape` to dismiss the topmost active dialog layer according to the global LIFO stack.
+- **Focus Management**: Automatically traps focus within the dialog content upon mounting (focuses the confirm button or prompt input), and restores focus to the previously active element upon closing.
+- **ARIA Semantics**: Implements `role="alertdialog"` / `role="dialog"` semantic landmarks with proper labeling for screen readers.
+- **High-Contrast Visibility**: Built on high-contrast 3px Neo-Brutalist borders and semantic color palettes satisfying WCAG AAA contrast ratio standards.
+
 ## Imperative & Composable API
 
 ### showMessageBox(options)
