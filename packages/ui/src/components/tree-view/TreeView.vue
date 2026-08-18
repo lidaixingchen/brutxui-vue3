@@ -167,8 +167,7 @@ function toggleCheck(node: TreeNode) {
 function getVisibleTreeItems(): HTMLElement[] {
     const root = treeRootRef.value
     if (!root) return []
-    return Array.from(root.querySelectorAll<HTMLElement>('[role="treeitem"]'))
-        .filter((el) => el.getClientRects().length > 0)
+    return Array.from(root.querySelectorAll<HTMLElement>('[role="treeitem"]:not([data-hidden="true"])'))
 }
 
 function focusAdjacent(direction: -1 | 1) {

@@ -242,7 +242,7 @@ describe('TimelineDot', () => {
         })
         const classes = wrapper.classes()
         expect(classes).toContain('rotate-45')
-        expect(classes).toContain('[&_*]:-rotate-45')
+        expect(classes).toContain('[&>*]:-rotate-45')
     })
 
     it('renders slot content', () => {

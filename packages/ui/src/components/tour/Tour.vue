@@ -94,8 +94,8 @@ const drawCanvas = (): void => {
     const dpr = getDevicePixelRatio()
     const { width, height } = getViewportSize()
 
-    const nextW = width * dpr
-    const nextH = height * dpr
+    const nextW = Math.round(width * dpr)
+    const nextH = Math.round(height * dpr)
     if (canvas.width !== nextW || canvas.height !== nextH) {
         canvas.width = nextW
         canvas.height = nextH
@@ -105,8 +105,12 @@ const drawCanvas = (): void => {
 
     if (ctx.setTransform) {
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    } else if (ctx.resetTransform) {
+        ctx.resetTransform()
+        ctx.scale?.(dpr, dpr)
     } else {
-        ctx.scale(dpr, dpr)
+        ctx.save?.()
+        ctx.scale?.(dpr, dpr)
     }
     ctx.clearRect(0, 0, width, height)
 
@@ -412,7 +416,7 @@ onBeforeUnmount((): void => {
         <div
             ref="popoverRef"
             role="dialog"
-            aria-modal="true"
+            :aria-modal="showMask ? 'true' : undefined"
             :aria-label="currentStepVal?.title || t('tour.dialog')"
             :style="[popoverStyle, { zIndex: Z_INDEX.TOUR_POPOVER }]"
             :class="popoverClasses"

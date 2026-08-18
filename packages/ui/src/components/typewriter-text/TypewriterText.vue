@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, shallowRef, computed, watch, onBeforeUnmount } from 'vue'
+import { ref, shallowRef, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { useReducedMotion } from '@/composables/useReducedMotion'
@@ -112,15 +112,25 @@ function init() {
     }
 }
 
-// 监听 text 变化并初始化
+const isMounted = ref(false)
+
+onMounted(() => {
+    isMounted.value = true
+    if (props.text) {
+        init()
+    }
+})
+
+// 监听 text 变化并重新开始
 watch(() => props.text, (newText) => {
+    if (!isMounted.value) return
     if (newText) {
         init()
     } else {
         reset()
         emit('complete')
     }
-}, { immediate: true })
+})
 
 watch(prefersReducedMotion, (reduced) => {
     if (reduced && isTyping.value) {

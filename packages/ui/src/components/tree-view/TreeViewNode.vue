@@ -251,6 +251,7 @@ defineExpose({ focus, nodeId: props.node.id });
         v-show="!node.hidden"
         ref="treeItemRef"
         role="treeitem"
+        :data-hidden="node.hidden ? 'true' : undefined"
         :tabindex="isSelected ? 0 : (isFirstRoot ? 0 : -1)"
         :aria-expanded="!isLeaf ? isExpanded : undefined"
         :aria-controls="!isLeaf ? contentId : undefined"

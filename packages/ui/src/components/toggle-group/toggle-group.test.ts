@@ -108,4 +108,35 @@ describe('ToggleGroupItem', () => {
         const item = wrapper.find('button')
         expect(item.attributes('disabled')).toBeDefined()
     })
+
+    it('emits empty string when deselecting in single mode', async () => {
+        const wrapper = mount(ToggleGroup, {
+            props: { type: 'single', modelValue: 'bold' },
+            slots: {
+                default: () => h(ToggleGroupItem, { value: 'bold' }),
+            },
+            attachTo: document.body,
+        })
+        await wrapper.find('button').trigger('click')
+        expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([''])
+    })
+
+    it('emits string array when selecting and deselecting in multiple mode', async () => {
+        const wrapper = mount(ToggleGroup, {
+            props: { type: 'multiple', modelValue: ['bold'] },
+            slots: {
+                default: () => [
+                    h(ToggleGroupItem, { value: 'bold' }),
+                    h(ToggleGroupItem, { value: 'italic' }),
+                ],
+            },
+            attachTo: document.body,
+        })
+        const buttons = wrapper.findAll('button')
+        await buttons[1].trigger('click')
+        expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['bold', 'italic']])
+
+        await buttons[0].trigger('click')
+        expect(wrapper.emitted('update:modelValue')?.[1]).toEqual([[]])
+    })
 })

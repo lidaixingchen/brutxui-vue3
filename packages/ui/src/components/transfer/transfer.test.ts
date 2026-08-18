@@ -220,4 +220,18 @@ describe('Transfer', () => {
         await buttons[1].trigger('click')
         expect(wrapper.text()).toContain('0/2')
     })
+
+    it('deduplicates duplicate keys in modelValue in right panel', () => {
+        const wrapper = mount(Transfer, {
+            props: {
+                data: mockData,
+                modelValue: [4, 4, 5, 5],
+            },
+            attachTo: document.body,
+        })
+        const items = wrapper.findAll('.cursor-pointer')
+        const item4List = items.filter(w => w.text().includes('Item 4'))
+        expect(item4List.length).toBe(1)
+        expect(wrapper.text()).toContain('0/2')
+    })
 })

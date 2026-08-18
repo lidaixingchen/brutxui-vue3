@@ -1,5 +1,5 @@
 import { cva } from 'class-variance-authority'
-import { brutalHoverLiftSm, brutalPress, brutalPressedStateOn } from '@/lib/brutal-interaction-variants'
+import { brutalPress, brutalPressedStateOn } from '@/lib/brutal-interaction-variants'
 import { formToggleForegroundColors, formToggleVariantColors } from '@/lib/form-toggle-base'
 import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
@@ -16,14 +16,14 @@ export const toggleVariants = cva(
             variant: {
                 default: [
                     'text-brutal-fg shadow-brutal-sm',
-                    `data-[state=off]:hover:bg-brutal-muted data-[state=off]:${brutalHoverLiftSm}`,
+                    'data-[state=off]:hover:bg-brutal-muted data-[state=off]:hover:shadow-brutal data-[state=off]:hover:-translate-x-0.5 data-[state=off]:hover:-translate-y-0.5',
                     formToggleVariantColors.primary,
                     formToggleForegroundColors.primary,
                     brutalPressedStateOn,
                 ],
                 outline: [
                     'text-brutal-fg shadow-brutal-sm',
-                    `data-[state=off]:hover:bg-brutal-muted data-[state=off]:${brutalHoverLiftSm}`,
+                    'data-[state=off]:hover:bg-brutal-muted data-[state=off]:hover:shadow-brutal data-[state=off]:hover:-translate-x-0.5 data-[state=off]:hover:-translate-y-0.5',
                     formToggleVariantColors.secondary,
                     'data-[state=off]:bg-transparent',
                     formToggleForegroundColors.secondary,

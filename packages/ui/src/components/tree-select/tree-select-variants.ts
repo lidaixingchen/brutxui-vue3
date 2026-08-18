@@ -32,7 +32,6 @@ export const treeSelectNodeVariants = cva(
         ...treeNodeBaseClasses,
         'hover:border-brutal',
         brutalHoverLiftSm,
-        'disabled:opacity-50 disabled:cursor-not-allowed disabled:border-transparent disabled:shadow-none disabled:translate-x-0 disabled:translate-y-0',
     ],
     {
         variants: {
@@ -45,27 +44,35 @@ export const treeSelectNodeVariants = cva(
                 true: '',
                 false: treeNodeUnselectedClass,
             },
+            disabled: {
+                true: 'opacity-50 cursor-not-allowed border-transparent shadow-none hover:shadow-none hover:border-transparent hover:translate-x-0 hover:translate-y-0',
+                false: '',
+            },
         },
         compoundVariants: [
             {
                 variant: 'default',
                 selected: true,
+                disabled: false,
                 class: 'bg-brutal-accent text-brutal-accent-foreground border-brutal shadow-brutal',
             },
             {
                 variant: 'primary',
                 selected: true,
+                disabled: false,
                 class: 'bg-brutal-primary text-brutal-primary-foreground border-brutal shadow-brutal',
             },
             {
                 variant: 'secondary',
                 selected: true,
+                disabled: false,
                 class: 'bg-brutal-secondary text-brutal-secondary-foreground border-brutal shadow-brutal',
             },
         ],
         defaultVariants: {
             variant: 'default',
             selected: false,
+            disabled: false,
         },
     }
 )

@@ -41,8 +41,11 @@ const isSelected = computed(() => props.selectedIds.has(props.node.id))
 
 const itemClass = computed(() =>
     cn(
-        treeSelectNodeVariants({ selected: isSelected.value, variant: props.variant }),
-        props.node.disabled && 'opacity-50 cursor-not-allowed'
+        treeSelectNodeVariants({
+            selected: isSelected.value,
+            variant: props.variant,
+            disabled: props.node.disabled ?? false,
+        })
     )
 )
 

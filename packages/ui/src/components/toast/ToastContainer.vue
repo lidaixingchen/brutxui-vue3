@@ -105,7 +105,7 @@ const gapStyle = computed(() => ({
 const maxVisible = computed(() => {
     const configured = props.stack?.maxVisible
     if (typeof configured === 'number' && Number.isFinite(configured)) {
-        return Math.max(0, configured)
+        return Math.max(1, Math.floor(configured))
     }
     return DEFAULT_TOAST_MAX_VISIBLE
 })

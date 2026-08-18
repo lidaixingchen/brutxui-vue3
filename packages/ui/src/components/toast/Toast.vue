@@ -100,8 +100,7 @@ watch(() => props.duration, (newDuration) => {
         timer.value = undefined
     }
     remainingTime.value = newDuration
-    if (newDuration > 0) {
-        isPaused.value = false
+    if (newDuration > 0 && !isPaused.value) {
         startTimer()
     }
 })
@@ -155,7 +154,7 @@ const ariaRole = computed(() => isUrgentVariant.value ? 'alert' : 'status')
 const ariaLive = computed(() => isUrgentVariant.value ? 'assertive' : 'polite')
 
 const progressBarStyle = computed(() => ({
-    animationDuration: `${Math.max(remainingTime.value, 0)}ms`,
+    animationDuration: `${Math.max(props.duration, 0)}ms`,
     animationPlayState: isPaused.value ? ('paused' as const) : ('running' as const),
 }))
 </script>

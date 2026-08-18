@@ -62,7 +62,7 @@ let skipNextInput = false
 const hasError = computed(() => props.variant === 'error' && !!props.errorMessage)
 const resolvedErrorId = computed(() => props.ariaErrormessage ?? defaultErrorId)
 const resolvedAriaInvalid = computed(() => props.ariaInvalid ?? (hasError.value ? true : undefined))
-const resolvedAriaErrormessage = computed(() => (hasError.value ? resolvedErrorId.value : props.ariaErrormessage))
+const resolvedAriaErrormessage = computed(() => props.ariaErrormessage ?? (hasError.value ? resolvedErrorId.value : undefined))
 const resolvedAriaDescribedby = computed(() => props.ariaDescribedby ?? (hasError.value ? resolvedErrorId.value : undefined))
 
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('textarea.placeholder'))

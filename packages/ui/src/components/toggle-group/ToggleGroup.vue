@@ -36,7 +36,7 @@ function handleUpdateModelValue(val: unknown) {
     } else if (Array.isArray(val) && val.every(v => typeof v === 'string')) {
         emit('update:modelValue', val)
     } else if (val === undefined || val === null) {
-        emit('update:modelValue', (props.type === 'multiple' ? [] : '') as string | string[])
+        emit('update:modelValue', props.type === 'multiple' ? [] : '')
     }
 }
 
