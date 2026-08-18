@@ -40,7 +40,6 @@ const DOCS_EN_BLOCKS_DIR = path.resolve(__dirname, '../../../apps/docs/en/blocks
 
 const DOCS_PAGE_ALIASES: Record<string, string> = {
     kanban: 'kanban-board',
-    'message-box': 'message',
 };
 
 const DOCS_PAGE_EXEMPTIONS = new Set([
