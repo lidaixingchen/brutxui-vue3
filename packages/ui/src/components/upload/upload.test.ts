@@ -180,5 +180,40 @@ describe('Upload', () => {
         expect(file.status).toBe('success')
         expect(file.abortController).toBeUndefined()
     })
+
+    it('preserves uploading status when external fileList updates', async () => {
+        let savedOptions: { onSuccess: (res: unknown) => void } | null = null
+        const httpRequest = vi.fn(async (options: { onSuccess: (res: unknown) => void }) => {
+            savedOptions = options
+        })
+
+        const wrapper = mount(Upload, {
+            props: {
+                autoUpload: true,
+                httpRequest,
+            },
+        })
+
+        const vm = wrapper.vm as unknown as {
+            handleFileSelect: (files: File[]) => Promise<void>
+        }
+
+        await vm.handleFileSelect([createFile('sync.txt', 'text/plain')])
+        const files = wrapper.emitted('update:fileList')![0][0] as UploadFile[]
+        const file = files[0]
+        expect(file.status).toBe('uploading')
+
+        // 外部父组件传入旧状态数组
+        await wrapper.setProps({
+            fileList: [{ ...file, status: 'ready' }],
+        })
+
+        expect(file.status).toBe('uploading')
+        expect(file.abortController).toBeDefined()
+
+        savedOptions!.onSuccess({ ok: true })
+        expect(file.status).toBe('success')
+    })
 })
+
 

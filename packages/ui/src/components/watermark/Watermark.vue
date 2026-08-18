@@ -65,14 +65,33 @@ function getMarkSize(): [number, number] {
 }
 
 function getFontSizePx(size: number | string): number {
-    if (typeof size === 'number') return size
+    if (typeof size === 'number') return size > 0 ? size : 14
     const str = String(size).trim()
     const pxMatch = /^([\d.]+)px$/i.exec(str)
-    if (pxMatch) return parseFloat(pxMatch[1])
+    if (pxMatch) {
+        const val = parseFloat(pxMatch[1])
+        return val > 0 ? val : 14
+    }
     const remMatch = /^([\d.]+)rem$/i.exec(str)
-    if (remMatch) return parseFloat(remMatch[1]) * 16
-    const num = parseFloat(str)
-    return isNaN(num) || num <= 0 ? 14 : num
+    if (remMatch) {
+        const val = parseFloat(remMatch[1]) * 16
+        return val > 0 ? val : 14
+    }
+    const emMatch = /^([\d.]+)em$/i.exec(str)
+    if (emMatch) {
+        const val = parseFloat(emMatch[1]) * 16
+        return val > 0 ? val : 14
+    }
+    const ptMatch = /^([\d.]+)pt$/i.exec(str)
+    if (ptMatch) {
+        const val = parseFloat(ptMatch[1]) * (4 / 3)
+        return val > 0 ? val : 14
+    }
+    if (/^\d+(\.\d+)?$/.test(str)) {
+        const val = parseFloat(str)
+        return val > 0 ? val : 14
+    }
+    return 14
 }
 
 function escapeXml(str: string): string {

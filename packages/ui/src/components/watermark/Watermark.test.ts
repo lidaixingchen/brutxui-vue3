@@ -339,5 +339,42 @@ describe('Watermark.vue', () => {
         wrapper.unmount()
         toDataURLSpy.mockRestore()
     })
+
+    it('safely handles em, pt, and invalid font units', async () => {
+        const getContextSpy = vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null)
+
+        const wrapper = mount(Watermark, {
+            props: {
+                content: 'TEST_FONT_UNITS',
+                font: {
+                    fontSize: '1.2em',
+                },
+            },
+            attachTo: document.body
+        })
+
+        await nextTick()
+
+        const watermarkDiv = wrapper.find('.absolute')
+        expect(watermarkDiv.exists()).toBe(true)
+
+        // 切换为 pt
+        await wrapper.setProps({
+            font: { fontSize: '12pt' },
+        })
+        await nextTick()
+        expect(wrapper.find('.absolute').exists()).toBe(true)
+
+        // 切换为未知无效格式，回退为 14
+        await wrapper.setProps({
+            font: { fontSize: 'invalid-size' },
+        })
+        await nextTick()
+        expect(wrapper.find('.absolute').exists()).toBe(true)
+
+        wrapper.unmount()
+        getContextSpy.mockRestore()
+    })
 })
+
 

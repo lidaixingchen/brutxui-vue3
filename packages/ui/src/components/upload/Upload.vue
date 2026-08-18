@@ -78,7 +78,12 @@ watch(() => props.fileList, (newList) => {
     internalFileList.value = newList.map((newFile) => {
         const existing = currentMap.get(newFile.id)
         if (existing) {
-            return Object.assign(existing, newFile)
+            return Object.assign(existing, newFile, {
+                status: existing.status === 'uploading' ? existing.status : newFile.status,
+                progress: existing.status === 'uploading' ? existing.progress : (newFile.progress ?? existing.progress),
+                abortController: existing.abortController,
+                raw: existing.raw ?? newFile.raw,
+            })
         }
         return newFile
     })
@@ -166,8 +171,11 @@ async function doUpload(file: UploadFile): Promise<void> {
 
 // 重试上传
 async function retryUpload(file: UploadFile): Promise<void> {
-    if (file.status === 'success' || file.status === 'uploading') {
+    if (file.status === 'success') {
         return
+    }
+    if (file.status === 'uploading') {
+        file.abortController?.abort()
     }
     if (props.maxRetries !== undefined && (file.retryCount ?? 0) >= props.maxRetries) {
         const error: UploadError = {
@@ -223,7 +231,13 @@ async function handleFileSelect(files: FileList | File[]): Promise<void> {
             continue
         }
 
-        // 验证剩余数量额度
+        // 执行 beforeUpload 钩子
+        if (props.beforeUpload) {
+            const result = await props.beforeUpload(file)
+            if (result === false) continue
+        }
+
+        // 验证剩余数量额度（在 beforeUpload 之后紧邻校验，避免异步期间竞态超限）
         if (props.limit !== undefined && internalFileList.value.length >= props.limit) {
             const error: UploadError = {
                 message: `最多只能上传 ${props.limit} 个文件`,
@@ -238,12 +252,6 @@ async function handleFileSelect(files: FileList | File[]): Promise<void> {
                 error,
             })
             continue
-        }
-
-        // 执行 beforeUpload 钩子
-        if (props.beforeUpload) {
-            const result = await props.beforeUpload(file)
-            if (result === false) continue
         }
 
         const uploadFile = createUploadFile(file)

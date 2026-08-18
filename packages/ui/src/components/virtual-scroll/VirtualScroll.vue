@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T">
-import { ref, computed, onMounted, onBeforeUnmount, watch, useSlots, shallowRef, triggerRef } from 'vue'
+import { ref, computed, onBeforeUnmount, watch, useSlots, shallowRef, triggerRef } from 'vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { virtualScrollRootVariants, virtualScrollItemVariants } from './virtual-scroll-variants'
@@ -119,11 +119,18 @@ function handleScroll() {
     }
 }
 
-onMounted(() => {
-    if (parentRef.value) {
-        parentRef.value.addEventListener('scroll', handleScroll)
-    }
-})
+watch(
+    parentRef,
+    (newEl, oldEl) => {
+        if (oldEl) {
+            oldEl.removeEventListener('scroll', handleScroll)
+        }
+        if (newEl) {
+            newEl.addEventListener('scroll', handleScroll)
+        }
+    },
+    { immediate: true }
+)
 
 onBeforeUnmount(() => {
     isUnmounted = true
@@ -188,24 +195,19 @@ defineExpose({ scrollToIndex, measureElement, measure, virtualizer: virtualizerR
         </div>
     </div>
     <div
-        v-else-if="isAvailable === null && slots.loading"
-        :class="rootClasses"
-        :role="props.role"
-        :aria-label="t('virtualScroll.label')"
-    >
-        <div class="flex items-center justify-center p-8">
-            <slot name="loading" />
-        </div>
-    </div>
-    <div
         v-else
         ref="parentRef"
         :class="rootClasses"
         :role="props.role"
         :aria-label="t('virtualScroll.label')"
     >
+        <!-- 加载中状态 -->
+        <div v-if="isAvailable === null && slots.loading" class="flex items-center justify-center p-8">
+            <slot name="loading" />
+        </div>
+
         <!-- 空状态 -->
-        <div v-if="isEmpty" class="flex items-center justify-center p-8 text-brutal-fg/50">
+        <div v-else-if="isEmpty" class="flex items-center justify-center p-8 text-brutal-fg/50">
             <slot name="empty">
                 <p class="font-bold">
                     {{ t('virtualScroll.empty') }}
