@@ -208,6 +208,10 @@
             "types": "./dist/components/message/index.d.ts",
             "import": "./dist/components/message/index.js"
         },
+        "./message-box": {
+            "types": "./dist/components/message-box/index.d.ts",
+            "import": "./dist/components/message-box/index.js"
+        },
         "./noise-background": {
             "types": "./dist/components/noise-background/index.d.ts",
             "import": "./dist/components/noise-background/index.js"
