@@ -109,7 +109,7 @@ const drawCanvas = (): void => {
         ctx.resetTransform()
         ctx.scale?.(dpr, dpr)
     } else {
-        ctx.save?.()
+        canvas.width = nextW
         ctx.scale?.(dpr, dpr)
     }
     ctx.clearRect(0, 0, width, height)

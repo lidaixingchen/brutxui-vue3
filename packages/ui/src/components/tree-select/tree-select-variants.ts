@@ -45,7 +45,7 @@ export const treeSelectNodeVariants = cva(
                 false: treeNodeUnselectedClass,
             },
             disabled: {
-                true: 'opacity-50 cursor-not-allowed border-transparent shadow-none hover:shadow-none hover:border-transparent hover:translate-x-0 hover:translate-y-0',
+                true: 'opacity-50 cursor-not-allowed border-transparent shadow-none hover:shadow-none hover:border-transparent hover:translate-x-0 hover:translate-y-0 active:translate-x-0 active:translate-y-0 active:shadow-none',
                 false: '',
             },
         },

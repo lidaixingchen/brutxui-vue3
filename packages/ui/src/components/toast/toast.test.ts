@@ -418,4 +418,39 @@ describe('ToastContainer', () => {
 
         expect(wrapper.findAllComponents(Toast).length).toBe(3)
     })
+
+    it('clamps non-positive or fractional maxVisible values to at least 1', async () => {
+        let toastStore: any = null
+
+        mount({
+            components: { ToastContainer, Toast },
+            setup() {
+                toastStore = provideToast()
+                return { toasts: toastStore.toasts }
+            },
+            template: `
+                <ToastContainer :stack="{ maxVisible: 0 }">
+                    <Toast
+                        v-for="toast in toasts"
+                        :key="toast.id"
+                        :title="toast.title"
+                    />
+                </ToastContainer>
+            `
+        }, {
+            global: {
+                provide: {
+                    [LOCALE_INJECTION_KEY]: en
+                }
+            }
+        })
+
+        toastStore.addToast({ title: 'Toast 1' })
+        toastStore.addToast({ title: 'Toast 2' })
+        await nextTick()
+
+        // 0 被钳制为 1，因此只保留最新的 1 条
+        expect(toastStore.toasts.value.length).toBe(1)
+        expect(toastStore.toasts.value[0].title).toBe('Toast 2')
+    })
 })

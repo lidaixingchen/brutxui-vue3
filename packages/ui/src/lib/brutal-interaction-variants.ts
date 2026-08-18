@@ -58,6 +58,8 @@ export const brutalHighlightPress = 'data-[highlighted]:active:translate-x-[var(
 // brutalPressWithTransition / brutalHoverLiftWithTransition / brutalPressWithShadowSm 已删除：
 // 过渡属性须按场景显式声明（见审查报告 §八修复模板），WithTransition 组合为死导出，不再提供。
 export const brutalHoverLiftSm = hoverLiftSm
+export const brutalHoverLiftSmStateOff = 'data-[state=off]:hover:shadow-brutal data-[state=off]:hover:-translate-x-0.5 data-[state=off]:hover:-translate-y-0.5'
 export const brutalHoverLiftNoX = hoverLiftLgNoX
+export const brutalHoverLiftLgNoX = hoverLiftLgNoX
 export const brutalHoverLiftSmNoX = hoverLiftSmNoX
 export const brutalHighlightLiftWithBorder = `${brutalHighlightLift} data-[highlighted]:border-brutal`

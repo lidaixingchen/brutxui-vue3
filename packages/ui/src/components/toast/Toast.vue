@@ -93,6 +93,8 @@ onMounted(() => {
     }
 })
 
+const isHovering = ref(false)
+
 watch(() => props.duration, (newDuration) => {
     if (isLeaving.value) return
     if (timer.value) {
@@ -100,8 +102,15 @@ watch(() => props.duration, (newDuration) => {
         timer.value = undefined
     }
     remainingTime.value = newDuration
-    if (newDuration > 0 && !isPaused.value) {
-        startTimer()
+    if (newDuration > 0) {
+        if (isHovering.value && props.pauseOnHover) {
+            isPaused.value = true
+        } else {
+            isPaused.value = false
+            startTimer()
+        }
+    } else {
+        isPaused.value = false
     }
 })
 
@@ -111,10 +120,12 @@ onBeforeUnmount(() => {
 })
 
 function onMouseEnter() {
+    isHovering.value = true
     if (props.pauseOnHover) pauseTimer()
 }
 
 function onMouseLeave() {
+    isHovering.value = false
     if (props.pauseOnHover) resumeTimer()
 }
 
