@@ -231,13 +231,30 @@ async function handleFileSelect(files: FileList | File[]): Promise<void> {
             continue
         }
 
+        // 预检剩余数量额度（快速失败，避免超限文件触发耗时的 beforeUpload）
+        if (props.limit !== undefined && internalFileList.value.length >= props.limit) {
+            const error: UploadError = {
+                message: `最多只能上传 ${props.limit} 个文件`,
+            }
+            props.onError?.(error, {
+                id: '',
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                status: 'error',
+                progress: 0,
+                error,
+            })
+            continue
+        }
+
         // 执行 beforeUpload 钩子
         if (props.beforeUpload) {
             const result = await props.beforeUpload(file)
             if (result === false) continue
         }
 
-        // 验证剩余数量额度（在 beforeUpload 之后紧邻校验，避免异步期间竞态超限）
+        // 严格验证剩余数量额度（在 beforeUpload 之后紧邻校验，避免异步挂起期间并发超限）
         if (props.limit !== undefined && internalFileList.value.length >= props.limit) {
             const error: UploadError = {
                 message: `最多只能上传 ${props.limit} 个文件`,

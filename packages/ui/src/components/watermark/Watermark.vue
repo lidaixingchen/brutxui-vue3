@@ -67,27 +67,28 @@ function getMarkSize(): [number, number] {
 function getFontSizePx(size: number | string): number {
     if (typeof size === 'number') return size > 0 ? size : 14
     const str = String(size).trim()
-    const pxMatch = /^([\d.]+)px$/i.exec(str)
+    const pxMatch = /^(\d+(?:\.\d+)?)px$/i.exec(str)
     if (pxMatch) {
         const val = parseFloat(pxMatch[1])
         return val > 0 ? val : 14
     }
-    const remMatch = /^([\d.]+)rem$/i.exec(str)
+    const remMatch = /^(\d+(?:\.\d+)?)rem$/i.exec(str)
     if (remMatch) {
-        const val = parseFloat(remMatch[1]) * 16
+        const base = isClient ? (parseFloat(getComputedStyle(document.documentElement).fontSize) || 16) : 16
+        const val = parseFloat(remMatch[1]) * base
         return val > 0 ? val : 14
     }
-    const emMatch = /^([\d.]+)em$/i.exec(str)
+    const emMatch = /^(\d+(?:\.\d+)?)em$/i.exec(str)
     if (emMatch) {
         const val = parseFloat(emMatch[1]) * 16
         return val > 0 ? val : 14
     }
-    const ptMatch = /^([\d.]+)pt$/i.exec(str)
+    const ptMatch = /^(\d+(?:\.\d+)?)pt$/i.exec(str)
     if (ptMatch) {
         const val = parseFloat(ptMatch[1]) * (4 / 3)
         return val > 0 ? val : 14
     }
-    if (/^\d+(\.\d+)?$/.test(str)) {
+    if (/^\d+(?:\.\d+)?$/.test(str)) {
         const val = parseFloat(str)
         return val > 0 ? val : 14
     }

@@ -249,8 +249,8 @@ defineExpose({ scrollToIndex, measureElement, measure, virtualizer: virtualizerR
             </div>
         </div>
 
-        <!-- 加载更多 -->
-        <div v-if="slots.loading" class="flex items-center justify-center p-4">
+        <!-- 加载更多（仅在列表已就绪且非空时展示） -->
+        <div v-if="isAvailable === true && !isEmpty && slots.loading" class="flex items-center justify-center p-4">
             <slot name="loading" />
         </div>
     </div>

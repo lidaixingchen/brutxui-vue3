@@ -225,4 +225,20 @@ describe('VirtualScroll', () => {
         expect(typeof vm.measure).toBe('function')
         expect(typeof vm.measureElement).toBe('function')
     })
+
+    it('renders loading slot once when loading more', async () => {
+        const wrapper = mountComponent({
+            props: {
+                items: mockItems,
+            },
+            slots: {
+                loading: '<div class="loading-indicator">Loading more...</div>',
+            },
+        })
+        await flushPromises()
+
+        const loadingNodes = wrapper.findAll('.loading-indicator')
+        expect(loadingNodes.length).toBe(1)
+        expect(loadingNodes[0].text()).toBe('Loading more...')
+    })
 })
