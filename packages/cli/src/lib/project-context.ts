@@ -194,23 +194,32 @@ export class ProjectContext {
         return resolved;
     }
 
+    async assertSafePath(targetPath: string, rootDir: string = this.cwd): Promise<void> {
+        const isSafe = await isSafePath(targetPath, rootDir, this.fs);
+        if (!isSafe) {
+            const scopeLabel = rootDir === this.cwd ? 'project' : 'components';
+            throw new CliError(`Security Error: Resolved path "${targetPath}" is outside the ${scopeLabel} directory.`, {
+                code: 'PATH_UNSAFE',
+                exitCode: 2,
+            });
+        }
+    }
+
     async resolveComponentsDir(): Promise<string> {
-        if (this._componentsDirCache) return this._componentsDirCache;
-        const config = this.requireConfig();
-        const resolved = await this.resolveAliasPath(config.aliases.components);
-        this._componentsDirCache = resolved;
-        return resolved;
+        return this.resolveAliasPath(this.requireConfig().aliases.components);
     }
 
     async resolveComponentDir(componentName: string): Promise<string> {
         const componentsDir = await this.resolveComponentsDir();
-        const uiTarget = path.join(componentsDir, 'ui', componentName);
+        const target = path.resolve(componentsDir, componentName);
+        await this.assertSafePath(target, componentsDir);
+
+        const uiTarget = path.resolve(componentsDir, 'ui', componentName);
         if (await this.fs.pathExists(uiTarget)) {
-            await this.assertSafePath(uiTarget);
+            await this.assertSafePath(uiTarget, componentsDir);
             return uiTarget;
         }
-        const target = path.join(componentsDir, componentName);
-        await this.assertSafePath(target);
+
         return target;
     }
 
@@ -366,10 +375,6 @@ export class ProjectContext {
 
     toRelativePosixPath(absolutePath: string): string {
         return path.relative(this.cwd, absolutePath).replace(/\\/g, '/');
-    }
-
-    async assertSafePath(targetPath: string): Promise<void> {
-        return assertSafePath(targetPath, this.cwd, this.fs);
     }
 
     async isSafePath(targetPath: string): Promise<boolean> {

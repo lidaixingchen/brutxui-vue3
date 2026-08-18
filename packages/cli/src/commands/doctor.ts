@@ -5,7 +5,7 @@ import { createRequire } from 'module';
 import chalk from 'chalk';
 import type { BrutalistConfig, CheckResult, DoctorOptions, BrutxManifest, InstalledComponentManifest, RegistrySourceStatus } from '../lib/types.js';
 import { FixId } from '../lib/types.js';
-import { readConfigSafe, CliError, FileTransaction, detectWorkspaceRoot, readManifest, computeInstalledContentHash, resolveRegistrySources, isOfflineRequested, withOfflineScope, getRecentFailures, auditLogExists, countAuditEntries, getCacheStats } from '../lib/index.js';
+import { readConfigSafe, CliError, FileTransaction, ProjectContext, detectWorkspaceRoot, readManifest, computeInstalledContentHash, resolveRegistrySources, isOfflineRequested, withOfflineScope, getRecentFailures, auditLogExists, countAuditEntries, getCacheStats } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
 import { SCHEMA_URL, BASE_DEPENDENCIES, getBrutalistCssStyles, UTILS_TEMPLATE, CN_FUNCTION_BODY_TEMPLATE, CURRENT_CONFIG_VERSION, CONFIG_FILES, hasBrutxCssBlock } from '../lib/constants.js';
 import { logger } from '../lib/logger.js';
@@ -782,7 +782,8 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
 
     if (!config) return;
 
-    const transaction = new FileTransaction();
+    const context = await ProjectContext.loadUninitialized(cwd, { configOverride: config });
+    const transaction = context.createTransaction();
     let applied = 0;
     const total = fixable.length;
 

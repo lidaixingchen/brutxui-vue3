@@ -82,7 +82,7 @@ async function setupHealthyProject(cwd: string): Promise<void> {
         path.join(cwd, 'src', 'lib', 'utils.ts'),
         'export function cn(...inputs: any[]) { return inputs.join(" "); }',
     );
-    await fs.writeJson(path.join(cwd, 'components.json'), { style: 'brutalism' });
+    await fs.writeJson(path.join(cwd, 'components.json'), makeConfig());
 }
 
 async function runDoctor(cwd: string, options: Partial<DoctorOptions> = {}): Promise<CheckResult[]> {
@@ -616,6 +616,7 @@ describe('fixes', () => {
             await setupHealthyProject(cwd);
             const config = makeConfig();
             delete config.$schema;
+            await fs.writeJson(path.join(cwd, 'components.json'), config);
             mockedReadConfigSafe.mockResolvedValue(config);
 
             await runDoctor(cwd, { fix: true, yes: true, fixOnly: FixId.AddSchema });
@@ -632,7 +633,9 @@ describe('fixes', () => {
         try {
             suppressConsole();
             await setupHealthyProject(cwd);
-            mockedReadConfigSafe.mockResolvedValue(makeConfig({ style: '' }));
+            const config = makeConfig({ style: '' });
+            await fs.writeJson(path.join(cwd, 'components.json'), config);
+            mockedReadConfigSafe.mockResolvedValue(config);
 
             await runDoctor(cwd, { fix: true, yes: true, fixOnly: FixId.SetStyle });
 
@@ -731,6 +734,7 @@ describe('fixes', () => {
             await setupHealthyProject(cwd);
             const config = makeConfig();
             delete config.$version;
+            await fs.writeJson(path.join(cwd, 'components.json'), config);
             mockedReadConfigSafe.mockResolvedValue(config);
 
             await runDoctor(cwd, { fix: true, yes: true, fixOnly: FixId.AddConfigVersion });

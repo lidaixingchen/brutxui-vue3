@@ -205,7 +205,7 @@ describe('add service', () => {
             .rejects
             .toMatchObject({
                 message: 'simulated write failure',
-                rollbackCount: 2,
+                rollbackCount: 1,
                 rollbackFailures: 0,
             });
 

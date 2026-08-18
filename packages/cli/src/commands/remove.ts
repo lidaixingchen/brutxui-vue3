@@ -72,7 +72,7 @@ async function removeInner(components: string[], options: RemoveOptions, cwd: st
 
     // 依赖告警
     for (const [comp, depList] of removal.dependents.entries()) {
-        logger.warn(`Warning: "${comp}" is required by: ${depList.join(', ')}.`);
+        logger.warn(`Warning: ${depList.join(', ')} depends on ${comp}`);
         logger.warn(`Removing it may break these components.`);
         logger.newLine();
     }

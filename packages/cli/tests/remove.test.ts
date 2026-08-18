@@ -59,6 +59,7 @@ describe('remove command', () => {
     beforeEach(async () => {
         vi.clearAllMocks();
         tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-remove-'));
+        await fs.writeJson(path.join(tmpDir, 'components.json'), defaultConfig);
         savedEnv = process.env.BRUTX_NO_CACHE;
         process.env.BRUTX_NO_CACHE = '1';
 
@@ -134,9 +135,10 @@ describe('remove command', () => {
 
         it('should throw CliError when no components.json found', async () => {
             mockedReadConfigSafe.mockResolvedValue(null);
+            await fs.remove(path.join(tmpDir, 'components.json'));
 
             await expect(
-                remove(['button'], { cwd: tmpDir, silent: true, yes: true }),
+                remove(['button'], { cwd: tmpDir, silent: true, yes: true })
             ).rejects.toThrow(CliError);
 
             await expect(

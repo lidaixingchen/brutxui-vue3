@@ -13,50 +13,39 @@ export async function isSafePath(
         : (s: string) => s.replace(/\\/g, '/');
 
     const resolveRealPath = async (p: string): Promise<string> => {
+        const absPath = path.resolve(p);
         try {
             if (fsAdapter) {
-                return await fsAdapter.realpath(p);
+                return await fsAdapter.realpath(absPath);
             }
-            return await fs.promises.realpath(path.resolve(p));
+            return await fs.promises.realpath(absPath);
         } catch {
-            return path.resolve(p);
+            let current = absPath;
+            const root = path.parse(current).root;
+            while (current !== root) {
+                const parent = path.dirname(current);
+                try {
+                    const realParent = fsAdapter
+                        ? await fsAdapter.realpath(parent)
+                        : await fs.promises.realpath(parent);
+                    const relative = path.relative(parent, absPath);
+                    return path.join(realParent, relative);
+                } catch {
+                    current = parent;
+                }
+            }
+            return absPath;
         }
     };
 
-    let resolvedCwd = normalize(await resolveRealPath(cwd));
+    const resolvedCwd = normalize(await resolveRealPath(cwd));
     const parsedRoot = normalize(path.parse(path.resolve(cwd)).root);
 
     if (resolvedCwd === parsedRoot || resolvedCwd === '') {
         return false;
     }
 
-    let resolvedTarget: string;
-    try {
-        if (fsAdapter) {
-            resolvedTarget = normalize(await fsAdapter.realpath(targetPath));
-        } else {
-            resolvedTarget = normalize(await fs.promises.realpath(path.resolve(targetPath)));
-        }
-    } catch {
-        resolvedTarget = normalize(path.resolve(targetPath));
-        let current = path.resolve(targetPath);
-        const root = path.parse(current).root;
-
-        while (current !== root) {
-            const parent = path.dirname(current);
-            try {
-                const realParent = fsAdapter
-                    ? await fsAdapter.realpath(parent)
-                    : await fs.promises.realpath(parent);
-                const relative = path.relative(parent, path.resolve(targetPath));
-                resolvedTarget = normalize(path.join(realParent, relative));
-                break;
-            } catch {
-                current = parent;
-            }
-        }
-    }
-
+    const resolvedTarget = normalize(await resolveRealPath(targetPath));
     const isInside = resolvedTarget.startsWith(resolvedCwd + '/') || resolvedTarget === resolvedCwd;
     return isInside;
 }

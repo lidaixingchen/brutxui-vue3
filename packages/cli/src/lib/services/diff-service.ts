@@ -169,6 +169,7 @@ export async function diffComponent(
     }
 
     const config = context.requireConfig();
+    await context.resolveComponentDir(componentName);
     let registryItem: RegistryItem | null;
     let registryError: Error | null = null;
 
