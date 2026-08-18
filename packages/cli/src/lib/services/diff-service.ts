@@ -1,4 +1,3 @@
-import fs from 'fs-extra';
 import path from 'path';
 import { diffLines } from 'diff';
 import type {
@@ -14,7 +13,6 @@ import { getItemFromSources } from '../registry.js';
 import { resolveRegistrySources } from '../registry-source.js';
 import { getInstalledComponentNames } from '../installed-components.js';
 import { REGISTRY_PATH_PREFIXES } from '../constants.js';
-import { isSafePath, resolveAliasPath, resolveImportAlias } from '../project.js';
 
 function normalizeLineEndings(content: string): string {
     return content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');

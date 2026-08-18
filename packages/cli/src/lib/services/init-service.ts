@@ -13,7 +13,7 @@ import {
     UTILS_TEMPLATE,
 } from '../constants.js';
 import { FileTransaction } from '../file-transaction.js';
-import { isSafePath, resolveAliasPath, resolveUtilsFilePath } from '../project.js';
+import { isSafePath } from '../project.js';
 
 import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
 import { ProjectContext } from '../project-context.js';
@@ -390,7 +390,14 @@ async function configureNuxtConfig(
 
 export async function initializeProjectFiles(options: ProjectInitializationOptions): Promise<ProjectInitializationResult> {
     const { cwd, projectType, settings, callbacks } = options;
-    const context = options.context ?? await ProjectContext.loadUninitialized(cwd, { fs: options.fs });
+    let context = options.context;
+    if (!context) {
+        try {
+            context = await ProjectContext.loadUninitialized(cwd, { fs: options.fs });
+        } catch {
+            context = await ProjectContext.loadUninitialized(cwd, { fs: options.fs, configOverride: settings as unknown as BrutalistConfig });
+        }
+    }
     const transaction = options.transaction ?? context.createTransaction();
 
     try {

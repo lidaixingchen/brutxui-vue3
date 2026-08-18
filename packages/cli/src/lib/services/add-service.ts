@@ -130,9 +130,11 @@ export async function writeComponentFiles(
     } else {
         items = contextOrItems;
         const config = itemsOrConfig as BrutalistConfig;
-        const cwd = (optionsOrCwd as string) ?? process.cwd();
+        const cwd = typeof optionsOrCwd === 'string' ? optionsOrCwd : process.cwd();
         context = await ProjectContext.loadUninitialized(cwd, { configOverride: config });
-        options = legacyOptions ?? {};
+        options = typeof optionsOrCwd === 'object' && optionsOrCwd !== null
+            ? (optionsOrCwd as ComponentFileWriteOptions)
+            : (legacyOptions ?? {});
     }
 
     const transaction = options.transaction ?? context.createTransaction();
@@ -140,6 +142,7 @@ export async function writeComponentFiles(
     const skippedSet = new Set<string>();
     const filesWritten: string[] = [];
     const filesByComponent = new Map<string, string[]>();
+    let actualWritesCount = 0;
 
     try {
         for (let i = 0; i < items.length; i++) {
@@ -170,6 +173,7 @@ export async function writeComponentFiles(
 
                 const resolvedContent = context.resolveImportAlias(file.content);
                 await transaction.writeFile(targetPath, resolvedContent);
+                actualWritesCount++;
 
                 itemAdded = true;
                 filesWritten.push(targetPath);
@@ -191,7 +195,7 @@ export async function writeComponentFiles(
             writeError instanceof Error ? writeError : new Error(String(writeError)),
             {
                 rollbackFailures: failures.length,
-                rollbackCount: filesWritten.length,
+                rollbackCount: actualWritesCount,
             } satisfies ComponentFileWriteFailure
         ));
     }
