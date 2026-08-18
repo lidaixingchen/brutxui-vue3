@@ -10,6 +10,7 @@ import {
     REGISTRY_MANIFEST_SCHEMA_URL,
     validateComponentSourceFiles,
     validateDocsComponentPageCoverage,
+    validateDocsDemoCoverage,
     validateGeneratedItemMatchesMetadata,
     validateRegistryItemInternalImports,
     validateRegistryManifestConsistency,
@@ -717,3 +718,36 @@ function createRegistryItem(
         replacement: overrides.replacement,
     }
 }
+
+describe('validateDocsDemoCoverage', () => {
+    it('passes when all components have corresponding demo files', () => {
+        const errors = validateDocsDemoCoverage({
+            componentNames: ['button', 'message-box', 'card-3d'],
+            demoFiles: new Set(['ButtonDemo.vue', 'MessageBoxDemo.vue', 'Card3DDemo.vue']),
+        })
+        expect(errors).toEqual([])
+    })
+
+    it('flags missing demo components when expected .vue file is absent', () => {
+        const errors = validateDocsDemoCoverage({
+            componentNames: ['button', 'message-box'],
+            demoFiles: new Set(['ButtonDemo.vue']),
+        })
+        expect(errors).toEqual([
+            '[demo] Missing demo component for "message-box" (expected "MessageBoxDemo.vue")',
+        ])
+    })
+
+    it('honors aliases and exemptions', () => {
+        const errors = validateDocsDemoCoverage({
+            componentNames: ['kanban', 'input-adornment'],
+            demoFiles: new Set(['KanbanBoardDemo.vue']),
+            aliases: {
+                kanban: 'kanban-board',
+            },
+            exemptions: new Set(['input-adornment']),
+        })
+        expect(errors).toEqual([])
+    })
+})
+

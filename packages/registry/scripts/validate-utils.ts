@@ -367,6 +367,44 @@ export function validateDocsComponentPageCoverage(options: DocsComponentPageCove
     return errors
 }
 
+export interface DocsDemoCoverageOptions {
+    componentNames: string[]
+    demoFiles: Set<string>
+    aliases?: Record<string, string>
+    exemptions?: Set<string>
+}
+
+export function toPascalCase(str: string): string {
+    return str
+        .split('-')
+        .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+        .join('')
+}
+
+export function validateDocsDemoCoverage(options: DocsDemoCoverageOptions): string[] {
+    const errors: string[] = []
+    const aliases = options.aliases ?? {}
+    const exemptions = options.exemptions ?? new Set<string>()
+
+    for (const name of options.componentNames) {
+        if (exemptions.has(name)) {
+            continue
+        }
+        const effectiveName = aliases[name] ?? name
+        let pascalName = toPascalCase(effectiveName)
+        if (pascalName.endsWith('3d')) {
+            pascalName = pascalName.slice(0, -2) + '3D'
+        }
+        const expectedDemoFile = `${pascalName}Demo.vue`
+
+        if (!options.demoFiles.has(expectedDemoFile)) {
+            errors.push(`[demo] Missing demo component for "${name}" (expected "${expectedDemoFile}")`)
+        }
+    }
+
+    return errors
+}
+
 export function validateGeneratedItemMatchesMetadata(
     item: Pick<RegistryItem, 'name' | 'title' | 'description' | 'dependencies' | 'category' | 'examples' | 'status' | 'replacement' | 'files'>,
     entry: MergedRegistryEntry

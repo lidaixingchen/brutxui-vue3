@@ -18,6 +18,7 @@ import {
     formatDependencyGraphJson,
     validateComponentSourceFiles,
     validateDocsComponentPageCoverage,
+    validateDocsDemoCoverage,
     validateGeneratedItemMatchesMetadata,
     validateRegistryItemInternalImports,
     validateRegistryManifestConsistency,
@@ -37,6 +38,7 @@ const DOCS_COMPONENTS_DIR = path.resolve(__dirname, '../../../apps/docs/componen
 const DOCS_BLOCKS_DIR = path.resolve(__dirname, '../../../apps/docs/blocks');
 const DOCS_EN_COMPONENTS_DIR = path.resolve(__dirname, '../../../apps/docs/en/components');
 const DOCS_EN_BLOCKS_DIR = path.resolve(__dirname, '../../../apps/docs/en/blocks');
+const DOCS_DEMOS_DIR = path.resolve(__dirname, '../../../apps/docs/.vitepress/theme/components/demos');
 
 const DOCS_PAGE_ALIASES: Record<string, string> = {
     kanban: 'kanban-board',
@@ -293,6 +295,34 @@ function validateSidebar(): number {
     return sidebarErrors;
 }
 
+function validateDemos(): number {
+    const componentNames = Object.keys(COMPONENT_METADATA);
+    const demoFiles = new Set(
+        fs.existsSync(DOCS_DEMOS_DIR)
+            ? fs.readdirSync(DOCS_DEMOS_DIR).filter(file => file.endsWith('.vue'))
+            : []
+    );
+
+    const errors = validateDocsDemoCoverage({
+        componentNames,
+        demoFiles,
+        aliases: {
+            kanban: 'kanban-board',
+        },
+        exemptions: DOCS_PAGE_EXEMPTIONS,
+    });
+
+    for (const error of errors) {
+        console.error(`✗ ${error}.`);
+    }
+
+    if (errors.length === 0) {
+        console.log(`✓ Docs demo components cover COMPONENT_METADATA (${componentNames.length} components).`);
+    }
+
+    return errors.length;
+}
+
 function parseArgs(argv: string[]): { graph: boolean } {
     return {
         graph: argv.includes('--graph'),
@@ -431,6 +461,7 @@ function validate() {
     errorCount += validateComponentsSync();
     errorCount += validateDocsCoverage();
     errorCount += validateSidebar();
+    errorCount += validateDemos();
 
     console.log(`\n📊 Total files across all registry items: ${totalFiles}`);
 
