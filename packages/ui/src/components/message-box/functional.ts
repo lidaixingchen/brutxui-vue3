@@ -52,10 +52,6 @@ export function showMessageBox(options: MessageBoxOptions = {}): MessageBoxInsta
             transitionDuration,
             zIndex: options.zIndex,
             enableEsc,
-            onClose: () => {
-                // 若通过全局 ESC 触发无参 close()，确保终态兑现为 cancel
-                return { action: 'cancel' } as MessageBoxResult
-            },
         }
     )
 }
@@ -67,7 +63,7 @@ function normalizeMessageBoxOptions(
 ): MessageBoxOptions {
     const base: MessageBoxOptions = typeof optionsOrMessage === 'string'
         ? { message: optionsOrMessage, ...extraOptions }
-        : optionsOrMessage
+        : { ...extraOptions, ...optionsOrMessage }
 
     return {
         type: fallbackType,

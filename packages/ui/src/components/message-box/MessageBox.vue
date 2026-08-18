@@ -128,8 +128,8 @@ const typeIconComponent = computed(() => {
 function handleConfirm(): void {
     if (props.showInput) {
         if (props.inputPattern) {
-            props.inputPattern.lastIndex = 0
-            if (!props.inputPattern.test(currentInputValue.value)) {
+            const pattern = new RegExp(props.inputPattern.source, props.inputPattern.flags)
+            if (!pattern.test(currentInputValue.value)) {
                 hasValidationError.value = true
                 return
             }
@@ -178,7 +178,7 @@ function handleCancel(): void {
                         </div>
                         <DialogClose
                             v-if="props.showCloseButton"
-                            class="inline-flex items-center justify-center p-1 text-brutal-fg hover:bg-muted border-2 border-transparent hover:border-brutal transition-colors focus:outline-none"
+                            class="inline-flex items-center justify-center p-1 text-brutal-fg hover:bg-brutal-muted border-2 border-transparent hover:border-brutal transition-colors focus:outline-none"
                             @click="handleCancel"
                         >
                             <X :class="closeIconClasses" aria-hidden="true" />

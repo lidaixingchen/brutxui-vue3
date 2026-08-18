@@ -132,6 +132,41 @@ describe('MessageBox Component & Functional API', () => {
 
             wrapper.unmount()
         })
+
+        it('does not mutate external global regex state across multiple validations', async () => {
+            const globalRegex = /^[a-z]+$/g
+            const wrapper = mount(MessageBox, {
+                props: {
+                    open: true,
+                    title: '全局正则测试',
+                    showInput: true,
+                    inputPattern: globalRegex,
+                },
+                attachTo: document.body,
+            })
+
+            await nextTick()
+            const input = document.body.querySelector('input')
+            const confirmBtn = Array.from(document.body.querySelectorAll('button')).find((b) =>
+                b.textContent?.includes('确认') || b.textContent?.includes('Confirm')
+            )
+
+            // 第一次提交合法内容
+            input!.value = 'hello'
+            input!.dispatchEvent(new Event('input'))
+            await nextTick()
+            confirmBtn!.click()
+            await nextTick()
+            expect(wrapper.emitted('confirm')?.[0]).toEqual(['hello'])
+
+            // 第二次提交相同合法内容（确保不会因为 lastIndex 累积而校验失败）
+            confirmBtn!.click()
+            await nextTick()
+            expect(wrapper.emitted('confirm')?.[1]).toEqual(['hello'])
+            expect(globalRegex.lastIndex).toBe(0)
+
+            wrapper.unmount()
+        })
     })
 
     describe('Functional APIs', () => {
