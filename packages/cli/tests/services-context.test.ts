@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import path from 'path';
 import { MemoryFileSystemAdapter } from '../src/lib/fs/memory-fs.js';
 import { ProjectContext } from '../src/lib/project-context.js';
@@ -6,6 +6,15 @@ import { writeComponentFiles, ensureUtilsFile } from '../src/lib/services/add-se
 import { initializeProjectFiles } from '../src/lib/services/init-service.js';
 import { prepareRemoveComponents, removeComponents } from '../src/lib/services/remove-service.js';
 import type { BrutalistConfig, RegistryItem } from '../src/lib/types.js';
+import * as registry from '../src/lib/registry.js';
+
+vi.mock('../src/lib/registry.js', async (importOriginal) => {
+    const original = await importOriginal<typeof registry>();
+    return {
+        ...original,
+        getItem: vi.fn().mockRejectedValue(new Error('not found in test')),
+    };
+});
 
 describe('Services with ProjectContext (VFS)', () => {
     let fs: MemoryFileSystemAdapter;

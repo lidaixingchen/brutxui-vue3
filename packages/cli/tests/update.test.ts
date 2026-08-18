@@ -36,6 +36,7 @@ import * as addModule from '../src/commands/add.js';
 import * as prompts from '@inquirer/prompts';
 import { update } from '../src/commands/update.js';
 import type { DiffResult } from '../src/lib/types.js';
+import { ProjectContext } from '../src/lib/project-context.js';
 
 const mockedReadConfigSafe = vi.mocked(registry.readConfigSafe);
 const mockedGetInstalledComponents = vi.mocked(diffService.getInstalledComponents);
@@ -172,7 +173,7 @@ describe('update command', () => {
     describe('has updates with --dry-run', () => {
         it('should return without calling add in dry-run mode', async () => {
             mockedGetInstalledComponents.mockResolvedValue(['button', 'badge']);
-            mockedDiffComponent.mockImplementation(async (_cwd, _config, name) => {
+            mockedDiffComponent.mockImplementation(async (_context, name) => {
                 if (name === 'button') return modifiedResult;
                 return upToDateResult;
             });
@@ -196,7 +197,7 @@ describe('update command', () => {
     describe('has updates with --yes --all', () => {
         it('should call add with all outdated components', async () => {
             mockedGetInstalledComponents.mockResolvedValue(['button', 'badge']);
-            mockedDiffComponent.mockImplementation(async (_cwd, _config, name) => {
+            mockedDiffComponent.mockImplementation(async (_context, name) => {
                 if (name === 'button') return modifiedResult;
                 return upToDateResult;
             });
@@ -253,8 +254,7 @@ describe('update command', () => {
             await update([], { cwd: tmpDir, silent: true, yes: true });
 
             expect(mockedDiffComponent).toHaveBeenCalledWith(
-                tmpDir,
-                defaultConfig,
+                expect.any(ProjectContext),
                 'button',
                 'https://example.test/registry-a',
                 expect.objectContaining({ name: 'button' }),
@@ -275,7 +275,7 @@ describe('update command', () => {
                 card: { registrySource: 'https://example.test/registry-b' },
             });
             mockedGetInstalledComponents.mockResolvedValue(['button', 'card']);
-            mockedDiffComponent.mockImplementation(async (_cwd, _config, name) => {
+            mockedDiffComponent.mockImplementation(async (_context, name) => {
                 if (name === 'button') return modifiedResult;
                 return modifiedNoPatch;
             });
@@ -308,8 +308,7 @@ describe('update command', () => {
             });
 
             expect(mockedDiffComponent).toHaveBeenCalledWith(
-                tmpDir,
-                defaultConfig,
+                expect.any(ProjectContext),
                 'button',
                 'https://override.test/registry',
                 expect.objectContaining({ name: 'button' }),
@@ -325,7 +324,7 @@ describe('update command', () => {
     describe('multiple outdated components', () => {
         it('should update all outdated components with --all', async () => {
             mockedGetInstalledComponents.mockResolvedValue(['button', 'card', 'badge']);
-            mockedDiffComponent.mockImplementation(async (_cwd, _config, name) => {
+            mockedDiffComponent.mockImplementation(async (_context, name) => {
                 if (name === 'button') return modifiedResult;
                 if (name === 'card') return modifiedNoPatch;
                 return upToDateResult;
@@ -383,7 +382,7 @@ describe('update command', () => {
     describe('interactive selection', () => {
         it('should use checkbox for component selection when not --yes', async () => {
             mockedGetInstalledComponents.mockResolvedValue(['button', 'card']);
-            mockedDiffComponent.mockImplementation(async (_cwd, _config, name) => {
+            mockedDiffComponent.mockImplementation(async (_context, name) => {
                 if (name === 'button') return modifiedResult;
                 if (name === 'card') return modifiedNoPatch;
                 return upToDateResult;
@@ -496,7 +495,7 @@ describe('update command', () => {
                 card: { registrySource: 'https://example.test/registry', version: 'v0.9.0' },
             });
             mockedGetInstalledComponents.mockResolvedValue(['button', 'badge', 'card']);
-            mockedDiffComponent.mockImplementation(async (_cwd, _config, name) => {
+            mockedDiffComponent.mockImplementation(async (_context, name) => {
                 if (name === 'badge') return modifiedFor('badge');
                 return upToDateResult;
             });
@@ -506,8 +505,7 @@ describe('update command', () => {
             // only badge should be diffed and updated; button/card are version-pinned
             expect(mockedDiffComponent).toHaveBeenCalledTimes(1);
             expect(mockedDiffComponent).toHaveBeenCalledWith(
-                tmpDir,
-                defaultConfig,
+                expect.any(ProjectContext),
                 'badge',
                 'https://example.test/registry',
                 expect.objectContaining({ name: 'badge' }),
@@ -539,7 +537,7 @@ describe('update command', () => {
                 badge: { registrySource: 'https://example.test/registry' },
             });
             mockedGetInstalledComponents.mockResolvedValue(['button', 'badge']);
-            mockedDiffComponent.mockImplementation(async (_cwd, _config, name) => {
+            mockedDiffComponent.mockImplementation(async (_context, name) => {
                 return modifiedFor(name);
             });
 
@@ -586,8 +584,7 @@ describe('update command', () => {
             await update([], { cwd: dummyCwd, silent: true, cache: false } as any);
 
             expect(mockedDiffComponent).toHaveBeenCalledWith(
-                dummyCwd,
-                defaultConfig,
+                expect.any(ProjectContext),
                 'badge',
                 undefined,
                 undefined,

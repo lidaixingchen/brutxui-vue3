@@ -41,3 +41,23 @@
 - **定义**：用于执行确定性操作确认、系统重要告警提示（Alert）或轻量文本输入（Prompt）的标准结构化反馈浮层。
 - **特性**：具备明确的语义状态（info / success / warning / error）、内建输入校验器（`inputPattern`）以及标准确认/取消动作。
 - **归属**：`packages/ui/src/components/message-box/`，属于 `feedback` 类别，与 Dialog 完全正交解耦。
+
+---
+
+## CLI 基础设施与路径解析引擎 (CLI Infrastructure & Path Engine)
+
+### 项目上下文实体 (Project Context)
+- **定义**：代表一次 CLI 运行会话所处目标项目的核心聚合实体与深模块（Deep Module）。
+- **职责**：
+  - 统一加载并强类型化管理项目配置（`components.json`）、tsconfig 别名树、Nuxt/Vite 项目类型与包管理器。
+  - 对外暴露高阶领域路径解析（`resolveTargetPath`、`resolveUtilsFilePath`、`resolveStyleFilePath`）与源码转换能力（`resolveImportAlias`）。
+  - 内置路径越界守卫（`assertSafePath`）与写后防御（`verifyWrittenPath`），彻底杜绝目录遍历与符号链接攻击。
+  - 提供事务工厂（`createTransaction`），自动绑定当前工作目录与文件系统适配器。
+
+### 文件系统适配器 Seam (File System Adapter Seam)
+- **定义**：解耦 CLI 业务逻辑与底层物理 IO 的虚拟文件系统抽象层。
+- **职责**：
+  - 定义与 POSIX/fs-extra 异步核心子集 1:1 对齐的操作契约（`readFile`、`writeFile`、`readJson`、`writeJson`、`pathExists`、`ensureDir`、`remove`、`copy`、`stat`、`readdir`、`realpath`、`mkdtemp`）。
+  - `DiskFileSystemAdapter`：直调 Node.js 原生 `fs-extra`，服务于 CLI 生产执行环境。
+  - `MemoryFileSystemAdapter`：纯内存树虚拟实现，服务于零 IO 单元测试与 dry-run 演练模式。
+

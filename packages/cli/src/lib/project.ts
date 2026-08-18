@@ -5,9 +5,7 @@ import { parse as parseJsonc } from 'jsonc-parser';
 import { initSync, parse as parseModuleImports } from 'es-module-lexer';
 import type { ProjectType, TsConfig, AliasConfig, PackageManager, BrutalistConfig } from './types.js';
 import { CONFIG_FILES, CSS_LOCATIONS, DEFAULT_ALIASES } from './constants.js';
-import { CliError } from './error.js';
 import { logger } from './logger.js';
-import { assertSafePath, isSafePath, verifyWrittenPath } from './security.js';
 
 initSync();
 

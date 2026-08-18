@@ -1,12 +1,11 @@
-import fs from 'fs-extra';
 import path from 'path';
-import type { BrutalistConfig, BrutxManifest, RegistryItem } from '../types.js';
+import type { BrutxManifest, RegistryItem } from '../types.js';
 import { getItem } from '../registry.js';
-import { FileTransaction } from '../file-transaction.js';
 import { removeInstalledComponents } from '../manifest.js';
 import { getInstalledComponentNames } from '../installed-components.js';
-import { isSafePath, resolveAliasPath } from '../project.js';
 import { logger } from '../logger.js';
+import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
+import { ProjectContext } from '../project-context.js';
 
 const SCRIPT_EXTENSIONS = ['.ts', '.js', '.mts', '.mjs'] as const;
 const COMPONENT_FILE_EXTENSIONS = [...SCRIPT_EXTENSIONS, '.vue', '.tsx', '.jsx'] as const;
@@ -103,20 +102,22 @@ interface AliasDirEntry {
 }
 
 /** 解析各 alias 配置对应的绝对目录，供 import 图引用校验（#103）匹配使用。 */
-async function resolveAliasDirs(cwd: string, config: BrutalistConfig, componentsPath: string): Promise<AliasDirEntry[]> {
+async function resolveAliasDirs(context: ProjectContext): Promise<AliasDirEntry[]> {
+    const config = context.requireConfig();
+    const componentsPath = await context.resolveComponentsDir();
     const entries: AliasDirEntry[] = [
         { aliasDir: config.aliases.components.replace(/^@\//, ''), absDir: componentsPath },
-        { aliasDir: config.aliases.composables.replace(/^@\//, ''), absDir: await resolveAliasPath(config.aliases.composables, cwd) },
+        { aliasDir: config.aliases.composables.replace(/^@\//, ''), absDir: await context.resolveAliasPath(config.aliases.composables) },
     ];
     const utilsDirAlias = path.dirname(config.aliases.utils);
     entries.push({
         aliasDir: utilsDirAlias.replace(/^@\//, ''),
-        absDir: await resolveAliasPath(utilsDirAlias, cwd),
+        absDir: await context.resolveAliasPath(utilsDirAlias),
     });
     if (config.sharedBase) {
         entries.push({
             aliasDir: config.sharedBase.replace(/^@\//, ''),
-            absDir: await resolveAliasPath(config.sharedBase, cwd),
+            absDir: await context.resolveAliasPath(config.sharedBase),
         });
     }
     return entries;
@@ -147,7 +148,8 @@ function importerComponentName(componentsPath: string, importerFile: string): st
 const relativeImportResolveCache = new Map<string, Map<string, Promise<string | null>>>();
 
 /** 把以 importer 文件所在目录为基准的相对 import 解析为绝对路径，无法解析时返回 null。 */
-function resolveRelativeImport(importerFile: string, specifier: string): Promise<string | null> {
+/** 把以 importer 文件所在目录为基准的相对 import 解析为绝对路径，无法解析时返回 null。 */
+function resolveRelativeImport(importerFile: string, specifier: string, fsAdapter: FileSystemAdapter): Promise<string | null> {
     let importerEntries = relativeImportResolveCache.get(importerFile);
     if (!importerEntries) {
         importerEntries = new Map<string, Promise<string | null>>();
@@ -157,23 +159,21 @@ function resolveRelativeImport(importerFile: string, specifier: string): Promise
     if (cached) {
         return cached;
     }
-    const promise = resolveRelativeImportUncached(importerFile, specifier);
+    const promise = resolveRelativeImportUncached(importerFile, specifier, fsAdapter);
     importerEntries.set(specifier, promise);
     return promise;
 }
 
-async function resolveRelativeImportUncached(importerFile: string, specifier: string): Promise<string | null> {
+async function resolveRelativeImportUncached(importerFile: string, specifier: string, fsAdapter: FileSystemAdapter): Promise<string | null> {
     const candidate = path.resolve(path.dirname(importerFile), specifier);
-    const stat = await fs.stat(candidate).catch(() => null);
+    const stat = await fsAdapter.stat(candidate).catch(() => null);
     if (stat !== null) {
         if (stat.isDirectory()) {
-            // 目录导入（`./shared` 指向 shared/index.*）：先判断目录，避免把目录路径
-            // 直接当解析结果与目标文件比较（pathExists 对目录返回 true 会短路）
-            return resolveScriptFile(candidate, 'index');
+            return resolveScriptFile(candidate, 'index', fsAdapter);
         }
         return candidate;
     }
-    return resolveScriptFile(path.dirname(candidate), path.basename(candidate));
+    return resolveScriptFile(path.dirname(candidate), path.basename(candidate), fsAdapter);
 }
 
 /**
@@ -186,10 +186,9 @@ async function isReferencedByRemainingComponents(
     aliasDirs: AliasDirEntry[],
     componentsPath: string,
     importGraph: ImportGraph,
-    remainingComponents: Set<string>
+    remainingComponents: Set<string>,
+    fsAdapter: FileSystemAdapter
 ): Promise<boolean> {
-    // 以 aliasDir 为维度存储规范化目标（#C）：`composables/index` 与 `@/components/index`
-    // 规范化后同为 `index`，合并进同一 Set 会丢失 alias 身份造成误匹配，孤立清理被静默跳过
     const fileTargets = new Map<string, Set<string>>();
     for (const { aliasDir, absDir } of aliasDirs) {
         const rel = path.relative(absDir, absoluteFile);
@@ -207,11 +206,9 @@ async function isReferencedByRemainingComponents(
             const importerFiles = importGraph.byImporterFile.get(specifier);
             if (!importerFiles) continue;
             for (const importerFile of importerFiles) {
-                // 相对导入按 importer 实际文件所在目录解析（#B），
-                // 归属组件由文件路径推导，限定 remaining 组件内的 importer
                 const componentName = importerComponentName(componentsPath, importerFile);
                 if (componentName === null || !remainingComponents.has(componentName)) continue;
-                const resolved = await resolveRelativeImport(importerFile, specifier);
+                const resolved = await resolveRelativeImport(importerFile, specifier, fsAdapter);
                 if (resolved !== null && path.resolve(resolved) === path.resolve(absoluteFile)) {
                     return true;
                 }
@@ -222,7 +219,6 @@ async function isReferencedByRemainingComponents(
         for (const { aliasDir } of aliasDirs) {
             const stripped = stripAliasPrefix(specifier, aliasDir);
             if (stripped === null) continue;
-            // 限定同一 alias 域内比较（stripAliasPrefix 已按 aliasDir 剥离，配对自然成立）
             if (fileTargets.get(aliasDir)?.has(normalizeImportTarget(stripped))) {
                 return true;
             }
@@ -233,8 +229,7 @@ async function isReferencedByRemainingComponents(
 }
 
 async function findManifestKnownFiles(
-    cwd: string,
-    config: BrutalistConfig,
+    context: ProjectContext,
     manifest: BrutxManifest | null,
     removedComponents: string[],
     remainingComponents: string[],
@@ -247,13 +242,11 @@ async function findManifestKnownFiles(
     const remainingFiles = new Set(
         remainingComponents.flatMap(component => manifest.components[component]?.files ?? [])
     );
-    const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
+    const componentsPath = await context.resolveComponentsDir();
     const removedComponentDirs = removedComponents.map(component => path.join(componentsPath, component));
     const remainingSet = new Set(remainingComponents);
-    const aliasDirs = await resolveAliasDirs(cwd, config, componentsPath);
+    const aliasDirs = await resolveAliasDirs(context);
 
-    // 先收集通过前置安全检查的候选文件，再小批量并发执行引用判定（#D），
-    // 避免逐文件串行等待 import 图磁盘 IO
     const candidateFiles: string[] = [];
     for (const component of removedComponents) {
         const entry = manifest.components[component];
@@ -262,10 +255,10 @@ async function findManifestKnownFiles(
         for (const manifestFile of entry.files) {
             if (remainingFiles.has(manifestFile)) continue;
 
-            const absolutePath = path.resolve(cwd, manifestFile);
-            if (!await isSafePath(absolutePath, cwd)) continue;
+            const absolutePath = path.resolve(context.cwd, manifestFile);
+            if (!await context.isSafePath(absolutePath)) continue;
             if (removedComponentDirs.some(dir => isInsideDirectory(absolutePath, dir))) continue;
-            if (!await fs.pathExists(absolutePath)) continue;
+            if (!await context.fs.pathExists(absolutePath)) continue;
             candidateFiles.push(absolutePath);
         }
     }
@@ -274,11 +267,9 @@ async function findManifestKnownFiles(
     for (let offset = 0; offset < candidateFiles.length; offset += REFERENCE_CHECK_BATCH_SIZE) {
         const batch = candidateFiles.slice(offset, offset + REFERENCE_CHECK_BATCH_SIZE);
         const referencedFlags = await Promise.all(
-            batch.map(file => isReferencedByRemainingComponents(file, aliasDirs, componentsPath, importGraph, remainingSet))
+            batch.map(file => isReferencedByRemainingComponents(file, aliasDirs, componentsPath, importGraph, remainingSet, context.fs))
         );
         for (let i = 0; i < batch.length; i++) {
-            // #103：删除前用 import 图交叉确认——若 remaining 组件仍引用该文件
-            // （如工具函数被移动至共享位置后继续被引用），不判为孤立，避免引用断裂
             if (!referencedFlags[i]) {
                 knownFiles.push(batch[i]);
             }
@@ -287,8 +278,6 @@ async function findManifestKnownFiles(
 
     const uniqueKnownFiles = [...new Set(knownFiles)];
 
-    // 折中提示：import 图仅覆盖组件间引用，无法确认项目其他（非组件）代码是否仍在引用
-    // 这些位于共享位置的文件；保留删除行为（与既有测试契约一致），仅以 warning 提醒
     const sharedOrphans = uniqueKnownFiles.filter(file => !isInsideDirectory(file, componentsPath));
     if (sharedOrphans.length > 0) {
         logger.warn(
@@ -300,16 +289,16 @@ async function findManifestKnownFiles(
     return uniqueKnownFiles;
 }
 
-async function scanAllImports(componentsPath: string): Promise<ImportGraph> {
+async function scanAllImports(componentsPath: string, fsAdapter: FileSystemAdapter): Promise<ImportGraph> {
     const byComponent = new Map<string, Set<string>>();
     const byImporterFile = new Map<string, Set<string>>();
 
-    if (!await fs.pathExists(componentsPath)) {
+    if (!await fsAdapter.pathExists(componentsPath)) {
         return { byComponent, byImporterFile };
     }
 
     async function scanDir(dir: string, componentName: string): Promise<void> {
-        const entries = await fs.readdir(dir, { withFileTypes: true });
+        const entries = await fsAdapter.readdir(dir, { withFileTypes: true });
         for (const entry of entries) {
             const fullPath = path.join(dir, entry.name);
             if (entry.isDirectory()) {
@@ -320,7 +309,7 @@ async function scanAllImports(componentsPath: string): Promise<ImportGraph> {
             const ext = path.extname(entry.name);
             if (ext !== '.vue' && ext !== '.ts' && ext !== '.js') continue;
 
-            const content = await fs.readFile(fullPath, 'utf-8');
+            const content = await fsAdapter.readFile(fullPath, 'utf-8');
             const importRegex = /from\s+['"]([^'"]+)['"]/g;
             let match: RegExpExecArray | null;
 
@@ -330,7 +319,6 @@ async function scanAllImports(componentsPath: string): Promise<ImportGraph> {
                     byComponent.set(importPath, new Set());
                 }
                 byComponent.get(importPath)!.add(componentName);
-                // 相对导入按 importer 实际文件所在目录解析（#B），单独记录文件路径
                 if (importPath.startsWith('.')) {
                     if (!byImporterFile.has(importPath)) {
                         byImporterFile.set(importPath, new Set());
@@ -341,7 +329,7 @@ async function scanAllImports(componentsPath: string): Promise<ImportGraph> {
         }
     }
 
-    const dirs = await fs.readdir(componentsPath, { withFileTypes: true });
+    const dirs = await fsAdapter.readdir(componentsPath, { withFileTypes: true });
     for (const dir of dirs) {
         if (!dir.isDirectory()) continue;
         await scanDir(path.join(componentsPath, dir.name), dir.name);
@@ -350,58 +338,53 @@ async function scanAllImports(componentsPath: string): Promise<ImportGraph> {
     return { byComponent, byImporterFile };
 }
 
-async function resolveScriptFile(baseDir: string, fileName: string): Promise<string | null> {
+async function resolveScriptFile(baseDir: string, fileName: string, fsAdapter: FileSystemAdapter): Promise<string | null> {
     for (const ext of SCRIPT_EXTENSIONS) {
         const candidate = path.join(baseDir, fileName + ext);
-        if (await fs.pathExists(candidate)) {
+        if (await fsAdapter.pathExists(candidate)) {
             return candidate;
         }
     }
     const noExtCandidate = path.join(baseDir, fileName);
-    if (await fs.pathExists(noExtCandidate)) {
+    if (await fsAdapter.pathExists(noExtCandidate)) {
         return noExtCandidate;
     }
     return null;
 }
 
 async function findOrphanedFiles(
-    cwd: string,
-    config: BrutalistConfig,
+    context: ProjectContext,
     remainingComponents: string[],
     removedComponents: string[],
     importMap: Map<string, Set<string>>
 ): Promise<string[]> {
-    const composablesPath = await resolveAliasPath(config.aliases.composables, cwd);
+    const config = context.requireConfig();
+    const composablesPath = await context.resolveAliasPath(config.aliases.composables);
     const utilsAlias = config.aliases.utils;
     const utilsDir = path.dirname(utilsAlias);
-    const utilsPath = await resolveAliasPath(utilsDir, cwd);
+    const utilsPath = await context.resolveAliasPath(utilsDir);
     const localesPath = path.join(path.dirname(composablesPath), 'locales');
     const directivesPath = path.join(path.dirname(composablesPath), 'directives');
 
     const sharedBasePath = config.sharedBase
-        ? await resolveAliasPath(config.sharedBase, cwd)
+        ? await context.resolveAliasPath(config.sharedBase)
         : null;
     const sharedHooksPath = sharedBasePath ? path.join(sharedBasePath, 'hooks') : null;
     const sharedLibPath = sharedBasePath ? path.join(sharedBasePath, 'lib') : null;
 
     const orphaned: string[] = [];
 
-    /**
-     * 统一"取相对路径 + 判空 + 调 resolveScriptFile"的解析模式：
-     * basePath 不存在或 specifier 无法识别时返回 null。
-     */
     const tryResolve = async (basePath: string | null, specifier: string, aliasDir: string): Promise<string | null> => {
-        if (!basePath || !await fs.pathExists(basePath)) return null;
+        if (!basePath || !await context.fs.pathExists(basePath)) return null;
         const relativePath = stripAliasPrefix(specifier, aliasDir);
         if (relativePath === null) return null;
-        return resolveScriptFile(basePath, relativePath);
+        return resolveScriptFile(basePath, relativePath, context.fs);
     };
 
     for (const [importPath, importers] of importMap) {
         const wasOnlyUsedByRemoved = [...importers].every(c => removedComponents.includes(c));
         if (!wasOnlyUsedByRemoved) continue;
 
-        // 相对导入无法可靠定位（需按导入文件所在目录解析），跳过避免误删无关同名文件
         if (importPath.startsWith('.')) continue;
 
         const isComposable = importPath.includes('/composables/')
@@ -439,8 +422,7 @@ async function findOrphanedFiles(
         }
 
         if (resolvedPath) {
-            // 路径穿越防护：解析结果必须位于 cwd 内，非安全路径不加入 orphaned
-            if (!await isSafePath(resolvedPath, cwd)) continue;
+            if (!await context.isSafePath(resolvedPath)) continue;
             orphaned.push(resolvedPath);
         }
     }
@@ -449,8 +431,7 @@ async function findOrphanedFiles(
 }
 
 async function getDependents(
-    cwd: string,
-    config: BrutalistConfig,
+    context: ProjectContext,
     componentsToRemove: string[],
     manifest: BrutxManifest | null,
     useCache: boolean = true,
@@ -458,7 +439,7 @@ async function getDependents(
 ): Promise<{ dependents: Map<string, string[]>; failures: string[] }> {
     const dependents = new Map<string, string[]>();
     const failures = new Set<string>();
-    const installed = await getInstalledComponentNames(cwd, config);
+    const installed = await getInstalledComponentNames(context.cwd, context.requireConfig(), context.fs);
     const remaining = installed.filter(c => !componentsToRemove.includes(c));
 
     for (const name of componentsToRemove) {
@@ -478,11 +459,9 @@ async function getDependents(
         }
     }
 
-    // #102：用组件间真实 import 交叉校验，补齐 registryDependencies 元数据缺失/过期
-    // 导致的依赖漏检（如代码中实际 import 了被删组件但元数据未声明）
     if (importMap.size > 0) {
         const removedSet = new Set(componentsToRemove);
-        const componentsAliasDir = config.aliases.components.replace(/^@\//, '');
+        const componentsAliasDir = context.requireConfig().aliases.components.replace(/^@\//, '');
         for (const name of componentsToRemove) {
             for (const [specifier, importers] of importMap) {
                 if (!importTargetsComponent(specifier, name, componentsAliasDir)) continue;
@@ -503,39 +482,11 @@ async function getDependents(
     return { dependents, failures: Array.from(failures).sort() };
 }
 
-import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
-import { ProjectContext } from '../project-context.js';
-
 export async function countComponentFiles(
     context: ProjectContext,
     componentName: string
-): Promise<number | null>;
-export async function countComponentFiles(
-    cwd: string,
-    config: BrutalistConfig,
-    componentName: string,
-    fsAdapter?: FileSystemAdapter
-): Promise<number | null>;
-export async function countComponentFiles(
-    cwdOrContext: string | ProjectContext,
-    configOrComponentName?: BrutalistConfig | string,
-    componentName?: string,
-    fsAdapter?: FileSystemAdapter
 ): Promise<number | null> {
-    let context: ProjectContext;
-    let name: string;
-    if (cwdOrContext instanceof ProjectContext) {
-        context = cwdOrContext;
-        name = configOrComponentName as string;
-    } else {
-        context = await ProjectContext.loadUninitialized(cwdOrContext, {
-            configOverride: configOrComponentName as BrutalistConfig,
-            fs: fsAdapter,
-        });
-        name = componentName!;
-    }
-
-    const componentPath = await context.resolveComponentDir(name);
+    const componentPath = await context.resolveComponentDir(componentName);
 
     if (!await context.fs.pathExists(componentPath)) {
         return null;
@@ -544,10 +495,8 @@ export async function countComponentFiles(
     return countFilesRecursive(componentPath, context.fs);
 }
 
-async function countFilesRecursive(dir: string, fsAdapter?: FileSystemAdapter): Promise<number> {
-    const entries = fsAdapter
-        ? await fsAdapter.readdir(dir, { withFileTypes: true })
-        : await fs.readdir(dir, { withFileTypes: true });
+async function countFilesRecursive(dir: string, fsAdapter: FileSystemAdapter): Promise<number> {
+    const entries = await fsAdapter.readdir(dir, { withFileTypes: true });
 
     let count = 0;
     for (const entry of entries) {
@@ -562,30 +511,11 @@ async function countFilesRecursive(dir: string, fsAdapter?: FileSystemAdapter): 
 }
 
 export async function prepareRemoveComponents(
-    cwdOrContext: string | ProjectContext,
-    configOrComponents: BrutalistConfig | string[],
-    componentsOrManifest?: string[] | BrutxManifest | null,
-    manifestOrUseCache?: BrutxManifest | null | boolean,
+    context: ProjectContext,
+    components: string[],
+    manifest: BrutxManifest | null = null,
     useCache: boolean = true
 ): Promise<RemovePreparation> {
-    let context: ProjectContext;
-    let components: string[];
-    let manifest: BrutxManifest | null;
-    let shouldCache = useCache;
-
-    if (cwdOrContext instanceof ProjectContext) {
-        context = cwdOrContext;
-        components = configOrComponents as string[];
-        manifest = componentsOrManifest as BrutxManifest | null;
-        shouldCache = typeof manifestOrUseCache === 'boolean' ? manifestOrUseCache : useCache;
-    } else {
-        const cwd = cwdOrContext;
-        const config = configOrComponents as BrutalistConfig;
-        context = await ProjectContext.loadUninitialized(cwd, { configOverride: config });
-        components = componentsOrManifest as string[];
-        manifest = manifestOrUseCache as BrutxManifest | null;
-    }
-
     const config = context.requireConfig();
     const installed = await getInstalledComponentNames(context.cwd, config, context.fs);
     const toRemove = components.filter(c => installed.includes(c));
@@ -594,16 +524,16 @@ export async function prepareRemoveComponents(
 
     const emptyImportGraph: ImportGraph = { byComponent: new Map(), byImporterFile: new Map() };
     const importGraph = toRemove.length > 0
-        ? await scanAllImports(await context.resolveComponentsDir())
+        ? await scanAllImports(await context.resolveComponentsDir(), context.fs)
         : emptyImportGraph;
     const { dependents, failures: dependencyCheckFailures } = toRemove.length > 0
-        ? await getDependents(context.cwd, config, toRemove, manifest, shouldCache, importGraph.byComponent)
+        ? await getDependents(context, toRemove, manifest, useCache, importGraph.byComponent)
         : { dependents: new Map<string, string[]>(), failures: [] as string[] };
     const orphanedFiles = toRemove.length > 0
         ? [
             ...new Set([
-                ...await findOrphanedFiles(context.cwd, config, remaining, toRemove, importGraph.byComponent),
-                ...await findManifestKnownFiles(context.cwd, config, manifest, toRemove, remaining, importGraph),
+                ...await findOrphanedFiles(context, remaining, toRemove, importGraph.byComponent),
+                ...await findManifestKnownFiles(context, manifest, toRemove, remaining, importGraph),
             ]),
         ]
         : [];
@@ -620,31 +550,11 @@ export async function prepareRemoveComponents(
 }
 
 export async function removeComponents(
-    cwdOrContext: string | ProjectContext,
-    configOrComponentsToRemove: BrutalistConfig | string[],
-    componentsToRemoveOrOrphaned?: string[],
-    orphanedFilesOrOptions?: string[] | RemoveExecutionOptions,
-    optionsOrLegacy?: RemoveExecutionOptions
+    context: ProjectContext,
+    componentsToRemove: string[],
+    orphanedFiles: string[] = [],
+    options: RemoveExecutionOptions = { removeOrphaned: true }
 ): Promise<RemoveExecutionResult> {
-    let context: ProjectContext;
-    let componentsToRemove: string[];
-    let orphanedFiles: string[];
-    let options: RemoveExecutionOptions;
-
-    if (cwdOrContext instanceof ProjectContext) {
-        context = cwdOrContext;
-        componentsToRemove = configOrComponentsToRemove as string[];
-        orphanedFiles = componentsToRemoveOrOrphaned!;
-        options = orphanedFilesOrOptions as RemoveExecutionOptions;
-    } else {
-        const cwd = cwdOrContext;
-        const config = configOrComponentsToRemove as BrutalistConfig;
-        context = await ProjectContext.loadUninitialized(cwd, { configOverride: config });
-        componentsToRemove = componentsToRemoveOrOrphaned!;
-        orphanedFiles = orphanedFilesOrOptions as string[];
-        options = optionsOrLegacy!;
-    }
-
     const transaction = context.createTransaction();
     let totalRemoved = 0;
     let orphanedRemoved = 0;

@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { confirm } from '@inquirer/prompts';
 import type { RemoveOptions } from '../lib/types.js';
-import { readConfigSafe, CliError, readManifest, mergeDryRun, withAuditLog, ProjectContext } from '../lib/index.js';
+import { CliError, readManifest, mergeDryRun, withAuditLog, ProjectContext } from '../lib/index.js';
 import {
     countComponentFiles,
     prepareRemoveComponents,

@@ -4,7 +4,6 @@ import path from 'path';
 
 import {
     type AddOptions,
-    type BrutalistConfig,
     type RegistryItem,
     AVAILABLE_COMPONENTS,
     DEFAULT_REGISTRY_URL,
@@ -13,7 +12,6 @@ import {
     detectPackageManager,
     installPackages,
     getInstallCommand,
-    readConfig,
     readManifest,
     isSafePath,
     logger,

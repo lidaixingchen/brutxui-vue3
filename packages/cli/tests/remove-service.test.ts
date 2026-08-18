@@ -9,6 +9,7 @@ import {
     prepareRemoveComponents,
     removeComponents,
 } from '../src/lib/services/remove-service.js';
+import { ProjectContext } from '../src/lib/project-context.js';
 
 vi.mock('../src/lib/registry.js', async (importOriginal) => {
     const original = await importOriginal<typeof registry>();
@@ -126,10 +127,10 @@ describe('remove service', () => {
     it('prepares installed, missing, dependent, and orphaned component state', async () => {
         const { orphanFile } = await seedProject(tmpDir);
         const manifest = await readManifest(tmpDir);
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
 
         const removal = await prepareRemoveComponents(
-            tmpDir,
-            defaultConfig,
+            context,
             ['button', 'missing'],
             manifest
         );
@@ -144,10 +145,10 @@ describe('remove service', () => {
     it('removes component files and keeps orphaned files when requested', async () => {
         const { orphanFile } = await seedProject(tmpDir);
         const componentDir = path.join(tmpDir, 'src', 'components', 'button');
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
 
         const result = await removeComponents(
-            tmpDir,
-            defaultConfig,
+            context,
             ['button'],
             [orphanFile],
             { removeOrphaned: false }
@@ -164,10 +165,10 @@ describe('remove service', () => {
 
     it('removes orphaned files when requested', async () => {
         const { orphanFile } = await seedProject(tmpDir);
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
 
         const result = await removeComponents(
-            tmpDir,
-            defaultConfig,
+            context,
             ['button'],
             [orphanFile],
             { removeOrphaned: true }

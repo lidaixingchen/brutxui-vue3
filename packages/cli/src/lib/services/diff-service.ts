@@ -1,7 +1,6 @@
 import path from 'path';
 import { diffLines } from 'diff';
 import type {
-    BrutalistConfig,
     DiffComponentStatus,
     DiffIntegrityStatus,
     DiffResult,
@@ -13,6 +12,7 @@ import { getItemFromSources } from '../registry.js';
 import { resolveRegistrySources } from '../registry-source.js';
 import { getInstalledComponentNames } from '../installed-components.js';
 import { REGISTRY_PATH_PREFIXES } from '../constants.js';
+import { ProjectContext } from '../project-context.js';
 
 function normalizeLineEndings(content: string): string {
     return content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
@@ -68,18 +68,9 @@ function generateUnifiedDiff(
     return diffLines_.join('\n');
 }
 
-import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
-import { ProjectContext } from '../project-context.js';
-
 export async function getInstalledComponents(
-    cwdOrContext: string | ProjectContext,
-    config?: BrutalistConfig,
-    fsAdapter?: FileSystemAdapter
+    context: ProjectContext
 ): Promise<string[]> {
-    if (cwdOrContext instanceof ProjectContext) {
-        return getInstalledComponentNames(cwdOrContext.cwd, cwdOrContext.requireConfig(), cwdOrContext.fs);
-    }
-    const context = await ProjectContext.loadUninitialized(cwdOrContext, { configOverride: config, fs: fsAdapter });
     return getInstalledComponentNames(context.cwd, context.requireConfig(), context.fs);
 }
 
@@ -123,8 +114,7 @@ function getIntegrityMetadata(
         : undefined;
 
     let integrityStatus: DiffIntegrityStatus = 'unknown';
-    if (typeof installedIntegrity === 'string' && installedIntegrity.length > 0
-        && typeof latestIntegrity === 'string' && latestIntegrity.length > 0) {
+    if (installedIntegrity && latestIntegrity) {
         integrityStatus = installedIntegrity === latestIntegrity ? 'current' : 'outdated';
     }
 
@@ -138,36 +128,14 @@ function getIntegrityMetadata(
 }
 
 export async function diffComponent(
-    cwdOrContext: string | ProjectContext,
-    configOrComponentName: BrutalistConfig | string,
-    componentNameOrRegistryOverride?: string,
-    registryOverrideOrManifest?: string | InstalledComponentManifest,
-    manifestEntryOrCache?: InstalledComponentManifest | boolean,
-    useCache: boolean = true
+    context: ProjectContext,
+    componentName: string,
+    registryOverride?: string,
+    manifestEntry?: InstalledComponentManifest,
+    shouldCache = true
 ): Promise<DiffResult> {
-    let context: ProjectContext;
-    let componentName: string;
-    let registryOverride: string | undefined;
-    let manifestEntry: InstalledComponentManifest | undefined;
-    let shouldCache = useCache;
-
-    if (cwdOrContext instanceof ProjectContext) {
-        context = cwdOrContext;
-        componentName = configOrComponentName as string;
-        registryOverride = componentNameOrRegistryOverride;
-        manifestEntry = registryOverrideOrManifest as InstalledComponentManifest | undefined;
-        shouldCache = typeof manifestEntryOrCache === 'boolean' ? manifestEntryOrCache : useCache;
-    } else {
-        const cwd = cwdOrContext;
-        const config = configOrComponentName as BrutalistConfig;
-        context = await ProjectContext.loadUninitialized(cwd, { configOverride: config });
-        componentName = componentNameOrRegistryOverride as string;
-        registryOverride = registryOverrideOrManifest as string | undefined;
-        manifestEntry = manifestEntryOrCache as InstalledComponentManifest | undefined;
-    }
-
     const config = context.requireConfig();
-    await context.resolveComponentDir(componentName);
+    const localFiles = await getLocalComponentFiles(context, componentName);
     let registryItem: RegistryItem | null;
     let registryError: Error | null = null;
 
@@ -181,7 +149,6 @@ export async function diffComponent(
     }
 
     if (!registryItem) {
-        const localFiles = await getLocalComponentFiles(context, componentName);
         let status: DiffComponentStatus;
         if (registryError) {
             status = 'registry-unreachable';
@@ -199,7 +166,6 @@ export async function diffComponent(
         };
     }
 
-    const localFiles = await getLocalComponentFiles(context, componentName);
     const fileDiffs: FileDiff[] = [];
 
     for (const registryFile of registryItem.files) {
@@ -268,44 +234,21 @@ export async function diffComponent(
 }
 
 export async function diffComponents(
-    cwdOrContext: string | ProjectContext,
-    configOrComponentNames: BrutalistConfig | string[],
-    componentNamesOrGetRegistry?: string[] | ((componentName: string) => string | undefined),
-    getRegistrySourceOrGetManifest?: ((componentName: string) => string | undefined) | ((componentName: string) => InstalledComponentManifest | undefined),
-    getManifestEntryOrCache?: ((componentName: string) => InstalledComponentManifest | undefined) | boolean,
+    context: ProjectContext,
+    componentNames: string[],
+    getRegistrySource: (componentName: string) => string | undefined,
+    getManifestEntry: (componentName: string) => InstalledComponentManifest | undefined,
     useCache: boolean = true
 ): Promise<DiffResult[]> {
-    if (cwdOrContext instanceof ProjectContext) {
-        const context = cwdOrContext;
-        const componentNames = configOrComponentNames as string[];
-        const getRegistrySource = componentNamesOrGetRegistry as (componentName: string) => string | undefined;
-        const getManifestEntry = getRegistrySourceOrGetManifest as (componentName: string) => InstalledComponentManifest | undefined;
-        const shouldCache = typeof getManifestEntryOrCache === 'boolean' ? getManifestEntryOrCache : useCache;
-        return Promise.all(
-            componentNames.map(component => diffComponent(
-                context,
-                component,
-                getRegistrySource(component),
-                getManifestEntry(component),
-                shouldCache
-            ))
-        );
-    }
-
-    const cwd = cwdOrContext;
-    const config = configOrComponentNames as BrutalistConfig;
-    const componentNames = componentNamesOrGetRegistry as string[];
-    const getRegistrySource = getRegistrySourceOrGetManifest as (componentName: string) => string | undefined;
-    const getManifestEntry = getManifestEntryOrCache as (componentName: string) => InstalledComponentManifest | undefined;
-
     return Promise.all(
         componentNames.map(component => diffComponent(
-            cwd,
-            config,
+            context,
             component,
             getRegistrySource(component),
             getManifestEntry(component),
-            useCache,
+            useCache
         ))
     );
 }
+
+export const diffAllComponents = diffComponents;

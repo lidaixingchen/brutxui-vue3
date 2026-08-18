@@ -82,6 +82,7 @@ draft ──评审通过──▶ active ──落地完成──▶ done ──
 | [CLI样式自动生成与单一信源治理方案](plans/CLI样式自动生成与单一信源治理方案.md) | done | 将 CLI brutalist.css 纳入 generate-styles-tokens 自动化生成管道，实现全库设计令牌单一事实来源闭环 |
 | [组件视觉效果深化与质感进阶方案](plans/组件视觉效果深化与质感进阶方案.md) | **active** | 材质纹理系统、多重立体与内嵌凹槽阴影、机械微动效与音效联动、工控装配与 HUD 版式四大维度深化 |
 | [命令式弹层宿主深化与MessageBox解耦方案](plans/命令式弹层宿主深化与MessageBox解耦方案.md) | **active** | 命令式 UI 全生命周期宿主深模块构建、LIFO 活动栈与 ESC 路由、MessageBox 独立解耦 |
+| [CLI项目上下文与路径解析引擎封装方案](plans/CLI项目上下文与路径解析引擎封装方案.md) | done | ProjectContext 深模块聚合实体、FileSystemAdapter 双适配器 Seam（Disk/Memory）、路径解析引擎全量收拢与零 IO 测试 |
 
 
 ## 归档方案（archive/2026/）

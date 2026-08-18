@@ -1,14 +1,13 @@
 import chalk from 'chalk';
 import type {
-    BrutalistConfig,
     DiffComponentStatus,
     DiffResult,
     DiffOptions,
 } from '../lib/types.js';
-import { readConfigSafe, CliError, readManifest, withOfflineScope, withAuditLog } from '../lib/index.js';
-import { diffComponents, getInstalledComponents } from '../lib/services/diff-service.js';
+import { readConfigSafe, CliError, readManifest, withOfflineScope, withAuditLog, ProjectContext } from '../lib/index.js';
+import { diffAllComponents, getInstalledComponents } from '../lib/services/diff-service.js';
 import { logger } from '../lib/logger.js';
-export { diffComponent, getInstalledComponents } from '../lib/services/diff-service.js';
+export { diffComponent, diffAllComponents, getInstalledComponents } from '../lib/services/diff-service.js';
 
 function getIntegrityHint(result: DiffResult): string {
     return result.integrityStatus === 'outdated'
@@ -119,10 +118,6 @@ export async function diff(options: DiffOptions): Promise<void> {
 
     const restoreOffline = withOfflineScope(options.offline === true);
     try {
-        // 注意（有意取舍）：config 读取与组件列表解析前置到 withAuditLog 之外，
-        // 使审计记录与实际执行范围一致；代价是配置缺失（CONFIG_NOT_FOUND）与组件列表
-        // 解析失败这两条路径不再写审计（旧实现会记录 success:false 条目）——
-        // 此时命令本身无法正常初始化，审计价值有限，故有意不写
         const config = await readConfigSafe(cwd);
 
         if (!config) {
@@ -131,11 +126,11 @@ export async function diff(options: DiffOptions): Promise<void> {
             });
         }
 
-        // 先解析实际比较的组件列表（未显式指定时取全部已安装组件），
-        // 保证审计记录与实际执行范围一致
+        const context = await ProjectContext.loadUninitialized(cwd, { configOverride: config });
+
         const targetComponents = options.components?.length
             ? options.components
-            : await getInstalledComponents(cwd, config);
+            : await getInstalledComponents(context);
 
         await withAuditLog(
             cwd,
@@ -143,9 +138,9 @@ export async function diff(options: DiffOptions): Promise<void> {
                 command: 'diff',
                 components: targetComponents,
                 cwd,
-                dryRun: false, // diff 是只读操作，无 dry-run 语义
+                dryRun: false,
             },
-            () => diffInner(options, cwd, useCache, config, targetComponents),
+            () => diffInner(options, context, useCache, targetComponents),
         );
     } finally {
         restoreOffline();
@@ -154,15 +149,11 @@ export async function diff(options: DiffOptions): Promise<void> {
 
 async function diffInner(
     options: DiffOptions,
-    cwd: string,
+    context: ProjectContext,
     useCache: boolean,
-    config: BrutalistConfig,
     targetComponents: string[],
 ): Promise<void> {
-    // 清单读取失败仅对"文件不存在"降级为 null（readManifest 内部已用 pathExists 提前返回 null，
-    // 此处 ENOENT 只出现在读取瞬间文件被删的竞态下）；JSON 损坏/权限错误等其余错误
-    // 包装为带上下文的 CliError，避免 diff 在缺少完整性/registrySource 信息时静默降级
-    const manifest = await readManifest(cwd).catch((error: unknown) => {
+    const manifest = await readManifest(context.cwd, context.fs).catch((error: unknown) => {
         if ((error as NodeJS.ErrnoException)?.code === 'ENOENT') {
             return null;
         }
@@ -177,9 +168,8 @@ async function diffInner(
         return;
     }
 
-    const results = await diffComponents(
-        cwd,
-        config,
+    const results = await diffAllComponents(
+        context,
         targetComponents,
         component => options.registry ?? manifest?.components?.[component]?.registrySource,
         component => manifest?.components?.[component],

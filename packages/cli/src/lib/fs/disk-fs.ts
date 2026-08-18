@@ -1,5 +1,4 @@
 import fs from 'fs-extra';
-import { promises as nodeFs } from 'node:fs';
 import path from 'path';
 import type {
     FileEntry,

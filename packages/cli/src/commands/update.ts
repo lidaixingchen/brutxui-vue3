@@ -1,7 +1,7 @@
 import { checkbox, confirm } from '@inquirer/prompts';
 import chalk from 'chalk';
 import type { UpdateOptions, DiffResult } from '../lib/types.js';
-import { readConfigSafe, CliError, logger, readManifest, withOfflineScope, mergeDryRun, withAuditLog } from '../lib/index.js';
+import { readConfigSafe, CliError, logger, readManifest, withOfflineScope, mergeDryRun, withAuditLog, ProjectContext } from '../lib/index.js';
 import { getInstalledComponents, diffComponent } from '../lib/services/diff-service.js';
 import { add } from './add.js';
 
@@ -40,9 +40,11 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
         });
     }
 
+    const context = await ProjectContext.loadUninitialized(cwd, { configOverride: config });
+
     const installedComponents = components.length > 0
         ? components
-        : await getInstalledComponents(cwd, config);
+        : await getInstalledComponents(context);
 
     if (installedComponents.length === 0) {
         logger.info('No installed components found to update.');
@@ -88,8 +90,7 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
     // 失败明细告警后继续；全部失败时才抛汇总 CliError
     const settled = await Promise.allSettled(
         updatableComponents.map(name => diffComponent(
-            cwd,
-            config,
+            context,
             name,
             options.registry ?? manifest?.components[name]?.registrySource,
             manifest?.components[name],

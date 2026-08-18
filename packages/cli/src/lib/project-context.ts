@@ -14,12 +14,10 @@ import { DiskFileSystemAdapter } from './fs/disk-fs.js';
 import {
     CONFIG_FILES,
     CSS_LOCATIONS,
-    DEFAULT_ALIASES,
     REGISTRY_PATH_PREFIXES,
 } from './constants.js';
 import { CliError } from './error.js';
-import { logger } from './logger.js';
-import { assertSafePath, isSafePath } from './security.js';
+import { isSafePath } from './security.js';
 import { FileTransaction } from './file-transaction.js';
 
 initSync();
@@ -41,8 +39,6 @@ export interface ProjectContextOptions {
 interface RawTsConfig extends TsConfig {
     extends?: string | string[];
 }
-
-const CONVENTIONAL_ALIAS_PREFIXES = ['@', '~', '#'] as const;
 
 export class ProjectContext {
     readonly cwd: string;

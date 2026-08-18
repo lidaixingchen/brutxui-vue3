@@ -7,9 +7,10 @@ import type { BrutalistConfig, RegistryItem, InstalledComponentManifest } from '
 import { updateInstalledComponents } from '../src/lib/manifest.js';
 import {
     diffComponent,
-    diffComponents,
+    diffAllComponents,
     getInstalledComponents,
 } from '../src/lib/services/diff-service.js';
+import { ProjectContext } from '../src/lib/project-context.js';
 
 vi.mock('../src/lib/registry.js', async (importOriginal) => {
     const original = await importOriginal<typeof registry>();
@@ -105,7 +106,8 @@ describe('diff service', () => {
         ], 'sha256-current');
         stubRegistryItem(registryItem);
 
-        const result = await diffComponent(tmpDir, defaultConfig, 'button');
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
+        const result = await diffComponent(context, 'button');
 
         expect(result).toMatchObject({
             component: 'button',
@@ -134,7 +136,8 @@ describe('diff service', () => {
             },
         ]));
 
-        const result = await diffComponent(tmpDir, defaultConfig, 'button');
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
+        const result = await diffComponent(context, 'button');
 
         expect(result.status).toBe('modified');
         expect(result.files).toEqual(expect.arrayContaining([
@@ -158,7 +161,8 @@ describe('diff service', () => {
             },
         ]));
 
-        const result = await diffComponent(tmpDir, defaultConfig, 'button');
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
+        const result = await diffComponent(context, 'button');
 
         expect(result.status).toBe('up-to-date');
         expect(result.files).toEqual([
@@ -174,11 +178,10 @@ describe('diff service', () => {
                 type: 'registry:ui',
             },
         ]));
-        // src/components/../.. 指向项目根之外，穿越组件目录边界
-        await expect(diffComponent(tmpDir, defaultConfig, '../..'))
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
+        await expect(diffComponent(context, '../..'))
             .rejects.toThrow(/Security Error.*outside the components directory/);
-        // 仍在项目内但越出组件目录（如 src/）同样拦截
-        await expect(diffComponent(tmpDir, defaultConfig, '..'))
+        await expect(diffComponent(context, '..'))
             .rejects.toThrow(/Security Error.*outside the components directory/);
     });
 
@@ -202,9 +205,9 @@ describe('diff service', () => {
             },
         ], 'sha256-new'));
 
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
         const result = await diffComponent(
-            tmpDir,
-            defaultConfig,
+            context,
             'button',
             manifestEntry.registrySource,
             manifestEntry
@@ -246,10 +249,10 @@ describe('diff service', () => {
             source: `https://example.test/${name === 'button' ? 'a' : 'b'}`,
         }));
 
-        const installed = await getInstalledComponents(tmpDir, defaultConfig);
-        const results = await diffComponents(
-            tmpDir,
-            defaultConfig,
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
+        const installed = await getInstalledComponents(context);
+        const results = await diffAllComponents(
+            context,
             installed,
             component => `https://example.test/${component === 'button' ? 'a' : 'b'}`,
             component => ({
@@ -274,7 +277,8 @@ describe('diff service', () => {
     it('returns registry-unreachable when registry lookup fails', async () => {
         mockedGetItemFromSources.mockRejectedValue(new Error('not found'));
 
-        const result = await diffComponent(tmpDir, defaultConfig, 'missing');
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
+        const result = await diffComponent(context, 'missing');
 
         expect(result).toEqual({
             component: 'missing',
