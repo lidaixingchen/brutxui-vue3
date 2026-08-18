@@ -1,4 +1,4 @@
-import { ref, readonly, onUnmounted, getCurrentInstance, type Ref, type DeepReadonly } from 'vue'
+import { ref, readonly, onUnmounted, getCurrentInstance, type Ref } from 'vue'
 import { showDialog, type ShowDialogOptions, type DialogInstance } from '@/components/dialog/functional'
 
 export type { ShowDialogOptions, DialogInstance }
@@ -7,7 +7,7 @@ export interface UseDialogReturn {
     show: (options?: ShowDialogOptions) => DialogInstance
     open: (options?: ShowDialogOptions) => DialogInstance
     close: () => void
-    isOpen: DeepReadonly<Ref<boolean>> | Readonly<Ref<boolean>>
+    isOpen: Readonly<Ref<boolean>>
 }
 
 /**

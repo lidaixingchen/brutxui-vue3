@@ -413,7 +413,7 @@ export async function initializeProjectFiles(options: ProjectInitializationOptio
                     });
                 } catch (fallbackError) {
                     throw new CliError(`Failed to initialize project context: ${fallbackError instanceof Error ? fallbackError.message : String(fallbackError)}`, {
-                        cause: error,
+                        cause: fallbackError,
                     });
                 }
             } else {

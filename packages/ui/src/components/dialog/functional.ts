@@ -174,7 +174,6 @@ export function showDialog(options: ShowDialogOptions = {}): DialogInstance {
             zIndex: options.zIndex ?? context.zIndex,
             'onUpdate:open': (val: boolean) => {
                 if (!val) {
-                    options.onCancel?.()
                     context.close()
                 }
             },

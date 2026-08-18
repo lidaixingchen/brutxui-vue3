@@ -4,6 +4,8 @@ import MessageBox, { type MessageBoxProps } from './MessageBox.vue'
 import type { MessageBoxType } from './message-box-variants'
 import { canUseDocumentBody } from '@/lib/env'
 
+export type { MessageBoxType }
+
 export type MessageBoxAction = 'confirm' | 'cancel' | 'destroy'
 
 export interface MessageBoxResult {
@@ -25,10 +27,12 @@ export type MessageBoxInstance = OverlayInstanceHandle<MessageBoxResult>
  * 命令式展示 MessageBox 弹层
  */
 export function showMessageBox(options: MessageBoxOptions = {}): MessageBoxInstance {
+    const { appContext, transitionDuration, enableEsc, ...componentProps } = options
+
     return mountOverlay<MessageBoxProps, MessageBoxResult>(
         MessageBox,
         (context) => ({
-            ...options,
+            ...componentProps,
             open: context.isOpen.value,
             zIndex: options.zIndex ?? context.zIndex,
             'onUpdate:open': (val: boolean) => {
@@ -44,12 +48,31 @@ export function showMessageBox(options: MessageBoxOptions = {}): MessageBoxInsta
             },
         }),
         {
-            appContext: options.appContext,
-            transitionDuration: options.transitionDuration,
+            appContext,
+            transitionDuration,
             zIndex: options.zIndex,
-            enableEsc: options.enableEsc,
+            enableEsc,
+            onClose: () => {
+                // 若通过全局 ESC 触发无参 close()，确保终态兑现为 cancel
+                return { action: 'cancel' } as MessageBoxResult
+            },
         }
     )
+}
+
+function normalizeMessageBoxOptions(
+    optionsOrMessage: string | MessageBoxOptions,
+    extraOptions: MessageBoxOptions = {},
+    fallbackType: MessageBoxType = 'info'
+): MessageBoxOptions {
+    const base: MessageBoxOptions = typeof optionsOrMessage === 'string'
+        ? { message: optionsOrMessage, ...extraOptions }
+        : optionsOrMessage
+
+    return {
+        type: fallbackType,
+        ...base,
+    }
 }
 
 /**
@@ -61,16 +84,10 @@ export async function showConfirm(
 ): Promise<boolean> {
     if (!canUseDocumentBody()) return false
 
-    const mergedOptions: MessageBoxOptions = typeof optionsOrMessage === 'string'
-        ? { message: optionsOrMessage, ...options }
-        : optionsOrMessage
+    const mergedOptions = normalizeMessageBoxOptions(optionsOrMessage, options, 'warning')
+    const instance = showMessageBox(mergedOptions)
 
-    const instance = showMessageBox({
-        type: 'warning',
-        ...mergedOptions,
-    })
-
-    const result = await instance.promise
+    const result = (await instance.promise) ?? { action: 'cancel' }
     return result.action === 'confirm'
 }
 
@@ -83,15 +100,12 @@ export async function showAlert(
 ): Promise<void> {
     if (!canUseDocumentBody()) return
 
-    const mergedOptions: MessageBoxOptions = typeof optionsOrMessage === 'string'
-        ? { message: optionsOrMessage, ...options }
-        : optionsOrMessage
-
-    const instance = showMessageBox({
-        type: 'info',
-        showCancelButton: false,
-        ...mergedOptions,
-    })
+    const mergedOptions = normalizeMessageBoxOptions(
+        optionsOrMessage,
+        { showCancelButton: false, ...options },
+        'info'
+    )
+    const instance = showMessageBox(mergedOptions)
 
     await instance.promise
 }
@@ -105,16 +119,13 @@ export async function showPrompt(
 ): Promise<MessageBoxResult> {
     if (!canUseDocumentBody()) return { action: 'cancel' }
 
-    const mergedOptions: MessageBoxOptions = typeof optionsOrMessage === 'string'
-        ? { message: optionsOrMessage, ...options }
-        : optionsOrMessage
+    const mergedOptions = normalizeMessageBoxOptions(
+        optionsOrMessage,
+        { showInput: true, ...options },
+        'info'
+    )
+    const instance = showMessageBox(mergedOptions)
 
-    const instance = showMessageBox({
-        showInput: true,
-        ...mergedOptions,
-    })
-
-    return await instance.promise
+    const result = (await instance.promise) ?? { action: 'cancel' }
+    return result
 }
-
-export type { MessageBoxType }

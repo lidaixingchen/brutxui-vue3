@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 
 export const messageBoxCardVariants = cva(
-    'relative z-50 w-full max-w-md bg-bg text-fg border-3 border-black shadow-brutal p-6 flex flex-col gap-4 focus:outline-none select-none',
+    'relative z-50 w-full max-w-md bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal p-6 flex flex-col gap-4 focus:outline-none select-none',
     {
         variants: {
             size: {
@@ -17,14 +17,14 @@ export const messageBoxCardVariants = cva(
 )
 
 export const messageBoxIconVariants = cva(
-    'inline-flex items-center justify-center shrink-0 w-10 h-10 border-2 border-black font-black',
+    'inline-flex items-center justify-center shrink-0 w-10 h-10 border-2 border-brutal font-black',
     {
         variants: {
             type: {
-                info: 'bg-info text-info-foreground',
-                success: 'bg-success text-success-foreground',
-                warning: 'bg-accent text-accent-foreground',
-                error: 'bg-destructive text-destructive-foreground',
+                info: 'bg-brutal-info text-brutal-info-foreground',
+                success: 'bg-brutal-success text-brutal-success-foreground',
+                warning: 'bg-brutal-accent text-brutal-accent-foreground',
+                error: 'bg-brutal-destructive text-brutal-destructive-foreground',
             },
         },
         defaultVariants: {

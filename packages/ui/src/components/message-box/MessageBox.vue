@@ -79,6 +79,16 @@ const currentInputValue = ref(props.inputValue ?? '')
 const hasValidationError = ref(false)
 
 watch(
+    () => props.open,
+    (opened) => {
+        if (opened) {
+            currentInputValue.value = props.inputValue ?? ''
+            hasValidationError.value = false
+        }
+    }
+)
+
+watch(
     () => props.inputValue,
     (newVal) => {
         currentInputValue.value = newVal ?? ''
@@ -117,9 +127,12 @@ const typeIconComponent = computed(() => {
 
 function handleConfirm(): void {
     if (props.showInput) {
-        if (props.inputPattern && !props.inputPattern.test(currentInputValue.value)) {
-            hasValidationError.value = true
-            return
+        if (props.inputPattern) {
+            props.inputPattern.lastIndex = 0
+            if (!props.inputPattern.test(currentInputValue.value)) {
+                hasValidationError.value = true
+                return
+            }
         }
         emit('confirm', currentInputValue.value)
     } else {
@@ -142,11 +155,11 @@ function handleCancel(): void {
         <DialogPortal>
             <DialogOverlay
                 class="fixed inset-0 z-50 bg-overlay backdrop-blur-xs transition-opacity data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
-                :style="props.zIndex ? { zIndex: props.zIndex } : undefined"
+                :style="props.zIndex !== undefined ? { zIndex: props.zIndex } : undefined"
             />
             <div
                 class="fixed inset-0 z-50 flex items-center justify-center p-4"
-                :style="props.zIndex ? { zIndex: props.zIndex } : undefined"
+                :style="props.zIndex !== undefined ? { zIndex: props.zIndex } : undefined"
             >
                 <DialogContent
                     :class="cardClasses"
@@ -159,13 +172,13 @@ function handleCancel(): void {
                             <div :class="iconWrapperClasses" aria-hidden="true">
                                 <component :is="typeIconComponent" :class="iconClasses" />
                             </div>
-                            <DialogTitle class="text-lg font-black tracking-tight text-fg">
+                            <DialogTitle class="text-lg font-black tracking-tight text-brutal-fg">
                                 {{ displayTitle }}
                             </DialogTitle>
                         </div>
                         <DialogClose
                             v-if="props.showCloseButton"
-                            class="inline-flex items-center justify-center p-1 text-fg hover:bg-muted border-2 border-transparent hover:border-black transition-colors focus:outline-none"
+                            class="inline-flex items-center justify-center p-1 text-brutal-fg hover:bg-muted border-2 border-transparent hover:border-brutal transition-colors focus:outline-none"
                             @click="handleCancel"
                         >
                             <X :class="closeIconClasses" aria-hidden="true" />
