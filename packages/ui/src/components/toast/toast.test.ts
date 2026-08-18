@@ -236,6 +236,24 @@ describe('Toast', () => {
             await wrapper.trigger('mouseenter')
             expect(progressBar.attributes('style')).toContain('animation-play-state: paused')
         })
+
+        it('maintains pause when updating duration during hover and resumes on mouseleave', async () => {
+            vi.useFakeTimers()
+            const wrapper = mount(Toast, {
+                props: { duration: 5000, pauseOnHover: true },
+                global: globalProvide,
+            })
+            await wrapper.trigger('mouseenter')
+            await wrapper.setProps({ duration: 8000 })
+            vi.advanceTimersByTime(5000)
+            expect(wrapper.emitted('close')).toBeFalsy()
+
+            await wrapper.trigger('mouseleave')
+            vi.advanceTimersByTime(7900)
+            expect(wrapper.emitted('close')).toBeFalsy()
+            vi.advanceTimersByTime(400)
+            expect(wrapper.emitted('close')).toBeTruthy()
+        })
     })
 
     it('renders size variants with responsive constraints', () => {

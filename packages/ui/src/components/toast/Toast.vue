@@ -43,6 +43,7 @@ const { t } = useLocale()
 
 const isLeaving = ref(false)
 const isPaused = ref(false)
+const isHovering = ref(false)
 const timer = ref<ReturnType<typeof setTimeout> | undefined>(undefined)
 const leaveTimer = ref<ReturnType<typeof setTimeout> | undefined>(undefined)
 const remainingTime = ref(props.duration)
@@ -92,8 +93,6 @@ onMounted(() => {
         startTimer()
     }
 })
-
-const isHovering = ref(false)
 
 watch(() => props.duration, (newDuration) => {
     if (isLeaving.value) return

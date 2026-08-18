@@ -60,6 +60,5 @@ export const brutalHighlightPress = 'data-[highlighted]:active:translate-x-[var(
 export const brutalHoverLiftSm = hoverLiftSm
 export const brutalHoverLiftSmStateOff = 'data-[state=off]:hover:shadow-brutal data-[state=off]:hover:-translate-x-0.5 data-[state=off]:hover:-translate-y-0.5'
 export const brutalHoverLiftNoX = hoverLiftLgNoX
-export const brutalHoverLiftLgNoX = hoverLiftLgNoX
 export const brutalHoverLiftSmNoX = hoverLiftSmNoX
 export const brutalHighlightLiftWithBorder = `${brutalHighlightLift} data-[highlighted]:border-brutal`
