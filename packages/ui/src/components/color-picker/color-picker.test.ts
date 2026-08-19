@@ -17,8 +17,9 @@ afterEach(() => {
         wrapper.unmount()
         wrapper = null
     }
-    document.body.innerHTML = ''
-    localStorage.clear()
+    if (typeof localStorage !== 'undefined' && localStorage && typeof localStorage.clear === 'function') {
+        localStorage.clear()
+    }
 })
 
 async function openPanel(w: ReturnType<typeof mount>) {

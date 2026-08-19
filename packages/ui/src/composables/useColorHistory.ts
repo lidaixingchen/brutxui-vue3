@@ -24,7 +24,7 @@ export function useColorHistory(options: UseColorHistoryOptions = {}): UseColorH
 
     function loadHistory() {
         const storageKey = getStorageKey()
-        if (!storageKey || !hasLocalStorage) return
+        if (!storageKey) return
         const raw = safeGetStorageItem(storageKey)
         if (raw) {
             try {
@@ -46,7 +46,7 @@ export function useColorHistory(options: UseColorHistoryOptions = {}): UseColorH
 
     function saveHistory() {
         const storageKey = getStorageKey()
-        if (!storageKey || !hasLocalStorage) return
+        if (!storageKey) return
         // 写入前先与现有存储合并，避免多标签页共用 storageKey 时全量覆盖丢失其他标签页新增的历史
         let merged = history.value
         const raw = safeGetStorageItem(storageKey)

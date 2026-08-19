@@ -102,15 +102,11 @@ export function getCanvas2DContext(canvas: HTMLCanvasElement): CanvasRenderingCo
     }
 }
 
-/**
- * Safely get a value from localStorage.
- * Returns `null` if localStorage is unavailable or the key doesn't exist.
- */
 export function safeGetStorageItem(key: string): string | null {
     try {
-        // 双重守卫：SSR 且带全局 localStorage polyfill 时也不读写服务端存储，保证 SSR 确定性
-        if (!isClient || !hasLocalStorage) return null
-        return localStorage.getItem(key)
+        const storage = getLocalStorage()
+        if (!storage) return null
+        return storage.getItem(key)
     } catch {
         return null
     }
@@ -122,8 +118,9 @@ export function safeGetStorageItem(key: string): string | null {
  */
 export function safeSetStorageItem(key: string, value: string): void {
     try {
-        if (!isClient || !hasLocalStorage) return
-        localStorage.setItem(key, value)
+        const storage = getLocalStorage()
+        if (!storage) return
+        storage.setItem(key, value)
     } catch {
         // Storage full or blocked (e.g. Safari private mode)
     }
