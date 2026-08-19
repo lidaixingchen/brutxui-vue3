@@ -345,5 +345,125 @@ describe('DiagnosticEngine & Env Rules (Ticket 1)', () => {
             expect(secondRepair.applied).toHaveLength(0);
         });
     });
+
+    describe('Integrity Domain Rules & Offline Semantics (Ticket 4)', () => {
+        it('detects missing component files recorded in manifest', async () => {
+            const fs = new MemoryFileSystemAdapter();
+            await fs.ensureDir('/app/src/components/ui/button');
+            await fs.writeJson('/app/components.json', {
+                $schema: 'https://example.com/schema.json',
+                $version: 1,
+                style: 'brutalism',
+                tailwind: { config: 'tailwind.config.js', css: '@/styles.css' },
+                aliases: { components: '@/components', utils: '@/lib/utils', composables: '@/composables' },
+            });
+            await fs.writeJson('/app/.brutx/manifest.json', {
+                version: 1,
+                components: {
+                    button: {
+                        name: 'button',
+                        registrySource: 'official',
+                        integrity: 'sha256-abc',
+                        installedAt: new Date().toISOString(),
+                        files: ['src/components/ui/button/Button.vue', 'src/components/ui/button/button-variants.ts'],
+                        dependencies: [],
+                        registryDependencies: [],
+                    },
+                },
+            });
+            // 只创建了一个文件，缺少 button-variants.ts
+            await fs.writeFile('/app/src/components/ui/button/Button.vue', '<template><button><slot /></button></template>');
+
+            const report = await diagnose({
+                cwd: '/app',
+                fs,
+                ruleIds: ['integrity.manifest-files'],
+            });
+
+            expect(report.summary.total).toBe(1);
+            const check = report.getByRuleId('integrity.manifest-files')[0];
+            expect(check.status).toBe('error');
+            expect(check.message).toContain('Missing 1 file(s)');
+            expect(check.fixId).toBe('restore-integrity');
+        });
+
+        it('detects and cleans orphan files not recorded in manifest', async () => {
+            const fs = new MemoryFileSystemAdapter();
+            await fs.ensureDir('/app/src/components/ui/button');
+            await fs.writeJson('/app/components.json', {
+                $schema: 'https://example.com/schema.json',
+                $version: 1,
+                style: 'brutalism',
+                tailwind: { config: 'tailwind.config.js', css: '@/styles.css' },
+                aliases: { components: '@/components', utils: '@/lib/utils', composables: '@/composables' },
+            });
+            await fs.writeJson('/app/.brutx/manifest.json', {
+                version: 1,
+                components: {
+                    button: {
+                        name: 'button',
+                        registrySource: 'official',
+                        integrity: 'sha256-abc',
+                        installedAt: new Date().toISOString(),
+                        files: ['src/components/ui/button/Button.vue'],
+                        dependencies: [],
+                        registryDependencies: [],
+                    },
+                },
+            });
+            await fs.writeFile('/app/src/components/ui/button/Button.vue', '<template><button /></template>');
+            // 孤儿文件
+            await fs.writeFile('/app/src/components/ui/button/orphan-temp.ts', 'export const x = 1;');
+
+            const report = await diagnose({
+                cwd: '/app',
+                fs,
+                ruleIds: ['integrity.orphans'],
+            });
+
+            expect(report.summary.total).toBe(1);
+            const check = report.getByRuleId('integrity.orphans')[0];
+            expect(check.status).toBe('warn');
+            expect(check.message).toContain('Found 1 orphan file(s)');
+            expect(check.fixId).toBe('remove-orphans');
+
+            // 执行自愈清理孤儿文件
+            const repairReport = await repair({
+                cwd: '/app',
+                fs,
+                ruleIds: ['integrity.orphans'],
+            });
+
+            expect(repairReport.applied).toHaveLength(1);
+            expect(await fs.pathExists('/app/src/components/ui/button/orphan-temp.ts')).toBe(false);
+            expect(repairReport.freshReport.getByRuleId('integrity.orphans')[0].status).toBe('pass');
+        });
+
+        it('gracefully skips reachability probing in offline mode', async () => {
+            const fs = new MemoryFileSystemAdapter();
+            await fs.ensureDir('/app');
+            await fs.writeJson('/app/components.json', {
+                $schema: 'https://example.com/schema.json',
+                $version: 1,
+                style: 'brutalism',
+                tailwind: { config: 'tailwind.config.js', css: '@/styles.css' },
+                aliases: { components: '@/components', utils: '@/lib/utils', composables: '@/composables' },
+                registries: ['https://example.com/registry'],
+            });
+
+            const report = await diagnose({
+                cwd: '/app',
+                fs,
+                offline: true,
+                ruleIds: ['integrity.registry-reachability'],
+            });
+
+            expect(report.summary.total).toBe(1);
+            const reachabilityCheck = report.getByRuleId('integrity.registry-reachability')[0];
+            expect(reachabilityCheck.status).toBe('pass');
+            expect(reachabilityCheck.message).toContain('offline mode, reachability check skipped');
+        });
+    });
 });
+
 
