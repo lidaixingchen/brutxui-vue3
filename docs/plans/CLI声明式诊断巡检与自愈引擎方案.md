@@ -1,12 +1,14 @@
 # CLI声明式诊断巡检与自愈引擎方案
 
 > 方案类型：底层架构重构与深模块封装
-> 状态：**draft**
+> 状态：**done**
 > 日期：2026-08-19
 > 关联文档：[CLI项目上下文与路径解析引擎封装方案](CLI项目上下文与路径解析引擎封装方案.md)；[架构优化方案-v3](架构优化方案-v3.md)；[CONTEXT.md](../../CONTEXT.md)
 > 修订记录：
 > - 2026-08-19：初稿定稿。确立声明式 DiagnosticEngine 架构、5 大领域规则集（env/config/tailwind/structure/integrity）、基于 ProjectContext 与 FileSystemAdapter 的无 IO 纯数据巡检与原子自愈事务契约，正交剥离 CycloneDX SBOM 导出至 sbom-service。
 > - 2026-08-19：架构审查与契约完善。消除 DiagnosticRepairContext 配置双源分叉风险（绑定 ProjectContext.bindConfig），CheckResult 补齐 ruleId，RuleFixResult 确立三态枚举（applied/skipped/failed），确立确定性拓扑规则调度与单事务原子自愈边界，补充非 TTY/CI 交互安全防御契约与深模块外部命令复用范式。
+> - 2026-08-19：方案全量落地并完成 AI 代码审查。6 个垂直切片 tickets 全部高质交付并通过全量单测与严格类型检查门禁。
+
 
 ---
 

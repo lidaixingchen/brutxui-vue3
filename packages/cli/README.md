@@ -227,6 +227,12 @@ brutx-vue doctor --fix
 # 仅执行指定修复
 brutx-vue doctor --fix-only AddConfigVersion
 
+# 生成 CycloneDX 1.5 SBOM 物料清单
+brutx-vue doctor --sbom
+
+# 离线模式下跳过网络探测
+brutx-vue doctor --offline
+
 # JSON 格式输出
 brutx-vue doctor --json
 ```
@@ -236,6 +242,9 @@ brutx-vue doctor --json
 | `--cwd <cwd>` | 指定工作目录 |
 | `--fix` | 自动修复所有可修复问题 |
 | `--fix-only <fixId>` | 仅执行指定的修复项 |
+| `--sbom` | 导出项目级 CycloneDX 1.5 格式 SBOM |
+| `--sbom-output <path>` | 指定 SBOM 输出文件路径（默认 `brutx-sbom.json`） |
+| `--offline` | 离线模式，跳过网络可达性探测 |
 | `--json` | 以 JSON 格式输出报告 |
 | `-y, --yes` | 跳过确认提示 |
 | `-s, --silent` | 静默输出 |
@@ -346,7 +355,44 @@ CLI 会自动检测以下信息：
 - 注册表本地读取时检查工作目录边界
 - 组件文件路径在写入前经过规范化和验证
 - `verifyWrittenPath()` 在写入时验证文件实际路径，防御 TOCTOU（Time-of-Check-to-Time-of-Use）攻击
-- 配置文件版本迁移机制，`doctor --fix` 可自动升级旧版本配置
+## Node.js 编程式 API
+
+`brutx-vue` 提供一套类型完备的 Node.js 编程式服务门面，可在自定义构建脚本、CI 工作流或自动化 Agent 工具中直接调用：
+
+```typescript
+import {
+    diagnose,
+    repair,
+    DiagnosticEngine,
+    generateProjectSbom,
+    diffComponents,
+    initializeProjectFiles,
+    writeComponentFiles,
+    removeComponents,
+} from 'brutx-vue';
+
+// 1. 无副作用只读健康诊断巡检
+const report = await diagnose({
+    cwd: process.cwd(),
+    categories: ['config', 'tailwind', 'structure', 'integrity'],
+});
+console.log(`Passed: ${report.summary.passed}, Errors: ${report.summary.errors}`);
+
+// 2. 单事务确定性拓扑自愈
+if (report.hasErrors) {
+    const repairReport = await repair({
+        cwd: process.cwd(),
+        dryRun: false,
+    });
+    console.log(`Applied ${repairReport.applied.length} fixes.`);
+}
+
+// 3. 导出项目级 CycloneDX 1.5 SBOM
+const sbom = await generateProjectSbom({
+    cwd: process.cwd(),
+    outputPath: 'brutx-sbom.json',
+});
+```
 
 ## 开发
 

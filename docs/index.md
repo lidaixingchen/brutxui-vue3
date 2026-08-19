@@ -83,6 +83,7 @@ draft ──评审通过──▶ active ──落地完成──▶ done ──
 | [组件视觉效果深化与质感进阶方案](plans/组件视觉效果深化与质感进阶方案.md) | **active** | 材质纹理系统、多重立体与内嵌凹槽阴影、机械微动效与音效联动、工控装配与 HUD 版式四大维度深化 |
 | [命令式弹层宿主深化与MessageBox解耦方案](plans/命令式弹层宿主深化与MessageBox解耦方案.md) | **active** | 命令式 UI 全生命周期宿主深模块构建、LIFO 活动栈与 ESC 路由、MessageBox 独立解耦 |
 | [CLI项目上下文与路径解析引擎封装方案](plans/CLI项目上下文与路径解析引擎封装方案.md) | done | ProjectContext 深模块聚合实体、FileSystemAdapter 双适配器 Seam（Disk/Memory）、路径解析引擎全量收拢与零 IO 测试 |
+| [CLI声明式诊断巡检与自愈引擎方案](plans/CLI声明式诊断巡检与自愈引擎方案.md) | done | 声明式 DiagnosticEngine 规则引擎、五大领域规则集解耦、单事务拓扑原子自愈与 CycloneDX 1.5 SBOM 独立服务 |
 | [注册表编译与AST静态转换管线模块化方案](plans/注册表编译与AST静态转换管线模块化方案.md) | done | RegistryCompiler 深模块编译流水线、SourceProvider 内存/磁盘双适配器 Seam、AST 语义安全重写与发射器解耦 |
 
 
