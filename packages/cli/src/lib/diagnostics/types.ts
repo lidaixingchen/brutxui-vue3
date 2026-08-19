@@ -1,9 +1,11 @@
-import type { BrutalistConfig, BrutxManifest, CheckStatus, FixId } from '../types.js';
+import type { BrutalistConfig, BrutxManifest, CheckStatus } from '../types.js';
+import { FixId } from '../types.js';
 import type { ProjectContext } from '../project-context.js';
 import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
 import type { FileTransaction } from '../file-transaction.js';
 
-export type { CheckStatus, FixId };
+export type { CheckStatus };
+export { FixId };
 export type DiagnosticCategory = 'env' | 'config' | 'tailwind' | 'structure' | 'integrity';
 
 export type RuleFixStatus = 'applied' | 'skipped' | 'failed';

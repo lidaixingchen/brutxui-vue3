@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { MemoryFileSystemAdapter } from '../src/lib/fs/memory-fs.js';
-import { diagnose, DiagnosticEngine } from '../src/lib/services/diagnostic-service.js';
+import { diagnose, repair, DiagnosticEngine } from '../src/lib/services/diagnostic-service.js';
 import { isNodeVersionSupported, nodeVersionRule, workspaceHintRule } from '../src/lib/diagnostics/rules/env-rules.js';
 import type { DiagnosticRule } from '../src/lib/diagnostics/types.js';
 
@@ -98,6 +98,124 @@ describe('DiagnosticEngine & Env Rules (Ticket 1)', () => {
             expect(report.hasWarnings).toBe(true);
             expect(report.getByStatus('warn')).toHaveLength(1);
             expect(report.getByCategory('integrity')).toHaveLength(1);
+        });
+    });
+
+    describe('Config Domain Rules & Atomic Repair (Ticket 2)', () => {
+        it('reports error when components.json does not exist', async () => {
+            const fs = new MemoryFileSystemAdapter();
+            await fs.ensureDir('/app');
+
+            const report = await diagnose({
+                cwd: '/app',
+                fs,
+                categories: ['config'],
+            });
+
+            expect(report.summary.total).toBe(1);
+            expect(report.hasErrors).toBe(true);
+            const existsCheck = report.getByRuleId('config.exists')[0];
+            expect(existsCheck.status).toBe('error');
+        });
+
+        it('detects and fixes missing schema, version and style', async () => {
+            const fs = new MemoryFileSystemAdapter();
+            await fs.ensureDir('/app');
+            // 初始化一个不完整的配置
+            const initialConfig = {
+                tailwind: { config: 'tailwind.config.js', css: '@/styles.css' },
+                aliases: { components: '@/components', utils: '@/lib/utils', composables: '@/composables' },
+            };
+            await fs.writeJson('/app/components.json', initialConfig);
+
+            const initialReport = await diagnose({
+                cwd: '/app',
+                fs,
+                categories: ['config'],
+            });
+
+            expect(initialReport.getByRuleId('config.exists')[0].status).toBe('pass');
+            expect(initialReport.getByRuleId('config.schema')[0].status).toBe('warn');
+            expect(initialReport.getByRuleId('config.version')[0].status).toBe('warn');
+            expect(initialReport.getByRuleId('config.style')[0].status).toBe('warn');
+            expect(initialReport.fixableCount).toBe(3);
+
+            // 执行自愈
+            const repairReport = await repair({
+                cwd: '/app',
+                fs,
+                categories: ['config'],
+            });
+
+            expect(repairReport.applied).toHaveLength(3);
+            expect(repairReport.failed).toHaveLength(0);
+            expect(repairReport.configUpdated).toBe(true);
+
+            // 检查写回后的内存文件
+            const updatedConfig = await fs.readJson<any>('/app/components.json');
+            expect(updatedConfig.$schema).toBeDefined();
+            expect(updatedConfig.$version).toBe(1);
+            expect(updatedConfig.style).toBe('brutalism');
+
+            // 验证最新报告中已全部 pass
+            expect(repairReport.freshReport.getByRuleId('config.schema')[0].status).toBe('pass');
+            expect(repairReport.freshReport.getByRuleId('config.version')[0].status).toBe('pass');
+            expect(repairReport.freshReport.getByRuleId('config.style')[0].status).toBe('pass');
+            expect(repairReport.freshReport.hasErrors).toBe(false);
+            expect(repairReport.freshReport.hasWarnings).toBe(false);
+        });
+
+        it('respects dryRun option and rolls back changes', async () => {
+            const fs = new MemoryFileSystemAdapter();
+            await fs.ensureDir('/app');
+            const initialConfig = {
+                tailwind: { config: 'tailwind.config.js', css: '@/styles.css' },
+                aliases: { components: '@/components', utils: '@/lib/utils', composables: '@/composables' },
+            };
+            await fs.writeJson('/app/components.json', initialConfig);
+
+            const repairReport = await repair({
+                cwd: '/app',
+                fs,
+                categories: ['config'],
+                dryRun: true,
+            });
+
+            expect(repairReport.applied).toHaveLength(3);
+            expect(repairReport.configUpdated).toBe(false);
+
+            // 文件应保持未修改
+            const persistedConfig = await fs.readJson<any>('/app/components.json');
+            expect(persistedConfig.$schema).toBeUndefined();
+            expect(persistedConfig.$version).toBeUndefined();
+        });
+
+        it('detects deprecated brutalism plugin in tailwind config', async () => {
+            const fs = new MemoryFileSystemAdapter();
+            await fs.ensureDir('/app');
+            await fs.writeJson('/app/components.json', {
+                $schema: 'https://example.com/schema.json',
+                $version: 1,
+                style: 'brutalism',
+                tailwind: { config: 'tailwind.config.js', css: '@/styles.css' },
+                aliases: { components: '@/components', utils: '@/lib/utils', composables: '@/composables' },
+            });
+            await fs.writeFile('/app/tailwind.config.js', `
+                module.exports = {
+                    plugins: [require('brutx-ui-vue/brutalism-plugin')],
+                };
+            `);
+
+            const report = await diagnose({
+                cwd: '/app',
+                fs,
+                ruleIds: ['config.deprecated-plugin'],
+            });
+
+            expect(report.summary.total).toBe(1);
+            const pluginCheck = report.getByRuleId('config.deprecated-plugin')[0];
+            expect(pluginCheck.status).toBe('warn');
+            expect(pluginCheck.message).toContain('deprecated empty brutalism plugin');
         });
     });
 });
