@@ -14,7 +14,7 @@ export default defineConfig({
         testTimeout: 10000,
         environment: 'happy-dom',
         setupFiles: ['./src/vitest.setup.ts'],
-        include: ['src/**/*.{test,spec}.{ts,tsx}'],
+        include: ['src/**/*.{test,spec}.{ts,tsx}', 'scripts/**/*.{test,spec}.{ts,tsx}'],
         exclude: ['src/**/*.browser.test.ts', ...defaultExclude],
         pool: 'threads',
         maxWorkers: 4,

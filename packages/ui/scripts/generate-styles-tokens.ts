@@ -1,45 +1,17 @@
-/**
- * 从 packages/shared/src/design-tokens.ts 生成样式文件的注入块：
- *
- * 1. styles.css @theme 块内的变量声明（含 fallback，取自 BASE_THEME.light）
- *    标记：/* @brutx:theme-tokens:start *\/ ... /* @brutx:theme-tokens:end *\/
- *
- * 2. styles.css @layer base 内的 :root / .dark 块（无 fallback，纯运行时值）
- *    标记：/* @brutx:root-tokens:start *\/ ... /* @brutx:root-tokens:end *\/
- *
- * 3. styles.css @layer base 内的主题预设块
- *    标记：/* @brutx:theme-presets:start *\/ ... /* @brutx:theme-presets:end *\/
- *
- * 4. preflight.css body 的 font-family 兜底（源自 shared FONT_STACK_PARTS）
- *    标记：/* @brutx:font-stack:start *\/ ... /* @brutx:font-stack:end *\/
- *
- * 5. packages/cli/src/styles/brutalist.css 标记注入：
- *    - @theme 区块：/* @brutx:theme-tokens:start *\/ ... /* @brutx:theme-tokens:end *\/
- *    - :root / .dark 区块：/* @brutx:root-tokens:start *\/ ... /* @brutx:root-tokens:end *\/
- *    - 主题预设区块：/* @brutx:theme-presets:start *\/ ... /* @brutx:theme-presets:end *\/
- *    - 保留主题预设结束标记之后的全部静态兼容性工具类。
- *
- * 模式：
- *   - 默认：写回 styles.css、preflight.css 与 brutalist.css（prebuild）
- *   - --check：仅比对磁盘与生成结果，不一致则退出非零并打印差异摘要（CI 门禁）
- *
- * 运行：pnpm --filter brutx-ui-vue prebuild:tokens
- */
-import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { DiskFileSystemAdapter } from 'brutx-shared-vue/fs';
 import {
-    CSS_VARS,
-    BASE_THEME,
-    THEME_PRESETS,
-    TOKEN_TO_CSS_VAR,
-    FONT_STACK,
-    FONT_STACK_PARTS,
-    EASING_TOKENS,
-    SUBTLE_COLOR_DEFS,
-    SHADOW_DEFINITIONS,
-    type ThemeTokens,
-} from 'brutx-shared-vue';
+    TokenStyleCompiler,
+    THEME_START,
+    THEME_END,
+    ROOT_START,
+    ROOT_END,
+    PRESETS_START,
+    PRESETS_END,
+    FONT_STACK_START,
+    FONT_STACK_END,
+} from './compiler/token-style-compiler.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -47,198 +19,6 @@ const STYLES_PATH = path.resolve(__dirname, '..', 'src', 'styles.css');
 const PREFLIGHT_PATH = path.resolve(__dirname, '..', 'src', 'preflight.css');
 const CLI_BRUTALIST_PATH = path.resolve(__dirname, '..', '..', 'cli', 'src', 'styles', 'brutalist.css');
 
-const ROOT_START = '/* @brutx:root-tokens:start */';
-const ROOT_END = '/* @brutx:root-tokens:end */';
-const THEME_START = '/* @brutx:theme-tokens:start */';
-const THEME_END = '/* @brutx:theme-tokens:end */';
-const PRESETS_START = '/* @brutx:theme-presets:start */';
-const PRESETS_END = '/* @brutx:theme-presets:end */';
-const FONT_STACK_START = '/* @brutx:font-stack:start */';
-const FONT_STACK_END = '/* @brutx:font-stack:end */';
-
-interface ThemeEntry {
-    themeVar: string;
-    build: (l: ThemeTokens) => string;
-}
-
-interface ThemeGroup {
-    comment: string;
-    entries: ThemeEntry[];
-}
-
-interface SubtleEntry {
-    varName: string;
-    buildLight: (l: ThemeTokens) => string;
-    buildDark: (d: ThemeTokens) => string;
-}
-
-const SHADOW_ENTRIES: ThemeEntry[] = SHADOW_DEFINITIONS.map(def => ({
-    themeVar: def.themeVar,
-    build: def.build,
-}));
-
-const SUBTLE_ENTRIES: SubtleEntry[] = SUBTLE_COLOR_DEFS.map(({ key, lightPct, darkPct }) => ({
-    varName: `brutal-${key}-subtle`,
-    buildLight: (l: ThemeTokens) => `color-mix(in srgb, var(--brutal-${key}, ${l[key]}) ${lightPct}%, var(--brutal-bg, #ffffff))`,
-    buildDark: (d: ThemeTokens) => `color-mix(in srgb, var(--brutal-${key}, ${d[key]}) ${darkPct}%, var(--brutal-bg, #141414))`,
-}));
-
-const EASING_ENTRIES: ThemeEntry[] = Object.entries(EASING_TOKENS).map(([key, val]) => ({
-    themeVar: `--ease-brutal-${key}`,
-    build: () => val,
-}));
-
-const NON_COLOR_TOKEN_KEYS = new Set<keyof ThemeTokens>([
-    'borderWidth',
-    'borderColor',
-    'shadowOffsetX',
-    'shadowOffsetY',
-    'shadowColor',
-    'radius',
-]);
-
-const DYNAMIC_COLOR_ENTRIES: ThemeEntry[] = (Object.keys(TOKEN_TO_CSS_VAR) as Array<keyof ThemeTokens>)
-    .filter(key => !NON_COLOR_TOKEN_KEYS.has(key))
-    .map(key => {
-        const cssVarName = TOKEN_TO_CSS_VAR[key];
-        return {
-            themeVar: `--color-${cssVarName}`,
-            build: (l: ThemeTokens) => `var(--${cssVarName}, ${l[key]})`,
-        };
-    });
-
-const THEME_GROUPS: ThemeGroup[] = [
-    {
-        comment:
-            'Dynamic color tokens derived from design-tokens.ts:\n       Resolve at runtime via --brutal-* for dark mode and theme presets support.\n       Fallbacks sourced from BASE_THEME.light.',
-        entries: DYNAMIC_COLOR_ENTRIES,
-    },
-    {
-        comment: 'Dynamic: subtle backgrounds derived via color-mix',
-        entries: SUBTLE_ENTRIES.map(e => ({
-            themeVar: `--color-${e.varName}`,
-            build: (l: ThemeTokens) => `var(--${e.varName}, ${e.buildLight(l)})`,
-        })),
-    },
-    {
-        comment: 'Dynamic: border/radius use --brutal-* for theme support',
-        entries: [
-            { themeVar: '--border-width-3', build: (l: ThemeTokens) => `var(--brutal-border-width, ${l.borderWidth})` },
-            { themeVar: '--radius-brutal', build: (l: ThemeTokens) => `var(--brutal-radius, ${l.radius})` },
-        ],
-    },
-    {
-        comment: 'Default font family (preflight html/body 继承，可被消费方 @theme 覆盖)',
-        entries: [
-            {
-                themeVar: '--default-font-family',
-                build: () => FONT_STACK,
-            },
-        ],
-    },
-    {
-        comment: 'brutal shadows：经 @theme 派生标准组装工具类，与 :root 双发射',
-        entries: SHADOW_ENTRIES,
-    },
-    {
-        comment: 'Mechanical motion easing curves',
-        entries: EASING_ENTRIES,
-    },
-];
-
-function formatVarsBlock(selector: string, vars: Record<string, string>, indentSpaces = 4): string {
-    const baseIndent = ' '.repeat(indentSpaces);
-    const varIndent = ' '.repeat(indentSpaces + 4);
-    const lines = Object.entries(vars).map(
-        ([key, value]) => `${varIndent}--${key}: ${value};`,
-    );
-    return `${baseIndent}${selector} {\n${lines.join('\n')}\n${baseIndent}}`;
-}
-
-function generateRootBlock(indentSpaces = 4): string {
-    const lightVars: Record<string, string> = { ...CSS_VARS.light };
-    for (const entry of SHADOW_ENTRIES) {
-        lightVars[entry.themeVar.slice(2)] = entry.build(BASE_THEME.light);
-    }
-    for (const entry of SUBTLE_ENTRIES) {
-        lightVars[entry.varName] = entry.buildLight(BASE_THEME.light);
-    }
-
-    const darkVars: Record<string, string> = { ...CSS_VARS.dark };
-    for (const entry of SUBTLE_ENTRIES) {
-        darkVars[entry.varName] = entry.buildDark(BASE_THEME.dark);
-    }
-
-    const lightBlock = formatVarsBlock(':root', lightVars, indentSpaces);
-    const darkBlock = formatVarsBlock('.dark', darkVars, indentSpaces);
-    return `${lightBlock}\n\n${darkBlock}`;
-}
-
-function generateThemeBlock(): string {
-    const light = BASE_THEME.light;
-    const lines: string[] = [];
-    for (let gi = 0; gi < THEME_GROUPS.length; gi++) {
-        const group = THEME_GROUPS[gi];
-        lines.push(`    /* ${group.comment} */`);
-        for (const entry of group.entries) {
-            lines.push(`    ${entry.themeVar}: ${entry.build(light)};`);
-        }
-        if (gi < THEME_GROUPS.length - 1) {
-            lines.push('');
-        }
-    }
-    return lines.join('\n');
-}
-
-function collectPresetVars(overrides: Partial<ThemeTokens>, presetName: string): Record<string, string> {
-    const vars: Record<string, string> = {};
-    for (const [tokenKey, value] of Object.entries(overrides)) {
-        if (value === undefined) continue;
-        const varName = TOKEN_TO_CSS_VAR[tokenKey as keyof ThemeTokens];
-        if (!varName) {
-            console.warn(`[generate-styles-tokens] 预设 "${presetName}" 的 token "${tokenKey}" 缺少 CSS 变量映射，已跳过`);
-            continue;
-        }
-        vars[varName] = value;
-    }
-    return vars;
-}
-
-/** 生成主题预设规则块（.theme-pastel / .theme-mono / .theme-warm 的 light 与 dark） */
-function generateThemePresetsBlock(indentSpaces = 4): string {
-    const blocks: string[] = [];
-    const baseIndent = ' '.repeat(indentSpaces);
-    for (const preset of Object.values(THEME_PRESETS)) {
-        if (preset.description) {
-            blocks.push(`${baseIndent}/* ${preset.description} */`);
-        }
-        const selector = `.theme-${preset.name}`;
-        const darkSelector = `.dark .theme-${preset.name}, .theme-${preset.name}.dark`;
-
-        const lightVars = collectPresetVars(preset.light, preset.name);
-        blocks.push(formatVarsBlock(selector, lightVars, indentSpaces));
-
-        const darkVars = collectPresetVars(preset.dark, preset.name);
-        blocks.push(formatVarsBlock(darkSelector, darkVars, indentSpaces));
-    }
-    return blocks.join('\n\n');
-}
-
-/** 生成 preflight.css body 的 font-family 声明（含 --default-font-family 兜底），缩进与 body 规则体一致。 */
-function generateFontStackBlock(): string {
-    const lines: string[] = [
-        '        font-family: var(',
-        '            --default-font-family,',
-    ];
-    for (let i = 0; i < FONT_STACK_PARTS.length; i++) {
-        const comma = i < FONT_STACK_PARTS.length - 1 ? ',' : '';
-        lines.push(`            ${FONT_STACK_PARTS[i]}${comma}`);
-    }
-    lines.push('        );');
-    return lines.join('\n');
-}
-
-/** 打印某注入区间「磁盘现状 vs 生成期望」的差异摘要（供 --check 模式使用）。 */
 function printBlockDiff(
     content: string,
     startMarker: string,
@@ -256,110 +36,33 @@ function printBlockDiff(
     console.error(`\n${generated}`);
 }
 
-function injectBetweenMarkers(
-    content: string,
-    startMarker: string,
-    endMarker: string,
-    generated: string,
-    filePath: string,
-): string {
-    const startIdx = content.indexOf(startMarker);
-    const endIdx = content.indexOf(endMarker);
-    if (startIdx === -1 || endIdx === -1) {
-        throw new Error(
-            `无法在 ${filePath} 中找到注入标记。请确认存在 "${startMarker}" 与 "${endMarker}"。`,
-        );
-    }
-    const startLineStart = content.lastIndexOf('\n', startIdx) + 1;
-    const indent = content.slice(startLineStart, startIdx);
-    const before = content.slice(0, startIdx + startMarker.length);
-    const after = content.slice(endIdx);
-    return `${before}\n${generated}\n${indent}${after}`;
-}
+async function main(): Promise<void> {
+    const fs = new DiskFileSystemAdapter();
+    const compiler = new TokenStyleCompiler();
 
-function main(): void {
     const isCheckMode = process.argv.slice(2).includes('--check');
     const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v') || process.env.BRUTX_VERBOSE === '1';
 
-    // --- 1. styles.css 令牌块与预设块 ---
-    const stylesOriginal = fs.readFileSync(STYLES_PATH, 'utf-8');
-    let stylesContent = stylesOriginal;
+    // 1. styles.css
+    const stylesOriginal = await fs.readFile(STYLES_PATH, 'utf-8');
+    const { content: stylesNext, changed: stylesChanged } = compiler.patchStylesCss(stylesOriginal);
 
-    const themeBlock = generateThemeBlock();
-    const stylesThemeNext = injectBetweenMarkers(stylesContent, THEME_START, THEME_END, themeBlock, STYLES_PATH);
-    const stylesThemeChanged = stylesThemeNext !== stylesContent;
-    if (stylesThemeChanged) {
-        stylesContent = stylesThemeNext;
-    }
+    // 2. preflight.css
+    const preflightOriginal = await fs.readFile(PREFLIGHT_PATH, 'utf-8');
+    const { content: preflightNext, changed: preflightChanged } = compiler.patchPreflightCss(preflightOriginal);
 
-    const stylesRootBlock = generateRootBlock(4);
-    const stylesRootNext = injectBetweenMarkers(stylesContent, ROOT_START, ROOT_END, stylesRootBlock, STYLES_PATH);
-    const stylesRootChanged = stylesRootNext !== stylesContent;
-    if (stylesRootChanged) {
-        stylesContent = stylesRootNext;
-    }
-
-    const stylesPresetsBlock = generateThemePresetsBlock(4);
-    const stylesPresetsNext = injectBetweenMarkers(stylesContent, PRESETS_START, PRESETS_END, stylesPresetsBlock, STYLES_PATH);
-    const stylesPresetsChanged = stylesPresetsNext !== stylesContent;
-    if (stylesPresetsChanged) {
-        stylesContent = stylesPresetsNext;
-    }
-
-    const stylesChanged = stylesThemeChanged || stylesRootChanged || stylesPresetsChanged;
-
-    // --- 2. preflight.css 字体栈 ---
-    const preflightOriginal = fs.readFileSync(PREFLIGHT_PATH, 'utf-8');
-    const fontStackBlock = generateFontStackBlock();
-    const preflightNext = injectBetweenMarkers(
-        preflightOriginal,
-        FONT_STACK_START,
-        FONT_STACK_END,
-        fontStackBlock,
-        PREFLIGHT_PATH,
-    );
-    const preflightChanged = preflightNext !== preflightOriginal;
-
-    // --- 3. CLI brutalist.css 标记注入 ---
+    // 3. CLI brutalist.css
     let cliChanged = false;
     let cliOriginal = '';
     let cliNext = '';
-    let cliThemeChanged = false;
-    let cliRootChanged = false;
-    let cliPresetsChanged = false;
-    const cliRootBlock = generateRootBlock(0);
-    const cliPresetsBlock = generateThemePresetsBlock(0);
-
-    if (!fs.existsSync(CLI_BRUTALIST_PATH)) {
-        if (isCheckMode) {
-            console.error(`✗ CLI brutalist.css 不存在：${CLI_BRUTALIST_PATH}`);
-            process.exit(1);
-        }
-        console.warn(`⚠ CLI brutalist.css 不存在，已跳过注入：${CLI_BRUTALIST_PATH}`);
-    } else {
-        cliOriginal = fs.readFileSync(CLI_BRUTALIST_PATH, 'utf-8');
-        let cliContent = cliOriginal;
-
-        const cliThemeNext = injectBetweenMarkers(cliContent, THEME_START, THEME_END, themeBlock, CLI_BRUTALIST_PATH);
-        cliThemeChanged = cliThemeNext !== cliContent;
-        if (cliThemeChanged) {
-            cliContent = cliThemeNext;
-        }
-
-        const cliRootNextInner = injectBetweenMarkers(cliContent, ROOT_START, ROOT_END, cliRootBlock, CLI_BRUTALIST_PATH);
-        cliRootChanged = cliRootNextInner !== cliContent;
-        if (cliRootChanged) {
-            cliContent = cliRootNextInner;
-        }
-
-        const cliPresetsNextInner = injectBetweenMarkers(cliContent, PRESETS_START, PRESETS_END, cliPresetsBlock, CLI_BRUTALIST_PATH);
-        cliPresetsChanged = cliPresetsNextInner !== cliContent;
-        if (cliPresetsChanged) {
-            cliContent = cliPresetsNextInner;
-        }
-
-        cliNext = cliContent;
-        cliChanged = cliThemeChanged || cliRootChanged || cliPresetsChanged;
+    if (await fs.pathExists(CLI_BRUTALIST_PATH)) {
+        cliOriginal = await fs.readFile(CLI_BRUTALIST_PATH, 'utf-8');
+        const res = compiler.patchCliBrutalistCss(cliOriginal);
+        cliNext = res.content;
+        cliChanged = res.changed;
+    } else if (isCheckMode) {
+        console.error(`✗ CLI brutalist.css 不存在：${CLI_BRUTALIST_PATH}`);
+        process.exit(1);
     }
 
     const hasAnyChange = stylesChanged || preflightChanged || cliChanged;
@@ -373,40 +76,35 @@ function main(): void {
 
     if (isCheckMode) {
         console.error('✗ 生成内容与磁盘不一致，需运行 `pnpm prebuild:tokens` 重新生成。');
-        if (stylesThemeChanged) {
-            printBlockDiff(stylesOriginal, THEME_START, THEME_END, themeBlock, 'styles.css @theme 令牌块');
-        }
-        if (stylesRootChanged) {
-            printBlockDiff(stylesOriginal, ROOT_START, ROOT_END, stylesRootBlock, 'styles.css :root/.dark 区块');
-        }
-        if (stylesPresetsChanged) {
-            printBlockDiff(stylesOriginal, PRESETS_START, PRESETS_END, stylesPresetsBlock, 'styles.css 主题预设区块');
+        if (stylesChanged) {
+            printBlockDiff(stylesOriginal, THEME_START, THEME_END, compiler.compileThemeBlock(), 'styles.css @theme 令牌块');
+            printBlockDiff(stylesOriginal, ROOT_START, ROOT_END, compiler.compileRootBlock(4), 'styles.css :root/.dark 区块');
+            printBlockDiff(stylesOriginal, PRESETS_START, PRESETS_END, compiler.compileThemePresetsBlock(4), 'styles.css 主题预设区块');
         }
         if (preflightChanged) {
-            printBlockDiff(preflightOriginal, FONT_STACK_START, FONT_STACK_END, fontStackBlock, 'preflight.css 字体栈');
+            printBlockDiff(preflightOriginal, FONT_STACK_START, FONT_STACK_END, compiler.compileFontStackBlock(), 'preflight.css 字体栈');
         }
-        if (cliThemeChanged) {
-            printBlockDiff(cliOriginal, THEME_START, THEME_END, themeBlock, 'CLI brutalist.css @theme 令牌块');
-        }
-        if (cliRootChanged) {
-            printBlockDiff(cliOriginal, ROOT_START, ROOT_END, cliRootBlock, 'CLI brutalist.css :root/.dark 区块');
-        }
-        if (cliPresetsChanged) {
-            printBlockDiff(cliOriginal, PRESETS_START, PRESETS_END, cliPresetsBlock, 'CLI brutalist.css 主题预设区块');
+        if (cliChanged) {
+            printBlockDiff(cliOriginal, THEME_START, THEME_END, compiler.compileThemeBlock(), 'CLI brutalist.css @theme 令牌块');
+            printBlockDiff(cliOriginal, ROOT_START, ROOT_END, compiler.compileRootBlock(0), 'CLI brutalist.css :root/.dark 区块');
+            printBlockDiff(cliOriginal, PRESETS_START, PRESETS_END, compiler.compileThemePresetsBlock(0), 'CLI brutalist.css 主题预设区块');
         }
         process.exit(1);
     }
 
     if (stylesChanged) {
-        fs.writeFileSync(STYLES_PATH, stylesContent, 'utf-8');
+        await fs.writeFile(STYLES_PATH, stylesNext, 'utf-8');
     }
     if (preflightChanged) {
-        fs.writeFileSync(PREFLIGHT_PATH, preflightNext, 'utf-8');
+        await fs.writeFile(PREFLIGHT_PATH, preflightNext, 'utf-8');
     }
     if (cliChanged) {
-        fs.writeFileSync(CLI_BRUTALIST_PATH, cliNext, 'utf-8');
+        await fs.writeFile(CLI_BRUTALIST_PATH, cliNext, 'utf-8');
     }
     console.log('✓ styles.css、preflight.css 与 CLI brutalist.css 令牌块已从 design-tokens.ts 重新生成');
 }
 
-main();
+main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+});
