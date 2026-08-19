@@ -297,7 +297,7 @@ export function rewriteImports(
 }
 
 /**
- * 提取重写后代码中指定目录前缀的文件名依赖（如 'lib', 'composables'）。
+ * 提取代码中指定前缀目录（如 'lib', 'composables', 'locales'）的相对文件依赖。
  */
 export function extractDeps(code: string, dirPrefix: string): string[] {
     const specifiers = extractModuleSpecifiers(code);
@@ -306,42 +306,47 @@ export function extractDeps(code: string, dirPrefix: string): string[] {
 
     for (const spec of specifiers) {
         if (spec.startsWith(prefix)) {
-            const clean = spec.slice(prefix.length).split(/[?#]/)[0];
-            if (clean) {
-                const file = clean.endsWith('.vue') || clean.endsWith('.ts') || clean.endsWith('.css')
-                    ? clean
-                    : `${clean}.ts`;
-                deps.add(file);
+            const remainder = spec.slice(prefix.length).split(/[?#]/)[0];
+            if (remainder) {
+                const normalized = remainder.endsWith('.ts') || remainder.endsWith('.vue') || remainder.endsWith('.css')
+                    ? remainder
+                    : `${remainder}.ts`;
+                deps.add(normalized);
             }
         }
     }
 
-    return Array.from(deps).sort();
+    return Array.from(deps);
 }
 
 /**
- * 提取代码中引用的其他注册表组件依赖（不含当前组件自身）。
+ * 提取代码中引用的其他注册表组件依赖（不含当前组件自身，跳过纯类型导入，仅收集已知组件）。
  */
-export function extractRegistryDeps(code: string, componentName: string): string[] {
-    const specifiers = extractModuleSpecifiers(code);
+export function extractRegistryDeps(code: string, componentName: string, knownComponents?: Set<string>): string[] {
+    const items = extractClassifiedModuleSpecifiers(code);
     const prefix = '@/components/ui/';
     const deps = new Set<string>();
 
-    for (const spec of specifiers) {
+    for (const item of items) {
+        if (item.isTypeOnly) continue;
+        const spec = item.specifier;
         if (spec.startsWith(prefix)) {
             const remainder = spec.slice(prefix.length);
             const comp = remainder.split('/')[0];
-            if (comp && comp !== componentName && COMPONENT_METADATA[comp]) {
-                deps.add(comp);
+            if (comp && comp !== componentName) {
+                const isKnown = knownComponents ? knownComponents.has(comp) : Boolean(COMPONENT_METADATA[comp]);
+                if (isKnown) {
+                    deps.add(comp);
+                }
             }
         }
     }
 
-    return Array.from(deps).sort();
+    return Array.from(deps);
 }
 
 /**
- * 提取组件内部子文件依赖（如 '@/components/ui/{componentName}/SubPart.vue'）。
+ * 提取同一组件内部的其它源文件依赖（相对组件目录的相对文件名）。
  */
 export function extractComponentFileDeps(code: string, componentName: string): string[] {
     const specifiers = extractModuleSpecifiers(code);
@@ -350,14 +355,17 @@ export function extractComponentFileDeps(code: string, componentName: string): s
 
     for (const spec of specifiers) {
         if (spec.startsWith(prefix)) {
-            const remainder = spec.slice(prefix.length).split(/[?#]/)[0];
-            if (remainder) {
-                files.add(remainder);
+            const file = spec.slice(prefix.length);
+            if (file && file !== 'index.ts' && file !== 'index') {
+                const normalized = file.endsWith('.vue') || file.endsWith('.ts') || file.endsWith('.css')
+                    ? file
+                    : `${file}.ts`;
+                files.add(normalized);
             }
         }
     }
 
-    return Array.from(files).sort();
+    return Array.from(files);
 }
 
 /**
@@ -378,7 +386,7 @@ export function extractUnknownRegistryDeps(code: string): string[] {
         }
     }
 
-    return Array.from(unknowns).sort();
+    return Array.from(unknowns);
 }
 
 /**
@@ -399,8 +407,9 @@ export function assertKnownRegistryDeps(code: string, ownerName: string, sourceL
  */
 export function getFileType(filePath: string): RegistryFileType {
     const posix = filePath.replace(/\\/g, '/');
-    if (posix.includes('/composables/')) return 'registry:hook';
-    if (posix.includes('/lib/')) return 'registry:lib';
-    if (posix.includes('/directives/')) return 'registry:directive';
-    return 'registry:ui';
+    if (posix.startsWith('composables/') || posix.includes('/composables/')) return 'registry:hook';
+    if (posix.startsWith('directives/') || posix.includes('/directives/')) return 'registry:directive';
+    if (posix.startsWith('lib/') || posix.includes('/lib/')) return 'registry:lib';
+    if (posix.endsWith('.vue') || posix.endsWith('.css')) return 'registry:ui';
+    return 'registry:lib';
 }

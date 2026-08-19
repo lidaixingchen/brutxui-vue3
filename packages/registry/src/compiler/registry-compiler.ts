@@ -291,7 +291,7 @@ export class RegistryCompiler {
 
         // 3. 构建 RegistryIndex
         const index: RegistryIndex = {
-            $schema: 'https://ui.shadcn.com/schema/registry-index.json',
+            $schema: 'https://ui.shadcn.com/schema/registry.json',
             name: 'brutx-ui-vue',
             schemaVersion: REGISTRY_SCHEMA_VERSION,
             registryVersion: '0.1.0',

@@ -40,6 +40,13 @@ export class CacheManager {
         return raw.replace(/\r\n/g, '\n');
     }
 
+    private async resolveExtension(rawFileName: string, baseDir: string): Promise<string> {
+        if (path.extname(rawFileName)) return rawFileName;
+        if (await this.fs.pathExists(path.join(baseDir, `${rawFileName}.vue`))) return `${rawFileName}.vue`;
+        if (await this.fs.pathExists(path.join(baseDir, `${rawFileName}.ts`))) return `${rawFileName}.ts`;
+        return rawFileName;
+    }
+
     public async computeSourceHash(
         name: string,
         fileMapping: { files: string[]; composables?: string[]; directives?: string[] },
@@ -64,7 +71,8 @@ export class CacheManager {
         const localeDeps = new Set<string>();
         const libDeps = new Set<string>();
 
-        const addComponentFile = async (fileName: string): Promise<void> => {
+        const addComponentFile = async (rawName: string): Promise<void> => {
+            const fileName = await this.resolveExtension(rawName, path.join(paths.componentsDir, name));
             const filePath = path.join(paths.componentsDir, name, fileName);
             if (!(await this.fs.pathExists(filePath))) {
                 throw new Error(`Source file not found: ${filePath}`);
@@ -72,14 +80,26 @@ export class CacheManager {
             const code = await this.readSource(filePath);
             parts.push(code);
             const rewritten = rewriteImports(code, name, 'component');
-            extractComponentFileDeps(rewritten, name).forEach(d => componentDeps.add(d));
-            extractDeps(rewritten, 'composables').forEach(d => composableDeps.add(d));
-            extractDeps(rewritten, 'locales').forEach(d => localeDeps.add(d));
-            extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
+
+            for (const d of extractComponentFileDeps(rewritten, name)) {
+                componentDeps.add(await this.resolveExtension(d, path.join(paths.componentsDir, name)));
+            }
+            for (const d of extractDeps(rewritten, 'composables')) {
+                composableDeps.add(await this.resolveExtension(d, paths.composablesDir));
+            }
+            for (const d of extractDeps(rewritten, 'locales')) {
+                localeDeps.add(await this.resolveExtension(d, paths.localesDir));
+            }
+            for (const d of extractDeps(rewritten, 'lib')) {
+                libDeps.add(await this.resolveExtension(d, paths.libDir));
+            }
+
+            addedComponentDeps.add(rawName);
             addedComponentDeps.add(fileName);
         };
 
-        const addComposableFile = async (composableName: string): Promise<void> => {
+        const addComposableFile = async (rawName: string): Promise<void> => {
+            const composableName = await this.resolveExtension(rawName, paths.composablesDir);
             const composablePath = path.join(paths.composablesDir, composableName);
             if (!(await this.fs.pathExists(composablePath))) {
                 throw new Error(`Composable file not found: ${composablePath}`);
@@ -87,9 +107,18 @@ export class CacheManager {
             const code = await this.readSource(composablePath);
             parts.push(code);
             const rewritten = rewriteImports(code, name, 'composable');
-            extractDeps(rewritten, 'composables').forEach(d => composableDeps.add(d));
-            extractDeps(rewritten, 'locales').forEach(d => localeDeps.add(d));
-            extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
+
+            for (const d of extractDeps(rewritten, 'composables')) {
+                composableDeps.add(await this.resolveExtension(d, paths.composablesDir));
+            }
+            for (const d of extractDeps(rewritten, 'locales')) {
+                localeDeps.add(await this.resolveExtension(d, paths.localesDir));
+            }
+            for (const d of extractDeps(rewritten, 'lib')) {
+                libDeps.add(await this.resolveExtension(d, paths.libDir));
+            }
+
+            addedComposableDeps.add(rawName);
             addedComposableDeps.add(composableName);
         };
 
@@ -107,7 +136,8 @@ export class CacheManager {
         const addedDirectiveDeps = new Set<string>();
         while (addedDirectiveDeps.size < directiveDeps.size) {
             const pending = Array.from(directiveDeps).filter(d => !addedDirectiveDeps.has(d));
-            for (const directiveName of pending) {
+            for (const rawName of pending) {
+                const directiveName = await this.resolveExtension(rawName, paths.directivesDir);
                 const directivePath = path.join(paths.directivesDir, directiveName);
                 if (!(await this.fs.pathExists(directivePath))) {
                     throw new Error(`Directive file not found: ${directivePath}`);
@@ -115,10 +145,21 @@ export class CacheManager {
                 const code = await this.readSource(directivePath);
                 parts.push(code);
                 const rewritten = rewriteImports(code, name, 'directive');
-                extractDeps(rewritten, 'composables').forEach(d => composableDeps.add(d));
-                extractDeps(rewritten, 'locales').forEach(d => localeDeps.add(d));
-                extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
-                extractDeps(rewritten, 'directives').forEach(d => directiveDeps.add(d));
+
+                for (const d of extractDeps(rewritten, 'composables')) {
+                    composableDeps.add(await this.resolveExtension(d, paths.composablesDir));
+                }
+                for (const d of extractDeps(rewritten, 'locales')) {
+                    localeDeps.add(await this.resolveExtension(d, paths.localesDir));
+                }
+                for (const d of extractDeps(rewritten, 'lib')) {
+                    libDeps.add(await this.resolveExtension(d, paths.libDir));
+                }
+                for (const d of extractDeps(rewritten, 'directives')) {
+                    directiveDeps.add(await this.resolveExtension(d, paths.directivesDir));
+                }
+
+                addedDirectiveDeps.add(rawName);
                 addedDirectiveDeps.add(directiveName);
             }
         }
@@ -131,28 +172,39 @@ export class CacheManager {
             }
 
             const pendingLocales = Array.from(localeDeps).filter(l => !addedLocaleDeps.has(l));
-            for (const localeName of pendingLocales) {
+            for (const rawLocaleName of pendingLocales) {
+                const localeName = await this.resolveExtension(rawLocaleName, paths.localesDir);
                 const localePath = path.join(paths.localesDir, localeName);
                 if (await this.fs.pathExists(localePath)) {
                     const code = await this.readSource(localePath);
                     parts.push(code);
                     const rewritten = rewriteImports(code, name, 'locale');
-                    extractDeps(rewritten, 'locales').forEach(d => localeDeps.add(d));
-                    extractDeps(rewritten, 'composables').forEach(d => composableDeps.add(d));
-                    extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
+                    for (const d of extractDeps(rewritten, 'locales')) {
+                        localeDeps.add(await this.resolveExtension(d, paths.localesDir));
+                    }
+                    for (const d of extractDeps(rewritten, 'composables')) {
+                        composableDeps.add(await this.resolveExtension(d, paths.composablesDir));
+                    }
+                    for (const d of extractDeps(rewritten, 'lib')) {
+                        libDeps.add(await this.resolveExtension(d, paths.libDir));
+                    }
                 }
+                addedLocaleDeps.add(rawLocaleName);
                 addedLocaleDeps.add(localeName);
             }
         }
 
-        for (const libName of libDeps) {
+        for (const rawLibName of libDeps) {
+            const libName = await this.resolveExtension(rawLibName, paths.libDir);
             const libPath = path.join(paths.libDir, libName);
             if (!(await this.fs.pathExists(libPath))) {
                 throw new Error(`Lib file not found: ${libPath}`);
             }
             const code = await this.readSource(libPath);
             const rewritten = rewriteImports(code, name, 'lib');
-            extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
+            for (const d of extractDeps(rewritten, 'lib')) {
+                libDeps.add(await this.resolveExtension(d, paths.libDir));
+            }
 
             if (libExclude.has(libName)) continue;
             parts.push(code);

@@ -74,7 +74,7 @@ describe('AstRewriter', () => {
             'await import(\'@/components/ui/popover/PopoverContent.vue\');',
         ].join('\n');
 
-        expect(extractDeps(code, 'lib')).toEqual(['data-table-types.ts', 'table-key.ts', 'utils.ts']);
+        expect(extractDeps(code, 'lib')).toEqual(['utils.ts', 'data-table-types.ts', 'table-key.ts']);
         expect(extractDeps(code, 'composables')).toEqual(['useForwardProps.ts']);
         expect(extractRegistryDeps(code, 'data-table')).toEqual(['button', 'popover']);
         expect(extractUnknownRegistryDeps(code)).toEqual([]);
@@ -97,7 +97,7 @@ describe('AstRewriter', () => {
             'import Footer from \'@/components/ui/dialog/DialogFooter.vue\';',
         ].join('\n');
 
-        expect(extractComponentFileDeps(code, 'dialog')).toEqual(['DialogFooter.vue', 'DialogHeader.vue']);
+        expect(extractComponentFileDeps(code, 'dialog')).toEqual(['DialogHeader.vue', 'DialogFooter.vue']);
     });
 
     it('resolves correct registry file types', () => {

@@ -11,6 +11,7 @@ import {
     assertKnownRegistryDeps,
     extractComponentFileDeps,
     extractDeps,
+    extractRegistryDeps,
     getFileType,
     rewriteImports,
 } from './ast-rewriter.js';
@@ -33,6 +34,13 @@ export class DependencyResolver {
         return raw.replace(/\r\n/g, '\n');
     }
 
+    private async resolveExtension(rawFileName: string, baseDir: string): Promise<string> {
+        if (path.extname(rawFileName)) return rawFileName;
+        if (await this.fs.pathExists(path.join(baseDir, `${rawFileName}.vue`))) return `${rawFileName}.vue`;
+        if (await this.fs.pathExists(path.join(baseDir, `${rawFileName}.ts`))) return `${rawFileName}.ts`;
+        return rawFileName;
+    }
+
     public async resolveComponentClosure(
         name: string,
         componentInfo: MergedRegistryEntry,
@@ -48,7 +56,8 @@ export class DependencyResolver {
         const addedComponentFiles = new Set<string>();
         while (addedComponentFiles.size < componentFileDeps.size) {
             const pending = Array.from(componentFileDeps).filter(f => !addedComponentFiles.has(f));
-            for (const fileName of pending) {
+            for (const rawName of pending) {
+                const fileName = await this.resolveExtension(rawName, path.join(this.paths.componentsDir, name));
                 const filePath = path.join(this.paths.componentsDir, name, fileName);
                 if (!(await this.fs.pathExists(filePath))) {
                     throw new Error(`Source file not found at ${filePath}`);
@@ -57,11 +66,25 @@ export class DependencyResolver {
                 let code = await this.readSource(filePath);
                 code = rewriteImports(code, name, 'component', knownComponents);
 
-                assertKnownRegistryDeps(code, name, fileName).forEach(d => allRegistryDeps.add(d));
-                extractComponentFileDeps(code, name).forEach(d => componentFileDeps.add(d));
-                extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
-                extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
-                extractDeps(code, 'lib').forEach(d => libDeps.add(d));
+                assertKnownRegistryDeps(code, name, fileName);
+                extractRegistryDeps(code, name, knownComponents).forEach(d => allRegistryDeps.add(d));
+
+                for (const d of extractComponentFileDeps(code, name)) {
+                    const resolved = await this.resolveExtension(d, path.join(this.paths.componentsDir, name));
+                    componentFileDeps.add(resolved);
+                }
+                for (const d of extractDeps(code, 'composables')) {
+                    const resolved = await this.resolveExtension(d, this.paths.composablesDir);
+                    composableDeps.add(resolved);
+                }
+                for (const d of extractDeps(code, 'locales')) {
+                    const resolved = await this.resolveExtension(d, this.paths.localesDir);
+                    localeDeps.add(resolved);
+                }
+                for (const d of extractDeps(code, 'lib')) {
+                    const resolved = await this.resolveExtension(d, this.paths.libDir);
+                    libDeps.add(resolved);
+                }
 
                 const relPath = `components/ui/${name}/${fileName}`;
                 files.push({
@@ -69,6 +92,7 @@ export class DependencyResolver {
                     content: code,
                     type: getFileType(relPath),
                 });
+                addedComponentFiles.add(rawName);
                 addedComponentFiles.add(fileName);
             }
         }
@@ -103,7 +127,8 @@ export class DependencyResolver {
         const directiveDeps = new Set<string>(componentInfo.directives ?? []);
         while (addedDirectives.size < directiveDeps.size) {
             const pending = Array.from(directiveDeps).filter(d => !addedDirectives.has(d));
-            for (const directiveName of pending) {
+            for (const rawName of pending) {
+                const directiveName = await this.resolveExtension(rawName, this.paths.directivesDir);
                 const directivePath = path.join(this.paths.directivesDir, directiveName);
                 if (!(await this.fs.pathExists(directivePath))) {
                     throw new Error(`Directive file not found at ${directivePath}`);
@@ -111,11 +136,21 @@ export class DependencyResolver {
 
                 let code = await this.readSource(directivePath);
                 code = rewriteImports(code, name, 'directive', knownComponents);
-                assertKnownRegistryDeps(code, name, directiveName).forEach(d => allRegistryDeps.add(d));
-                extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
-                extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
-                extractDeps(code, 'lib').forEach(d => libDeps.add(d));
-                extractDeps(code, 'directives').forEach(d => directiveDeps.add(d));
+                assertKnownRegistryDeps(code, name, directiveName);
+                extractRegistryDeps(code, name, knownComponents).forEach(d => allRegistryDeps.add(d));
+
+                for (const d of extractDeps(code, 'composables')) {
+                    composableDeps.add(await this.resolveExtension(d, this.paths.composablesDir));
+                }
+                for (const d of extractDeps(code, 'locales')) {
+                    localeDeps.add(await this.resolveExtension(d, this.paths.localesDir));
+                }
+                for (const d of extractDeps(code, 'lib')) {
+                    libDeps.add(await this.resolveExtension(d, this.paths.libDir));
+                }
+                for (const d of extractDeps(code, 'directives')) {
+                    directiveDeps.add(await this.resolveExtension(d, this.paths.directivesDir));
+                }
 
                 const relPath = `directives/${directiveName}`;
                 files.push({
@@ -123,6 +158,7 @@ export class DependencyResolver {
                     content: code,
                     type: getFileType(relPath),
                 });
+                addedDirectives.add(rawName);
                 addedDirectives.add(directiveName);
             }
         }
@@ -141,15 +177,23 @@ export class DependencyResolver {
         const addedLocaleDeps = new Set<string>();
         while (addedLocaleDeps.size < localeDeps.size || addedComposables.size < composableDeps.size) {
             const pendingLocales = Array.from(localeDeps).filter(l => !addedLocaleDeps.has(l));
-            for (const localeName of pendingLocales) {
+            for (const rawLocaleName of pendingLocales) {
+                const localeName = await this.resolveExtension(rawLocaleName, this.paths.localesDir);
                 const localePath = path.join(this.paths.localesDir, localeName);
                 if (await this.fs.pathExists(localePath)) {
                     const raw = await this.readSource(localePath);
                     const code = rewriteImports(raw, name, 'locale', knownComponents);
-                    extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
-                    extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
-                    extractDeps(code, 'lib').forEach(d => libDeps.add(d));
+                    for (const d of extractDeps(code, 'locales')) {
+                        localeDeps.add(await this.resolveExtension(d, this.paths.localesDir));
+                    }
+                    for (const d of extractDeps(code, 'composables')) {
+                        composableDeps.add(await this.resolveExtension(d, this.paths.composablesDir));
+                    }
+                    for (const d of extractDeps(code, 'lib')) {
+                        libDeps.add(await this.resolveExtension(d, this.paths.libDir));
+                    }
                 }
+                addedLocaleDeps.add(rawLocaleName);
                 addedLocaleDeps.add(localeName);
             }
             await this.processComposables(
@@ -168,7 +212,8 @@ export class DependencyResolver {
             allRegistryDeps.add('locale-zh-cn');
         }
 
-        for (const libName of libDeps) {
+        for (const rawLibName of libDeps) {
+            const libName = await this.resolveExtension(rawLibName, this.paths.libDir);
             const libPath = path.join(this.paths.libDir, libName);
             if (!(await this.fs.pathExists(libPath))) {
                 throw new Error(`Lib file not found at ${libPath}`);
@@ -176,8 +221,11 @@ export class DependencyResolver {
 
             const raw = await this.readSource(libPath);
             const code = rewriteImports(raw, name, 'lib', knownComponents);
-            assertKnownRegistryDeps(code, name, libName).forEach(d => allRegistryDeps.add(d));
-            extractDeps(code, 'lib').forEach(d => libDeps.add(d));
+            assertKnownRegistryDeps(code, name, libName);
+            extractRegistryDeps(code, name, knownComponents).forEach(d => allRegistryDeps.add(d));
+            for (const d of extractDeps(code, 'lib')) {
+                libDeps.add(await this.resolveExtension(d, this.paths.libDir));
+            }
 
             if (this.libExclude.has(libName)) continue;
 
@@ -207,7 +255,8 @@ export class DependencyResolver {
     ): Promise<void> {
         while (addedComposables.size < composableDeps.size) {
             const pending = Array.from(composableDeps).filter(c => !addedComposables.has(c));
-            for (const composableName of pending) {
+            for (const rawName of pending) {
+                const composableName = await this.resolveExtension(rawName, this.paths.composablesDir);
                 const composablePath = path.join(this.paths.composablesDir, composableName);
                 if (!(await this.fs.pathExists(composablePath))) {
                     throw new Error(`Composable file not found at ${composablePath}`);
@@ -215,10 +264,17 @@ export class DependencyResolver {
 
                 let code = await this.readSource(composablePath);
                 code = rewriteImports(code, componentName, 'composable', knownComponents);
-                assertKnownRegistryDeps(code, componentName, composableName).forEach(d => allRegistryDeps.add(d));
-                extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
-                extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
-                extractDeps(code, 'lib').forEach(d => libDeps.add(d));
+                assertKnownRegistryDeps(code, componentName, composableName);
+                extractRegistryDeps(code, componentName, knownComponents).forEach(d => allRegistryDeps.add(d));
+                for (const d of extractDeps(code, 'composables')) {
+                    composableDeps.add(await this.resolveExtension(d, this.paths.composablesDir));
+                }
+                for (const d of extractDeps(code, 'locales')) {
+                    localeDeps.add(await this.resolveExtension(d, this.paths.localesDir));
+                }
+                for (const d of extractDeps(code, 'lib')) {
+                    libDeps.add(await this.resolveExtension(d, this.paths.libDir));
+                }
 
                 const relPath = `composables/${composableName}`;
                 files.push({
@@ -226,6 +282,7 @@ export class DependencyResolver {
                     content: code,
                     type: getFileType(relPath),
                 });
+                addedComposables.add(rawName);
                 addedComposables.add(composableName);
             }
         }

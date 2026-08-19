@@ -1,32 +1,47 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import crypto from 'node:crypto';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath, pathToFileURL } from 'url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import {
+    scanComponentFiles,
+    buildComponentIndexContent,
+} from 'brutx-shared-vue/scan';
 import {
     COMPONENT_METADATA,
     computeRegistryIntegrity,
     computeRegistryManifestIntegrity,
-    validateRegistryIntegrity,
-    validateRegistryItem,
-    CSS_VARS,
+    type MergedRegistryEntry,
+    type RegistryFile,
+    type RegistryFileType,
+    type RegistryIndex,
+    type RegistryItem,
 } from 'brutx-shared-vue';
-import { extractModuleSpecifiers, extractClassifiedModuleSpecifiers } from 'brutx-shared-vue/scan';
-import { scanComponentFiles, buildComponentIndexContent } from 'brutx-shared-vue/scan';
-import { applyManifestOverrides, LIB_EXCLUDE } from '../../ui/scripts/manifest-shared';
-import type {
-    MergedRegistryEntry,
-    RegistryManifest,
-    RegistryFile,
-    RegistryFileType,
-    RegistryIndex,
-    RegistryIndexItem,
-    RegistryItem,
-} from 'brutx-shared-vue';
+import { applyManifestOverrides, LIB_EXCLUDE } from '../../ui/scripts/manifest-shared.js';
+import {
+    RegistryCompiler,
+    rewriteImports as coreRewriteImports,
+    extractDeps as coreExtractDeps,
+    extractRegistryDeps as coreExtractRegistryDeps,
+    extractComponentFileDeps as coreExtractComponentFileDeps,
+    extractUnknownRegistryDeps as coreExtractUnknownRegistryDeps,
+    assertKnownRegistryDeps as coreAssertKnownRegistryDeps,
+    getFileType as coreGetFileType,
+    buildRegistrySbom as coreBuildRegistrySbom,
+    computeSbomIntegrity as coreComputeSbomIntegrity,
+    computeSbomSerialNumber as coreComputeSbomSerialNumber,
+    signManifestFromEnv as coreSignManifestFromEnv,
+    CACHE_VERSION,
+    runBuild,
+    runWatch,
+    type RegistryBuildManifest,
+    type RegistryBuildManifestOptions,
+    type RewriteContext,
+} from '../src/index.js';
 import {
     findRegistryDependencyCycles,
     REGISTRY_MANIFEST_SCHEMA_URL,
-    validateRegistryItemInternalImports,
-} from './validate-utils';
+    type RegistryReferenceItem,
+} from './validate-utils.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,11 +52,22 @@ const UI_LOCALES_DIR = path.resolve(__dirname, '../../ui/src/locales');
 const UI_LIB_DIR = path.resolve(__dirname, '../../ui/src/lib');
 const UI_DIRECTIVES_DIR = path.resolve(__dirname, '../../ui/src/directives');
 const MANIFEST_PATH = path.resolve(__dirname, '../../ui/registry-manifest.json');
-const OUTPUT_DIR = path.resolve(__dirname, '../registry');
 
+let defaultCompiler = new RegistryCompiler();
+
+export type { RegistryBuildManifest, RegistryBuildManifestOptions };
+
+function resolveExtension(rawFileName: string, baseDir: string): string {
+    if (path.extname(rawFileName)) return rawFileName;
+    if (fs.existsSync(path.join(baseDir, `${rawFileName}.vue`))) return `${rawFileName}.vue`;
+    if (fs.existsSync(path.join(baseDir, `${rawFileName}.ts`))) return `${rawFileName}.ts`;
+    return rawFileName;
+}
+
+/**
+ * 重新加载并获取 MergedRegistry（兼容旧接口）。
+ */
 export function loadMergedRegistry(): Record<string, MergedRegistryEntry> {
-    // 包装读取错误：模块顶层调用（import 期）早于 validate 的 REGISTRY_DIR 检查，
-    // ui manifest 缺失时给出可操作的提示（产物发布时构建方案 T12）。
     let manifestRaw: string;
     try {
         manifestRaw = fs.readFileSync(MANIFEST_PATH, 'utf-8');
@@ -53,10 +79,11 @@ export function loadMergedRegistry(): Record<string, MergedRegistryEntry> {
             { cause: error }
         );
     }
-    const manifest = JSON.parse(manifestRaw) as RegistryManifest;
+    const manifest = JSON.parse(manifestRaw);
+    const metaSource = defaultCompiler['metadata'] ?? COMPONENT_METADATA;
     const merged: Record<string, MergedRegistryEntry> = {};
 
-    for (const [name, meta] of Object.entries(COMPONENT_METADATA)) {
+    for (const [name, meta] of Object.entries(metaSource)) {
         const fileManifest = manifest[name];
         if (!fileManifest) {
             throw new Error(`Component "${name}" has metadata but is missing from registry-manifest.json. Run pnpm --filter brutx-ui-vue prebuild:scan.`);
@@ -71,7 +98,7 @@ export function loadMergedRegistry(): Record<string, MergedRegistryEntry> {
     }
 
     for (const name of Object.keys(manifest)) {
-        if (!COMPONENT_METADATA[name]) {
+        if (!metaSource[name]) {
             throw new Error(`Component "${name}" is in registry-manifest.json but has no metadata in COMPONENT_METADATA. Add an entry in packages/shared/src/components.ts.`);
         }
     }
@@ -79,21 +106,10 @@ export function loadMergedRegistry(): Record<string, MergedRegistryEntry> {
     return merged;
 }
 
-let REGISTRY: Record<string, MergedRegistryEntry> = loadMergedRegistry();
-
-/**
- * 重新加载 REGISTRY（watch 模式使用，当 registry-manifest.json 变化后调用）。
- */
 export function reloadRegistry(): void {
-    REGISTRY = loadMergedRegistry();
+    defaultCompiler = new RegistryCompiler();
 }
 
-/**
- * 重新生成 registry-manifest.json（复用 prebuild-scan 的共享清单，供 watch 模式使用）。
- * 当用户新增/删除组件文件时，manifest 需要更新才能让 build 感知到新的组件。
- * 清单 LIB_EXCLUDE / MANIFEST_OVERRIDES 来自 ../../ui/scripts/manifest-shared，
- * 与 prebuild-scan 同源，保证 watch 产物与 CI 产物不因清单漂移而分叉。
- */
 export function runPrebuildScan(): void {
     const manifest = scanComponentFiles({
         componentsDir: UI_COMPONENTS_DIR,
@@ -107,112 +123,301 @@ export function runPrebuildScan(): void {
     fs.writeFileSync(MANIFEST_PATH, output, 'utf-8');
 }
 
-type RewriteContext = 'component' | 'composable' | 'lib' | 'directive' | 'locale';
-
-const DIR_PREFIX_TO_BASE: Record<string, string> = {
-    composables: UI_COMPOSABLES_DIR,
-    locales: UI_LOCALES_DIR,
-    lib: UI_LIB_DIR,
-    directives: UI_DIRECTIVES_DIR,
-};
-
-function resolveExtension(rawFileName: string, baseDir: string): string {
-    if (path.extname(rawFileName)) return rawFileName;
-    if (fs.existsSync(path.join(baseDir, `${rawFileName}.vue`))) return `${rawFileName}.vue`;
-    return `${rawFileName}.ts`;
+export function rewriteImports(code: string, componentName: string, context: RewriteContext = 'component'): string {
+    return coreRewriteImports(code, componentName, context);
 }
 
-const CACHE_FILE = path.resolve(__dirname, '../.registry-cache.json');
-const CACHE_VERSION = 4;
-const REGISTRY_SCHEMA_VERSION = 1;
-const BENCH_FILE = path.resolve(__dirname, '../bench.json');
-const SBOM_FILE = path.resolve(OUTPUT_DIR, 'registry-sbom.json');
-const SBOM_SPEC_VERSION = '1.5';
-const SBOM_FORMAT = 'CycloneDX';
-
-/**
- * 增量构建缓存策略（P0-4 文档化）
- *
- * 缓存位置：packages/registry/.registry-cache.json
- *   结构：Record<componentName | 'locale-zh-cn', sourceHash: string>
- *
- * 缓存键（sourceHash，见 computeSourceHash）由以下要素 sha256 而成：
- *   1. CACHE_VERSION —— 钥匙版本，提升后所有条目强制失效
- *   2. REGISTRY[name] 即 COMPONENT_METADATA 派生的 merged 条目（title/desc/category/deps/...）
- *   3. fileMapping —— registry-manifest.json 中该组件的 files/composables/directives/lib 清单
- *   4. TAILWIND_CONFIG + CSS_VARS —— 共享配置（受 shared 影响）
- *   5. 该组件传递闭包内所有源码原文（component/composable/locale/lib/directive）
- *      闭包通过 AST 扫描 import 静态派生（见 extractComponentFileDeps/extractDeps）
- *
- * 命中条件（见 run() 中 `cache[name] === sourceHash && fs.existsSync(outputPath)`）：
- *   - sourceHash 与缓存一致
- *   - 输出文件存在
- *   - validateReusableRegistryItem 通过（integrity 自洽 + 内部 import 合法）
- *   三者均满足才复用旧输出，否则重算 buildRegistryItem 并覆写。
- *
- * 失效触发：
- *   - 改 COMPONENT_METADATA / components.ts → 闭包内所有组件失效
- *   - 改任一源文件（含被传递依赖的文件）→ 依赖它的组件失效
- *   - 改 TAILWIND_CONFIG / CSS_VARS → 全部失效
- *   - 提升 CACHE_VERSION → 全部失效
- *   - registry-manifest.json 中某组件 files 列表变化 → 该组件失效
- *
- * 注意：sourceHash 包含"传递闭包源码原文"，故改 Button.vue 会让所有依赖 button
- * 的组件（dialog/popover/...）也失效——这是正确的，因为它们的 files 会嵌入
- * Button.vue 的内容。删除任一闭包内文件同样会触发"Source file not found"错误。
- *
- * 稳定契约：componentNames 已字典序遍历（见 run() L656），保证 build 顺序稳定；
- *   manifest 的 items 也按字典序存（见 buildRegistryManifest L146）。
- *   registry-manifest.json 的 integrity 字段对 items 内容求 sha256（排除
- *   buildTimestamp/gitCommit/integrity 自身），CLI 拉取后可校验完整性。
- */
-
-export interface RegistryBuildManifest {
-    $schema: string;
-    name: string;
-    schemaVersion: number;
-    registryVersion: string;
-    buildTimestamp: string | null;
-    gitCommit: string | null;
-    integrity: string;
-    itemCount: number;
-    items: Record<string, {
-        integrity: string;
-        fileCount: number;
-        dependencies: string[];
-        registryDependencies: string[];
-        category?: RegistryIndexItem['category'];
-        examples?: string[];
-        status?: RegistryIndexItem['status'];
-        replacement?: string;
-    }>;
-    /**
-     * P1-6：对 integrity 字段值的 Ed25519 签名（base64）。
-     * 由签名工具离线计算后注入；CLI 拉取 manifest 时按 keyId 查找受信任公钥验签。
-     * 未设置时 CLI 跳过验签（向后兼容旧 manifest）。
-     */
-    signature?: string;
-    /**
-     * P1-6：标识签名所用密钥，便于密钥轮换——CLI 持有的公钥列表按 keyId 索引。
-     * 与 signature 字段成对出现；两者皆存在时才触发验签。
-     */
-    keyId?: string;
+export function extractDeps(code: string, dirPrefix: string): string[] {
+    return coreExtractDeps(code, dirPrefix);
 }
 
-export interface RegistryBuildManifestOptions {
-    registryVersion: string;
-    schemaVersion?: number;
-    buildTimestamp?: string | null;
-    gitCommit?: string | null;
+export function getFileType(filePath: string): RegistryFileType {
+    return coreGetFileType(filePath);
 }
 
-/**
- * 计算 registry-manifest 自身完整性哈希。
- * 对 items 的规范化 JSON 序列求 sha256（按 name 字典序），
- * 排除 buildTimestamp/gitCommit/integrity 本身（这些字段在两次 build 间会变）。
- * 规范化契约实现位于 brutx-shared-vue 的 computeRegistryManifestIntegrity，
- * CLI 验签侧复用同一实现——两处必须保持逐字一致，严禁各自单独实现。
- */
+export function extractRegistryDeps(code: string, componentName: string): string[] {
+    return coreExtractRegistryDeps(code, componentName);
+}
+
+export function extractComponentFileDeps(code: string, componentName: string): string[] {
+    return coreExtractComponentFileDeps(code, componentName);
+}
+
+export function extractUnknownRegistryDeps(code: string): string[] {
+    return coreExtractUnknownRegistryDeps(code);
+}
+
+export function assertKnownRegistryDeps(code: string, ownerName: string, sourceLabel: string): string[] {
+    return coreAssertKnownRegistryDeps(code, ownerName, sourceLabel);
+}
+
+export function buildRegistryItem(name: string): RegistryItem {
+    const merged = loadMergedRegistry();
+    const componentInfo = merged[name];
+    if (!componentInfo) {
+        throw new Error(`No file mapping found for component "${name}"`);
+    }
+
+    const allRegistryDeps = new Set<string>();
+    const files: RegistryFile[] = [];
+    const componentFileDeps = new Set(componentInfo.files);
+    const composableDeps = new Set(componentInfo.composables ?? []);
+    const localeDeps = new Set<string>();
+    const libDeps = new Set<string>();
+
+    const addedComponentFiles = new Set<string>();
+    while (addedComponentFiles.size < componentFileDeps.size) {
+        const pending = Array.from(componentFileDeps).filter(f => !addedComponentFiles.has(f));
+        for (const rawName of pending) {
+            const fileName = resolveExtension(rawName, path.join(UI_COMPONENTS_DIR, name));
+            const filePath = path.join(UI_COMPONENTS_DIR, name, fileName);
+            if (!fs.existsSync(filePath)) {
+                throw new Error(`Source file not found at ${filePath}`);
+            }
+            let code = fs.readFileSync(filePath, 'utf-8').replace(/\r\n/g, '\n');
+            code = rewriteImports(code, name, 'component');
+            assertKnownRegistryDeps(code, name, fileName);
+            extractRegistryDeps(code, name).forEach(d => allRegistryDeps.add(d));
+
+            for (const d of extractComponentFileDeps(code, name)) {
+                componentFileDeps.add(resolveExtension(d, path.join(UI_COMPONENTS_DIR, name)));
+            }
+            for (const d of extractDeps(code, 'composables')) {
+                composableDeps.add(resolveExtension(d, UI_COMPOSABLES_DIR));
+            }
+            for (const d of extractDeps(code, 'locales')) {
+                localeDeps.add(resolveExtension(d, UI_LOCALES_DIR));
+            }
+            for (const d of extractDeps(code, 'lib')) {
+                libDeps.add(resolveExtension(d, UI_LIB_DIR));
+            }
+
+            const relPath = `components/ui/${name}/${fileName}`;
+            files.push({
+                path: relPath,
+                content: code,
+                type: getFileType(relPath),
+            });
+            addedComponentFiles.add(rawName);
+            addedComponentFiles.add(fileName);
+        }
+    }
+
+    const indexContent = rewriteImports(
+        buildComponentIndexContent(Array.from(componentFileDeps)),
+        name,
+        'component'
+    );
+    const indexRelPath = `components/ui/${name}/index.ts`;
+    files.push({
+        path: indexRelPath,
+        content: indexContent,
+        type: getFileType(indexRelPath),
+    });
+
+    const addedComposables = new Set<string>();
+    while (addedComposables.size < composableDeps.size) {
+        const pending = Array.from(composableDeps).filter(c => !addedComposables.has(c));
+        for (const rawName of pending) {
+            const composableName = resolveExtension(rawName, UI_COMPOSABLES_DIR);
+            const composablePath = path.join(UI_COMPOSABLES_DIR, composableName);
+            if (!fs.existsSync(composablePath)) {
+                throw new Error(`Composable file not found at ${composablePath}`);
+            }
+            let code = fs.readFileSync(composablePath, 'utf-8').replace(/\r\n/g, '\n');
+            code = rewriteImports(code, name, 'composable');
+            assertKnownRegistryDeps(code, name, composableName);
+            extractRegistryDeps(code, name).forEach(d => allRegistryDeps.add(d));
+            for (const d of extractDeps(code, 'composables')) {
+                composableDeps.add(resolveExtension(d, UI_COMPOSABLES_DIR));
+            }
+            for (const d of extractDeps(code, 'locales')) {
+                localeDeps.add(resolveExtension(d, UI_LOCALES_DIR));
+            }
+            for (const d of extractDeps(code, 'lib')) {
+                libDeps.add(resolveExtension(d, UI_LIB_DIR));
+            }
+
+            const relPath = `composables/${composableName}`;
+            files.push({
+                path: relPath,
+                content: code,
+                type: getFileType(relPath),
+            });
+            addedComposables.add(rawName);
+            addedComposables.add(composableName);
+        }
+    }
+
+    if (localeDeps.size > 0) {
+        allRegistryDeps.add('locale-zh-cn');
+    }
+
+    for (const rawLibName of libDeps) {
+        const libName = resolveExtension(rawLibName, UI_LIB_DIR);
+        const libPath = path.join(UI_LIB_DIR, libName);
+        if (!fs.existsSync(libPath)) {
+            throw new Error(`Lib file not found at ${libPath}`);
+        }
+        let code = fs.readFileSync(libPath, 'utf-8').replace(/\r\n/g, '\n');
+        code = rewriteImports(code, name, 'lib');
+        assertKnownRegistryDeps(code, name, libName);
+        extractRegistryDeps(code, name).forEach(d => allRegistryDeps.add(d));
+        for (const d of extractDeps(code, 'lib')) {
+            libDeps.add(resolveExtension(d, UI_LIB_DIR));
+        }
+
+        if (LIB_EXCLUDE.has(libName)) continue;
+
+        const relPath = `lib/${libName}`;
+        files.push({
+            path: relPath,
+            content: code,
+            type: getFileType(relPath),
+        });
+    }
+
+    const integrity = computeRegistryIntegrity(files);
+
+    return {
+        $schema: 'https://ui.shadcn.com/schema/registry-item.json',
+        name,
+        type: 'registry:ui',
+        title: componentInfo.title,
+        description: componentInfo.description,
+        category: componentInfo.category,
+        examples: [...(componentInfo.examples ?? [])],
+        status: componentInfo.status,
+        replacement: componentInfo.replacement,
+        dependencies: [...(componentInfo.dependencies ?? [])],
+        registryDependencies: Array.from(allRegistryDeps),
+        files,
+        tailwind: {},
+        cssVars: {},
+        integrity,
+    };
+}
+
+export function computeSourceHash(name: string, fileMapping: { files: string[]; composables?: string[]; directives?: string[] }): string {
+    const merged = loadMergedRegistry();
+    const parts: string[] = [JSON.stringify({
+        cacheVersion: CACHE_VERSION,
+        componentInfo: merged[name] ?? null,
+        fileMapping,
+        tailwind: {},
+        cssVars: {},
+    })];
+
+    const componentDeps = new Set(fileMapping.files);
+    const addedComponentDeps = new Set<string>();
+    const composableDeps = new Set(fileMapping.composables ?? []);
+    const addedComposableDeps = new Set<string>();
+    const localeDeps = new Set<string>();
+    const libDeps = new Set<string>();
+
+    const addComponentFile = (rawName: string): void => {
+        const fileName = resolveExtension(rawName, path.join(UI_COMPONENTS_DIR, name));
+        const filePath = path.join(UI_COMPONENTS_DIR, name, fileName);
+        if (!fs.existsSync(filePath)) {
+            throw new Error(`Source file not found: ${filePath}`);
+        }
+        const code = fs.readFileSync(filePath, 'utf-8').replace(/\r\n/g, '\n');
+        parts.push(code);
+        const rewritten = rewriteImports(code, name, 'component');
+        for (const d of extractComponentFileDeps(rewritten, name)) {
+            componentDeps.add(resolveExtension(d, path.join(UI_COMPONENTS_DIR, name)));
+        }
+        for (const d of extractDeps(rewritten, 'composables')) {
+            composableDeps.add(resolveExtension(d, UI_COMPOSABLES_DIR));
+        }
+        for (const d of extractDeps(rewritten, 'locales')) {
+            localeDeps.add(resolveExtension(d, UI_LOCALES_DIR));
+        }
+        for (const d of extractDeps(rewritten, 'lib')) {
+            libDeps.add(resolveExtension(d, UI_LIB_DIR));
+        }
+        addedComponentDeps.add(rawName);
+        addedComponentDeps.add(fileName);
+    };
+
+    while (addedComponentDeps.size < componentDeps.size) {
+        const pending = Array.from(componentDeps).filter(f => !addedComponentDeps.has(f));
+        for (const fileName of pending) {
+            addComponentFile(fileName);
+        }
+    }
+
+    parts.push(buildComponentIndexContent(Array.from(componentDeps)));
+
+    const addComposableFile = (rawName: string): void => {
+        const composableName = resolveExtension(rawName, UI_COMPOSABLES_DIR);
+        const composablePath = path.join(UI_COMPOSABLES_DIR, composableName);
+        if (fs.existsSync(composablePath)) {
+            const code = fs.readFileSync(composablePath, 'utf-8').replace(/\r\n/g, '\n');
+            parts.push(code);
+            const rewritten = rewriteImports(code, name, 'composable');
+            for (const d of extractDeps(rewritten, 'composables')) {
+                composableDeps.add(resolveExtension(d, UI_COMPOSABLES_DIR));
+            }
+            for (const d of extractDeps(rewritten, 'locales')) {
+                localeDeps.add(resolveExtension(d, UI_LOCALES_DIR));
+            }
+            for (const d of extractDeps(rewritten, 'lib')) {
+                libDeps.add(resolveExtension(d, UI_LIB_DIR));
+            }
+        }
+        addedComposableDeps.add(rawName);
+        addedComposableDeps.add(composableName);
+    };
+
+    const addedLocaleDeps = new Set<string>();
+    while (addedComposableDeps.size < composableDeps.size || addedLocaleDeps.size < localeDeps.size) {
+        const pendingComposables = Array.from(composableDeps).filter(c => !addedComposableDeps.has(c));
+        for (const composableName of pendingComposables) {
+            addComposableFile(composableName);
+        }
+
+        const pendingLocales = Array.from(localeDeps).filter(l => !addedLocaleDeps.has(l));
+        for (const rawLocaleName of pendingLocales) {
+            const localeName = resolveExtension(rawLocaleName, UI_LOCALES_DIR);
+            const localePath = path.join(UI_LOCALES_DIR, localeName);
+            if (fs.existsSync(localePath)) {
+                const code = fs.readFileSync(localePath, 'utf-8').replace(/\r\n/g, '\n');
+                parts.push(code);
+                const rewritten = rewriteImports(code, name, 'locale');
+                for (const d of extractDeps(rewritten, 'locales')) {
+                    localeDeps.add(resolveExtension(d, UI_LOCALES_DIR));
+                }
+                for (const d of extractDeps(rewritten, 'composables')) {
+                    composableDeps.add(resolveExtension(d, UI_COMPOSABLES_DIR));
+                }
+                for (const d of extractDeps(rewritten, 'lib')) {
+                    libDeps.add(resolveExtension(d, UI_LIB_DIR));
+                }
+            }
+            addedLocaleDeps.add(rawLocaleName);
+            addedLocaleDeps.add(localeName);
+        }
+    }
+
+    for (const rawLibName of libDeps) {
+        const libName = resolveExtension(rawLibName, UI_LIB_DIR);
+        const libPath = path.join(UI_LIB_DIR, libName);
+        if (fs.existsSync(libPath)) {
+            const code = fs.readFileSync(libPath, 'utf-8').replace(/\r\n/g, '\n');
+            const rewritten = rewriteImports(code, name, 'lib');
+            for (const d of extractDeps(rewritten, 'lib')) {
+                libDeps.add(resolveExtension(d, UI_LIB_DIR));
+            }
+            if (!LIB_EXCLUDE.has(libName)) {
+                parts.push(code);
+            }
+        }
+    }
+
+    return crypto.createHash('sha256').update(parts.join('\0')).digest('hex');
+}
+
 export function buildRegistryManifest(
     index: RegistryIndex,
     options: RegistryBuildManifestOptions
@@ -252,1146 +457,37 @@ export function buildRegistryManifest(
     };
 }
 
-export function assertRegistryDependencyGraph(
-    items: Array<Pick<RegistryIndexItem, 'name' | 'registryDependencies'>>
-): void {
+export function assertRegistryDependencyGraph(items: RegistryReferenceItem[]): void {
     const cycles = findRegistryDependencyCycles(items);
-
     if (cycles.length > 0) {
-        throw new Error(`Registry dependency cycle detected: ${cycles.map(cycle => cycle.join(' -> ')).join('; ')}`);
+        const cycleDescriptions = cycles
+            .map(cycle => `Registry dependency cycle detected: ${cycle.join(' -> ')}`)
+            .join('\n');
+        throw new Error(cycleDescriptions);
     }
 }
 
-function validateReusableRegistryItem(data: unknown, name: string): asserts data is RegistryItem {
-    validateRegistryItem(data, { name, requireSchema: true });
-    validateRegistryIntegrity(data, name);
-
-    const importErrors = validateRegistryItemInternalImports(data);
-    if (importErrors.length > 0) {
-        throw new Error(importErrors.join('; '));
-    }
+export function buildRegistrySbom(index: RegistryIndex, manifestIntegrity: string) {
+    return coreBuildRegistrySbom(index, manifestIntegrity);
 }
 
-function loadCache(): Record<string, string> {
-    if (fs.existsSync(CACHE_FILE)) {
-        try {
-            return JSON.parse(fs.readFileSync(CACHE_FILE, 'utf-8'));
-        } catch { return {}; }
-    }
-    return {};
+export function computeSbomIntegrity(sbom: Parameters<typeof coreComputeSbomIntegrity>[0]) {
+    return coreComputeSbomIntegrity(sbom);
 }
 
-function saveCache(cache: Record<string, string>): void {
-    fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2), 'utf-8');
+export function computeSbomSerialNumber(sbom: Parameters<typeof coreComputeSbomSerialNumber>[0]) {
+    return coreComputeSbomSerialNumber(sbom);
 }
 
-function removeStaleRegistryFiles(expectedFiles: Set<string>): void {
-    for (const fileName of fs.readdirSync(OUTPUT_DIR)) {
-        if (!fileName.endsWith('.json') || expectedFiles.has(fileName)) continue;
-
-        fs.unlinkSync(path.join(OUTPUT_DIR, fileName));
-        console.log(`  Removed stale ${fileName}`);
-    }
-}
-
-export function computeSourceHash(name: string, fileMapping: { files: string[]; composables?: string[]; directives?: string[] }): string {
-    const parts: string[] = [JSON.stringify({
-        cacheVersion: CACHE_VERSION,
-        componentInfo: REGISTRY[name] ?? null,
-        fileMapping,
-        tailwind: TAILWIND_CONFIG,
-        cssVars: CSS_VARS,
-    })];
-    const componentDeps = new Set(fileMapping.files);
-    const addedComponentDeps = new Set<string>();
-    const composableDeps = new Set(fileMapping.composables ?? []);
-    const addedComposableDeps = new Set<string>();
-    const localeDeps = new Set<string>();
-    const libDeps = new Set<string>();
-
-    const addComponentFile = (fileName: string) => {
-        const filePath = path.join(UI_COMPONENTS_DIR, name, fileName);
-        if (!fs.existsSync(filePath)) {
-            throw new Error(`Source file not found: ${filePath}`);
-        }
-        const code = readComponentSource(filePath);
-        parts.push(code);
-        const rewritten = rewriteImports(code, name, 'component');
-        extractComponentFileDeps(rewritten, name).forEach(d => componentDeps.add(d));
-        extractDeps(rewritten, 'composables').forEach(d => composableDeps.add(d));
-        extractDeps(rewritten, 'locales').forEach(d => localeDeps.add(d));
-        extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
-        addedComponentDeps.add(fileName);
-    };
-    const addComposableFile = (composableName: string) => {
-        const composablePath = path.join(UI_COMPOSABLES_DIR, composableName);
-        if (!fs.existsSync(composablePath)) {
-            throw new Error(`Composable file not found: ${composablePath}`);
-        }
-        const code = readComponentSource(composablePath);
-        parts.push(code);
-        const rewritten = rewriteImports(code, name, 'composable');
-        extractDeps(rewritten, 'composables').forEach(d => composableDeps.add(d));
-        extractDeps(rewritten, 'locales').forEach(d => localeDeps.add(d));
-        extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
-        addedComposableDeps.add(composableName);
-    };
-
-    while (addedComponentDeps.size < componentDeps.size) {
-        const pendingComponentDeps = Array.from(componentDeps).filter(fileName => !addedComponentDeps.has(fileName));
-        for (const fileName of pendingComponentDeps) {
-            addComponentFile(fileName);
-        }
-    }
-    // Include the derived index.ts barrel content in the hash so that changes
-    // to the component file list (which determines the barrel's exports) are
-    // detected. The barrel is generated inline — see buildRegistryItem.
-    parts.push(buildComponentIndexContent(Array.from(componentDeps)));
-    const directiveDeps = new Set<string>(fileMapping.directives ?? []);
-    const addedDirectiveDeps = new Set<string>();
-    while (addedDirectiveDeps.size < directiveDeps.size) {
-        const pendingDirectiveDeps = Array.from(directiveDeps).filter(d => !addedDirectiveDeps.has(d));
-        for (const directiveName of pendingDirectiveDeps) {
-            const directivePath = path.join(UI_DIRECTIVES_DIR, directiveName);
-            if (!fs.existsSync(directivePath)) {
-                throw new Error(`Directive file not found: ${directivePath}`);
-            }
-            const code = readComponentSource(directivePath);
-            parts.push(code);
-            const rewritten = rewriteImports(code, name, 'directive');
-            extractDeps(rewritten, 'composables').forEach(d => composableDeps.add(d));
-            extractDeps(rewritten, 'locales').forEach(d => localeDeps.add(d));
-            extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
-            extractDeps(rewritten, 'directives').forEach(d => directiveDeps.add(d));
-            addedDirectiveDeps.add(directiveName);
-        }
-    }
-    const addedLocaleDeps = new Set<string>();
-    while (addedComposableDeps.size < composableDeps.size || addedLocaleDeps.size < localeDeps.size) {
-        const pendingComposables = Array.from(composableDeps).filter(c => !addedComposableDeps.has(c));
-        for (const composableName of pendingComposables) {
-            addComposableFile(composableName);
-        }
-
-        const pendingLocaleDeps = Array.from(localeDeps).filter(localeName => !addedLocaleDeps.has(localeName));
-        for (const localeName of pendingLocaleDeps) {
-            const localePath = path.join(UI_LOCALES_DIR, localeName);
-            if (fs.existsSync(localePath)) {
-                const code = readComponentSource(localePath);
-                parts.push(code);
-                const rewritten = rewriteImports(code, name, 'locale');
-                extractDeps(rewritten, 'locales').forEach(d => localeDeps.add(d));
-                extractDeps(rewritten, 'composables').forEach(d => composableDeps.add(d));
-                extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
-            }
-            addedLocaleDeps.add(localeName);
-        }
-    }
-
-    for (const libName of libDeps) {
-        const libPath = path.join(UI_LIB_DIR, libName);
-        if (!fs.existsSync(libPath)) {
-            throw new Error(`Lib file not found: ${libPath}`);
-        }
-        const code = readComponentSource(libPath);
-        const rewritten = rewriteImports(code, name, 'lib');
-        extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
-
-        if (LIB_EXCLUDE.has(libName)) continue;
-        parts.push(code);
-    }
-
-    return crypto.createHash('sha256').update(parts.join('\0')).digest('hex');
-}
-
-function readComponentSource(filePath: string): string {
-    return fs.readFileSync(filePath, 'utf-8').replace(/\r\n/g, '\n');
-}
-
-export function rewriteImports(code: string, componentName: string, context: RewriteContext = 'component'): string {
-    // Rewrite relative imports from composable/lib files to @/ aliases
-    code = code.replace(/(['"])\.\.\/composables\/([^'"]+)\1/g, (_m, q, rest) => `${q}@/composables/${rest}${q}`);
-    code = code.replace(/(['"])\.\.\/lib\/([^'"]+)\1/g, (_m, q, rest) => `${q}@/lib/${rest}${q}`);
-    code = code.replace(/(['"])\.\.\/locales\/([^'"]+)\1/g, (_m, q, rest) => `${q}@/locales/${rest}${q}`);
-
-    code = code.replace(
-        /(['"])\.\.\/components\/([a-zA-Z0-9-]+)\/([^'"]+)\1/g,
-        (m, quote, comp, rest) => (REGISTRY[comp] ? `${quote}@/components/ui/${comp}/${rest}${quote}` : m)
-    );
-
-    // Rewrite cross-component imports: ../{component}/{file} → @/components/ui/{component}/{file}
-    // Extract the component name directly from the path to avoid filename collision issues.
-    code = code.replace(
-        /(['"])\.\.\/([a-zA-Z0-9-]+)\/([^'"]+)\1/g,
-        (m, quote, comp, rest) => (REGISTRY[comp] ? `${quote}@/components/ui/${comp}/${rest}${quote}` : m)
-    );
-
-    // Rewrite same-directory imports: ./{file} → @/<context-dir>/{file}
-    // Context determines the target alias directory so same-directory imports in
-    // composables/libs/directives aren't misrouted to @/components/ui/{componentName}/.
-    // Only apply within <script> blocks for Vue files to avoid rewriting
-    // CSS url('./...') or template attribute strings.
-    const contextAliasPrefix: Record<RewriteContext, string> = {
-        component: `@/components/ui/${componentName}/`,
-        composable: '@/composables/',
-        lib: '@/lib/',
-        directive: '@/directives/',
-        locale: '@/locales/',
-    };
-    const sameDirReplace = (block: string): string =>
-        block.replace(
-            /(['"])\.\/([^'"]+)\1/g,
-            `$1${contextAliasPrefix[context]}$2$1`
-        );
-
-    if (/<script\b/i.test(code)) {
-        code = code.replace(
-            /(<script\b[^>]*>)([\s\S]*?)(<\/script\b[^>]*>)/gi,
-            (_m, openTag: string, scriptContent: string, closeTag: string) =>
-                `${openTag}${sameDirReplace(scriptContent)}${closeTag}`
-        );
-    } else {
-        code = sameDirReplace(code);
-    }
-
-    return code;
-}
-
-export function extractDeps(code: string, dirPrefix: string): string[] {
-    const deps = new Set<string>();
-    const aliasPrefix = `@/${dirPrefix}/`;
-    const baseDir = DIR_PREFIX_TO_BASE[dirPrefix];
-
-    for (const specifier of extractModuleSpecifiers(code)) {
-        if (!specifier.startsWith(aliasPrefix)) continue;
-
-        const rawFileName = specifier.slice(aliasPrefix.length).split(/[?#]/)[0];
-        const fileName = resolveExtension(rawFileName, baseDir);
-        deps.add(fileName);
-    }
-    return Array.from(deps);
-}
-
-export function getFileType(filePath: string): RegistryFileType {
-    const fileName = path.basename(filePath);
-
-    if (filePath.endsWith('.vue')) return 'registry:ui';
-    if (filePath.startsWith('composables/')) return 'registry:hook';
-    if (filePath.startsWith('locales/')) return 'registry:lib';
-    if (filePath.startsWith('lib/')) return 'registry:lib';
-    if (filePath.startsWith('directives/')) return 'registry:directive';
-    if (filePath.endsWith('.css')) return 'registry:ui';
-    if (fileName.includes('-variants') || fileName.includes('-types') || fileName.includes('-key') || fileName === 'types.ts') return 'registry:lib';
-    return 'registry:ui';
-}
-
-export function extractRegistryDeps(code: string, componentName: string): string[] {
-    const deps = new Set<string>();
-    const prefix = '@/components/ui/';
-
-    // P1-7: skip type-only imports — `import type { Foo } from '@/components/ui/x'`
-    // does not create a runtime registry dependency. Mixed imports
-    // (`import { type Foo, useBar } from '...'`) are NOT type-only and are kept.
-    for (const classified of extractClassifiedModuleSpecifiers(code)) {
-        if (classified.isTypeOnly) continue;
-        if (!classified.specifier.startsWith(prefix)) continue;
-
-        const depName = classified.specifier.slice(prefix.length).split('/')[0];
-        if (depName !== componentName && REGISTRY[depName]) {
-            deps.add(depName);
-        }
-    }
-
-    return Array.from(deps);
-}
-
-export function extractComponentFileDeps(code: string, componentName: string): string[] {
-    const deps = new Set<string>();
-    const prefix = `@/components/ui/${componentName}/`;
-    const baseDir = path.join(UI_COMPONENTS_DIR, componentName);
-
-    for (const specifier of extractModuleSpecifiers(code)) {
-        if (!specifier.startsWith(prefix)) continue;
-
-        const rawFileName = specifier.slice(prefix.length).split(/[?#]/)[0];
-        const fileName = resolveExtension(rawFileName, baseDir);
-        deps.add(fileName);
-    }
-
-    return Array.from(deps);
-}
-
-export function extractUnknownRegistryDeps(code: string): string[] {
-    const deps = new Set<string>();
-    const prefix = '@/components/ui/';
-
-    for (const specifier of extractModuleSpecifiers(code)) {
-        if (!specifier.startsWith(prefix)) continue;
-
-        const depName = specifier.slice(prefix.length).split('/')[0];
-        if (depName && !REGISTRY[depName]) {
-            deps.add(depName);
-        }
-    }
-
-    return Array.from(deps);
-}
-
-export function assertKnownRegistryDeps(code: string, ownerName: string, sourceLabel: string): string[] {
-    const unknownDeps = extractUnknownRegistryDeps(code);
-    if (unknownDeps.length > 0) {
-        throw new Error(`Unknown registry component import(s) in "${ownerName}" (${sourceLabel}): ${unknownDeps.join(', ')}`);
-    }
-
-    return extractRegistryDeps(code, ownerName);
-}
-
-const TAILWIND_CONFIG = {};
-
-function processComposables(
-    composableDeps: Set<string>,
-    addedComposables: Set<string>,
-    name: string,
-    files: RegistryFile[],
-    allRegistryDeps: Set<string>,
-    localeDeps: Set<string>,
-    libDeps: Set<string>
-): void {
-    while (addedComposables.size < composableDeps.size) {
-        const pendingComposables = Array.from(composableDeps).filter(
-            composableName => !addedComposables.has(composableName)
-        );
-
-        for (const composableName of pendingComposables) {
-            const composablePath = path.join(UI_COMPOSABLES_DIR, composableName);
-
-            if (!fs.existsSync(composablePath)) {
-                throw new Error(`Composable file not found at ${composablePath}`);
-            }
-
-            let code = readComponentSource(composablePath);
-            code = rewriteImports(code, name, 'composable');
-            assertKnownRegistryDeps(code, name, composableName).forEach(d => allRegistryDeps.add(d));
-            extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
-            extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
-            extractDeps(code, 'lib').forEach(d => libDeps.add(d));
-
-            files.push({
-                path: `composables/${composableName}`,
-                content: code,
-                type: getFileType(`composables/${composableName}`)
-            });
-            addedComposables.add(composableName);
-        }
-    }
-}
-
-export function buildRegistryItem(name: string): RegistryItem {
-    const componentInfo = REGISTRY[name];
-    if (!componentInfo) {
-        throw new Error(`No file mapping found for component "${name}"`);
-    }
-
-    const allRegistryDeps = new Set<string>();
-    const files: RegistryFile[] = [];
-    const componentFileDeps = new Set(componentInfo.files);
-    const composableDeps = new Set(componentInfo.composables ?? []);
-    const localeDeps = new Set<string>();
-    const libDeps = new Set<string>();
-
-    const addedComponentFiles = new Set<string>();
-    while (addedComponentFiles.size < componentFileDeps.size) {
-        const pendingComponentFiles = Array.from(componentFileDeps).filter(
-            fileName => !addedComponentFiles.has(fileName)
-        );
-
-        for (const fileName of pendingComponentFiles) {
-            const filePath = path.join(UI_COMPONENTS_DIR, name, fileName);
-
-            if (!fs.existsSync(filePath)) {
-                throw new Error(`Source file not found at ${filePath}`);
-            }
-
-            let code = readComponentSource(filePath);
-            code = rewriteImports(code, name, 'component');
-
-            assertKnownRegistryDeps(code, name, fileName).forEach(d => allRegistryDeps.add(d));
-            extractComponentFileDeps(code, name).forEach(d => componentFileDeps.add(d));
-            extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
-            extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
-            extractDeps(code, 'lib').forEach(d => libDeps.add(d));
-
-            files.push({
-                path: `components/ui/${name}/${fileName}`,
-                content: code,
-                type: getFileType(`components/ui/${name}/${fileName}`)
-            });
-            addedComponentFiles.add(fileName);
-        }
-    }
-
-    // Generate index.ts barrel content inline.
-    // The barrel is a derived artifact (gitignored, auto-generated from the
-    // component file list). Generating it here avoids depending on the file
-    // existing on disk, which breaks on clean CI checkouts.
-    const indexContent = rewriteImports(
-        buildComponentIndexContent(Array.from(componentFileDeps)),
-        name,
-        'component'
-    );
-    files.push({
-        path: `components/ui/${name}/index.ts`,
-        content: indexContent,
-        type: getFileType(`components/ui/${name}/index.ts`)
-    });
-
-    const addedComposables = new Set<string>();
-    processComposables(composableDeps, addedComposables, name, files, allRegistryDeps, localeDeps, libDeps);
-
-    const addedDirectives = new Set<string>();
-    const directiveDeps = new Set<string>(componentInfo.directives ?? []);
-    while (addedDirectives.size < directiveDeps.size) {
-        const pendingDirectives = Array.from(directiveDeps).filter(d => !addedDirectives.has(d));
-        for (const directiveName of pendingDirectives) {
-            const directivePath = path.join(UI_DIRECTIVES_DIR, directiveName);
-
-            if (!fs.existsSync(directivePath)) {
-                throw new Error(`Directive file not found at ${directivePath}`);
-            }
-
-            let code = readComponentSource(directivePath);
-            code = rewriteImports(code, name, 'directive');
-            assertKnownRegistryDeps(code, name, directiveName).forEach(d => allRegistryDeps.add(d));
-            extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
-            extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
-            extractDeps(code, 'lib').forEach(d => libDeps.add(d));
-            extractDeps(code, 'directives').forEach(d => directiveDeps.add(d));
-
-            files.push({
-                path: `directives/${directiveName}`,
-                content: code,
-                type: getFileType(`directives/${directiveName}`)
-            });
-            addedDirectives.add(directiveName);
-        }
-    }
-
-    processComposables(composableDeps, addedComposables, name, files, allRegistryDeps, localeDeps, libDeps);
-
-    const addedLocaleDeps = new Set<string>();
-    while (addedLocaleDeps.size < localeDeps.size || (addedComposables.size < composableDeps.size)) {
-        const pendingLocaleDeps = Array.from(localeDeps).filter(localeName => !addedLocaleDeps.has(localeName));
-        for (const localeName of pendingLocaleDeps) {
-            const localePath = path.join(UI_LOCALES_DIR, localeName);
-            if (fs.existsSync(localePath)) {
-                const code = rewriteImports(readComponentSource(localePath), name, 'locale');
-                extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
-                extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
-                extractDeps(code, 'lib').forEach(d => libDeps.add(d));
-            }
-            addedLocaleDeps.add(localeName);
-        }
-        processComposables(composableDeps, addedComposables, name, files, allRegistryDeps, localeDeps, libDeps);
-    }
-
-    if (localeDeps.size > 0) {
-        allRegistryDeps.add('locale-zh-cn');
-    }
-
-    for (const libName of libDeps) {
-        const libPath = path.join(UI_LIB_DIR, libName);
-
-        if (!fs.existsSync(libPath)) {
-            throw new Error(`Lib file not found at ${libPath}`);
-        }
-
-        const code = rewriteImports(readComponentSource(libPath), name, 'lib');
-        assertKnownRegistryDeps(code, name, libName).forEach(d => allRegistryDeps.add(d));
-        extractDeps(code, 'lib').forEach(d => libDeps.add(d));
-
-        if (LIB_EXCLUDE.has(libName)) continue;
-
-        files.push({
-            path: `lib/${libName}`,
-            content: code,
-            type: getFileType(`lib/${libName}`)
-        });
-    }
-
-    const integrity = computeRegistryIntegrity(files);
-
-    return {
-        $schema: 'https://ui.shadcn.com/schema/registry-item.json',
-        name,
-        type: 'registry:ui',
-        title: componentInfo.title,
-        description: componentInfo.description,
-        category: componentInfo.category,
-        examples: [...(componentInfo.examples ?? [])],
-        status: componentInfo.status,
-        replacement: componentInfo.replacement,
-        dependencies: [...(componentInfo.dependencies ?? [])],
-        registryDependencies: Array.from(allRegistryDeps),
-        files,
-        tailwind: TAILWIND_CONFIG,
-        cssVars: CSS_VARS,
-        integrity,
-    } satisfies RegistryItem;
-}
-
-/**
- * 构建 CycloneDX 格式的 SBOM（P1-6 供应链安全）。
- *
- * 范围：列出所有 registry 组件及其声明的 npm 依赖（dependencies 字段）。
- *   - 组件 → SBOM component（type: 'application'）
- *   - npm 依赖 → SBOM component（type: 'library'）
- *   - registryDependencies → SBOM dependency 关系（组件间）
- *
- * 完整性：SBOM 自身 integrity 字段对 components 数组规范化序列求 sha256（按 bom-ref 字典序）。
- *   与 registry-manifest 的 integrity 独立计算，避免互相影响。
- */
-export function buildRegistrySbom(
-    index: RegistryIndex,
-    manifestIntegrity: string,
-): RegistrySbom {
-    const components: SbomComponent[] = [];
-    const seenNpmDeps = new Set<string>();
-
-    for (const item of index.items) {
-        // 组件本身作为 SBOM component
-        components.push({
-            'bom-ref': `brutx:${item.name}`,
-            type: 'application',
-            name: item.name,
-            version: index.registryVersion,
-            description: item.description,
-            hashes: [
-                { alg: 'SHA-256', content: item.integrity.replace(/^sha256-/, '') },
-            ],
-            dependencies: [
-                ...item.dependencies.map(dep => `npm:${dep}`),
-                ...item.registryDependencies.map(dep => `brutx:${dep}`),
-            ],
-        });
-
-        // 收集 npm 依赖（去重，按字典序保证稳定）
-        for (const dep of item.dependencies) {
-            if (!seenNpmDeps.has(dep)) {
-                seenNpmDeps.add(dep);
-            }
-        }
-    }
-
-    for (const dep of [...seenNpmDeps].sort()) {
-        components.push({
-            'bom-ref': `npm:${dep}`,
-            type: 'library',
-            name: dep,
-        });
-    }
-
-    // 规范化排序，确保 SBOM 可重复构建
-    components.sort((a, b) => a['bom-ref'].localeCompare(b['bom-ref']));
-
-    // P1-6 可复现构建：serialNumber 由内容哈希派生（确定性）而非随机 UUID，
-    // 保证同一 registry 内容两次 build 产物逐字一致（幂等）。否则每次 build
-    // 都会让 registry-sbom.json 产生随机 diff，Sign Registry Manifest 工作流
-    // 的 `git pull --rebase` 会因 unstaged changes 失败。
-    const sbomBase = {
-        $schema: 'http://cyclonedx.org/schema/bom-1.5.schema.json',
-        bomFormat: SBOM_FORMAT,
-        specVersion: SBOM_SPEC_VERSION,
-        version: 1,
-        serialNumber: computeSbomSerialNumber({ bomFormat: SBOM_FORMAT, specVersion: SBOM_SPEC_VERSION, components }),
-        metadata: {
-            timestamp: process.env.BRUTX_REGISTRY_BUILD_TIMESTAMP ?? null,
-            tools: [
-                {
-                    vendor: 'brutx-vue',
-                    name: 'registry-builder',
-                    version: index.registryVersion,
-                },
-            ],
-            component: {
-                'bom-ref': 'brutx:registry',
-                type: 'application',
-                name: index.name,
-                version: index.registryVersion,
-            },
-        },
-        components,
-    } satisfies Omit<RegistrySbom, 'integrity' | 'manifestIntegrity'>;
-
-    // SBOM 自身完整性：对 components 数组规范化求 sha256（按 bom-ref 字典序）
-    const sbomIntegrity = computeSbomIntegrity(sbomBase);
-    return { ...sbomBase, integrity: sbomIntegrity, manifestIntegrity };
-}
-
-/**
- * 计算 SBOM 完整性哈希。对 SBOM 的 bomFormat/specVersion/components 求规范化 sha256，
- * 排除 serialNumber/metadata.timestamp/integrity 自身（这些字段在两次 build 间会变）。
- */
-export function computeSbomIntegrity(
-    sbom: Pick<RegistrySbom, 'bomFormat' | 'specVersion' | 'components'>,
-): string {
-    const canonical = JSON.stringify({
-        bomFormat: sbom.bomFormat,
-        specVersion: sbom.specVersion,
-        components: sbom.components,
-    });
-    return 'sha256-' + crypto.createHash('sha256').update(canonical).digest('hex');
-}
-
-/**
- * 确定性生成 SBOM serialNumber（UUID v4 格式的 urn）。
- * 基于 bomFormat/specVersion/components 的规范化内容哈希前 16 字节构造，
- * 同一内容始终产出同一 serialNumber；内容变化时 serialNumber 随之变化。
- */
-export function computeSbomSerialNumber(
-    sbom: Pick<RegistrySbom, 'bomFormat' | 'specVersion' | 'components'>,
-): string {
-    const canonical = JSON.stringify({
-        bomFormat: sbom.bomFormat,
-        specVersion: sbom.specVersion,
-        components: sbom.components,
-    });
-    const hash = crypto.createHash('sha256').update(canonical).digest();
-    const bytes = hash.subarray(0, 16);
-    // 标记为 UUID v4 版本与 RFC 4122 变体（保证格式合法、避免与随机 UUID 混淆）
-    bytes[6] = (bytes[6] & 0x0f) | 0x40;
-    bytes[8] = (bytes[8] & 0x3f) | 0x80;
-    const hex = bytes.toString('hex');
-    return `urn:uuid:${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20, 32)}`;
-}
-
-interface SbomComponent {
-    'bom-ref': string;
-    type: 'application' | 'library';
-    name: string;
-    version?: string;
-    description?: string;
-    hashes?: Array<{ alg: 'SHA-256'; content: string }>;
-    dependencies?: string[];
-}
-
-interface RegistrySbom {
-    $schema: string;
-    bomFormat: string;
-    specVersion: string;
-    version: number;
-    serialNumber: string;
-    metadata: {
-        timestamp: string | null;
-        tools: Array<{ vendor: string; name: string; version: string }>;
-        component: { 'bom-ref': string; type: 'application'; name: string; version: string };
-    };
-    components: SbomComponent[];
-    integrity: string;
-    /** 关联的 registry-manifest.json 的 integrity，便于追溯 SBOM 与 manifest 的对应关系 */
-    manifestIntegrity: string;
-}
-
-// --- 基础设施闭环 P0：CI/CD 自动签发 --------------------------------------
-// 在 GitHub Actions 发布工作流（main/tag 受信环境）注入以下 Secret：
-//   - BRUTX_REGISTRY_PRIVATE_KEY：Ed25519 私钥（PEM 或 PKCS8 DER base64 单行）
-//   - BRUTX_REGISTRY_KEY_ID：签发密钥标识，与 CLI 内置官方公钥的 keyId 对应
-// Fork PR / 本地 build 不注入私钥，产物保持未签名（向后兼容）。
-
-const PRIVATE_KEY_ENV = 'BRUTX_REGISTRY_PRIVATE_KEY';
-const KEY_ID_ENV = 'BRUTX_REGISTRY_KEY_ID';
-
-/**
- * 根据环境变量对 registry-manifest 签名（Ed25519）。
- * - 私钥与 keyId 同时存在时签发 signature/keyId 字段（对 manifest.integrity 值签名）。
- * - 未配置私钥时返回未签名 manifest 并输出提示（本地开发 / Fork CI 保留未签名状态）。
- * - 配置了私钥但签名失败时抛错阻断，避免发布无效签名产物。
- */
-function isVerbose(): boolean {
-    if (process.argv.includes('--verbose') || process.argv.includes('-v')) return true;
-    const env = (process.env.BRUTX_VERBOSE ?? '').toLowerCase();
-    return env === '1' || env === 'true' || env === 'yes';
-}
-
-export function signManifestFromEnv(manifest: RegistryBuildManifest): RegistryBuildManifest {
-    const privateKeyRaw = process.env[PRIVATE_KEY_ENV];
-    const keyId = process.env[KEY_ID_ENV];
-    if (!privateKeyRaw || !keyId) {
-        if (isVerbose()) {
-            console.log('ℹ Registry manifest left unsigned (BRUTX_REGISTRY_PRIVATE_KEY / BRUTX_REGISTRY_KEY_ID not set).');
-        }
-        return manifest;
-    }
-
-    const privateKey = createPrivateKeyFromInput(privateKeyRaw);
-    const signature = crypto.sign(null, Buffer.from(manifest.integrity, 'utf-8'), privateKey).toString('base64');
-    console.log(`🔏 Signed registry manifest integrity with keyId "${keyId}" (Ed25519).`);
-    return { ...manifest, signature, keyId };
-}
-
-/** 兼容 PEM 文本与 PKCS8 DER base64 单行两种私钥格式。 */
-function createPrivateKeyFromInput(raw: string): crypto.KeyObject {
-    if (raw.includes('-----BEGIN')) {
-        return crypto.createPrivateKey(raw);
-    }
-    return crypto.createPrivateKey({
-        key: Buffer.from(raw, 'base64'),
-        format: 'der',
-        type: 'pkcs8',
-    });
+export function signManifestFromEnv(manifest: RegistryBuildManifest) {
+    return coreSignManifestFromEnv(manifest);
 }
 
 export async function run() {
-    const verbose = isVerbose();
-    const buildStartTime = process.hrtime.bigint();
-
-    if (verbose) {
-        console.log('🚀 Starting registry build...');
-    }
-
-    if (!fs.existsSync(OUTPUT_DIR)) {
-        fs.mkdirSync(OUTPUT_DIR, { recursive: true });
-    }
-
-    const cache = loadCache();
-    const newCache: Record<string, string> = {};
-    // 字典序遍历：让 registry build 顺序成为稳定契约，doctor 漂移检测重算 integrity 时
-    // 可与 manifest 的 files 顺序对齐（manifest 不再 .sort()，按此序存储）。
-    const componentNames = Object.keys(REGISTRY).sort();
-    if (verbose) {
-        console.log(`📦 Found ${componentNames.length} components to process.`);
-    }
-    let errorCount = 0;
-    let cachedCount = 0;
-    let generatedCount = 0;
-    const packageJson = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../package.json'), 'utf-8')) as { version: string };
-
-    // P0-4 性能基准：--bench flag 或 BRUTX_BENCH=1 时收集每组件/locale 耗时，末尾写入 bench.json
-    const benchEnabled = process.argv.includes('--bench') || process.env.BRUTX_BENCH === '1';
-    const timings: Array<{ name: string; ms: number; fileCount: number; cached: boolean }> = [];
-    const benchStart = benchEnabled ? process.hrtime.bigint() : 0n;
-
-    const registryIndex = {
-        $schema: 'https://ui.shadcn.com/schema/registry.json',
-        name: 'brutx-vue',
-        homepage: 'https://lidaixingchen.github.io/brutxui-vue3/',
-        schemaVersion: REGISTRY_SCHEMA_VERSION,
-        registryVersion: packageJson.version,
-        items: [] as RegistryIndexItem[]
-    } satisfies RegistryIndex;
-
-    const LOCALE_FILES = ['zh-CN.ts', 'types.ts'];
-    const localeFiles: RegistryFile[] = [];
-    const localeHashParts: string[] = [];
-    for (const localeFile of LOCALE_FILES) {
-        const localePath = path.join(UI_LOCALES_DIR, localeFile);
-        if (fs.existsSync(localePath)) {
-            const code = rewriteImports(readComponentSource(localePath), 'locale', 'locale');
-            localeFiles.push({
-                path: `locales/${localeFile}`,
-                content: code,
-                type: 'registry:lib'
-            });
-            localeHashParts.push(code);
-        }
-    }
-
-    const localeHash = crypto.createHash('sha256').update([
-        JSON.stringify({
-            cacheVersion: CACHE_VERSION,
-            tailwind: TAILWIND_CONFIG,
-            cssVars: CSS_VARS,
-        }),
-        ...localeHashParts,
-    ].join('\0')).digest('hex');
-    const localeOutputPath = path.join(OUTPUT_DIR, 'locale-zh-cn.json');
-
-    if (cache['locale-zh-cn'] === localeHash && fs.existsSync(localeOutputPath) && localeFiles.length > 0) {
-        try {
-            const existingLocaleItem = JSON.parse(fs.readFileSync(localeOutputPath, 'utf-8'));
-            validateReusableRegistryItem(existingLocaleItem, 'locale-zh-cn');
-            registryIndex.items.push({
-                name: existingLocaleItem.name,
-                type: existingLocaleItem.type,
-                title: existingLocaleItem.title,
-                description: existingLocaleItem.description,
-                status: existingLocaleItem.status,
-                replacement: existingLocaleItem.replacement,
-                dependencies: existingLocaleItem.dependencies,
-                registryDependencies: existingLocaleItem.registryDependencies,
-                files: existingLocaleItem.files.map((f: RegistryFile) => ({
-                    path: f.path,
-                    type: f.type
-                })),
-                tailwind: TAILWIND_CONFIG,
-                cssVars: CSS_VARS,
-                integrity: existingLocaleItem.integrity
-            });
-            newCache['locale-zh-cn'] = localeHash;
-            cachedCount++;
-            if (verbose) {
-                console.log('⊘ Skipped locale-zh-cn (unchanged)');
-            }
-        } catch (cacheErr) {
-            console.warn(`⚠ Cache reuse for locale-zh-cn failed, rebuilding: ${cacheErr instanceof Error ? cacheErr.message : cacheErr}`);
-        }
-    } else if (localeFiles.length > 0) {
-        const localeIntegrity = computeRegistryIntegrity(localeFiles);
-
-        const localeItem = {
-            $schema: 'https://ui.shadcn.com/schema/registry-item.json',
-            name: 'locale-zh-cn',
-            type: 'registry:lib',
-            title: 'Locale Zh CN',
-            description: 'Chinese (Simplified) locale data files for BrutxUI components.',
-            dependencies: [] as string[],
-            registryDependencies: [] as string[],
-            files: localeFiles,
-            tailwind: TAILWIND_CONFIG,
-            cssVars: CSS_VARS,
-            integrity: localeIntegrity
-        } satisfies RegistryItem;
-
-        fs.writeFileSync(localeOutputPath, JSON.stringify(localeItem, null, 2), 'utf-8');
-        console.log(`✓ Generated locale-zh-cn.json (${localeFiles.length} files)`);
-        generatedCount++;
-        newCache['locale-zh-cn'] = localeHash;
-
-        registryIndex.items.push({
-            name: 'locale-zh-cn',
-            type: 'registry:lib',
-            title: 'Locale Zh CN',
-            description: 'Chinese (Simplified) locale data files for BrutxUI components.',
-            dependencies: [],
-            registryDependencies: [],
-            files: localeFiles.map(f => ({ path: f.path, type: f.type })),
-            tailwind: TAILWIND_CONFIG,
-            cssVars: CSS_VARS,
-            integrity: localeIntegrity
-        });
-    }
-
-    for (const name of componentNames) {
-        const itemStart = benchEnabled ? process.hrtime.bigint() : 0n;
-        try {
-            const componentInfo = REGISTRY[name];
-            const fileMapping = componentInfo;
-
-            if (!fileMapping) {
-                throw new Error(`No file mapping found for component "${name}"`);
-            }
-
-            const sourceHash = computeSourceHash(name, fileMapping);
-            const outputPath = path.join(OUTPUT_DIR, `${name}.json`);
-
-            if (cache[name] === sourceHash && fs.existsSync(outputPath)) {
-                try {
-                    const existingItem = JSON.parse(fs.readFileSync(outputPath, 'utf-8'));
-                    validateReusableRegistryItem(existingItem, name);
-                    registryIndex.items.push({
-                        name: existingItem.name,
-                        type: existingItem.type,
-                        title: existingItem.title,
-                        description: existingItem.description,
-                        category: existingItem.category,
-                        examples: existingItem.examples,
-                        status: existingItem.status,
-                        replacement: existingItem.replacement,
-                        dependencies: existingItem.dependencies,
-                        registryDependencies: existingItem.registryDependencies,
-                        files: existingItem.files.map((f: RegistryFile) => ({
-                            path: f.path,
-                            type: f.type
-                        })),
-                        tailwind: TAILWIND_CONFIG,
-                        cssVars: CSS_VARS,
-                        integrity: existingItem.integrity
-                    });
-                    newCache[name] = sourceHash;
-                    cachedCount++;
-                    if (verbose) {
-                        console.log(`⊘ Skipped ${name} (unchanged)`);
-                    }
-                    if (benchEnabled) {
-                        timings.push({ name, ms: Number(process.hrtime.bigint() - itemStart) / 1e6, fileCount: existingItem.files.length, cached: true });
-                    }
-                    continue;
-                } catch (cacheErr) {
-                    console.warn(`⚠ Cache reuse for ${name} failed, rebuilding: ${cacheErr instanceof Error ? cacheErr.message : cacheErr}`);
-                }
-            }
-
-            const registryItem = buildRegistryItem(name);
-
-            fs.writeFileSync(outputPath, JSON.stringify(registryItem, null, 2), 'utf-8');
-            console.log(`✓ Generated ${name}.json (${registryItem.files.length} files, Registry dependencies: [${registryItem.registryDependencies.join(', ')}])`);
-            generatedCount++;
-            newCache[name] = sourceHash;
-
-            registryIndex.items.push({
-                name: registryItem.name,
-                type: registryItem.type,
-                title: registryItem.title,
-                description: registryItem.description,
-                category: registryItem.category,
-                examples: registryItem.examples,
-                status: registryItem.status,
-                replacement: registryItem.replacement,
-                dependencies: registryItem.dependencies,
-                registryDependencies: registryItem.registryDependencies,
-                files: registryItem.files.map(f => ({
-                    path: f.path,
-                    type: f.type
-                })),
-                tailwind: registryItem.tailwind,
-                cssVars: registryItem.cssVars,
-                integrity: registryItem.integrity
-            });
-            if (benchEnabled) {
-                timings.push({ name, ms: Number(process.hrtime.bigint() - itemStart) / 1e6, fileCount: registryItem.files.length, cached: false });
-            }
-        } catch (err: unknown) {
-            const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-            console.error(`✗ Failed to process component ${name}:`, errorMessage);
-            const stalePath = path.join(OUTPUT_DIR, `${name}.json`);
-            if (fs.existsSync(stalePath)) {
-                fs.unlinkSync(stalePath);
-                console.log(`  Removed stale ${name}.json`);
-            }
-            errorCount++;
-        }
-    }
-
-    assertRegistryDependencyGraph(registryIndex.items);
-
-    const indexPath = path.join(OUTPUT_DIR, 'index.json');
-    fs.writeFileSync(indexPath, JSON.stringify(registryIndex, null, 2), 'utf-8');
-
-    const manifest = buildRegistryManifest(registryIndex, {
-        registryVersion: packageJson.version,
-        schemaVersion: REGISTRY_SCHEMA_VERSION,
-        buildTimestamp: process.env.BRUTX_REGISTRY_BUILD_TIMESTAMP ?? null,
-        gitCommit: process.env.GITHUB_SHA ?? process.env.COMMIT_SHA ?? null,
-    });
-    // 基础设施闭环 P0：CI 检测到私钥环境变量时自动签发（Fork/本地保持未签名）
-    const signedManifest = signManifestFromEnv(manifest);
-    const manifestPath = path.join(OUTPUT_DIR, 'registry-manifest.json');
-    fs.writeFileSync(manifestPath, JSON.stringify(signedManifest, null, 2), 'utf-8');
-
-    // P1-6 供应链安全：生成 CycloneDX 格式 SBOM，列出所有组件及 npm 依赖
-    const sbom = buildRegistrySbom(registryIndex, manifest.integrity);
-    fs.writeFileSync(SBOM_FILE, JSON.stringify(sbom, null, 2), 'utf-8');
-
-    if (verbose) {
-        console.log('✓ Generated index.json');
-        console.log(signedManifest.signature
-            ? `✓ Generated registry-manifest.json (signed by ${signedManifest.keyId})`
-            : '✓ Generated registry-manifest.json (unsigned)');
-        console.log(`✓ Generated registry-sbom.json (${sbom.components.length} components)`);
-    }
-
-    removeStaleRegistryFiles(new Set([
-        'index.json',
-        'registry-manifest.json',
-        'registry-sbom.json',
-        ...registryIndex.items.map(item => `${item.name}.json`),
-    ]));
-
-    saveCache(newCache);
-
-    if (benchEnabled) {
-        const totalMs = Number(process.hrtime.bigint() - benchStart) / 1e6;
-        // 按耗时降序，便于一眼定位瓶颈组件
-        const sortedTimings = [...timings].sort((a, b) => b.ms - a.ms);
-        const cachedCountBench = sortedTimings.filter(t => t.cached).length;
-        const rebuiltCountBench = sortedTimings.length - cachedCountBench;
-        const benchReport = {
-            totalMs,
-            itemCount: sortedTimings.length,
-            cachedCount: cachedCountBench,
-            rebuiltCount: rebuiltCountBench,
-            items: sortedTimings,
-        };
-        fs.writeFileSync(BENCH_FILE, JSON.stringify(benchReport, null, 2), 'utf-8');
-        console.log(`📊 Bench: ${sortedTimings.length} items, ${cachedCountBench} cached, ${rebuiltCountBench} rebuilt, total ${totalMs.toFixed(2)}ms`);
-        console.log(`📊 Slowest 5: ${sortedTimings.slice(0, 5).map(t => `${t.name}=${t.ms.toFixed(1)}ms`).join(', ')}`);
-        console.log(`📊 Written to ${path.relative(process.cwd(), BENCH_FILE)}`);
-    }
-
-    const totalDurationMs = Number(process.hrtime.bigint() - buildStartTime) / 1e6;
-    if (errorCount > 0) {
-        console.warn(`⚠ Registry build completed with ${errorCount} error(s) in ${totalDurationMs.toFixed(0)}ms (${generatedCount} updated, ${cachedCount} cached)`);
-    } else if (verbose || generatedCount > 0) {
-        console.log(`🎉 Registry built in ${totalDurationMs.toFixed(0)}ms (${generatedCount} updated, ${cachedCount} cached)`);
-    } else {
-        console.log(`✓ Registry up-to-date (${cachedCount} components cached)`);
-    }
+    await runBuild();
 }
 
-/**
- * Watch 模式（P2.3）：监听 UI 源码变化，增量 rebuild registry JSON。
- *
- * 工作流：
- *   1. 启动时先跑一次完整 build（含 prebuild:scan + run）
- *   2. 递归监听 UI 源码目录（components/composables/locales/lib/directives）
- *   3. 检测到 .vue/.ts 文件变化时（debounce 300ms）：
- *      a. runPrebuildScan() —— 更新 registry-manifest.json（应对新增/删除文件）
- *      b. reloadRegistry() —— 重新加载 REGISTRY 常量
- *      c. run() —— 增量 build（cache 命中时跳过未变化组件）
- *   4. 也监听 shared/src/components.ts（COMPONENT_METADATA 来源）
- *
- * 防并发：isBuilding 标志确保上一次 build 完成后才启动下一次。
- * 退出：Ctrl+C 触发 SIGINT，关闭所有 watcher。
- */
-const WATCH_DEBOUNCE_MS = 300;
-
-const WATCHED_EXTENSIONS = new Set(['.vue', '.ts', '.tsx']);
-
-// shared/src/components.ts 的路径（COMPONENT_METADATA 来源，影响所有组件的元数据）
-const SHARED_COMPONENTS_FILE = path.resolve(__dirname, '../../shared/src/components.ts');
-
-interface WatchState {
-    isBuilding: boolean;
-    pendingChange: boolean;
-    watchers: fs.FSWatcher[];
-    debounceTimer: NodeJS.Timeout | null;
-}
-
-export async function runWatch(): Promise<void> {
-    console.log('👀 Starting registry build in watch mode...');
-
-    // 初始 build：先 scan，再 build
-    console.log('📦 Initial prebuild:scan...');
-    runPrebuildScan();
-    reloadRegistry();
-    console.log('📦 Initial build...');
-    await run();
-
-    const state: WatchState = {
-        isBuilding: false,
-        pendingChange: false,
-        watchers: [],
-        debounceTimer: null,
-    };
-
-    const dirsToWatch = [
-        UI_COMPONENTS_DIR,
-        UI_COMPOSABLES_DIR,
-        UI_LOCALES_DIR,
-        UI_LIB_DIR,
-        UI_DIRECTIVES_DIR,
-    ];
-
-    for (const dir of dirsToWatch) {
-        if (!fs.existsSync(dir)) continue;
-        try {
-            const watcher = fs.watch(dir, { recursive: true }, (eventType, filename) => {
-                if (!filename) return;
-                handleFileChange(filename, state);
-            });
-            state.watchers.push(watcher);
-            console.log(`  Watching ${path.relative(process.cwd(), dir)}/`);
-        } catch (error) {
-            console.warn(`  Failed to watch ${dir}: ${error instanceof Error ? error.message : error}`);
-        }
-    }
-
-    // 监听 shared/src/components.ts（单文件）
-    const sharedDir = path.dirname(SHARED_COMPONENTS_FILE);
-    if (fs.existsSync(sharedDir)) {
-        try {
-            const watcher = fs.watch(sharedDir, (eventType, filename) => {
-                if (filename === 'components.ts') {
-                    handleFileChange('shared/components.ts', state);
-                }
-            });
-            state.watchers.push(watcher);
-            console.log(`  Watching ${path.relative(process.cwd(), SHARED_COMPONENTS_FILE)}`);
-        } catch (error) {
-            console.warn(`  Failed to watch shared/components.ts: ${error instanceof Error ? error.message : error}`);
-        }
-    }
-
-    console.log(`\n👀 Watching for changes (debounce ${WATCH_DEBOUNCE_MS}ms). Press Ctrl+C to stop.\n`);
-
-    // SIGINT 清理
-    process.on('SIGINT', () => {
-        console.log('\n👋 Stopping watchers...');
-        if (state.debounceTimer) {
-            clearTimeout(state.debounceTimer);
-        }
-        for (const watcher of state.watchers) {
-            watcher.close();
-        }
-        process.exit(0);
-    });
-}
-
-function handleFileChange(filename: string, state: WatchState): void {
-    // 只关心 .vue/.ts/.tsx 文件
-    const ext = path.extname(filename);
-    if (!WATCHED_EXTENSIONS.has(ext)) return;
-
-    // 忽略测试文件
-    if (/\.(test|spec)\.(ts|tsx)$/.test(filename)) return;
-
-    // debounce：标记有待处理的变化
-    state.pendingChange = true;
-
-    if (state.isBuilding) {
-        // build 进行中，等 build 完成后会检查 pendingChange
-        return;
-    }
-
-    // debounce 延迟：清除前一个定时器，避免堆积多个 timer 导致 pendingChange 被错误消费
-    if (state.debounceTimer) {
-        clearTimeout(state.debounceTimer);
-    }
-    state.debounceTimer = setTimeout(() => {
-        state.debounceTimer = null;
-        if (!state.pendingChange) return;
-        state.pendingChange = false;
-        void triggerRebuild(state);
-    }, WATCH_DEBOUNCE_MS);
-}
-
-async function triggerRebuild(state: WatchState): Promise<void> {
-    if (state.isBuilding) return;
-    state.isBuilding = true;
-
-    const startTime = Date.now();
-    try {
-        console.log(`\n🔄 Change detected, rebuilding...`);
-
-        // 1. 重新生成 registry-manifest.json（应对新增/删除文件）
-        runPrebuildScan();
-
-        // 2. 重新加载 REGISTRY（manifest 变化后）
-        reloadRegistry();
-
-        // 3. 增量 build（cache 命中时跳过未变化组件）
-        await run();
-
-        const elapsed = Date.now() - startTime;
-        console.log(`✅ Rebuild complete in ${elapsed}ms. Watching for more changes...`);
-    } catch (error) {
-        console.error('❌ Rebuild failed:', error instanceof Error ? error.message : error);
-        console.log('  (watch mode continues, fix the error and save again)');
-    } finally {
-        state.isBuilding = false;
-
-        // 如果在 build 期间有新的文件变化，再触发一次
-        if (state.pendingChange) {
-            state.pendingChange = false;
-            if (state.debounceTimer) {
-                clearTimeout(state.debounceTimer);
-            }
-            state.debounceTimer = setTimeout(() => {
-                state.debounceTimer = null;
-                void triggerRebuild(state);
-            }, WATCH_DEBOUNCE_MS);
-        }
-    }
-}
+export { runWatch };
 
 const isVitestRuntime = process.env.VITEST === 'true' || process.env.VITEST_WORKER_ID !== undefined;
 
