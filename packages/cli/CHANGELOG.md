@@ -1,5 +1,16 @@
 # brutx-vue
 
+## 0.11.0
+
+### Minor Changes
+
+- UI 包与 CLI 包 v0.11.0 中版本发布：
+
+  - **VFS 虚拟文件系统与深模块重构**：引入抽象文件系统与内存/物理适配器，CLI 与脚本全量消除裸 I/O 穿透；引入 ScaffoldEngine 原子事务与 AST 精准切片注入；封装 AuditLogStorage 深模块。
+  - **设计令牌单一信源与多端生成**：下沉设计令牌至 `design-tokens.ts` 单一信源，自动生成 CSS 变量与多端样式；支持 Subtle 浅色衍生令牌与机械弹性动效；阴影与按压反馈改用盖影语义。
+  - **全库组件无障碍 (a11y) 与交互加固**：全面强化焦点管理与键盘可访问性，修复 Form、DatePicker、Kanban、NumberInput、DashboardShell、Dialog、Message 等组件的状态残留、SSR 水合与事件边界。
+  - **质量门禁与零 I/O 测试**：构建与扫描脚本收敛至单一事实源，建立全工程零 I/O 测试套件与双向一致性核对门禁。
+
 ## 0.10.1
 
 ### Patch Changes
