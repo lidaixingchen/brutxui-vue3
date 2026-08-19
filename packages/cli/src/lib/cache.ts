@@ -1,8 +1,19 @@
-import crypto from 'node:crypto';
 import os from 'node:os';
 import path from 'node:path';
-import fs from 'fs-extra';
-import { logger } from './logger.js';
+import { DiskFileSystemAdapter, type FileSystemAdapter } from 'brutx-shared-vue/fs';
+import {
+    CacheStorage,
+    type CacheReadResult,
+    type CacheWriteInput,
+    type CacheStats,
+} from './storage/cache-storage.js';
+
+export {
+    type CacheReadResult,
+    type CacheWriteInput,
+    type CacheStats,
+    CacheStorage,
+};
 
 const DEFAULT_CACHE_DIR = path.join(os.homedir(), '.brutx-vue', 'cache');
 const DEFAULT_TTL = 3600000;
@@ -13,51 +24,14 @@ const MAX_ENTRIES_ENV = 'BRUTX_CACHE_MAX';
 const MAX_BYTES_ENV = 'BRUTX_CACHE_MAX_BYTES';
 const CACHE_DIR_ENV = 'BRUTX_CACHE_DIR';
 
-/**
- * 运行时读取缓存目录，优先环境变量 BRUTX_CACHE_DIR（主要用于测试隔离）。
- * 不用模块级常量——环境变量在进程内可变，且测试需动态切换。
- */
 function getCacheDir(): string {
     return process.env[CACHE_DIR_ENV] ?? DEFAULT_CACHE_DIR;
-}
-
-interface CacheEntry<T> {
-    data: T;
-    timestamp: number;
-    etag?: string;
-    lastModified?: string;
-    registryVersion?: string;
-}
-
-interface CacheFileRaw<T> {
-    data?: T;
-    timestamp?: number;
-    etag?: string;
-    lastModified?: string;
-    registryVersion?: string;
-}
-
-function getCacheKey(name: string, source: string): string {
-    return crypto
-        .createHash('sha256')
-        .update(`${source}/${name}`)
-        .digest('hex')
-        .slice(0, 16);
-}
-
-function getCacheFilePath(name: string, source: string): string {
-    return path.join(getCacheDir(), `${getCacheKey(name, source)}.json`);
 }
 
 function isCacheDisabled(): boolean {
     return process.env.BRUTX_NO_CACHE === '1';
 }
 
-/**
- * 离线模式（P1-5）：BRUTX_OFFLINE=1 或 --offline 触发。
- * 语义：只读缓存，TTL 过期也复用（但必须通过 integrity 校验）。
- * 缓存未命中时调用方应抛 REGISTRY_OFFLINE_UNAVAILABLE。
- */
 export function isOfflineMode(): boolean {
     return process.env.BRUTX_OFFLINE === '1';
 }
@@ -66,346 +40,75 @@ function getMaxEntries(): number {
     const raw = process.env[MAX_ENTRIES_ENV];
     if (!raw) return DEFAULT_MAX_ENTRIES;
     const parsed = Number.parseInt(raw, 10);
-    if (Number.isNaN(parsed) || parsed < 1) return DEFAULT_MAX_ENTRIES;
-    return parsed;
+    return Number.isNaN(parsed) || parsed < 1 ? DEFAULT_MAX_ENTRIES : parsed;
 }
 
 function getMaxBytes(): number {
     const raw = process.env[MAX_BYTES_ENV];
     if (!raw) return DEFAULT_MAX_BYTES;
     const parsed = Number.parseInt(raw, 10);
-    if (Number.isNaN(parsed) || parsed < 1024) return DEFAULT_MAX_BYTES;
-    return parsed;
+    return Number.isNaN(parsed) || parsed < 1024 ? DEFAULT_MAX_BYTES : parsed;
 }
 
-/**
- * in-flight 去重：同一 cacheKey 的并发请求共享同一 Promise。
- * 进程级 Map，CLI 退出即清理。面向未来并发 getItem/add 路径的安全储备。
- */
-const inflightRequests = new Map<string, Promise<unknown>>();
+/** 默认磁盘适配器单例 */
+const defaultDiskFs = new DiskFileSystemAdapter();
 
-export function getInflightKey(name: string, source: string): string {
-    return getCacheKey(name, source);
+/** 创建基于当前环境变量与传入 VFS 适配器的 CacheStorage 实例 */
+export function createDefaultCacheStorage(fsAdapter: FileSystemAdapter = defaultDiskFs): CacheStorage {
+    return new CacheStorage({
+        fs: fsAdapter,
+        cacheDir: getCacheDir(),
+        maxEntries: getMaxEntries(),
+        maxBytes: getMaxBytes(),
+        defaultTtl: DEFAULT_TTL,
+        disabled: isCacheDisabled(),
+        offline: isOfflineMode(),
+    });
 }
 
-/**
- * 执行去重：若已有同名请求在飞，返回该 Promise；否则执行 fn 并缓存其 Promise。
- * fn 返回 null 时视为缓存未命中且不写入缓存（仍复用 Promise 避免重复请求）。
- */
 export async function dedupeInflight<T>(
     name: string,
     source: string,
     fn: () => Promise<T | null>,
 ): Promise<T | null> {
-    const key = getInflightKey(name, source);
-    const existing = inflightRequests.get(key);
-    if (existing) {
-        return existing as Promise<T | null>;
-    }
-    const promise = (async () => {
-        try {
-            return await fn();
-        } finally {
-            inflightRequests.delete(key);
-        }
-    })();
-    inflightRequests.set(key, promise);
-    return promise;
+    return createDefaultCacheStorage().dedupe(name, source, fn);
 }
 
-/**
- * 清理超过上限的最旧缓存条目（LRU 淘汰）。
- * 按两条上限取严：条目数与字节数。
- */
-async function enforceLimits(): Promise<void> {
-    const maxEntries = getMaxEntries();
-    const maxBytes = getMaxBytes();
-    const cacheDir = getCacheDir();
-
-    if (!(await fs.pathExists(cacheDir))) return;
-
-    const entries = await fs.readdir(cacheDir, { withFileTypes: true });
-    const files: Array<{ path: string; stat: { mtimeMs: number; size: number } }> = [];
-
-    // 各文件 stat 相互独立，并行收集避免串行等待拖慢清理
-    const stats = await Promise.all(
-        entries
-            .filter(entry => entry.isFile() && entry.name.endsWith('.json'))
-            .map(async (entry) => {
-                const fullPath = path.join(cacheDir, entry.name);
-                try {
-                    const stat = await fs.stat(fullPath);
-                    return { path: fullPath, stat: { mtimeMs: stat.mtimeMs, size: stat.size } };
-                } catch {
-                    // stat 失败的文件跳过
-                    return null;
-                }
-            }),
-    );
-    files.push(...stats.filter((s): s is NonNullable<typeof s> => s !== null));
-
-    const totalBytes = files.reduce((sum, f) => sum + f.stat.size, 0);
-    const needsEntryEviction = files.length > maxEntries;
-    const needsByteEviction = totalBytes > maxBytes;
-
-    if (!needsEntryEviction && !needsByteEviction) return;
-
-    files.sort((a, b) => a.stat.mtimeMs - b.stat.mtimeMs);
-
-    // 先按"假定全部成功"确定需淘汰的最旧条目，再并行删除；
-    // 若个别删除失败，会在下方对剩余最旧文件补偿删除，保持尽力满足限额的语义。
-    const toRemove: string[] = [];
-    let currentBytes = totalBytes;
-    let currentCount = files.length;
-    for (const file of files) {
-        if (currentCount <= maxEntries && currentBytes <= maxBytes) break;
-        toRemove.push(file.path);
-        currentBytes -= file.stat.size;
-        currentCount -= 1;
-    }
-
-    const results = await Promise.all(toRemove.map(async (filePath) => {
-        try {
-            await fs.remove(filePath);
-            return true;
-        } catch {
-            // 删除失败跳过
-            return false;
-        }
-    }));
-    let removed = results.filter(Boolean).length;
-
-    // 并行批次存在删除失败时，实际释放小于预期，需补偿删除。
-    // 先重试批次内删除失败的最旧文件（避免持久性失败时反复淘汰更新的文件偏离 LRU），
-    // 仍超限再继续淘汰后续较新的文件
-    if (removed < toRemove.length) {
-        currentBytes = totalBytes;
-        currentCount = files.length;
-        for (let i = 0; i < results.length; i++) {
-            if (results[i]) {
-                currentBytes -= files[i].stat.size;
-                currentCount -= 1;
-            }
-        }
-        for (let i = 0; i < files.length; i++) {
-            if (i < results.length && results[i]) continue;
-            if (currentCount <= maxEntries && currentBytes <= maxBytes) break;
-            try {
-                await fs.remove(files[i].path);
-                currentBytes -= files[i].stat.size;
-                currentCount -= 1;
-                removed += 1;
-            } catch {
-                // 删除失败继续尝试下一个
-            }
-        }
-    }
-
-    if (removed > 0) {
-        logger.debug(`Cache: evicted ${removed} entries (LRU).`);
-    }
-}
-
-export interface CacheReadResult<T> {
-    data: T;
-    timestamp: number;
-    etag?: string;
-    lastModified?: string;
-    registryVersion?: string;
-    expired: boolean;
-}
-
-/**
- * 读取缓存。返回完整 entry（含 header 与 registryVersion），以及 expired 标记。
- * TTL 过期时不立即删除——调用方可据 etag/lastModified 发条件请求，304 则复用 body。
- */
 export async function getCachedEntry<T>(
     name: string,
     source: string,
     ttl: number = DEFAULT_TTL,
 ): Promise<CacheReadResult<T> | null> {
-    if (isCacheDisabled()) return null;
-
-    const filePath = getCacheFilePath(name, source);
-
-    try {
-        if (!(await fs.pathExists(filePath))) return null;
-
-        const raw = await fs.readJson(filePath) as CacheFileRaw<T>;
-        // 缓存文件损坏（缺字段/写中断残留）时视为未命中，避免把 undefined 强转返回
-        if (typeof raw.timestamp !== 'number' || raw.data === undefined) return null;
-
-        const expired = Date.now() - raw.timestamp >= ttl;
-        return {
-            data: raw.data as T,
-            timestamp: raw.timestamp,
-            etag: raw.etag,
-            lastModified: raw.lastModified,
-            registryVersion: raw.registryVersion,
-            expired,
-        };
-    } catch {
-        return null;
-    }
+    return createDefaultCacheStorage().get<T>(name, source, ttl);
 }
 
-export interface CacheWriteInput {
-    etag?: string;
-    lastModified?: string;
-    registryVersion?: string;
-}
-
-/**
- * 原子写缓存文件：先写临时文件再 rename 替换。
- * 进程崩溃不会留下截断的 JSON 主文件（临时文件残留无碍），
- * 也避免并发 touch/set 时用旧数据覆盖新写入的数据（rename 原子替换）。
- */
-async function writeCacheFileAtomic<T>(filePath: string, entry: CacheFileRaw<T>): Promise<void> {
-    // 临时文件名带 randomUUID：仅 pid 不足以唯一，同进程内并发写同一缓存文件
-    // 会共用同一 temp 路径（互相 rename 覆盖/吞错）
-    const tempPath = `${filePath}.${process.pid}.${crypto.randomUUID()}.tmp`;
-    try {
-        await fs.writeJson(tempPath, entry);
-        await fs.move(tempPath, filePath, { overwrite: true });
-    } catch (error) {
-        await fs.remove(tempPath).catch(() => {});
-        throw error;
-    }
-}
-
-/**
- * 写入缓存。写入后触发 LRU 上限检查。
- */
 export async function setCachedEntry<T>(
     name: string,
     source: string,
     data: T,
     meta?: CacheWriteInput,
 ): Promise<void> {
-    if (isCacheDisabled()) return;
-
-    const filePath = getCacheFilePath(name, source);
-    await fs.ensureDir(getCacheDir());
-
-    const entry: CacheEntry<T> = {
-        data,
-        timestamp: Date.now(),
-        etag: meta?.etag,
-        lastModified: meta?.lastModified,
-        registryVersion: meta?.registryVersion,
-    };
-
-    await writeCacheFileAtomic(filePath, entry);
-    // LRU 清理失败不应影响主流程，但记录 debug 日志便于定位清理失效原因（缓存膨胀）
-    await enforceLimits().catch((err) => {
-        logger.debug(`Cache: enforceLimits failed: ${err instanceof Error ? err.message : String(err)}`);
-    });
+    return createDefaultCacheStorage().set<T>(name, source, data, meta);
 }
 
-/**
- * 刷新已缓存条目的 timestamp（不重写 body），用于 304 响应时续期。
- */
 export async function touchCachedEntry(name: string, source: string): Promise<void> {
-    if (isCacheDisabled()) return;
-
-    const filePath = getCacheFilePath(name, source);
-    if (!(await fs.pathExists(filePath))) return;
-
-    try {
-        const raw = await fs.readJson(filePath) as CacheFileRaw<unknown>;
-        // 与 getCachedEntry 一致：data 缺失的损坏条目视为未命中，不续命
-        if (typeof raw.timestamp !== 'number' || raw.data === undefined) return;
-        raw.timestamp = Date.now();
-        await writeCacheFileAtomic(filePath, raw);
-    } catch {
-        // touch 失败不影响主流程
-    }
+    return createDefaultCacheStorage().touch(name, source);
 }
-
-// --- 向后兼容旧 API -------------------------------------------------------
-// getCached/setCache 保留给尚未改造的调用方使用；新代码应直接用 getCachedEntry/setCachedEntry。
 
 export async function getCached<T>(name: string, source: string, ttl: number = DEFAULT_TTL): Promise<T | null> {
     const result = await getCachedEntry<T>(name, source, ttl);
-    if (!result) return null;
-    if (result.expired) return null;
+    if (!result || result.expired) return null;
     return result.data;
 }
 
 export async function setCache<T>(name: string, source: string, data: T): Promise<void> {
-    await setCachedEntry(name, source, data);
+    return setCachedEntry(name, source, data);
 }
 
-/**
- * 清空整个缓存目录，或只清理超过 maxAgeDays 天的条目。
- * @param maxAgeDays 可选，提供时只清理超过该天数的条目；不提供时清空全部。
- */
 export async function clearCache(maxAgeDays?: number): Promise<void> {
-    const cacheDir = getCacheDir();
-    if (!(await fs.pathExists(cacheDir))) return;
-
-    if (maxAgeDays === undefined || maxAgeDays <= 0) {
-        await fs.remove(cacheDir);
-        return;
-    }
-
-    const maxAgeMs = maxAgeDays * 24 * 60 * 60 * 1000;
-    const now = Date.now();
-    const entries = await fs.readdir(cacheDir, { withFileTypes: true });
-
-    // 各文件 stat 相互独立，并行收集过期条目后统一删除
-    const staleFiles = await Promise.all(
-        entries
-            .filter(entry => entry.isFile() && entry.name.endsWith('.json'))
-            .map(async (entry) => {
-                const fullPath = path.join(cacheDir, entry.name);
-                try {
-                    const stat = await fs.stat(fullPath);
-                    return now - stat.mtimeMs > maxAgeMs ? fullPath : null;
-                } catch {
-                    // stat 失败跳过
-                    return null;
-                }
-            }),
-    );
-    await Promise.all(
-        staleFiles
-            .filter((p): p is string => p !== null)
-            .map(fullPath => fs.remove(fullPath).catch(() => {})),
-    );
+    return createDefaultCacheStorage().clear(maxAgeDays);
 }
 
-export interface CacheStats {
-    /** 缓存目录路径 */
-    dir: string;
-    /** 缓存条目数（.json 文件数） */
-    entryCount: number;
-    /** 占用体积（字节） */
-    totalBytes: number;
-}
-
-/**
- * 缓存可观测性（基础设施闭环 P2）：统计缓存条目数与占用体积。
- * 供 `brutx doctor` 报告缓存健康状况与离线可用状态。
- */
 export async function getCacheStats(): Promise<CacheStats> {
-    const cacheDir = getCacheDir();
-    let entryCount = 0;
-    let totalBytes = 0;
-
-    if (await fs.pathExists(cacheDir)) {
-        const entries = await fs.readdir(cacheDir, { withFileTypes: true });
-        for (const entry of entries) {
-            if (!entry.isFile() || !entry.name.endsWith('.json')) continue;
-            try {
-                const stat = await fs.stat(path.join(cacheDir, entry.name));
-                entryCount += 1;
-                totalBytes += stat.size;
-            } catch {
-                // stat 失败的文件不计入
-            }
-        }
-    }
-
-    return { dir: cacheDir, entryCount, totalBytes };
+    return createDefaultCacheStorage().getStats();
 }
