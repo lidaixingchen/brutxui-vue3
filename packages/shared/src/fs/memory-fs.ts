@@ -141,10 +141,13 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
         const byteSize = typeof content === 'string'
             ? Buffer.byteLength(content, encoding)
             : content.byteLength;
+        const storedContent = typeof content === 'string'
+            ? content
+            : new Uint8Array(content);
 
         this.nodes.set(normalized, {
             type: 'file',
-            content,
+            content: storedContent,
             mtimeMs: Date.now(),
             size: byteSize,
         });
@@ -163,72 +166,75 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
 
     async pathExists(filePath: string): Promise<boolean> {
         const normalized = this.normalizePath(filePath);
-        return this.nodes.has(normalized);
+        const resolved = await this.resolveSymlinkTarget(normalized);
+        return this.nodes.has(resolved);
     }
 
     async ensureDir(dirPath: string): Promise<void> {
-        this.ensureDirSync(dirPath);
+        const normalized = this.normalizePath(dirPath);
+        this.ensureDirSync(normalized);
     }
 
     async remove(targetPath: string, options: FsRemoveOptions = {}): Promise<void> {
         const normalized = this.normalizePath(targetPath);
-        const node = this.nodes.get(normalized);
-        if (!node && !options.force) {
-            return;
+        const resolved = await this.resolveSymlinkTarget(normalized);
+
+        const node = this.nodes.get(resolved);
+        if (!node && options.force === false) {
+            throw new Error(`ENOENT: no such file or directory, rm '${targetPath}'`);
         }
 
-        if (node?.type === 'dir') {
-            const prefix = `${normalized}/`;
-            const keysToDelete: string[] = [normalized];
+        if (options.recursive === false && node?.type === 'dir') {
+            const prefix = `${resolved}/`;
             for (const key of this.nodes.keys()) {
-                if (key.startsWith(prefix)) {
-                    keysToDelete.push(key);
+                if (key.startsWith(prefix) && key !== resolved) {
+                    throw new Error(`ENOTEMPTY: directory not empty, rm '${targetPath}'`);
                 }
             }
-            for (const key of keysToDelete) {
-                this.nodes.delete(key);
-            }
-            return;
         }
 
-        this.nodes.delete(normalized);
+        const prefix = `${resolved}/`;
+        for (const key of Array.from(this.nodes.keys())) {
+            if (key === resolved || key.startsWith(prefix)) {
+                this.nodes.delete(key);
+            }
+        }
     }
 
     async copy(src: string, dest: string): Promise<void> {
-        const normalizedSrc = await this.resolveSymlinkTarget(this.normalizePath(src));
+        const normalizedSrc = this.normalizePath(src);
         const normalizedDest = this.normalizePath(dest);
-        const node = this.nodes.get(normalizedSrc);
+
+        const resolvedSrc = await this.resolveSymlinkTarget(normalizedSrc);
+        const node = this.nodes.get(resolvedSrc);
         if (!node) {
-            throw new Error(`ENOENT: no such file or directory, copy '${src}' -> '${dest}'`);
+            throw new Error(`ENOENT: no such file or directory, cp '${src}' -> '${dest}'`);
         }
 
         if (node.type === 'file') {
             this.ensureDirSync(this.getParentDir(normalizedDest));
             this.nodes.set(normalizedDest, {
                 type: 'file',
-                content: node.content,
+                content: typeof node.content === 'string' ? node.content : new Uint8Array(node.content),
                 mtimeMs: Date.now(),
                 size: node.size,
             });
-            return;
-        }
-
-        if (node.type === 'dir') {
+        } else if (node.type === 'dir') {
             this.ensureDirSync(normalizedDest);
-            const prefix = `${normalizedSrc}/`;
-            for (const [key, childNode] of this.nodes.entries()) {
+            const prefix = `${resolvedSrc}/`;
+            for (const [key, n] of this.nodes.entries()) {
                 if (key.startsWith(prefix)) {
                     const relative = key.slice(prefix.length);
-                    const childDest = `${normalizedDest}/${relative}`;
-                    if (childNode.type === 'dir') {
-                        this.ensureDirSync(childDest);
-                    } else if (childNode.type === 'file') {
-                        this.ensureDirSync(this.getParentDir(childDest));
-                        this.nodes.set(childDest, {
+                    const destPath = `${normalizedDest}/${relative}`;
+                    if (n.type === 'dir') {
+                        this.ensureDirSync(destPath);
+                    } else if (n.type === 'file') {
+                        this.ensureDirSync(this.getParentDir(destPath));
+                        this.nodes.set(destPath, {
                             type: 'file',
-                            content: childNode.content,
+                            content: typeof n.content === 'string' ? n.content : new Uint8Array(n.content),
                             mtimeMs: Date.now(),
-                            size: childNode.size,
+                            size: n.size,
                         });
                     }
                 }
@@ -237,8 +243,9 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
     }
 
     async stat(filePath: string): Promise<FileStat> {
-        const normalized = await this.resolveSymlinkTarget(this.normalizePath(filePath));
-        const node = this.nodes.get(normalized);
+        const normalized = this.normalizePath(filePath);
+        const resolved = await this.resolveSymlinkTarget(normalized);
+        const node = this.nodes.get(resolved);
         if (!node) {
             throw new Error(`ENOENT: no such file or directory, stat '${filePath}'`);
         }
@@ -272,21 +279,29 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
     readdir(dirPath: string, options?: { withFileTypes?: false }): Promise<string[]>;
     readdir(dirPath: string, options?: { withFileTypes?: boolean }): Promise<FileEntry[] | string[]>;
     async readdir(dirPath: string, options?: { withFileTypes?: boolean }): Promise<FileEntry[] | string[]> {
-        const normalized = this.normalizePath(dirPath);
+        const normalized = await this.resolveSymlinkTarget(this.normalizePath(dirPath));
+        const node = this.nodes.get(normalized);
+        if (!node) {
+            throw new Error(`ENOENT: no such file or directory, scandir '${dirPath}'`);
+        }
+        if (node.type !== 'dir') {
+            throw new Error(`ENOTDIR: not a directory, scandir '${dirPath}'`);
+        }
+
         const prefix = `${normalized}/`;
         const directChildren = new Map<string, FileEntry>();
 
-        for (const [key, node] of this.nodes.entries()) {
+        for (const [key, n] of this.nodes.entries()) {
             if (key.startsWith(prefix) && key !== normalized) {
                 const subPath = key.slice(prefix.length);
                 const firstSegment = subPath.split('/')[0];
                 if (!directChildren.has(firstSegment)) {
-                    const isSubDir = subPath.includes('/') || node.type === 'dir';
+                    const isSubDir = subPath.includes('/') || n.type === 'dir';
                     directChildren.set(firstSegment, {
                         name: firstSegment,
                         isDirectory: () => isSubDir,
-                        isFile: () => !isSubDir && node.type === 'file',
-                        isSymbolicLink: () => !isSubDir && node.type === 'symlink',
+                        isFile: () => !isSubDir && n.type === 'file',
+                        isSymbolicLink: () => !isSubDir && n.type === 'symlink',
                     });
                 }
             }
@@ -313,6 +328,45 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
         const tempPath = `${normalizedPrefix}${Date.now()}-${this.tempCounter++}`;
         this.ensureDirSync(tempPath);
         return tempPath;
+    }
+
+    async rename(oldPath: string, newPath: string): Promise<void> {
+        const normalizedOld = this.normalizePath(oldPath);
+        const normalizedNew = this.normalizePath(newPath);
+
+        const node = this.nodes.get(normalizedOld);
+        if (!node) {
+            throw new Error(`ENOENT: no such file or directory, rename '${oldPath}' -> '${newPath}'`);
+        }
+
+        this.ensureDirSync(this.getParentDir(normalizedNew));
+
+        if (node.type === 'dir') {
+            const oldPrefix = `${normalizedOld}/`;
+            const newPrefix = `${normalizedNew}/`;
+            const keysToMove: Array<[string, MemoryNode]> = [];
+
+            for (const [key, n] of this.nodes.entries()) {
+                if (key.startsWith(oldPrefix)) {
+                    keysToMove.push([key, n]);
+                }
+            }
+
+            for (const [key] of keysToMove) {
+                this.nodes.delete(key);
+            }
+
+            this.nodes.delete(normalizedOld);
+            this.nodes.set(normalizedNew, node);
+
+            for (const [key, n] of keysToMove) {
+                const subPath = key.slice(oldPrefix.length);
+                this.nodes.set(`${newPrefix}${subPath}`, n);
+            }
+        } else {
+            this.nodes.delete(normalizedOld);
+            this.nodes.set(normalizedNew, node);
+        }
     }
 
     /** 测试辅助：手动创建符号链接 */

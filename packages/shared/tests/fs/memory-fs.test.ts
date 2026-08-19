@@ -139,5 +139,31 @@ describe('MemoryFileSystemAdapter', () => {
             expect(pkgKey).toBeDefined();
             expect(snapshot[pkgKey!]).toBe('{"name":"demo"}');
         });
+
+        it('写入 Uint8Array 后外部修改不会影响内部存储', async () => {
+            const buffer = new Uint8Array([1, 2, 3]);
+            await vfs.writeFile('/binary.dat', buffer);
+            buffer[0] = 99; // 外部修改
+
+            const readBack = await vfs.readFile('/binary.dat');
+            expect(readBack).toBe('\x01\x02\x03');
+        });
+
+        it('readdir 访问不存在目录抛出 ENOENT，访问文件抛出 ENOTDIR', async () => {
+            await expect(vfs.readdir('/non-existent-dir')).rejects.toThrow('ENOENT');
+
+            await vfs.writeFile('/plain-file.txt', 'content');
+            await expect(vfs.readdir('/plain-file.txt')).rejects.toThrow('ENOTDIR');
+        });
+
+        it('支持 rename 文件与目录并原子移动子树', async () => {
+            await vfs.writeFile('/old-dir/sub/file.txt', 'hello');
+            await vfs.rename('/old-dir', '/new-dir');
+
+            expect(await vfs.pathExists('/old-dir')).toBe(false);
+            expect(await vfs.pathExists('/old-dir/sub/file.txt')).toBe(false);
+            expect(await vfs.pathExists('/new-dir/sub/file.txt')).toBe(true);
+            expect(await vfs.readFile('/new-dir/sub/file.txt')).toBe('hello');
+        });
     });
 });

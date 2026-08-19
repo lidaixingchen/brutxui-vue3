@@ -100,4 +100,9 @@ export class DiskFileSystemAdapter implements FileSystemAdapter {
         await fs.mkdir(path.dirname(prefix), { recursive: true });
         return fs.mkdtemp(prefix);
     }
+
+    async rename(oldPath: string, newPath: string): Promise<void> {
+        await fs.mkdir(path.dirname(newPath), { recursive: true });
+        await fs.rename(oldPath, newPath);
+    }
 }

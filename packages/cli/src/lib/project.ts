@@ -151,6 +151,8 @@ async function resolveTsConfigExtendsPath(extend: string, baseDir: string, fsAda
     } else if (extend.startsWith('.')) {
         candidates.push(path.resolve(baseDir, extend));
     } else {
+        candidates.push(path.resolve(baseDir, 'node_modules', extend));
+        candidates.push(path.resolve(baseDir, 'node_modules', `${extend}.json`));
         try {
             const requireFromBase = createRequire(path.join(baseDir, 'package.json'));
             candidates.push(requireFromBase.resolve(extend));

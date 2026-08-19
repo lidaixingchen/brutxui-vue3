@@ -18,17 +18,20 @@ export class BarrelManager {
             ts.ScriptKind.TS,
         );
 
-        // 收集已有的导出语句特征，避免重复
+        // 收集已有的导出语句（规范化去除空白与末尾分号），避免重复注入
         const existingExports = new Set<string>();
         for (const statement of sourceFile.statements) {
             if (ts.isExportDeclaration(statement)) {
-                existingExports.add(statement.getText(sourceFile).trim());
+                const norm = statement.getText(sourceFile).trim().replace(/;$/, '').replace(/\s+/g, ' ');
+                existingExports.add(norm);
             }
         }
 
         const filteredExports = newExports.filter(exp => {
             const trimmed = exp.trim();
-            return !sourceText.includes(trimmed) && !existingExports.has(trimmed);
+            if (!trimmed) return false;
+            const norm = trimmed.replace(/;$/, '').replace(/\s+/g, ' ');
+            return !existingExports.has(norm);
         });
 
         if (filteredExports.length === 0) {

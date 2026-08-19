@@ -67,8 +67,8 @@ export async function verifyWrittenPath(
     const isSafe = await isSafePath(filePath, cwd, fsAdapter);
     if (!isSafe) {
         await fsAdapter.remove(filePath).catch(() => {});
-        throw new CliError(`Security Error: Resolved path "${filePath}" is outside the project directory.`, {
-            code: 'PATH_UNSAFE',
+        throw new CliError(`Security Error: Written path "${filePath}" resolved outside the project directory after write. This may indicate a symlink attack. The file has been removed.`, {
+            code: 'PATH_UNSAFE_AFTER_WRITE',
             exitCode: 1,
         });
     }
@@ -86,7 +86,7 @@ export function sanitizeComponentName(name: string): string {
 }
 
 export function sanitizeFileName(name: string): string {
-    if (name.includes('..') || name.startsWith('/') || name.startsWith('\\')) {
+    if (name.includes('..') || name.startsWith('/') || name.startsWith('\\') || /^[a-zA-Z]:[/\\]/.test(name)) {
         throw new CliError(`Invalid file path: "${name}"`, {
             code: 'PATH_UNSAFE',
             exitCode: 1,

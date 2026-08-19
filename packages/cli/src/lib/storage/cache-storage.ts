@@ -91,8 +91,8 @@ export class CacheStorage {
         const tempPath = `${filePath}.${process.pid}.${crypto.randomUUID()}.tmp`;
         try {
             await this.fs.writeJson(tempPath, entry);
-            await this.fs.copy(tempPath, filePath);
-            await this.fs.remove(tempPath).catch(() => {});
+            // rename 在同一文件系统内是原子操作，避免读侧看到半写入的文件
+            await this.fs.rename(tempPath, filePath);
         } catch (error) {
             await this.fs.remove(tempPath).catch(() => {});
             throw error;
@@ -103,6 +103,11 @@ export class CacheStorage {
         if (!(await this.fs.pathExists(this.cacheDir))) return;
 
         const entries = await this.fs.readdir(this.cacheDir, { withFileTypes: true });
+
+        // 一并清理残留的 .tmp 临时文件
+        const tmpFiles = entries.filter(e => e.isFile() && e.name.endsWith('.tmp'));
+        await Promise.all(tmpFiles.map(e => this.fs.remove(path.join(this.cacheDir, e.name)).catch(() => {})));
+
         const files: Array<{ path: string; stat: { mtimeMs: number; size: number } }> = [];
 
         const stats = await Promise.all(
@@ -149,7 +154,10 @@ export class CacheStorage {
             if (!(await this.fs.pathExists(filePath))) return null;
 
             const raw = await this.fs.readJson<CacheFileRaw<T>>(filePath);
-            if (typeof raw.timestamp !== 'number' || raw.data === undefined) return null;
+            if (typeof raw.timestamp !== 'number' || raw.data === undefined) {
+                await this.fs.remove(filePath).catch(() => {});
+                return null;
+            }
 
             const expired = Date.now() - raw.timestamp >= ttl;
             return {
@@ -161,6 +169,7 @@ export class CacheStorage {
                 expired,
             };
         } catch {
+            await this.fs.remove(filePath).catch(() => {});
             return null;
         }
     }

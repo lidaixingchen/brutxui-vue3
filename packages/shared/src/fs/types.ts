@@ -36,4 +36,5 @@ export interface FileSystemAdapter {
 
     realpath(filePath: string): Promise<string>;
     mkdtemp(prefix: string): Promise<string>;
+    rename(oldPath: string, newPath: string): Promise<void>;
 }

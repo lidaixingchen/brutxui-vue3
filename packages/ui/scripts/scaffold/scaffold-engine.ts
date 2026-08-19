@@ -497,13 +497,20 @@ export class ScaffoldEngine {
             };
         }
 
-        const writtenFiles: string[] = [];
+        const writtenNewFiles: string[] = [];
+        const overwrittenBackups = new Map<string, string>();
         let originalIndexContent: string | null = null;
 
         try {
             for (const file of plannedFiles) {
-                await this.fs.writeFile(file.filePath, file.content, 'utf-8');
-                writtenFiles.push(file.filePath);
+                if (file.isNew) {
+                    await this.fs.writeFile(file.filePath, file.content, 'utf-8');
+                    writtenNewFiles.push(file.filePath);
+                } else {
+                    const existing = await this.fs.readFile(file.filePath, 'utf-8');
+                    overwrittenBackups.set(file.filePath, existing);
+                    await this.fs.writeFile(file.filePath, file.content, 'utf-8');
+                }
             }
 
             if (await this.fs.pathExists(this.indexFile)) {
@@ -522,8 +529,11 @@ export class ScaffoldEngine {
                 injectedExports: config.exports,
             };
         } catch (error) {
-            for (const written of writtenFiles) {
+            for (const written of writtenNewFiles) {
                 await this.fs.remove(written).catch(() => {});
+            }
+            for (const [filePath, backupContent] of overwrittenBackups.entries()) {
+                await this.fs.writeFile(filePath, backupContent, 'utf-8').catch(() => {});
             }
             if (originalIndexContent !== null) {
                 await this.fs.writeFile(this.indexFile, originalIndexContent, 'utf-8').catch(() => {});
