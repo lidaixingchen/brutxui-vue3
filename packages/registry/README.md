@@ -13,17 +13,12 @@
 ```
 packages/registry/
 ├── src/
-│   ├── fs/                     # 跨平台虚拟文件系统 Seam
-│   │   ├── file-system-adapter.ts   # 抽象文件系统接口 (FileSystemAdapter)
-│   │   ├── disk-fs.ts               # Node.js 物理磁盘适配器
-│   │   └── memory-fs.ts             # 纯内存虚拟文件系统（用于全链路零 IO 测试）
-│   │
-│   ├── compiler/               # 纯内存注册表编译核心管道
-│   │   ├── types.ts                 # 编译器、SBOM、Manifest 数据结构定义
-│   │   ├── ast-rewriter.ts          # 基于 TypeScript AST 的倒序切片替换与依赖提取
-│   │   ├── dependency-resolver.ts   # 递归传递依赖闭包解析与 index.ts 派生生成
-│   │   ├── cache-manager.ts         # 确定性 SHA-256 增量哈希计算与缓存持久化
-│   │   └── registry-compiler.ts     # 纯计算流水线主编排控制器
+├── compiler/               # 纯内存注册表编译核心管道（依赖 @/fs -> brutx-shared-vue/fs）
+│   ├── types.ts                 # 编译器、SBOM、Manifest 数据结构定义
+│   ├── ast-rewriter.ts          # 基于 TypeScript AST 的倒序切片替换与依赖提取
+│   ├── dependency-resolver.ts   # 递归传递依赖闭包解析与 index.ts 派生生成
+│   ├── cache-manager.ts         # 确定性 SHA-256 增量哈希计算与缓存持久化
+│   └── registry-compiler.ts     # 纯计算流水线主编排控制器
 │   │
 │   ├── emitters/               # 产物发射与数据持久化
 │   │   ├── sbom-generator.ts        # CycloneDX 1.5 确定性 SBOM 生成与校验

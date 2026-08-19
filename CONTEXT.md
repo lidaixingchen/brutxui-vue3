@@ -54,10 +54,31 @@
   - 内置路径越界守卫（`assertSafePath`）与写后防御（`verifyWrittenPath`），彻底杜绝目录遍历与符号链接攻击。
   - 提供事务工厂（`createTransaction`），自动绑定当前工作目录与文件系统适配器。
 
-### 文件系统适配器 Seam (File System Adapter Seam)
-- **定义**：解耦 CLI 业务逻辑与底层物理 IO 的虚拟文件系统抽象层。
+### 跨包统一虚拟文件系统 Seam (Universal File System Adapter Seam)
+- **定义**：解耦整个 Monorepo（CLI、Registry 编译器、UI 构建/脚手架脚本）与底层物理 IO 的跨包统一虚拟文件系统抽象层。
+- **归属**：`packages/shared/src/fs/`（通过 `brutx-shared-vue/fs` 或共享包导出）。
 - **职责**：
-  - 定义与 POSIX/fs-extra 异步核心子集 1:1 对齐的操作契约（`readFile`、`writeFile`、`readJson`、`writeJson`、`pathExists`、`ensureDir`、`remove`、`copy`、`stat`、`readdir`、`realpath`、`mkdtemp`）。
-  - `DiskFileSystemAdapter`：直调 Node.js 原生 `fs-extra`，服务于 CLI 生产执行环境。
-  - `MemoryFileSystemAdapter`：纯内存树虚拟实现，服务于零 IO 单元测试与 dry-run 演练模式。
+  - 定义与 POSIX/fs 异步核心子集 1:1 对齐的操作契约（`readFile`、`writeFile`、`readJson`、`writeJson`、`pathExists`、`ensureDir`、`remove`、`copy`、`rename`、`stat`、`readdir`、`realpath`、`mkdtemp`）。
+  - `DiskFileSystemAdapter`：基于 Node 22+ 原生 `node:fs/promises` 零第三方依赖实现，服务于生产磁盘执行环境。
+  - `MemoryFileSystemAdapter`：纯内存 Map 目录树虚拟实现，具备符号链接 `lstat/rm` 语义、`Uint8Array` 缓冲区深拷贝隔离与原子子树迁移，服务于全链路零 IO 单元测试与演练沙箱。
+
+### 缓存与审计日志持久化深模块 (Cache & Audit Storage Deep Modules)
+- **定义**：负责 CLI 注册表网络元数据缓存与操作合规审计事件落盘的独立持久化深模块。
+- **职责**：
+  - `CacheStorage`（`packages/cli/src/lib/storage/cache-storage.ts`）：基于文件哈希分片存储，具备 `rename` 同卷原子写入、损坏 JSON 自愈清除、LRU/TTL 自动驱逐与 `.tmp` 残留清理机制。
+  - `AuditLogStorage`（`packages/cli/src/lib/storage/audit-storage.ts`）：负责 CLI 关键变更行为（安装、更新、移除、自愈）的确定性结构化审计事件持久化，支持按时间范围/类型多维度检索与 JSON 导出。
+
+### 设计令牌纯计算编译器 (Token Style Compiler)
+- **定义**：将单一信源 `packages/shared/src/design-tokens.ts` 纯函数式静态计算编译为 Tailwind CSS v4 `@theme` 声明块、`:root/.dark` 预设样式与 CLI 注入块的无 IO 编译引擎。
+- **归属**：`packages/ui/scripts/compiler/token-style-compiler.ts`。
+- **职责**：
+  - 承载所有的 CSS 格式化与令牌拼装逻辑，提供纯数据输入与字符串输出接口，彻底将磁盘读写与令牌转换算法解耦。
+
+### 脚手架生成事务引擎 (Scaffold Transaction Engine)
+- **定义**：驱动 `pnpm generate:component` / `pnpm generate:composable` / `pnpm generate:page` 安全生成模板与索引注入的事务引擎。
+- **归属**：`packages/ui/scripts/scaffold/scaffold-engine.ts`。
+- **职责**：
+  - 严格依托 `FileSystemAdapter` 执行计划、探测与写入；
+  - 覆盖写入（`overwrite: true`）前自动暂存被覆盖文件原始内容快照；
+  - 遇到异常时执行无损自动回滚（删除新建文件、精准还原被覆盖文件、恢复 `index.ts` 导出索引）。
 
