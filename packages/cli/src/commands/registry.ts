@@ -1,4 +1,5 @@
-import fs from 'fs-extra';
+import { DiskFileSystemAdapter } from 'brutx-shared-vue/fs';
+const defaultDiskFs = new DiskFileSystemAdapter();
 import path from 'path';
 import { resolveRegistrySources, readConfigSafe, isOfflineRequested, CliError, logger } from '../lib/index.js';
 
@@ -20,7 +21,7 @@ export interface RegistrySourceStatus {
 
 async function probeSource(source: string): Promise<RegistrySourceStatus> {
     if (!source.startsWith('http://') && !source.startsWith('https://')) {
-        const exists = await fs.pathExists(source);
+        const exists = await defaultDiskFs.pathExists(source);
         return {
             url: source,
             reachable: exists,
@@ -51,14 +52,14 @@ async function probeSource(source: string): Promise<RegistrySourceStatus> {
 
 async function readConfigRaw(cwd: string): Promise<Record<string, unknown>> {
     const configPath = path.join(cwd, 'components.json');
-    if (!(await fs.pathExists(configPath))) {
+    if (!(await defaultDiskFs.pathExists(configPath))) {
         throw new CliError('components.json not found. Run `brutx-vue init` first.', {
             code: 'CONFIG_NOT_FOUND',
         });
     }
     let raw: unknown;
     try {
-        raw = await fs.readJson(configPath);
+        raw = await defaultDiskFs.readJson(configPath);
     } catch (error) {
         throw new CliError(`Failed to parse components.json: ${error instanceof Error ? error.message : String(error)}`);
     }
@@ -115,7 +116,7 @@ export async function registryAdd(url: string, options: { cwd?: string }): Promi
     }
 
     raw.registries = [...registries, normalized];
-    await fs.writeJson(path.join(cwd, 'components.json'), raw, { spaces: 2 });
+    await defaultDiskFs.writeJson(path.join(cwd, 'components.json'), raw, { spaces: 2 });
     logger.success(`Added registry source: ${normalized}`);
 }
 
@@ -141,6 +142,6 @@ export async function registryRemove(url: string, options: { cwd?: string }): Pr
         raw.registries = remaining;
     }
 
-    await fs.writeJson(path.join(cwd, 'components.json'), raw, { spaces: 2 });
+    await defaultDiskFs.writeJson(path.join(cwd, 'components.json'), raw, { spaces: 2 });
     logger.success(`Removed registry source: ${normalized}`);
 }

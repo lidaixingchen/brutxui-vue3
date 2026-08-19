@@ -1,4 +1,6 @@
-import fs from 'fs-extra';
+import { DiskFileSystemAdapter, type FileSystemAdapter } from 'brutx-shared-vue/fs';
+
+const defaultDiskFs = new DiskFileSystemAdapter();
 import path from 'path';
 import {
     RegistryIntegrityMismatchError,
@@ -225,7 +227,7 @@ function verifyManifestItemIntegrity(item: RegistryItem, name: string, summary: 
     );
 }
 
-export async function getItem(name: string, source: string = DEFAULT_REGISTRY_URL, useCache: boolean = true): Promise<RegistryItem> {
+export async function getItem(name: string, source: string = DEFAULT_REGISTRY_URL, useCache: boolean = true, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<RegistryItem> {
     if (isUrl(source)) {
         const effectiveUseCache = useCache && process.env.BRUTX_NO_CACHE !== '1';
 
@@ -245,7 +247,7 @@ export async function getItem(name: string, source: string = DEFAULT_REGISTRY_UR
                 { code: 'PATH_UNSAFE', exitCode: 2 }
             );
         }
-        if (!(await fs.pathExists(filePath))) {
+        if (!(await fsAdapter.pathExists(filePath))) {
             throw new CliError(
                 `Component "${name}" not found in local registry: ${filePath}`,
                 { code: 'COMPONENT_NOT_FOUND' }
@@ -255,7 +257,7 @@ export async function getItem(name: string, source: string = DEFAULT_REGISTRY_UR
         // realpath 归一化后再做前缀校验，封堵 PATH_UNSAFE 绕过。
         let realFilePath: string;
         try {
-            realFilePath = await fs.realpath(filePath);
+            realFilePath = await fsAdapter.realpath(filePath);
         } catch {
             // realpath 失败（文件在 pathExists 与 realpath 之间被删除等竞态）按未找到处理
             throw new CliError(
@@ -265,7 +267,7 @@ export async function getItem(name: string, source: string = DEFAULT_REGISTRY_UR
         }
         let realSource: string;
         try {
-            realSource = await fs.realpath(sourceResolved);
+            realSource = await fsAdapter.realpath(sourceResolved);
         } catch {
             // source 目录本身无法解析（不存在等）时按词法路径比较，后续 readJson 自会报错
             realSource = sourceResolved;
@@ -282,7 +284,7 @@ export async function getItem(name: string, source: string = DEFAULT_REGISTRY_UR
                 { code: 'PATH_UNSAFE', exitCode: 2 }
             );
         }
-        const data = await fs.readJson(realFilePath);
+        const data = await fsAdapter.readJson(realFilePath);
 
         validateItemWithIntegrity(data, name);
         return data;
@@ -300,19 +302,19 @@ export async function getItem(name: string, source: string = DEFAULT_REGISTRY_UR
  *   （registry-manifest.json / registry-sbom.json 及未来元数据）
  * - 内容校验：读取后顶层缺少组件 name 字段的文件（与 getItem 的校验语义一致）
  */
-export async function listLocalRegistryComponents(registryPath: string): Promise<string[] | null> {
+export async function listLocalRegistryComponents(registryPath: string, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<string[] | null> {
     if (isUrl(registryPath)) {
         return null;
     }
     try {
-        const entries = await fs.readdir(registryPath, { withFileTypes: true });
+        const entries = await fsAdapter.readdir(registryPath, { withFileTypes: true });
         const names: string[] = [];
         for (const entry of entries) {
             if (!entry.isFile() || !entry.name.endsWith('.json')) continue;
             const name = entry.name.slice(0, -'.json'.length);
             if (name === 'index' || name.startsWith('registry-')) continue;
             try {
-                const data = await fs.readJson(path.join(registryPath, entry.name)) as { name?: unknown };
+                const data = await fsAdapter.readJson(path.join(registryPath, entry.name)) as { name?: unknown };
                 if (typeof data.name !== 'string' || data.name.length === 0) continue;
                 names.push(name);
             } catch {
@@ -560,23 +562,23 @@ export async function migrateConfig(raw: Record<string, unknown>): Promise<Recor
     return migrated;
 }
 
-export async function readConfigSafe(cwd: string): Promise<BrutalistConfig | null> {
+export async function readConfigSafe(cwd: string, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<BrutalistConfig | null> {
     try {
-        return await readConfig(cwd);
+        return await readConfig(cwd, fsAdapter);
     } catch {
         return null;
     }
 }
 
-export async function readConfig(cwd: string): Promise<BrutalistConfig> {
+export async function readConfig(cwd: string, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<BrutalistConfig> {
     const configPath = path.join(cwd, 'components.json');
-    if (!(await fs.pathExists(configPath))) {
+    if (!(await fsAdapter.pathExists(configPath))) {
         throw new Error('components.json not found. Run `brutx-vue init` first.');
     }
 
     let config: unknown;
     try {
-        config = await fs.readJson(configPath);
+        config = await fsAdapter.readJson(configPath);
     } catch (error) {
         throw new Error(`Failed to parse components.json: invalid JSON. ${error instanceof Error ? error.message : ''}`, { cause: error });
     }

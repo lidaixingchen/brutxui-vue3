@@ -1,4 +1,5 @@
-import fs from 'fs-extra';
+import { DiskFileSystemAdapter, type FileSystemAdapter } from 'brutx-shared-vue/fs';
+const defaultDiskFs = new DiskFileSystemAdapter();
 import path from 'path';
 import type { AliasConfig, BrutalistConfig, ProjectType, TailwindConfig } from '../types.js';
 import {
@@ -16,7 +17,6 @@ import { FileTransaction } from '../file-transaction.js';
 import { isSafePath } from '../project.js';
 import { CliError } from '../error.js';
 
-import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
 import { ProjectContext } from '../project-context.js';
 
 export interface ProjectInitializationSettings {
@@ -105,9 +105,9 @@ async function addBrutalistStyles(
     const brutxBlock = `${BRUTX_CSS_START_MARKER}\n${brutalistCss}\n${BRUTX_CSS_END_MARKER}`;
 
     let content: string;
-    const exists = fsAdapter ? await fsAdapter.pathExists(fullPath) : await fs.pathExists(fullPath);
+    const exists = await (fsAdapter ?? defaultDiskFs).pathExists(fullPath);
     if (exists) {
-        content = fsAdapter ? await fsAdapter.readFile(fullPath, 'utf-8') : await fs.readFile(fullPath, 'utf-8');
+        content = await (fsAdapter ?? defaultDiskFs).readFile(fullPath, 'utf-8');
         if (hasBrutxCssBlock(content)) {
             content = replaceBrutxCssBlock(content, brutxBlock);
         } else {
@@ -127,7 +127,7 @@ async function addBrutalistStyles(
 async function findNuxtConfig(cwd: string, fsAdapter?: FileSystemAdapter): Promise<string | null> {
     for (const file of CONFIG_FILES.nuxt) {
         const fullPath = path.join(cwd, file);
-        const exists = fsAdapter ? await fsAdapter.pathExists(fullPath) : await fs.pathExists(fullPath);
+        const exists = await (fsAdapter ?? defaultDiskFs).pathExists(fullPath);
         if (exists) {
             return fullPath;
         }
@@ -364,7 +364,7 @@ async function configureNuxtConfig(
         };
     }
 
-    const original = fsAdapter ? await fsAdapter.readFile(configPath, 'utf-8') : await fs.readFile(configPath, 'utf-8');
+    const original = await (fsAdapter ?? defaultDiskFs).readFile(configPath, 'utf-8');
     const result = injectNuxtConfig(original, cssPath, componentsRelDir);
     const configFile = path.basename(configPath);
 

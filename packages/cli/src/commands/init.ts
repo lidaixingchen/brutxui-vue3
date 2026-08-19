@@ -1,6 +1,7 @@
 import ora from 'ora';
 import { input, confirm } from '@inquirer/prompts';
-import fs from 'fs-extra';
+import { DiskFileSystemAdapter } from 'brutx-shared-vue/fs';
+const defaultDiskFs = new DiskFileSystemAdapter();
 import path from 'path';
 
 import {
@@ -90,7 +91,7 @@ async function promptForConfig(defaults: DetectedSettings): Promise<DetectedSett
 async function shouldProceed(cwd: string, options: InitOptions): Promise<boolean> {
     const configPath = path.join(cwd, 'components.json');
 
-    if (!(await fs.pathExists(configPath))) {
+    if (!(await defaultDiskFs.pathExists(configPath))) {
         return true;
     }
 

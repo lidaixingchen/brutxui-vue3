@@ -1,8 +1,10 @@
-import fs from 'fs-extra';
 import path from 'path';
+import { DiskFileSystemAdapter, type FileSystemAdapter } from 'brutx-shared-vue/fs';
 
 import { AVAILABLE_COMPONENTS } from './constants.js';
 import { CliError } from './error.js';
+
+const defaultDiskFs = new DiskFileSystemAdapter();
 
 interface VscodeSnippet {
     prefix: string;
@@ -352,17 +354,10 @@ export function generateSnippetsForComponents(components: string[]): string {
     return generateSnippets(components);
 }
 
-import type { FileSystemAdapter } from './fs/file-system-adapter.js';
-
-async function writeSnippetFile(snippetPath: string, content: string, fsAdapter?: FileSystemAdapter): Promise<void> {
+async function writeSnippetFile(snippetPath: string, content: string, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<void> {
     try {
-        if (fsAdapter) {
-            await fsAdapter.ensureDir(path.dirname(snippetPath));
-            await fsAdapter.writeFile(snippetPath, content, 'utf-8');
-        } else {
-            await fs.ensureDir(path.dirname(snippetPath));
-            await fs.writeFile(snippetPath, content, 'utf-8');
-        }
+        await fsAdapter.ensureDir(path.dirname(snippetPath));
+        await fsAdapter.writeFile(snippetPath, content, 'utf-8');
     } catch (error) {
         throw new CliError(
             `Failed to write VS Code snippets file "${snippetPath}": ${error instanceof Error ? error.message : String(error)}`,
@@ -374,7 +369,7 @@ async function writeSnippetFile(snippetPath: string, content: string, fsAdapter?
 export async function writeSnippetsFile(
     cwd: string,
     components?: string[],
-    fsAdapter?: FileSystemAdapter
+    fsAdapter: FileSystemAdapter = defaultDiskFs
 ): Promise<string> {
     const vscodeDir = path.join(cwd, '.vscode');
     const snippetPath = path.join(vscodeDir, 'brutx.code-snippets');
@@ -388,33 +383,25 @@ export async function writeSnippetsFile(
 export async function mergeSnippetsFile(
     cwd: string,
     newComponents: string[],
-    fsAdapter?: FileSystemAdapter
+    fsAdapter: FileSystemAdapter = defaultDiskFs
 ): Promise<string> {
     const vscodeDir = path.join(cwd, '.vscode');
     const snippetPath = path.join(vscodeDir, 'brutx.code-snippets');
 
     let existingSnippets: VscodeSnippetFile = {};
-    const exists = fsAdapter ? await fsAdapter.pathExists(snippetPath) : await fs.pathExists(snippetPath);
+    const exists = await fsAdapter.pathExists(snippetPath);
     if (exists) {
         let parsed: unknown;
         try {
-            parsed = fsAdapter ? await fsAdapter.readJson(snippetPath) : await fs.readJson(snippetPath);
+            parsed = await fsAdapter.readJson(snippetPath);
         } catch (error) {
             const backupPath = `${snippetPath}.bak`;
-            if (fsAdapter) {
-                await fsAdapter.copy(snippetPath, backupPath).catch(() => {});
-            } else {
-                await fs.copy(snippetPath, backupPath).catch(() => {});
-            }
+            await fsAdapter.copy(snippetPath, backupPath).catch(() => {});
             throw new Error(`Failed to read existing snippets file "${snippetPath}": ${error instanceof Error ? error.message : String(error)}. The original file was backed up to .bak.`, { cause: error });
         }
         if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
             const backupPath = `${snippetPath}.bak`;
-            if (fsAdapter) {
-                await fsAdapter.copy(snippetPath, backupPath).catch(() => {});
-            } else {
-                await fs.copy(snippetPath, backupPath).catch(() => {});
-            }
+            await fsAdapter.copy(snippetPath, backupPath).catch(() => {});
             throw new Error(`"${snippetPath}" is not a valid snippets file (expected a JSON object). The original file was backed up to .bak.`);
         }
         existingSnippets = parsed as VscodeSnippetFile;
@@ -430,7 +417,7 @@ export async function mergeSnippetsFile(
     return snippetPath;
 }
 
-export async function hasVscodeDir(cwd: string, fsAdapter?: FileSystemAdapter): Promise<boolean> {
+export async function hasVscodeDir(cwd: string, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<boolean> {
     const p = path.join(cwd, '.vscode');
-    return fsAdapter ? fsAdapter.pathExists(p) : fs.pathExists(p);
+    return fsAdapter.pathExists(p);
 }

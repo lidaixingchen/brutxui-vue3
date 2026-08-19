@@ -1,4 +1,5 @@
-import fs from 'fs-extra';
+import { DiskFileSystemAdapter } from 'brutx-shared-vue/fs';
+const defaultDiskFs = new DiskFileSystemAdapter();
 import path from 'path';
 import chalk from 'chalk';
 import type { BrutalistConfig, InfoOptions, RegistryItem } from '../lib/types.js';
@@ -31,14 +32,14 @@ async function getLocalFiles(cwd: string, config: BrutalistConfig, componentName
             );
         }
 
-        if (!await fs.pathExists(componentPath)) {
+        if (!await defaultDiskFs.pathExists(componentPath)) {
             return [];
         }
 
         const files: string[] = [];
 
         async function walk(dir: string, base: string): Promise<void> {
-            const entries = await fs.readdir(dir, { withFileTypes: true });
+            const entries = await defaultDiskFs.readdir(dir, { withFileTypes: true });
             for (const entry of entries) {
                 const fullPath = path.join(dir, entry.name);
                 const relative = base ? `${base}/${entry.name}` : entry.name;
@@ -46,7 +47,7 @@ async function getLocalFiles(cwd: string, config: BrutalistConfig, componentName
                 if (entry.isSymbolicLink()) {
                     // 符号链接：用 stat 判断真实类型（链接指向的目录不递归，避免环引用）
                     try {
-                        const stat = await fs.stat(fullPath);
+                        const stat = await defaultDiskFs.stat(fullPath);
                         if (stat.isFile()) {
                             files.push(relative);
                         }

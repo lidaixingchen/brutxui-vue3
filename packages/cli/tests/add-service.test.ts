@@ -4,6 +4,7 @@ import os from 'os';
 import path from 'path';
 import type { BrutalistConfig, RegistryItem } from '../src/lib/types.js';
 import { resolveDeps } from '../src/lib/registry.js';
+import { FileTransaction } from '../src/lib/file-transaction.js';
 import {
     ensureUtilsFile,
     resolveComponents,
@@ -194,14 +195,16 @@ describe('add service', () => {
             ],
         } as RegistryItem;
 
-        const writeFile = vi.spyOn(fs, 'writeFile').mockImplementation(async (file, content, options) => {
+        const tx = new FileTransaction(undefined, tmpDir);
+        const originalWriteFile = tx.writeFile.bind(tx);
+        const writeFile = vi.spyOn(tx, 'writeFile').mockImplementation(async (file, content) => {
             if (file === helperPath && content === 'export function useBadge() {}\n') {
                 throw new Error('simulated write failure');
             }
-            return fs.outputFile(file, content, options);
+            return originalWriteFile(file, content);
         });
 
-        await expect(writeComponentFiles([itemWithFailingHelper], config, tmpDir, { overwrite: true }))
+        await expect(writeComponentFiles([itemWithFailingHelper], config, tmpDir, { overwrite: true, transaction: tx }))
             .rejects
             .toMatchObject({
                 message: 'simulated write failure',

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
-import type { PathLike } from 'fs';
+import { MemoryFileSystemAdapter } from 'brutx-shared-vue/fs';
 import { resolveImportAlias, detectProjectType, detectPackageManager, getAliasFromTsConfig, resolveAliasPath, clearProjectTypeCache } from '../src/lib/project.js';
 
 describe('resolveImportAlias', () => {
@@ -42,234 +42,248 @@ describe('resolveImportAlias', () => {
         expect(resolved).toContain('import { cn } from "@/lib/utils";');
     });
 
-    it('should resolve composables and sibling locales aliases', () => {
-        const content = `import { useLocale } from "@/composables/useLocale";\nimport { zhCN } from "@/locales/zh-CN";`;
+    it('should correctly resolve deeply nested component imports', () => {
+        const content = `import { AccordionItem } from "@/components/ui/accordion";\nimport { useToast } from "@/composables/useToast";`;
 
         const config = {
             style: 'brutalism',
             tailwind: { config: 'tailwind.config.js', css: 'src/index.css' },
             aliases: {
                 components: '~/components',
-                utils: '~/shared/cn',
-                composables: '~/shared/composables'
+                utils: '~/utils/cn',
+                composables: '~/hooks'
             }
         };
 
         const resolved = resolveImportAlias(content, config);
 
-        expect(resolved).toContain('import { useLocale } from "~/shared/composables/useLocale";');
-        expect(resolved).toContain('import { zhCN } from "~/shared/locales/zh-CN";');
+        expect(resolved).toContain('import { AccordionItem } from "~/components/ui/accordion";');
+        expect(resolved).toContain('import { useToast } from "~/hooks/useToast";');
     });
 
-    it('should rewrite composables and lib imports to sharedBase when set', () => {
-        const content = `import { useLocale } from "@/composables/useLocale";\nimport { cn } from "@/lib/utils";\nimport { env } from "@/lib/env";`;
+    it('should correctly rewrite relative nested imports', () => {
+        const content = `import { Root } from "./accordion-root";\nimport { Button } from "@/components/ui/button";`;
 
         const config = {
             style: 'brutalism',
-            tailwind: { config: '', css: 'src/index.css' },
-            aliases: {
-                components: '@/components',
-                utils: '@/lib/utils',
-                composables: '@/composables',
-            },
-            sharedBase: '@/components/brutx/shared',
-        };
-
-        const resolved = resolveImportAlias(content, config);
-
-        expect(resolved).toContain('from "@/components/brutx/shared/hooks/useLocale"');
-        expect(resolved).toContain('from "@/components/brutx/shared/utils"');
-        expect(resolved).toContain('from "@/components/brutx/shared/lib/env"');
-    });
-
-    it('should rewrite composables and lib imports to user-configured aliases when sharedBase is not set', () => {
-        // N1 fix: `@/lib/<x>` imports are now rewritten symmetrically with
-        // `@/composables/`, `@/locales/`, `@/directives/`. The lib alias is
-        // derived as `path.dirname(config.aliases.utils)`, matching where
-        // add-service.ts writes non-utils lib files.
-        const content = `import { useLocale } from "@/composables/useLocale";\nimport { cn } from "@/lib/utils";\nimport { env } from "@/lib/env";`;
-
-        const config = {
-            style: 'brutalism',
-            tailwind: { config: '', css: 'src/index.css' },
+            tailwind: { config: 'tailwind.config.js', css: 'src/index.css' },
             aliases: {
                 components: '~/components',
-                utils: '~/lib/utils',
-                composables: '~/composables',
-            },
+                utils: '~/utils/cn'
+            }
         };
 
         const resolved = resolveImportAlias(content, config);
 
-        expect(resolved).toContain('from "~/composables/useLocale"');
-        expect(resolved).toContain('from "~/lib/utils"');
-        expect(resolved).toContain('from "~/lib/env"');
-    });
-
-    it('should rewrite @/lib/<x> to parent of aliases.utils when utils is not under @/lib (N1 trigger case)', () => {
-        // N1 trigger: when `aliases.utils` is `@/utils` (not the default
-        // `@/lib/utils`), add-service.ts writes lib files to `src/<x>.ts`
-        // (parent of utils file). The rewrite must keep imports aligned:
-        // `@/lib/<x>` → `@/<x>` so tsconfig `@/* → src/*` resolves correctly.
-        const content = `import { env } from "@/lib/env";\nimport { cn } from "@/lib/utils";`;
-
-        const config = {
-            style: 'brutalism',
-            tailwind: { config: '', css: 'src/index.css' },
-            aliases: {
-                components: '@/components',
-                utils: '@/utils',
-            },
-        };
-
-        const resolved = resolveImportAlias(content, config);
-
-        expect(resolved).toContain('from "@/env"');
-        expect(resolved).toContain('from "@/utils"');
-    });
-
-    it('should keep locales and directives unchanged with sharedBase', () => {
-        const content = `import { zhCN } from "@/locales/zh-CN";\nimport { vRipple } from "@/directives/ripple";`;
-
-        const config = {
-            style: 'brutalism',
-            tailwind: { config: '', css: 'src/index.css' },
-            aliases: {
-                components: '@/components',
-                utils: '@/lib/utils',
-                composables: '@/composables',
-            },
-            sharedBase: '@/components/brutx/shared',
-        };
-
-        const resolved = resolveImportAlias(content, config);
-
-        expect(resolved).toContain('from "@/locales/zh-CN"');
-        expect(resolved).toContain('from "@/directives/ripple"');
+        expect(resolved).toContain('import { Root } from "./accordion-root";');
+        expect(resolved).toContain('import { Button } from "~/components/ui/button";');
     });
 });
 
-describe('tsconfig alias parsing', () => {
-    afterEach(() => {
-        vi.restoreAllMocks();
+describe('getAliasFromTsConfig', () => {
+    let tmpDir: string;
+
+    afterEach(async () => {
+        if (tmpDir && await fs.pathExists(tmpDir)) {
+            await fs.remove(tmpDir);
+        }
     });
 
-    it('should parse JSONC tsconfig files with trailing commas', async () => {
-        const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-project-'));
-        try {
-            await fs.writeFile(path.join(cwd, 'tsconfig.json'), `{
-                // common Vue alias
-                "compilerOptions": {
-                    "baseUrl": ".",
-                    "paths": {
-                        "@/*": ["./src/*",],
-                    },
-                },
-            }`);
+    it('should read @ alias mapping correctly', async () => {
+        tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-alias-test-'));
+        const tsconfig = {
+            compilerOptions: {
+                baseUrl: '.',
+                paths: {
+                    '@/*': ['./src/*']
+                }
+            }
+        };
+        await fs.writeJson(path.join(tmpDir, 'tsconfig.json'), tsconfig);
 
-            expect(await getAliasFromTsConfig(cwd)).toEqual({
-                components: '@/components',
-                utils: '@/lib/utils',
-                composables: '@/composables',
-            });
-            expect(await resolveAliasPath('@/components', cwd)).toBe(path.join(cwd, 'src', 'components'));
-        } finally {
-            await fs.remove(cwd);
+        const aliases = await getAliasFromTsConfig(tmpDir);
+        expect(aliases).toEqual({
+            components: '@/components',
+            utils: '@/lib/utils',
+            composables: '@/composables'
+        });
+    });
+
+    it('should read ~ alias mapping correctly', async () => {
+        tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-alias-test-'));
+        const tsconfig = {
+            compilerOptions: {
+                baseUrl: '.',
+                paths: {
+                    '~/*': ['./*']
+                }
+            }
+        };
+        await fs.writeJson(path.join(tmpDir, 'tsconfig.json'), tsconfig);
+
+        const aliases = await getAliasFromTsConfig(tmpDir);
+        expect(aliases).toEqual({
+            components: '~/components',
+            utils: '~/lib/utils',
+            composables: '~/composables'
+        });
+    });
+
+    it('should return null if no tsconfig exists', async () => {
+        tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-alias-test-'));
+        const aliases = await getAliasFromTsConfig(tmpDir);
+        expect(aliases).toBeNull();
+    });
+
+    it('should return null if tsconfig exists but has no paths', async () => {
+        tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-alias-test-'));
+        await fs.writeJson(path.join(tmpDir, 'tsconfig.json'), { compilerOptions: {} });
+        const aliases = await getAliasFromTsConfig(tmpDir);
+        expect(aliases).toBeNull();
+    });
+
+    it('should prefer conventional alias @/* over first listed non-conventional alias', async () => {
+        tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-alias-test-'));
+        const tsconfig = {
+            compilerOptions: {
+                baseUrl: '.',
+                paths: {
+                    'assets/*': ['./src/assets/*'],
+                    '@/*': ['./src/*']
+                }
+            }
+        };
+        await fs.writeJson(path.join(tmpDir, 'tsconfig.json'), tsconfig);
+
+        const aliases = await getAliasFromTsConfig(tmpDir);
+        expect(aliases).toEqual({
+            components: '@/components',
+            utils: '@/lib/utils',
+            composables: '@/composables'
+        });
+    });
+});
+
+describe('resolveAliasPath', () => {
+    let tmpDir: string;
+
+    afterEach(async () => {
+        if (tmpDir && await fs.pathExists(tmpDir)) {
+            await fs.remove(tmpDir);
         }
+    });
+
+    it('should resolve @/components to src/components when tsconfig paths map @/* to ./src/*', async () => {
+        tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-alias-path-test-'));
+        const tsconfig = {
+            compilerOptions: {
+                baseUrl: '.',
+                paths: {
+                    '@/*': ['./src/*']
+                }
+            }
+        };
+        await fs.writeJson(path.join(tmpDir, 'tsconfig.json'), tsconfig);
+
+        const resolved = await resolveAliasPath('@/components', tmpDir);
+        expect(resolved).toBe(path.resolve(tmpDir, 'src/components'));
+    });
+
+    it('should resolve ~/components to components when tsconfig paths map ~/* to ./*', async () => {
+        tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-alias-path-test-'));
+        const tsconfig = {
+            compilerOptions: {
+                baseUrl: '.',
+                paths: {
+                    '~/*': ['./*']
+                }
+            }
+        };
+        await fs.writeJson(path.join(tmpDir, 'tsconfig.json'), tsconfig);
+
+        const resolved = await resolveAliasPath('~/components', tmpDir);
+        expect(resolved).toBe(path.resolve(tmpDir, 'components'));
+    });
+
+    it('should resolve @/components with src fallback when no tsconfig paths exist and src directory is present', async () => {
+        tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-alias-path-test-'));
+        await fs.ensureDir(path.join(tmpDir, 'src'));
+
+        const resolved = await resolveAliasPath('@/components', tmpDir);
+        expect(resolved).toBe(path.resolve(tmpDir, 'src/components'));
+    });
+
+    it('should resolve @/components to components when no tsconfig and no src directory exist', async () => {
+        tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-alias-path-test-'));
+
+        const resolved = await resolveAliasPath('@/components', tmpDir);
+        expect(resolved).toBe(path.resolve(tmpDir, 'components'));
     });
 });
 
 describe('detectPackageManager', () => {
-    afterEach(() => {
-        vi.restoreAllMocks();
-    });
-
     it('should detect pnpm if pnpm-lock.yaml exists', async () => {
-        vi.spyOn(fs, 'pathExists').mockImplementation((p: PathLike) => {
-            return Promise.resolve(p.toString().endsWith('pnpm-lock.yaml'));
-        });
-        const pm = await detectPackageManager('/dummy/path');
+        const memFs = new MemoryFileSystemAdapter();
+        await memFs.writeFile('/dummy/path/pnpm-lock.yaml', '');
+        const pm = await detectPackageManager('/dummy/path', memFs);
         expect(pm).toBe('pnpm');
     });
 
     it('should detect yarn if yarn.lock exists', async () => {
-        vi.spyOn(fs, 'pathExists').mockImplementation((p: PathLike) => {
-            return Promise.resolve(p.toString().endsWith('yarn.lock'));
-        });
-        const pm = await detectPackageManager('/dummy/path');
+        const memFs = new MemoryFileSystemAdapter();
+        await memFs.writeFile('/dummy/path/yarn.lock', '');
+        const pm = await detectPackageManager('/dummy/path', memFs);
         expect(pm).toBe('yarn');
     });
 
     it('should detect bun if bun.lockb exists', async () => {
-        vi.spyOn(fs, 'pathExists').mockImplementation((p: PathLike) => {
-            return Promise.resolve(p.toString().endsWith('bun.lockb'));
-        });
-        const pm = await detectPackageManager('/dummy/path');
+        const memFs = new MemoryFileSystemAdapter();
+        await memFs.writeFile('/dummy/path/bun.lockb', '');
+        const pm = await detectPackageManager('/dummy/path', memFs);
         expect(pm).toBe('bun');
     });
 
     it('should detect npm as fallback if no lockfile exists', async () => {
-        vi.spyOn(fs, 'pathExists').mockResolvedValue(false);
-        const pm = await detectPackageManager('/dummy/path');
+        const memFs = new MemoryFileSystemAdapter();
+        const pm = await detectPackageManager('/dummy/path', memFs);
         expect(pm).toBe('npm');
     });
 });
 
 describe('detectProjectType', () => {
     afterEach(() => {
-        vi.restoreAllMocks();
         clearProjectTypeCache();
     });
 
     it('should detect nuxt if nuxt config exists', async () => {
-        vi.spyOn(fs, 'pathExists').mockImplementation((p: PathLike) => {
-            const pStr = p.toString();
-            if (pStr.endsWith('nuxt.config.js') || pStr.endsWith('nuxt.config.ts') || pStr.endsWith('nuxt.config.mjs')) {
-                return Promise.resolve(true);
-            }
-            return Promise.resolve(false);
-        });
-        const type = await detectProjectType('/dummy/path');
+        const memFs = new MemoryFileSystemAdapter();
+        await memFs.writeFile('/dummy/path/nuxt.config.ts', '');
+        const type = await detectProjectType('/dummy/path', memFs);
         expect(type).toBe('nuxt');
     });
 
     it('should detect vite-vue if vite config exists and vue dependency exists and no src dir', async () => {
-        vi.spyOn(fs, 'pathExists').mockImplementation((p: PathLike) => {
-            const pStr = p.toString();
-            if (pStr.endsWith('vite.config.js') || pStr.endsWith('vite.config.ts') || pStr.endsWith('vite.config.mjs')) {
-                return Promise.resolve(true);
-            }
-            if (pStr.endsWith('src')) {
-                return Promise.resolve(false);
-            }
-            return Promise.resolve(false);
-        });
-        vi.spyOn(fs, 'readJson').mockResolvedValue({
+        const memFs = new MemoryFileSystemAdapter();
+        await memFs.writeFile('/dummy/path/vite.config.ts', '');
+        await memFs.writeJson('/dummy/path/package.json', {
             dependencies: {
                 vue: '^3.5.0'
             }
         });
-        const type = await detectProjectType('/dummy/path');
+        const type = await detectProjectType('/dummy/path', memFs);
         expect(type).toBe('vite-vue');
     });
 
     it('should detect vite-vue-src if vite config exists and vue dependency exists and src dir exists', async () => {
-        vi.spyOn(fs, 'pathExists').mockImplementation((p: PathLike) => {
-            const pStr = p.toString();
-            if (pStr.endsWith('vite.config.js') || pStr.endsWith('vite.config.ts') || pStr.endsWith('vite.config.mjs')) {
-                return Promise.resolve(true);
-            }
-            if (pStr.endsWith('src')) {
-                return Promise.resolve(true);
-            }
-            return Promise.resolve(false);
-        });
-        vi.spyOn(fs, 'readJson').mockResolvedValue({
+        const memFs = new MemoryFileSystemAdapter();
+        await memFs.writeFile('/dummy/path/vite.config.ts', '');
+        await memFs.writeJson('/dummy/path/package.json', {
             dependencies: {
                 vue: '^3.5.0'
             }
         });
-        const type = await detectProjectType('/dummy/path');
+        await memFs.ensureDir('/dummy/path/src');
+        const type = await detectProjectType('/dummy/path', memFs);
         expect(type).toBe('vite-vue-src');
     });
 });

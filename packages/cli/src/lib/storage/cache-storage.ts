@@ -243,8 +243,8 @@ export class CacheStorage {
         );
         await Promise.all(
             staleFiles
-                .filter((p): p is string => p !== null)
-                .map(fullPath => this.fs.remove(fullPath).catch(() => {})),
+                .filter((p: string | null): p is string => p !== null)
+                .map((fullPath: string) => this.fs.remove(fullPath).catch(() => {})),
         );
     }
 

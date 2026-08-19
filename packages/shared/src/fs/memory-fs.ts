@@ -66,6 +66,13 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
         const normalized = this.normalizePath(dirPath);
         if (this.nodes.has(normalized)) {
             const node = this.nodes.get(normalized);
+            if (node?.type === 'symlink') {
+                const targetPath = path.isAbsolute(node.target)
+                    ? this.normalizePath(node.target)
+                    : this.normalizePath(path.join(this.getParentDir(normalized), node.target));
+                this.ensureDirSync(targetPath);
+                return;
+            }
             if (node?.type !== 'dir') {
                 throw new Error(`Path already exists and is not a directory: ${dirPath}`);
             }
@@ -88,12 +95,24 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
             throw new Error(`Too many symbolic links encountered: ${normalizedPath}`);
         }
         const node = this.nodes.get(normalizedPath);
-        if (!node || node.type !== 'symlink') {
+        if (!node) {
+            const parent = this.getParentDir(normalizedPath);
+            if (parent !== normalizedPath) {
+                const resolvedParent = await this.resolveSymlinkTarget(parent, depth + 1);
+                if (resolvedParent !== parent) {
+                    const relative = path.posix.relative(parent, normalizedPath);
+                    const reconstructed = this.normalizePath(path.posix.join(resolvedParent, relative));
+                    return this.resolveSymlinkTarget(reconstructed, depth + 1);
+                }
+            }
+            return normalizedPath;
+        }
+        if (node.type !== 'symlink') {
             return normalizedPath;
         }
         const nextTarget = path.isAbsolute(node.target)
             ? this.normalizePath(node.target)
-            : this.normalizePath(path.join(this.getParentDir(normalizedPath), node.target));
+            : this.normalizePath(path.posix.join(this.getParentDir(normalizedPath), node.target));
         return this.resolveSymlinkTarget(nextTarget, depth + 1);
     }
 
@@ -280,7 +299,11 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
     }
 
     async realpath(filePath: string): Promise<string> {
-        const resolved = await this.resolveSymlinkTarget(this.normalizePath(filePath));
+        const normalized = this.normalizePath(filePath);
+        const resolved = await this.resolveSymlinkTarget(normalized);
+        if (!this.nodes.has(resolved)) {
+            throw new Error(`ENOENT: no such file or directory, realpath '${filePath}'`);
+        }
         return process.platform === 'win32' ? path.win32.normalize(resolved) : path.posix.normalize(resolved);
     }
 

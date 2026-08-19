@@ -1,5 +1,6 @@
 import path from 'path';
-import fs from 'fs-extra';
+import { DiskFileSystemAdapter } from 'brutx-shared-vue/fs';
+const defaultDiskFs = new DiskFileSystemAdapter();
 
 import {
     type CreateOptions,
@@ -78,7 +79,7 @@ export async function create(projectName: string, options: CreateOptions): Promi
     const baseCwd = options.cwd ?? process.cwd();
     const projectDir = path.resolve(baseCwd, projectName);
 
-    if (await fs.pathExists(projectDir)) {
+    if (await defaultDiskFs.pathExists(projectDir)) {
         throw new CliError(`Directory "${projectName}" already exists.`);
     }
 
@@ -89,7 +90,7 @@ export async function create(projectName: string, options: CreateOptions): Promi
     } catch (error) {
         // 脚手架可能留下半成品目录；清理后重新抛出，保证失败后可以直接重试
         // （否则重试会命中上面的 pathExists 检查报 "Directory already exists"）
-        await fs.remove(projectDir).catch(() => {});
+        await defaultDiskFs.remove(projectDir).catch(() => {});
         const message = error instanceof Error ? error.message : String(error);
         throw new CliError(`Failed to scaffold project: ${message}`);
     }
@@ -102,7 +103,7 @@ export async function create(projectName: string, options: CreateOptions): Promi
         const { command, args } = getInstallCommand(packageManager);
         await runCommand(command, args, projectDir);
     } catch (error) {
-        await fs.remove(projectDir).catch(() => {});
+        await defaultDiskFs.remove(projectDir).catch(() => {});
         const message = error instanceof Error ? error.message : String(error);
         throw new CliError(`Failed to install dependencies: ${message}`);
     }

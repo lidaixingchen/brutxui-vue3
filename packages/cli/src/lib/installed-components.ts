@@ -1,10 +1,12 @@
-import fs from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 import { parse as parseModuleImports, type ImportSpecifier } from 'es-module-lexer';
+import { DiskFileSystemAdapter, type FileSystemAdapter } from 'brutx-shared-vue/fs';
 import type { BrutalistConfig, InstalledComponentInfo, InstalledComponentManifest } from './types.js';
 import { readManifest } from './manifest.js';
 import { extractScriptBlocks, resolveAliasPath } from './project.js';
 import { logger } from './logger.js';
+
+const defaultDiskFs = new DiskFileSystemAdapter();
 
 /** 组件目录扫描的并发上限，避免组件较多时瞬时占用过多文件描述符 */
 const SCAN_CONCURRENCY = 8;
@@ -40,15 +42,11 @@ async function mapWithConcurrency<T, R>(
     return results;
 }
 
-import type { FileSystemAdapter } from './fs/file-system-adapter.js';
-
-async function scanComponentFiles(dir: string, fsAdapter?: FileSystemAdapter): Promise<string[]> {
+async function scanComponentFiles(dir: string, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<string[]> {
     const files: string[] = [];
 
     async function walk(currentDir: string, base: string): Promise<void> {
-        const entries = fsAdapter
-            ? await fsAdapter.readdir(currentDir, { withFileTypes: true })
-            : await fs.readdir(currentDir, { withFileTypes: true });
+        const entries = await fsAdapter.readdir(currentDir, { withFileTypes: true });
 
         for (const entry of entries) {
             const fullPath = path.join(currentDir, entry.name);
@@ -69,7 +67,7 @@ async function scanComponentFiles(dir: string, fsAdapter?: FileSystemAdapter): P
     return files;
 }
 
-async function extractDependencies(componentDir: string, fsAdapter?: FileSystemAdapter): Promise<string[]> {
+async function extractDependencies(componentDir: string, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<string[]> {
     const deps = new Set<string>();
     const files = await scanComponentFiles(componentDir, fsAdapter);
 
@@ -77,9 +75,7 @@ async function extractDependencies(componentDir: string, fsAdapter?: FileSystemA
         const ext = path.extname(file);
         if (ext !== '.vue' && ext !== '.ts' && ext !== '.js') continue;
 
-        const content = fsAdapter
-            ? await fsAdapter.readFile(path.join(componentDir, file), 'utf-8')
-            : await fs.readFile(path.join(componentDir, file), 'utf-8');
+        const content = await fsAdapter.readFile(path.join(componentDir, file), 'utf-8');
 
         const scripts = ext === '.vue'
             ? extractScriptBlocks(content).map(block => block.code)
@@ -115,15 +111,13 @@ function collectDependency(deps: Set<string>, specifier: string | undefined): vo
     }
 }
 
-async function getScannedComponentNames(componentsPath: string, fsAdapter?: FileSystemAdapter): Promise<string[]> {
-    const exists = fsAdapter ? await fsAdapter.pathExists(componentsPath) : await fs.pathExists(componentsPath);
+async function getScannedComponentNames(componentsPath: string, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<string[]> {
+    const exists = await fsAdapter.pathExists(componentsPath);
     if (!exists) {
         return [];
     }
 
-    const dirs = fsAdapter
-        ? await fsAdapter.readdir(componentsPath, { withFileTypes: true })
-        : await fs.readdir(componentsPath, { withFileTypes: true });
+    const dirs = await fsAdapter.readdir(componentsPath, { withFileTypes: true });
 
     return dirs
         .filter((dir) => dir.isDirectory())
@@ -174,7 +168,7 @@ function createManifestInfo(entry: InstalledComponentManifest): InstalledCompone
 export async function getInstalledComponentNames(
     cwd: string,
     config: BrutalistConfig,
-    fsAdapter?: FileSystemAdapter
+    fsAdapter: FileSystemAdapter = defaultDiskFs
 ): Promise<string[]> {
     const manifest = await readManifest(cwd, fsAdapter).catch(() => null);
     const manifestNames = Object.keys(manifest?.components ?? {});
@@ -187,7 +181,7 @@ export async function getInstalledComponentNames(
 export async function getInstalledComponentInfos(
     cwd: string,
     config: BrutalistConfig,
-    fsAdapter?: FileSystemAdapter
+    fsAdapter: FileSystemAdapter = defaultDiskFs
 ): Promise<InstalledComponentInfo[]> {
     const manifest = await readManifest(cwd, fsAdapter).catch(() => null);
     const componentsPath = await resolveAliasPath(config.aliases.components, cwd, fsAdapter);
@@ -198,7 +192,7 @@ export async function getInstalledComponentInfos(
         const manifestEntry = manifest?.components[name];
 
         try {
-            const exists = fsAdapter ? await fsAdapter.pathExists(componentDir) : await fs.pathExists(componentDir);
+            const exists = await fsAdapter.pathExists(componentDir);
             if (!exists) {
                 return manifestEntry ? createManifestInfo(manifestEntry) : null;
             }

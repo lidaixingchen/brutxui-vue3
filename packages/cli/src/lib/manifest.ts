@@ -1,9 +1,11 @@
 import crypto from 'node:crypto';
-import fs from 'fs-extra';
 import path from 'path';
+import { DiskFileSystemAdapter, type FileSystemAdapter } from 'brutx-shared-vue/fs';
 import { MANIFEST_VERSION } from './types.js';
 import type { BrutxManifest, InstalledComponentManifest, RegistryItem } from './types.js';
 import type { FileTransaction } from './file-transaction.js';
+
+const defaultDiskFs = new DiskFileSystemAdapter();
 
 export const MANIFEST_RELATIVE_PATH = '.brutx/manifest.json';
 const COMPONENT_CATEGORIES: Array<NonNullable<RegistryItem['category']>> = [
@@ -174,34 +176,29 @@ export function getManifestPath(cwd: string): string {
  * 既有 manifest 的 installedContentHash 由旧算法生成，doctor 会报一次漂移警告，
  * 执行 update 后以新算法重写。
  */
-import type { FileSystemAdapter } from './fs/file-system-adapter.js';
-
-export async function computeInstalledContentHash(files: string[], fsAdapter?: FileSystemAdapter): Promise<string> {
-    const contents = await Promise.all(files.map(async (filePath) => {
+export async function computeInstalledContentHash(files: string[], fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<string> {
+    const contents = await Promise.all(files.map(async (filePath: string) => {
         try {
-            if (fsAdapter) {
-                return await fsAdapter.readFile(filePath, 'utf-8');
-            }
-            return await fs.readFile(filePath, 'utf-8');
+            return await fsAdapter.readFile(filePath, 'utf-8');
         } catch (error) {
             const detail = error instanceof Error ? error.message : String(error);
             throw new Error(`Failed to read file for integrity check: ${filePath} (${detail})`, { cause: error });
         }
     }));
-    const allContent = contents.map(content => `${content.length}:${content}`).join('');
+    const allContent = contents.map((content: string) => `${content.length}:${content}`).join('');
     return 'sha256-' + crypto.createHash('sha256').update(allContent).digest('hex');
 }
 
-export async function readManifest(cwd: string, fsAdapter?: FileSystemAdapter): Promise<BrutxManifest | null> {
+export async function readManifest(cwd: string, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<BrutxManifest | null> {
     const manifestPath = getManifestPath(cwd);
-    const exists = fsAdapter ? await fsAdapter.pathExists(manifestPath) : await fs.pathExists(manifestPath);
+    const exists = await fsAdapter.pathExists(manifestPath);
 
     if (!exists) {
         return null;
     }
 
     try {
-        const data = fsAdapter ? await fsAdapter.readJson(manifestPath) : await fs.readJson(manifestPath);
+        const data = await fsAdapter.readJson(manifestPath);
         return validateManifest(data);
     } catch (error) {
         const detail = error instanceof Error ? error.message : String(error);
@@ -218,7 +215,7 @@ async function writeManifest(
     cwd: string,
     manifest: BrutxManifest,
     options: ManifestWriteOptions = {},
-    fsAdapter?: FileSystemAdapter
+    fsAdapter: FileSystemAdapter = defaultDiskFs
 ): Promise<void> {
     const manifestPath = getManifestPath(cwd);
 
@@ -227,14 +224,8 @@ async function writeManifest(
         return;
     }
 
-    if (fsAdapter) {
-        await fsAdapter.ensureDir(path.dirname(manifestPath));
-        await fsAdapter.writeJson(manifestPath, manifest, { spaces: 4 });
-        return;
-    }
-
-    await fs.ensureDir(path.dirname(manifestPath));
-    await fs.writeJson(manifestPath, manifest, { spaces: 4 });
+    await fsAdapter.ensureDir(path.dirname(manifestPath));
+    await fsAdapter.writeJson(manifestPath, manifest, { spaces: 4 });
 }
 
 export async function updateInstalledComponents(
