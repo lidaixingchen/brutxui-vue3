@@ -342,14 +342,31 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
         const normalizedOld = this.normalizePath(oldPath);
         const normalizedNew = this.normalizePath(newPath);
 
+        if (normalizedOld === normalizedNew) return;
+
         const node = this.nodes.get(normalizedOld);
         if (!node) {
             throw new Error(`ENOENT: no such file or directory, rename '${oldPath}' -> '${newPath}'`);
         }
 
-        this.ensureDirSync(this.getParentDir(normalizedNew));
+        const existingDest = this.nodes.get(normalizedNew);
 
         if (node.type === 'dir') {
+            if (existingDest && existingDest.type !== 'dir') {
+                throw new Error(`ENOTDIR: not a directory, rename '${oldPath}' -> '${newPath}'`);
+            }
+            if (existingDest && existingDest.type === 'dir') {
+                const destPrefix = `${normalizedNew}/`;
+                for (const key of this.nodes.keys()) {
+                    if (key.startsWith(destPrefix) && key !== normalizedNew) {
+                        throw new Error(`ENOTEMPTY: directory not empty, rename '${oldPath}' -> '${newPath}'`);
+                    }
+                }
+                this.nodes.delete(normalizedNew);
+            }
+
+            this.ensureDirSync(this.getParentDir(normalizedNew));
+
             const oldPrefix = `${normalizedOld}/`;
             const newPrefix = `${normalizedNew}/`;
             const keysToMove: Array<[string, MemoryNode]> = [];
@@ -372,6 +389,11 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
                 this.nodes.set(`${newPrefix}${subPath}`, n);
             }
         } else {
+            if (existingDest && existingDest.type === 'dir') {
+                throw new Error(`EISDIR: illegal operation on a directory, rename '${oldPath}' -> '${newPath}'`);
+            }
+
+            this.ensureDirSync(this.getParentDir(normalizedNew));
             this.nodes.delete(normalizedOld);
             this.nodes.set(normalizedNew, node);
         }

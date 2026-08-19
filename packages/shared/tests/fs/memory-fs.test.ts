@@ -177,5 +177,14 @@ describe('MemoryFileSystemAdapter', () => {
             expect(await vfs.pathExists('/real/target.txt')).toBe(true);
             expect(await vfs.readFile('/real/target.txt')).toBe('target content');
         });
+
+        it('rename 目标为非空目录抛出 ENOTEMPTY，重命名文件至目录抛出 EISDIR', async () => {
+            await vfs.writeFile('/source-dir/a.txt', 'a');
+            await vfs.writeFile('/dest-dir/b.txt', 'b');
+            await expect(vfs.rename('/source-dir', '/dest-dir')).rejects.toThrow('ENOTEMPTY');
+
+            await vfs.writeFile('/file.txt', 'content');
+            await expect(vfs.rename('/file.txt', '/dest-dir')).rejects.toThrow('EISDIR');
+        });
     });
 });
