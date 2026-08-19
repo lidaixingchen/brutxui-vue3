@@ -186,16 +186,16 @@ export function resolveRewrittenSpecifier(
     context: RewriteContext = 'component',
     knownComponents: Set<string> = new Set(AVAILABLE_COMPONENTS)
 ): string {
-    // 1. ../composables/..., ../lib/..., ../locales/..., ../directives/...
+    // 1. ../composables/..., ../lib/..., ../locales/..., ../directives/... (支持单层或多层 ../)
     for (const [prefix, alias] of Object.entries(KNOWN_DIR_PREFIXES)) {
-        const match = new RegExp(`^\\.\\./${prefix}/(.+)$`).exec(specifier);
+        const match = new RegExp(`^(?:\\.\\./)+${prefix}/(.+)$`).exec(specifier);
         if (match && match[1]) {
             return `${alias}${match[1]}`;
         }
     }
 
-    // 2. ../components/{name}/...
-    const crossCompMatch1 = /^\.\.\/components\/([a-zA-Z0-9-]+)\/(.+)$/.exec(specifier);
+    // 2. ../components/{name}/... (支持单层或多层 ../)
+    const crossCompMatch1 = /^(?:\.\.\/)+components\/([a-zA-Z0-9-]+)\/(.+)$/.exec(specifier);
     if (crossCompMatch1 && crossCompMatch1[1] && crossCompMatch1[2]) {
         const targetComp = crossCompMatch1[1];
         if (knownComponents.has(targetComp)) {
@@ -204,7 +204,7 @@ export function resolveRewrittenSpecifier(
     }
 
     // 3. ../{name}/...
-    const crossCompMatch2 = /^\.\.\/([a-zA-Z0-9-]+)\/(.+)$/.exec(specifier);
+    const crossCompMatch2 = /^(?:\.\.\/)+([a-zA-Z0-9-]+)\/(.+)$/.exec(specifier);
     if (crossCompMatch2 && crossCompMatch2[1] && crossCompMatch2[2]) {
         const targetComp = crossCompMatch2[1];
         if (knownComponents.has(targetComp)) {
