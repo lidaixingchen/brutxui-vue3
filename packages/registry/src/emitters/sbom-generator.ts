@@ -13,17 +13,26 @@ export interface SbomGeneratorOptions {
 }
 
 /**
+ * 规范化序列化 SBOM 核心字段，确保哈希与 serialNumber 具有一致的口径。
+ */
+export function canonicalizeSbomCore(
+    sbom: Pick<RegistrySbom, 'bomFormat' | 'specVersion' | 'components'>
+): string {
+    return JSON.stringify({
+        bomFormat: sbom.bomFormat,
+        specVersion: sbom.specVersion,
+        components: sbom.components,
+    });
+}
+
+/**
  * 确定性计算 SBOM 完整性哈希。
  * 对 bomFormat/specVersion/components 求规范化 sha256。
  */
 export function computeSbomIntegrity(
     sbom: Pick<RegistrySbom, 'bomFormat' | 'specVersion' | 'components'>
 ): string {
-    const canonical = JSON.stringify({
-        bomFormat: sbom.bomFormat,
-        specVersion: sbom.specVersion,
-        components: sbom.components,
-    });
+    const canonical = canonicalizeSbomCore(sbom);
     return `sha256-${crypto.createHash('sha256').update(canonical).digest('hex')}`;
 }
 
@@ -33,11 +42,7 @@ export function computeSbomIntegrity(
 export function computeSbomSerialNumber(
     sbom: Pick<RegistrySbom, 'bomFormat' | 'specVersion' | 'components'>
 ): string {
-    const canonical = JSON.stringify({
-        bomFormat: sbom.bomFormat,
-        specVersion: sbom.specVersion,
-        components: sbom.components,
-    });
+    const canonical = canonicalizeSbomCore(sbom);
     const hash = crypto.createHash('sha256').update(canonical).digest();
     const bytes = hash.subarray(0, 16);
     bytes[6] = (bytes[6] & 0x0f) | 0x40;

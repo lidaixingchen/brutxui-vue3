@@ -215,6 +215,36 @@ export function buildRegistryItem(name: string): RegistryItem {
         type: getFileType(indexRelPath),
     });
 
+    const addedDirectives = new Set<string>();
+    const directiveDeps = new Set<string>(componentInfo.directives ?? []);
+    while (addedDirectives.size < directiveDeps.size) {
+        const pending = Array.from(directiveDeps).filter(d => !addedDirectives.has(d));
+        for (const rawName of pending) {
+            const directiveName = resolveExtension(rawName, UI_DIRECTIVES_DIR);
+            const directivePath = path.join(UI_DIRECTIVES_DIR, directiveName);
+            if (!fs.existsSync(directivePath)) {
+                throw new Error(`Directive file not found at ${directivePath}`);
+            }
+            let code = fs.readFileSync(directivePath, 'utf-8').replace(/\r\n/g, '\n');
+            code = rewriteImports(code, name, 'directive');
+            assertKnownRegistryDeps(code, name, directiveName);
+            extractRegistryDeps(code, name).forEach(d => allRegistryDeps.add(d));
+            for (const d of extractDeps(code, 'composables')) directiveDeps.add(resolveExtension(d, UI_COMPOSABLES_DIR));
+            for (const d of extractDeps(code, 'locales')) localeDeps.add(resolveExtension(d, UI_LOCALES_DIR));
+            for (const d of extractDeps(code, 'lib')) libDeps.add(resolveExtension(d, UI_LIB_DIR));
+            for (const d of extractDeps(code, 'directives')) directiveDeps.add(resolveExtension(d, UI_DIRECTIVES_DIR));
+
+            const relPath = `directives/${directiveName}`;
+            files.push({
+                path: relPath,
+                content: code,
+                type: getFileType(relPath),
+            });
+            addedDirectives.add(rawName);
+            addedDirectives.add(directiveName);
+        }
+    }
+
     const addedComposables = new Set<string>();
     while (addedComposables.size < composableDeps.size) {
         const pending = Array.from(composableDeps).filter(c => !addedComposables.has(c));

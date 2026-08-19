@@ -16,6 +16,7 @@ export class RegistryWatcher {
     private isBuilding = false;
     private pendingChange = false;
     private debounceMs: number;
+    private sigintHandler: (() => void) | null = null;
 
     constructor(
         private paths: CompilerPaths,
@@ -38,7 +39,7 @@ export class RegistryWatcher {
             try {
                 const watcher = fs.watch(dir, { recursive: true }, (_eventType, filename) => {
                     if (!filename) return;
-                    this.handleFileChange(filename);
+                    this.handleFileChange(filename.toString());
                 });
                 this.watchers.push(watcher);
                 console.log(`  Watching ${path.relative(process.cwd(), dir)}/`);
@@ -49,13 +50,18 @@ export class RegistryWatcher {
 
         console.log(`\n👀 Watching for changes (debounce ${this.debounceMs}ms). Press Ctrl+C to stop.\n`);
 
-        process.on('SIGINT', () => {
+        this.sigintHandler = () => {
             this.stop();
             process.exit(0);
-        });
+        };
+        process.on('SIGINT', this.sigintHandler);
     }
 
     public stop(): void {
+        if (this.sigintHandler) {
+            process.off('SIGINT', this.sigintHandler);
+            this.sigintHandler = null;
+        }
         if (this.debounceTimer) {
             clearTimeout(this.debounceTimer);
             this.debounceTimer = null;

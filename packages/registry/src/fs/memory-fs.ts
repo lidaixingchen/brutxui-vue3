@@ -132,14 +132,21 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
         const node = this.nodes.get(normalized);
         if (!node) return;
 
-        if (node.type === 'dir' && options.recursive !== false) {
+        if (node.type === 'dir') {
             const prefix = normalized.endsWith('/') ? normalized : `${normalized}/`;
-            for (const key of Array.from(this.nodes.keys())) {
-                if (key === normalized || key.startsWith(prefix)) {
-                    this.nodes.delete(key);
+            if (options.recursive === false) {
+                const hasChildren = Array.from(this.nodes.keys()).some(k => k !== normalized && k.startsWith(prefix));
+                if (hasChildren) {
+                    throw new Error(`ENOTEMPTY: directory not empty, rmdir '${normalized}'`);
                 }
+            } else {
+                for (const key of Array.from(this.nodes.keys())) {
+                    if (key === normalized || key.startsWith(prefix)) {
+                        this.nodes.delete(key);
+                    }
+                }
+                return;
             }
-            return;
         }
 
         this.nodes.delete(normalized);
@@ -158,6 +165,11 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
             return;
         }
 
+        if (node.type === 'symlink') {
+            await this.copy(node.target, normDest);
+            return;
+        }
+
         if (node.type === 'dir') {
             this.ensureDirSync(normDest);
             const prefix = normSrc.endsWith('/') ? normSrc : `${normSrc}/`;
@@ -169,6 +181,13 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
                         await this.writeFile(destKey, val.content);
                     } else if (val.type === 'dir') {
                         this.ensureDirSync(destKey);
+                    } else if (val.type === 'symlink') {
+                        this.ensureDirSync(path.posix.dirname(destKey));
+                        this.nodes.set(destKey, {
+                            type: 'symlink',
+                            target: val.target,
+                            mtimeMs: Date.now(),
+                        });
                     }
                 }
             }

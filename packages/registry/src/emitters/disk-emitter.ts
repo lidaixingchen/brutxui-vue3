@@ -2,6 +2,10 @@ import path from 'node:path';
 import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
 import type { CompiledRegistryResult } from '../compiler/types.js';
 
+export const INDEX_FILENAME = 'index.json';
+export const MANIFEST_FILENAME = 'registry-manifest.json';
+export const SBOM_FILENAME = 'registry-sbom.json';
+
 export interface EmitOptions {
     cleanStale?: boolean;
     spaces?: number;
@@ -32,17 +36,17 @@ export class DiskEmitter {
         }
 
         // 2. 写入 index.json
-        const indexPath = path.join(outputDir, 'index.json');
+        const indexPath = path.join(outputDir, INDEX_FILENAME);
         await this.fs.writeJson(indexPath, result.index, { spaces });
         writtenCount++;
 
         // 3. 写入 registry-manifest.json
-        const manifestPath = path.join(outputDir, 'registry-manifest.json');
+        const manifestPath = path.join(outputDir, MANIFEST_FILENAME);
         await this.fs.writeJson(manifestPath, result.manifest, { spaces });
         writtenCount++;
 
         // 4. 写入 registry-sbom.json
-        const sbomPath = path.join(outputDir, 'registry-sbom.json');
+        const sbomPath = path.join(outputDir, SBOM_FILENAME);
         await this.fs.writeJson(sbomPath, result.sbom, { spaces });
         writtenCount++;
 
@@ -51,9 +55,9 @@ export class DiskEmitter {
         if (options.cleanStale !== false) {
             const activeFileNames = new Set([
                 ...Array.from(result.items.keys()).map(name => `${name}.json`),
-                'index.json',
-                'registry-manifest.json',
-                'registry-sbom.json',
+                INDEX_FILENAME,
+                MANIFEST_FILENAME,
+                SBOM_FILENAME,
             ]);
             cleanedCount = await this.removeStaleFiles(outputDir, activeFileNames);
         }
@@ -65,20 +69,16 @@ export class DiskEmitter {
     }
 
     private async removeStaleFiles(outputDir: string, activeFileNames: Set<string>): Promise<number> {
-        let cleaned = 0;
         try {
             const entries = await this.fs.readdir(outputDir, { withFileTypes: true });
-            for (const entry of entries) {
-                if (entry.isFile() && entry.name.endsWith('.json')) {
-                    if (!activeFileNames.has(entry.name)) {
-                        await this.fs.remove(path.join(outputDir, entry.name));
-                        cleaned++;
-                    }
-                }
-            }
+            const staleFiles = entries
+                .filter(entry => entry.isFile() && entry.name.endsWith('.json') && !activeFileNames.has(entry.name))
+                .map(entry => path.join(outputDir, entry.name));
+
+            await Promise.all(staleFiles.map(filePath => this.fs.remove(filePath)));
+            return staleFiles.length;
         } catch {
-            // 目录不存在或读取失败忽略
+            return 0;
         }
-        return cleaned;
     }
 }
