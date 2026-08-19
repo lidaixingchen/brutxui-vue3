@@ -85,6 +85,7 @@ draft ──评审通过──▶ active ──落地完成──▶ done ──
 | [CLI项目上下文与路径解析引擎封装方案](plans/CLI项目上下文与路径解析引擎封装方案.md) | done | ProjectContext 深模块聚合实体、FileSystemAdapter 双适配器 Seam（Disk/Memory）、路径解析引擎全量收拢与零 IO 测试 |
 | [CLI声明式诊断巡检与自愈引擎方案](plans/CLI声明式诊断巡检与自愈引擎方案.md) | done | 声明式 DiagnosticEngine 规则引擎、五大领域规则集解耦、单事务拓扑原子自愈与 CycloneDX 1.5 SBOM 独立服务 |
 | [注册表编译与AST静态转换管线模块化方案](plans/注册表编译与AST静态转换管线模块化方案.md) | done | RegistryCompiler 深模块编译流水线、SourceProvider 内存/磁盘双适配器 Seam、AST 语义安全重写与发射器解耦 |
+| [全工程虚拟文件系统统一与持久化深模块重构方案](plans/全工程虚拟文件系统统一与持久化深模块重构方案.md) | **active** | 跨包 VFS 基础设施（`brutx-shared-vue/fs`）、CLI 缓存/审计持久化深模块、清除双轨适配器、设计令牌纯计算编译器与脚手架事务引擎 |
 
 
 ## 归档方案（archive/2026/）
