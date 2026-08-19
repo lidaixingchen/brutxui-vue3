@@ -86,7 +86,8 @@ export class RegistryCompiler {
             const cause = error instanceof Error ? error.message : String(error);
             throw new Error(
                 `Failed to read registry-manifest.json (${cause}). ` +
-                `Run pnpm --filter brutx-ui-vue prebuild:scan first to generate the UI registry manifest.`
+                `Run pnpm --filter brutx-ui-vue prebuild:scan first to generate the UI registry manifest.`,
+                { cause: error }
             );
         }
 
@@ -97,7 +98,8 @@ export class RegistryCompiler {
             const cause = error instanceof Error ? error.message : String(error);
             throw new Error(
                 `Failed to parse registry-manifest.json (${cause}). ` +
-                `Run pnpm --filter brutx-ui-vue prebuild:scan first to regenerate the file.`
+                `Run pnpm --filter brutx-ui-vue prebuild:scan first to regenerate the file.`,
+                { cause: error }
             );
         }
         const merged: Record<string, MergedRegistryEntry> = {};
@@ -252,7 +254,7 @@ export class RegistryCompiler {
         };
     }
 
-    public async compileAll(options: { forceRebuild?: boolean } = {}): Promise<CompiledRegistryResult> {
+    public async compileAll(_options: { forceRebuild?: boolean } = {}): Promise<CompiledRegistryResult> {
         const totalStartTime = Date.now();
         const mergedRegistry = await this.loadMergedRegistry();
         const componentNames = Object.keys(mergedRegistry).sort();
