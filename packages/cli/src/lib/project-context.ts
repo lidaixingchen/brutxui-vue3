@@ -9,8 +9,8 @@ import type {
     ProjectType,
     TsConfig,
 } from './types.js';
-import type { FileSystemAdapter } from './fs/file-system-adapter.js';
-import { DiskFileSystemAdapter } from './fs/disk-fs.js';
+import { DiskFileSystemAdapter, type FileSystemAdapter } from 'brutx-shared-vue/fs';
+import { AuditLogStorage } from './storage/audit-storage.js';
 import {
     CONFIG_FILES,
     CSS_LOCATIONS,
@@ -45,6 +45,7 @@ export class ProjectContext {
     readonly fs: FileSystemAdapter;
     readonly env: ProjectEnvironmentInfo;
     readonly tsConfig: TsConfig | null;
+    readonly auditLog: AuditLogStorage;
 
     private _config?: BrutalistConfig;
     private _aliasesCache?: AliasConfig;
@@ -63,6 +64,7 @@ export class ProjectContext {
         this.env = env;
         this.tsConfig = tsConfig;
         this._config = config;
+        this.auditLog = new AuditLogStorage({ fs: fsAdapter, cwd: this.cwd });
     }
 
     get config(): BrutalistConfig | undefined {
