@@ -74,6 +74,10 @@ export class RegistryCompiler {
         this.cacheManager = new CacheManager(this.fs, cacheFilePath);
     }
 
+    public getMetadata(): Record<string, ComponentMetadataEntry> {
+        return this.metadata;
+    }
+
     public async loadMergedRegistry(): Promise<Record<string, MergedRegistryEntry>> {
         let manifestRaw: string;
         try {
@@ -86,7 +90,16 @@ export class RegistryCompiler {
             );
         }
 
-        const manifest = JSON.parse(manifestRaw) as RegistryManifest;
+        let manifest: RegistryManifest;
+        try {
+            manifest = JSON.parse(manifestRaw) as RegistryManifest;
+        } catch (error) {
+            const cause = error instanceof Error ? error.message : String(error);
+            throw new Error(
+                `Failed to parse registry-manifest.json (${cause}). ` +
+                `Run pnpm --filter brutx-ui-vue prebuild:scan first to regenerate the file.`
+            );
+        }
         const merged: Record<string, MergedRegistryEntry> = {};
 
         for (const [name, meta] of Object.entries(this.metadata)) {
@@ -186,9 +199,14 @@ export class RegistryCompiler {
                 .map(d => d.name)
                 .sort();
 
-            for (const localeFile of tsFiles) {
-                const fullPath = path.join(this.paths.localesDir, localeFile);
-                const raw = await this.fs.readFile(fullPath, 'utf-8');
+            const contents = await Promise.all(
+                tsFiles.map(localeFile =>
+                    this.fs.readFile(path.join(this.paths.localesDir, localeFile), 'utf-8')
+                )
+            );
+
+            tsFiles.forEach((localeFile, idx) => {
+                const raw = contents[idx] ?? '';
                 const code = rewriteImports(raw.replace(/\r\n/g, '\n'), 'locale-zh-cn', 'locale');
                 localeFiles.push({
                     path: `locales/${localeFile}`,
@@ -196,7 +214,7 @@ export class RegistryCompiler {
                     type: 'registry:lib',
                 });
                 localeHashParts.push(code);
-            }
+            });
         }
 
         const localeHash = crypto.createHash('sha256').update([

@@ -85,7 +85,7 @@ export function buildRegistrySbom(
         }
     }
 
-    for (const dep of [...seenNpmDeps].sort()) {
+    for (const dep of Array.from(seenNpmDeps).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))) {
         components.push({
             'bom-ref': `npm:${dep}`,
             type: 'library',
@@ -93,7 +93,7 @@ export function buildRegistrySbom(
         });
     }
 
-    components.sort((a, b) => a['bom-ref'].localeCompare(b['bom-ref']));
+    components.sort((a, b) => (a['bom-ref'] < b['bom-ref'] ? -1 : a['bom-ref'] > b['bom-ref'] ? 1 : 0));
 
     const sbomBase = {
         $schema: 'http://cyclonedx.org/schema/bom-1.5.schema.json',

@@ -75,8 +75,23 @@ export class DiskEmitter {
                 .filter(entry => entry.isFile() && entry.name.endsWith('.json') && !activeFileNames.has(entry.name))
                 .map(entry => path.join(outputDir, entry.name));
 
-            await Promise.all(staleFiles.map(filePath => this.fs.remove(filePath)));
-            return staleFiles.length;
+            const results = await Promise.allSettled(staleFiles.map(filePath => this.fs.remove(filePath)));
+            let removedCount = 0;
+            const failures: string[] = [];
+
+            results.forEach((res, idx) => {
+                if (res.status === 'fulfilled') {
+                    removedCount++;
+                } else {
+                    failures.push(staleFiles[idx] ?? 'unknown');
+                }
+            });
+
+            if (failures.length > 0) {
+                console.warn(`[DiskEmitter] Failed to remove stale file(s): ${failures.join(', ')}`);
+            }
+
+            return removedCount;
         } catch {
             return 0;
         }

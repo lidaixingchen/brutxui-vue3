@@ -39,37 +39,43 @@ export async function runBuild(options: RunnerOptions = {}): Promise<void> {
         console.log('🚀 Starting registry build...');
     }
 
-    const compiler = new RegistryCompiler({
-        fs,
-        paths,
-        ...options,
-    });
+    try {
+        const compiler = new RegistryCompiler({
+            fs,
+            paths,
+            ...options,
+        });
 
-    const result = await compiler.compileAll({ forceRebuild: options.forceRebuild });
+        const result = await compiler.compileAll({ forceRebuild: options.forceRebuild });
 
-    // 签名 Manifest（若配置私钥）
-    result.manifest = signManifestFromEnv(result.manifest);
+        // 签名 Manifest（若配置私钥）
+        result.manifest = signManifestFromEnv(result.manifest, { verbose });
 
-    // 发射产物落盘
-    const emitter = new DiskEmitter(fs);
-    const { writtenCount, cleanedCount } = await emitter.emit(result, paths.outputDir);
+        // 发射产物落盘
+        const emitter = new DiskEmitter(fs);
+        const { writtenCount, cleanedCount } = await emitter.emit(result, paths.outputDir);
 
-    // 保存缓存
-    const cacheFilePath = path.join(path.dirname(paths.outputDir), '.registry-cache.json');
-    await fs.writeJson(cacheFilePath, result.cacheRecord, { spaces: 2 });
+        // 保存缓存
+        const cacheFilePath = path.join(path.dirname(paths.outputDir), '.registry-cache.json');
+        await fs.writeJson(cacheFilePath, result.cacheRecord, { spaces: 2 });
 
-    // 记录基准指标
-    if (isBench) {
-        const benchFilePath = path.join(path.dirname(paths.outputDir), 'bench.json');
-        const tracker = new BenchmarkTracker(fs, benchFilePath);
-        const metrics = tracker.createMetrics(result);
-        await tracker.saveMetrics(metrics);
-        console.log(`📊 Benchmark saved to ${path.relative(process.cwd(), benchFilePath)}`);
+        // 记录基准指标
+        if (isBench) {
+            const benchFilePath = path.join(path.dirname(paths.outputDir), 'bench.json');
+            const tracker = new BenchmarkTracker(fs, benchFilePath);
+            const metrics = tracker.createMetrics(result);
+            await tracker.saveMetrics(metrics);
+            console.log(`📊 Benchmark saved to ${path.relative(process.cwd(), benchFilePath)}`);
+        }
+
+        console.log(
+            `✓ Built ${result.items.size} registry items, written ${writtenCount} files (${cleanedCount} cleaned) in ${result.totalDurationMs}ms`
+        );
+    } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        console.error(`❌ Registry build failed: ${message}`);
+        throw error;
     }
-
-    console.log(
-        `✓ Built ${result.items.size} registry items, written ${writtenCount} files (${cleanedCount} cleaned) in ${result.totalDurationMs}ms`
-    );
 }
 
 export async function runWatch(options: RunnerOptions = {}): Promise<void> {

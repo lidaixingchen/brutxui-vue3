@@ -7,7 +7,6 @@ import {
     buildComponentIndexContent,
 } from 'brutx-shared-vue/scan';
 import {
-    COMPONENT_METADATA,
     computeRegistryIntegrity,
     computeRegistryManifestIntegrity,
     type MergedRegistryEntry,
@@ -80,7 +79,7 @@ export function loadMergedRegistry(): Record<string, MergedRegistryEntry> {
         );
     }
     const manifest = JSON.parse(manifestRaw);
-    const metaSource = defaultCompiler['metadata'] ?? COMPONENT_METADATA;
+    const metaSource = defaultCompiler.getMetadata();
     const merged: Record<string, MergedRegistryEntry> = {};
 
     for (const [name, meta] of Object.entries(metaSource)) {
@@ -378,6 +377,36 @@ export function computeSourceHash(name: string, fileMapping: { files: string[]; 
     }
 
     parts.push(buildComponentIndexContent(Array.from(componentDeps)));
+
+    const directiveDeps = new Set<string>(fileMapping.directives ?? []);
+    const addedDirectiveDeps = new Set<string>();
+    while (addedDirectiveDeps.size < directiveDeps.size) {
+        const pending = Array.from(directiveDeps).filter(d => !addedDirectiveDeps.has(d));
+        for (const rawName of pending) {
+            const directiveName = resolveExtension(rawName, UI_DIRECTIVES_DIR);
+            const directivePath = path.join(UI_DIRECTIVES_DIR, directiveName);
+            if (!fs.existsSync(directivePath)) {
+                throw new Error(`Directive file not found at ${directivePath}`);
+            }
+            const code = fs.readFileSync(directivePath, 'utf-8').replace(/\r\n/g, '\n');
+            parts.push(code);
+            const rewritten = rewriteImports(code, name, 'directive');
+            for (const d of extractDeps(rewritten, 'composables')) {
+                composableDeps.add(resolveExtension(d, UI_COMPOSABLES_DIR));
+            }
+            for (const d of extractDeps(rewritten, 'locales')) {
+                localeDeps.add(resolveExtension(d, UI_LOCALES_DIR));
+            }
+            for (const d of extractDeps(rewritten, 'lib')) {
+                libDeps.add(resolveExtension(d, UI_LIB_DIR));
+            }
+            for (const d of extractDeps(rewritten, 'directives')) {
+                directiveDeps.add(resolveExtension(d, UI_DIRECTIVES_DIR));
+            }
+            addedDirectiveDeps.add(rawName);
+            addedDirectiveDeps.add(directiveName);
+        }
+    }
 
     const addComposableFile = (rawName: string): void => {
         const composableName = resolveExtension(rawName, UI_COMPOSABLES_DIR);
