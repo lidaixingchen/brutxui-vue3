@@ -115,7 +115,8 @@ export const structureUtilsCnRule: DiagnosticRule = {
         }
 
         const content = await ctx.fs.readFile(existingUtilsFile, 'utf-8');
-        if (!content.includes('export function cn') && !content.includes('export const cn')) {
+        const hasCnDeclaration = /^\s*export\s+(?:function|const)\s+cn\b/m.test(content);
+        if (!hasCnDeclaration) {
             return {
                 ruleId: 'structure.utils-cn',
                 category: 'structure',
@@ -145,7 +146,7 @@ export const structureUtilsCnRule: DiagnosticRule = {
         }
 
         const existing = await ctx.fs.readFile(existingUtilsFile, 'utf-8');
-        if (existing.includes('export function cn') || existing.includes('export const cn')) {
+        if (/^\s*export\s+(?:function|const)\s+cn\b/m.test(existing)) {
             return {
                 status: 'skipped',
                 message: 'cn() function already exists.',
@@ -153,10 +154,10 @@ export const structureUtilsCnRule: DiagnosticRule = {
         }
 
         const importLines: string[] = [];
-        if (!/from\s+["']clsx["']/.test(existing)) {
+        if (!/^\s*import\b.*?\bfrom\s+["']clsx["']/m.test(existing)) {
             importLines.push('import { type ClassValue, clsx } from "clsx";');
         }
-        if (!/from\s+["']tailwind-merge["']/.test(existing)) {
+        if (!/^\s*import\b.*?\bfrom\s+["']tailwind-merge["']/m.test(existing)) {
             importLines.push('import { twMerge } from "tailwind-merge";');
         }
 

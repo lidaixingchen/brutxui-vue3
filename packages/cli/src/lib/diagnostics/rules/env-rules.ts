@@ -51,7 +51,7 @@ export const workspaceHintRule: DiagnosticRule = {
             return [];
         }
 
-        const relativeRoot = path.relative(resolvedCwd, workspaceRoot);
+        const relativeRoot = path.relative(resolvedCwd, workspaceRoot) || '.';
         return [{
             ruleId: 'env.workspace-hint',
             category: 'env',

@@ -94,8 +94,13 @@ export const tailwindTokensRule: DiagnosticRule = {
         if (hasBrutxCssBlock(existing)) {
             newContent = replaceBrutxCssBlock(existing, brutxBlock);
         } else {
-            newContent = existing.length > 0
-                ? (existing.endsWith('\n') ? `${existing}${brutxBlock}` : `${existing}\n${brutxBlock}`)
+            const cleaned = existing
+                .replaceAll(BRUTX_CSS_START_MARKER, '')
+                .replaceAll(BRUTX_CSS_END_MARKER, '')
+                .trimEnd();
+
+            newContent = cleaned.length > 0
+                ? `${cleaned}\n${brutxBlock}`
                 : `@import "tailwindcss";\n${brutxBlock}`;
         }
 

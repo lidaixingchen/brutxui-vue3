@@ -156,18 +156,22 @@ export const configDeprecatedPluginRule: DiagnosticRule = {
             const configPath = path.resolve(ctx.cwd, candidate);
             if (!(await ctx.fs.pathExists(configPath))) continue;
 
-            const stat = await ctx.fs.stat(configPath);
-            if (stat.isDirectory()) continue;
+            try {
+                const stat = await ctx.fs.stat(configPath);
+                if (stat.isDirectory()) continue;
 
-            const content = await ctx.fs.readFile(configPath, 'utf-8');
-            if (content.includes('brutx-ui-vue/brutalism-plugin') || content.includes('brutx-ui-vue/dist/brutalism-plugin')) {
-                return {
-                    ruleId: 'config.deprecated-plugin',
-                    category: 'config',
-                    name: 'deprecated brutalism plugin',
-                    status: 'warn',
-                    message: `${candidate} imports the deprecated empty brutalism plugin. Import BrutxUI styles via styles.css or preflight.css instead.`,
-                };
+                const content = await ctx.fs.readFile(configPath, 'utf-8');
+                if (content.includes('brutx-ui-vue/brutalism-plugin') || content.includes('brutx-ui-vue/dist/brutalism-plugin')) {
+                    return {
+                        ruleId: 'config.deprecated-plugin',
+                        category: 'config',
+                        name: 'deprecated brutalism plugin',
+                        status: 'warn',
+                        message: `${candidate} imports the deprecated empty brutalism plugin. Import BrutxUI styles via styles.css or preflight.css instead.`,
+                    };
+                }
+            } catch {
+                continue;
             }
         }
 
