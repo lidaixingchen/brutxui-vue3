@@ -177,6 +177,14 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
 
     async remove(targetPath: string, options: FsRemoveOptions = {}): Promise<void> {
         const normalized = this.normalizePath(targetPath);
+
+        // 遵循标准 rm 语义：如果目标本身是符号链接，直接删除该链接节点，不解引用目标
+        const directNode = this.nodes.get(normalized);
+        if (directNode?.type === 'symlink') {
+            this.nodes.delete(normalized);
+            return;
+        }
+
         const resolved = await this.resolveSymlinkTarget(normalized);
 
         const node = this.nodes.get(resolved);

@@ -165,5 +165,17 @@ describe('MemoryFileSystemAdapter', () => {
             expect(await vfs.pathExists('/new-dir/sub/file.txt')).toBe(true);
             expect(await vfs.readFile('/new-dir/sub/file.txt')).toBe('hello');
         });
+
+        it('删除符号链接时仅删除链接节点本身，保留真实目标', async () => {
+            await vfs.writeFile('/real/target.txt', 'target content');
+            await vfs.symlink('/real/target.txt', '/links/link.txt');
+
+            expect(await vfs.pathExists('/links/link.txt')).toBe(true);
+            await vfs.remove('/links/link.txt');
+
+            expect(await vfs.pathExists('/links/link.txt')).toBe(false);
+            expect(await vfs.pathExists('/real/target.txt')).toBe(true);
+            expect(await vfs.readFile('/real/target.txt')).toBe('target content');
+        });
     });
 });
