@@ -42,3 +42,33 @@ export type {
     RemoveExecutionResult,
     RemovePreparation,
 } from './remove-service.js';
+
+export {
+    diagnose,
+    repair,
+    DiagnosticEngine,
+} from './diagnostic-service.js';
+export type {
+    CheckResult,
+    CheckStatus,
+    DiagnosticCategory,
+    DiagnosticContext,
+    DiagnosticRepairContext,
+    DiagnosticReport,
+    DiagnosticRule,
+    DiagnosticSummary,
+    DiagnoseOptions,
+    RepairOptions,
+    RepairReport,
+    RepairItemReport,
+    RuleFixStatus,
+} from '../diagnostics/types.js';
+
+export {
+    generateProjectSbom,
+} from './sbom-service.js';
+export type {
+    ProjectSbomComponent,
+    ProjectSbomOptions,
+    ProjectSbomResult,
+} from './sbom-service.js';

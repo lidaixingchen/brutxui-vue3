@@ -178,7 +178,7 @@ export const structureDependenciesRule: DiagnosticRule = {
     id: 'structure.dependencies',
     category: 'structure',
     name: 'package dependencies',
-    requiresConfig: false,
+    requiresConfig: true,
     async check(ctx: DiagnosticContext): Promise<CheckResult[]> {
         const results: CheckResult[] = [];
         const packageJsonPath = path.join(ctx.cwd, 'package.json');

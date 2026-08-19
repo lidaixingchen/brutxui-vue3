@@ -123,10 +123,13 @@ export class ProjectContext {
                 try {
                     config = await fsAdapter.readJson<BrutalistConfig>(configPath);
                 } catch (error) {
-                    throw new CliError(`Failed to parse components.json in "${resolvedCwd}": ${error instanceof Error ? error.message : String(error)}`, {
-                        code: 'CONFIG_INVALID',
-                        exitCode: 1,
-                    });
+                    if (!options.optionalConfig) {
+                        throw new CliError(`Failed to parse components.json in "${resolvedCwd}": ${error instanceof Error ? error.message : String(error)}`, {
+                            code: 'CONFIG_INVALID',
+                            exitCode: 1,
+                        });
+                    }
+                    config = undefined;
                 }
             }
         }

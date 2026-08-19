@@ -17,6 +17,7 @@ import type {
 import { BUILTIN_RULES } from './rules/index.js';
 import { ProjectContext } from '../project-context.js';
 import { readManifest } from '../manifest.js';
+import { readConfigSafe } from '../registry.js';
 import { CliError } from '../error.js';
 
 export function createDiagnosticReport(checks: CheckResult[]): DiagnosticReport {
@@ -76,8 +77,23 @@ export class DiagnosticEngine {
 
     async diagnose(options: DiagnoseOptions = {}): Promise<DiagnosticReport> {
         const cwd = path.resolve(options.cwd ?? process.cwd());
+        const fsAdapter = options.fs;
+
+        let configOverride = options.context?.config;
+        if (!configOverride) {
+            try {
+                const safe = await readConfigSafe(cwd);
+                if (safe) {
+                    configOverride = safe;
+                }
+            } catch {
+                // Ignore parse errors, loadUninitialized handles null config
+            }
+        }
+
         const projectContext = options.context ?? await ProjectContext.loadUninitialized(cwd, {
-            fs: options.fs,
+            fs: fsAdapter,
+            configOverride,
             optionalConfig: true,
         });
 

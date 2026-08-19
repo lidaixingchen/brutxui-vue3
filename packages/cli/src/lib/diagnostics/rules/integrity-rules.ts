@@ -91,6 +91,52 @@ export async function restoreComponentFromRegistry(
     }
 }
 
+async function collectComponentDirs(componentsPath: string, fsAdapter: FileSystemAdapter): Promise<string[]> {
+    if (!(await fsAdapter.pathExists(componentsPath))) return [];
+    const entries = await fsAdapter.readdir(componentsPath, { withFileTypes: true });
+    const dirs: string[] = [];
+    for (const e of entries) {
+        if (e.isDirectory()) {
+            dirs.push(path.join(componentsPath, e.name));
+        }
+    }
+    return dirs;
+}
+
+async function checkComponentIntegrityLegacy(ctx: DiagnosticContext): Promise<CheckResult[]> {
+    const results: CheckResult[] = [];
+    if (!ctx.config) return results;
+    const componentsPath = await ctx.projectContext.resolveComponentsDir();
+
+    if (!(await ctx.fs.pathExists(componentsPath))) {
+        return results;
+    }
+
+    try {
+        const componentDirs = await collectComponentDirs(componentsPath, ctx.fs);
+        for (const componentPath of componentDirs) {
+            const entries = await ctx.fs.readdir(componentPath, { withFileTypes: true });
+            const fileCount = entries.filter(e => e.isFile()).length;
+            const hasFiles = fileCount > 0;
+            const componentName = path.relative(componentsPath, componentPath).split(path.sep).join('/');
+
+            results.push({
+                ruleId: 'integrity.manifest-files',
+                category: 'integrity',
+                name: `component ${componentName}`,
+                status: hasFiles ? 'pass' : 'warn',
+                message: hasFiles
+                    ? `${fileCount} files found. (legacy scan)`
+                    : 'Component directory is empty. (legacy scan)',
+            });
+        }
+    } catch {
+        // Ignore read errors
+    }
+
+    return results;
+}
+
 export const integrityManifestFilesRule: DiagnosticRule = {
     id: 'integrity.manifest-files',
     category: 'integrity',
@@ -98,7 +144,7 @@ export const integrityManifestFilesRule: DiagnosticRule = {
     requiresConfig: true,
     async check(ctx: DiagnosticContext): Promise<CheckResult[]> {
         if (!ctx.manifest || Object.keys(ctx.manifest.components).length === 0) {
-            return [];
+            return await checkComponentIntegrityLegacy(ctx);
         }
 
         const results: CheckResult[] = [];
@@ -401,7 +447,7 @@ export const integrityCacheHealthRule: DiagnosticRule = {
     id: 'integrity.cache-health',
     category: 'integrity',
     name: 'registry cache',
-    requiresConfig: false,
+    requiresConfig: true,
     async check(): Promise<CheckResult[]> {
         try {
             const stats = await getCacheStats();
@@ -425,7 +471,7 @@ export const integrityAuditLogRule: DiagnosticRule = {
     id: 'integrity.audit-log',
     category: 'integrity',
     name: 'audit log health',
-    requiresConfig: false,
+    requiresConfig: true,
     async check(ctx: DiagnosticContext): Promise<CheckResult[]> {
         if (!(await auditLogExists(ctx.cwd))) {
             return [];

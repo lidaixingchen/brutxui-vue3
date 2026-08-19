@@ -170,3 +170,19 @@ export type {
     RemoveExecutionResult,
     RemovePreparation,
 } from './services/remove-service.js';
+
+export {
+    diagnose,
+    repair,
+    DiagnosticEngine,
+} from './services/diagnostic-service.js';
+
+export {
+    generateProjectSbom,
+} from './services/sbom-service.js';
+export type {
+    ProjectSbomComponent,
+    ProjectSbomOptions,
+    ProjectSbomResult,
+} from './services/sbom-service.js';
+
