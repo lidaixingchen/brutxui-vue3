@@ -561,8 +561,6 @@ export async function removeComponents(
     options: RemoveExecutionOptions = { removeOrphaned: true }
 ): Promise<RemoveExecutionResult> {
     const transaction = context.createTransaction();
-    let totalRemoved = 0;
-    let orphanedRemoved = 0;
 
     try {
         const componentRemovalCounts = await Promise.all(
@@ -578,7 +576,8 @@ export async function removeComponents(
                 return 0;
             })
         );
-        totalRemoved = componentRemovalCounts.reduce((sum, count) => sum + count, 0);
+        const totalRemoved = componentRemovalCounts.reduce((sum, count) => sum + count, 0);
+        let orphanedRemoved = 0;
 
         if (options.removeOrphaned) {
             const orphanRemovalCounts = await Promise.all(
@@ -596,15 +595,16 @@ export async function removeComponents(
 
         await removeInstalledComponents(context.cwd, componentsToRemove, { transaction }, context.fs);
         await transaction.commit();
+
+        return {
+            totalRemoved,
+            orphanedRemoved,
+        };
     } catch (error) {
         const rollbackFailures = await transaction.rollback();
         return Promise.reject(Object.assign(error instanceof Error ? error : new Error(String(error)), {
             rollbackFailures,
         }));
     }
-
-    return {
-        totalRemoved,
-        orphanedRemoved,
-    };
 }
+
