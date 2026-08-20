@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { useMessage, messageStore, removeMessage, destroyMessageSystem } from './useMessage'
+import { useMessage, messageStore, removeMessage, destroyFallback, destroyMessageSystem } from './useMessage'
 import MessageContainer from '../components/message/MessageContainer.vue'
 
 const TEST_CUSTOM_DURATION_MS = 1500
@@ -84,13 +84,38 @@ describe('useMessage', () => {
         expect(messageStore.value[0].title).toBe('消息 2')
     })
 
-    it('destroyMessageSystem 清空所有消息与定时器', () => {
+    it('destroyFallback 与 destroyMessageSystem 清空所有消息与定时器', () => {
         const msg = useMessage()
         msg.info('消息 1')
         msg.info('消息 2')
         expect(messageStore.value).toHaveLength(2)
 
-        destroyMessageSystem()
+        destroyFallback()
+        expect(messageStore.value).toHaveLength(0)
+    })
+
+    it('组件卸载后活跃消息仍然保持存续，直到 duration 倒计时结束', async () => {
+        const TestComponent = {
+            setup() {
+                const msg = useMessage()
+                msg.success('卸载存续消息', undefined)
+                return () => null
+            },
+        }
+
+        const wrapper = mount(TestComponent)
+        expect(messageStore.value).toHaveLength(1)
+        expect(messageStore.value[0].title).toBe('卸载存续消息')
+
+        // 模拟路由跳转或弹窗关闭：组件卸载
+        wrapper.unmount()
+
+        // 卸载后活跃消息依然在展示中，不被强制清空
+        expect(messageStore.value).toHaveLength(1)
+
+        // 倒计时结束，消息自然移除
+        const duration = messageStore.value[0].duration
+        await vi.advanceTimersByTimeAsync(duration + ADVANCE_STEP_MS)
         expect(messageStore.value).toHaveLength(0)
     })
 })

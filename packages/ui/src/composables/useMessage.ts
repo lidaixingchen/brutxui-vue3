@@ -1,7 +1,18 @@
-import { readonly, shallowRef, type DeepReadonly, type Ref } from 'vue'
+import {
+    getCurrentInstance,
+    onUnmounted,
+    readonly,
+    shallowRef,
+    type DeepReadonly,
+    type Ref,
+} from 'vue'
 import { renderImperative, type RenderImperativeReturn } from '../lib/render-imperative'
-import { isClient } from '../lib/env'
-import { DEFAULT_MESSAGE_DURATION_MS, MESSAGE_GRACE_PERIOD_MS, DEFAULT_DIALOG_TRANSITION_MS } from '../lib/defaults'
+import { getWindow, isClient } from '../lib/env'
+import {
+    DEFAULT_MESSAGE_DURATION_MS,
+    MESSAGE_GRACE_PERIOD_MS,
+    DEFAULT_DIALOG_TRANSITION_MS,
+} from '../lib/defaults'
 import MessageContainer from '../components/message/MessageContainer.vue'
 
 export type MessageType = 'info' | 'success' | 'warning' | 'error'
@@ -32,14 +43,29 @@ export interface UseMessageReturn {
 }
 
 const messageStoreRef = shallowRef<MessageItem[]>([])
-// 只读视图：消息列表仅能经 useMessage()/removeMessage/destroyMessageSystem 修改，
+// 只读视图：消息列表仅能经 useMessage()/removeMessage/destroyFallback 修改，
 // 外部直写会绕过 duration 定时器与 GC，故导出 readonly 代理
 export const messageStore: DeepReadonly<Ref<MessageItem[]>> = readonly(messageStoreRef)
 
 let instance: RenderImperativeReturn | null = null
+let refCount = 0
 let graceTimer: ReturnType<typeof setTimeout> | null = null
 let messageIdCounter = 0
 const timerMap = new Map<string, ReturnType<typeof setTimeout>>()
+let beforeUnloadHandler: (() => void) | null = null
+
+function registerBeforeUnload(): void {
+    if (!isClient || beforeUnloadHandler) return
+    beforeUnloadHandler = () => destroyFallback()
+    getWindow()?.addEventListener('beforeunload', beforeUnloadHandler)
+}
+
+function unregisterBeforeUnload(): void {
+    if (beforeUnloadHandler) {
+        getWindow()?.removeEventListener('beforeunload', beforeUnloadHandler)
+        beforeUnloadHandler = null
+    }
+}
 
 function clearTimer(id: string): void {
     const timer = timerMap.get(id)
@@ -60,12 +86,20 @@ function scheduleGC(): void {
         clearTimeout(graceTimer)
         graceTimer = null
     }
+
+    // 活跃消息守卫：只要当前仍有未过期的活跃消息，容器必须维持存续，
+    // 避免页面跳转或弹窗关闭卸载组件时提前杀死正在展示的提示
     if (messageStoreRef.value.length > 0) return
+
+    // 宿主守卫：若仍有组件处于 setup 存活周期中，保持容器常驻
+    if (refCount > 0) return
+
     graceTimer = setTimeout(() => {
         graceTimer = null
-        if (messageStoreRef.value.length === 0 && instance) {
+        if (messageStoreRef.value.length === 0 && refCount <= 0 && instance) {
             instance.destroy()
             instance = null
+            unregisterBeforeUnload()
         }
     }, MESSAGE_GRACE_PERIOD_MS)
 }
@@ -83,6 +117,7 @@ function ensureMounted(): void {
     instance = renderImperative(MessageContainer, {}, {
         transitionDuration: DEFAULT_DIALOG_TRANSITION_MS,
     })
+    registerBeforeUnload()
 }
 
 function addMessage(options: MessageOptions): () => void {
@@ -119,6 +154,14 @@ function addMessage(options: MessageOptions): () => void {
 }
 
 export function useMessage(): UseMessageReturn {
+    if (getCurrentInstance()) {
+        refCount++
+        onUnmounted(() => {
+            refCount--
+            scheduleGC()
+        })
+    }
+
     function show(options: MessageOptions): () => void {
         return addMessage(options)
     }
@@ -142,15 +185,22 @@ export function useMessage(): UseMessageReturn {
     return { show, info, success, warning, error }
 }
 
-export function destroyMessageSystem(): void {
+/**
+ * 显式销毁全局 Message 系统（清空全部活跃定时器、Store 与 DOM 容器）。
+ * 推荐在测试隔离、多应用同页或热更新边界调用。
+ */
+export function destroyFallback(): void {
+    unregisterBeforeUnload()
     timerMap.forEach((timer) => clearTimeout(timer))
     timerMap.clear()
     cancelGraceTimer()
     messageStoreRef.value = []
-    // 注意：messageIdCounter 保持单调递增，不归零——旧消息 close() 闭包捕获的 id（msg-N）
-    // 若在新消息创建后才被调用，归零会使其按相同 id 误删无关的新消息，破坏数据完整性
+    refCount = 0
     if (instance) {
         instance.destroy()
         instance = null
     }
 }
+
+/** @deprecated 请使用 {@link destroyFallback} */
+export const destroyMessageSystem = destroyFallback
