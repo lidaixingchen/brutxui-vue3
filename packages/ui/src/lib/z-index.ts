@@ -1,24 +1,20 @@
+import { Z_INDEX_TOKENS } from 'brutx-shared-vue'
+
 /**
- * Centralized z-index tokens for page-level overlays.
- *
- * Components that overlay the page (tours, image viewers, messages) must
- * reference these tokens instead of hard-coded numbers so that stacking
- * order stays predictable and never collides.
- *
- * Values sit in the 9000+ band to remain above reka-ui portals (dialogs,
- * popovers, tooltips), which typically use z-index < 9000. Each layer has
- * a distinct, ordered value so simultaneous overlays stack deterministically:
- * tour < image viewer < message.
+ * 全局浮层与覆盖层 Z-Index 常量（单一数据源从 shared Z_INDEX_TOKENS 派生）。
  */
 export const Z_INDEX = {
-    /** Tour darkening canvas (behind the tour popover). */
-    TOUR_CANVAS: 9998,
-    /** Tour popover (above its own canvas). */
-    TOUR_POPOVER: 9999,
-    /** Image viewer backdrop / overlay. */
-    IMAGE_PREVIEW_OVERLAY: 10001,
-    /** Image viewer controls (close, prev, next, toolbar) — above the overlay. */
-    IMAGE_PREVIEW_CONTROL: 10002,
-    /** Toast / message container — above all other overlays. */
-    MESSAGE: 10010,
+    STICKY: Z_INDEX_TOKENS.sticky,
+    HEADER: Z_INDEX_TOKENS.header,
+    POPOVER: Z_INDEX_TOKENS.popover,
+    DROPDOWN: Z_INDEX_TOKENS.dropdown,
+    TOOLTIP: Z_INDEX_TOKENS.tooltip,
+    DIALOG: Z_INDEX_TOKENS.dialog,
+    TOUR_CANVAS: Z_INDEX_TOKENS.tourCanvas,
+    TOUR_POPOVER: Z_INDEX_TOKENS.tourPopover,
+    IMAGE_PREVIEW_OVERLAY: Z_INDEX_TOKENS.previewOverlay,
+    IMAGE_PREVIEW_CONTROL: Z_INDEX_TOKENS.previewControl,
+    LOADING: Z_INDEX_TOKENS.loading,
+    TOAST: Z_INDEX_TOKENS.toast,
+    MESSAGE: Z_INDEX_TOKENS.message,
 } as const

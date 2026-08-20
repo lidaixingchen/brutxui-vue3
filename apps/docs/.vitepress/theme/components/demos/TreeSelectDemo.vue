@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { TreeSelect } from 'brutx-ui-vue'
-import type { TreeSelectTreeNode } from 'brutx-ui-vue'
+import type { TreeNode } from 'brutx-ui-vue'
 
-const nodes: TreeSelectTreeNode[] = [
+const nodes: TreeNode[] = [
     {
         id: 'docs',
         label: '文档',

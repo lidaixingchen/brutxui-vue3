@@ -154,11 +154,11 @@ function handleCancel(): void {
     >
         <DialogPortal>
             <DialogOverlay
-                class="fixed inset-0 z-50 bg-overlay backdrop-blur-xs transition-opacity data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
+                class="fixed inset-0 z-dialog bg-overlay backdrop-blur-xs transition-opacity data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
                 :style="props.zIndex !== undefined ? { zIndex: props.zIndex } : undefined"
             />
             <div
-                class="fixed inset-0 z-50 flex items-center justify-center p-4"
+                class="fixed inset-0 z-dialog flex items-center justify-center p-4"
                 :style="props.zIndex !== undefined ? { zIndex: props.zIndex } : undefined"
             >
                 <DialogContent

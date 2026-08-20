@@ -8,7 +8,7 @@ import { centeredModalAnimationClasses } from '@/lib/floating-animation-classes'
 export const alertDialogContentVariants = cva(
     [
         // grid 使 gap-4 生效：Header/Description/Footer 等子块在内容容器内形成间距（与 Dialog 的块级布局等价）
-        'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4',
+        'fixed left-[50%] top-[50%] z-dialog grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4',
         'p-6 text-brutal-fg',
         ...baseModalContentClasses,
         ...centeredModalAnimationClasses,

@@ -1,6 +1,7 @@
 import path from 'node:path';
 import type { FileSystemAdapter } from 'brutx-shared-vue/fs';
 import { BarrelManager } from './barrel-manager.js';
+import { MetadataManager } from './metadata-manager.js';
 
 export type GenerateType = 'component' | 'composable' | 'page';
 
@@ -362,7 +363,9 @@ export class ScaffoldEngine {
     private readonly componentsDir: string;
     private readonly composablesDir: string;
     private readonly indexFile: string;
+    private readonly sharedComponentsFile: string;
     private readonly barrelManager: BarrelManager;
+    private readonly metadataManager: MetadataManager;
 
     constructor(options: ScaffoldEngineOptions) {
         this.fs = options.fs;
@@ -371,7 +374,9 @@ export class ScaffoldEngine {
         this.componentsDir = path.join(this.uiSrcDir, 'components');
         this.composablesDir = path.join(this.uiSrcDir, 'composables');
         this.indexFile = path.join(this.uiSrcDir, 'index.ts');
+        this.sharedComponentsFile = path.join(this.projectRoot, 'packages', 'shared', 'src', 'components.ts');
         this.barrelManager = new BarrelManager();
+        this.metadataManager = new MetadataManager();
     }
 
     public buildTemplateVars(name: string, type: GenerateType): TemplateVars {
@@ -487,6 +492,27 @@ export class ScaffoldEngine {
             });
         }
 
+        let originalMetaContent: string | null = null;
+        let nextMetaContent: string | null = null;
+
+        if (type === 'component' && (await this.fs.pathExists(this.sharedComponentsFile))) {
+            originalMetaContent = await this.fs.readFile(this.sharedComponentsFile, 'utf-8');
+            nextMetaContent = this.metadataManager.injectComponentMeta(originalMetaContent, {
+                kebabName: vars.kebabName,
+                titleZh: `${vars.PascalName} 组件`,
+                category: 'utility',
+                dependencies: ['reka-ui', '@lucide/vue'],
+                description: `${vars.PascalName} component description.`,
+            });
+            if (nextMetaContent !== originalMetaContent) {
+                plannedFiles.push({
+                    filePath: this.sharedComponentsFile,
+                    content: nextMetaContent,
+                    isNew: false,
+                });
+            }
+        }
+
         if (dryRun) {
             return {
                 success: true,
@@ -503,6 +529,9 @@ export class ScaffoldEngine {
 
         try {
             for (const file of plannedFiles) {
+                if (file.filePath === this.sharedComponentsFile) {
+                    continue; // 稍后单独写入
+                }
                 if (file.isNew) {
                     await this.fs.writeFile(file.filePath, file.content, 'utf-8');
                     writtenNewFiles.push(file.filePath);
@@ -521,6 +550,10 @@ export class ScaffoldEngine {
                 }
             }
 
+            if (nextMetaContent !== null && originalMetaContent !== null && nextMetaContent !== originalMetaContent) {
+                await this.fs.writeFile(this.sharedComponentsFile, nextMetaContent, 'utf-8');
+            }
+
             return {
                 success: true,
                 type,
@@ -537,6 +570,9 @@ export class ScaffoldEngine {
             }
             if (originalIndexContent !== null) {
                 await this.fs.writeFile(this.indexFile, originalIndexContent, 'utf-8').catch(() => {});
+            }
+            if (originalMetaContent !== null) {
+                await this.fs.writeFile(this.sharedComponentsFile, originalMetaContent, 'utf-8').catch(() => {});
             }
             const message = error instanceof Error ? error.message : String(error);
             return {

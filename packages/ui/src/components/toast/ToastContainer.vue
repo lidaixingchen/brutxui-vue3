@@ -91,7 +91,7 @@ const expandDirection = computed(() => {
 
 const classes = computed(() =>
     cn(
-        'fixed z-50 flex flex-col pointer-events-none p-4',
+        'fixed z-toast flex flex-col pointer-events-none p-4',
         expandDirection.value === 'up' ? 'flex-col-reverse' : 'flex-col',
         positionClasses.value,
         props.class

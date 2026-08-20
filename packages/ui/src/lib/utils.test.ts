@@ -25,5 +25,13 @@ describe('cn', () => {
         expect(cn('bg-brutal-accent-subtle', 'bg-brutal-success')).toBe('bg-brutal-success')
         expect(cn('border-brutal-primary', 'border-gray-200')).toBe('border-gray-200')
     })
+
+    it('should correctly override custom brutalist z-index classes', () => {
+        expect(cn('z-dialog', 'z-50')).toBe('z-50')
+        expect(cn('z-50', 'z-dialog')).toBe('z-dialog')
+        expect(cn('z-popover', 'z-dialog')).toBe('z-dialog')
+        expect(cn('z-toast', 'z-10')).toBe('z-10')
+        expect(cn('z-tour-canvas', 'z-tour-popover')).toBe('z-tour-popover')
+    })
 })
 

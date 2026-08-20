@@ -52,6 +52,7 @@ export type {
     ThemePresetOverrides,
     SubtleColorDef,
     ShadowTokenDefinition,
+    ZIndexTokenKey,
 } from './design-tokens.js';
 export {
     BASE_THEME,
@@ -66,6 +67,9 @@ export {
     SHADOW_DEFINITIONS,
     NON_COLOR_TOKEN_KEYS,
     BRUTAL_COLOR_NAMES,
+    Z_INDEX_TOKENS,
+    Z_INDEX_CLASS_ENTRIES,
+    BRUTAL_Z_INDEX_NAMES,
 } from './design-tokens.js';
 
 

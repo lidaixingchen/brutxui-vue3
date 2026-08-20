@@ -1,3 +1,5 @@
+import { Z_INDEX_TOKENS } from 'brutx-shared-vue'
+
 /**
  * Shared default values for component configuration.
  */
@@ -33,7 +35,7 @@ export const DEFAULT_DIALOG_TRANSITION_MS = 300
 // ── Imperative Overlay ────────────────────────────────────────
 
 /** 命令式弹层基础 z-index */
-export const DEFAULT_OVERLAY_Z_INDEX = 1000
+export const DEFAULT_OVERLAY_Z_INDEX = Z_INDEX_TOKENS.dialog
 
 /** 多层弹窗嵌套时的 z-index 步进步长 */
 export const OVERLAY_Z_INDEX_STEP = 10

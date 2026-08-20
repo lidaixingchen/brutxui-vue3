@@ -45,10 +45,31 @@ const BRUTAL_COLOR_NAMES = [
 ];
 /* @brutx:color-names:end */
 
+/* @brutx:z-index-names:start */
+const BRUTAL_Z_INDEX_NAMES = [
+    'dialog',
+    'dropdown',
+    'header',
+    'loading',
+    'message',
+    'popover',
+    'preview-control',
+    'preview-overlay',
+    'sticky',
+    'toast',
+    'tooltip',
+    'tour-canvas',
+    'tour-popover',
+];
+/* @brutx:z-index-names:end */
+
 const customTwMerge = extendTailwindMerge({
     extend: {
         theme: {
             color: [...BRUTAL_COLOR_NAMES],
+        },
+        classGroups: {
+            z: [{ z: [...BRUTAL_Z_INDEX_NAMES] }],
         },
     },
 })

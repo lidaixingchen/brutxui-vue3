@@ -232,10 +232,29 @@ const BRUTAL_COLOR_NAMES = [
     'brutal-yellow',
 ] as const;
 
+const BRUTAL_Z_INDEX_NAMES = [
+    'dialog',
+    'dropdown',
+    'header',
+    'loading',
+    'message',
+    'popover',
+    'preview-control',
+    'preview-overlay',
+    'sticky',
+    'toast',
+    'tooltip',
+    'tour-canvas',
+    'tour-popover',
+] as const;
+
 const customTwMerge = extendTailwindMerge({
     extend: {
         theme: {
             color: [...BRUTAL_COLOR_NAMES],
+        },
+        classGroups: {
+            z: [{ z: [...BRUTAL_Z_INDEX_NAMES] }],
         },
     },
 });
@@ -293,10 +312,29 @@ export const CN_FUNCTION_BODY_TEMPLATE = `const BRUTAL_COLOR_NAMES = [
     'brutal-yellow',
 ] as const;
 
+const BRUTAL_Z_INDEX_NAMES = [
+    'dialog',
+    'dropdown',
+    'header',
+    'loading',
+    'message',
+    'popover',
+    'preview-control',
+    'preview-overlay',
+    'sticky',
+    'toast',
+    'tooltip',
+    'tour-canvas',
+    'tour-popover',
+] as const;
+
 const customTwMerge = extendTailwindMerge({
     extend: {
         theme: {
             color: [...BRUTAL_COLOR_NAMES],
+        },
+        classGroups: {
+            z: [{ z: [...BRUTAL_Z_INDEX_NAMES] }],
         },
     },
 });

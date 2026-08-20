@@ -44,7 +44,7 @@ const isPageMode = computed(() => props.page || props.fullscreen)
 const isFullscreen = computed(() => props.fullscreen)
 const pageRootClasses = computed(() => {
     if (isFullscreen.value) {
-        return cn('fixed inset-0 z-50 flex items-center justify-center bg-brutal-bg p-4 overflow-y-auto', props.class)
+        return cn('fixed inset-0 z-loading flex items-center justify-center bg-brutal-bg p-4 overflow-y-auto', props.class)
     }
     return cn('min-h-screen flex items-center justify-center bg-brutal-bg p-4', props.class)
 })
@@ -101,7 +101,7 @@ const clampedProgress = computed(() =>
             <div
                 v-if="loading"
                 :class="cn(
-                    'absolute inset-0 flex flex-col items-center justify-center z-50 select-none bg-white/80 dark:bg-brutal-black/80',
+                    'absolute inset-0 flex flex-col items-center justify-center z-loading select-none bg-white/80 dark:bg-brutal-black/80',
                     customClass
                 )"
                 :style="maskStyles"

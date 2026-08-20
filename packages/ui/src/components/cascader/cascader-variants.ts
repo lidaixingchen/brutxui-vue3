@@ -36,7 +36,7 @@ export const cascaderTriggerVariants = cva(
 
 export const cascaderContentVariants = cva(
     [
-        'relative z-50 overflow-hidden',
+        'relative z-dropdown overflow-hidden',
         ...brutalFloatingSurfaceClasses,
         ...floatingContentAnimationClasses,
     ]

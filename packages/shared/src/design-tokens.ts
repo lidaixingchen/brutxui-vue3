@@ -499,4 +499,55 @@ export const BRUTAL_COLOR_NAMES: readonly string[] = Object.freeze(
     [...baseBrutalColors, ...subtleBrutalColors].sort(),
 );
 
+/**
+ * 全局 Z-Index 层级尺度令牌（单一事实来源）。
+ * 覆盖 5 级层级与复合浮层子层级。
+ */
+export const Z_INDEX_TOKENS = Object.freeze({
+    // Layer 1: Inline / Sticky
+    sticky: 10,
+    header: 40,
+    // Layer 2: Popper / Dropdown
+    popover: 100,
+    dropdown: 100,
+    tooltip: 200,
+    // Layer 3: Overlay / Dialog
+    dialog: 1000,
+    // Layer 4: System / Guide / Preview
+    tourCanvas: 9000,
+    tourPopover: 9001,
+    previewOverlay: 9100,
+    previewControl: 9101,
+    loading: 9200,
+    // Layer 5: Top Notification
+    toast: 10010,
+    message: 10010,
+} as const);
+
+export type ZIndexTokenKey = keyof typeof Z_INDEX_TOKENS;
+
+/**
+ * 语义 Z-Index 类名对应映射（kebab-case 对应 Tailwind v4 --z-index-* 工具类与 twMerge 注册）
+ */
+export const Z_INDEX_CLASS_ENTRIES: ReadonlyArray<{ name: string; value: number }> = Object.freeze([
+    { name: 'sticky', value: Z_INDEX_TOKENS.sticky },
+    { name: 'header', value: Z_INDEX_TOKENS.header },
+    { name: 'popover', value: Z_INDEX_TOKENS.popover },
+    { name: 'dropdown', value: Z_INDEX_TOKENS.dropdown },
+    { name: 'tooltip', value: Z_INDEX_TOKENS.tooltip },
+    { name: 'dialog', value: Z_INDEX_TOKENS.dialog },
+    { name: 'tour-canvas', value: Z_INDEX_TOKENS.tourCanvas },
+    { name: 'tour-popover', value: Z_INDEX_TOKENS.tourPopover },
+    { name: 'preview-overlay', value: Z_INDEX_TOKENS.previewOverlay },
+    { name: 'preview-control', value: Z_INDEX_TOKENS.previewControl },
+    { name: 'loading', value: Z_INDEX_TOKENS.loading },
+    { name: 'toast', value: Z_INDEX_TOKENS.toast },
+    { name: 'message', value: Z_INDEX_TOKENS.message },
+]);
+
+export const BRUTAL_Z_INDEX_NAMES: readonly string[] = Object.freeze(
+    Array.from(new Set(Z_INDEX_CLASS_ENTRIES.map(e => e.name))).sort(),
+);
+
+
 

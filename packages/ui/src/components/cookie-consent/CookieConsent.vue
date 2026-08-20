@@ -50,7 +50,7 @@ function handleDecline() {
 
 const rootClasses = computed(() =>
     cn(
-        'fixed bottom-0 left-0 right-0 z-50 p-4',
+        'fixed bottom-0 left-0 right-0 z-toast p-4',
         props.class
     )
 )

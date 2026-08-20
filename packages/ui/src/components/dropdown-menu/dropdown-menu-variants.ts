@@ -5,7 +5,7 @@ import { brutalFloatingSurfaceClasses } from '@/lib/floating-content-variants'
 import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 const dropdownMenuContentBaseStyles = [
-    'z-50 min-w-[8rem] overflow-hidden p-1',
+    'z-dropdown min-w-[8rem] overflow-hidden p-1',
     ...brutalFloatingSurfaceClasses,
     ...floatingContentAnimationClasses,
 ]

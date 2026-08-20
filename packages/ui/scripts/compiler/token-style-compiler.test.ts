@@ -88,24 +88,36 @@ ${THEME_END}
             expect(content).toContain('.theme-pastel {');
         });
 
-        it('能够生成 colorNames 块并成功 patch utils.ts', () => {
+        it('能够生成 colorNames 与 zIndexNames 块并成功 patch utils.ts', () => {
             const block = compiler.compileColorNamesBlock();
             expect(block).toContain('const BRUTAL_COLOR_NAMES = [');
             expect(block).toContain("'brutal-primary',");
             expect(block).toContain("'brutal-primary-subtle',");
+
+            const zIndexBlock = compiler.compileZIndexNamesBlock();
+            expect(zIndexBlock).toContain('const BRUTAL_Z_INDEX_NAMES = [');
+            expect(zIndexBlock).toContain("'dialog',");
+            expect(zIndexBlock).toContain("'popover',");
 
             const rawUtils = `
 import { clsx } from 'clsx';
 /* @brutx:color-names:start */
 const old = [];
 /* @brutx:color-names:end */
+
+/* @brutx:z-index-names:start */
+const oldZ = [];
+/* @brutx:z-index-names:end */
 export function cn() {}
 `;
             const { content, changed } = compiler.patchUtilsTs(rawUtils);
             expect(changed).toBe(true);
             expect(content).toContain('const BRUTAL_COLOR_NAMES = [');
             expect(content).toContain("'brutal-accent',");
+            expect(content).toContain('const BRUTAL_Z_INDEX_NAMES = [');
+            expect(content).toContain("'dialog',");
             expect(content).not.toContain('const old = [];');
+            expect(content).not.toContain('const oldZ = [];');
         });
 
         it('能够生成 CLI utils 模板并成功 patch constants.ts', () => {

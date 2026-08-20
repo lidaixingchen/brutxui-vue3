@@ -378,7 +378,7 @@ function onAfterLeave(el: Element) {
         </Transition>
 
         <!-- Horizontal absolute dropdown overlays -->
-        <div v-else-if="isOpened" class="absolute top-full left-0 z-50 pt-1.5">
+        <div v-else-if="isOpened" class="absolute top-full left-0 z-dropdown pt-1.5">
             <ul class="min-w-[200px] border-3 border-brutal bg-brutal-bg p-1.5 shadow-brutal rounded-brutal flex flex-col gap-1 list-none">
                 <slot />
             </ul>

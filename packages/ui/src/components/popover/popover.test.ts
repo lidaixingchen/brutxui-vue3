@@ -23,7 +23,7 @@ describe('PopoverContent', () => {
         expect(content.classes()).toContain('shadow-brutal')
         expect(content.classes()).toContain('bg-brutal-bg')
         expect(content.classes()).toContain('text-brutal-fg')
-        expect(content.classes()).toContain('z-50')
+        expect(content.classes()).toContain('z-popover')
     })
 
     it('applies custom class', () => {

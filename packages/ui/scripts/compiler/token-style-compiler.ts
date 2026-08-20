@@ -10,6 +10,8 @@ import {
     SHADOW_DEFINITIONS,
     NON_COLOR_TOKEN_KEYS,
     BRUTAL_COLOR_NAMES,
+    BRUTAL_Z_INDEX_NAMES,
+    Z_INDEX_CLASS_ENTRIES,
     type ThemeTokens,
 } from 'brutx-shared-vue';
 
@@ -23,6 +25,8 @@ export const FONT_STACK_START = '/* @brutx:font-stack:start */';
 export const FONT_STACK_END = '/* @brutx:font-stack:end */';
 export const COLOR_NAMES_START = '/* @brutx:color-names:start */';
 export const COLOR_NAMES_END = '/* @brutx:color-names:end */';
+export const Z_INDEX_NAMES_START = '/* @brutx:z-index-names:start */';
+export const Z_INDEX_NAMES_END = '/* @brutx:z-index-names:end */';
 export const CLI_UTILS_START = '/* @brutx:cli-utils-template:start */';
 export const CLI_UTILS_END = '/* @brutx:cli-utils-template:end */';
 
@@ -56,6 +60,11 @@ const SUBTLE_ENTRIES: SubtleEntry[] = SUBTLE_COLOR_DEFS.map(({ key, lightPct, da
 const EASING_ENTRIES: ThemeEntry[] = Object.entries(EASING_TOKENS).map(([key, val]) => ({
     themeVar: `--ease-brutal-${key}`,
     build: () => val,
+}));
+
+const Z_INDEX_ENTRIES: ThemeEntry[] = Z_INDEX_CLASS_ENTRIES.map(def => ({
+    themeVar: `--z-index-${def.name}`,
+    build: () => String(def.value),
 }));
 
 const DYNAMIC_COLOR_ENTRIES: ThemeEntry[] = (Object.keys(TOKEN_TO_CSS_VAR) as Array<keyof ThemeTokens>)
@@ -105,6 +114,10 @@ const THEME_GROUPS: ThemeGroup[] = [
         comment: 'Mechanical motion easing curves',
         entries: EASING_ENTRIES,
     },
+    {
+        comment: 'Z-Index scale hierarchy derived from design-tokens.ts',
+        entries: Z_INDEX_ENTRIES,
+    },
 ];
 
 export interface PatchResult {
@@ -130,10 +143,16 @@ export class TokenStyleCompiler {
         for (const entry of SUBTLE_ENTRIES) {
             lightVars[entry.varName] = entry.buildLight(BASE_THEME.light);
         }
+        for (const entry of Z_INDEX_CLASS_ENTRIES) {
+            lightVars[`z-index-${entry.name}`] = String(entry.value);
+        }
 
         const darkVars: Record<string, string> = { ...CSS_VARS.dark };
         for (const entry of SUBTLE_ENTRIES) {
             darkVars[entry.varName] = entry.buildDark(BASE_THEME.dark);
+        }
+        for (const entry of Z_INDEX_CLASS_ENTRIES) {
+            darkVars[`z-index-${entry.name}`] = String(entry.value);
         }
 
         const lightBlock = this.formatVarsBlock(':root', lightVars, indentSpaces);
@@ -251,8 +270,14 @@ export class TokenStyleCompiler {
         return `const BRUTAL_COLOR_NAMES = [\n${lines.join('\n')}\n];`;
     }
 
+    public compileZIndexNamesBlock(): string {
+        const lines = BRUTAL_Z_INDEX_NAMES.map(name => `    '${name}',`);
+        return `const BRUTAL_Z_INDEX_NAMES = [\n${lines.join('\n')}\n];`;
+    }
+
     public compileCliUtilsTemplate(): string {
         const colorLines = BRUTAL_COLOR_NAMES.map(name => `    '${name}',`).join('\n');
+        const zIndexLines = BRUTAL_Z_INDEX_NAMES.map(name => `    '${name}',`).join('\n');
         const utilsTemplateStr = [
             'import { type ClassValue, clsx } from "clsx";',
             'import { extendTailwindMerge } from "tailwind-merge";',
@@ -261,10 +286,17 @@ export class TokenStyleCompiler {
             colorLines,
             '] as const;',
             '',
+            'const BRUTAL_Z_INDEX_NAMES = [',
+            zIndexLines,
+            '] as const;',
+            '',
             'const customTwMerge = extendTailwindMerge({',
             '    extend: {',
             '        theme: {',
             '            color: [...BRUTAL_COLOR_NAMES],',
+            '        },',
+            '        classGroups: {',
+            '            z: [{ z: [...BRUTAL_Z_INDEX_NAMES] }],',
             '        },',
             '    },',
             '});',
@@ -283,10 +315,17 @@ export class TokenStyleCompiler {
             colorLines,
             '] as const;',
             '',
+            'const BRUTAL_Z_INDEX_NAMES = [',
+            zIndexLines,
+            '] as const;',
+            '',
             'const customTwMerge = extendTailwindMerge({',
             '    extend: {',
             '        theme: {',
             '            color: [...BRUTAL_COLOR_NAMES],',
+            '        },',
+            '        classGroups: {',
+            '            z: [{ z: [...BRUTAL_Z_INDEX_NAMES] }],',
             '        },',
             '    },',
             '});',
@@ -314,14 +353,22 @@ export class TokenStyleCompiler {
     }
 
     public patchUtilsTs(content: string): PatchResult {
-        const patched = this.patchBetweenMarkers(
-            content,
+        let current = content;
+        current = this.patchBetweenMarkers(
+            current,
             COLOR_NAMES_START,
             COLOR_NAMES_END,
             this.compileColorNamesBlock(),
             'utils.ts',
         );
-        return { content: patched, changed: patched !== content };
+        current = this.patchBetweenMarkers(
+            current,
+            Z_INDEX_NAMES_START,
+            Z_INDEX_NAMES_END,
+            this.compileZIndexNamesBlock(),
+            'utils.ts',
+        );
+        return { content: current, changed: current !== content };
     }
 
     public patchCliConstants(content: string): PatchResult {
@@ -335,4 +382,3 @@ export class TokenStyleCompiler {
         return { content: patched, changed: patched !== content };
     }
 }
-

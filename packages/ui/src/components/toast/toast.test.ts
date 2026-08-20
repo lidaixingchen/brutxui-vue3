@@ -278,7 +278,7 @@ describe('ToastContainer', () => {
     it('renders with default props', () => {
         const wrapper = mount(ToastContainer)
         expect(wrapper.classes()).toContain('fixed')
-        expect(wrapper.classes()).toContain('z-50')
+        expect(wrapper.classes()).toContain('z-toast')
         expect(wrapper.classes()).toContain('flex')
         expect(wrapper.classes()).toContain('flex-col')
     })

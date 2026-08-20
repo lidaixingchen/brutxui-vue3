@@ -5,7 +5,7 @@ const SHEET_SIZE_CLASSES = 'h-full w-3/4 sm:max-w-sm'
 
 export const sheetVariants = cva(
     [
-        'fixed z-50 gap-4 p-6 text-brutal-fg transition ease-in-out',
+        'fixed z-dialog gap-4 p-6 text-brutal-fg transition ease-in-out',
         ...baseModalContentClasses,
         'data-[state=open]:animate-in data-[state=closed]:animate-out',
         'data-[state=closed]:duration-300 data-[state=open]:duration-500',

@@ -3,7 +3,7 @@ import { FOCUS_RING_CLASSES } from '@/lib/utils'
 import { brutalHoverLift, brutalHoverLiftSm, brutalPress } from '@/lib/brutal-interaction-variants'
 
 export const overlayVariants = cva([
-    'fixed inset-0 z-50 bg-brutal-overlay',
+    'fixed inset-0 z-dialog bg-brutal-overlay',
     'data-[state=open]:animate-in data-[state=closed]:animate-out',
     'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
     // forceMount 下关闭态遮罩仍保持挂载播放退出动画，需禁用指针事件避免拦截整页交互

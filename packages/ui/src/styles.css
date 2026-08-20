@@ -68,6 +68,21 @@
     /* Mechanical motion easing curves */
     --ease-brutal-snap: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-brutal-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* Z-Index scale hierarchy derived from design-tokens.ts */
+    --z-index-sticky: 10;
+    --z-index-header: 40;
+    --z-index-popover: 100;
+    --z-index-dropdown: 100;
+    --z-index-tooltip: 200;
+    --z-index-dialog: 1000;
+    --z-index-tour-canvas: 9000;
+    --z-index-tour-popover: 9001;
+    --z-index-preview-overlay: 9100;
+    --z-index-preview-control: 9101;
+    --z-index-loading: 9200;
+    --z-index-toast: 10010;
+    --z-index-message: 10010;
     /* @brutx:theme-tokens:end */
 }
 
@@ -136,6 +151,19 @@
         --brutal-destructive-subtle: color-mix(in srgb, var(--brutal-destructive, #EF476F) 12%, var(--brutal-bg, #ffffff));
         --brutal-success-subtle: color-mix(in srgb, var(--brutal-success, #7FB069) 12%, var(--brutal-bg, #ffffff));
         --brutal-info-subtle: color-mix(in srgb, var(--brutal-info, #4A90D9) 12%, var(--brutal-bg, #ffffff));
+        --z-index-sticky: 10;
+        --z-index-header: 40;
+        --z-index-popover: 100;
+        --z-index-dropdown: 100;
+        --z-index-tooltip: 200;
+        --z-index-dialog: 1000;
+        --z-index-tour-canvas: 9000;
+        --z-index-tour-popover: 9001;
+        --z-index-preview-overlay: 9100;
+        --z-index-preview-control: 9101;
+        --z-index-loading: 9200;
+        --z-index-toast: 10010;
+        --z-index-message: 10010;
     }
 
     .dark {
@@ -181,6 +209,19 @@
         --brutal-destructive-subtle: color-mix(in srgb, var(--brutal-destructive, #EF476F) 20%, var(--brutal-bg, #141414));
         --brutal-success-subtle: color-mix(in srgb, var(--brutal-success, #7FB069) 20%, var(--brutal-bg, #141414));
         --brutal-info-subtle: color-mix(in srgb, var(--brutal-info, #3B82F6) 20%, var(--brutal-bg, #141414));
+        --z-index-sticky: 10;
+        --z-index-header: 40;
+        --z-index-popover: 100;
+        --z-index-dropdown: 100;
+        --z-index-tooltip: 200;
+        --z-index-dialog: 1000;
+        --z-index-tour-canvas: 9000;
+        --z-index-tour-popover: 9001;
+        --z-index-preview-overlay: 9100;
+        --z-index-preview-control: 9101;
+        --z-index-loading: 9200;
+        --z-index-toast: 10010;
+        --z-index-message: 10010;
     }
     /* @brutx:root-tokens:end */
 

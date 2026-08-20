@@ -22,7 +22,7 @@ describe('TooltipContent', () => {
         expect(content.classes()).toContain('text-brutal-bg')
         expect(content.classes()).toContain('border-3')
         expect(content.classes()).toContain('border-brutal')
-        expect(content.classes()).toContain('z-50')
+        expect(content.classes()).toContain('z-tooltip')
         expect(content.classes()).toContain('font-bold')
         expect(content.classes()).toContain('rounded-brutal')
         expect(content.classes()).toContain('shadow-brutal')

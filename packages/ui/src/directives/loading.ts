@@ -34,7 +34,7 @@ export const vLoading: Directive<LoadingEl, boolean> & { getSSRProps?: () => Rec
 
         // 2. 创建遮罩容器
         const mask = doc.createElement('div')
-        mask.className = 'absolute inset-0 flex flex-col items-center justify-center z-50 select-none bg-white/80 dark:bg-brutal-black/80'
+        mask.className = 'absolute inset-0 flex flex-col items-center justify-center z-loading select-none bg-white/80 dark:bg-brutal-black/80'
         mask.style.display = binding.value ? 'flex' : 'none'
 
         // 3. 实例化 Spinner 并挂载

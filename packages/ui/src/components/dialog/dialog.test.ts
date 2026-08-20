@@ -24,7 +24,7 @@ describe('DialogOverlay', () => {
         })
         expect(wrapper.classes()).toContain('fixed')
         expect(wrapper.classes()).toContain('inset-0')
-        expect(wrapper.classes()).toContain('z-50')
+        expect(wrapper.classes()).toContain('z-dialog')
         expect(wrapper.classes()).toContain('bg-brutal-overlay')
     })
 

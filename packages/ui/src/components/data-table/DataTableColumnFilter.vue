@@ -158,7 +158,7 @@ function resetColumnFilter() {
                 <Filter class="h-3 w-3" />
             </Button>
         </PopoverTrigger>
-        <PopoverContent class="w-64 p-3 bg-brutal-bg border-3 border-brutal shadow-brutal flex flex-col gap-2 z-50">
+        <PopoverContent class="w-64 p-3 bg-brutal-bg border-3 border-brutal shadow-brutal flex flex-col gap-2 z-popover">
             <div class="font-bold text-xs text-brutal-fg mb-1">
                 {{ t('dataTable.filterTitle', { label: headerLabel }) }}
             </div>
@@ -182,7 +182,7 @@ function resetColumnFilter() {
                     <SelectTrigger size="sm" class="w-full">
                         <SelectValue :placeholder="t('dataTable.filterAll')" />
                     </SelectTrigger>
-                    <SelectContent class="z-50">
+                    <SelectContent class="z-dropdown">
                         <SelectItem value="">{{ t('dataTable.filterAll') }}</SelectItem>
                         <SelectItem
                             v-for="opt in column.filterOptions"

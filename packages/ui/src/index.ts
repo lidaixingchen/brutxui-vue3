@@ -289,7 +289,7 @@ export { timelineDotVariants } from './components/timeline/timeline-variants'
 
 export { default as TreeView } from './components/tree-view/TreeView.vue'
 export { default as TreeViewNode } from './components/tree-view/TreeViewNode.vue'
-export type { TreeNode } from './components/tree-view/types'
+export type { TreeNode, SelectionMode } from './types/tree'
 export { treeItemVariants } from './components/tree-view/tree-view-variants'
 
 export { default as KanbanBoard } from './components/kanban/KanbanBoard.vue'
@@ -350,7 +350,6 @@ export type { VirtualScrollItem, VirtualScrollProps, VirtualScrollEmits, Virtual
 export { default as TreeSelect } from './components/tree-select/TreeSelect.vue'
 export { default as TreeSelectNode } from './components/tree-select/TreeSelectNode.vue'
 export { treeSelectTriggerVariants, treeSelectNodeVariants } from './components/tree-select/tree-select-variants'
-export type { TreeNode as TreeSelectTreeNode } from './components/tree-select/tree-select-types'
 
 export { default as TypewriterText } from './components/typewriter-text/TypewriterText.vue'
 export { typewriterTextVariants } from './components/typewriter-text/typewriter-text-variants'
