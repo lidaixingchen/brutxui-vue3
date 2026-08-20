@@ -1,46 +1,107 @@
 /**
- * 校验 utils.ts 的 BRUTAL_COLOR_NAMES 与 styles.css 的 --color-brutal-* 一致。
- * 二者任一漂移（新增/重命名颜色令牌后漏同步）会导致 cn() 冲突去重静默失效，
- * 但现有审计（check-brutalist-tokens）只覆盖 @theme 区与 CLI 侧，无法捕获此处。
+ * 校验粗野主义颜色与工具函数四端一致性门禁：
+ * 1. Shared: brutx-shared-vue 的 BRUTAL_COLOR_NAMES
+ * 2. Styles: packages/ui/src/styles.css 的 --color-brutal-*
+ * 3. UI Utils: packages/ui/src/lib/utils.ts 中的 BRUTAL_COLOR_NAMES 与 FOCUS_RING_CLASSES
+ * 4. CLI Constants: packages/cli/src/lib/constants.ts 的 UTILS_TEMPLATE 中的 BRUTAL_COLOR_NAMES 与 FOCUS_RING_CLASSES
+ *
+ * 任何一端发生漂移均会破坏样式覆盖或导致组件编译错误，门禁精准报错并拦截 CI。
  */
-import { readFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
-import { dirname, resolve } from 'node:path'
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path';
+import { BRUTAL_COLOR_NAMES } from 'brutx-shared-vue';
 
-const currentDir = dirname(fileURLToPath(import.meta.url))
-const stylesCssPath = resolve(currentDir, '../src/styles.css')
-const utilsTsPath = resolve(currentDir, '../src/lib/utils.ts')
+const currentDir = dirname(fileURLToPath(import.meta.url));
+const stylesCssPath = resolve(currentDir, '../src/styles.css');
+const utilsTsPath = resolve(currentDir, '../src/lib/utils.ts');
+const cliConstantsPath = resolve(currentDir, '../../cli/src/lib/constants.ts');
 
-const stylesCss = readFileSync(stylesCssPath, 'utf8')
-const utilsTs = readFileSync(utilsTsPath, 'utf8')
+const stylesCss = readFileSync(stylesCssPath, 'utf8');
+const utilsTs = readFileSync(utilsTsPath, 'utf8');
+const cliConstants = readFileSync(cliConstantsPath, 'utf8');
 
+let hasError = false;
+
+// 1. Shared 端基准颜色集合（去掉前缀的纯名称）
+const sharedColorSet = new Set(BRUTAL_COLOR_NAMES);
+
+// 2. styles.css 中的 --color-brutal-* 提取
 const cssVarNames = new Set(
-    [...stylesCss.matchAll(/--color-brutal-[a-z-]+/g)].map((m) => m[0]),
-)
+    [...stylesCss.matchAll(/--color-(brutal-[a-z-]+)/g)].map(m => m[1]),
+);
 
-const listMatch = utilsTs.match(/const BRUTAL_COLOR_NAMES = \[([\s\S]*?)\]/)
-if (!listMatch) {
-    console.error('[check-twmerge-colors] BRUTAL_COLOR_NAMES not found in lib/utils.ts')
-    process.exitCode = 1
-} else {
-    const listNames = new Set(
-        [...listMatch[1].matchAll(/'([a-z-]+)'/g)].map((m) => `--color-${m[1]}`),
-    )
+// 3. UI utils.ts 中的 BRUTAL_COLOR_NAMES 提取
+const uiListMatch = utilsTs.match(/const BRUTAL_COLOR_NAMES = \[([\s\S]*?)\]/);
+const uiColorSet = new Set(
+    uiListMatch ? [...uiListMatch[1].matchAll(/'([a-z-]+)'/g)].map(m => m[1]) : [],
+);
 
-    const missingInList = [...cssVarNames].filter((name) => !listNames.has(name))
-    const staleInList = [...listNames].filter((name) => !cssVarNames.has(name))
+// 4. CLI constants.ts 中的 BRUTAL_COLOR_NAMES 提取
+const cliListMatch = cliConstants.match(/const BRUTAL_COLOR_NAMES = \[([\s\S]*?)\]/);
+const cliColorSet = new Set(
+    cliListMatch ? [...cliListMatch[1].matchAll(/'([a-z-]+)'/g)].map(m => m[1]) : [],
+);
 
-    if (missingInList.length > 0 || staleInList.length > 0) {
-        console.error('[check-twmerge-colors] BRUTAL_COLOR_NAMES 与 styles.css 的 --color-brutal-* 不一致：')
-        if (missingInList.length > 0) {
-            console.error('  styles.css 有但清单缺失:', missingInList.join(', '))
+// 颜色对齐比对辅助函数
+function compareColorSets(targetName: string, targetSet: Set<string>): void {
+    const missing = [...sharedColorSet].filter(name => !targetSet.has(name));
+    const extra = [...targetSet].filter(name => !sharedColorSet.has(name));
+
+    if (missing.length > 0 || extra.length > 0) {
+        hasError = true;
+        console.error(`[check-twmerge-colors] ✗ ${targetName} 与 shared BRUTAL_COLOR_NAMES 不一致:`);
+        if (missing.length > 0) {
+            console.error(`  shared 有但 ${targetName} 缺失:`, missing.join(', '));
         }
-        if (staleInList.length > 0) {
-            console.error('  清单有但 styles.css 已无:', staleInList.join(', '))
+        if (extra.length > 0) {
+            console.error(`  ${targetName} 有但 shared 无:`, extra.join(', '));
         }
-        // 用 exitCode 而非 process.exit：确保 stderr 诊断信息完整刷出后再自然退出（CI 管道场景）
-        process.exitCode = 1
-    } else {
-        console.log(`[check-twmerge-colors] 一致（${listNames.size} 项）`)
     }
+}
+
+if (!uiListMatch) {
+    hasError = true;
+    console.error('[check-twmerge-colors] ✗ 未在 packages/ui/src/lib/utils.ts 中找到 BRUTAL_COLOR_NAMES 声明');
+}
+
+if (!cliListMatch) {
+    hasError = true;
+    console.error('[check-twmerge-colors] ✗ 未在 packages/cli/src/lib/constants.ts 中找到 BRUTAL_COLOR_NAMES 声明');
+}
+
+compareColorSets('styles.css (--color-brutal-*)', cssVarNames);
+compareColorSets('UI lib/utils.ts', uiColorSet);
+compareColorSets('CLI constants.ts', cliColorSet);
+
+// 5. FOCUS_RING_CLASSES 一致性校验
+const uiFocusRingMatch = utilsTs.match(/export\s+const\s+FOCUS_RING_CLASSES\s*=\s*['"]([^'"]+)['"]/);
+const cliFocusRingMatch = cliConstants.match(/export\s+const\s+FOCUS_RING_CLASSES\s*=\s*\\?['"]([^'"]+)\\?['"]/);
+
+if (!uiFocusRingMatch) {
+    hasError = true;
+    console.error('[check-twmerge-colors] ✗ 未在 packages/ui/src/lib/utils.ts 中找到 FOCUS_RING_CLASSES 导出');
+}
+
+if (!cliFocusRingMatch) {
+    hasError = true;
+    console.error('[check-twmerge-colors] ✗ 未在 packages/cli/src/lib/constants.ts 中找到 FOCUS_RING_CLASSES 导出');
+}
+
+if (uiFocusRingMatch && cliFocusRingMatch) {
+    const uiRing = uiFocusRingMatch[1].trim();
+    const cliRing = cliFocusRingMatch[1].trim();
+    if (uiRing !== cliRing) {
+        hasError = true;
+        console.error('[check-twmerge-colors] ✗ UI 与 CLI 的 FOCUS_RING_CLASSES 声明不一致:');
+        console.error('  UI :', uiRing);
+        console.error('  CLI:', cliRing);
+    }
+}
+
+if (hasError) {
+    console.error('\n✗ 四端粗野主义颜色与工具函数校验失败，请运行 `pnpm --filter brutx-ui-vue prebuild:tokens` 重新生成同步。');
+    process.exitCode = 1;
+} else {
+    console.log(`✓ 四端粗野主义颜色与 FOCUS_RING_CLASSES 严格对齐（${sharedColorSet.size} 项颜色）`);
 }
