@@ -51,6 +51,13 @@ BrutxUI 使用 CSS 自定义属性定义设计令牌，便于主题切换和自�
 | `--brutal-placeholder` | `#9CA3AF` | `#6B7280` | 占位符文本颜色 |
 | `--brutal-black` | `#000000` | `#000000` | 品牌黑 |
 | `--brutal-yellow` | `#FFE66D` | `#FFE66D` | 品牌黄 |
+| `--z-index-dropdown` | `1000` | `1000` | 下拉菜单、选择器层级 |
+| `--z-index-sticky` | `1100` | `1100` | 吸顶与吸底栏层级 |
+| `--z-index-dialog` | `2000` | `2000` | 对话框、抽屉、MessageBox 层级 |
+| `--z-index-popover` | `5000` | `5000` | 气泡浮层、颜色选择器层级 |
+| `--z-index-tooltip` | `6000` | `6000` | 工具提示层级 |
+| `--z-index-loading` | `9200` | `9200` | 全局/局部 Loading 指示器层级 |
+| `--z-index-toast` | `10010` | `10010` | 通知消息容器层级 |
 | `--brutal-primary-subtle` | `color-mix(...)` | `color-mix(...)` | 主色浅色衍生背景 |
 | `--brutal-secondary-subtle` | `color-mix(...)` | `color-mix(...)` | 辅助色浅色衍生背景 |
 | `--brutal-accent-subtle` | `color-mix(...)` | `color-mix(...)` | 强调色浅色衍生背景 |
@@ -203,6 +210,21 @@ BrutxUI 使用 CSS 自定义属性定义设计令牌，便于主题切换和自�
 ```
 
 > 注意：焦点指示用 ring（`focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden`，即 `FOCUS_RING_CLASSES`）。前景色一律随 `*-foreground` 令牌，禁止 `text-white`/`text-black` 硬编码。
+
+### 层级（Z-Index）
+
+```vue
+<!-- 全局 5 级层级语义类 -->
+<div class="z-dropdown">    <!-- 下拉菜单 / 选择器 (1000) -->
+<div class="z-sticky">      <!-- 吸顶导航 / 栏目 (1100) -->
+<div class="z-dialog">      <!-- 对话框 / 抽屉 / 遮罩 (2000) -->
+<div class="z-popover">     <!-- 气泡弹层 / 颜色选择器 (5000) -->
+<div class="z-tooltip">     <!-- 工具提示 (6000) -->
+<div class="z-loading">     <!-- 加载遮罩指示 (9200) -->
+<div class="z-toast">       <!-- 全局通知容器 (10010) -->
+```
+
+> 注意：严禁使用 `z-50` 或 `z-[9999]` 等硬编码值。全库 `cn()` 函数通过 `classGroups.z` 已注册全部语义 Z-Index 类名，外部传入自定义层级时支持确定性去重覆盖。
 
 ### 交互效果
 

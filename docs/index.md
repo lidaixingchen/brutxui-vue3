@@ -90,6 +90,7 @@ draft ──评审通过──▶ active ──落地完成──▶ done ──
 | [编译扫描排除清单与覆盖规则下沉方案](plans/编译扫描排除清单与覆盖规则下沉方案.md) | done | 将 DEFAULT_LIB_EXCLUDE、DEFAULT_MANIFEST_OVERRIDES 与 applyManifestOverrides 下沉至 shared，消除 registry 跨包非法引用与硬编码 |
 | [元数据脚手架树模型与层级体系治理方案](plans/元数据脚手架树模型与层级体系治理方案.md) | **done** | 脚手架与元数据自动同步闭环、统一 TreeNode 领域模型、Z-Index 五级阶梯尺度与设计令牌治理 |
 | [状态生命周期色彩与组件双轨治理方案](plans/状态生命周期色彩与组件双轨治理方案.md) | **active** | useMessage 接入 createFallbackManager、useDialogGeometry 规范重构、WCAG 对比度算法下沉 shared、Tabs 双轨状态对称性治理 |
+| [代码质量与性能改进方案](plans/代码质量与性能改进方案.md) | done | 注册表 schema 独立单测、子进程命令注入防护、Devtools 日志收敛、事务并发安全与批量移除并行化 |
 
 
 ## 归档方案（archive/2026/）
