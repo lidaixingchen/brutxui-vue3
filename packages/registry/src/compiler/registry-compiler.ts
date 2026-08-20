@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import {
     COMPONENT_METADATA,
     CSS_VARS,
+    DEFAULT_LIB_EXCLUDE,
     computeRegistryIntegrity,
     computeRegistryManifestIntegrity,
     type ComponentMetadataEntry,
@@ -14,7 +15,6 @@ import {
     type RegistryItem,
     type RegistryManifest,
 } from 'brutx-shared-vue';
-import { LIB_EXCLUDE } from '../../../ui/scripts/manifest-shared.js';
 import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
 import { DiskFileSystemAdapter } from '../fs/disk-fs.js';
 import { rewriteImports } from './ast-rewriter.js';
@@ -56,7 +56,7 @@ export class RegistryCompiler {
     private paths: CompilerPaths;
     private tailwindConfig: Record<string, unknown>;
     private cssVars: Record<string, string>;
-    private libExclude: Set<string>;
+    private libExclude: ReadonlySet<string>;
     private metadata: Record<string, ComponentMetadataEntry>;
     private dependencyResolver: DependencyResolver;
     private cacheManager: CacheManager;
@@ -66,7 +66,7 @@ export class RegistryCompiler {
         this.paths = { ...DEFAULT_PATHS, ...(options.paths ?? {}) };
         this.tailwindConfig = options.tailwindConfig ?? DEFAULT_TAILWIND_CONFIG;
         this.cssVars = options.cssVars ?? (CSS_VARS as unknown as Record<string, string>);
-        this.libExclude = options.libExclude ?? LIB_EXCLUDE;
+        this.libExclude = options.libExclude ?? DEFAULT_LIB_EXCLUDE;
         this.metadata = options.metadata ?? COMPONENT_METADATA;
 
         this.dependencyResolver = new DependencyResolver(this.fs, this.paths, this.libExclude);

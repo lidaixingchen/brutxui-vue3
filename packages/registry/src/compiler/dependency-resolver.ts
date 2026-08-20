@@ -2,9 +2,10 @@ import path from 'node:path';
 import {
     buildComponentIndexContent,
 } from 'brutx-shared-vue/scan';
-import type {
-    MergedRegistryEntry,
-    RegistryFile,
+import {
+    DEFAULT_LIB_EXCLUDE,
+    type MergedRegistryEntry,
+    type RegistryFile,
 } from 'brutx-shared-vue';
 import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
 import {
@@ -26,7 +27,7 @@ export class DependencyResolver {
     constructor(
         private fs: FileSystemAdapter,
         private paths: CompilerPaths,
-        private libExclude: Set<string> = new Set(['utils.ts'])
+        private libExclude: ReadonlySet<string> = DEFAULT_LIB_EXCLUDE
     ) {}
 
     private async readSource(filePath: string): Promise<string> {

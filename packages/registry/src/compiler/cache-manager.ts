@@ -3,7 +3,10 @@ import path from 'node:path';
 import {
     buildComponentIndexContent,
 } from 'brutx-shared-vue/scan';
-import type { MergedRegistryEntry } from 'brutx-shared-vue';
+import {
+    DEFAULT_LIB_EXCLUDE,
+    type MergedRegistryEntry,
+} from 'brutx-shared-vue';
 import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
 import {
     extractComponentFileDeps,
@@ -54,7 +57,7 @@ export class CacheManager {
         tailwindConfig: Record<string, unknown> | undefined,
         cssVars: Record<string, string> | undefined,
         paths: CompilerPaths,
-        libExclude: Set<string> = new Set(['utils.ts'])
+        libExclude: ReadonlySet<string> = DEFAULT_LIB_EXCLUDE
     ): Promise<string> {
         const parts: string[] = [JSON.stringify({
             cacheVersion: CACHE_VERSION,

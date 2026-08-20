@@ -7,6 +7,7 @@ import {
     buildComponentIndexContent,
 } from 'brutx-shared-vue/scan';
 import {
+    DEFAULT_LIB_EXCLUDE,
     computeRegistryIntegrity,
     computeRegistryManifestIntegrity,
     type MergedRegistryEntry,
@@ -15,7 +16,6 @@ import {
     type RegistryIndex,
     type RegistryItem,
 } from 'brutx-shared-vue';
-import { applyManifestOverrides, LIB_EXCLUDE } from '../../ui/scripts/manifest-shared.js';
 import {
     RegistryCompiler,
     rewriteImports as coreRewriteImports,
@@ -115,9 +115,7 @@ export function runPrebuildScan(): void {
         composablesDir: UI_COMPOSABLES_DIR,
         libDir: UI_LIB_DIR,
         directivesDir: UI_DIRECTIVES_DIR,
-        libExclude: LIB_EXCLUDE,
     });
-    applyManifestOverrides(manifest);
     const output = JSON.stringify(manifest, null, 2) + '\n';
     fs.writeFileSync(MANIFEST_PATH, output, 'utf-8');
 }
@@ -296,7 +294,7 @@ export function buildRegistryItem(name: string): RegistryItem {
             libDeps.add(resolveExtension(d, UI_LIB_DIR));
         }
 
-        if (LIB_EXCLUDE.has(libName)) continue;
+        if (DEFAULT_LIB_EXCLUDE.has(libName)) continue;
 
         const relPath = `lib/${libName}`;
         files.push({
@@ -468,7 +466,7 @@ export function computeSourceHash(name: string, fileMapping: { files: string[]; 
             for (const d of extractDeps(rewritten, 'lib')) {
                 libDeps.add(resolveExtension(d, UI_LIB_DIR));
             }
-            if (!LIB_EXCLUDE.has(libName)) {
+            if (!DEFAULT_LIB_EXCLUDE.has(libName)) {
                 parts.push(code);
             }
         }

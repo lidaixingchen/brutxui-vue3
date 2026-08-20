@@ -83,7 +83,7 @@ export interface CompilerOptions {
     paths?: Partial<CompilerPaths>;
     tailwindConfig?: Record<string, unknown>;
     cssVars?: Record<string, string>;
-    libExclude?: Set<string>;
+    libExclude?: ReadonlySet<string>;
     manifestOverrides?: Record<string, Partial<Pick<MergedRegistryEntry, 'directives' | 'composables' | 'lib'>>>;
     metadata?: Record<string, ComponentMetadataEntry>;
     manifest?: RegistryManifest;
