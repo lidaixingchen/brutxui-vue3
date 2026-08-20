@@ -403,12 +403,46 @@ describe('Tabs (slot mode, no tabs prop)', () => {
         expect(root.props('orientation')).toBe('vertical')
     })
 
-    it('emits update:modelValue on TabsRoot change in slot mode', () => {
+    it('supports defaultValue in slot mode', () => {
+        const wrapper = mount(Tabs, {
+            props: { defaultValue: 'tab-default' },
+            global: { stubs: tabsGlobalStubs },
+        })
+        const root = wrapper.findComponent({ name: 'TabsRoot' })
+        expect(root.props('modelValue')).toBe('tab-default')
+    })
+
+    it('supports defaultValue in config mode', () => {
+        const wrapper = mount(Tabs, {
+            props: { tabs: mockTabs, defaultValue: 'pricing' },
+            global: { stubs: tabsGlobalStubs },
+        })
+        const root = wrapper.findComponent({ name: 'TabsRoot' })
+        expect(root.props('modelValue')).toBe('pricing')
+    })
+
+    it('updates activeValue in uncontrolled slot mode when TabsRoot changes', async () => {
         const wrapper = mount(Tabs, {
             global: { stubs: tabsGlobalStubs },
         })
         const root = wrapper.findComponent({ name: 'TabsRoot' })
         root.vm.$emit('update:modelValue', 'tab2')
+        await nextTick()
         expect(wrapper.emitted('update:modelValue')![0]).toEqual(['tab2'])
+        expect(root.props('modelValue')).toBe('tab2')
+    })
+
+    it('handles async tabs data loading correctly in config mode', async () => {
+        const wrapper = mount(Tabs, {
+            props: { tabs: [] },
+            global: { stubs: tabsGlobalStubs },
+        })
+        expect(wrapper.find('.text-brutal-muted-foreground').exists()).toBe(false)
+
+        // 异步数据返回
+        await wrapper.setProps({ tabs: mockTabs })
+        const root = wrapper.findComponent({ name: 'TabsRoot' })
+        expect(root.exists()).toBe(true)
+        expect(root.props('modelValue')).toBe('overview')
     })
 })
