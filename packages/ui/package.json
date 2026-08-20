@@ -436,6 +436,10 @@
             "types": "./dist/composables/useDialogEnhanced.d.ts",
             "import": "./dist/composables/useDialogEnhanced.js"
         },
+        "./useDialogGeometry": {
+            "types": "./dist/composables/useDialogGeometry.d.ts",
+            "import": "./dist/composables/useDialogGeometry.js"
+        },
         "./useFormFieldValidation": {
             "types": "./dist/composables/useFormFieldValidation.d.ts",
             "import": "./dist/composables/useFormFieldValidation.js"
