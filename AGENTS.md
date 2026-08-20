@@ -7,6 +7,8 @@
 | 文件 | 触发更新的命令 |
 | --- | --- |
 | `packages/ui/registry-manifest.json` | `pnpm build` / `prebuild:scan`（lint、typecheck 也会前置执行，幂等） |
+| `packages/ui/exports-manifest.json` | `prebuild:scan`（build、typecheck、lint 也会前置执行，幂等） |
+| `packages/ui/package.json` 的 `exports` 字段 | `prebuild:exports`（build、typecheck、lint 也会前置执行，幂等） |
 | `packages/ui/src/styles.css` 的 `@theme`、`:root/.dark` 与预设 tokens | `prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
 | `packages/ui/src/preflight.css` 的 body 字体栈 | `prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
 | `packages/ui/src/lib/utils.ts` 的 `BRUTAL_COLOR_NAMES` 列表 | `prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
