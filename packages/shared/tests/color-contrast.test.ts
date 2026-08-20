@@ -55,6 +55,8 @@ describe('color-contrast 模块', () => {
         it('对非法颜色格式抛出 Error', () => {
             expect(() => parseColorChannels('not-a-color')).toThrow()
             expect(() => parseColorChannels('#12345')).toThrow()
+            expect(() => parseColorChannels({ r: NaN, g: 0, b: 0 })).toThrow(/Invalid color channels/)
+            expect(() => parseColorChannels({ r: 0, g: 0, b: 0, a: NaN })).toThrow(/Invalid color channels/)
         })
     })
 

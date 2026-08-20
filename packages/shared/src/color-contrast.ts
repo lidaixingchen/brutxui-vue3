@@ -45,6 +45,14 @@ function hslChannelsToRgb(h: number, s: number, l: number): [number, number, num
 
 export function parseColorChannels(color: ColorInput): [r: number, g: number, b: number, a: number] {
     if (typeof color === 'object' && color !== null) {
+        if (
+            !Number.isFinite(color.r) ||
+            !Number.isFinite(color.g) ||
+            !Number.isFinite(color.b) ||
+            (color.a !== undefined && !Number.isFinite(color.a))
+        ) {
+            throw new Error(`Invalid color channels in object input: ${JSON.stringify(color)}`)
+        }
         const r = clamp(Math.round(color.r), 0, 255)
         const g = clamp(Math.round(color.g), 0, 255)
         const b = clamp(Math.round(color.b), 0, 255)
