@@ -311,11 +311,11 @@ describe('devtoolsPlugin', () => {
 
         beforeEach(() => {
             process.env.NODE_ENV = 'development'
-            app.use(devtoolsPlugin)
+            app.use(devtoolsPlugin, { debug: true })
             context = app.config.globalProperties.__BRUTX_UI_DEVTOOLS__ as BrutxUIDevtoolsContext
         })
 
-        it('should register component', () => {
+        it('should register component and log when debug is true', () => {
             const consoleSpy = vi.spyOn(console, 'log')
 
             context.registerComponent('Button', {
@@ -339,6 +339,18 @@ describe('devtoolsPlugin', () => {
             expect(meta?.lastUpdatedAt).toBeGreaterThan(0)
             expect(consoleSpy).toHaveBeenCalledWith(
                 '[BrutxUI] 组件已注册: Button'
+            )
+        })
+
+        it('should register component silently when debug is false', () => {
+            const quietApp = createApp({})
+            quietApp.use(devtoolsPlugin, { debug: false })
+            const quietContext = quietApp.config.globalProperties.__BRUTX_UI_DEVTOOLS__ as BrutxUIDevtoolsContext
+            const consoleSpy = vi.spyOn(console, 'log')
+
+            quietContext.registerComponent('QuietButton')
+            expect(consoleSpy).not.toHaveBeenCalledWith(
+                expect.stringContaining('组件已注册: QuietButton')
             )
         })
 

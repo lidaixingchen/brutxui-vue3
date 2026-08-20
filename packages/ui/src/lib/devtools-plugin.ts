@@ -32,6 +32,8 @@ export interface DevtoolsPluginOptions {
     maxEventLogSize?: number
     /** 性能阈值（毫秒），超过此值会发出警告，默认 16 */
     performanceThreshold?: number
+    /** 是否启用调试模式日志，默认 false */
+    debug?: boolean
 }
 
 /** 事件日志条目 */
@@ -224,6 +226,7 @@ const DEFAULT_OPTIONS: Required<DevtoolsPluginOptions> = {
     enableComponentTree: true,
     maxEventLogSize: 100,
     performanceThreshold: 16,
+    debug: false,
 }
 
 /**
@@ -347,9 +350,11 @@ function createDevtoolsContext(options: Required<DevtoolsPluginOptions>): BrutxU
                 })
             }
 
-            console.log(
-                `[${options.libraryName}] 组件已注册: ${name}`
-            )
+            if (options.debug) {
+                console.log(
+                    `[${options.libraryName}] 组件已注册: ${name}`
+                )
+            }
         },
 
         getComponents() {
@@ -362,7 +367,9 @@ function createDevtoolsContext(options: Required<DevtoolsPluginOptions>): BrutxU
 
         clearEventLog() {
             eventLog.length = 0
-            console.log(`[${options.libraryName}] 事件日志已清除`)
+            if (options.debug) {
+                console.log(`[${options.libraryName}] 事件日志已清除`)
+            }
         },
 
         getPerformanceReport(): PerformanceReport {
@@ -423,7 +430,9 @@ function createDevtoolsContext(options: Required<DevtoolsPluginOptions>): BrutxU
 
         clearPerformanceEntries() {
             performanceEntries.length = 0
-            console.log(`[${options.libraryName}] 性能记录已清除`)
+            if (options.debug) {
+                console.log(`[${options.libraryName}] 性能记录已清除`)
+            }
         },
 
         exportDebugData() {
@@ -555,25 +564,31 @@ function initDevtoolsIntegration(
                     if (key && meta.props) {
                         meta.props[key] = payload.state.value
                         meta.lastUpdatedAt = Date.now()
-                        console.log(
-                            `[${options.libraryName}] Props 已更新: ${name}.${key} =`,
-                            payload.state.value
-                        )
+                        if (options.debug) {
+                            console.log(
+                                `[${options.libraryName}] Props 已更新: ${name}.${key} =`,
+                                payload.state.value
+                            )
+                        }
                     }
                 })
             },
         })
 
         if (!registered) {
-            console.log(
-                `[${options.libraryName}] Vue Devtools 未检测到，跳过 Devtools 集成初始化`
-            )
+            if (options.debug) {
+                console.log(
+                    `[${options.libraryName}] Vue Devtools 未检测到，跳过 Devtools 集成初始化`
+                )
+            }
             return
         }
 
-        console.log(
-            `[${options.libraryName}] Vue Devtools 集成已初始化`
-        )
+        if (options.debug) {
+            console.log(
+                `[${options.libraryName}] Vue Devtools 集成已初始化`
+            )
+        }
     } catch (error) {
         console.error(
             `[${options.libraryName}] Vue Devtools 集成初始化失败:`,
