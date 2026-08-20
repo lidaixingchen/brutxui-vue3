@@ -58,9 +58,15 @@ function makeLineEmitter(onLine?: (line: string) => void): LineEmitter {
  *   - 子进程忽略 SIGINT 时 5s 后 SIGKILL 兜底；close 后若有残留句柄阻止自然退出，3s 后强制退出。
  *   - 中断后 promise 不 settle（调用方 await 挂起），阻止中断后继续执行后续流程。
  */
+const SHELL_METACHARS_PATTERN = /[&|<>^%\r\n]/;
+
 export function runProcess(command: string, args: string[], options: RunProcessOptions = {}): Promise<void> {
     const isWindows = process.platform === 'win32';
     const { cwd, stdio = 'inherit', onStdout, onStderr } = options;
+
+    if (SHELL_METACHARS_PATTERN.test(command) || args.some((arg) => SHELL_METACHARS_PATTERN.test(arg))) {
+        return Promise.reject(new Error('Command or arguments contain invalid shell metacharacters'));
+    }
 
     return new Promise<void>((resolve, reject) => {
         const child = spawn(command, args, {

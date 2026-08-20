@@ -70,3 +70,20 @@ describe('verifyWrittenPath', () => {
         }
     });
 });
+
+describe('runProcess command injection protection', () => {
+    it('should reject commands with shell metacharacters', async () => {
+        const { runProcess } = await import('../src/lib/run-process.js');
+        await expect(runProcess('echo & calc.exe', [])).rejects.toThrow('Command or arguments contain invalid shell metacharacters');
+        await expect(runProcess('npm | dir', [])).rejects.toThrow('Command or arguments contain invalid shell metacharacters');
+    });
+
+    it('should reject arguments with shell metacharacters', async () => {
+        const { runProcess } = await import('../src/lib/run-process.js');
+        await expect(runProcess('echo', ['hello & whoami'])).rejects.toThrow('Command or arguments contain invalid shell metacharacters');
+        await expect(runProcess('echo', ['foo | bar'])).rejects.toThrow('Command or arguments contain invalid shell metacharacters');
+        await expect(runProcess('echo', ['foo > out.txt'])).rejects.toThrow('Command or arguments contain invalid shell metacharacters');
+        await expect(runProcess('echo', ['%PATH%'])).rejects.toThrow('Command or arguments contain invalid shell metacharacters');
+        await expect(runProcess('echo', ['foo\nbar'])).rejects.toThrow('Command or arguments contain invalid shell metacharacters');
+    });
+});
