@@ -78,6 +78,14 @@ describe('color-contrast 模块', () => {
             expect(g).toBe(128)
             expect(b).toBe(128)
         })
+
+        it('支持半透明背景与底层底色递归混合', () => {
+            // 背景是 50% 黑色在白底上（得 128 灰），前景是 50% 纯黑在此背景上混合
+            const [r, g, b] = blendAlpha('rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.5)', '#ffffff')
+            expect(r).toBe(64)
+            expect(g).toBe(64)
+            expect(b).toBe(64)
+        })
     })
 
     describe('srgbToLinear 与 getRelativeLuminance', () => {
@@ -116,6 +124,11 @@ describe('color-contrast 模块', () => {
             expect(isContrastCompliant(4.49, 'AA')).toBe(false)
             expect(isContrastCompliant(7.0, 'AAA')).toBe(true)
             expect(isContrastCompliant(6.99, 'AAA')).toBe(false)
+        })
+
+        it('对非法 contrast level 抛出明确异常', () => {
+            // @ts-expect-error testing invalid runtime level
+            expect(() => isContrastCompliant(5.0, 'invalid-level')).toThrow(/Unsupported contrast level/)
         })
     })
 })

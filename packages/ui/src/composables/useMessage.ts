@@ -49,6 +49,7 @@ export const messageStore: DeepReadonly<Ref<MessageItem[]>> = readonly(messageSt
 
 let instance: RenderImperativeReturn | null = null
 let refCount = 0
+let generation = 0
 let graceTimer: ReturnType<typeof setTimeout> | null = null
 let messageIdCounter = 0
 const timerMap = new Map<string, ReturnType<typeof setTimeout>>()
@@ -155,8 +156,10 @@ function addMessage(options: MessageOptions): () => void {
 
 export function useMessage(): UseMessageReturn {
     if (getCurrentInstance()) {
+        const currentGeneration = generation
         refCount++
         onUnmounted(() => {
+            if (currentGeneration !== generation) return
             refCount--
             scheduleGC()
         })
@@ -190,6 +193,7 @@ export function useMessage(): UseMessageReturn {
  * 推荐在测试隔离、多应用同页或热更新边界调用。
  */
 export function destroyFallback(): void {
+    generation++
     unregisterBeforeUnload()
     timerMap.forEach((timer) => clearTimeout(timer))
     timerMap.clear()

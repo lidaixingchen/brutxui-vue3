@@ -63,7 +63,8 @@ export interface UseDialogGeometryReturn {
 const INTERACTIVE_TAGS = ['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A']
 
 export function isInteractiveElement(target: HTMLElement): boolean {
-    return INTERACTIVE_TAGS.includes(target.tagName) || target.isContentEditable
+    const selector = INTERACTIVE_TAGS.join(',').toLowerCase()
+    return !!target.closest(selector) || target.isContentEditable
 }
 
 export function useDialogGeometry(
@@ -187,6 +188,7 @@ export function useDialogGeometry(
             newWidth = newHeight * opt.aspectRatio
             if (opt.minWidth) newWidth = Math.max(opt.minWidth, newWidth)
             if (opt.maxWidth) newWidth = Math.min(opt.maxWidth, newWidth)
+            newHeight = newWidth / opt.aspectRatio
         }
         return { width: newWidth, height: newHeight }
     }
@@ -209,6 +211,7 @@ export function useDialogGeometry(
         const doc = getDocument()
         if (!doc) return
         if (!opt.draggable) return
+        if (e.button !== 0) return
 
         const target = e.target
         if (!(target instanceof HTMLElement) || isInteractiveElement(target)) return
