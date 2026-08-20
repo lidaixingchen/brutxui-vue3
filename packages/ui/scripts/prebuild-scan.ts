@@ -12,8 +12,8 @@
  * names, composable files, and directive files. Consumed by generate-exports.ts
  * and generate-component-index.ts.
  *
- * Manual overrides (manifest-shared.ts) cover convention-based dependencies that
- * AST scanning cannot discover (no import link between source files).
+ * Convention-based overrides cover dependencies that AST scanning cannot discover
+ * (no import link between source files, e.g. loading directive).
  *
  * Usage: pnpm prebuild:scan
  */
@@ -21,7 +21,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { scanComponentFiles, type ComponentFileManifest } from 'brutx-shared-vue/scan';
-import { applyManifestOverrides, LIB_EXCLUDE } from './manifest-shared';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -74,14 +73,12 @@ function main(): void {
         composablesDir: path.join(UI_SRC_DIR, 'composables'),
         libDir: path.join(UI_SRC_DIR, 'lib'),
         directivesDir: path.join(UI_SRC_DIR, 'directives'),
-        libExclude: LIB_EXCLUDE,
     };
 
     if (isVerbose) {
         console.log('🔍 Scanning component files...');
     }
     const manifest = scanComponentFiles(options);
-    applyManifestOverrides(manifest);
     const componentCount = Object.keys(manifest).length;
 
     const output = JSON.stringify(manifest, null, 2) + '\n';
