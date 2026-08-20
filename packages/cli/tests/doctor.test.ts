@@ -80,7 +80,7 @@ async function setupHealthyProject(cwd: string): Promise<void> {
     await fs.ensureDir(path.join(cwd, 'src', 'lib'));
     await fs.writeFile(
         path.join(cwd, 'src', 'lib', 'utils.ts'),
-        'export function cn(...inputs: any[]) { return inputs.join(" "); }',
+        'export const FOCUS_RING_CLASSES = "focus-visible:ring-2";\nexport function cn(...inputs: any[]) { return inputs.join(" "); }\n// BRUTAL_COLOR_NAMES extendTailwindMerge',
     );
     await fs.writeJson(path.join(cwd, 'components.json'), makeConfig());
 }
@@ -511,7 +511,7 @@ describe('checkUtilsFunction', () => {
             await setupHealthyProject(cwd);
             mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
-            const check = results.find((r) => r.name === 'cn() function exists');
+            const check = results.find((r) => r.ruleId === 'structure.utils-cn');
             expect(check?.status).toBe('pass');
         } finally {
             await fs.remove(cwd);
@@ -525,7 +525,7 @@ describe('checkUtilsFunction', () => {
             await fs.remove(path.join(cwd, 'src', 'lib', 'utils.ts'));
             mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
-            const check = results.find((r) => r.name === 'cn() function exists');
+            const check = results.find((r) => r.ruleId === 'structure.utils-cn');
             expect(check?.status).toBe('error');
             expect(check?.message).toContain('not found');
             expect(check?.fixId).toBe(FixId.AddCnFunction);
@@ -544,7 +544,7 @@ describe('checkUtilsFunction', () => {
             );
             mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
-            const check = results.find((r) => r.name === 'cn() function exists');
+            const check = results.find((r) => r.ruleId === 'structure.utils-cn');
             expect(check?.status).toBe('error');
             expect(check?.message).toContain('cn() function not found');
             expect(check?.fixId).toBe(FixId.AddCnFunction);
@@ -792,7 +792,7 @@ describe('edge cases', () => {
             mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
 
-            const cnCheck = results.find((r) => r.name === 'cn() function exists');
+            const cnCheck = results.find((r) => r.ruleId === 'structure.utils-cn');
             expect(cnCheck?.status).toBe('error');
             expect(cnCheck?.message).toContain('cn() function not found');
         } finally {
@@ -836,12 +836,12 @@ describe('edge cases', () => {
             await setupHealthyProject(cwd);
             await fs.writeFile(
                 path.join(cwd, 'src', 'lib', 'utils.ts'),
-                'export const cn = (...inputs: any[]) => inputs.join(" ");',
+                'export const FOCUS_RING_CLASSES = "focus-visible:ring-2";\nexport const cn = (...inputs: any[]) => inputs.join(" ");\n// BRUTAL_COLOR_NAMES extendTailwindMerge',
             );
             mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
 
-            const cnCheck = results.find((r) => r.name === 'cn() function exists');
+            const cnCheck = results.find((r) => r.ruleId === 'structure.utils-cn');
             expect(cnCheck?.status).toBe('pass');
         } finally {
             await fs.remove(cwd);

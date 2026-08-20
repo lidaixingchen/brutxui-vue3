@@ -35,21 +35,25 @@ export async function findOrphanFilesInVfs(
         }
     }
 
-    for (const dir of directories) {
-        if (!(await fsAdapter.pathExists(dir))) continue;
-        const entries = await fsAdapter.readdir(dir, { withFileTypes: true });
-        for (const e of entries) {
-            if (!e.isFile()) continue;
-            const ext = path.extname(e.name).toLowerCase();
-            if (!ORPHAN_EXTENSIONS.has(ext)) continue;
-            const absPath = path.join(dir, e.name);
-            if (!manifestAbsSet.has(absPath)) {
-                orphans.push(path.relative(cwd, absPath).split(path.sep).join('/'));
+    const dirResults = await Promise.all(
+        Array.from(directories).map(async (dir) => {
+            const dirOrphans: string[] = [];
+            if (!(await fsAdapter.pathExists(dir))) return dirOrphans;
+            const entries = await fsAdapter.readdir(dir, { withFileTypes: true });
+            for (const e of entries) {
+                if (!e.isFile()) continue;
+                const ext = path.extname(e.name).toLowerCase();
+                if (!ORPHAN_EXTENSIONS.has(ext)) continue;
+                const absPath = path.join(dir, e.name);
+                if (!manifestAbsSet.has(absPath)) {
+                    dirOrphans.push(path.relative(cwd, absPath).split(path.sep).join('/'));
+                }
             }
-        }
-    }
+            return dirOrphans;
+        })
+    );
 
-    return orphans;
+    return dirResults.flat();
 }
 
 export async function restoreComponentFromRegistry(
@@ -238,10 +242,12 @@ export const integrityOrphansRule: DiagnosticRule = {
         }
 
         const orphans = await findOrphanFilesInVfs(ctx.cwd, entry, ctx.fs);
-        for (const orphan of orphans) {
-            const absPath = path.resolve(ctx.cwd, orphan);
-            await ctx.transaction.remove(absPath);
-        }
+        await Promise.all(
+            orphans.map(async (orphan) => {
+                const absPath = path.resolve(ctx.cwd, orphan);
+                await ctx.transaction.remove(absPath);
+            })
+        );
 
         return {
             status: 'applied',

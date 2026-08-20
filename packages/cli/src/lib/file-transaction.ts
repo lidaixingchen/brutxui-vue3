@@ -11,7 +11,10 @@ interface Snapshot {
 
 export class FileTransaction {
     private snapshots = new Map<string, Snapshot>();
+    private inFlightSnapshots = new Map<string, Promise<void>>();
     private tempDir: string | null = null;
+    private tempDirPromise: Promise<string> | null = null;
+    private snapshotCounter = 0;
     private committed = false;
     /** commit/rollback 完成后置真，之后的一切写操作抛错，避免产生"半提交"变更 */
     private finished = false;
@@ -105,28 +108,44 @@ export class FileTransaction {
             return;
         }
 
-        const existed = await this.fs.pathExists(resolvedPath);
-        if (!existed) {
-            this.snapshots.set(resolvedPath, { existed: false });
-            return;
+        const inFlight = this.inFlightSnapshots.get(resolvedPath);
+        if (inFlight) {
+            return inFlight;
         }
 
-        const tempDir = await this.getTempDir();
-        const backupPath = path.join(tempDir, String(this.snapshots.size));
-        try {
-            await this.fs.copy(resolvedPath, backupPath);
-        } catch (error) {
-            if (Array.from(this.snapshots.values()).every((snap) => !snap.backupPath)) {
-                try {
-                    await this.fs.remove(tempDir);
-                    this.tempDir = null;
-                } catch {
-                    // 移除失败时保留 tempDir 引用
-                }
+        const task = (async () => {
+            const existed = await this.fs.pathExists(resolvedPath);
+            if (!existed) {
+                this.snapshots.set(resolvedPath, { existed: false });
+                return;
             }
-            throw error;
+
+            const tempDir = await this.getTempDir();
+            const counter = ++this.snapshotCounter;
+            const backupPath = path.join(tempDir, String(counter));
+            try {
+                await this.fs.copy(resolvedPath, backupPath);
+            } catch (error) {
+                if (Array.from(this.snapshots.values()).every((snap) => !snap.backupPath)) {
+                    try {
+                        await this.fs.remove(tempDir);
+                        this.tempDir = null;
+                        this.tempDirPromise = null;
+                    } catch {
+                        // 移除失败时保留 tempDir 引用
+                    }
+                }
+                throw error;
+            }
+            this.snapshots.set(resolvedPath, { existed: true, backupPath });
+        })();
+
+        this.inFlightSnapshots.set(resolvedPath, task);
+        try {
+            await task;
+        } finally {
+            this.inFlightSnapshots.delete(resolvedPath);
         }
-        this.snapshots.set(resolvedPath, { existed: true, backupPath });
     }
 
     /**
@@ -154,17 +173,26 @@ export class FileTransaction {
     }
 
     private async getTempDir(): Promise<string> {
-        if (!this.tempDir) {
-            this.tempDir = await this.fs.mkdtemp(path.join(os.tmpdir(), 'brutx-tx-'));
+        if (this.tempDir) {
+            return this.tempDir;
         }
-        return this.tempDir;
+        if (!this.tempDirPromise) {
+            this.tempDirPromise = (async () => {
+                const dir = await this.fs.mkdtemp(path.join(os.tmpdir(), 'brutx-tx-'));
+                this.tempDir = dir;
+                return dir;
+            })();
+        }
+        return this.tempDirPromise;
     }
 
     private async cleanup(): Promise<void> {
         if (this.tempDir) {
             await this.fs.remove(this.tempDir).catch(() => {});
             this.tempDir = null;
+            this.tempDirPromise = null;
         }
         this.snapshots.clear();
+        this.inFlightSnapshots.clear();
     }
 }

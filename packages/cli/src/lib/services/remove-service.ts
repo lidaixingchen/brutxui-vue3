@@ -565,25 +565,33 @@ export async function removeComponents(
     let orphanedRemoved = 0;
 
     try {
-        for (const comp of componentsToRemove) {
-            const componentPath = await context.resolveComponentDir(comp);
+        const componentRemovalCounts = await Promise.all(
+            componentsToRemove.map(async (comp) => {
+                const componentPath = await context.resolveComponentDir(comp);
 
-            if (await context.fs.pathExists(componentPath)) {
-                const fileCount = await countFilesRecursive(componentPath, context.fs);
-                options.onRemoveComponent?.(comp, fileCount);
-                await transaction.remove(componentPath);
-                totalRemoved += fileCount;
-            }
-        }
+                if (await context.fs.pathExists(componentPath)) {
+                    const fileCount = await countFilesRecursive(componentPath, context.fs);
+                    options.onRemoveComponent?.(comp, fileCount);
+                    await transaction.remove(componentPath);
+                    return fileCount;
+                }
+                return 0;
+            })
+        );
+        totalRemoved = componentRemovalCounts.reduce((sum, count) => sum + count, 0);
 
         if (options.removeOrphaned) {
-            for (const f of orphanedFiles) {
-                if (!await context.isSafePath(f)) continue;
-                if (await context.fs.pathExists(f)) {
-                    await transaction.remove(f);
-                    orphanedRemoved++;
-                }
-            }
+            const orphanRemovalCounts = await Promise.all(
+                orphanedFiles.map(async (f): Promise<number> => {
+                    if (!await context.isSafePath(f)) return 0;
+                    if (await context.fs.pathExists(f)) {
+                        await transaction.remove(f);
+                        return 1;
+                    }
+                    return 0;
+                })
+            );
+            orphanedRemoved = orphanRemovalCounts.reduce<number>((sum, count) => sum + count, 0);
         }
 
         await removeInstalledComponents(context.cwd, componentsToRemove, { transaction }, context.fs);
