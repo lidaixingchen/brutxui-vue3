@@ -1,11 +1,13 @@
 # Tailwind颜色双轨与工具函数单一信源治理方案
 
 > 方案类型：重构 / 架构优化 / 单一信源治理
-> 状态：**active**
+> 状态：**done**
 > 日期：2026-08-20
 > 关联文档：[TAILWIND_V4_MECHANISMS.md](../guides/TAILWIND_V4_MECHANISMS.md)、[CLI样式自动生成与单一信源治理方案.md](CLI样式自动生成与单一信源治理方案.md)
 > 修订记录：
 > - 2026-08-20：初始版本草案；根据审查意见补全 CLI constants 自动注入闭环、FOCUS_RING_CLASSES 诊断规则与 AGENTS.md 维护契约。
+> - 2026-08-20：全部落地完成（M1~M7），通过 Issue #38、#39、#40、#41、#42 及 OCR 审查闭环，四端一致性门禁与全量测试 100% 通过。
+
 
 ## 1. 概述与背景
 
