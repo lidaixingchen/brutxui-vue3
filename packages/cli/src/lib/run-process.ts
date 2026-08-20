@@ -65,7 +65,10 @@ export function runProcess(command: string, args: string[], options: RunProcessO
     const { cwd, stdio = 'inherit', onStdout, onStderr } = options;
 
     if (SHELL_METACHARS_PATTERN.test(command) || args.some((arg) => SHELL_METACHARS_PATTERN.test(arg))) {
-        return Promise.reject(new Error('Command or arguments contain invalid shell metacharacters'));
+        const offending = SHELL_METACHARS_PATTERN.test(command)
+            ? `command "${command}"`
+            : `arg "${args.find((a) => SHELL_METACHARS_PATTERN.test(a))}"`;
+        return Promise.reject(new Error(`Command or arguments contain invalid shell metacharacters (${offending})`));
     }
 
     return new Promise<void>((resolve, reject) => {
