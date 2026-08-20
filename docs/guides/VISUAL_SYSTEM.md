@@ -89,6 +89,9 @@
   - 状态指示必须使用 `--brutal-status-*` 家族；
   - `bg-black/5` 5% 叠色为浅层覆盖显式豁免；
   - 状态型半透明阴影仅允许通过 `shadow-brutal-destructive` 实现（alpha 值仅允许在此类状态阴影中出现）。
+- **WCAG 对比度与单一信源契约**：
+  - 全部语义前景色与背景色组合必须满足 WCAG 2.1 AA 标准（对比度比率 $\ge 4.5:1$）；
+  - 色彩通道解析、Alpha 混合（Alpha Over Blending）与对比度计算算法统一收敛于 `brutx-shared-vue`（`parseColorChannels`, `blendAlpha`, `calculateContrastRatio`, `isContrastCompliant`），禁止在各子包中重复手写私有公式。
 
 ### R7 焦点指示体系 (Focus Ring)
 - **核心规则**：统一采用 Ring 表达——引用 `@/lib/utils` 的 `FOCUS_RING_CLASSES`（`focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden`）。

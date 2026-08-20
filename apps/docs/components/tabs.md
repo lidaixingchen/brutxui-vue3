@@ -258,6 +258,7 @@ import {
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `modelValue` | `string` | — | 当前激活标签页的值（受控模式） |
+| `defaultValue` | `string` | — | 默认激活的标签页值（非受控模式初始值） |
 | `tabs` | `TabItem[]` | — | 标签数据数组。传入时自动渲染 `TabsList`/`TabsTrigger`/`TabsContent`，未传入时使用默认 slot 组合 |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 标签页排列方向 |
 | `class` | `string` | — | 自定义 CSS 类名。`tabs` 模式下作用于外层包裹容器 |

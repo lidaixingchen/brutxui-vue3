@@ -163,7 +163,9 @@
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `modelValue` | `string` | — | 当前激活标签页的值 |
+| `modelValue` | `string` | — | 当前激活标签页的值（受控模式） |
+| `defaultValue` | `string` | — | 默认激活标签页的值（非受控模式初始值） |
+| `tabs` | `TabItem[]` | — | 标签数据配置数组，传入时自动渲染子项，未传入时使用插槽 |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 标签页排列方向 |
 | `class` | `string` | — | 自定义样式类 |
 

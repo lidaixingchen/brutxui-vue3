@@ -45,13 +45,15 @@
 | --- | --- | --- | --- |
 | `draggable` | `boolean` | `false` | 是否可拖拽 |
 | `dragHandle` | `string \| HTMLElement` | — | 拖拽手柄（CSS 选择器或元素） |
+| `bounds` | `'viewport' \| 'parent' \| object` | `'viewport'` | 拖拽与缩放边界限制 |
 | `resizable` | `boolean` | `false` | 是否可调整大小 |
 | `minWidth` | `number` | `200` | 最小宽度 |
 | `minHeight` | `number` | `150` | 最小高度 |
 | `maxWidth` | `number` | — | 最大宽度 |
 | `maxHeight` | `number` | — | 最大高度 |
+| `aspectRatio` | `number` | — | 保持固定宽高比缩放 |
 | `fullscreen` | `boolean` | `false` | 全屏模式（占满整个视口） |
-| `beforeClose` | `((done) => void) \| (() => boolean \| Promise<boolean>)` | — | 关闭前钩子（支持回调模式和 Promise 模式） |
+| `beforeClose` | `() => boolean \| Promise<boolean>` | — | 关闭前钩子（支持同步/异步布尔返回值） |
 | `destroyOnClose` | `boolean` | `false` | 关闭后销毁内容 |
 | `zIndex` | `number` | — | 自定义层级 |
 

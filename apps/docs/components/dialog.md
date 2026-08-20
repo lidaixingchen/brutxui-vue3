@@ -306,6 +306,34 @@ function showMyDialog() {
 > [!TIP]
 > `useDialog` 返回的 `isOpen` 属性为 `Readonly<Ref<boolean>>` 只读响应式视图，状态仅由 Composable 内部统一调度。
 
+### useDialogGeometry（空间几何状态控制器）
+
+当需要对自定义弹窗或浮层实现拖拽、缩放与边界约束时，可直接使用底层的 `useDialogGeometry` 纯空间几何状态控制器：
+
+```ts
+import { useDialogGeometry } from 'brutx-ui-vue'
+
+const {
+    contentRef,
+    position,
+    size,
+    contentStyle,
+    isDragging,
+    isResizing,
+    onDragStart,
+    onResizeStart,
+} = useDialogGeometry({
+    draggable: true,
+    resizable: true,
+    bounds: 'viewport',
+    minWidth: 320,
+    minHeight: 240,
+})
+```
+
+- **纯空间几何职责**：专注管理位置、尺寸、拖拽、缩放、宽高比与视口/父级边界限制，彻底与业务关闭控制流解耦；
+- **只读视图契约**：`position` 与 `size` 为只读 Ref，程序化改写请通过 `setPosition` 与 `setSize`。
+
 ## 常见问题
 
 **Q: 打开对话框后页面还能滚动怎么办？**

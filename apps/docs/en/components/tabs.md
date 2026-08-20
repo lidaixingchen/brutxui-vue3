@@ -178,6 +178,7 @@ import {
 | Prop | Type | Default | Description |
 |------|------|--------|------|
 | `modelValue` | `string` | — | Value of the currently active tab (controlled mode) |
+| `defaultValue` | `string` | — | Default active tab value (uncontrolled initial value) |
 | `tabs` | `TabItem[]` | — | Tab data array for auto rendering TabsList/TabsTrigger/TabsContent |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Tab arrangement direction |
 | `class` | `string` | — | Custom CSS class name |

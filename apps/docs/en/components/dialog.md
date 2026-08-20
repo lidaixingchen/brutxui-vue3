@@ -307,6 +307,34 @@ function showMyDialog() {
 > [!TIP]
 > The `isOpen` property returned by `useDialog` is a `Readonly<Ref<boolean>>` view, strictly managed by the composable internally.
 
+### useDialogGeometry (Spatial Geometry Controller)
+
+When you need dragging, resizing, and boundary clamping for custom dialogs or overlays, use the low-level `useDialogGeometry` pure spatial geometry controller:
+
+```ts
+import { useDialogGeometry } from 'brutx-ui-vue'
+
+const {
+    contentRef,
+    position,
+    size,
+    contentStyle,
+    isDragging,
+    isResizing,
+    onDragStart,
+    onResizeStart,
+} = useDialogGeometry({
+    draggable: true,
+    resizable: true,
+    bounds: 'viewport',
+    minWidth: 320,
+    minHeight: 240,
+})
+```
+
+- **Pure Spatial Geometry Responsibility**: Exclusively manages position, size, dragging, resizing, aspect ratio, and boundary constraints, fully decoupled from business close control flows.
+- **Readonly State Views**: `position` and `size` are readonly Refs; programmatically update them via `setPosition` and `setSize`.
+
 ## FAQ
 
 **Q: The page is still scrollable after opening the dialog. What should I do?**

@@ -28,8 +28,9 @@
 | `useDataTableSelection` | DataTable 单选/多选及跨页选择状态管理 | 默认导出 |
 | `useDataTablePagination` | DataTable 逻辑分页及页码变动管理 | 默认导出 |
 | `useUpload` | 文件上传核心逻辑，支持 AbortController 强行取消上传，所有参数响应式更新 | 默认导出 |
-| `useMessage` | 函数式消息提示调用（info/success/warning/error），支持垂直堆叠与单例销毁 | 默认导出 |
+| `useMessage` | 函数式消息提示调用（info/success/warning/error），支持活跃消息守卫与惰性 GC 销毁 | 默认导出 |
 | `useDialog` | 通用对话框响应式管理器，支持单例调度与 `isOpen: Readonly<Ref<boolean>>` 只读视图 | 默认导出 |
+| `useDialogGeometry` | 纯空间几何状态控制器（管理弹层拖拽、缩放、宽高比与视口边界约束，与关闭控制流解耦） | 默认导出 |
 | `useMessageBox` | 函数式消息对话框管理器，提供 `show/confirm/alert/prompt` 与确定性非拒绝 Promise 交互 | 默认导出 |
 
 ---

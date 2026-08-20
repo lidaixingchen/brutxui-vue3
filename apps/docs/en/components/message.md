@@ -270,7 +270,8 @@ Key features:
 - **Stacked animations**: Multiple messages stack vertically via `TransitionGroup` with smooth reordering
 - **Auto-close**: Closes automatically after 3 seconds by default; customize with `duration`, set to `0` to disable
 - **Manual close**: Each method returns a `close` function — call it to dismiss the message immediately
-- **Auto-cleanup**: The container DOM is automatically unmounted 500ms after all messages are closed, ensuring proper garbage collection
+- **Active message guard & Lazy GC**: Equipped with dual component refCount and active message guards; active messages are never killed abruptly on unmount. Triggers a 3000ms lazy GC once all messages clear and refCount reaches 0
+- **Explicit destruction**: Exported `destroyFallback()` (or batch cleanup via `destroyBrutxUI()`) for test isolation and HMR resets
 - **SSR safe**: Uses an internal `isClient` guard; no side effects or errors in server-side rendering
 
 ### useDialog
