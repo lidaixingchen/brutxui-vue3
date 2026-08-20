@@ -89,6 +89,7 @@ draft ──评审通过──▶ active ──落地完成──▶ done ──
 | [Tailwind颜色双轨与工具函数单一信源治理方案](plans/Tailwind颜色双轨与工具函数单一信源治理方案.md) | done | 颜色令牌单一信源派生 BRUTAL_COLOR_NAMES、UI 与 CLI 工具函数模板同源生成、FOCUS_RING_CLASSES 导出闭环与四端 CI 门禁 |
 | [编译扫描排除清单与覆盖规则下沉方案](plans/编译扫描排除清单与覆盖规则下沉方案.md) | **active** | 将 LIB_EXCLUDE、MANIFEST_OVERRIDES 与 applyManifestOverrides 下沉至 shared，消除 registry 跨包非法引用与硬编码 |
 | [元数据脚手架树模型与层级体系治理方案](plans/元数据脚手架树模型与层级体系治理方案.md) | **done** | 脚手架与元数据自动同步闭环、统一 TreeNode 领域模型、Z-Index 五级阶梯尺度与设计令牌治理 |
+| [状态生命周期色彩与组件双轨治理方案](plans/状态生命周期色彩与组件双轨治理方案.md) | **active** | useMessage 接入 createFallbackManager、useDialogGeometry 规范重构、WCAG 对比度算法下沉 shared、Tabs 双轨状态对称性治理 |
 
 
 ## 归档方案（archive/2026/）
