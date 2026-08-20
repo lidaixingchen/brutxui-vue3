@@ -472,3 +472,31 @@ export const SHADOW_DEFINITIONS: readonly ShadowTokenDefinition[] = [
     },
 ] as const;
 
+/**
+ * 非颜色令牌集合（排查阴影、边框宽度、圆角等非颜色键）。
+ */
+export const NON_COLOR_TOKEN_KEYS: ReadonlySet<keyof ThemeTokens> = new Set<keyof ThemeTokens>([
+    'borderWidth',
+    'borderColor',
+    'shadowOffsetX',
+    'shadowOffsetY',
+    'shadowColor',
+    'radius',
+]);
+
+const baseBrutalColors: string[] = (Object.keys(TOKEN_TO_CSS_VAR) as Array<keyof ThemeTokens>)
+    .filter(key => !NON_COLOR_TOKEN_KEYS.has(key))
+    .map(key => TOKEN_TO_CSS_VAR[key]);
+
+const subtleBrutalColors: string[] = SUBTLE_COLOR_DEFS.map(d => `brutal-${d.key}-subtle`);
+
+/**
+ * 全量粗野主义颜色类名清单（单一事实来源）：
+ * 由基础颜色（30个）与 subtle 衍生色（6个）纯函数式计算、排序并冻结导出。
+ * 供 TokenStyleCompiler 编译静态代码并注入至 UI utils 与 CLI 模板。
+ */
+export const BRUTAL_COLOR_NAMES: readonly string[] = Object.freeze(
+    [...baseBrutalColors, ...subtleBrutalColors].sort(),
+);
+
+

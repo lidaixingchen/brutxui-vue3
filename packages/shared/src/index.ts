@@ -59,5 +59,8 @@ export {
     EASING_TOKENS,
     SUBTLE_COLOR_DEFS,
     SHADOW_DEFINITIONS,
+    NON_COLOR_TOKEN_KEYS,
+    BRUTAL_COLOR_NAMES,
 } from './design-tokens.js';
+
 
