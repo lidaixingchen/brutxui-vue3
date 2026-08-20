@@ -107,17 +107,17 @@ describe('registry schema and integrity validation', () => {
         it('throws for invalid items in index', () => {
             expect(() => validateRegistryIndex({
                 ...validIndex,
-                items: [{ ...validIndex.items[0], category: 'unknown-category' as any }],
+                items: [{ ...validIndex.items[0], category: 'unknown-category' as unknown as RegistryIndex['items'][number]['category'] }],
             })).toThrow('"category" must be one of');
 
             expect(() => validateRegistryIndex({
                 ...validIndex,
-                items: [{ ...validIndex.items[0], status: 'invalid-status' as any }],
+                items: [{ ...validIndex.items[0], status: 'invalid-status' as unknown as RegistryIndex['items'][number]['status'] }],
             })).toThrow('"status" must be one of');
 
             expect(() => validateRegistryIndex({
                 ...validIndex,
-                items: [{ ...validIndex.items[0], type: 'invalid:type' as any }],
+                items: [{ ...validIndex.items[0], type: 'invalid:type' as unknown as RegistryIndex['items'][number]['type'] }],
             })).toThrow('"type" must be one of');
         });
 

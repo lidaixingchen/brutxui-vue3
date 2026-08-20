@@ -124,7 +124,10 @@ export function blendAlpha(
     underlay: ColorInput = '#ffffff',
 ): [r: number, g: number, b: number] {
     const [fgR, fgG, fgB, fgA] = parseColorChannels(fg)
-    let [bgR, bgG, bgB, bgA] = parseColorChannels(bg)
+    const [rawBgR, rawBgG, rawBgB, bgA] = parseColorChannels(bg)
+    let bgR = rawBgR
+    let bgG = rawBgG
+    let bgB = rawBgB
 
     // 若背景自身也是半透明色彩，先将背景与不透明底色（默认白色）进行预合成
     if (bgA < 1) {
@@ -132,7 +135,6 @@ export function blendAlpha(
         bgR = Math.round(bgA * bgR + (1 - bgA) * underR)
         bgG = Math.round(bgA * bgG + (1 - bgA) * underG)
         bgB = Math.round(bgA * bgB + (1 - bgA) * underB)
-        bgA = 1
     }
 
     if (fgA >= 1) {
