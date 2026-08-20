@@ -13,6 +13,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { extractModuleSpecifiers } from './extract-module-specifiers.js';
 import type { ComponentFileManifest } from './registry-manifest.types.js';
+import {
+    DEFAULT_LIB_EXCLUDE,
+    DEFAULT_MANIFEST_OVERRIDES,
+    applyManifestOverrides,
+} from './scan-manifest.js';
 
 export type { ComponentFileManifest } from './registry-manifest.types.js';
 
@@ -21,8 +26,15 @@ export interface ScanOptions {
     composablesDir: string;
     libDir: string;
     directivesDir: string;
-    /** Filenames to exclude from lib output (e.g. 'utils.ts' — consumer creates their own). */
-    libExclude?: Set<string>;
+    /** 排除的 lib 文件集合，未指定时默认使用 DEFAULT_LIB_EXCLUDE */
+    libExclude?: ReadonlySet<string>;
+    /**
+     * 依赖覆盖清单。
+     * - undefined（默认）：自动应用 DEFAULT_MANIFEST_OVERRIDES
+     * - Record<...>: 应用自定义覆盖清单
+     * - false: 禁用覆盖，仅返回纯 AST 扫描结果
+     */
+    manifestOverrides?: Record<string, Partial<Pick<ComponentFileManifest, 'directives'>>> | false;
 }
 
 const ALIAS_PREFIXES = {
@@ -199,6 +211,7 @@ function scanComponent(
 
     const queue = [...diskFiles];
     const visited = new Set<string>();
+    const libExclude = options.libExclude ?? DEFAULT_LIB_EXCLUDE;
 
     // 用游标代替 queue.shift()：数组头部出队是 O(n)，文件较多时整体退化为 O(n²)；
     // 遍历顺序不影响结果正确性，游标即可
@@ -227,7 +240,7 @@ function scanComponent(
                 }
                 case 'lib': {
                     const resolved = resolveExtension(classified.name, options.libDir);
-                    if (resolved !== null && !options.libExclude?.has(resolved)) {
+                    if (resolved !== null && !libExclude.has(resolved)) {
                         lib.add(resolved);
                     }
                     break;
@@ -300,6 +313,10 @@ export function scanComponentFiles(options: ScanOptions): Record<string, Compone
 
     for (const dir of componentDirs) {
         manifest[dir] = scanComponent(dir, options);
+    }
+
+    if (options.manifestOverrides !== false) {
+        applyManifestOverrides(manifest, options.manifestOverrides ?? DEFAULT_MANIFEST_OVERRIDES);
     }
 
     return manifest;

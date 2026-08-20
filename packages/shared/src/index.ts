@@ -14,6 +14,11 @@ export type {
     MergedRegistryEntry,
     RegistryManifest,
 } from './registry-manifest.types.js';
+export {
+    DEFAULT_LIB_EXCLUDE,
+    DEFAULT_MANIFEST_OVERRIDES,
+    applyManifestOverrides,
+} from './scan-manifest.js';
 export type {
     RegistryFileType,
     RegistryFile,
