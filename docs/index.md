@@ -87,6 +87,7 @@ draft ──评审通过──▶ active ──落地完成──▶ done ──
 | [注册表编译与AST静态转换管线模块化方案](plans/注册表编译与AST静态转换管线模块化方案.md) | done | RegistryCompiler 深模块编译流水线、SourceProvider 内存/磁盘双适配器 Seam、AST 语义安全重写与发射器解耦 |
 | [全工程虚拟文件系统统一与持久化深模块重构方案](plans/全工程虚拟文件系统统一与持久化深模块重构方案.md) | done | 跨包 VFS 基础设施（`brutx-shared-vue/fs`）、CLI 缓存/审计持久化深模块、清除双轨适配器、设计令牌纯计算编译器与脚手架事务引擎 |
 | [Tailwind颜色双轨与工具函数单一信源治理方案](plans/Tailwind颜色双轨与工具函数单一信源治理方案.md) | done | 颜色令牌单一信源派生 BRUTAL_COLOR_NAMES、UI 与 CLI 工具函数模板同源生成、FOCUS_RING_CLASSES 导出闭环与四端 CI 门禁 |
+| [编译扫描排除清单与覆盖规则下沉方案](plans/编译扫描排除清单与覆盖规则下沉方案.md) | **active** | 将 LIB_EXCLUDE、MANIFEST_OVERRIDES 与 applyManifestOverrides 下沉至 shared，消除 registry 跨包非法引用与硬编码 |
 
 
 ## 归档方案（archive/2026/）
