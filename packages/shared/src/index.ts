@@ -71,5 +71,17 @@ export {
     Z_INDEX_CLASS_ENTRIES,
     BRUTAL_Z_INDEX_NAMES,
 } from './design-tokens.js';
-
-
+export type {
+    ColorChannels,
+    ColorInput,
+    ContrastLevel,
+} from './color-contrast.js';
+export {
+    parseColorChannels,
+    blendAlpha,
+    srgbToLinear,
+    getRelativeLuminance,
+    calculateContrastRatio,
+    CONTRAST_RATIO_THRESHOLDS,
+    isContrastCompliant,
+} from './color-contrast.js';

@@ -236,3 +236,17 @@ export function normalizeColor(color: string): string | null {
     const hasAlpha = hsv.a < 1
     return formatColor(hsv, 'hex', hasAlpha)
 }
+
+export {
+    parseColorChannels,
+    blendAlpha,
+    srgbToLinear,
+    getRelativeLuminance,
+    calculateContrastRatio,
+    CONTRAST_RATIO_THRESHOLDS,
+    isContrastCompliant,
+    type ColorChannels,
+    type ColorInput,
+    type ContrastLevel,
+} from 'brutx-shared-vue'
+
