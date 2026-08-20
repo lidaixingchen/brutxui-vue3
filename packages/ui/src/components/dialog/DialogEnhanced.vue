@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, onBeforeUnmount } from 'vue'
+import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue'
 import {
     DialogPortal as DialogPortalPrimitive,
     DialogContent as DialogContentPrimitive,
@@ -13,7 +13,7 @@ import DialogOverlay from './DialogOverlay.vue'
 import { dialogContentVariants, dialogCloseVariants } from './dialog-variants'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
-import { useDialogEnhanced, type ResizeCorner } from '@/composables/useDialogEnhanced'
+import { useDialogGeometry, type ResizeCorner } from '@/composables/useDialogGeometry'
 
 interface DialogEnhancedProps {
     draggable?: boolean
@@ -77,8 +77,7 @@ const {
     contentStyle: composableContentStyle,
     onDragStart,
     onResizeStart,
-    handleClose,
-} = useDialogEnhanced(() => ({
+} = useDialogGeometry(() => ({
     draggable: props.draggable,
     dragHandle: props.dragHandle,
     bounds: props.bounds,
@@ -89,13 +88,33 @@ const {
     maxWidth: props.maxWidth,
     maxHeight: props.maxHeight,
     aspectRatio: props.aspectRatio,
-    beforeClose: props.beforeClose,
-    onOpen: () => emit('open'),
-    onClose: () => emit('close'),
-    onUpdateOpen: (value) => emit('update:open', value),
 }))
 
 void contentRef
+
+let isClosing = false
+
+async function handleClose(): Promise<void> {
+    if (isClosing) return
+    if (!props.beforeClose) {
+        emit('close')
+        emit('update:open', false)
+        return
+    }
+
+    isClosing = true
+    try {
+        const result = await props.beforeClose()
+        if (result !== false) {
+            emit('close')
+            emit('update:open', false)
+        }
+    } catch (error) {
+        console.error('[DialogEnhanced] beforeClose 执行失败:', error)
+    } finally {
+        isClosing = false
+    }
+}
 
 const contentClasses = computed(() =>
     cn(
@@ -185,6 +204,10 @@ watch(
     },
     { immediate: true }
 )
+
+onMounted(() => {
+    emit('open')
+})
 
 onBeforeUnmount(() => {
     clearDestroySlotTimer()

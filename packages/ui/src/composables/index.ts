@@ -14,7 +14,7 @@
 export { useToast, provideToast, createToast, destroyFallback as destroyToastFallback } from './useToast'
 export type { ToastItem, ToastPosition, ToastStackOptions, PromiseToastOptions } from './useToast'
 
-export { useMessage, destroyMessageSystem } from './useMessage'
+export { useMessage, destroyFallback as destroyMessageFallback, destroyMessageSystem } from './useMessage'
 export type { MessageItem, MessageOptions, MessageType, UseMessageReturn } from './useMessage'
 
 export { useTheme, provideTheme, createTheme, destroyFallback as destroyThemeFallback } from './useTheme'
@@ -42,6 +42,18 @@ export type { TransferPanelItem, TransferPanelKey, UseTransferPanelSelectionOpti
 
 export { useDialog } from './useDialog'
 export type { UseDialogReturn, ShowDialogOptions } from './useDialog'
+
+export { useDialogGeometry } from './useDialogGeometry'
+export type {
+    UseDialogGeometryOptions,
+    UseDialogGeometryReturn,
+    DraggableDialogOptions,
+    ResizableDialogOptions,
+    ResizeCorner,
+} from './useDialogGeometry'
+
+export { useDialogEnhanced } from './useDialogEnhanced'
+export type { UseDialogEnhancedOptions, UseDialogEnhancedReturn } from './useDialogEnhanced'
 
 export { useMessageBox } from './useMessageBox'
 export type { UseMessageBoxReturn, MessageBoxOptions } from './useMessageBox'

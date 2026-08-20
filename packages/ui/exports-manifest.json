@@ -107,6 +107,7 @@
     "useDebounce.ts",
     "useDialog.ts",
     "useDialogEnhanced.ts",
+    "useDialogGeometry.ts",
     "useFormFieldValidation.ts",
     "useGlitchEffect.ts",
     "useKanban.ts",
