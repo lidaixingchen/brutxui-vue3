@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
+import ts from 'typescript';
 import { MetadataManager } from './metadata-manager.js';
 
 describe('MetadataManager (AST-assisted Component Metadata Insertion)', () => {
@@ -71,7 +72,7 @@ export const COMPONENTS: Record<string, RegistryComponentMeta> = {
         expect(aaIdx).toBeLessThan(accordionIdx);
     });
 
-    it('能够按字母序在末尾插入新组件元数据', () => {
+    it('能够按字母序在末尾插入新组件元数据且无双逗号或语法错误', () => {
         const result = metadataManager.injectComponentMeta(sampleComponentsSource, {
             kebabName: 'toast',
             titleZh: '通知',
@@ -84,6 +85,30 @@ export const COMPONENTS: Record<string, RegistryComponentMeta> = {
         const dialogIdx = result.indexOf('dialog: {');
         const toastIdx = result.indexOf('toast: {');
         expect(dialogIdx).toBeLessThan(toastIdx);
+
+        // 验证无双逗号
+        expect(result).not.toContain('},\n,');
+        expect(result).not.toContain('},\n    ,');
+
+        // 验证生成的 TS 代码完全语法合法
+        const sf = ts.createSourceFile('test.ts', result, ts.ScriptTarget.Latest, true);
+        expect(sf.parseDiagnostics.length).toBe(0);
+    });
+
+    it('对包含单引号与反斜杠的输入能够正确转义', () => {
+        const result = metadataManager.injectComponentMeta(sampleComponentsSource, {
+            kebabName: 'special',
+            titleZh: "带有 '单引号' 和 \\ 路径的组件",
+            category: 'utility',
+            dependencies: ['reka-ui'],
+            description: "It's a \\special\\ component.",
+        });
+
+        expect(result).toContain("titleZh: '带有 \\'单引号\\' 和 \\\\ 路径的组件',");
+        expect(result).toContain("description: 'It\\'s a \\\\special\\\\ component.',");
+
+        const sf = ts.createSourceFile('test.ts', result, ts.ScriptTarget.Latest, true);
+        expect(sf.parseDiagnostics.length).toBe(0);
     });
 
     it('若组件已存在则幂等返回原内容不重复插入', () => {

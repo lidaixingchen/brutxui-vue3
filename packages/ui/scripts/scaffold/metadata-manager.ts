@@ -8,6 +8,14 @@ export interface NewComponentMetaInput {
     description?: string;
 }
 
+function escapeTsString(str: string): string {
+    return str
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/\r/g, '')
+        .replace(/\n/g, '\\n');
+}
+
 export class MetadataManager {
     /**
      * 将新组件元数据以 ASCII 字母序无损插入到 components.ts 的 COMPONENTS 对象字面量中。
@@ -54,7 +62,6 @@ export class MetadataManager {
         }
 
         const properties = componentsObjectLiteral.properties;
-        let insertIndex = -1;
         let insertAnchorPos = -1;
 
         for (let i = 0; i < properties.length; i++) {
@@ -73,49 +80,52 @@ export class MetadataManager {
                 return sourceText;
             }
 
-            if (keyName > kebabName && insertIndex === -1) {
-                insertIndex = i;
+            if (keyName > kebabName && insertAnchorPos === -1) {
                 insertAnchorPos = prop.getFullStart();
                 break;
             }
         }
 
-        // 生成新条目的代码字符串
-        const formattedKey = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(kebabName)
-            ? kebabName
-            : `'${kebabName}'`;
+        // 生成新条目的代码字符串（带转义安全保护）
+        const escapedKey = escapeTsString(kebabName);
+        const formattedKey = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(escapedKey)
+            ? escapedKey
+            : `'${escapedKey}'`;
 
-        const depsFormatted = dependencies.map(d => `'${d}'`).join(', ');
+        const depsFormatted = dependencies
+            .map(d => `'${escapeTsString(d)}'`)
+            .join(', ');
 
         const formattedEntry = [
             `    ${formattedKey}: {`,
-            `        titleZh: '${titleZh}',`,
-            `        category: '${category}',`,
+            `        titleZh: '${escapeTsString(titleZh)}',`,
+            `        category: '${escapeTsString(category)}',`,
             `        dependencies: [${depsFormatted}],`,
-            `        description: '${description}',`,
+            `        description: '${escapeTsString(description)}',`,
             `    },`,
         ].join('\n');
 
-        // 如果找到了字母序大于新 key 的节点，在其起始位置（包含前导换行/缩进）前插入
+        // 1. 若找到字母序大于新 key 的节点，在其起始位置（包含前导换行/缩进）前插入
         if (insertAnchorPos !== -1) {
             const before = sourceText.slice(0, insertAnchorPos);
             const after = sourceText.slice(insertAnchorPos);
             return `${before}\n${formattedEntry}${after}`;
         }
 
-        // 如果没有找到（即新 key 字母序在最后），则在最后一个属性之后插入
-        if (properties.length > 0) {
-            const lastProp = properties[properties.length - 1];
-            const endPos = lastProp.getEnd();
-            const before = sourceText.slice(0, endPos);
-            const after = sourceText.slice(endPos);
+        // 2. 若新 key 字母序排在最后（或列表已有属性但未命中更大 key）：
+        // 定位对象字面量的右闭合大括号，在其前导换行处插入，避免 lastProp.getEnd() 导致双逗号
+        const closeBracePos = componentsObjectLiteral.getEnd() - 1;
+        const lastNewlineBeforeClose = sourceText.lastIndexOf('\n', closeBracePos);
+
+        if (lastNewlineBeforeClose !== -1 && lastNewlineBeforeClose >= componentsObjectLiteral.getStart()) {
+            const before = sourceText.slice(0, lastNewlineBeforeClose);
+            const after = sourceText.slice(lastNewlineBeforeClose);
             return `${before}\n${formattedEntry}${after}`;
         }
 
-        // 如果对象原本为空
-        const openBracePos = componentsObjectLiteral.getStart(sourceFile) + 1;
-        const before = sourceText.slice(0, openBracePos);
-        const after = sourceText.slice(openBracePos);
+        // 3. 回退处理
+        const before = sourceText.slice(0, closeBracePos);
+        const after = sourceText.slice(closeBracePos);
         return `${before}\n${formattedEntry}\n${after}`;
     }
 }

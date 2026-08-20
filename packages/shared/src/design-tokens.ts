@@ -548,6 +548,3 @@ export const Z_INDEX_CLASS_ENTRIES: ReadonlyArray<{ name: string; value: number 
 export const BRUTAL_Z_INDEX_NAMES: readonly string[] = Object.freeze(
     Array.from(new Set(Z_INDEX_CLASS_ENTRIES.map(e => e.name))).sort(),
 );
-
-
-
