@@ -79,12 +79,12 @@ node --input-type=module -e "import { twMerge } from 'tailwind-merge'; console.l
 
 ## §5 设计令牌单一信源（SSOT）与多端自动化派生机制
 
-全库设计令牌（颜色、阴影、动效缓动、字体栈、预设值）唯一事实来源为 `packages/shared/src/design-tokens.ts`（严格保持 0 外部依赖）。
+全库设计令牌（颜色、阴影、层级 Z-Index、动效缓动、字体栈、预设值）唯一事实来源为 `packages/shared/src/design-tokens.ts`（严格保持 0 外部依赖）。
 
 **自动化派生流向**：
-- `packages/ui/src/styles.css`：自动生成 `@theme`、`:root/.dark` 基础运行时变量与主题预设（`.theme-*`）；
+- `packages/ui/src/styles.css`：自动生成 `@theme`（包含 `--color-brutal-*` 与 `--z-index-*`）、`:root/.dark` 基础运行时变量与主题预设（`.theme-*`）；
 - `packages/ui/src/preflight.css`：自动生成 body 字体栈回退；
-- `packages/ui/src/lib/utils.ts`：自动生成并注入 `BRUTAL_COLOR_NAMES` 冻结常量，驱动 `extendTailwindMerge` 注册自定义粗野主义颜色；
+- `packages/ui/src/lib/utils.ts`：自动生成并注入 `BRUTAL_COLOR_NAMES` 与 `BRUTAL_Z_INDEX_NAMES` 冻结常量，驱动 `extendTailwindMerge` 注册自定义粗野主义颜色与 Z-Index 组；
 - `packages/cli/src/styles/brutalist.css`：通过注释标记（Marker Injection）自动同步注入 `@theme` 与 `:root/.dark` 令牌及主题预设，并保护后方 650+ 行面向非 Tailwind v4 项目的静态工具类；
 - `packages/cli/src/lib/constants.ts`：通过注释标记自动同步生成分发给终端用户的 `UTILS_TEMPLATE` 与 `CN_FUNCTION_BODY_TEMPLATE` 模板块。
 
@@ -93,12 +93,16 @@ node --input-type=module -e "import { twMerge } from 'tailwind-merge'; console.l
 - 修改令牌只需更新 `packages/shared/src/design-tokens.ts`，运行 `pnpm prebuild:tokens`（或 `pnpm --filter brutx-ui-vue prebuild:tokens`）即可完成多端自动化同构同步；
 - CI 门禁通过 `pnpm --filter brutx-ui-vue prebuild:tokens -- --check` 与 `tsx scripts/check-twmerge-colors.ts` 双重拦截任何未重新生成的漂移。
 
-## §6 `extendTailwindMerge` 粗野主义颜色覆盖与去重机制
+## §6 `extendTailwindMerge` 粗野主义颜色与 Z-Index 覆盖去重机制
 
-在 Tailwind CSS v4 中，通过 `@theme` 注入的 `--color-brutal-*` 属于自定义颜色类组。`tailwind-merge` 默认仅识别标准 Tailwind 调色盘（如 `red-500`、`blue-600`），未注册自定义颜色时，传入外部类（如 `bg-red-500` 覆盖默认 `bg-brutal-primary`）不会被判定为同组冲突，导致两个类名均被保留，最终样式生效结果取决于底层 CSS 规则声明顺序。
+在 Tailwind CSS v4 中：
+1. 通过 `@theme` 注入的 `--color-brutal-*` 属于自定义颜色类组；
+2. 通过 `@theme` 注入的 `--z-index-*` 生成的语义类（如 `z-dialog`、`z-popover`、`z-toast`）是非数字命名的自定义 Z-Index 类。
+
+`tailwind-merge` 默认仅识别标准 Tailwind 调色盘与纯数字/auto 的 `z-*` 类（`[isInteger, 'auto', isArbitraryVariable, isArbitraryValue]`）。若未注册自定义颜色与 Z-Index，传入外部类（如 `bg-red-500` 覆盖 `bg-brutal-primary`，或 `z-50` 覆盖 `z-dialog`）不会被判定为同组冲突，导致两个类名均被保留，最终样式层级取决于底层 CSS 规则声明顺序。
 
 **机制与实现**：
-全库 `cn()` 函数通过 `extendTailwindMerge` 显式扩展 `theme.color` 集合：
+全库 `cn()` 函数通过 `extendTailwindMerge` 显式扩展 `theme.color` 与 `classGroups.z` 集合：
 
 ```ts
 const customTwMerge = extendTailwindMerge({
@@ -106,15 +110,20 @@ const customTwMerge = extendTailwindMerge({
         theme: {
             color: [...BRUTAL_COLOR_NAMES],
         },
+        classGroups: {
+            z: [{ z: [...BRUTAL_Z_INDEX_NAMES] }],
+        },
     },
 });
 ```
 
 **实证效果**：
-- `cn('bg-brutal-primary', 'bg-red-500')` → `'bg-red-500'`（成功识别冲突并去重）；
+- `cn('bg-brutal-primary', 'bg-red-500')` → `'bg-red-500'`（成功识别颜色冲突并去重）；
 - `cn('text-brutal-fg', 'text-blue-600')` → `'text-blue-600'`；
-- `cn('bg-brutal-accent-subtle', 'bg-brutal-success')` → `'bg-brutal-success'`。
+- `cn('z-dialog', 'z-50')` → `'z-50'`（成功识别语义 Z-Index 与数字层级冲突并去重）；
+- `cn('z-popover', 'z-dialog')` → `'z-dialog'`（成功识别不同语义层级冲突并去重）。
 
-通过 `packages/shared/src/design-tokens.ts` 纯函数派生 `BRUTAL_COLOR_NAMES` 并经 `TokenStyleCompiler` 静态注入，确保 UI 库源码与 CLI 分发给用户的工程 100% 具备确定性的粗野主义颜色覆盖去重能力。
+通过 `packages/shared/src/design-tokens.ts` 纯函数派生 `BRUTAL_COLOR_NAMES` 与 `BRUTAL_Z_INDEX_NAMES` 并经 `TokenStyleCompiler` 静态注入，确保 UI 库源码与 CLI 分发给用户的工程 100% 具备确定性的粗野主义颜色与层级覆盖去重能力。
+
 
 

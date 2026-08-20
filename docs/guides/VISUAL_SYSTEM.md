@@ -41,6 +41,13 @@
 | `--brutal-placeholder` | `#9CA3AF` | `#6B7280` | 输入框占位文本颜色 |
 | `--brutal-black` | `#000000` | `#000000` | 基础黑色 |
 | `--brutal-yellow` | `#FFE66D` | `#FFE66D` | 基础黄色 |
+| `--z-index-dropdown` | `1000` | `1000` | 下拉菜单、选择器浮层 |
+| `--z-index-sticky` | `1100` | `1100` | 吸顶导航、吸底栏 |
+| `--z-index-dialog` | `2000` | `2000` | 对话框、抽屉、MessageBox 遮罩与内容 |
+| `--z-index-popover` | `5000` | `5000` | 浮动卡片、气泡弹窗 |
+| `--z-index-tooltip` | `6000` | `6000` | 工具提示（浮于常规 Popover 之上） |
+| `--z-index-toast` | `10010` | `10010` | 全局通知容器与消息提示 |
+| `--z-index-loading` | `9200` | `9200` | 全屏与局部遮罩加载指示器 |
 
 ## 视觉规则 (R1 - R8)
 
@@ -106,6 +113,16 @@
   - **数据与代码（Technical/Data）**：`font-mono font-bold tracking-normal`（用于 Kbd、CodeBlock、Counter、Metric、PinInput）；
   - **正文与辅助描述（Body/Muted）**：`font-medium text-brutal-muted-foreground leading-relaxed`（用于 CardDescription、FormDescription、辅助提示）。
 
+### R9 层级与浮层体系 (Z-Index)
+- **核心规则**：全库浮层、弹窗、提示及遮罩必须严格使用语义 `z-*` 类名（`z-dropdown`, `z-sticky`, `z-dialog`, `z-popover`, `z-tooltip`, `z-toast`, `z-loading`, `z-tour-canvas`, `z-tour-popover`, `z-preview-overlay`, `z-preview-control` 等），杜绝硬编码 `z-50` 或任意值 `z-[9999]`。
+- **阶梯标度契约**：
+  - **Level 1 (下拉/吸顶)**：`z-dropdown` (1000) / `z-sticky` (1100) — Select、Dropdown、Cascader 下拉菜单及 Sticky 容器；
+  - **Level 2 (模态对话框)**：`z-dialog` (2000) — Modal、Dialog、AlertDialog、Drawer/Sheet、MessageBox 遮罩与内容；
+  - **Level 3 (气泡弹层)**：`z-popover` (5000) — Popover、ColorPicker、DatePicker 浮动卡片；
+  - **Level 4 (工具提示)**：`z-tooltip` (6000) — Tooltip 浮层（确保悬停时可浮在 Dialog/Popover 选项之上）；
+  - **Level 5 (顶层通知/引导/加载)**：`z-tour-canvas` (9000), `z-tour-popover` (9001), `z-preview-overlay` (9100), `z-preview-control` (9101), `z-loading` (9200), `z-toast` (10010) — 漫游引导、全屏图片预览、Loading 指示器与全局 Toast 容器。
+- **tailwind-merge 去重保障**：全库 `cn()` 已通过 `classGroups.z` 注册全部语义类名，外部传入 `z-50` 或其他层级类名时可实现确定性覆盖去重（机制见 [TAILWIND_V4_MECHANISMS.md](TAILWIND_V4_MECHANISMS.md) §6）。
+
 ## CVA 变体文件
 
 [CVA.md](CVA.md)
@@ -114,12 +131,13 @@
 
 - **边框与圆角**：`border-3`、`border-brutal`、`border-brutal-dashed`、`rounded-brutal`
 - **阴影**：`shadow-brutal`、`shadow-brutal-sm`、`shadow-brutal-lg`、`shadow-brutal-xl`、`shadow-brutal-primary`、`shadow-brutal-secondary`、`shadow-brutal-destructive`
+- **层级派生类（`@theme --z-index-*` 自动生成 `z-*`）**：`z-dropdown`、`z-sticky`、`z-dialog`、`z-popover`、`z-tooltip`、`z-loading`、`z-toast`、`z-message`、`z-tour-canvas`、`z-tour-popover`、`z-preview-overlay`、`z-preview-control`
 - **颜色派生类（`@theme --color-brutal-*` 自动生成 `bg-` / `text-` / `border-`）**：
   - *品牌与基础*：`bg-brutal-bg`、`text-brutal-fg`、`bg-brutal-primary`、`bg-brutal-secondary`、`bg-brutal-accent`、`bg-brutal-destructive`、`bg-brutal-success`、`bg-brutal-info`、`bg-brutal-muted`、`bg-brutal-yellow`、`bg-brutal-black`
   - *前景家族*：`text-brutal-primary-foreground`、`text-brutal-secondary-foreground`、`text-brutal-accent-foreground`、`text-brutal-destructive-foreground`、`text-brutal-success-foreground`、`text-brutal-info-foreground`、`text-brutal-muted-foreground`
   - *状态色家族*：`bg-brutal-status-success`、`bg-brutal-status-success-foreground`、`bg-brutal-status-warning`、`bg-brutal-status-warning-foreground`、`bg-brutal-status-info`、`bg-brutal-status-info-foreground`、`bg-brutal-status-error`、`bg-brutal-status-error-foreground`
 - **变体支持差异**：
-  - `shadow-brutal*` 与 `bg/text/border-brutal-*` 均经 `@theme` 派生，原生支持 `hover:`、`focus:`、`data-[...]:` 等变体；
+  - `shadow-brutal*`、`z-*` 与 `bg/text/border-brutal-*` 均经 `@theme` 派生，原生支持 `hover:`、`focus:`、`data-[...]:` 等变体；
   - 手写 `@layer utilities` 类（`border-3`、`border-brutal`、`border-brutal-dashed`）**不带变体支持**（如 `hover:border-brutal` 会被静默丢弃，机制见 [TAILWIND_V4_MECHANISMS.md](TAILWIND_V4_MECHANISMS.md) §3）。
 
 ### 主题预设
@@ -142,3 +160,4 @@
 | **按压** | 点击无位移或缺少去影 | 复用 `brutalPress`（位移 + 去影） | 缺少按压反馈会导致交互迟钝无生气 |
 | **前景** | `text-white`、`text-black` 硬编码 | `text-brutal-*-foreground` | 破坏暗色模式与自定义主题下的文本对比度 |
 | **焦点** | 在承载焦点元素上使用 `outline-none` | `FOCUS_RING_CLASSES` | 缺少 forced-colors 恢复块且抑制焦点环渲染 |
+| **层级** | `z-50`、`z-[9999]` 等非标硬编码层级 | `z-dialog`、`z-popover` 等语义工具类 | 破坏 5 级全局层级秩序，引发不同浮层遮挡错乱与去重失效 |

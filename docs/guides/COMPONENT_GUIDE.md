@@ -7,12 +7,14 @@
 - **Props 声明**：统一采用 `<script setup lang="ts">` 配合 `defineProps<T>()` + `withDefaults()`。
 - **无障碍原语**：始终使用 `reka-ui` 实现无障碍无头原语。
 - **统一导出与生成**：始终从 `src/index.ts` 导出新组件及公开的 TypeScript 类型；组件目录下的 `index.ts` 由 `prebuild:component-index` 自动生成，测试文件遵循 `${kebabName}.test.ts` 命名规范。
+- **树结构统一模型**：涉及树形数据结构的组件（如 TreeView、TreeSelect）必须统一使用 `@/types/tree` 的 `TreeNode<T>` 与 `SelectionMode`，严禁在组件内部发明私有树节点接口或重复定义 `TreeSelectTreeNode` 等历史别名。
 - **优先复用库内组件**：创建或修改组件时，优先复用现有 BrutxUI 组件，禁止用 native HTML 元素替代已有组件（如用 `Button` 而非 `<button>`、`Select` 系列而非 `<select>`/`<option>`、`Badge` 而非手写 badge `<div>`、`Input` 而非 `<input>`），防止重复造轮子；仅在特殊 ARIA 角色、内联图标切换等无对应组件的场景下方可使用 native 元素。
 - **定价区单一主实现**：`PricingSection` 是定价区唯一主实现，支持一次性价格与订阅切换；定价能力一律扩展 `PricingSection`，禁止新增或维护第二套定价逻辑。
 
 ### 2. 样式与扫描契约 (Styling & Scan Contracts)
 
 - **变体隔离**：变体逻辑提取到同目录 `*-variants.ts`，使用 CVA 定义并由组件 `import` 引入，不得在 `.vue` 内联定义。
+- **层级标尺与浮层语义规范**：所有弹窗、抽屉、下拉、气泡、提示及遮罩必须统一使用全局语义 `z-*` 类名（`z-dropdown`, `z-dialog`, `z-popover`, `z-tooltip`, `z-toast`, `z-loading` 等），禁止手写 `z-50` 或任意值 `z-[9999]`（规则见 [VISUAL_SYSTEM.md](VISUAL_SYSTEM.md) R9）。
 - **完整类名字面量（@source 契约）**：始终通过 `cn()` 合并类——禁止把运行时值插值进类名（每个完整类名必须是可被 `@source` 扫描的源码字面量，由 `check:class-literals` 门禁强制，测试文件不得成为产物 CSS 的字面量来源）；从封闭常量表选取完整字面量再与静态片段组合（如 shared-input-variants 的 `validationBorderColors[variant]`）属合法例外，不算拼接。
 - **动态类计算规范**：动态类合并默认在 `computed()` 中完成（条件三目/多分支/动态对象键留在 JS 侧）；模板内 `cn()` 仅限「计算值或静态字面量 + 单个尾巴」的轻量二参数合并（如 `:class="cn('flex flex-col gap-1', props.class)"`）。
 - **变体键命名统一**：变体键 `danger` 是统一惯例（alert/badge/button/checkbox/counter/progress/radio-group/switch/tags-input/timeline）：语义键 `danger` 映射 `brutal-destructive` token，勿重命名。
@@ -74,7 +76,7 @@
 
 | 顺序 | 阶段 | 操作 / 运行命令 | 说明 / 验证方式 |
 | --- | --- | --- | --- |
-| 1 | **元数据登记** | 在 `packages/shared/src/components.ts` 的 `COMPONENTS` 中登记元数据（先 grep 确认 key 未被占用） | 必填 `titleZh`（中文名）、`category`（所属分类）、`description`、`dependencies`，可选 `kind` 等元数据（全库单一事实来源） |
+| 1 | **脚手架生成与元数据登记** | 根目录下运行 `pnpm generate:component`（或在 `packages/shared/src/components.ts` 的 `COMPONENTS` 中登记） | 脚手架已自动按字母序在 `components.ts` 注入元数据并建立骨架；必填 `titleZh`、`category`、`description`、`dependencies`（单一信源） |
 | 2 | **生成清单** | 在根目录下运行 `pnpm --filter brutx-ui-vue prebuild:scan` | 自动发现新组件文件，更新 `registry-manifest.json` |
 | 3 | **编译注册表** | 在根目录下运行 `pnpm --filter brutx-registry-vue build` | 编译组件 JSON，可用 `pnpm --filter brutx-registry-vue validate` 验证 |
 | 4 | **国际化检查** | 运行 `pnpm check:i18n:strict` | 严格校验中英文国际化 key 的镜像对称性 |
