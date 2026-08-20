@@ -61,6 +61,13 @@ describe('isInteractiveElement', () => {
         const el = document.createElement('span')
         expect(isInteractiveElement(el)).toBe(false)
     })
+
+    it('returns true for nested elements inside interactive buttons or links', () => {
+        const button = document.createElement('button')
+        const span = document.createElement('span')
+        button.appendChild(span)
+        expect(isInteractiveElement(span)).toBe(true)
+    })
 })
 
 describe('useDialogGeometry', () => {
@@ -184,6 +191,35 @@ describe('useDialogGeometry', () => {
 
         document.dispatchEvent(new PointerEvent('pointerup'))
         expect(result.isResizing.value).toBe(false)
+    })
+
+    it('ignores non-left-click on onDragStart', () => {
+        const { result } = createWrapper({ draggable: true })
+        const div = document.createElement('div')
+        result.contentRef.value = div
+
+        const rightClickEvent = new MouseEvent('mousedown', { clientX: 100, clientY: 100, button: 2 })
+        Object.defineProperty(rightClickEvent, 'target', { value: div })
+        result.onDragStart(rightClickEvent)
+        expect(result.isDragging.value).toBe(false)
+    })
+
+    it('preserves aspectRatio when maxWidth constraint is active', () => {
+        const { result } = createWrapper({ resizable: true, aspectRatio: 2, maxWidth: 300 })
+        const div = document.createElement('div')
+        result.contentRef.value = div
+        result.setSize({ width: 200, height: 100 })
+
+        const resizeEvent = new MouseEvent('mousedown', { clientX: 200, clientY: 100 })
+        Object.defineProperty(resizeEvent, 'target', { value: div })
+        result.onResizeStart(resizeEvent, 'se')
+
+        // 尝试缩放到宽度 400，高度 200，但受 maxWidth: 300 限制，宽度应为 300，高度应为 150
+        document.dispatchEvent(new PointerEvent('pointermove', { clientX: 400, clientY: 200 }))
+        expect(result.size.value.width).toBe(300)
+        expect(result.size.value.height).toBe(150)
+
+        document.dispatchEvent(new PointerEvent('pointerup'))
     })
 
     it('works without options', () => {
