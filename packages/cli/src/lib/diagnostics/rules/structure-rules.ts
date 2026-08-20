@@ -98,7 +98,7 @@ export const structureUtilsFileRule: DiagnosticRule = {
 export const structureUtilsCnRule: DiagnosticRule = {
     id: 'structure.utils-cn',
     category: 'structure',
-    name: 'cn() utility function exists',
+    name: 'cn() utility function and FOCUS_RING_CLASSES exist',
     requiresConfig: true,
     async check(ctx: DiagnosticContext): Promise<CheckResult> {
         const existingUtilsFile = await findExistingUtilsFile(ctx);
@@ -106,34 +106,61 @@ export const structureUtilsCnRule: DiagnosticRule = {
             return {
                 ruleId: 'structure.utils-cn',
                 category: 'structure',
-                name: 'cn() function exists',
+                name: 'cn() function and FOCUS_RING_CLASSES exist',
                 status: 'error',
                 message: 'Utils file not found.',
                 fixId: FixId.AddCnFunction,
-                fixDescription: 'Create utils file with cn() function',
+                fixDescription: 'Create utils file with cn() function and FOCUS_RING_CLASSES',
             };
         }
 
         const content = await ctx.fs.readFile(existingUtilsFile, 'utf-8');
         const hasCnDeclaration = /^\s*export\s+(?:function|const)\s+cn\b/m.test(content);
+        const hasFocusRing = /^\s*export\s+const\s+FOCUS_RING_CLASSES\b/m.test(content);
+        const hasBrutalMerge = /extendTailwindMerge|BRUTAL_COLOR_NAMES|brutal-primary/.test(content);
+
         if (!hasCnDeclaration) {
             return {
                 ruleId: 'structure.utils-cn',
                 category: 'structure',
-                name: 'cn() function exists',
+                name: 'cn() function and FOCUS_RING_CLASSES exist',
                 status: 'error',
                 message: 'cn() function not found in utils file.',
                 fixId: FixId.AddCnFunction,
-                fixDescription: 'Add cn() function to utils file',
+                fixDescription: 'Add cn() function and FOCUS_RING_CLASSES to utils file',
+            };
+        }
+
+        if (!hasFocusRing) {
+            return {
+                ruleId: 'structure.utils-cn',
+                category: 'structure',
+                name: 'cn() function and FOCUS_RING_CLASSES exist',
+                status: 'warn',
+                message: 'FOCUS_RING_CLASSES not found in utils file. Components relying on standard focus ring may fail to compile.',
+                fixId: FixId.AddCnFunction,
+                fixDescription: 'Add FOCUS_RING_CLASSES to utils file',
+            };
+        }
+
+        if (!hasBrutalMerge) {
+            return {
+                ruleId: 'structure.utils-cn',
+                category: 'structure',
+                name: 'cn() function and FOCUS_RING_CLASSES exist',
+                status: 'warn',
+                message: 'cn() utility uses standard twMerge without Brutalism color extensions. Custom color overrides may not resolve conflicts deterministically.',
+                fixId: FixId.AddCnFunction,
+                fixDescription: 'Upgrade cn() with extendTailwindMerge and Brutalism colors',
             };
         }
 
         return {
             ruleId: 'structure.utils-cn',
             category: 'structure',
-            name: 'cn() function exists',
+            name: 'cn() function and FOCUS_RING_CLASSES exist',
             status: 'pass',
-            message: 'cn() function found.',
+            message: 'cn() function and FOCUS_RING_CLASSES found with Brutalism color extensions.',
         };
     },
     async fix(ctx: DiagnosticRepairContext): Promise<RuleFixResult> {
@@ -145,32 +172,84 @@ export const structureUtilsCnRule: DiagnosticRule = {
             };
         }
 
-        const existing = await ctx.fs.readFile(existingUtilsFile, 'utf-8');
-        if (/^\s*export\s+(?:function|const)\s+cn\b/m.test(existing)) {
+        let existing = await ctx.fs.readFile(existingUtilsFile, 'utf-8');
+        const hasCnDeclaration = /^\s*export\s+(?:function|const)\s+cn\b/m.test(existing);
+        const hasFocusRing = /^\s*export\s+const\s+FOCUS_RING_CLASSES\b/m.test(existing);
+        const hasBrutalMerge = /extendTailwindMerge|BRUTAL_COLOR_NAMES|brutal-primary/.test(existing);
+
+        if (hasCnDeclaration && hasFocusRing && hasBrutalMerge) {
             return {
                 status: 'skipped',
-                message: 'cn() function already exists.',
+                message: 'cn() function and FOCUS_RING_CLASSES are already fully configured.',
             };
         }
 
-        const importLines: string[] = [];
-        if (!/^\s*import\b.*?\bfrom\s+["']clsx["']/m.test(existing)) {
-            importLines.push('import { type ClassValue, clsx } from "clsx";');
-        }
-        if (!/^\s*import\b.*?\bfrom\s+["']tailwind-merge["']/m.test(existing)) {
-            importLines.push('import { twMerge } from "tailwind-merge";');
+        if (!hasCnDeclaration) {
+            const importLines: string[] = [];
+            if (!/^\s*import\b.*?\bfrom\s+["']clsx["']/m.test(existing)) {
+                importLines.push('import { type ClassValue, clsx } from "clsx";');
+            }
+            if (!/^\s*import\b.*?\bfrom\s+["']tailwind-merge["']/m.test(existing)) {
+                importLines.push('import { extendTailwindMerge } from "tailwind-merge";');
+            } else if (!/extendTailwindMerge/.test(existing)) {
+                existing = existing.replace(
+                    /import\s+\{([^}]+)\}\s+from\s+["']tailwind-merge["']/,
+                    'import { $1, extendTailwindMerge } from "tailwind-merge"',
+                );
+            }
+
+            const addition = importLines.length > 0
+                ? `${importLines.join('\n')}\n${CN_FUNCTION_BODY_TEMPLATE}`
+                : CN_FUNCTION_BODY_TEMPLATE;
+
+            const newContent = existing.trim().length > 0 ? `${existing}\n${addition}` : addition;
+            await ctx.transaction.writeFile(existingUtilsFile, newContent);
+
+            return {
+                status: 'applied',
+                message: 'Added cn() function with Brutalism color extensions and FOCUS_RING_CLASSES.',
+            };
         }
 
-        const addition = importLines.length > 0
-            ? `${importLines.join('\n')}\n${CN_FUNCTION_BODY_TEMPLATE}`
-            : CN_FUNCTION_BODY_TEMPLATE;
+        let modified = existing;
 
-        const newContent = existing.trim().length > 0 ? `${existing}\n${addition}` : addition;
-        await ctx.transaction.writeFile(existingUtilsFile, newContent);
+        if (!hasFocusRing) {
+            const focusRingDeclaration = `export const FOCUS_RING_CLASSES =
+    "focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden";
+`;
+            modified = `${modified.trim()}\n\n${focusRingDeclaration}`;
+        }
+
+        if (!hasBrutalMerge) {
+            if (!/^\s*import\b.*?\bfrom\s+["']tailwind-merge["']/m.test(modified)) {
+                modified = `import { extendTailwindMerge } from "tailwind-merge";\n${modified}`;
+            } else if (!/extendTailwindMerge/.test(modified)) {
+                modified = modified.replace(
+                    /import\s+\{([^}]+)\}\s+from\s+["']tailwind-merge["']/,
+                    'import { $1, extendTailwindMerge } from "tailwind-merge"',
+                );
+            }
+
+            const colorAndMergeBlock = CN_FUNCTION_BODY_TEMPLATE.replace(
+                /export\s+const\s+FOCUS_RING_CLASSES[\s\S]*?;/,
+                '',
+            ).trim();
+
+            if (/^\s*export\s+(?:function|const)\s+cn\b[\s\S]*?\{[\s\S]*?\}/m.test(modified)) {
+                modified = modified.replace(
+                    /^\s*export\s+(?:function|const)\s+cn\b[\s\S]*?\{[\s\S]*?\}/m,
+                    colorAndMergeBlock,
+                );
+            } else {
+                modified = `${modified.trim()}\n\n${colorAndMergeBlock}`;
+            }
+        }
+
+        await ctx.transaction.writeFile(existingUtilsFile, modified);
 
         return {
             status: 'applied',
-            message: 'Added cn() function.',
+            message: 'Upgraded utils file with Brutalism color extensions and FOCUS_RING_CLASSES.',
         };
     },
 };

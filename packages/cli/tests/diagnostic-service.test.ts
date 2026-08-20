@@ -335,6 +335,8 @@ describe('DiagnosticEngine & Env Rules (Ticket 1)', () => {
             const content = await fs.readFile('/app/src/lib/utils.ts', 'utf-8');
             expect(content).toContain('tailwind-merge');
             expect(content).toContain('export function cn');
+            expect(content).toContain('FOCUS_RING_CLASSES');
+            expect(content).toContain('BRUTAL_COLOR_NAMES');
 
             // 再次执行自愈，应为 skipped，不重复注入
             const secondRepair = await repair({
@@ -344,7 +346,49 @@ describe('DiagnosticEngine & Env Rules (Ticket 1)', () => {
             });
             expect(secondRepair.applied).toHaveLength(0);
         });
+
+        it('diagnoses and upgrades utils file missing FOCUS_RING_CLASSES or Brutalism color extensions', async () => {
+            const fs = new MemoryFileSystemAdapter();
+            await fs.ensureDir('/app/src/lib');
+            await fs.writeJson('/app/components.json', {
+                $schema: 'https://example.com/schema.json',
+                $version: 1,
+                style: 'brutalism',
+                tailwind: { config: 'tailwind.config.js', css: '@/styles.css' },
+                aliases: { components: '@/components', utils: '@/lib/utils', composables: '@/composables' },
+            });
+            // 只有基础 twMerge 和 cn，无 FOCUS_RING_CLASSES 和 extendTailwindMerge
+            await fs.writeFile(
+                '/app/src/lib/utils.ts',
+                'import { type ClassValue, clsx } from "clsx";\nimport { twMerge } from "tailwind-merge";\n\nexport function cn(...inputs: ClassValue[]) {\n    return twMerge(clsx(inputs));\n}\n',
+            );
+
+            // 诊断应提示 warn（缺少 FOCUS_RING_CLASSES 或颜色扩展）
+            const initialReport = await diagnose({
+                cwd: '/app',
+                fs,
+                ruleIds: ['structure.utils-cn'],
+            });
+            expect(initialReport.getByRuleId('structure.utils-cn')[0].status).toBe('warn');
+
+            // 执行自愈
+            const repairReport = await repair({
+                cwd: '/app',
+                fs,
+                ruleIds: ['structure.utils-cn'],
+            });
+            expect(repairReport.applied).toHaveLength(1);
+
+            const upgraded = await fs.readFile('/app/src/lib/utils.ts', 'utf-8');
+            expect(upgraded).toContain('extendTailwindMerge');
+            expect(upgraded).toContain('FOCUS_RING_CLASSES');
+            expect(upgraded).toContain('BRUTAL_COLOR_NAMES');
+
+            // 复检全 pass
+            expect(repairReport.freshReport.getByRuleId('structure.utils-cn')[0].status).toBe('pass');
+        });
     });
+
 
     describe('Integrity Domain Rules & Offline Semantics (Ticket 4)', () => {
         it('detects missing component files recorded in manifest', async () => {
