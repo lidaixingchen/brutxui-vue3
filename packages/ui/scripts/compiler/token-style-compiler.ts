@@ -8,6 +8,8 @@ import {
     EASING_TOKENS,
     SUBTLE_COLOR_DEFS,
     SHADOW_DEFINITIONS,
+    NON_COLOR_TOKEN_KEYS,
+    BRUTAL_COLOR_NAMES,
     type ThemeTokens,
 } from 'brutx-shared-vue';
 
@@ -19,6 +21,10 @@ export const PRESETS_START = '/* @brutx:theme-presets:start */';
 export const PRESETS_END = '/* @brutx:theme-presets:end */';
 export const FONT_STACK_START = '/* @brutx:font-stack:start */';
 export const FONT_STACK_END = '/* @brutx:font-stack:end */';
+export const COLOR_NAMES_START = '/* @brutx:color-names:start */';
+export const COLOR_NAMES_END = '/* @brutx:color-names:end */';
+export const CLI_UTILS_START = '/* @brutx:cli-utils-template:start */';
+export const CLI_UTILS_END = '/* @brutx:cli-utils-template:end */';
 
 interface ThemeEntry {
     themeVar: string;
@@ -51,15 +57,6 @@ const EASING_ENTRIES: ThemeEntry[] = Object.entries(EASING_TOKENS).map(([key, va
     themeVar: `--ease-brutal-${key}`,
     build: () => val,
 }));
-
-const NON_COLOR_TOKEN_KEYS = new Set<keyof ThemeTokens>([
-    'borderWidth',
-    'borderColor',
-    'shadowOffsetX',
-    'shadowOffsetY',
-    'shadowColor',
-    'radius',
-]);
 
 const DYNAMIC_COLOR_ENTRIES: ThemeEntry[] = (Object.keys(TOKEN_TO_CSS_VAR) as Array<keyof ThemeTokens>)
     .filter(key => !NON_COLOR_TOKEN_KEYS.has(key))
@@ -248,4 +245,94 @@ export class TokenStyleCompiler {
         current = this.patchBetweenMarkers(current, PRESETS_START, PRESETS_END, this.compileThemePresetsBlock(0), 'brutalist.css');
         return { content: current, changed: current !== content };
     }
+
+    public compileColorNamesBlock(): string {
+        const lines = BRUTAL_COLOR_NAMES.map(name => `    '${name}',`);
+        return `const BRUTAL_COLOR_NAMES = [\n${lines.join('\n')}\n];`;
+    }
+
+    public compileCliUtilsTemplate(): string {
+        const colorLines = BRUTAL_COLOR_NAMES.map(name => `    '${name}',`).join('\n');
+        const utilsTemplateStr = [
+            'import { type ClassValue, clsx } from "clsx";',
+            'import { extendTailwindMerge } from "tailwind-merge";',
+            '',
+            'const BRUTAL_COLOR_NAMES = [',
+            colorLines,
+            '] as const;',
+            '',
+            'const customTwMerge = extendTailwindMerge({',
+            '    extend: {',
+            '        theme: {',
+            '            color: [...BRUTAL_COLOR_NAMES],',
+            '        },',
+            '    },',
+            '});',
+            '',
+            'export const FOCUS_RING_CLASSES =',
+            '    "focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden";',
+            '',
+            'export function cn(...inputs: ClassValue[]) {',
+            '    return customTwMerge(clsx(inputs));',
+            '}',
+            '',
+        ].join('\n');
+
+        const bodyTemplateStr = [
+            'const BRUTAL_COLOR_NAMES = [',
+            colorLines,
+            '] as const;',
+            '',
+            'const customTwMerge = extendTailwindMerge({',
+            '    extend: {',
+            '        theme: {',
+            '            color: [...BRUTAL_COLOR_NAMES],',
+            '        },',
+            '    },',
+            '});',
+            '',
+            'export const FOCUS_RING_CLASSES =',
+            '    "focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden";',
+            '',
+            'export function cn(...inputs: ClassValue[]) {',
+            '    return customTwMerge(clsx(inputs));',
+            '}',
+            '',
+        ].join('\n');
+
+        return [
+            `export const UTILS_TEMPLATE = \`${utilsTemplateStr}\`;`,
+            '',
+            '// 与 UTILS_TEMPLATE 逐字节一致，复用其定义保持单一数据源（须置于 UTILS_TEMPLATE 之后避免 TDZ）。',
+            '// doctor 的 AddCnFunction 用它追加到全新的 utils 文件（自带 import，保证自包含）。',
+            'export const CN_FUNCTION_TEMPLATE = UTILS_TEMPLATE;',
+            '',
+            '// 仅函数体（无 import）：doctor 追加到已导入 clsx/tailwind-merge 的文件时使用，',
+            '// 避免同名 import 重复绑定导致 SyntaxError',
+            `export const CN_FUNCTION_BODY_TEMPLATE = \`${bodyTemplateStr}\`;`,
+        ].join('\n');
+    }
+
+    public patchUtilsTs(content: string): PatchResult {
+        const patched = this.patchBetweenMarkers(
+            content,
+            COLOR_NAMES_START,
+            COLOR_NAMES_END,
+            this.compileColorNamesBlock(),
+            'utils.ts',
+        );
+        return { content: patched, changed: patched !== content };
+    }
+
+    public patchCliConstants(content: string): PatchResult {
+        const patched = this.patchBetweenMarkers(
+            content,
+            CLI_UTILS_START,
+            CLI_UTILS_END,
+            this.compileCliUtilsTemplate(),
+            'constants.ts',
+        );
+        return { content: patched, changed: patched !== content };
+    }
 }
+

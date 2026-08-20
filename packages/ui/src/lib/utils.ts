@@ -4,6 +4,7 @@ import { extendTailwindMerge } from 'tailwind-merge'
 // 设计令牌颜色名（styles.css 的 --color-brutal-*）：tailwind-merge 默认不识别自定义色，
 // 未注册时调用方覆盖类（如 bg-red-500 覆盖 bg-brutal-primary）不会与默认类冲突去重，
 // 最终生效取决于 CSS 加载顺序而非 cn() 的合并优先级
+/* @brutx:color-names:start */
 const BRUTAL_COLOR_NAMES = [
     'brutal-accent',
     'brutal-accent-foreground',
@@ -41,9 +42,10 @@ const BRUTAL_COLOR_NAMES = [
     'brutal-success-foreground',
     'brutal-success-subtle',
     'brutal-yellow',
-]
+];
+/* @brutx:color-names:end */
 
-const twMerge = extendTailwindMerge({
+const customTwMerge = extendTailwindMerge({
     extend: {
         theme: {
             color: [...BRUTAL_COLOR_NAMES],
@@ -67,5 +69,5 @@ export const FOCUS_RING_CLASSES =
     'focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden'
 
 export function cn(...inputs: ClassValue[]): string {
-    return twMerge(clsx(inputs))
+    return customTwMerge(clsx(inputs))
 }

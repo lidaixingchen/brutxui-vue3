@@ -189,11 +189,62 @@ export async function getBrutalistCssStyles(): Promise<string> {
 
 export const CURRENT_CONFIG_VERSION = 1;
 
+/* @brutx:cli-utils-template:start */
 export const UTILS_TEMPLATE = `import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { extendTailwindMerge } from "tailwind-merge";
+
+const BRUTAL_COLOR_NAMES = [
+    'brutal-accent',
+    'brutal-accent-foreground',
+    'brutal-accent-subtle',
+    'brutal-bg',
+    'brutal-black',
+    'brutal-destructive',
+    'brutal-destructive-foreground',
+    'brutal-destructive-subtle',
+    'brutal-fg',
+    'brutal-info',
+    'brutal-info-foreground',
+    'brutal-info-subtle',
+    'brutal-muted',
+    'brutal-muted-foreground',
+    'brutal-overlay',
+    'brutal-overlay-subtle',
+    'brutal-placeholder',
+    'brutal-primary',
+    'brutal-primary-foreground',
+    'brutal-primary-subtle',
+    'brutal-ring',
+    'brutal-secondary',
+    'brutal-secondary-foreground',
+    'brutal-secondary-subtle',
+    'brutal-status-error',
+    'brutal-status-error-foreground',
+    'brutal-status-info',
+    'brutal-status-info-foreground',
+    'brutal-status-success',
+    'brutal-status-success-foreground',
+    'brutal-status-warning',
+    'brutal-status-warning-foreground',
+    'brutal-success',
+    'brutal-success-foreground',
+    'brutal-success-subtle',
+    'brutal-yellow',
+] as const;
+
+const customTwMerge = extendTailwindMerge({
+    extend: {
+        theme: {
+            color: [...BRUTAL_COLOR_NAMES],
+        },
+    },
+});
+
+export const FOCUS_RING_CLASSES =
+    "focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden";
 
 export function cn(...inputs: ClassValue[]) {
-    return twMerge(clsx(inputs));
+    return customTwMerge(clsx(inputs));
 }
 `;
 
@@ -203,7 +254,59 @@ export const CN_FUNCTION_TEMPLATE = UTILS_TEMPLATE;
 
 // 仅函数体（无 import）：doctor 追加到已导入 clsx/tailwind-merge 的文件时使用，
 // 避免同名 import 重复绑定导致 SyntaxError
-export const CN_FUNCTION_BODY_TEMPLATE = `export function cn(...inputs: ClassValue[]) {
-    return twMerge(clsx(inputs));
+export const CN_FUNCTION_BODY_TEMPLATE = `const BRUTAL_COLOR_NAMES = [
+    'brutal-accent',
+    'brutal-accent-foreground',
+    'brutal-accent-subtle',
+    'brutal-bg',
+    'brutal-black',
+    'brutal-destructive',
+    'brutal-destructive-foreground',
+    'brutal-destructive-subtle',
+    'brutal-fg',
+    'brutal-info',
+    'brutal-info-foreground',
+    'brutal-info-subtle',
+    'brutal-muted',
+    'brutal-muted-foreground',
+    'brutal-overlay',
+    'brutal-overlay-subtle',
+    'brutal-placeholder',
+    'brutal-primary',
+    'brutal-primary-foreground',
+    'brutal-primary-subtle',
+    'brutal-ring',
+    'brutal-secondary',
+    'brutal-secondary-foreground',
+    'brutal-secondary-subtle',
+    'brutal-status-error',
+    'brutal-status-error-foreground',
+    'brutal-status-info',
+    'brutal-status-info-foreground',
+    'brutal-status-success',
+    'brutal-status-success-foreground',
+    'brutal-status-warning',
+    'brutal-status-warning-foreground',
+    'brutal-success',
+    'brutal-success-foreground',
+    'brutal-success-subtle',
+    'brutal-yellow',
+] as const;
+
+const customTwMerge = extendTailwindMerge({
+    extend: {
+        theme: {
+            color: [...BRUTAL_COLOR_NAMES],
+        },
+    },
+});
+
+export const FOCUS_RING_CLASSES =
+    "focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden";
+
+export function cn(...inputs: ClassValue[]) {
+    return customTwMerge(clsx(inputs));
 }
 `;
+/* @brutx:cli-utils-template:end */
+

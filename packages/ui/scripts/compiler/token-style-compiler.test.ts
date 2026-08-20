@@ -87,5 +87,47 @@ ${THEME_END}
             expect(content).toContain(':root {');
             expect(content).toContain('.theme-pastel {');
         });
+
+        it('能够生成 colorNames 块并成功 patch utils.ts', () => {
+            const block = compiler.compileColorNamesBlock();
+            expect(block).toContain('const BRUTAL_COLOR_NAMES = [');
+            expect(block).toContain("'brutal-primary',");
+            expect(block).toContain("'brutal-primary-subtle',");
+
+            const rawUtils = `
+import { clsx } from 'clsx';
+/* @brutx:color-names:start */
+const old = [];
+/* @brutx:color-names:end */
+export function cn() {}
+`;
+            const { content, changed } = compiler.patchUtilsTs(rawUtils);
+            expect(changed).toBe(true);
+            expect(content).toContain('const BRUTAL_COLOR_NAMES = [');
+            expect(content).toContain("'brutal-accent',");
+            expect(content).not.toContain('const old = [];');
+        });
+
+        it('能够生成 CLI utils 模板并成功 patch constants.ts', () => {
+            const cliTemplate = compiler.compileCliUtilsTemplate();
+            expect(cliTemplate).toContain('export const UTILS_TEMPLATE = `');
+            expect(cliTemplate).toContain('extendTailwindMerge');
+            expect(cliTemplate).toContain('FOCUS_RING_CLASSES');
+            expect(cliTemplate).toContain('export const CN_FUNCTION_TEMPLATE = UTILS_TEMPLATE;');
+            expect(cliTemplate).toContain('export const CN_FUNCTION_BODY_TEMPLATE = `');
+
+            const rawConstants = `
+export const CONFIG_FILES = {};
+/* @brutx:cli-utils-template:start */
+export const UTILS_TEMPLATE = 'old';
+/* @brutx:cli-utils-template:end */
+`;
+            const { content, changed } = compiler.patchCliConstants(rawConstants);
+            expect(changed).toBe(true);
+            expect(content).toContain('export const UTILS_TEMPLATE = `');
+            expect(content).toContain('FOCUS_RING_CLASSES');
+            expect(content).not.toContain("export const UTILS_TEMPLATE = 'old';");
+        });
     });
 });
+

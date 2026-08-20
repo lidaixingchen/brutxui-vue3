@@ -11,13 +11,19 @@ import {
     PRESETS_END,
     FONT_STACK_START,
     FONT_STACK_END,
+    COLOR_NAMES_START,
+    COLOR_NAMES_END,
+    CLI_UTILS_START,
+    CLI_UTILS_END,
 } from './compiler/token-style-compiler.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const STYLES_PATH = path.resolve(__dirname, '..', 'src', 'styles.css');
 const PREFLIGHT_PATH = path.resolve(__dirname, '..', 'src', 'preflight.css');
+const UTILS_PATH = path.resolve(__dirname, '..', 'src', 'lib', 'utils.ts');
 const CLI_BRUTALIST_PATH = path.resolve(__dirname, '..', '..', 'cli', 'src', 'styles', 'brutalist.css');
+const CLI_CONSTANTS_PATH = path.resolve(__dirname, '..', '..', 'cli', 'src', 'lib', 'constants.ts');
 
 function printBlockDiff(
     content: string,
@@ -51,25 +57,43 @@ async function main(): Promise<void> {
     const preflightOriginal = await fs.readFile(PREFLIGHT_PATH, 'utf-8');
     const { content: preflightNext, changed: preflightChanged } = compiler.patchPreflightCss(preflightOriginal);
 
-    // 3. CLI brutalist.css
-    let cliChanged = false;
-    let cliOriginal = '';
-    let cliNext = '';
+    // 3. UI lib/utils.ts
+    const utilsOriginal = await fs.readFile(UTILS_PATH, 'utf-8');
+    const { content: utilsNext, changed: utilsChanged } = compiler.patchUtilsTs(utilsOriginal);
+
+    // 4. CLI brutalist.css
+    let cliBrutalistChanged = false;
+    let cliBrutalistOriginal = '';
+    let cliBrutalistNext = '';
     if (await fs.pathExists(CLI_BRUTALIST_PATH)) {
-        cliOriginal = await fs.readFile(CLI_BRUTALIST_PATH, 'utf-8');
-        const res = compiler.patchCliBrutalistCss(cliOriginal);
-        cliNext = res.content;
-        cliChanged = res.changed;
+        cliBrutalistOriginal = await fs.readFile(CLI_BRUTALIST_PATH, 'utf-8');
+        const res = compiler.patchCliBrutalistCss(cliBrutalistOriginal);
+        cliBrutalistNext = res.content;
+        cliBrutalistChanged = res.changed;
     } else if (isCheckMode) {
         console.error(`✗ CLI brutalist.css 不存在：${CLI_BRUTALIST_PATH}`);
         process.exit(1);
     }
 
-    const hasAnyChange = stylesChanged || preflightChanged || cliChanged;
+    // 5. CLI constants.ts
+    let cliConstantsChanged = false;
+    let cliConstantsOriginal = '';
+    let cliConstantsNext = '';
+    if (await fs.pathExists(CLI_CONSTANTS_PATH)) {
+        cliConstantsOriginal = await fs.readFile(CLI_CONSTANTS_PATH, 'utf-8');
+        const res = compiler.patchCliConstants(cliConstantsOriginal);
+        cliConstantsNext = res.content;
+        cliConstantsChanged = res.changed;
+    } else if (isCheckMode) {
+        console.error(`✗ CLI constants.ts 不存在：${CLI_CONSTANTS_PATH}`);
+        process.exit(1);
+    }
+
+    const hasAnyChange = stylesChanged || preflightChanged || utilsChanged || cliBrutalistChanged || cliConstantsChanged;
 
     if (!hasAnyChange) {
         if (isVerbose || isCheckMode) {
-            console.log('✓ styles.css、preflight.css 与 CLI brutalist.css 令牌块已是最新');
+            console.log('✓ styles.css、preflight.css、utils.ts、CLI brutalist.css 与 CLI constants.ts 令牌与模板块已是最新');
         }
         return;
     }
@@ -84,10 +108,16 @@ async function main(): Promise<void> {
         if (preflightChanged) {
             printBlockDiff(preflightOriginal, FONT_STACK_START, FONT_STACK_END, compiler.compileFontStackBlock(), 'preflight.css 字体栈');
         }
-        if (cliChanged) {
-            printBlockDiff(cliOriginal, THEME_START, THEME_END, compiler.compileThemeBlock(), 'CLI brutalist.css @theme 令牌块');
-            printBlockDiff(cliOriginal, ROOT_START, ROOT_END, compiler.compileRootBlock(0), 'CLI brutalist.css :root/.dark 区块');
-            printBlockDiff(cliOriginal, PRESETS_START, PRESETS_END, compiler.compileThemePresetsBlock(0), 'CLI brutalist.css 主题预设区块');
+        if (utilsChanged) {
+            printBlockDiff(utilsOriginal, COLOR_NAMES_START, COLOR_NAMES_END, compiler.compileColorNamesBlock(), 'utils.ts 颜色名称块');
+        }
+        if (cliBrutalistChanged) {
+            printBlockDiff(cliBrutalistOriginal, THEME_START, THEME_END, compiler.compileThemeBlock(), 'CLI brutalist.css @theme 令牌块');
+            printBlockDiff(cliBrutalistOriginal, ROOT_START, ROOT_END, compiler.compileRootBlock(0), 'CLI brutalist.css :root/.dark 区块');
+            printBlockDiff(cliBrutalistOriginal, PRESETS_START, PRESETS_END, compiler.compileThemePresetsBlock(0), 'CLI brutalist.css 主题预设区块');
+        }
+        if (cliConstantsChanged) {
+            printBlockDiff(cliConstantsOriginal, CLI_UTILS_START, CLI_UTILS_END, compiler.compileCliUtilsTemplate(), 'CLI constants.ts utils 模板块');
         }
         process.exit(1);
     }
@@ -98,10 +128,16 @@ async function main(): Promise<void> {
     if (preflightChanged) {
         await fs.writeFile(PREFLIGHT_PATH, preflightNext, 'utf-8');
     }
-    if (cliChanged) {
-        await fs.writeFile(CLI_BRUTALIST_PATH, cliNext, 'utf-8');
+    if (utilsChanged) {
+        await fs.writeFile(UTILS_PATH, utilsNext, 'utf-8');
     }
-    console.log('✓ styles.css、preflight.css 与 CLI brutalist.css 令牌块已从 design-tokens.ts 重新生成');
+    if (cliBrutalistChanged) {
+        await fs.writeFile(CLI_BRUTALIST_PATH, cliBrutalistNext, 'utf-8');
+    }
+    if (cliConstantsChanged) {
+        await fs.writeFile(CLI_CONSTANTS_PATH, cliConstantsNext, 'utf-8');
+    }
+    console.log('✓ styles.css、preflight.css、utils.ts、CLI brutalist.css 与 CLI constants.ts 令牌块已从 design-tokens.ts 重新生成');
 }
 
 main().catch((err) => {
