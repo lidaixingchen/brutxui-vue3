@@ -58,6 +58,12 @@ export const COMPONENTS: Record<string, RegistryComponentMeta> = {
         dependencies: ['reka-ui', '@lucide/vue'],
         description: 'Hierarchical navigation breadcrumb with separator and ellipsis.',
     },
+    'brutal-shape': {
+        titleZh: '粗野图腾',
+        category: 'data-display',
+        dependencies: [],
+        description: 'Pure-vector brutalist glyph library (burst stars, industrial seals, crosshairs, pixel icons) with token-driven colors.',
+    },
     'brutalist-hero': {
         titleZh: '英雄区',
         category: 'marketing',

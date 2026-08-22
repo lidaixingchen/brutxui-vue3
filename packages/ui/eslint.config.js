@@ -110,4 +110,12 @@ export default tseslint.config(
             'no-restricted-imports': 'off',
         },
     },
+    // BrutalShape 的 v-html 注入的是仓库内静态图腾标记（shapes.ts 单一数据源），
+    // 无任何用户输入参与，不构成 XSS 面。
+    {
+        files: ['src/components/brutal-shape/*.vue'],
+        rules: {
+            'vue/no-v-html': 'off',
+        },
+    },
 )

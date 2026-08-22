@@ -481,3 +481,6 @@ export type { UseDataTablePaginationReturn } from './composables/useDataTablePag
 export { default as ImageCard } from './components/image-card/ImageCard.vue'
 export { imageCardVariants } from './components/image-card/image-card-variants'
 
+export { default as BrutalShape } from './components/brutal-shape/BrutalShape.vue'
+export { brutalShapeVariants } from './components/brutal-shape/brutal-shape-variants'
+

@@ -136,6 +136,16 @@
       "icon-size-variants.ts"
     ]
   },
+  "brutal-shape": {
+    "files": [
+      "BrutalShape.vue",
+      "brutal-shape-variants.ts",
+      "shapes.ts"
+    ],
+    "composables": [],
+    "directives": [],
+    "lib": []
+  },
   "brutalist-hero": {
     "files": [
       "BrutalistHero.vue"

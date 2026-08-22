@@ -52,6 +52,10 @@
             "types": "./dist/components/breadcrumb/index.d.ts",
             "import": "./dist/components/breadcrumb/index.js"
         },
+        "./brutal-shape": {
+            "types": "./dist/components/brutal-shape/index.d.ts",
+            "import": "./dist/components/brutal-shape/index.js"
+        },
         "./brutalist-hero": {
             "types": "./dist/components/brutalist-hero/index.d.ts",
             "import": "./dist/components/brutalist-hero/index.js"
