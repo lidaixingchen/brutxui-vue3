@@ -532,6 +532,7 @@
         "prebuild:exports": "tsx scripts/generate-exports.ts",
         "postbuild:exports": "tsx scripts/generate-exports.ts --verify",
         "build:preflight": "tailwindcss -i src/preflight.css -o dist/preflight.css",
+        "generate:echarts-theme": "tsx scripts/generate-echarts-theme.ts",
         "prepack": "npm run build",
         "dev": "vite build --watch",
         "clean": "rm -rf dist",

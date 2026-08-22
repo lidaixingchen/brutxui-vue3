@@ -265,6 +265,10 @@ export default defineConfig({
                     link: '/guide/theme-playground',
                 },
                 {
+                    text: '图表设计范式',
+                    link: '/guide/neobrutalist-charts',
+                },
+                {
                     text: '国际化',
                     link: '/guide/locale',
                 },
