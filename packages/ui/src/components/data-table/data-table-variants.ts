@@ -141,6 +141,8 @@ export const dataTableEmptyVariants = cva(
         'py-12 px-4',
         'text-brutal-fg',
         'border-t-3 border-brutal',
+        /* 蓝图空状态：四角十字准星 + 网格底纹（工业仪器标定感，纯装饰层） */
+        'hud-crosshairs bg-pattern-grid',
     ],
 )
 

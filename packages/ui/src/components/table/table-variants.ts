@@ -20,9 +20,16 @@ export const tableHeaderVariants = cva(
     {
         variants: {
             variant: headerColorVariants,
+            /* 表头底纹：工程制图剖面线 / 报刊点阵（叠加在配色之上） */
+            texture: {
+                none: '',
+                hatch: 'bg-pattern-hatch',
+                dots: 'bg-pattern-dots',
+            },
         },
         defaultVariants: {
             variant: 'default',
+            texture: 'none',
         },
     }
 )
@@ -72,7 +79,9 @@ export const tableRowVariants = cva(
     [
         'border-b-3 border-brutal transition-colors text-brutal-fg',
         'hover:bg-brutal-muted',
-        'data-[state=selected]:bg-brutal-primary/15 data-[state=selected]:text-brutal-fg',
+        /* 选中行：荧光色块 + 粗黑框选（ring-inset 黑环），accent 黄底黑字对比度满足 AA */
+        'data-[state=selected]:bg-brutal-accent data-[state=selected]:text-brutal-fg',
+        'data-[state=selected]:ring-2 data-[state=selected]:ring-brutal-ring data-[state=selected]:ring-inset',
     ]
 )
 

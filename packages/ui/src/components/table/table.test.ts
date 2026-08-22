@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { tableHeaderVariants, tableRowVariants } from './table-variants'
+import { dataTableEmptyVariants } from '../data-table/data-table-variants'
 import Table from './Table.vue'
 import TableHeader from './TableHeader.vue'
 import TableBody from './TableBody.vue'
@@ -180,7 +182,7 @@ describe('TableRow', () => {
         expect(wrapper.classes()).toContain('transition-colors')
         expect(wrapper.classes()).toContain('text-brutal-fg')
         expect(wrapper.classes()).toContain('hover:bg-brutal-muted')
-        expect(wrapper.classes()).toContain('data-[state=selected]:bg-brutal-primary/15')
+        expect(wrapper.classes()).toContain('data-[state=selected]:bg-brutal-accent')
     })
 
     it('applies custom class', () => {
@@ -303,5 +305,26 @@ describe('TableCaption', () => {
         const wrapper = mount(TableCaption, { props: { class: 'my-caption' } })
         expect(wrapper.classes()).toContain('my-caption')
         expect(wrapper.classes()).toContain('mt-4')
+    })
+})
+
+describe('Table 蓝图化质感', () => {
+    it('表头 texture=hatch/dots 叠加对应底纹类，默认零污染', () => {
+        expect(tableHeaderVariants({ texture: 'hatch' }).split(/\s+/)).toContain('bg-pattern-hatch')
+        expect(tableHeaderVariants({ texture: 'dots' }).split(/\s+/)).toContain('bg-pattern-dots')
+        expect(tableHeaderVariants().split(/\s+/)).not.toContain('bg-pattern-hatch')
+    })
+
+    it('选中行应用荧光色块与粗黑内嵌框选', () => {
+        const classTokens = tableRowVariants().split(/\s+/)
+        expect(classTokens).toContain('data-[state=selected]:bg-brutal-accent')
+        expect(classTokens).toContain('data-[state=selected]:ring-2')
+        expect(classTokens).toContain('data-[state=selected]:ring-inset')
+    })
+
+    it('空状态承载 HUD 准星与蓝图网格底纹', () => {
+        const classTokens = dataTableEmptyVariants().split(/\s+/)
+        expect(classTokens).toContain('hud-crosshairs')
+        expect(classTokens).toContain('bg-pattern-grid')
     })
 })
