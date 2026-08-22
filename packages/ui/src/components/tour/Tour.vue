@@ -419,8 +419,16 @@ onBeforeUnmount((): void => {
             :aria-modal="showMask ? 'true' : undefined"
             :aria-label="currentStepVal?.title || t('tour.dialog')"
             :style="[popoverStyle, { zIndex: Z_INDEX.TOUR_POPOVER }]"
-            :class="popoverClasses"
+            :class="[popoverClasses, 'hud-crosshairs']"
         >
+            <!-- 取景瞄准框顶栏：等宽步骤指示（纯装饰，读屏语义由 role=dialog + aria-label 承担） -->
+            <div
+                v-if="steps.length > 0"
+                aria-hidden="true"
+                class="flex items-center justify-end border-b-2 border-brutal pb-1 font-mono text-xs font-black uppercase tracking-widest text-brutal-muted-foreground select-none"
+            >
+                STEP [{{ String(currentStep + 1).padStart(2, '0') }}/{{ String(steps.length).padStart(2, '0') }}]
+            </div>
             <div v-if="currentStepVal?.title" class="text-lg font-black tracking-wide border-b-2 border-brutal pb-2">
                 {{ currentStepVal.title }}
             </div>

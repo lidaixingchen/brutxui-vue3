@@ -6,6 +6,7 @@ import DialogContent from './DialogContent.vue'
 import DialogHeader from './DialogHeader.vue'
 import DialogFooter from './DialogFooter.vue'
 import DialogTitle from './DialogTitle.vue'
+import { dialogContentVariants } from './dialog-variants'
 import DialogDescription from './DialogDescription.vue'
 import DialogEnhanced from './DialogEnhanced.vue'
 
@@ -1090,5 +1091,39 @@ describe('DialogEnhanced', () => {
             vi.useRealTimers()
             rafSpy = vi.spyOn(globalThis, 'requestAnimationFrame').mockReturnValue(0)
         })
+    })
+})
+
+describe('Dialog 百叶窗入场与遮罩点阵', () => {
+    it('entrance=shutter 输出百叶窗动画类并剥离 fade-zoom 体系', () => {
+        const classTokens = dialogContentVariants({ entrance: 'shutter' }).split(/\s+/)
+        expect(classTokens).toContain('data-[state=open]:animate-brutal-shutter')
+        expect(classTokens).toContain('duration-150')
+        expect(classTokens).not.toContain('data-[state=open]:animate-in')
+        expect(classTokens).not.toContain('data-[state=open]:zoom-in-95')
+    })
+
+    it('entrance 默认 fade-zoom（既有行为零回归）', () => {
+        const classTokens = dialogContentVariants().split(/\s+/)
+        expect(classTokens).toContain('data-[state=open]:animate-in')
+        expect(classTokens).not.toContain('data-[state=open]:animate-brutal-shutter')
+    })
+
+    it('DialogOverlay pattern=true 叠加点阵纹理，默认不叠加', () => {
+        const primitiveStub = { template: '<div><slot /></div>' }
+        const patterned = mount(DialogOverlay, {
+            props: { pattern: true },
+            global: { stubs: { DialogOverlay: primitiveStub } },
+        })
+        expect(patterned.classes()).toContain('bg-pattern-dots')
+        const plain = mount(DialogOverlay, {
+            global: { stubs: { DialogOverlay: primitiveStub } },
+        })
+        expect(plain.classes()).not.toContain('bg-pattern-dots')
+    })
+
+    it('shutter 时长严控在 140~180ms 区间', () => {
+        const classTokens = dialogContentVariants({ entrance: 'shutter' }).split(/\s+/)
+        expect(classTokens).toContain('duration-150')
     })
 })

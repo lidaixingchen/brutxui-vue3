@@ -839,6 +839,12 @@
         animation: brutal-hazard-slide 900ms linear infinite;
     }
 
+    /* 百叶窗入场：clip-path 分段快速拉开（时长严控 140~180ms）。
+       以转义选择器实现 data-[state=open] 变体——手写 @layer utilities 类不带变体修饰符支持 */
+    .data-\[state\=open\]\:animate-brutal-shutter[data-state="open"] {
+        animation: brutal-shutter-in 160ms ease-brutal-snap;
+    }
+
     /* ============================================
        Brutalism Keyframes
        ============================================ */
@@ -868,6 +874,13 @@
         to { background-position-x: 28.2842712475px; }
     }
 
+    /* 百叶窗展开（Shutter Reveal）：水平中缝向上下两端快速拉开 */
+    @keyframes brutal-shutter-in {
+        0% { clip-path: polygon(0 50%, 100% 50%, 100% 50%, 0 50%); opacity: 0.6; }
+        60% { clip-path: polygon(0 12%, 100% 12%, 100% 88%, 0 88%); opacity: 1; }
+        100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); opacity: 1; }
+    }
+
     /* ============================================
        Reduced Motion Support
        ============================================ */
@@ -877,6 +890,8 @@
         html:not([data-allow-motion="true"]) .animate-brutal-stamp,
         html:not([data-allow-motion="true"]) .animate-brutal-drum,
         html:not([data-allow-motion="true"]) .animate-brutal-hazard,
+        /* 百叶窗入场为 animation（经转义选择器实现 state 变体），纳入白名单 */
+        html:not([data-allow-motion="true"]) .data-\[state\=open\]\:animate-brutal-shutter[data-state="open"],
         html:not([data-allow-motion="true"]) .animate-indeterminate,
         html:not([data-allow-motion="true"]) .animate-marquee-left,
         html:not([data-allow-motion="true"]) .animate-marquee-right,
