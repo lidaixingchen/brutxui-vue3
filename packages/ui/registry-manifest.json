@@ -620,6 +620,17 @@
       "z-index.ts"
     ]
   },
+  "image-card": {
+    "files": [
+      "ImageCard.vue",
+      "image-card-variants.ts"
+    ],
+    "composables": [],
+    "directives": [],
+    "lib": [
+      "brutal-interaction-variants.ts"
+    ]
+  },
   "infinite-scroll": {
     "files": [
       "InfiniteScroll.vue",

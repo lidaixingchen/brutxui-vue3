@@ -252,6 +252,12 @@ export const COMPONENTS: Record<string, RegistryComponentMeta> = {
         dependencies: ['reka-ui', '@lucide/vue'],
         description: 'Image component with lazy loading, fallback image, and Neo-Brutalist interactive preview modal.',
     },
+    'image-card': {
+        titleZh: '图片卡片',
+        category: 'data-display',
+        dependencies: [],
+        description: 'Polaroid-style framed image card with aspect-locked media area, solid divider, and accent-colored caption footer.',
+    },
     'infinite-scroll': {
         titleZh: '无限滚动',
         category: 'utility',

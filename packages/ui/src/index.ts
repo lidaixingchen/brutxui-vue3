@@ -478,3 +478,6 @@ export type { UseDataTableFilterReturn } from './composables/useDataTableFilter'
 export type { UseDataTableSelectionReturn } from './composables/useDataTableSelection'
 export type { UseDataTablePaginationReturn } from './composables/useDataTablePagination'
 
+export { default as ImageCard } from './components/image-card/ImageCard.vue'
+export { imageCardVariants } from './components/image-card/image-card-variants'
+

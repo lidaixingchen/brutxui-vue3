@@ -172,6 +172,10 @@
             "types": "./dist/components/image/index.d.ts",
             "import": "./dist/components/image/index.js"
         },
+        "./image-card": {
+            "types": "./dist/components/image-card/index.d.ts",
+            "import": "./dist/components/image-card/index.js"
+        },
         "./infinite-scroll": {
             "types": "./dist/components/infinite-scroll/index.d.ts",
             "import": "./dist/components/infinite-scroll/index.js"
