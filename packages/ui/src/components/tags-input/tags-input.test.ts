@@ -102,7 +102,8 @@ describe('TagsInputItem', () => {
         expect(classes).toContain('flex')
         expect(classes).toContain('items-center')
         expect(classes).toContain('gap-1.5')
-        expect(classes).toContain('px-2.5')
+        expect(classes).toContain('pl-4')
+        expect(classes).toContain('pr-2.5')
         expect(classes).toContain('py-1')
         expect(classes).toContain('border-3')
         expect(classes).toContain('border-brutal')
@@ -296,5 +297,40 @@ describe('TagsInputItemDelete', () => {
             global: { stubs: { TagsInputItemDelete: buttonStub } },
         })
         expect(wrapper.attributes('aria-label')).toBe('移除标签')
+    })
+})
+
+describe('TagsInputItem 便签贴纸质感', () => {
+    const primitiveStub = { template: '<div><slot /></div>' }
+
+    it('奇偶交替微倾斜（便签贴纸感）', () => {
+        const wrapper = mount(TagsInputItem, {
+            props: { value: 'a' },
+            global: { stubs: { TagsInputItem: primitiveStub } },
+        })
+        const classTokens = wrapper.classes()
+        expect(classTokens.some(c => c.includes(':nth-child(odd)') && c.includes('-rotate-1'))).toBe(true)
+        expect(classTokens.some(c => c.includes(':nth-child(even)') && c.includes('rotate-'))).toBe(true)
+    })
+
+    it('左侧打孔圆点为伪元素装饰且容器可承载定位', () => {
+        const wrapper = mount(TagsInputItem, {
+            props: { value: 'a' },
+            global: { stubs: { TagsInputItem: primitiveStub } },
+        })
+        const classTokens = wrapper.classes()
+        expect(classTokens).toContain('relative')
+        expect(classTokens.some(c => c.startsWith('before:absolute'))).toBe(true)
+        expect(classTokens.some(c => c.startsWith('before:bg-brutal-bg'))).toBe(true)
+    })
+
+    it('悬浮/按压呈现撕除预兆（歪斜缩小）', () => {
+        const wrapper = mount(TagsInputItem, {
+            props: { value: 'a' },
+            global: { stubs: { TagsInputItem: primitiveStub } },
+        })
+        const classTokens = wrapper.classes()
+        expect(classTokens).toContain('hover:rotate-[-4deg]')
+        expect(classTokens).toContain('active:scale-90')
     })
 })

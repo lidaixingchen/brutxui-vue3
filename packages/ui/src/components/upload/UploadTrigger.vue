@@ -134,7 +134,7 @@ function handleDrop(event: DragEvent) {
                     'border-3 border-dashed rounded-brutal',
                     'transition-colors duration-200',
                     isDragging
-                        ? 'border-brutal-primary bg-brutal-primary/10'
+                        ? 'border-brutal-primary bg-brutal-primary/10 bg-pattern-grid'
                         : 'border-brutal hover:border-brutal-primary',
                 )"
             >

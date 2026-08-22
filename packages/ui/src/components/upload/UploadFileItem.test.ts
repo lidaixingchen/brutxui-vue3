@@ -175,3 +175,29 @@ describe('UploadFileItem previewUrl object URL lifecycle', () => {
     })
 })
 
+describe('UploadFileItem 软盘档案风格', () => {
+    it('上传成功展示 [ UPLOADED ] 等宽图章（纯装饰）', () => {
+        const wrapper = mount(UploadFileItem, {
+            props: { file: createUploadFile({ status: 'success' }) },
+        })
+        const stamp = wrapper.find('span[aria-hidden="true"]')
+        expect(stamp.exists()).toBe(true)
+        expect(stamp.text()).toContain('[ UPLOADED ]')
+        expect(stamp.classes()).toContain('font-mono')
+    })
+
+    it('非成功状态不渲染图章', () => {
+        const wrapper = mount(UploadFileItem, {
+            props: { file: createUploadFile({ status: 'uploading' }) },
+        })
+        expect(wrapper.text()).not.toContain('[ UPLOADED ]')
+    })
+
+    it('文件名与大小采用等宽字体（磁带标签感）', () => {
+        const wrapper = mount(UploadFileItem, {
+            props: { file: createUploadFile({ status: 'success' }) },
+        })
+        expect(wrapper.html()).toContain('font-mono')
+    })
+})
+

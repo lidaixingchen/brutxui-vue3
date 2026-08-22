@@ -202,8 +202,8 @@ const previewUrl = computed(() => props.file.url ?? objectUrl.value)
 
         <!-- 文件信息 -->
         <div class="flex-1 min-w-0">
-            <p class="font-medium text-brutal-fg truncate">{{ file.name }}</p>
-            <p class="text-sm text-brutal-placeholder">{{ formatFileSize(file.size) }}</p>
+            <p class="font-mono font-bold text-brutal-fg truncate">{{ file.name }}</p>
+            <p class="text-sm text-brutal-placeholder font-mono">{{ formatFileSize(file.size) }}</p>
 
             <!-- 进度条 -->
             <div v-if="showProgress" class="mt-2">
@@ -222,6 +222,13 @@ const previewUrl = computed(() => props.file.url ?? objectUrl.value)
 
         <!-- 状态图标和操作按钮 -->
         <div class="flex items-center gap-2 flex-shrink-0">
+            <!-- 上传成功图章：等宽 ASCII 印戳（纯装饰，状态语义由既有 aria/文案承担） -->
+            <span
+                v-if="file.status === 'success'"
+                class="hidden sm:inline-block -rotate-6 select-none border-2 border-double border-brutal-success px-1.5 py-0.5 font-mono text-xs font-black uppercase tracking-widest text-brutal-success"
+                aria-hidden="true"
+            >[ UPLOADED ]</span>
+
             <!-- 成功状态 -->
             <Check
                 v-if="file.status === 'success'"
