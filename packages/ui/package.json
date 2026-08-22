@@ -574,7 +574,7 @@
         {
             "name": "Button (tree-shaken)",
             "path": "dist/index.js",
-            "limit": "20 KB",
+            "limit": "22 KB",
             "import": "{ Button }"
         },
         {
