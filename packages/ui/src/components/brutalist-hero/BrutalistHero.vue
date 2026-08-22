@@ -91,7 +91,7 @@ const badgeIconClasses = cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
                 <BrutalShape
                     name="star-12"
                     :size="26"
-                    color="var(--brutal-secondary)"
+                    color="var(--brutal-secondary, #4ECDC4)"
                     class="absolute -bottom-2.5 -right-2 z-10 -rotate-6"
                 />
                 <div class="absolute inset-0 bg-brutal-primary border-3 border-brutal translate-x-3 translate-y-3" />

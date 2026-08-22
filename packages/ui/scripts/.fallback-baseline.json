@@ -7,7 +7,6 @@
   "components/date-picker/DatePickerRangePanel.vue": 26,
   "components/date-picker/DateTimePickerPanel.vue": 23,
   "components/date-picker/WeekPickerPanel.vue": 26,
-  "components/date-picker/panel-styles.css": 7,
   "components/glitch-text/GlitchText.vue": 6,
   "components/hardcore-input/HardcoreInput.vue": 2
 }

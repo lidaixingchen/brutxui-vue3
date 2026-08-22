@@ -168,8 +168,8 @@ const handleKeydown = (event: KeyboardEvent) => {
                 v-else
                 :name="props.icon!"
                 :size="36"
-                color="var(--brutal-muted)"
-                stroke="var(--brutal-muted-foreground)"
+                color="var(--brutal-muted, #f3f4f6)"
+                stroke="var(--brutal-muted-foreground, #4B5563)"
                 :stroke-width="2"
                 class="h-full w-full opacity-80"
                 :class="starSizeClass"
@@ -191,8 +191,8 @@ const handleKeydown = (event: KeyboardEvent) => {
                     v-else
                     :name="props.icon!"
                     :size="36"
-                    color="var(--brutal-accent)"
-                    stroke="var(--brutal-fg)"
+                    color="var(--brutal-accent, #FFE66D)"
+                    stroke="var(--brutal-fg, #000000)"
                     :stroke-width="2"
                     :class="starSizeClass"
                 />

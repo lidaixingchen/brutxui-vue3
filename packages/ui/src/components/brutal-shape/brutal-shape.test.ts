@@ -16,8 +16,8 @@ describe('BrutalShape', () => {
     it('默认填充与描边引用语义令牌以联动主题预设', () => {
         const wrapper = mount(BrutalShape, { props: { name: 'star-4' } })
         const svg = wrapper.find('svg')
-        expect(svg.attributes('fill')).toBe('var(--brutal-accent)')
-        expect(svg.attributes('stroke')).toBe('var(--brutal-fg)')
+        expect(svg.attributes('fill')).toBe('var(--brutal-accent, #FFE66D)')
+        expect(svg.attributes('stroke')).toBe('var(--brutal-fg, #000000)')
     })
 
     it('自定义颜色与描边宽度透传至根元素', () => {

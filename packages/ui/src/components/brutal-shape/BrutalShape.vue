@@ -23,8 +23,8 @@ interface BrutalShapeProps {
 
 const props = withDefaults(defineProps<BrutalShapeProps>(), {
     size: 32,
-    color: 'var(--brutal-accent)',
-    stroke: 'var(--brutal-fg)',
+    color: 'var(--brutal-accent, #FFE66D)',
+    stroke: 'var(--brutal-fg, #000000)',
     strokeWidth: 3,
     decorative: true,
     class: undefined,
