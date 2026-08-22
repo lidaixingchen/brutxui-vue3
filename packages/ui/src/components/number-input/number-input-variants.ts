@@ -34,6 +34,10 @@ export const numberInputButtonVariants = cva(
         'disabled:opacity-50 disabled:pointer-events-none select-none cursor-pointer',
         brutalPress,
         'hover:shadow-brutal-sm hover:-translate-y-0.5',
+        /* 3D 机械键帽：底边加厚形成侧面厚度（border-brutal 深色描边自带反差），
+           按压时消除侧面完成「按下」物理隐喻；与 Kbd 键帽语言同源 */
+        'border-b-4',
+        'active:border-b-0 active:translate-y-1',
     ],
     {
         variants: {

@@ -1,7 +1,39 @@
 import { mount } from '@vue/test-utils'
+import { vi, beforeEach } from 'vitest'
 import NumberInput from './NumberInput.vue'
 
+const hapticsMocks = vi.hoisted(() => {
+    const snap = vi.fn()
+    const click = vi.fn()
+    const beep = vi.fn()
+    const useBrutalHaptics = vi.fn(() => ({ snap, click, beep }))
+    return { snap, click, beep, useBrutalHaptics }
+})
+
+vi.mock('@/composables/useBrutalHaptics', () => ({
+    useBrutalHaptics: hapticsMocks.useBrutalHaptics,
+}))
+
+const reducedMotionMocks = vi.hoisted(() => ({
+    useReducedMotion: vi.fn(() => ({ value: false })),
+}))
+
+vi.mock('@/composables/useReducedMotion', () => ({
+    useReducedMotion: reducedMotionMocks.useReducedMotion,
+}))
+
 describe('NumberInput', () => {
+    beforeEach(() => {
+        hapticsMocks.click.mockClear()
+        hapticsMocks.useBrutalHaptics.mockClear()
+        hapticsMocks.useBrutalHaptics.mockImplementation(() => ({
+            snap: hapticsMocks.snap,
+            click: hapticsMocks.click,
+            beep: hapticsMocks.beep,
+        }))
+        reducedMotionMocks.useReducedMotion.mockReturnValue({ value: false })
+    })
+
     it('renders with split layout by default', () => {
         const wrapper = mount(NumberInput)
         const root = wrapper.find('[role="group"]')
@@ -133,5 +165,57 @@ describe('NumberInput', () => {
         const root = wrapper.find('[role="group"]')
         expect(root.attributes('iconsize')).toBeUndefined()
         expect(root.attributes('iconSize')).toBeUndefined()
+    })
+})
+
+describe('NumberInput 机械键帽与 Drum Ticker', () => {
+    it('步进按钮带 3D 键帽侧面厚度（border-b-4）与按压消除侧面', () => {
+        const wrapper = mount(NumberInput)
+        for (const btn of wrapper.findAll('button')) {
+            expect(btn.classes()).toContain('border-b-4')
+            expect(btn.classes()).toContain('active:border-b-0')
+            expect(btn.classes()).toContain('active:translate-y-1')
+        }
+    })
+
+    it('sound=true 时点击步进触发 click 音效，sound 选项随 prop 传递', async () => {
+        const wrapper = mount(NumberInput, { props: { sound: true } })
+        expect(hapticsMocks.useBrutalHaptics).toHaveBeenCalledWith({ sound: true })
+        await wrapper.findAll('button')[0]!.trigger('click')
+        expect(hapticsMocks.click).toHaveBeenCalledTimes(1)
+        wrapper.unmount()
+    })
+
+    it('默认静音：sound 缺省时以 false 传递给门面', () => {
+        mount(NumberInput)
+        expect(hapticsMocks.useBrutalHaptics).toHaveBeenCalledWith({ sound: false })
+    })
+
+    it('modelValue 变化触发 Drum Ticker 翻页动效类并在动画结束后清除', async () => {
+        vi.useFakeTimers()
+        const wrapper = mount(NumberInput, {
+            props: { modelValue: 1 },
+            attachTo: document.body,
+        })
+        await vi.advanceTimersByTimeAsync(0)
+        await wrapper.setProps({ modelValue: 2 })
+        expect(wrapper.html()).toContain('animate-brutal-drum')
+
+        const input = wrapper.find('input')
+        await input.trigger('animationend')
+        expect(wrapper.html()).not.toContain('animate-brutal-drum')
+        vi.useRealTimers()
+        wrapper.unmount()
+    })
+
+    it('prefers-reduced-motion 下数值变化不播 Drum Ticker 动画', async () => {
+        reducedMotionMocks.useReducedMotion.mockReturnValue({ value: true })
+        const wrapper = mount(NumberInput, {
+            props: { modelValue: 1 },
+            attachTo: document.body,
+        })
+        await wrapper.setProps({ modelValue: 2 })
+        expect(wrapper.html()).not.toContain('animate-brutal-drum')
+        wrapper.unmount()
     })
 })

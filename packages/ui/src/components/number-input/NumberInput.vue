@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useId } from 'vue'
+import { computed, ref, useId, watch } from 'vue'
 import {
     NumberFieldRoot,
     type NumberFieldRootProps,
@@ -14,6 +14,8 @@ import { cn } from '@/lib/utils'
 import { numberInputRootVariants, numberInputButtonVariants, numberInputFieldVariants } from './number-input-variants'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
+import { useBrutalHaptics } from '@/composables/useBrutalHaptics'
+import { useReducedMotion } from '@/composables/useReducedMotion'
 
 interface NumberInputProps extends NumberFieldRootProps {
     layout?: 'split' | 'stacked'
@@ -22,6 +24,8 @@ interface NumberInputProps extends NumberFieldRootProps {
     placeholder?: string
     class?: string
     iconSize?: IconSize
+    /** 显式开启步进按键的机械 click 音效；默认静音 */
+    sound?: boolean
 }
 
 const props = withDefaults(defineProps<NumberInputProps>(), {
@@ -31,11 +35,22 @@ const props = withDefaults(defineProps<NumberInputProps>(), {
     placeholder: undefined,
     class: undefined,
     iconSize: 'md',
+    sound: false,
 })
 
 const emit = defineEmits<NumberFieldRootEmits>()
 
 const { t } = useLocale()
+
+const haptics = useBrutalHaptics({ sound: props.sound })
+const prefersReducedMotion = useReducedMotion()
+
+/** Drum Ticker：数值变化时输入框做滚轮翻页微动效（reduced-motion 环境瞬时切换） */
+const isDrumming = ref(false)
+watch(() => props.modelValue, () => {
+    if (prefersReducedMotion.value) return
+    isDrumming.value = true
+})
 
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('numberInput.placeholder'))
 
@@ -73,7 +88,10 @@ const incrementClasses = computed(() =>
 )
 
 const fieldClasses = computed(() =>
-    cn(numberInputFieldVariants({ layout: props.layout }))
+    cn(
+        numberInputFieldVariants({ layout: props.layout }),
+        isDrumming.value && 'animate-brutal-drum',
+    )
 )
 
 const iconClasses = computed(() =>
@@ -85,7 +103,7 @@ const iconClasses = computed(() =>
     <div class="w-full">
         <NumberFieldRoot v-bind="forwarded" :class="containerClasses">
             <template v-if="layout === 'split'">
-                <NumberFieldDecrement :class="decrementClasses">
+                <NumberFieldDecrement :class="decrementClasses" @click="haptics.click()">
                     <Minus :class="iconClasses" />
                 </NumberFieldDecrement>
 
@@ -94,9 +112,10 @@ const iconClasses = computed(() =>
                     :aria-invalid="variant === 'error' ? true : undefined"
                     :aria-describedby="errorMessage ? errorTextId : undefined"
                     :class="fieldClasses"
+                    @animationend="isDrumming = false"
                 />
 
-                <NumberFieldIncrement :class="incrementClasses">
+                <NumberFieldIncrement :class="incrementClasses" @click="haptics.click()">
                     <Plus :class="iconClasses" />
                 </NumberFieldIncrement>
             </template>
@@ -107,13 +126,14 @@ const iconClasses = computed(() =>
                     :aria-invalid="variant === 'error' ? true : undefined"
                     :aria-describedby="errorMessage ? errorTextId : undefined"
                     :class="fieldClasses"
+                    @animationend="isDrumming = false"
                 />
 
                 <div class="flex flex-col border-l-3 border-brutal w-10 shrink-0">
-                    <NumberFieldIncrement :class="incrementClasses">
+                    <NumberFieldIncrement :class="incrementClasses" @click="haptics.click()">
                         <ChevronUp :class="iconClasses" />
                     </NumberFieldIncrement>
-                    <NumberFieldDecrement :class="decrementClasses">
+                    <NumberFieldDecrement :class="decrementClasses" @click="haptics.click()">
                         <ChevronDown :class="iconClasses" />
                     </NumberFieldDecrement>
                 </div>

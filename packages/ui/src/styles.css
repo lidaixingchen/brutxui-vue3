@@ -831,6 +831,10 @@
         animation: brutal-stamp-impact 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
+    .animate-brutal-drum {
+        animation: brutal-drum-tick 140ms ease-brutal-snap;
+    }
+
     /* ============================================
        Brutalism Keyframes
        ============================================ */
@@ -848,6 +852,12 @@
         100% { transform: scale(1) rotate(0deg); }
     }
 
+    /* 滚轮翻页：数字自上滑入归位（Drum Ticker） */
+    @keyframes brutal-drum-tick {
+        0% { transform: translateY(-45%); opacity: 0.2; }
+        100% { transform: translateY(0); opacity: 1; }
+    }
+
     /* ============================================
        Reduced Motion Support
        ============================================ */
@@ -855,6 +865,7 @@
         /* 与 preflight 全局兜底保持同一 opt-out 语义：html[data-allow-motion="true"] 时恢复动画 */
         html:not([data-allow-motion="true"]) .animate-brutal-badge-pulse,
         html:not([data-allow-motion="true"]) .animate-brutal-stamp,
+        html:not([data-allow-motion="true"]) .animate-brutal-drum,
         html:not([data-allow-motion="true"]) .animate-indeterminate,
         html:not([data-allow-motion="true"]) .animate-marquee-left,
         html:not([data-allow-motion="true"]) .animate-marquee-right,
