@@ -839,6 +839,11 @@
         animation: brutal-hazard-slide 900ms linear infinite;
     }
 
+    /* 工业 LED 脉冲光晕：status-success 色扩散后消散 */
+    .animate-brutal-led {
+        animation: brutal-led-pulse 1.6s ease-out infinite;
+    }
+
     /* 百叶窗入场：clip-path 分段快速拉开（时长严控 140~180ms）。
        以转义选择器实现 data-[state=open] 变体——手写 @layer utilities 类不带变体修饰符支持 */
     .data-\[state\=open\]\:animate-brutal-shutter[data-state="open"] {
@@ -881,6 +886,13 @@
         100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); opacity: 1; }
     }
 
+    /* 工业 LED 脉冲：光晕扩散消散循环 */
+    @keyframes brutal-led-pulse {
+        0% { box-shadow: 0 0 0 0 var(--brutal-status-success, #22c55e); }
+        70% { box-shadow: 0 0 0 8px transparent; }
+        100% { box-shadow: 0 0 0 0 transparent; }
+    }
+
     /* ============================================
        Reduced Motion Support
        ============================================ */
@@ -892,6 +904,7 @@
         html:not([data-allow-motion="true"]) .animate-brutal-hazard,
         /* 百叶窗入场为 animation（经转义选择器实现 state 变体），纳入白名单 */
         html:not([data-allow-motion="true"]) .data-\[state\=open\]\:animate-brutal-shutter[data-state="open"],
+        html:not([data-allow-motion="true"]) .animate-brutal-led,
         html:not([data-allow-motion="true"]) .animate-indeterminate,
         html:not([data-allow-motion="true"]) .animate-marquee-left,
         html:not([data-allow-motion="true"]) .animate-marquee-right,

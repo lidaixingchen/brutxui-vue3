@@ -264,10 +264,12 @@ describe('TimelineConnector', () => {
     it('renders with vertical orientation by default', () => {
         const wrapper = mount(TimelineConnector)
         const classes = wrapper.classes()
-        expect(classes).toContain('bg-brutal-fg')
-        expect(classes).toContain('w-[3px]')
+        // PCB 双平行总线：双边框中缝透底，取代单实线条
+        expect(classes).toContain('border-l-3')
+        expect(classes).toContain('border-r-3')
+        expect(classes).toContain('w-[9px]')
+        expect(classes).not.toContain('bg-brutal-fg')
         expect(classes).toContain('flex-1')
-        expect(classes).toContain('transition-colors')
     })
 
     it('applies horizontal orientation classes when injected', () => {
@@ -279,7 +281,8 @@ describe('TimelineConnector', () => {
             },
         })
         const classes = wrapper.classes()
-        expect(classes).toContain('h-[3px]')
+        expect(classes).toContain('h-[9px]')
+        expect(classes).toContain('border-t-3')
         expect(classes).toContain('absolute')
     })
 
@@ -313,5 +316,21 @@ describe('TimelineContent', () => {
             props: { class: 'custom-content' },
         })
         expect(wrapper.classes()).toContain('custom-content')
+    })
+})
+
+describe('Timeline LED 脉冲与 PCB 总线', () => {
+    it('led=true 的节点应用脉冲光晕动画类', () => {
+        const wrapper = mount(TimelineDot, { props: { led: true } })
+        expect(wrapper.classes()).toContain('animate-brutal-led')
+        const plain = mount(TimelineDot)
+        expect(plain.classes()).not.toContain('animate-brutal-led')
+    })
+
+    it('连接线升级为双平行总线（双边框中缝透底）', () => {
+        const wrapper = mount(TimelineConnector)
+        expect(wrapper.classes()).toContain('border-l-3')
+        expect(wrapper.classes()).toContain('border-r-3')
+        expect(wrapper.classes()).not.toContain('bg-brutal-fg')
     })
 })

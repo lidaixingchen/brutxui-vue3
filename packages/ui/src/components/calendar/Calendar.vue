@@ -34,6 +34,8 @@ interface CalendarProps {
     events?: CalendarEvent[]
     eventRenderer?: (event: CalendarEvent) => unknown
     mode?: 'default' | 'card'
+    /** 复古挂历头装饰：双金属打孔环 + 红色粗横条（纯装饰层） */
+    retroHeader?: boolean
 }
 
 interface DateRangeValue {
@@ -48,6 +50,7 @@ const props = withDefaults(defineProps<CalendarProps>(), {
     class: undefined,
     events: () => [],
     eventRenderer: undefined,
+    retroHeader: false,
     mode: 'default',
 })
 
@@ -209,19 +212,29 @@ function getDayEvents(day: { date?: Date; startDate?: Date }) {
 </script>
 
 <template>
-    <DatePicker
-        :model-value="vCalendarModelValue"
-        mode="date"
-        :is-range="isRange"
-        :class="rootClasses"
-        :select-attribute="selectAttribute"
-        :drag-attribute="dragAttribute"
-        trim-weeks
-        :first-day-of-week="2"
-        :popover="false"
-        @update:model-value="handleUpdate"
-        @drag="handleDrag"
-    >
+    <div class="w-fit">
+        <!-- 复古挂历头：双金属打孔环 + 红色粗横条（纯装饰层） -->
+        <div v-if="retroHeader" aria-hidden="true" class="relative flex justify-center gap-16 pb-1">
+            <span
+                v-for="ring in 2"
+                :key="ring"
+                class="block size-3 rounded-full border-3 border-brutal bg-brutal-bg shadow-brutal-sm"
+            />
+            <span class="absolute inset-x-0 bottom-0 h-2.5 border-3 border-brutal bg-brutal-destructive" />
+        </div>
+        <DatePicker
+            :model-value="vCalendarModelValue"
+            mode="date"
+            :is-range="isRange"
+            :class="rootClasses"
+            :select-attribute="selectAttribute"
+            :drag-attribute="dragAttribute"
+            trim-weeks
+            :first-day-of-week="2"
+            :popover="false"
+            @update:model-value="handleUpdate"
+            @drag="handleDrag"
+        >
         <template #header-prev-button>
             <ChevronLeft class="w-4 h-4" />
         </template>
@@ -303,6 +316,7 @@ function getDayEvents(day: { date?: Date; startDate?: Date }) {
             </template>
         </template>
     </DatePicker>
+    </div>
 </template>
 
 <style>
