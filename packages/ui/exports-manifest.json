@@ -92,6 +92,7 @@
   "composables": [
     "destroyFallbacks.ts",
     "useAudioEngine.ts",
+    "useBrutalHaptics.ts",
     "useCanvasInteraction.ts",
     "useCarousel.ts",
     "useCarouselEnhanced.ts",

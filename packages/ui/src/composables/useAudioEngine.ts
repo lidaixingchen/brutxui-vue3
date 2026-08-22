@@ -18,11 +18,37 @@ import {
     AUDIO_FAIL_GAIN,
     AUDIO_FAIL_GAIN_END,
     AUDIO_FAIL_DURATION,
+    AUDIO_CLICK_START_FREQ,
+    AUDIO_CLICK_END_FREQ,
+    AUDIO_CLICK_GAIN,
+    AUDIO_CLICK_GAIN_END,
+    AUDIO_CLICK_DURATION,
+    AUDIO_SNAP_DURATION,
+    AUDIO_SNAP_GAIN,
+    AUDIO_SNAP_GAIN_END,
+    AUDIO_BEEP_FREQ,
+    AUDIO_BEEP_GAIN,
+    AUDIO_BEEP_GAIN_END,
+    AUDIO_BEEP_DURATION,
 } from '../lib/defaults'
 
+/** 引擎音效配方类型：type/success/fail 为既有输入反馈，click/snap/beep 为机械触觉音效 */
+export type SoundType = 'type' | 'success' | 'fail' | 'click' | 'snap' | 'beep'
+
 export interface UseAudioEngineReturn {
-    playSound: (type: 'type' | 'success' | 'fail') => void
+    playSound: (type: SoundType) => void
     dispose: () => void
+}
+
+/** 生成指定时长与采样率的白噪声 AudioBuffer（snap 配方：模拟工控继电器吸合脉冲） */
+function createNoiseBuffer(ctx: AudioContext, durationSeconds: number): AudioBuffer {
+    const sampleCount = Math.ceil(ctx.sampleRate * durationSeconds)
+    const buffer = ctx.createBuffer(1, sampleCount, ctx.sampleRate)
+    const channelData = buffer.getChannelData(0)
+    for (let i = 0; i < sampleCount; i++) {
+        channelData[i] = Math.random() * 2 - 1
+    }
+    return buffer
 }
 
 export function useAudioEngine(enabled: Ref<boolean>): UseAudioEngineReturn {
@@ -48,8 +74,28 @@ export function useAudioEngine(enabled: Ref<boolean>): UseAudioEngineReturn {
         return audioCtx
     }
 
-    const scheduleSound = (ctx: AudioContext, type: 'type' | 'success' | 'fail') => {
+    const scheduleSound = (ctx: AudioContext, type: SoundType) => {
         try {
+            if (type === 'snap') {
+                // 白噪声脉冲走 BufferSource 通道：噪声无音高，Oscillator 不适用
+                const source = ctx.createBufferSource()
+                const noiseGain = ctx.createGain()
+                source.buffer = createNoiseBuffer(ctx, AUDIO_SNAP_DURATION)
+                source.connect(noiseGain)
+                noiseGain.connect(ctx.destination)
+
+                source.onended = () => {
+                    source.disconnect()
+                    noiseGain.disconnect()
+                }
+
+                noiseGain.gain.setValueAtTime(AUDIO_SNAP_GAIN, ctx.currentTime)
+                noiseGain.gain.exponentialRampToValueAtTime(AUDIO_SNAP_GAIN_END, ctx.currentTime + AUDIO_SNAP_DURATION)
+                source.start()
+                source.stop(ctx.currentTime + AUDIO_SNAP_DURATION)
+                return
+            }
+
             const osc = ctx.createOscillator()
             const gain = ctx.createGain()
             osc.connect(gain)
@@ -83,6 +129,23 @@ export function useAudioEngine(enabled: Ref<boolean>): UseAudioEngineReturn {
                 gain.gain.exponentialRampToValueAtTime(AUDIO_FAIL_GAIN_END, ctx.currentTime + AUDIO_FAIL_DURATION)
                 osc.start()
                 osc.stop(ctx.currentTime + AUDIO_FAIL_DURATION)
+            } else if (type === 'click') {
+                // 机械键帽音：方波快速线性降频，模拟按键按下瞬间的清脆段落
+                osc.type = 'square'
+                osc.frequency.setValueAtTime(AUDIO_CLICK_START_FREQ, ctx.currentTime)
+                osc.frequency.linearRampToValueAtTime(AUDIO_CLICK_END_FREQ, ctx.currentTime + AUDIO_CLICK_DURATION)
+                gain.gain.setValueAtTime(AUDIO_CLICK_GAIN, ctx.currentTime)
+                gain.gain.exponentialRampToValueAtTime(AUDIO_CLICK_GAIN_END, ctx.currentTime + AUDIO_CLICK_DURATION)
+                osc.start()
+                osc.stop(ctx.currentTime + AUDIO_CLICK_DURATION)
+            } else if (type === 'beep') {
+                // 8-bit 复古蜂鸣：恒频正弦短促提示音
+                osc.type = 'sine'
+                osc.frequency.setValueAtTime(AUDIO_BEEP_FREQ, ctx.currentTime)
+                gain.gain.setValueAtTime(AUDIO_BEEP_GAIN, ctx.currentTime)
+                gain.gain.exponentialRampToValueAtTime(AUDIO_BEEP_GAIN_END, ctx.currentTime + AUDIO_BEEP_DURATION)
+                osc.start()
+                osc.stop(ctx.currentTime + AUDIO_BEEP_DURATION)
             }
         } catch (err) {
             // 单次调度失败（如参数非法）不应永久禁用音效，记录日志便于排查
@@ -90,7 +153,7 @@ export function useAudioEngine(enabled: Ref<boolean>): UseAudioEngineReturn {
         }
     }
 
-    const playSound = (type: 'type' | 'success' | 'fail') => {
+    const playSound = (type: SoundType) => {
         if (!enabled.value) return
         if (type === 'type') {
             const now = Date.now()

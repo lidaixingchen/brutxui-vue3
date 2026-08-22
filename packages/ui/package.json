@@ -376,6 +376,10 @@
             "types": "./dist/composables/useAudioEngine.d.ts",
             "import": "./dist/composables/useAudioEngine.js"
         },
+        "./useBrutalHaptics": {
+            "types": "./dist/composables/useBrutalHaptics.d.ts",
+            "import": "./dist/composables/useBrutalHaptics.js"
+        },
         "./useCanvasInteraction": {
             "types": "./dist/composables/useCanvasInteraction.d.ts",
             "import": "./dist/composables/useCanvasInteraction.js"

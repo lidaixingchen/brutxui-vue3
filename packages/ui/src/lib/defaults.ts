@@ -187,6 +187,44 @@ export const AUDIO_FAIL_GAIN_END = 0.001
 /** Duration (s) of the fail sound */
 export const AUDIO_FAIL_DURATION = 0.2
 
+// ── Brutal Haptics（机械触觉音效配方）────────────────────────
+
+/** Start frequency (Hz) of the click sound sweep */
+export const AUDIO_CLICK_START_FREQ = 800
+
+/** End frequency (Hz) of the click sound sweep */
+export const AUDIO_CLICK_END_FREQ = 120
+
+/** Gain for the click sound */
+export const AUDIO_CLICK_GAIN = 0.08
+
+/** End gain for the click sound envelope */
+export const AUDIO_CLICK_GAIN_END = 0.001
+
+/** Duration (s) of the click sound */
+export const AUDIO_CLICK_DURATION = 0.025
+
+/** Duration (s) of the snap white-noise pulse */
+export const AUDIO_SNAP_DURATION = 0.012
+
+/** Gain for the snap pulse */
+export const AUDIO_SNAP_GAIN = 0.12
+
+/** End gain for the snap envelope */
+export const AUDIO_SNAP_GAIN_END = 0.001
+
+/** Frequency (Hz) of the beep tone */
+export const AUDIO_BEEP_FREQ = 1200
+
+/** Gain for the beep tone */
+export const AUDIO_BEEP_GAIN = 0.06
+
+/** End gain for the beep envelope */
+export const AUDIO_BEEP_GAIN_END = 0.001
+
+/** Duration (s) of the beep tone */
+export const AUDIO_BEEP_DURATION = 0.035
+
 // ── HardcoreInput ─────────────────────────────────────────────
 
 /** Delay (ms) before triggering the shake animation reset */

@@ -108,7 +108,9 @@ export type { KanbanCard, KanbanColumn, UseKanbanOptions, UseKanbanReturn } from
 
 // 音频类
 export { useAudioEngine } from './useAudioEngine'
-export type { UseAudioEngineReturn } from './useAudioEngine'
+export type { UseAudioEngineReturn, SoundType } from './useAudioEngine'
+export { useBrutalHaptics } from './useBrutalHaptics'
+export type { UseBrutalHapticsOptions, UseBrutalHapticsReturn } from './useBrutalHaptics'
 
 // 工具类
 export { useDebounce } from './useDebounce'
