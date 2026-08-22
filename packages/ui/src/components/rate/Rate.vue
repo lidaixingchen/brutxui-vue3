@@ -2,6 +2,9 @@
 import { computed, ref } from 'vue'
 import { cn } from '@/lib/utils'
 import { Star } from '@lucide/vue'
+import { useReducedMotion } from '@/composables/useReducedMotion'
+import BrutalShape from '../brutal-shape/BrutalShape.vue'
+import { isBrutalShapeName } from '../brutal-shape/shapes'
 
 interface RateProps {
     modelValue?: number
@@ -9,6 +12,8 @@ interface RateProps {
     allowHalf?: boolean
     readonly?: boolean
     size?: 'sm' | 'md' | 'lg'
+    /** 图腾图标名（brutal-shape 图腾库）；缺省渲染默认星形 */
+    icon?: string
 }
 
 const props = withDefaults(defineProps<RateProps>(), {
@@ -16,7 +21,8 @@ const props = withDefaults(defineProps<RateProps>(), {
     max: 5,
     allowHalf: false,
     readonly: false,
-    size: 'md'
+    size: 'md',
+    icon: undefined,
 })
 
 const emit = defineEmits<{
@@ -24,7 +30,12 @@ const emit = defineEmits<{
     change: [value: number]
 }>()
 
+const prefersReducedMotion = useReducedMotion()
 const hoverValue = ref<number>(0)
+/** 最近被敲选的图腾序号：驱动 Stamp Impact 敲印回弹动效 */
+const stampedIndex = ref<number | null>(null)
+
+const usesGlyphIcon = computed(() => Boolean(props.icon && isBrutalShapeName(props.icon)))
 
 const displayValue = computed<number>(() => {
     return hoverValue.value > 0 ? hoverValue.value : props.modelValue
@@ -82,6 +93,17 @@ const handleSelect = (val: number) => {
     if (val === props.modelValue) return
     emit('update:modelValue', val)
     emit('change', val)
+    triggerStampImpact(val - 1)
+}
+
+/** 敲印回弹：瞬间放大带微旋转后回弹归位；减弱动效环境下瞬时切换不播动画 */
+function triggerStampImpact(index: number): void {
+    if (props.readonly || prefersReducedMotion.value) return
+    stampedIndex.value = index
+}
+
+function clearStampImpact(): void {
+    stampedIndex.value = null
 }
 
 const handleKeydown = (event: KeyboardEvent) => {
@@ -129,27 +151,50 @@ const handleKeydown = (event: KeyboardEvent) => {
                 'relative inline-block transition-all duration-150',
                 starSizeClass,
                 !readonly && 'cursor-pointer active:scale-90 active:translate-y-0',
-                isStarActive(i - 1) && 'scale-115 -translate-y-0.5'
+                isStarActive(i - 1) && 'scale-115 -translate-y-0.5',
+                stampedIndex === i - 1 && 'animate-brutal-stamp'
             )"
+            @animationend="stampedIndex === i - 1 && clearStampImpact()"
         >
-            <!-- 底层未选中灰星 -->
+            <!-- 底层未选中灰图腾 -->
             <Star
+                v-if="!usesGlyphIcon"
                 :class="cn(
                     'w-full h-full text-brutal-muted stroke-brutal-muted-foreground stroke-[1.5px]',
                     readonly ? 'opacity-60' : 'opacity-80'
                 )"
             />
+            <BrutalShape
+                v-else
+                :name="props.icon!"
+                :size="36"
+                color="var(--brutal-muted)"
+                stroke="var(--brutal-muted-foreground)"
+                :stroke-width="2"
+                class="h-full w-full opacity-80"
+                :class="starSizeClass"
+            />
 
-            <!-- 上层选中高亮星（通过 width 和 overflow-hidden 实现半星剪裁） -->
+            <!-- 上层选中高亮图腾（通过 width 和 overflow-hidden 实现半星剪裁） -->
             <div
                 class="absolute left-0 top-0 h-full overflow-hidden pointer-events-none transition-all duration-75"
                 :style="{ width: getStarWidth(i - 1) }"
             >
                 <Star
+                    v-if="!usesGlyphIcon"
                     :class="cn(
-                        'fill-[hsl(48,100%,50%)] text-brutal-fg stroke-brutal-fg stroke-[2px]',
+                        'fill-brutal-accent text-brutal-fg stroke-brutal-fg stroke-[2px]',
                         starSizeClass
                     )"
+                />
+                <BrutalShape
+                    v-else
+                    :name="props.icon!"
+                    :size="36"
+                    color="var(--brutal-accent)"
+                    stroke="var(--brutal-fg)"
+                    :stroke-width="2"
+                    :class="starSizeClass"
                 />
             </div>
 

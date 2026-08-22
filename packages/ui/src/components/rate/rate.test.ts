@@ -1,3 +1,4 @@
+import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import Rate from './Rate.vue'
 
@@ -117,5 +118,51 @@ describe('Rate', () => {
 
         await slider.trigger('keydown', { key: 'Home' })
         expect(wrapper.emitted('update:modelValue')![1]).toEqual([0])
+    })
+})
+
+describe('Rate 图腾图标与敲印动效', () => {
+    it('默认渲染星形图标（lucide Star）', () => {
+        const wrapper = mount(Rate, { props: { max: 3 } })
+        expect(wrapper.findAll('svg[viewBox="0 0 100 100"]').length).toBe(0)
+    })
+
+    it('icon=lightning 时以 BrutalShape 渲染图腾', () => {
+        const wrapper = mount(Rate, {
+            props: { max: 3, icon: 'lightning' },
+            attachTo: document.body,
+        })
+        const glyphs = wrapper.findAll('svg[viewBox="0 0 100 100"]')
+        expect(glyphs.length).toBeGreaterThanOrEqual(6)
+        wrapper.unmount()
+    })
+
+    it('无效 icon 名称回退为默认星形渲染', () => {
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+        const wrapper = mount(Rate, {
+            props: { max: 2, icon: 'nonexistent' },
+            attachTo: document.body,
+        })
+        expect(wrapper.findAll('svg[viewBox="0 0 100 100"]').length).toBe(0)
+        warnSpy.mockRestore()
+        wrapper.unmount()
+    })
+
+    it('点击评分触发 Stamp Impact 动效类并在动画结束后清除', async () => {
+        vi.useFakeTimers()
+        const wrapper = mount(Rate, {
+            props: { max: 5, modelValue: 0 },
+            attachTo: document.body,
+        })
+        await vi.advanceTimersByTimeAsync(0)
+        const areas = wrapper.findAll('.rate-interactive-area')
+        await areas[2]!.trigger('click')
+        expect(wrapper.html()).toContain('animate-brutal-stamp')
+
+        const stamped = wrapper.find('.animate-brutal-stamp')
+        await stamped.trigger('animationend')
+        expect(wrapper.html()).not.toContain('animate-brutal-stamp')
+        vi.useRealTimers()
+        wrapper.unmount()
     })
 })

@@ -881,7 +881,9 @@
     "files": [
       "Rate.vue"
     ],
-    "composables": [],
+    "composables": [
+      "useReducedMotion.ts"
+    ],
     "directives": [],
     "lib": []
   },
