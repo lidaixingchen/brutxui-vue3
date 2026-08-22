@@ -86,5 +86,13 @@ import { Skeleton, SkeletonAvatar, SkeletonText, SkeletonCard, SkeletonTable } f
                 <Skeleton width="50%" />
             </div>
         </div>
+
+        <div class="space-y-2">
+            <p class="font-black text-sm">加载质感效果（effect）</p>
+            <div class="space-y-2 w-full">
+                <Skeleton effect="scanlines" width="240px" />
+                <Skeleton effect="ascii" size="xl" width="240px" />
+            </div>
+        </div>
     </div>
 </template>

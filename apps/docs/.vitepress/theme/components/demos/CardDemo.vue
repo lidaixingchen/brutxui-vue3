@@ -97,5 +97,21 @@ import {
                 </Card>
             </div>
         </div>
+
+        <div class="space-y-2">
+            <p class="text-sm font-bold tracking-wide">纹理与装饰（texture / deco）</p>
+            <div class="flex flex-wrap gap-4">
+                <Card variant="interactive" texture="grid" deco="hud" class="max-w-xs">
+                    <CardContent>
+                        <p class="text-sm font-medium">蓝图网格 + HUD 准星</p>
+                    </CardContent>
+                </Card>
+                <Card texture="dots" class="max-w-xs">
+                    <CardContent>
+                        <p class="text-sm font-medium">点阵纹理</p>
+                    </CardContent>
+                </Card>
+            </div>
+        </div>
     </div>
 </template>

@@ -7,6 +7,7 @@ const value = ref('')
 const errorValue = ref('')
 const successValue = ref('')
 const modelValue = ref('')
+const insetValue = ref('')
 const readonlyValue = ref('只读内容，可选中复制但不可编辑')
 const clearableValue = ref('悬停后点击右侧按钮清除')
 const password = ref('')
@@ -69,6 +70,13 @@ const site = ref('brutx-ui')
             <div class="flex flex-col gap-2">
                 <Input v-model="modelValue" placeholder="请输入内容..." />
                 <p class="text-xs font-medium text-brutal-fg">值：{{ modelValue }}</p>
+            </div>
+        </div>
+
+        <div class="space-y-2">
+            <p class="text-sm font-bold tracking-wide">冲压凹槽形态（inset）</p>
+            <div class="flex flex-col gap-2 max-w-sm">
+                <Input v-model="insetValue" variant="inset" placeholder="沉入外壳的凹槽输入框" />
             </div>
         </div>
     </div>

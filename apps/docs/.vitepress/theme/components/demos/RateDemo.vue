@@ -7,6 +7,9 @@ const val2 = ref(2.5)
 const val3 = ref(6)
 const val4 = ref(4)
 const sizeVal = ref(3)
+const iconHeartVal = ref(4)
+const iconBoltVal = ref(3)
+const iconStarVal = ref(5)
 </script>
 
 <template>
@@ -33,6 +36,24 @@ const sizeVal = ref(3)
             <h3 class="text-lg font-bold mb-3">只读模式</h3>
             <Rate v-model="val4" readonly allow-half />
             <div class="mt-2 text-sm text-neutral-500">只读分值: {{ val4 }}</div>
+        </div>
+
+        <div>
+            <h3 class="text-lg font-bold mb-3">自定义图腾图标 (icon)</h3>
+            <div class="flex flex-col gap-3">
+                <div class="flex items-center gap-4">
+                    <span class="w-24 text-sm text-neutral-500">heart:</span>
+                    <Rate v-model="iconHeartVal" icon="heart" />
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="w-24 text-sm text-neutral-500">lightning:</span>
+                    <Rate v-model="iconBoltVal" icon="lightning" />
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="w-24 text-sm text-neutral-500">star-8:</span>
+                    <Rate v-model="iconStarVal" icon="star-8" />
+                </div>
+            </div>
         </div>
 
         <div>

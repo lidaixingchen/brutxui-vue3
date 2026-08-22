@@ -17,5 +17,10 @@ import { Progress } from 'brutx-ui-vue'
             <p class="text-sm font-bold tracking-wide">显示百分比标签</p>
             <Progress :model-value="65" show-label />
         </div>
+
+        <div class="space-y-2">
+            <p class="text-sm font-bold tracking-wide">警戒斜纹（pattern）</p>
+            <Progress :model-value="55" pattern="hazard" />
+        </div>
     </div>
 </template>

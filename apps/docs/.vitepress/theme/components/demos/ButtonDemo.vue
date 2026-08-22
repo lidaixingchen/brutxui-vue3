@@ -48,5 +48,14 @@ import { Mail } from '@lucide/vue'
                 <Button type="submit" :loading="true" variant="secondary" pending-text="上传中...">提交</Button>
             </div>
         </div>
+
+        <div class="space-y-2">
+            <p class="text-sm font-bold tracking-wide">装饰形态（flair）</p>
+            <div class="flex flex-wrap items-center gap-3">
+                <Button variant="primary" flair="stacked">多层投影</Button>
+                <Button variant="accent" flair="hazard">警戒斜纹</Button>
+                <Button flair="ticket">票据撕口</Button>
+            </div>
+        </div>
     </div>
 </template>

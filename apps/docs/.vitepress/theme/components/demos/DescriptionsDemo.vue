@@ -42,5 +42,19 @@ const COLUMN_FOUR = 4
                 <DescriptionsItem label="带宽">100 Mbps</DescriptionsItem>
             </Descriptions>
         </div>
+
+        <!-- 技术档案印章插槽 -->
+        <div class="space-y-2">
+            <p class="text-sm font-bold tracking-wide">技术档案印章（stamp 插槽）</p>
+            <Descriptions title="机密档案" border :column="COLUMN_TWO">
+                <template #stamp>
+                    <span class="inline-block rotate-6 border-3 border-brutal-destructive px-2 py-0.5 font-mono text-xs font-black uppercase text-brutal-destructive bg-brutal-bg">
+                        [ CONFIDENTIAL ]
+                    </span>
+                </template>
+                <DescriptionsItem label="编号">BX-2077-001</DescriptionsItem>
+                <DescriptionsItem label="密级">Top Secret</DescriptionsItem>
+            </Descriptions>
+        </div>
     </div>
 </template>

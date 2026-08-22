@@ -47,6 +47,7 @@ import { Kbd } from 'brutx-ui-vue'
                 <Kbd variant="primary">Enter</Kbd>
                 <Kbd variant="secondary">Tab</Kbd>
                 <Kbd variant="accent">Space</Kbd>
+                <Kbd variant="backlit">Fn</Kbd>
             </div>
         </div>
     </div>

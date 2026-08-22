@@ -95,5 +95,25 @@ import { DialogRoot as Dialog, DialogTrigger, DialogClose } from 'reka-ui'
                 </DialogFooter>
             </DialogContent>
         </Dialog>
+
+        <Dialog>
+            <DialogTrigger as-child>
+                <Button variant="accent">百叶窗入场</Button>
+            </DialogTrigger>
+            <DialogContent entrance="shutter" size="lg">
+                <DialogHeader>
+                    <DialogTitle>机械百叶窗展开</DialogTitle>
+                    <DialogDescription>entrance="shutter" 以垂直百叶窗形态机械展开，reduced-motion 下自动降级为瞬现。</DialogDescription>
+                </DialogHeader>
+                <div class="space-y-3">
+                    <p class="text-sm font-medium">与默认的 fade-zoom 流体淡入形成两种动效语言。</p>
+                </div>
+                <DialogFooter>
+                    <DialogClose as-child>
+                        <Button variant="outline">关闭</Button>
+                    </DialogClose>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     </div>
 </template>

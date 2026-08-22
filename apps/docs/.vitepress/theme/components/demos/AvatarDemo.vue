@@ -84,5 +84,17 @@ import { Avatar, AvatarFallback, AvatarImage } from 'brutx-ui-vue'
                 </Avatar>
             </div>
         </div>
+
+        <div class="flex flex-col gap-3">
+            <p class="text-sm font-bold opacity-60">工牌吊孔（lanyard）</p>
+            <div class="flex items-center gap-4">
+                <Avatar size="lg" lanyard>
+                    <AvatarFallback>工</AvatarFallback>
+                </Avatar>
+                <Avatar size="lg" lanyard status="online">
+                    <AvatarFallback>班</AvatarFallback>
+                </Avatar>
+            </div>
+        </div>
     </div>
 </template>

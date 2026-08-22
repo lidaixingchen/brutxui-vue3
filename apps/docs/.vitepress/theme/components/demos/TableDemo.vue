@@ -45,5 +45,39 @@ const rows = [
                 </TableBody>
             </Table>
         </div>
+
+        <div>
+            <p class="text-sm font-black mb-3">表头底纹（texture）</p>
+            <div class="flex flex-wrap gap-6">
+                <Table>
+                    <TableHeader texture="hatch">
+                        <TableRow>
+                            <TableHead>剖面线</TableHead>
+                            <TableHead>HATCH</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell>A-01</TableCell>
+                            <TableCell>¥ 120</TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+                <Table>
+                    <TableHeader texture="dots">
+                        <TableRow>
+                            <TableHead>点阵</TableHead>
+                            <TableHead>DOTS</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell>B-02</TableCell>
+                            <TableCell>¥ 340</TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </div>
+        </div>
     </div>
 </template>
