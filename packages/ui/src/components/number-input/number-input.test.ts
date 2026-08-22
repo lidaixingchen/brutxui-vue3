@@ -169,6 +169,17 @@ describe('NumberInput', () => {
 })
 
 describe('NumberInput 机械键帽与 Drum Ticker', () => {
+    beforeEach(() => {
+        hapticsMocks.click.mockClear()
+        hapticsMocks.useBrutalHaptics.mockClear()
+        hapticsMocks.useBrutalHaptics.mockImplementation(() => ({
+            snap: hapticsMocks.snap,
+            click: hapticsMocks.click,
+            beep: hapticsMocks.beep,
+        }))
+        reducedMotionMocks.useReducedMotion.mockReturnValue({ value: false })
+    })
+
     it('步进按钮带 3D 键帽侧面厚度（border-b-4）与按压消除侧面', () => {
         const wrapper = mount(NumberInput)
         for (const btn of wrapper.findAll('button')) {
@@ -216,6 +227,23 @@ describe('NumberInput 机械键帽与 Drum Ticker', () => {
         })
         await wrapper.setProps({ modelValue: 2 })
         expect(wrapper.html()).not.toContain('animate-brutal-drum')
+        wrapper.unmount()
+    })
+
+    it('animationend 未触发时由 200ms 兜底定时器清除动效类', async () => {
+        vi.useFakeTimers()
+        const wrapper = mount(NumberInput, {
+            props: { modelValue: 1 },
+            attachTo: document.body,
+        })
+        await vi.advanceTimersByTimeAsync(0)
+        await wrapper.setProps({ modelValue: 2 })
+        expect(wrapper.html()).toContain('animate-brutal-drum')
+
+        // 不触发 animationend，仅推进时间越过兜底阈值
+        await vi.advanceTimersByTimeAsync(200)
+        expect(wrapper.html()).not.toContain('animate-brutal-drum')
+        vi.useRealTimers()
         wrapper.unmount()
     })
 })

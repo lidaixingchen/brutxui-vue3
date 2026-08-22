@@ -27,15 +27,15 @@ const OUTPUT_PATH = path.resolve(
 )
 
 const light = BASE_THEME.light
-/** 单一信源契约守卫：任一关键令牌缺失即显式失败，禁止静默产出残缺主题 */
-function assertToken(value: string | undefined, name: string): string {
-    if (!value) {
+/** 单一信源契约守卫：任一关键令牌为 undefined/null 即显式失败，禁止静默产出残缺主题 */
+function assertToken(value: string | null | undefined, name: string): string {
+    if (value === undefined || value === null) {
         throw new Error(`[generate-echarts-theme] BASE_THEME.light.${name} 缺失，拒绝生成残缺主题`)
     }
     return value
 }
 
-function buildTheme(): object {
+function buildTheme(): BrutxUiEchartsTheme {
     const seriesColors = [
         assertToken(light.primary, 'primary'),
         assertToken(light.secondary, 'secondary'),

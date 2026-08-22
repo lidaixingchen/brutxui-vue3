@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, useId, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, useId, watch } from 'vue'
 import {
     NumberFieldRoot,
     type NumberFieldRootProps,
@@ -55,6 +55,10 @@ watch(() => props.modelValue, () => {
     isDrumming.value = true
     if (drumResetTimer !== null) clearTimeout(drumResetTimer)
     drumResetTimer = setTimeout(() => { isDrumming.value = false }, 200)
+})
+
+onBeforeUnmount(() => {
+    if (drumResetTimer !== null) clearTimeout(drumResetTimer)
 })
 
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('numberInput.placeholder'))
