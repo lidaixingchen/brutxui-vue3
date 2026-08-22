@@ -1049,6 +1049,7 @@
       "switch-variants.ts"
     ],
     "composables": [
+      "useBrutalHaptics.ts",
       "useLocale.ts"
     ],
     "directives": [],

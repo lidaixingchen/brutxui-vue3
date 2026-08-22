@@ -1,5 +1,20 @@
 import { mount } from '@vue/test-utils'
 import Slider from './Slider.vue'
+import { sliderTrackVariants, sliderThumbVariants } from './slider-variants'
+
+describe('Slider 凹槽轨道与防滑齿纹', () => {
+    it('轨道应用冲压凹槽阴影（滑块深陷导轨内部）', () => {
+        expect(sliderTrackVariants().split(/\s+/)).toContain('shadow-brutal-inset')
+        expect(sliderTrackVariants().split(/\s+/)).not.toContain('shadow-brutal-sm')
+    })
+
+    it('滑块携带水平防滑齿纹', () => {
+        const classTokens = sliderThumbVariants().split(/\s+/)
+        expect(
+            classTokens.some(c => c.startsWith('bg-[image:repeating-linear-gradient(0deg') && c.includes('var(--brutal-bg')),
+        ).toBe(true)
+    })
+})
 
 describe('Slider', () => {
     it('renders with slider role', () => {

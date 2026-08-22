@@ -1,8 +1,31 @@
 import { mount } from '@vue/test-utils'
+import { vi, beforeEach } from 'vitest'
 import Switch from './Switch.vue'
 import { switchRootVariants, switchThumbVariants } from './switch-variants'
 
+const hapticsMocks = vi.hoisted(() => {
+    const snap = vi.fn()
+    const click = vi.fn()
+    const beep = vi.fn()
+    const useBrutalHaptics = vi.fn(() => ({ snap, click, beep }))
+    return { snap, click, beep, useBrutalHaptics }
+})
+
+vi.mock('@/composables/useBrutalHaptics', () => ({
+    useBrutalHaptics: hapticsMocks.useBrutalHaptics,
+}))
+
 describe('Switch', () => {
+    beforeEach(() => {
+        hapticsMocks.snap.mockClear()
+        hapticsMocks.useBrutalHaptics.mockClear()
+        hapticsMocks.useBrutalHaptics.mockImplementation(() => ({
+            snap: hapticsMocks.snap,
+            click: hapticsMocks.click,
+            beep: hapticsMocks.beep,
+        }))
+    })
+
     it('renders with switch role', () => {
         const wrapper = mount(Switch, {
             attachTo: document.body,
@@ -149,5 +172,49 @@ describe('Switch', () => {
         // 父组件重置表单传入 null
         await wrapper.setProps({ modelValue: null })
         expect(el.attributes('aria-checked')).toBe('false')
+    })
+})
+
+describe('Switch 翘板凹槽轨道与机械动效', () => {
+    it('轨道应用冲压凹槽阴影且脱离外凸交互反馈', () => {
+        const classTokens = switchRootVariants().split(/\s+/)
+        expect(classTokens).toContain('shadow-brutal-inset')
+        expect(classTokens).not.toContain('shadow-brutal-sm')
+        expect(classTokens).not.toContain('hover:-translate-y-0.5')
+        expect(classTokens).not.toContain('active:translate-x-[var(--brutal-shadow-offset-x,4px)]')
+    })
+
+    it('滑块以 bounce 缓动完成翘板吸合（120ms 机械段落）', () => {
+        const classTokens = switchThumbVariants().split(/\s+/)
+        expect(classTokens).toContain('ease-brutal-bounce')
+        expect(classTokens).toContain('duration-[120ms]')
+    })
+
+    it('滑块携带防滑凸棱纹理（背景色挖槽线条叠加在前景色上）', () => {
+        const classTokens = switchThumbVariants().split(/\s+/)
+        expect(
+            classTokens.some(c => c.startsWith('bg-[image:repeating-linear-gradient') && c.includes('var(--brutal-bg')),
+        ).toBe(true)
+    })
+
+    it('sound=true 时切换触发 snap 音效，sound 选项随 prop 传递', async () => {
+        const wrapper = mount(Switch, {
+            props: { sound: true },
+            attachTo: document.body,
+        })
+        expect(hapticsMocks.useBrutalHaptics).toHaveBeenCalledWith({ sound: true })
+        await wrapper.find('[role="switch"]').trigger('click')
+        expect(hapticsMocks.snap).toHaveBeenCalledTimes(1)
+        wrapper.unmount()
+    })
+
+    it('默认静音：sound 缺省时以 false 传递给门面（发声短路由门面契约承担）', async () => {
+        hapticsMocks.snap.mockClear()
+        const wrapper = mount(Switch, { attachTo: document.body })
+        expect(hapticsMocks.useBrutalHaptics).toHaveBeenCalledWith({ sound: false })
+        await wrapper.find('[role="switch"]').trigger('click')
+        // 组件层始终上报切换事件；是否真正发声由 useBrutalHaptics 门面的 opt-in 短路决定
+        expect(hapticsMocks.snap).toHaveBeenCalledTimes(1)
+        wrapper.unmount()
     })
 })

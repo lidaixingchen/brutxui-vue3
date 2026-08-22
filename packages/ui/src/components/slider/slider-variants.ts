@@ -30,7 +30,8 @@ export const sliderTrackVariants = cva(
     [
         'relative grow overflow-visible rounded-brutal',
         'border-3 border-brutal bg-brutal-bg',
-        'shadow-brutal-sm',
+        // 轨道底槽内嵌凹槽：滑块深陷导轨内部的机械物理关系
+        'shadow-brutal-inset',
     ],
     {
         variants: {
@@ -53,6 +54,8 @@ export const sliderThumbVariants = cva(
         'border-3 border-brutal',
         'shadow-brutal-sm',
         'transition-colors duration-150',
+        // 水平防滑齿纹：底色细线挖槽叠加在滑块主题色上（抓握摩擦面的物理隐喻）
+        'bg-[image:repeating-linear-gradient(0deg,var(--brutal-bg,#ffffff)_0px,var(--brutal-bg,#ffffff)_2px,transparent_2px,transparent_5px)]',
         FOCUS_RING_CLASSES,
         'data-[disabled]:pointer-events-none',
         brutalHoverLiftSmNoX,
