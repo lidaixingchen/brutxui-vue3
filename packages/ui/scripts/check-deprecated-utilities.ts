@@ -66,6 +66,8 @@ const RING_ALLOWLIST = new Set([
     'ring-offset-1',
     'ring-offset-2',
     'ring-offset-brutal-bg',
+    // 位置变体：内环绘制（表格选中行黑环、ScrollArea 激活内环等非焦点视觉）
+    'ring-inset',
 ]);
 
 // 锚定到 rgba( 函数调用（而非任意位置出现 rgba 子串，避免误判 var(--shadow-rgba) 等变量名）；
