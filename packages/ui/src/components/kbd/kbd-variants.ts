@@ -9,7 +9,11 @@ export const kbdVariants = cva(
         ...chipBaseClasses,
         'justify-center',
         'font-mono font-black',
+        // 3D 机械键帽：底边加厚形成侧面厚度，按压时下沉消除侧面完成「按下」物理隐喻
         'shadow-brutal-sm',
+        'border-b-4',
+        'transition-all duration-75',
+        'active:border-b-0 active:translate-y-1',
         'select-none whitespace-nowrap',
     ],
     {
@@ -19,6 +23,9 @@ export const kbdVariants = cva(
                 primary: chipColorVariants.primary,
                 secondary: chipColorVariants.secondary,
                 accent: chipColorVariants.accent,
+                /* 工控背光键帽：恒黑底 + accent 发光字符。
+                   --brutal-black 在亮暗预设均为纯黑，黄字对比度跨主题稳定（≈14:1） */
+                backlit: 'bg-brutal-black text-brutal-accent border-brutal-black',
             },
             size: {
                 sm: 'px-1.5 py-0.5 text-xs min-w-[1.25rem]',

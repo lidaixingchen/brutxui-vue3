@@ -136,3 +136,30 @@ describe('Kbd', () => {
         expect(wrapper2.classes()).toContain('bg-brutal-muted')
     })
 })
+
+describe('Kbd 3D 机械键帽', () => {
+    it('底边加厚形成键帽侧面（border-3 基座 + border-b-4）', () => {
+        const wrapper = mount(Kbd)
+        expect(wrapper.classes()).toContain('border-b-4')
+        expect(wrapper.classes()).toContain('border-3')
+    })
+
+    it('按压时下沉并消除侧面厚度', () => {
+        const wrapper = mount(Kbd)
+        expect(wrapper.classes()).toContain('active:border-b-0')
+        expect(wrapper.classes()).toContain('active:translate-y-1')
+    })
+
+    it('backlit 变体应用恒黑底与 accent 背光字符令牌', () => {
+        const wrapper = mount(Kbd, { props: { variant: 'backlit' } })
+        expect(wrapper.classes()).toContain('bg-brutal-black')
+        expect(wrapper.classes()).toContain('text-brutal-accent')
+        expect(wrapper.classes()).not.toContain('bg-brutal-muted')
+    })
+
+    it('backlit 键帽保留侧面厚度与按压下沉', () => {
+        const wrapper = mount(Kbd, { props: { variant: 'backlit' } })
+        expect(wrapper.classes()).toContain('border-b-4')
+        expect(wrapper.classes()).toContain('active:translate-y-1')
+    })
+})

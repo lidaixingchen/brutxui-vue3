@@ -1,14 +1,12 @@
 import { cva } from 'class-variance-authority'
 import { inputVariantClasses } from './shared-input-variants'
-import { brutalPress, brutalHoverLift } from '@/lib/brutal-interaction-variants'
 
 export const inputContainerVariants = cva(
     [
         'flex items-stretch overflow-hidden transition-all duration-150 bg-brutal-bg text-brutal-fg',
-        'border-3 border-brutal rounded-brutal shadow-brutal',
-        brutalHoverLift,
-        brutalPress,
-        'focus-within:ring-2 focus-within:ring-brutal-ring focus-within:ring-offset-2 focus-within:ring-offset-brutal-bg focus-within:outline-hidden focus-within:shadow-brutal-lg focus-within:-translate-x-0.5 focus-within:-translate-y-0.5'
+        'border-3 border-brutal rounded-brutal',
+        // R7 焦点指示环（容器为 div，须用 focus-within 命中内部 input 聚焦）
+        'focus-within:ring-2 focus-within:ring-brutal-ring focus-within:ring-offset-2 focus-within:ring-offset-brutal-bg focus-within:outline-hidden',
     ],
     {
         variants: {
