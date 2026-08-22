@@ -7,6 +7,8 @@ import {
     ROOT_END,
     PRESETS_START,
     PRESETS_END,
+    PATTERN_UTILS_START,
+    PATTERN_UTILS_END,
     FONT_STACK_START,
     FONT_STACK_END,
 } from './token-style-compiler.js';
@@ -68,7 +70,7 @@ ${THEME_END}
             }).toThrow('无法找到注入标记');
         });
 
-        it('patchStylesCss 能够同时打好三个 Marker 区间的补丁', () => {
+        it('patchStylesCss 能够同时打好全部 Marker 区间的补丁', () => {
             const raw = `
 @theme {
     ${THEME_START}
@@ -80,12 +82,16 @@ ${THEME_END}
     ${PRESETS_START}
     ${PRESETS_END}
 }
+${PATTERN_UTILS_START}
+${PATTERN_UTILS_END}
 `;
             const { content, changed } = compiler.patchStylesCss(raw);
             expect(changed).toBe(true);
             expect(content).toContain('--color-brutal-primary:');
             expect(content).toContain(':root {');
             expect(content).toContain('.theme-pastel {');
+            // 第四区间：纹理工具类（@utility 声明）由 PATTERN_UTILITIES 单一数据源生成
+            expect(content).toContain('@utility bg-pattern-dots');
         });
 
         it('能够生成 colorNames 与 zIndexNames 块并成功 patch utils.ts', () => {
