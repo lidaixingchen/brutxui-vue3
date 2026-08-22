@@ -90,6 +90,7 @@ const value = ref(3.5)
 | `allowHalf` | `boolean` | `false` | 是否允许半星选择 |
 | `readonly` | `boolean` | `false` | 是否只读（禁用所有交互） |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 尺寸大小 |
+| `icon` | `string` | `undefined` | 自定义评分图标的 BrutalShape 图腾名（如 `heart`、`lightning`、`star-5`）；未设置时使用默认星星。传入未知图腾名时回退为默认星星 |
 
 ## 事件
 

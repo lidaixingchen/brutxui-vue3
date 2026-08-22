@@ -52,6 +52,23 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 | `primary` | Primary color shadow and border |
 | `secondary` | Secondary color shadow and border |
 
+## Texture & Decoration
+
+`texture` provides background dot/grid patterns and `deco` adds a HUD decoration layer; both stack with any variant:
+
+| Prop | Values | Description |
+|------|-----|------|
+| `texture` | `none` / `grid` / `dots` | Background texture: blueprint grid / dot matrix (background-image based, never conflicts with background color) |
+| `deco` | `none` / `hud` | Four-corner crosshair decoration layer (pseudo-element based, industrial calibration feel) |
+
+```vue
+<template>
+    <Card variant="interactive" texture="grid" deco="hud">
+        <CardTitle>HUD Monitor Panel</CardTitle>
+    </Card>
+</template>
+```
+
 ## Padding
 
 | Padding | Value |
@@ -125,6 +142,8 @@ Compose new card templates directly from the `Card` sub-components.
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | `variant` | `'default' \| 'elevated' \| 'flat' \| 'interactive' \| 'primary' \| 'secondary'` | `'default'` | Card variant type |
+| `texture` | `'none' \| 'grid' \| 'dots'` | `'none'` | Background texture: blueprint grid / dot matrix |
+| `deco` | `'none' \| 'hud'` | `'none'` | HUD four-corner crosshair decoration layer |
 | `padding` | `'none' \| 'sm' \| 'default' \| 'lg'` | `'default'` | Card padding |
 | `interactive` | `boolean` | `false` | Whether clickable, adds `role="button"`, `tabindex="0"` and keyboard support |
 | `disabled` | `boolean` | `false` | Disables interaction: `tabindex="-1"`, `aria-disabled="true"`, and `activate` is never emitted |

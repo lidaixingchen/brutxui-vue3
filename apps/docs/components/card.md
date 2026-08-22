@@ -51,6 +51,23 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 | `primary` | Primary 色阴影和边框 |
 | `secondary` | Secondary 色阴影和边框 |
 
+## 纹理与装饰
+
+`texture` 提供背景网点/网格纹理，`deco` 提供 HUD 装饰层，两者可与任意变体叠加：
+
+| 属性 | 值 | 说明 |
+|------|-----|------|
+| `texture` | `none` / `grid` / `dots` | 背景纹理：蓝图网格 / 点阵（走 background-image，不与背景色冲突） |
+| `deco` | `none` / `hud` | 四角十字准星装饰层（伪元素承载，工业仪器标定感） |
+
+```vue
+<template>
+    <Card variant="interactive" texture="grid" deco="hud">
+        <CardTitle>HUD 监控面板</CardTitle>
+    </Card>
+</template>
+```
+
 ## 内边距
 
 | 内边距 | 值 |
@@ -125,6 +142,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 | --- | --- | --- | --- |
 | `variant` | `'default' \| 'elevated' \| 'flat' \| 'interactive' \| 'primary' \| 'secondary'` | `'default'` | 卡片变体类型 |
 | `padding` | `'none' \| 'sm' \| 'default' \| 'lg'` | `'default'` | 卡片内边距 |
+| `texture` | `'none' \| 'grid' \| 'dots'` | `'none'` | 背景纹理：蓝图网格 / 点阵 |
+| `deco` | `'none' \| 'hud'` | `'none'` | HUD 四角十字准星装饰层 |
 | `interactive` | `boolean` | `false` | 是否可点击，添加 `role="button"`、`tabindex="0"` 和键盘支持 |
 | `disabled` | `boolean` | `false` | 禁用交互：`tabindex="-1"`、`aria-disabled="true"`，且不触发 `activate` |
 | `class` | `string` | — | 自定义 CSS 类 |

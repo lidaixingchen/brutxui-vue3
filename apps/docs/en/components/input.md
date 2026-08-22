@@ -158,9 +158,16 @@ const url = ref('')
 
 | Variant | Description |
 |---------|-------------|
-| `default` | Standard border |
+| `default` | Standard border with hover lift and cover-shadow press; shadow enlarges on focus |
 | `error` | Error border with primary shadow on focus |
 | `success` | Success border with secondary shadow on focus |
+| `inset` | Stamped groove: static recessed form (inset shadow) with deliberately no hover/press/focus-lift feedback — the physical metaphor is "sunk into the shell" |
+
+```vue
+<template>
+    <Input v-model="value" variant="inset" placeholder="Stamped groove form" />
+</template>
+```
 
 ## Sizes
 
@@ -176,7 +183,7 @@ const url = ref('')
 |------|------|---------|-------------|
 | `type` | `HTMLInputType` 1 | `'text'` | Input type |
 | `modelValue` | `string` | — | v-model binding value |
-| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | Input variant |
+| `variant` | `'default' \| 'error' \| 'success' \| 'inset'` | `'default'` | Input variant |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Input size |
 | `disabled` | `boolean` | `false` | Whether disabled |
 | `readonly` | `boolean` | `false` | Whether readonly |

@@ -127,6 +127,7 @@ import { Descriptions, DescriptionsItem } from 'brutx-ui-vue'
 | --- | --- |
 | `default` | DescriptionsItem 组件 |
 | `title` | 自定义标题内容 |
+| `stamp` | 技术档案印章：右上角悬浮层（容器 overflow-hidden，内容不越界） |
 
 ### DescriptionsItem
 

@@ -94,6 +94,7 @@ NumberInput 提供两种按钮排版形态，通过 `layout` 属性配置：
 | `required` | `boolean` | `false` | 是否为必填字段 |
 | `id` | `string` | — | 元素的 id 属性 |
 | `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 加减按钮图标的尺寸 |
+| `sound` | `boolean` | `false` | 步进点击时播放机械咔哒音效（Web Audio 合成，遵循浏览器自动播放策略） |
 | `as` | `string \| Component` | `'div'` | 根元素渲染为的标签或组件 |
 | `asChild` | `boolean` | `false` | 是否启用组合模式，不渲染自身 DOM，将 props 传递给子元素 |
 | `class` | `string` | `undefined` | 容器的自定义 CSS 类 |
@@ -110,3 +111,4 @@ NumberInput 提供两种按钮排版形态，通过 `layout` 属性配置：
 - **ARIA 属性**：加减按钮自动设置 `aria-label`（如"增加"/"减少"），输入框设置 `aria-valuemin`、`aria-valuemax`、`aria-valuenow` 属性
 - **表单集成**：支持 `name`、`required`、`disabled`、`readonly` 等原生表单属性，与表单验证兼容
 - **焦点管理**：`focusOnChange` 属性控制值变化时是否自动聚焦，`disabled` 状态下禁止所有交互
+- **动效与音效降级**：数值变化触发的 Drum Ticker 滚轮微动效在 `prefers-reduced-motion` 下自动停用；`sound` 音效遵循浏览器自动播放策略，未交互前不发声

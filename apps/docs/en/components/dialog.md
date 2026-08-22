@@ -156,6 +156,7 @@ Trigger button re-exported from reka-ui.
 |------|------|---------|-------------|
 | `showCloseButton` | `boolean` | `true` | Whether to show the close button |
 | `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'default'` | Dialog size |
+| `entrance` | `'fade-zoom' \| 'shutter'` | `'fade-zoom'` | Entrance animation: fluid fade-zoom / mechanical shutter expansion (auto-degrades to instant show under reduced-motion) |
 | `forceMount` | `boolean` | — | Force mount (for animation control) |
 | `class` | `string` | — | Custom CSS class |
 

@@ -156,6 +156,25 @@ import { RouterLink } from 'vue-router'
 </template>
 ```
 
+## Decorative Flair
+
+The `flair` dimension composes orthogonally with color variants, offering three mechanical texture modes:
+
+| Flair | Description |
+| ---- | ---- |
+| `none` | Default; outputs no extra decoration classes |
+| `stacked` | Multi-layer rainbow hard shadow with matched 1.5x press displacement |
+| `hazard` | Yellow-black warning stripes; foreground is locked for readability on the texture |
+| `ticket` | Ticket tear — semicircle notches at the left/right midpoints |
+
+```vue
+<template>
+    <Button variant="primary" flair="stacked">Stacked shadow</Button>
+    <Button variant="accent" flair="hazard">Hazard stripes</Button>
+    <Button variant="default" flair="ticket">Ticket notch</Button>
+</template>
+```
+
 ## Sizes
 
 | Size | Height | Padding | Font Size |
@@ -178,6 +197,7 @@ import { RouterLink } from 'vue-router'
 | `disabled` | `boolean` | `false` | Disables the button |
 | `pendingText` | `string` | `undefined` (falls back to i18n `submitButton.submitting`) | Pending text displayed during loading; only effective when `type="submit"` and `loading` |
 | `effect` | `'none' \| 'glitch'` | `'none'` | Optional visual effect |
+| `flair` | `'none' \| 'stacked' \| 'hazard' \| 'ticket'` | `'none'` | Decorative flair dimension, composes orthogonally with color variants |
 | `glitchTrigger` | `'hover' \| 'click' \| 'autoplay' \| 'none'` | `'hover'` | Glitch animation trigger, only active with `effect="glitch"` |
 | `glitchInterval` | `number` | `3000` | Autoplay interval in milliseconds, only active with `glitchTrigger="autoplay"` |
 | `glitchSpeed` | `'slow' \| 'medium' \| 'fast'` | `'medium'` | Glitch animation speed |

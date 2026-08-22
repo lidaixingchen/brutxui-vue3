@@ -141,6 +141,25 @@ When `shape="circle"`, width matches height (`w-8`/`w-10`/`w-14`/`w-20`).
 </template>
 ```
 
+## Loading Texture Effects
+
+The `effect` variant overlays CRT-style texture on skeleton blocks:
+
+| Effect | Description |
+|------|------|
+| `none` | Default pulse breathing |
+| `scanlines` | Overlaid CRT scanline texture |
+| `ascii` | Renders flickering ASCII terminal blocks inside (customizable via the default slot) |
+
+```vue
+<template>
+    <div class="space-y-2">
+        <Skeleton effect="scanlines" width="240px" />
+        <Skeleton effect="ascii" size="xl" width="240px" />
+    </div>
+</template>
+```
+
 ## Sub-components
 
 | Component | Description |
@@ -160,6 +179,7 @@ When `shape="circle"`, width matches height (`w-8`/`w-10`/`w-14`/`w-20`).
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | Color variant |
 | `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | Controls height (also controls width for `circle`) |
 | `shape` | `'rect' \| 'circle'` | `'rect'` | Shape; `circle` uses `rounded-full` with equal width and height |
+| `effect` | `'none' \| 'scanlines' \| 'ascii'` | `'none'` | Loading texture effect: CRT scanlines / ASCII terminal block flicker |
 | `width` | `string \| number` | — | Custom width, supports numeric pixels (e.g. `64`) or strings (e.g. `'100%'`, `'200px'`); also sets height for `circle` |
 | `class` | `string` | — | Custom style class |
 

@@ -90,6 +90,7 @@ Add the `readonly` attribute to make the rating static, removing hover states, t
 | `allowHalf` | `boolean` | `false` | Whether to allow half-star selection |
 | `readonly` | `boolean` | `false` | Read-only mode |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Component size |
+| `icon` | `string` | `undefined` | BrutalShape totem name for a custom rating icon (e.g. `heart`, `lightning`, `star-5`); defaults to the built-in star when unset. Unknown names fall back to the default star |
 
 ## Events
 

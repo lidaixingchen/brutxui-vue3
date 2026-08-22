@@ -63,6 +63,7 @@ import { Kbd } from 'brutx-ui-vue'
         <Kbd variant="primary">Enter</Kbd>
         <Kbd variant="secondary">Tab</Kbd>
         <Kbd variant="accent">Space</Kbd>
+        <Kbd variant="backlit">Fn</Kbd>
     </div>
 </template>
 ```
@@ -79,7 +80,7 @@ import { Kbd } from 'brutx-ui-vue'
 
 | Prop | Type | Default | Description |
 |------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | Key color variant |
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'backlit'` | `'default'` | Key color variant; `backlit` is a black-on-yellow backlit keycap (mechanical keyboard backlight feel) |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Key size |
 | `class` | `string \| undefined` | `undefined` | Custom style class, merged with the component's default styles |
 

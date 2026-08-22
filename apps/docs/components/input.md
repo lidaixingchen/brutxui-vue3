@@ -180,9 +180,16 @@ const url = ref('')
 
 | 变体 | 说明 |
 |------|------|
-| `default` | 标准边框 |
+| `default` | 标准边框，悬浮上浮 + 盖影按压，聚焦时阴影放大 |
 | `error` | 错误边框，聚焦时使用 Primary 阴影 |
 | `success` | 成功边框，聚焦时使用 Secondary 阴影 |
+| `inset` | 冲压凹槽：静态内嵌形态（内嵌阴影），刻意无悬浮/按压/聚焦上浮反馈——凹槽的物理语义是「沉入外壳」 |
+
+```vue
+<template>
+    <Input v-model="value" variant="inset" placeholder="冲压凹槽形态" />
+</template>
+```
 
 ## 尺寸
 
@@ -198,7 +205,7 @@ const url = ref('')
 | --- | --- | --- | --- |
 | `type` | `HTMLInputType` ¹ | `'text'` | 输入框类型 |
 | `modelValue` | `string` | — | v-model 绑定值 |
-| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | 输入框变体 |
+| `variant` | `'default' \| 'error' \| 'success' \| 'inset'` | `'default'` | 输入框变体 |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 输入框尺寸 |
 | `disabled` | `boolean` | `false` | 是否禁用 |
 | `readonly` | `boolean` | `false` | 是否只读 |

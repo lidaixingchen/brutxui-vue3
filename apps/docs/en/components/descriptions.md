@@ -127,6 +127,7 @@ import { Descriptions, DescriptionsItem } from 'brutx-ui-vue'
 | --- | --- |
 | `default` | DescriptionsItem components |
 | `title` | Custom title content |
+| `stamp` | Technical archive stamp: floating layer at the top-right (container is overflow-hidden, content stays inside) |
 
 ### DescriptionsItem
 

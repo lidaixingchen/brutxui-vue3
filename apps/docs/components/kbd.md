@@ -62,6 +62,7 @@ import { Kbd } from 'brutx-ui-vue'
         <Kbd variant="primary">Enter</Kbd>
         <Kbd variant="secondary">Tab</Kbd>
         <Kbd variant="accent">Space</Kbd>
+        <Kbd variant="backlit">Fn</Kbd>
     </div>
 </template>
 ```
@@ -78,7 +79,7 @@ import { Kbd } from 'brutx-ui-vue'
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 按键颜色变体 |
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'backlit'` | `'default'` | 按键颜色变体；`backlit` 为黑底黄字背光键帽（机械键盘背光质感） |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 按键尺寸 |
 | `class` | `string \| undefined` | `undefined` | 自定义样式类，会与组件默认样式合并 |
 

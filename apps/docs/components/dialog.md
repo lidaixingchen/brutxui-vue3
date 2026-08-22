@@ -155,6 +155,7 @@ import { DialogEnhanced, DialogHeader, DialogTitle } from 'brutx-ui-vue'
 |------|------|--------|------|
 | `showCloseButton` | `boolean` | `true` | 是否显示关闭按钮 |
 | `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'default'` | 对话框尺寸 |
+| `entrance` | `'fade-zoom' \| 'shutter'` | `'fade-zoom'` | 入场动效形态：流体淡入缩放 / 百叶窗机械展开（reduced-motion 下自动降级为瞬现） |
 | `forceMount` | `boolean` | — | 强制渲染（用于动画控制） |
 | `class` | `string` | — | 自定义样式类 |
 

@@ -161,6 +161,7 @@ import { Avatar, AvatarFallback } from 'brutx-ui-vue'
 | `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | Size |
 | `shape` | `'square' \| 'rounded'` | `'square'` | Shape |
 | `status` | `'online' \| 'offline' \| 'busy' \| 'none'` | `'none'` | Status dot at the bottom-right corner |
+| `lanyard` | `boolean` | `false` | Badge grommet: renders a metal ring hole at the top (purely decorative, aria-hidden) |
 | `class` | `string` | — | Additional class name |
 
 ### AvatarImage

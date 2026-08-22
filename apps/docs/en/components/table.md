@@ -92,6 +92,7 @@ All sub-components accept:
 | Prop | Type | Default | Description |
 |------|------|--------|------|
 | `variant` | `'default' \| 'primary' \| 'secondary'` | `'default'` | Header color variant |
+| `texture` | `'none' \| 'hatch' \| 'dots'` | `'none'` | Header texture: engineering hatch lines / newspaper dots (overlaid on the color) |
 | `class` | `string` | — | Custom CSS class |
 
 ### TableFooter

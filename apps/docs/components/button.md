@@ -155,6 +155,25 @@ import { RouterLink } from 'vue-router'
 </template>
 ```
 
+## 装饰形态
+
+`flair` 与色系变体正交可组合，提供三种机械质感装饰形态：
+
+| 形态 | 说明 |
+| ---- | ---- |
+| `none` | 默认，不输出任何额外装饰类 |
+| `stacked` | 多层彩虹硬投影，按压时同源位移（1.5x 盖影） |
+| `hazard` | 黄黑警戒斜纹底色，前景锁定保证纹理上可读 |
+| `ticket` | 票据撕口——左右中缝半圆缺口 |
+
+```vue
+<template>
+    <Button variant="primary" flair="stacked">多层投影</Button>
+    <Button variant="accent" flair="hazard">警戒斜纹</Button>
+    <Button variant="default" flair="ticket">票据撕口</Button>
+</template>
+```
+
 ## 尺寸
 
 | 尺寸 | 高度 | 内边距 | 字体大小 |
@@ -177,6 +196,7 @@ import { RouterLink } from 'vue-router'
 | `disabled` | `boolean` | `false` | 禁用按钮 |
 | `pendingText` | `string` | `undefined`（回退到 i18n `submitButton.submitting`） | 加载中显示的等待文本，仅在 `type="submit"` 且 `loading` 时生效 |
 | `effect` | `'none' \| 'glitch'` | `'none'` | 可选视觉效果 |
+| `flair` | `'none' \| 'stacked' \| 'hazard' \| 'ticket'` | `'none'` | 装饰形态维度，与色系变体正交可组合 |
 | `glitchTrigger` | `'hover' \| 'click' \| 'autoplay' \| 'none'` | `'hover'` | 故障动画触发方式，仅在 `effect="glitch"` 时生效 |
 | `glitchInterval` | `number` | `3000` | 自动播放间隔（毫秒），仅在 `glitchTrigger="autoplay"` 时生效 |
 | `glitchSpeed` | `'slow' \| 'medium' \| 'fast'` | `'medium'` | 故障动画速度 |

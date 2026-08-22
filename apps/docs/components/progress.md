@@ -109,6 +109,21 @@ const value = ref(60)
 </template>
 ```
 
+### 警戒斜纹纹理
+
+`pattern` 为指示器叠加机械质感纹理；`hazard` 自带黄黑斜纹流动动画（reduced-motion 下静止）。indeterminate 滑轨动画与纹理动画互斥，滑轨优先：
+
+| 纹理 | 说明 |
+| --- | --- |
+| `none` | 默认纯色填充 |
+| `hazard` | 黄黑警戒斜纹 + 流动动画 |
+
+```vue
+<template>
+    <Progress v-model="value" pattern="hazard" />
+</template>
+```
+
 ## 尺寸
 
 `size` 控制进度条的高度。
@@ -146,6 +161,7 @@ const value = ref(50)
 | `max` | `number` | `100` | 最大值 |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 进度条高度预设 |
 | `variant` | `'default' \| 'secondary' \| 'accent' \| 'success' \| 'danger'` | `'default'` | 指示器颜色变体 |
+| `pattern` | `'none' \| 'hazard'` | `'none'` | 指示器纹理：`hazard` 为黄黑警戒斜纹 + 流动动画（indeterminate 时自动让位于滑轨动画） |
 | `indeterminate` | `boolean` | `false` | 是否为不确定状态（指示器循环滑动，忽略 `modelValue`） |
 | `showLabel` | `boolean` | `false` | 是否在进度条中央显示百分比标签（不确定状态下不显示） |
 | `class` | `string` | — | 自定义样式类 |

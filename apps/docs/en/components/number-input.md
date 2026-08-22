@@ -95,6 +95,7 @@ Set different border styles via the `variant` prop for form validation state fee
 | `required` | `boolean` | `false` | Whether the field is required |
 | `id` | `string` | — | Element id attribute |
 | `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | Size of the increment/decrement button icons |
+| `sound` | `boolean` | `false` | Plays a mechanical click sound on step taps (Web Audio synthesis, respects browser autoplay policy) |
 | `as` | `string \| Component` | `'div'` | Tag or component to render the root element as |
 | `asChild` | `boolean` | `false` | Whether to enable composition mode, not rendering its own DOM and passing props to the child element |
 | `class` | `string` | `undefined` | Custom CSS class for the container |
@@ -111,3 +112,4 @@ Set different border styles via the `variant` prop for form validation state fee
 - **ARIA attributes**: Increment/decrement buttons automatically set `aria-label` (e.g. "Increase"/"Decrease"), input sets `aria-valuemin`, `aria-valuemax`, `aria-valuenow` attributes
 - **Form integration**: Supports `name`, `required`, `disabled`, `readonly` and other native form attributes, compatible with form validation
 - **Focus management**: `focusOnChange` prop controls whether to auto-focus on value change; all interaction is disabled in `disabled` state
+- **Motion & sound degradation**: The Drum Ticker micro-animation on value change is disabled automatically under `prefers-reduced-motion`; the `sound` effect follows the browser autoplay policy and stays silent before user interaction

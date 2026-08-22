@@ -91,6 +91,7 @@ import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell, TableCap
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `variant` | `'default' \| 'primary' \| 'secondary'` | `'default'` | 表头颜色变体 |
+| `texture` | `'none' \| 'hatch' \| 'dots'` | `'none'` | 表头底纹：工程制图剖面线 / 报刊点阵（叠加在配色之上） |
 | `class` | `string` | — | 自定义样式类 |
 
 ### TableFooter

@@ -140,6 +140,25 @@ import { SkeletonTable } from 'brutx-ui-vue'
 </template>
 ```
 
+## 加载质感效果
+
+`effect` 为骨架块叠加 CRT 质感动效：
+
+| 效果 | 说明 |
+|------|------|
+| `none` | 默认脉冲呼吸 |
+| `scanlines` | 叠加 CRT 扫描线纹理 |
+| `ascii` | 内部渲染 ASCII 终端块闪烁（可通过默认插槽自定义内容） |
+
+```vue
+<template>
+    <div class="space-y-2">
+        <Skeleton effect="scanlines" width="240px" />
+        <Skeleton effect="ascii" size="xl" width="240px" />
+    </div>
+</template>
+```
+
 ## 子组件
 
 | 组件 | 说明 |
@@ -159,6 +178,7 @@ import { SkeletonTable } from 'brutx-ui-vue'
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 颜色变体 |
 | `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | 控制高度（`circle` 时同步控制宽度） |
 | `shape` | `'rect' \| 'circle'` | `'rect'` | 形状；`circle` 时 `rounded-full` 且宽高相等 |
+| `effect` | `'none' \| 'scanlines' \| 'ascii'` | `'none'` | 加载质感效果：CRT 扫描线 / ASCII 终端块闪烁 |
 | `width` | `string \| number` | — | 自定义宽度，支持数字像素（如 `64`）或字符串（如 `'100%'`、`'200px'`）；`circle` 时同时设置高度 |
 | `class` | `string` | — | 自定义样式类 |
 

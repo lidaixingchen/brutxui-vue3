@@ -160,6 +160,7 @@ import { Avatar, AvatarFallback } from 'brutx-ui-vue'
 | `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | 尺寸 |
 | `shape` | `'square' \| 'rounded'` | `'square'` | 形状 |
 | `status` | `'online' \| 'offline' \| 'busy' \| 'none'` | `'none'` | 右下角状态圆点 |
+| `lanyard` | `boolean` | `false` | 工牌吊孔：顶部渲染金属圆环挂孔（纯装饰，aria-hidden） |
 | `class` | `string` | — | 附加类名 |
 
 ### AvatarImage
