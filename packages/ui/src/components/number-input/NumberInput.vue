@@ -45,11 +45,16 @@ const { t } = useLocale()
 const haptics = useBrutalHaptics({ sound: props.sound })
 const prefersReducedMotion = useReducedMotion()
 
-/** Drum Ticker：数值变化时输入框做滚轮翻页微动效（reduced-motion 环境瞬时切换） */
+/** Drum Ticker：数值变化时输入框做滚轮翻页微动效（reduced-motion 环境瞬时切换）。
+    animationend 兜底定时器：动画被 reduced-motion 切换/元素隐藏等场景中断时，
+    animationend 永不触发会导致类残留并使后续变化无法重启动画 */
 const isDrumming = ref(false)
+let drumResetTimer: ReturnType<typeof setTimeout> | null = null
 watch(() => props.modelValue, () => {
     if (prefersReducedMotion.value) return
     isDrumming.value = true
+    if (drumResetTimer !== null) clearTimeout(drumResetTimer)
+    drumResetTimer = setTimeout(() => { isDrumming.value = false }, 200)
 })
 
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('numberInput.placeholder'))
@@ -66,6 +71,7 @@ const DELEGATED_OMIT_KEYS = new Set([
     'errorMessage',
     'placeholder',
     'iconSize',
+    'sound',
 ])
 
 const delegatedProps = computed(() => {

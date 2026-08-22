@@ -124,12 +124,24 @@ const PATTERN_UTILITIES: PatternUtilityDefinition[] = [
     },
     {
         name: 'hud-crosshairs',
-        comment: 'HUD 四角十字准星：工业仪器标定对齐感（容器装饰层）',
+        comment: 'HUD 四角十字准星：工业仪器标定对齐感（::before 承载，不与背景纹理类的 background-image 冲突）',
         declarations: [
-            'background-image: linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000)), linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000)), linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000)), linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000)), linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000)), linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000)), linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000)), linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000));',
-            'background-repeat: no-repeat;',
-            'background-size: 18px 2px, 2px 18px, 18px 2px, 2px 18px, 18px 2px, 2px 18px, 18px 2px, 2px 18px;',
-            'background-position: 5px 13px, 13px 5px, right 5px top 13px, right 13px top 5px, 5px bottom 13px, 13px bottom 5px, right 5px bottom 13px, right 13px bottom 5px;',
+            'position: relative;',
+        ],
+        nestedRules: [
+            {
+                selector: '&::before',
+                declarations: [
+                    'content: "";',
+                    'position: absolute;',
+                    'inset: 0;',
+                    'pointer-events: none;',
+                    'background-image: linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000)), linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000)), linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000)), linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000)), linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000)), linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000)), linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000)), linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000));',
+                    'background-repeat: no-repeat;',
+                    'background-size: 18px 2px, 2px 18px, 18px 2px, 2px 18px, 18px 2px, 2px 18px, 18px 2px, 2px 18px;',
+                    'background-position: 5px 13px, 13px 5px, right 5px top 13px, right 13px top 5px, 5px bottom 13px, 13px bottom 5px, right 5px bottom 13px, right 13px bottom 5px;',
+                ],
+            },
         ],
     },
 ];

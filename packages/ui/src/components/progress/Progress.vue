@@ -37,7 +37,12 @@ const classes = computed(() =>
 
 const indicatorClasses = computed(() =>
     cn(
-        progressIndicatorVariants({ variant: props.variant, pattern: props.pattern }),
+        // indeterminate 滑轨动画与 hazard 纹理平移动画同层互斥（transform 与 background-position
+        // 的 animation 属性互相覆盖），滑轨优先：indeterminate 时不应用纹理 pattern
+        progressIndicatorVariants({
+            variant: props.variant,
+            pattern: props.indeterminate ? 'none' : props.pattern,
+        }),
         props.indeterminate && 'w-1/2 animate-indeterminate',
     )
 )

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, useSlots } from 'vue'
+import type { ClassValue } from 'clsx'
 import { cn } from '@/lib/utils'
 import { imageCardVariants, imageCardImageVariants, imageCardFooterVariants } from './image-card-variants'
 
@@ -20,7 +21,7 @@ interface ImageCardProps {
     /** 底栏描述文本 */
     description?: string
     /** 自定义 CSS 类名 */
-    class?: string
+    class?: ClassValue
 }
 
 const props = withDefaults(defineProps<ImageCardProps>(), {

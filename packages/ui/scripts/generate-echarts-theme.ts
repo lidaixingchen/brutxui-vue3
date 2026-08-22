@@ -27,70 +27,84 @@ const OUTPUT_PATH = path.resolve(
 )
 
 const light = BASE_THEME.light
-
-/** 图表序列色板：映射语义色五族（零新增令牌，R6 单一信源） */
-const seriesColors = [
-    light.primary,
-    light.secondary,
-    light.accent,
-    light.statusSuccess,
-    light.info,
-]
-
-const theme = {
-    name: 'brutxui',
-    // 视觉法则一：网格背景为高对比细实线（禁柔和灰网格）
-    grid: {
-        left: 48,
-        top: 32,
-        right: 24,
-        bottom: 40,
-        borderColor: light.borderColor,
-        show: true,
-    },
-    // 视觉法则二：Tooltip 实体卡片——硬边框 + 不透明底 + 硬投影（无模糊）
-    tooltip: {
-        backgroundColor: light.bg,
-        borderColor: light.borderColor,
-        borderWidth: 3,
-        borderRadius: 0,
-        padding: [8, 12],
-        textStyle: {
-            color: light.fg,
-            fontFamily: 'monospace',
-            fontWeight: 'bold',
-        },
-        extraCssText: 'box-shadow: 4px 4px 0 0 ' + light.borderColor + ';',
-    },
-    color: seriesColors,
-    // 视觉法则三：柱体与折线强边框、数据点为同心圆
-    categoryAxis: {
-        axisLine: { lineStyle: { color: light.borderColor, width: 3 } },
-        axisTick: { lineStyle: { color: light.borderColor } },
-        axisLabel: { color: light.fg, fontFamily: 'monospace', fontWeight: 'bold' },
-    },
-    valueAxis: {
-        splitLine: { lineStyle: { color: light.muted, width: 1 } },
-        axisLine: { show: false },
-        axisLabel: { color: light.fg, fontFamily: 'monospace' },
-    },
-    barChart: {
-        itemStyle: {
-            borderColor: light.borderColor,
-            borderWidth: 2,
-            borderRadius: 0,
-        },
-    },
-    lineChart: {
-        lineStyle: { width: 3 },
-        itemStyle: {
-            borderColor: light.borderColor,
-            borderWidth: 2,
-        },
-        symbol: 'circle',
-        symbolSize: 10,
-    },
+/** 单一信源契约守卫：任一关键令牌缺失即显式失败，禁止静默产出残缺主题 */
+function assertToken(value: string | undefined, name: string): string {
+    if (!value) {
+        throw new Error(`[generate-echarts-theme] BASE_THEME.light.${name} 缺失，拒绝生成残缺主题`)
+    }
+    return value
 }
+
+function buildTheme(): object {
+    const seriesColors = [
+        assertToken(light.primary, 'primary'),
+        assertToken(light.secondary, 'secondary'),
+        assertToken(light.accent, 'accent'),
+        assertToken(light.statusSuccess, 'statusSuccess'),
+        assertToken(light.info, 'info'),
+    ]
+    const borderColor = assertToken(light.borderColor, 'borderColor')
+    const bgColor = assertToken(light.bg, 'bg')
+    const fgColor = assertToken(light.fg, 'fg')
+    const mutedColor = assertToken(light.muted, 'muted')
+
+    return {
+        name: 'brutxui',
+        // 视觉法则一：网格背景为高对比细实线（禁柔和灰网格）
+        grid: {
+            left: 48,
+            top: 32,
+            right: 24,
+            bottom: 40,
+            borderColor,
+            show: true,
+        },
+        // 视觉法则二：Tooltip 实体卡片——硬边框 + 不透明底 + 硬投影（无模糊）
+        tooltip: {
+            backgroundColor: bgColor,
+            borderColor,
+            borderWidth: 3,
+            borderRadius: 0,
+            padding: [8, 12],
+            textStyle: {
+                color: fgColor,
+                fontFamily: 'monospace',
+                fontWeight: 'bold',
+            },
+            extraCssText: 'box-shadow: 4px 4px 0 0 ' + borderColor + ';',
+        },
+        color: seriesColors,
+        categoryAxis: {
+            axisLine: { lineStyle: { color: borderColor, width: 3 } },
+            axisTick: { lineStyle: { color: borderColor } },
+            axisLabel: { color: fgColor, fontFamily: 'monospace', fontWeight: 'bold' },
+        },
+        valueAxis: {
+            splitLine: { lineStyle: { color: mutedColor, width: 1 } },
+            axisLine: { show: false },
+            axisLabel: { color: fgColor, fontFamily: 'monospace' },
+        },
+        /* 视觉法则三：柱体强边框零圆角 / 折线粗线同心圆数据点。
+           ECharts 主题规范以系列类型名为键（bar/line），barChart/lineChart 不会被合并识别 */
+        bar: {
+            itemStyle: {
+                borderColor,
+                borderWidth: 2,
+                borderRadius: 0,
+            },
+        },
+        line: {
+            lineStyle: { width: 3 },
+            itemStyle: {
+                borderColor,
+                borderWidth: 2,
+            },
+            symbol: 'circle',
+            symbolSize: 10,
+        },
+    }
+}
+
 
 interface BrutxUiEchartsTheme {
     name: string
@@ -98,7 +112,7 @@ interface BrutxUiEchartsTheme {
 }
 
 function serialize(): string {
-    return JSON.stringify(theme, null, 2) + '\n'
+    return JSON.stringify(buildTheme(), null, 2) + '\n'
 }
 
 async function main(): Promise<void> {

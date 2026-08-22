@@ -9,11 +9,13 @@ export const kbdVariants = cva(
         ...chipBaseClasses,
         'justify-center',
         'font-mono font-black',
-        // 3D 机械键帽：底边加厚形成侧面厚度，按压时下沉消除侧面完成「按下」物理隐喻
+        // 3D 机械键帽：底边加厚形成侧面厚度，按压时下沉消除侧面完成「按下」物理隐喻；
+        // reduced-motion 下保留边框消失的静态按压态、取消位移与过渡
         'shadow-brutal-sm',
         'border-b-4',
         'transition-all duration-75',
         'active:border-b-0 active:translate-y-1',
+        'motion-reduce:transition-none motion-reduce:active:translate-y-0',
         'select-none whitespace-nowrap',
     ],
     {

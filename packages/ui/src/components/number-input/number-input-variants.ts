@@ -35,9 +35,11 @@ export const numberInputButtonVariants = cva(
         brutalPress,
         'hover:shadow-brutal-sm hover:-translate-y-0.5',
         /* 3D 机械键帽：底边加厚形成侧面厚度（border-brutal 深色描边自带反差），
-           按压时消除侧面完成「按下」物理隐喻；与 Kbd 键帽语言同源 */
+           按压时消除侧面完成「按下」物理隐喻；与 Kbd 键帽语言同源。
+           active:translate-x-0 显式中和 brutalPress 的 X 轴盖影位移——键帽按压是纯垂直下沉，
+           依赖 twMerge 后置胜出属隐式行为，此处显式声明意图 */
         'border-b-4',
-        'active:border-b-0 active:translate-y-1',
+        'active:border-b-0 active:translate-y-1 active:translate-x-0',
     ],
     {
         variants: {

@@ -85,8 +85,8 @@ const gridStyle = computed(() => {
                 sizeClasses,
             )"
         >
-            <!-- 技术档案印章插槽：右上角悬浮（内容由调用方提供，如 [ CONFIDENTIAL ] 图章） -->
-            <div v-if="$slots.stamp" class="absolute -top-0.5 right-4 z-10">
+            <!-- 技术档案印章插槽：右上角悬浮（容器 overflow-hidden，印章不越界负偏移以免被裁剪） -->
+            <div v-if="$slots.stamp" class="absolute top-0 right-4 z-10">
                 <slot name="stamp" />
             </div>
             <div

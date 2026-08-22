@@ -82,17 +82,17 @@ const badgeIconClasses = cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
                     aria-hidden="true"
                     class="pointer-events-none select-none absolute -top-14 right-4 font-mono text-[120px] font-black leading-none text-brutal-fg opacity-5"
                 >&lt;/&gt;</span>
-                <!-- 四角爆炸星图腾点缀 -->
+                <!-- 四角爆炸星图腾点缀（内收定位避免溢出污染相邻布局） -->
                 <BrutalShape
                     name="star-8"
                     :size="40"
-                    class="absolute -left-5 -top-5 z-10 rotate-12"
+                    class="absolute -left-3 -top-3 z-10 rotate-12"
                 />
                 <BrutalShape
                     name="star-12"
                     :size="26"
                     color="var(--brutal-secondary)"
-                    class="absolute -bottom-4 -right-3 z-10 -rotate-6"
+                    class="absolute -bottom-2.5 -right-2 z-10 -rotate-6"
                 />
                 <div class="absolute inset-0 bg-brutal-primary border-3 border-brutal translate-x-3 translate-y-3" />
                 <Card texture="grid" variant="default" padding="none" class="relative bg-brutal-bg font-mono text-sm">
@@ -119,7 +119,7 @@ $ npx brutxui add card dialog
                                 <p class="text-brutal-success font-bold">
 ✓ 2 components added
 </p>
-                                <p class="text-brutal-accent font-bold animate-pulse">
+                                <p class="text-brutal-accent font-bold motion-safe:animate-pulse">
 █
 </p>
                             </div>

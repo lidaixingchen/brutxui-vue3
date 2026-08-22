@@ -25,11 +25,11 @@ function burstStarPoints(spikes: number, innerRadiusRatio: number): string {
     return points.join(' ')
 }
 
-/** 花瓣图章：主圆 + 沿外环均匀分布的花瓣小圆 */
+/** 花瓣图章：主圆 + 沿外环均匀分布的花瓣小圆（外缘 36+11=47 < 48，预留描边余量防裁切） */
 function scallopElements(petals: number): string {
-    const coreRadius = 32
-    const petalRadius = 13
-    const orbitRadius = 37
+    const coreRadius = 30
+    const petalRadius = 11
+    const orbitRadius = 36
     const elements = [`<circle cx="${SHAPE_CENTER}" cy="${SHAPE_CENTER}" r="${coreRadius}"/>`]
     for (let i = 0; i < petals; i++) {
         const angle = (Math.PI * 2 * i) / petals - Math.PI / 2

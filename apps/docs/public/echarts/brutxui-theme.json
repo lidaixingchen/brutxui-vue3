@@ -64,14 +64,14 @@
       "fontFamily": "monospace"
     }
   },
-  "barChart": {
+  "bar": {
     "itemStyle": {
       "borderColor": "#000000",
       "borderWidth": 2,
       "borderRadius": 0
     }
   },
-  "lineChart": {
+  "line": {
     "lineStyle": {
       "width": 3
     },

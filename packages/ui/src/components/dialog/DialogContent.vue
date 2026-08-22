@@ -18,6 +18,8 @@ type DialogContentVariantProps = VariantProps<typeof dialogContentVariants>
 interface DialogContentProps {
     showCloseButton?: boolean
     size?: NonNullable<DialogContentVariantProps['size']>
+    /** 入场动效形态：fade-zoom 流体淡入 / shutter 百叶窗机械展开 */
+    entrance?: NonNullable<DialogContentVariantProps['entrance']>
     forceMount?: boolean
     class?: string
 }
@@ -25,6 +27,7 @@ interface DialogContentProps {
 const props = withDefaults(defineProps<DialogContentProps>(), {
     showCloseButton: true,
     size: 'default',
+    entrance: 'fade-zoom',
     forceMount: undefined,
     class: undefined,
 })
@@ -32,7 +35,7 @@ const props = withDefaults(defineProps<DialogContentProps>(), {
 const { t } = useLocale()
 
 const contentClasses = computed(() =>
-    cn(dialogContentVariants({ size: props.size }), props.class)
+    cn(dialogContentVariants({ size: props.size, entrance: props.entrance }), props.class)
 )
 
 // 无响应式依赖：普通常量（与 closeIconClasses 一致）

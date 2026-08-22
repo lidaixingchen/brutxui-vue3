@@ -5,7 +5,8 @@ export const breadcrumbListVariants = cva(
     'list-none flex flex-wrap items-center gap-2.5 break-words text-sm font-medium text-brutal-fg sm:gap-4',
     {
         variants: {
-            /* 档案插片形态：链接渲染为文件夹标签插片（等宽大写、底边开口），当前页实心高亮 */
+            /* 档案插片形态：链接渲染为文件夹标签插片（等宽大写、底边开口形成插片感）。
+               当前页由 BreadcrumbPage 独立组件渲染，保持实心高亮章形态不做插片化 */
             variant: {
                 default: '',
                 folder:

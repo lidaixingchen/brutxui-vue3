@@ -172,10 +172,11 @@ const popularBadgeWrapClasses = computed(() =>
 
 function getPlanCardClasses(plan: BrutalistPricingPlan) {
     // 推荐主打卡片：stacked 多重彩虹阴影（twMerge 覆盖 interactive 变体的单层硬投影）；
-    // relative 承载卡内警戒缎带的 absolute 定位
+    // relative 恒定承载卡内警戒缎带的 absolute 定位（不随计费开关分支缺失）
     return cn(
+        plan.popular && 'relative',
         showBillingToggle.value
-            ? plan.popular && 'relative scale-105 shadow-brutal-stacked'
+            ? plan.popular && 'scale-105 shadow-brutal-stacked'
             : plan.popular && 'bg-brutal-accent/20',
     )
 }

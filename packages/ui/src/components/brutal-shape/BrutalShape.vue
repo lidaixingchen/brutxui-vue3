@@ -55,7 +55,7 @@ const hasSvg = computed(() => shapeSvg.value !== '')
         :stroke="props.stroke"
         :stroke-width="props.strokeWidth"
         stroke-linejoin="round"
-        aria-hidden="true"
+        :aria-hidden="props.decorative ? 'true' : undefined"
         focusable="false"
         v-html="shapeSvg"
     />

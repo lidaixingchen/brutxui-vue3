@@ -378,7 +378,7 @@ function onJumpToPage() {
             <Input
                 v-model="jumpValue"
                 size="sm"
-                class="w-16 font-mono font-black text-center"
+                class="w-16 font-mono text-center"
                 :disabled="disabled"
                 :placeholder="''"
                 @keyup.enter="onJumpToPage"
