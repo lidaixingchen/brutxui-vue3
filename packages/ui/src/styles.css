@@ -64,6 +64,8 @@
     --shadow-brutal-primary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B);
     --shadow-brutal-secondary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary, #4ECDC4);
     --shadow-brutal-destructive: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px color-mix(in srgb, var(--brutal-destructive, #EF476F) 30%, transparent);
+    --shadow-brutal-stacked: calc(var(--brutal-shadow-offset-x, 4px) * 0.5) calc(var(--brutal-shadow-offset-y, 4px) * 0.5) 0px 0px var(--brutal-border-color, #000000), var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B), calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-border-color, #000000);
+    --shadow-brutal-inset: inset calc(var(--brutal-shadow-offset-x, 4px) * 0.5) calc(var(--brutal-shadow-offset-y, 4px) * 0.5) 0px 0px var(--brutal-border-color, #000000);
 
     /* Mechanical motion easing curves */
     --ease-brutal-snap: cubic-bezier(0.16, 1, 0.3, 1);
@@ -145,6 +147,8 @@
         --shadow-brutal-primary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B);
         --shadow-brutal-secondary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary, #4ECDC4);
         --shadow-brutal-destructive: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px color-mix(in srgb, var(--brutal-destructive, #EF476F) 30%, transparent);
+        --shadow-brutal-stacked: calc(var(--brutal-shadow-offset-x, 4px) * 0.5) calc(var(--brutal-shadow-offset-y, 4px) * 0.5) 0px 0px var(--brutal-border-color, #000000), var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B), calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-border-color, #000000);
+        --shadow-brutal-inset: inset calc(var(--brutal-shadow-offset-x, 4px) * 0.5) calc(var(--brutal-shadow-offset-y, 4px) * 0.5) 0px 0px var(--brutal-border-color, #000000);
         --brutal-primary-subtle: color-mix(in srgb, var(--brutal-primary, #FF6B6B) 12%, var(--brutal-bg, #ffffff));
         --brutal-secondary-subtle: color-mix(in srgb, var(--brutal-secondary, #4ECDC4) 12%, var(--brutal-bg, #ffffff));
         --brutal-accent-subtle: color-mix(in srgb, var(--brutal-accent, #FFE66D) 20%, var(--brutal-bg, #ffffff));
@@ -401,6 +405,52 @@
     }
     /* @brutx:theme-presets:end */
 }
+
+/* @brutx:pattern-utilities:start */
+/* 半色调点阵：报刊网点印花、胶印网屏 */
+@utility bg-pattern-dots {
+    background-image: radial-gradient(color-mix(in srgb, var(--brutal-border-color, #000000) 18%, transparent) 1.5px, transparent 1.5px);
+    background-size: 12px 12px;
+}
+
+/* 蓝图方格：毫米坐标纸、CAD 工程图 */
+@utility bg-pattern-grid {
+    background-image: linear-gradient(to right, color-mix(in srgb, var(--brutal-border-color, #000000) 12%, transparent) 1px, transparent 1px), linear-gradient(to bottom, color-mix(in srgb, var(--brutal-border-color, #000000) 12%, transparent) 1px, transparent 1px);
+    background-size: 16px 16px;
+}
+
+/* 警戒斜纹：工业警示柱、施工重型机械 */
+@utility bg-pattern-hazard {
+    background-image: repeating-linear-gradient(-45deg, var(--brutal-accent, #FFE66D), var(--brutal-accent, #FFE66D) 10px, var(--brutal-border-color, #000000) 10px, var(--brutal-border-color, #000000) 20px);
+}
+
+/* 细斜线填充：工程制图剖面线、表头底纹 */
+@utility bg-pattern-hatch {
+    background-image: repeating-linear-gradient(-45deg, color-mix(in srgb, var(--brutal-border-color, #000000) 12%, transparent) 0, color-mix(in srgb, var(--brutal-border-color, #000000) 12%, transparent) 1px, transparent 1px, transparent 8px);
+}
+
+/* 扫描线：CRT 终端扫描余辉 */
+@utility bg-pattern-scanlines {
+    background-image: repeating-linear-gradient(0deg, color-mix(in srgb, var(--brutal-border-color, #000000) 15%, transparent) 0, color-mix(in srgb, var(--brutal-border-color, #000000) 15%, transparent) 1px, transparent 1px, transparent 6px);
+}
+
+/* 工控滚动条：工业仪器刻度导轨 */
+@utility scrollbar-brutal {
+    scrollbar-color: var(--brutal-fg, #000000) var(--brutal-bg, #ffffff);
+    &::-webkit-scrollbar {
+        width: 16px;
+        height: 16px;
+    }
+    &::-webkit-scrollbar-track {
+        background: var(--brutal-bg, #ffffff);
+        border-left: 3px solid var(--brutal-border-color, #000000);
+    }
+    &::-webkit-scrollbar-thumb {
+        background: var(--brutal-fg, #000000);
+        border: 2px solid var(--brutal-bg, #ffffff);
+    }
+}
+/* @brutx:pattern-utilities:end */
 
 @layer utilities {
     @keyframes nb-shrink {

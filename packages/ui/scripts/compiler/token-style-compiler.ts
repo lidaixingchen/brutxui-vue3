@@ -29,6 +29,90 @@ export const Z_INDEX_NAMES_START = '/* @brutx:z-index-names:start */';
 export const Z_INDEX_NAMES_END = '/* @brutx:z-index-names:end */';
 export const CLI_UTILS_START = '/* @brutx:cli-utils-template:start */';
 export const CLI_UTILS_END = '/* @brutx:cli-utils-template:end */';
+export const PATTERN_UTILS_START = '/* @brutx:pattern-utilities:start */';
+export const PATTERN_UTILS_END = '/* @brutx:pattern-utilities:end */';
+export const CLI_UTIL_RULES_START = '/* @brutx:utility-rules:start */';
+export const CLI_UTIL_RULES_END = '/* @brutx:utility-rules:end */';
+
+/**
+ * 纹理工具类单一数据源：
+ * ui 侧经 compilePatternUtilityBlock 生成 @utility 声明（Tailwind v4 编译器据此派生变体修饰符），
+ * CLI 消费方经 compileCliUtilityRules 生成等价扁平 CSS 直挂规则，彻底消除双实现漂移。
+ */
+interface PatternUtilityDefinition {
+    name: string;
+    comment: string;
+    declarations: string[];
+    /** 伪元素/子选择器规则；ui 侧以 & 嵌套输出，CLI 侧展开为 `.name selector` */
+    nestedRules?: Array<{ selector: string; declarations: string[] }>;
+}
+
+const PATTERN_UTILITIES: PatternUtilityDefinition[] = [
+    {
+        name: 'bg-pattern-dots',
+        comment: '半色调点阵：报刊网点印花、胶印网屏',
+        declarations: [
+            'background-image: radial-gradient(color-mix(in srgb, var(--brutal-border-color, #000000) 18%, transparent) 1.5px, transparent 1.5px);',
+            'background-size: 12px 12px;',
+        ],
+    },
+    {
+        name: 'bg-pattern-grid',
+        comment: '蓝图方格：毫米坐标纸、CAD 工程图',
+        declarations: [
+            'background-image: linear-gradient(to right, color-mix(in srgb, var(--brutal-border-color, #000000) 12%, transparent) 1px, transparent 1px), linear-gradient(to bottom, color-mix(in srgb, var(--brutal-border-color, #000000) 12%, transparent) 1px, transparent 1px);',
+            'background-size: 16px 16px;',
+        ],
+    },
+    {
+        name: 'bg-pattern-hazard',
+        comment: '警戒斜纹：工业警示柱、施工重型机械',
+        declarations: [
+            'background-image: repeating-linear-gradient(-45deg, var(--brutal-accent, #FFE66D), var(--brutal-accent, #FFE66D) 10px, var(--brutal-border-color, #000000) 10px, var(--brutal-border-color, #000000) 20px);',
+        ],
+    },
+    {
+        name: 'bg-pattern-hatch',
+        comment: '细斜线填充：工程制图剖面线、表头底纹',
+        declarations: [
+            'background-image: repeating-linear-gradient(-45deg, color-mix(in srgb, var(--brutal-border-color, #000000) 12%, transparent) 0, color-mix(in srgb, var(--brutal-border-color, #000000) 12%, transparent) 1px, transparent 1px, transparent 8px);',
+        ],
+    },
+    {
+        name: 'bg-pattern-scanlines',
+        comment: '扫描线：CRT 终端扫描余辉',
+        declarations: [
+            'background-image: repeating-linear-gradient(0deg, color-mix(in srgb, var(--brutal-border-color, #000000) 15%, transparent) 0, color-mix(in srgb, var(--brutal-border-color, #000000) 15%, transparent) 1px, transparent 1px, transparent 6px);',
+        ],
+    },
+    {
+        name: 'scrollbar-brutal',
+        comment: '工控滚动条：工业仪器刻度导轨',
+        declarations: [
+            'scrollbar-color: var(--brutal-fg, #000000) var(--brutal-bg, #ffffff);',
+        ],
+        nestedRules: [
+            {
+                selector: '&::-webkit-scrollbar',
+                declarations: ['width: 16px;', 'height: 16px;'],
+            },
+            {
+                selector: '&::-webkit-scrollbar-track',
+                declarations: [
+                    'background: var(--brutal-bg, #ffffff);',
+                    'border-left: 3px solid var(--brutal-border-color, #000000);',
+                ],
+            },
+            {
+                selector: '&::-webkit-scrollbar-thumb',
+                declarations: [
+                    'background: var(--brutal-fg, #000000);',
+                    'border: 2px solid var(--brutal-bg, #ffffff);',
+                ],
+            },
+        ],
+    },
+];
 
 interface ThemeEntry {
     themeVar: string;
@@ -222,6 +306,74 @@ export class TokenStyleCompiler {
         return lines.join('\n');
     }
 
+    /**
+     * ui 侧 @utility 声明块：由 PATTERN_UTILITIES 单一数据源生成，
+     * Tailwind v4 编译器据此派生 hover:/dark:/md: 等变体修饰符
+     */
+    public compilePatternUtilityBlock(indentSpaces = 0): string {
+        const baseIndent = ' '.repeat(indentSpaces);
+        const innerIndent = ' '.repeat(indentSpaces + 4);
+        const blocks: string[] = [];
+        for (const utility of PATTERN_UTILITIES) {
+            const lines: string[] = [`${baseIndent}/* ${utility.comment} */`];
+            lines.push(`${baseIndent}@utility ${utility.name} {`);
+            for (const declaration of utility.declarations) {
+                lines.push(`${innerIndent}${declaration}`);
+            }
+            for (const nested of utility.nestedRules ?? []) {
+                lines.push(`${innerIndent}${nested.selector} {`);
+                for (const declaration of nested.declarations) {
+                    lines.push(`${' '.repeat(indentSpaces + 8)}${declaration}`);
+                }
+                lines.push(`${innerIndent}}`);
+            }
+            lines.push(`${baseIndent}}`);
+            blocks.push(lines.join('\n'));
+        }
+        return blocks.join('\n\n');
+    }
+
+    /**
+     * CLI 消费方直挂规则块：
+     * - 阴影档位遍历 SHADOW_DEFINITIONS 全量产出（含既有档位收敛纳管）；
+     * - 纹理类从 PATTERN_UTILITIES 展开为扁平 CSS 规则（& 子选择器展开为完整选择器）。
+     * CLI 无 Tailwind 编译管道，直挂实现是与 ui 组装并存的刻意双实现，一致性由本生成器与门禁兜底。
+     */
+    public compileCliUtilityRules(): string {
+        const shadowRules: string[] = [
+            '/* ===== brutal 阴影档位直挂（由 prebuild:tokens 从 SHADOW_DEFINITIONS 生成）===== */',
+        ];
+        for (const def of SHADOW_DEFINITIONS) {
+            const className = `.${def.themeVar.replace(/^--/, '')}`;
+            shadowRules.push(`${className} {`);
+            shadowRules.push(`    box-shadow: var(${def.themeVar});`);
+            shadowRules.push('}');
+            shadowRules.push('');
+        }
+
+        const patternRules: string[] = [
+            '/* ===== 纹理工具类直挂（由 prebuild:tokens 从 PATTERN_UTILITIES 生成）===== */',
+        ];
+        for (const utility of PATTERN_UTILITIES) {
+            patternRules.push(`/* ${utility.comment} */`);
+            patternRules.push(`.${utility.name} {`);
+            for (const declaration of utility.declarations) {
+                patternRules.push(`    ${declaration}`);
+            }
+            patternRules.push('}');
+            for (const nested of utility.nestedRules ?? []) {
+                patternRules.push(`.${utility.name}${nested.selector.replace(/^&/, '')} {`);
+                for (const declaration of nested.declarations) {
+                    patternRules.push(`    ${declaration}`);
+                }
+                patternRules.push('}');
+            }
+            patternRules.push('');
+        }
+
+        return [...shadowRules, ...patternRules].join('\n').trimEnd();
+    }
+
     public patchBetweenMarkers(
         content: string,
         startMarker: string,
@@ -249,6 +401,13 @@ export class TokenStyleCompiler {
         current = this.patchBetweenMarkers(current, THEME_START, THEME_END, this.compileThemeBlock(), 'styles.css');
         current = this.patchBetweenMarkers(current, ROOT_START, ROOT_END, this.compileRootBlock(4), 'styles.css');
         current = this.patchBetweenMarkers(current, PRESETS_START, PRESETS_END, this.compileThemePresetsBlock(4), 'styles.css');
+        current = this.patchBetweenMarkers(
+            current,
+            PATTERN_UTILS_START,
+            PATTERN_UTILS_END,
+            this.compilePatternUtilityBlock(0),
+            'styles.css',
+        );
         return { content: current, changed: current !== content };
     }
 
@@ -262,6 +421,13 @@ export class TokenStyleCompiler {
         current = this.patchBetweenMarkers(current, THEME_START, THEME_END, this.compileThemeBlock(), 'brutalist.css');
         current = this.patchBetweenMarkers(current, ROOT_START, ROOT_END, this.compileRootBlock(0), 'brutalist.css');
         current = this.patchBetweenMarkers(current, PRESETS_START, PRESETS_END, this.compileThemePresetsBlock(0), 'brutalist.css');
+        current = this.patchBetweenMarkers(
+            current,
+            CLI_UTIL_RULES_START,
+            CLI_UTIL_RULES_END,
+            this.compileCliUtilityRules(),
+            'brutalist.css',
+        );
         return { content: current, changed: current !== content };
     }
 

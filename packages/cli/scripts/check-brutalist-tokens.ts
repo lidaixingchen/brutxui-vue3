@@ -272,6 +272,114 @@ function verifyThemeArea(uiCss: string, cliCss: string, failures: string[]): voi
     }
 }
 
+/**
+ * 提取指定 @brutx 标记块的文本（含起止标记本身）；缺失返回 null。
+ */
+function extractMarkerBlock(css: string, markerName: string): string | null {
+    const startMarker = `/* @brutx:${markerName}:start */`;
+    const endMarker = `/* @brutx:${markerName}:end */`;
+    const startIdx = css.indexOf(startMarker);
+    const endIdx = css.indexOf(endMarker);
+    if (startIdx === -1 || endIdx === -1) return null;
+    return css.slice(startIdx, endIdx + endMarker.length);
+}
+
+/**
+ * 扫描 CSS 文本中全部顶层 `@utility <name>` 声明名。
+ * 与 scanBlocks 同形的括号配对扫描：仅统计深度 0 处的 @utility 规则。
+ */
+function extractAtUtilityNames(css: string): string[] {
+    const names: string[] = [];
+    const cleaned = css.replace(/\/\*[\s\S]*?\*\//g, ' ');
+    let i = 0;
+    while (i < cleaned.length) {
+        const braceIdx = cleaned.indexOf('{', i);
+        if (braceIdx === -1) break;
+        const selectorRaw = cleaned.slice(i, braceIdx).trim();
+        let depth = 0;
+        let j = braceIdx;
+        for (; j < cleaned.length; j++) {
+            const ch = cleaned[j];
+            if (ch === '{') depth++;
+            else if (ch === '}') {
+                depth--;
+                if (depth === 0) break;
+            }
+        }
+        if (j >= cleaned.length) break;
+        const m = selectorRaw.match(/^@utility\s+([a-z0-9-]+)$/);
+        if (m) names.push(m[1]);
+        i = j + 1;
+    }
+    return names;
+}
+
+/**
+ * 扫描标记块内全部顶层规则的选择器行（`.foo` / `.foo::-webkit-scrollbar` 等）。
+ * 标记块内容为生成器产出的扁平规则序列，无容器嵌套；深度 0 处以 `{` 结尾的行即选择器。
+ */
+function extractTopLevelSelectors(blockText: string): string[] {
+    const selectors: string[] = [];
+    const lines = blockText.split('\n');
+    let depth = 0;
+    for (const line of lines) {
+        const opens = (line.match(/\{/g) ?? []).length;
+        const closes = (line.match(/\}/g) ?? []).length;
+        if (depth === 0 && opens > 0 && !line.trim().startsWith('/*')) {
+            const selector = line.trim().replace(/\{[\s\S]*$/, '').trim();
+            if (selector.startsWith('.')) selectors.push(selector);
+        }
+        depth += opens - closes;
+    }
+    return selectors;
+}
+
+/**
+ * ④ 工具类直挂规则完备性：ui styles.css 的 @utility 清单与阴影档位全集，
+ * 在 CLI utility-rules 直挂区必须一一对应（双向），缺失或手抄残留即拦截。
+ */
+function verifyUtilityRules(uiCss: string, cliCss: string, failures: string[]): void {
+    const cliRulesBlock = extractMarkerBlock(cliCss, 'utility-rules');
+    if (cliRulesBlock === null) {
+        failures.push('CLI brutalist.css 缺失 @brutx:utility-rules 标记块（工具类直挂区未接入生成管线）');
+        return;
+    }
+
+    const uiUtilityNames = extractAtUtilityNames(uiCss);
+    if (uiUtilityNames.length === 0) {
+        failures.push('ui styles.css 未提取到任何 @utility 声明（fail-closed：纹理工具类清单解析失效）');
+    }
+
+    const uiShadowKeys = Object.keys(extractShadowEntries(uiCss));
+    if (uiShadowKeys.length === 0) {
+        failures.push('ui :root 未提取到任何 --shadow-brutal-* 条目（fail-closed：阴影档位清单解析失效）');
+    }
+
+    const cliSelectors = new Set(extractTopLevelSelectors(cliRulesBlock));
+
+    for (const key of uiShadowKeys) {
+        if (!cliSelectors.has(`.${key}`)) {
+            failures.push(`CLI utility-rules 缺阴影直挂规则 .${key}（ui 档位已定义）`);
+        }
+    }
+    for (const name of uiUtilityNames) {
+        if (!cliSelectors.has(`.${name}`)) {
+            failures.push(`CLI utility-rules 缺纹理直挂规则 .${name}（ui @utility 已声明）`);
+        }
+    }
+
+    for (const selector of cliSelectors) {
+        const shadowKey = selector.replace(/^\./, '');
+        const isKnownShadow = uiShadowKeys.includes(shadowKey);
+        const isKnownUtility = uiUtilityNames.includes(selector.replace(/^\./, '').split(':')[0]);
+        if (selector.startsWith('.shadow-brutal') && !isKnownShadow) {
+            failures.push(`CLI utility-rules 阴影直挂 ${selector} 在 ui 档位中不存在（疑似手抄残留）`);
+        } else if (!selector.startsWith('.shadow-brutal') && !isKnownUtility) {
+            failures.push(`CLI utility-rules 规则 ${selector} 在 ui @utility 清单中不存在（疑似手抄残留）`);
+        }
+    }
+}
+
 const uiBlocks = parseThemeBlocks(uiCss)
 const cliBlocks = parseThemeBlocks(cliCss)
 
@@ -298,6 +406,9 @@ for (const [blockKey, uiVars] of Object.entries(uiBlocks)) {
 // ③ @theme 区比对（ui :root 的 shadow 区一并核）
 verifyThemeArea(uiCss, cliCss, failures)
 
+// ④ 工具类直挂规则完备性（@utility 清单 + 阴影档位全集 ↔ CLI utility-rules 区）
+verifyUtilityRules(uiCss, cliCss, failures)
+
 if (failures.length > 0) {
     console.error('CLI brutalist.css 令牌与 ui styles.css 未对齐：')
     for (const failure of failures) {
@@ -309,5 +420,6 @@ if (failures.length > 0) {
 const shadowCount = Object.keys(extractShadowEntries(uiCss)).length
 console.log(
     '✓ CLI brutalist.css 令牌对齐：' +
-    Object.keys(uiBlocks).length + ' 个 ui 主题块 + @theme 区（含 ' + shadowCount + ' 个阴影条目）在 CLI 全部存在且值一致',
+    Object.keys(uiBlocks).length + ' 个 ui 主题块 + @theme 区（含 ' + shadowCount + ' 个阴影条目）' +
+    ' + 工具类直挂 ' + extractTopLevelSelectors(extractMarkerBlock(cliCss, 'utility-rules') ?? '').length + ' 条，全部存在且值一致',
 )

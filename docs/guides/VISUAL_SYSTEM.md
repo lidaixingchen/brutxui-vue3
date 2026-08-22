@@ -61,11 +61,13 @@
   - *次级交互边框*：Transfer 选项行等状态指示器允许使用 1px 占位细边框 `border border-transparent`（选中态切换为 `border-brutal` 同宽换色，防止布局跳变）。
 
 ### R2 阴影体系 (Shadow)
-- **核心规则**：仅使用 `shadow-brutal` 系工具类（`shadow-brutal`、`shadow-brutal-sm`、`shadow-brutal-lg`、`shadow-brutal-xl`、`shadow-brutal-primary`、`shadow-brutal-secondary`、`shadow-brutal-destructive`）。严禁模糊阴影（如 `shadow-md`、`shadow-lg`），严禁手写 `shadow-[Npx_Npx_0px_0px_rgba(...)]` 任意值字面量。
+- **核心规则**：仅使用 `shadow-brutal` 系工具类（`shadow-brutal`、`shadow-brutal-sm`、`shadow-brutal-lg`、`shadow-brutal-xl`、`shadow-brutal-primary`、`shadow-brutal-secondary`、`shadow-brutal-destructive`、`shadow-brutal-stacked`、`shadow-brutal-inset`）。严禁模糊阴影（如 `shadow-md`、`shadow-lg`），严禁手写 `shadow-[Npx_Npx_0px_0px_rgba(...)]` 任意值字面量。
 - **合法例外**：
   - *标度外偏移逃生口*：偏移不在 sm/base/lg/xl 档位时，使用 `shadow-brutal [--brutal-shadow-offset-x:Npx] [--brutal-shadow-offset-y:Npx]` 本地覆盖；若手写偏移数字，颜色必须走 `var(--brutal-shadow-color, #000000)` 以跟随主题。
   - *危险态半透明红阴影*：统一使用 `shadow-brutal-destructive`（引用 `--brutal-destructive` 30% 透明 `color-mix` 派生，随主题预设联动）。
-- **防回潮守卫**：源码内新增 `shadow-[*rgba*]` 任意值由 CI 门禁 `check:deprecated:check` 拦截。
+- **stacked 多层彩虹投影**：三层刻度沿用 sm/base/lg 系数族（0.5x/1x/1.5x），全部经 `--brutal-shadow-offset-x/y` 运行时变量 calc 派生、随主题偏移覆盖联动；三明治配色仅中间层引用 `--brutal-primary`，两侧边框层恒为 `--brutal-border-color`，亮暗预设下层次对比恒定。用于核心 CTA 与推荐卡等需强实体突起的场景，禁止大面积滥用。
+- **inset 冲压凹槽**：凹槽深度取 0.5x 刻度与 sm 档系数同源派生。专用于表达「冲压进外壳」的物理纵深语义：输入类控件内槽、Switch/Slider 轨道、Progress 底槽、Kbd 按压态；严禁作为普通容器的默认阴影形态。
+- **防回潮守卫**：源码内新增 `shadow-[*rgba*]` 任意值由 CI 门禁 `check:deprecated:check` 拦截；新增档位经 `SHADOW_DEFINITIONS` 单一数据源注册后由生成器同步至 CLI 直挂区，完备性由 `check:tokens` 门禁校验。
 
 ### R3 圆角体系 (Radius)
 - **核心规则**：统一使用 `rounded-brutal`，严禁硬编码 `rounded-md`、`rounded-lg` 等。
@@ -74,6 +76,7 @@
 - **核心动作**：`active:translate-x-[var(--brutal-shadow-offset-x,4px)] active:translate-y-[var(--brutal-shadow-offset-y,4px)] active:shadow-none`。
 - **盖影语义**：交互元素在按压激活时，必须沿斜向滑到阴影原本的位置（X/Y 偏移量各自等于阴影偏移），同时去除阴影（「落回右下角盖住自己的影子」），按压位移直接派生自 `--brutal-shadow-offset-x/y` 令牌。
 - **代码复用**：完整类名串复用 `@/lib/brutal-interaction-variants` 的 `brutalPress`（遵循完整字面量契约）。
+- **stacked 档位按压**：承载 `shadow-brutal-stacked` 的元素必须复用同文件的 `brutalPressStacked`——位移以 calc 同源派生最外层 1.5x 偏移（`active:translate-x-[calc(var(--brutal-shadow-offset-x,4px)*1.5)]`）并去影；严禁内联手抄像素字面量造成位移与阴影脱同步。
 - **合法例外**：
   - *低强调变体*：`ghost` / `link` 变体豁免位移与阴影（`shadow-none` + 仅背景或下划线悬浮反馈）。
   - *私有与紧凑设计*：无阴影组件、分段控件、整宽单元格等小尺度私有设计允许使用轻量字面量（如 `active:translate-y-[2px]`）。
@@ -88,7 +91,8 @@
 - **状态色与叠色**：
   - 状态指示必须使用 `--brutal-status-*` 家族；
   - `bg-black/5` 5% 叠色为浅层覆盖显式豁免；
-  - 状态型半透明阴影仅允许通过 `shadow-brutal-destructive` 实现（alpha 值仅允许在此类状态阴影中出现）。
+  - 状态型半透明阴影仅允许通过 `shadow-brutal-destructive` 实现（alpha 值仅允许在此类状态阴影中出现）；
+  - *磨砂玻璃材质豁免*：悬浮顶栏、浮动工具条、DropdownMenu 等磨砂材质允许 `bg-brutal-bg/85` 形态的 alpha 修饰符（透出下层内容层次是材质语义的一部分），且必须搭配实体 `border-3 border-brutal` 与硬阴影保持粗野实体感；其余场景的语义色 alpha 修饰符仍然禁止。
 - **WCAG 对比度与单一信源契约**：
   - 全部语义前景色与背景色组合必须满足 WCAG 2.1 AA 标准（对比度比率 $\ge 4.5:1$）；
   - 色彩通道解析、Alpha 混合（Alpha Over Blending）与对比度计算算法统一收敛于 `brutx-shared-vue`（`parseColorChannels`, `blendAlpha`, `calculateContrastRatio`, `isContrastCompliant`），禁止在各子包中重复手写私有公式。
@@ -133,7 +137,8 @@
 ### Tailwind 工具类
 
 - **边框与圆角**：`border-3`、`border-brutal`、`border-brutal-dashed`、`rounded-brutal`
-- **阴影**：`shadow-brutal`、`shadow-brutal-sm`、`shadow-brutal-lg`、`shadow-brutal-xl`、`shadow-brutal-primary`、`shadow-brutal-secondary`、`shadow-brutal-destructive`
+- **阴影**：`shadow-brutal`、`shadow-brutal-sm`、`shadow-brutal-lg`、`shadow-brutal-xl`、`shadow-brutal-primary`、`shadow-brutal-secondary`、`shadow-brutal-destructive`、`shadow-brutal-stacked`、`shadow-brutal-inset`
+- **纹理与材质（`@utility` 声明，由 prebuild:tokens 从单一数据源生成）**：`bg-pattern-dots`、`bg-pattern-grid`、`bg-pattern-hazard`、`bg-pattern-hatch`、`bg-pattern-scanlines`、`scrollbar-brutal`
 - **层级派生类（`@theme --z-index-*` 自动生成 `z-*`）**：`z-dropdown`、`z-sticky`、`z-dialog`、`z-popover`、`z-tooltip`、`z-loading`、`z-toast`、`z-message`、`z-tour-canvas`、`z-tour-popover`、`z-preview-overlay`、`z-preview-control`
 - **颜色派生类（`@theme --color-brutal-*` 自动生成 `bg-` / `text-` / `border-`）**：
   - *品牌与基础*：`bg-brutal-bg`、`text-brutal-fg`、`bg-brutal-primary`、`bg-brutal-secondary`、`bg-brutal-accent`、`bg-brutal-destructive`、`bg-brutal-success`、`bg-brutal-info`、`bg-brutal-muted`、`bg-brutal-yellow`、`bg-brutal-black`
@@ -141,6 +146,7 @@
   - *状态色家族*：`bg-brutal-status-success`、`bg-brutal-status-success-foreground`、`bg-brutal-status-warning`、`bg-brutal-status-warning-foreground`、`bg-brutal-status-info`、`bg-brutal-status-info-foreground`、`bg-brutal-status-error`、`bg-brutal-status-error-foreground`
 - **变体支持差异**：
   - `shadow-brutal*`、`z-*` 与 `bg/text/border-brutal-*` 均经 `@theme` 派生，原生支持 `hover:`、`focus:`、`data-[...]:` 等变体；
+  - 纹理类经 `@utility` 指令声明（非裸 `@layer utilities`），同样支持 `hover:bg-pattern-*`、`dark:bg-pattern-*`、`md:bg-pattern-*` 等变体修饰符派生；
   - 手写 `@layer utilities` 类（`border-3`、`border-brutal`、`border-brutal-dashed`）**不带变体支持**（如 `hover:border-brutal` 会被静默丢弃，机制见 [TAILWIND_V4_MECHANISMS.md](TAILWIND_V4_MECHANISMS.md) §3）。
 
 ### 主题预设

@@ -57,6 +57,8 @@
     --shadow-brutal-primary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B);
     --shadow-brutal-secondary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary, #4ECDC4);
     --shadow-brutal-destructive: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px color-mix(in srgb, var(--brutal-destructive, #EF476F) 30%, transparent);
+    --shadow-brutal-stacked: calc(var(--brutal-shadow-offset-x, 4px) * 0.5) calc(var(--brutal-shadow-offset-y, 4px) * 0.5) 0px 0px var(--brutal-border-color, #000000), var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B), calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-border-color, #000000);
+    --shadow-brutal-inset: inset calc(var(--brutal-shadow-offset-x, 4px) * 0.5) calc(var(--brutal-shadow-offset-y, 4px) * 0.5) 0px 0px var(--brutal-border-color, #000000);
 
     /* Mechanical motion easing curves */
     --ease-brutal-snap: cubic-bezier(0.16, 1, 0.3, 1);
@@ -124,6 +126,8 @@
     --shadow-brutal-primary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B);
     --shadow-brutal-secondary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary, #4ECDC4);
     --shadow-brutal-destructive: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px color-mix(in srgb, var(--brutal-destructive, #EF476F) 30%, transparent);
+    --shadow-brutal-stacked: calc(var(--brutal-shadow-offset-x, 4px) * 0.5) calc(var(--brutal-shadow-offset-y, 4px) * 0.5) 0px 0px var(--brutal-border-color, #000000), var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B), calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-border-color, #000000);
+    --shadow-brutal-inset: inset calc(var(--brutal-shadow-offset-x, 4px) * 0.5) calc(var(--brutal-shadow-offset-y, 4px) * 0.5) 0px 0px var(--brutal-border-color, #000000);
     --brutal-primary-subtle: color-mix(in srgb, var(--brutal-primary, #FF6B6B) 12%, var(--brutal-bg, #ffffff));
     --brutal-secondary-subtle: color-mix(in srgb, var(--brutal-secondary, #4ECDC4) 12%, var(--brutal-bg, #ffffff));
     --brutal-accent-subtle: color-mix(in srgb, var(--brutal-accent, #FFE66D) 20%, var(--brutal-bg, #ffffff));
@@ -380,6 +384,90 @@
 }
 /* @brutx:theme-presets:end */
 
+/* @brutx:utility-rules:start */
+/* ===== brutal 阴影档位直挂（由 prebuild:tokens 从 SHADOW_DEFINITIONS 生成）===== */
+.shadow-brutal {
+    box-shadow: var(--shadow-brutal);
+}
+
+.shadow-brutal-sm {
+    box-shadow: var(--shadow-brutal-sm);
+}
+
+.shadow-brutal-lg {
+    box-shadow: var(--shadow-brutal-lg);
+}
+
+.shadow-brutal-xl {
+    box-shadow: var(--shadow-brutal-xl);
+}
+
+.shadow-brutal-primary {
+    box-shadow: var(--shadow-brutal-primary);
+}
+
+.shadow-brutal-secondary {
+    box-shadow: var(--shadow-brutal-secondary);
+}
+
+.shadow-brutal-destructive {
+    box-shadow: var(--shadow-brutal-destructive);
+}
+
+.shadow-brutal-stacked {
+    box-shadow: var(--shadow-brutal-stacked);
+}
+
+.shadow-brutal-inset {
+    box-shadow: var(--shadow-brutal-inset);
+}
+
+/* ===== 纹理工具类直挂（由 prebuild:tokens 从 PATTERN_UTILITIES 生成）===== */
+/* 半色调点阵：报刊网点印花、胶印网屏 */
+.bg-pattern-dots {
+    background-image: radial-gradient(color-mix(in srgb, var(--brutal-border-color, #000000) 18%, transparent) 1.5px, transparent 1.5px);
+    background-size: 12px 12px;
+}
+
+/* 蓝图方格：毫米坐标纸、CAD 工程图 */
+.bg-pattern-grid {
+    background-image: linear-gradient(to right, color-mix(in srgb, var(--brutal-border-color, #000000) 12%, transparent) 1px, transparent 1px), linear-gradient(to bottom, color-mix(in srgb, var(--brutal-border-color, #000000) 12%, transparent) 1px, transparent 1px);
+    background-size: 16px 16px;
+}
+
+/* 警戒斜纹：工业警示柱、施工重型机械 */
+.bg-pattern-hazard {
+    background-image: repeating-linear-gradient(-45deg, var(--brutal-accent, #FFE66D), var(--brutal-accent, #FFE66D) 10px, var(--brutal-border-color, #000000) 10px, var(--brutal-border-color, #000000) 20px);
+}
+
+/* 细斜线填充：工程制图剖面线、表头底纹 */
+.bg-pattern-hatch {
+    background-image: repeating-linear-gradient(-45deg, color-mix(in srgb, var(--brutal-border-color, #000000) 12%, transparent) 0, color-mix(in srgb, var(--brutal-border-color, #000000) 12%, transparent) 1px, transparent 1px, transparent 8px);
+}
+
+/* 扫描线：CRT 终端扫描余辉 */
+.bg-pattern-scanlines {
+    background-image: repeating-linear-gradient(0deg, color-mix(in srgb, var(--brutal-border-color, #000000) 15%, transparent) 0, color-mix(in srgb, var(--brutal-border-color, #000000) 15%, transparent) 1px, transparent 1px, transparent 6px);
+}
+
+/* 工控滚动条：工业仪器刻度导轨 */
+.scrollbar-brutal {
+    scrollbar-color: var(--brutal-fg, #000000) var(--brutal-bg, #ffffff);
+}
+.scrollbar-brutal::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+}
+.scrollbar-brutal::-webkit-scrollbar-track {
+    background: var(--brutal-bg, #ffffff);
+    border-left: 3px solid var(--brutal-border-color, #000000);
+}
+.scrollbar-brutal::-webkit-scrollbar-thumb {
+    background: var(--brutal-fg, #000000);
+    border: 2px solid var(--brutal-bg, #ffffff);
+}
+/* @brutx:utility-rules:end */
+
 
 .border-3 {
     border-width: var(--border-width-3);
@@ -505,34 +593,6 @@
 
 .rounded-brutal {
     border-radius: var(--radius-brutal);
-}
-
-.shadow-brutal {
-    box-shadow: var(--shadow-brutal);
-}
-
-.shadow-brutal-sm {
-    box-shadow: var(--shadow-brutal-sm);
-}
-
-.shadow-brutal-lg {
-    box-shadow: var(--shadow-brutal-lg);
-}
-
-.shadow-brutal-xl {
-    box-shadow: var(--shadow-brutal-xl);
-}
-
-.shadow-brutal-primary {
-    box-shadow: var(--shadow-brutal-primary);
-}
-
-.shadow-brutal-secondary {
-    box-shadow: var(--shadow-brutal-secondary);
-}
-
-.shadow-brutal-destructive {
-    box-shadow: var(--shadow-brutal-destructive);
 }
 
 .bg-brutal-bg {

@@ -470,6 +470,22 @@ export const SHADOW_DEFINITIONS: readonly ShadowTokenDefinition[] = [
         themeVar: '--shadow-brutal-destructive',
         build: l => `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px color-mix(in srgb, var(--brutal-destructive, ${l.destructive}) 30%, transparent)`,
     },
+    {
+        // 多层彩虹投影：三层刻度沿用 sm/base/lg 系数族（0.5x/1x/1.5x），
+        // 全部经运行时偏移变量 calc 派生以随主题偏移覆盖联动；
+        // 三明治配色仅中间层引用 --brutal-primary，亮暗预设下层次对比恒定
+        themeVar: '--shadow-brutal-stacked',
+        build: l => [
+            `calc(var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) * 0.5) calc(var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) * 0.5) 0px 0px var(--brutal-border-color, ${l.borderColor})`,
+            `var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) 0px 0px var(--brutal-primary, ${l.primary})`,
+            `calc(var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) * 1.5) calc(var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) * 1.5) 0px 0px var(--brutal-border-color, ${l.borderColor})`,
+        ].join(', '),
+    },
+    {
+        // 冲压内嵌凹槽：凹槽深度取 0.5x 刻度与 sm 档系数同源，随主题偏移联动
+        themeVar: '--shadow-brutal-inset',
+        build: l => `inset calc(var(--brutal-shadow-offset-x, ${l.shadowOffsetX}) * 0.5) calc(var(--brutal-shadow-offset-y, ${l.shadowOffsetY}) * 0.5) 0px 0px var(--brutal-border-color, ${l.borderColor})`,
+    },
 ] as const;
 
 /**
