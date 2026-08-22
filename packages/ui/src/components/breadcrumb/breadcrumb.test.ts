@@ -4,6 +4,7 @@ import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import Breadcrumb from './Breadcrumb.vue'
 import BreadcrumbList from './BreadcrumbList.vue'
+import { breadcrumbListVariants } from './breadcrumb-variants'
 import BreadcrumbItem from './BreadcrumbItem.vue'
 import BreadcrumbLink from './BreadcrumbLink.vue'
 import BreadcrumbPage from './BreadcrumbPage.vue'
@@ -299,5 +300,19 @@ describe('BreadcrumbEllipsis', () => {
     it('applies custom class', () => {
         const wrapper = mount(BreadcrumbEllipsis, { props: { class: 'my-ellipsis' }, ...localeProvide })
         expect(wrapper.classes()).toContain('my-ellipsis')
+    })
+})
+
+describe('Breadcrumb 档案插片形态', () => {
+    it('variant=folder 时链接渲染为等宽大写插片标签', () => {
+        const classTokens = breadcrumbListVariants({ variant: 'folder' }).split(/\s+/)
+        expect(classTokens.some(c => c.startsWith('[&_a]:font-mono'))).toBe(true)
+        expect(classTokens.some(c => c.includes('[&_a]:uppercase'))).toBe(true)
+        expect(classTokens.some(c => c.includes('[&_a]:border-b-transparent'))).toBe(true)
+    })
+
+    it('默认形态零插片类输出', () => {
+        const classTokens = breadcrumbListVariants().split(/\s+/)
+        expect(classTokens.every(c => !c.includes('[&_a]:'))).toBe(true)
     })
 })

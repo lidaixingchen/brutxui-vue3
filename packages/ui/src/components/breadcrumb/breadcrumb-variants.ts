@@ -2,7 +2,20 @@ import { cva } from 'class-variance-authority'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
 
 export const breadcrumbListVariants = cva(
-    'list-none flex flex-wrap items-center gap-2.5 break-words text-sm font-medium text-brutal-fg sm:gap-4'
+    'list-none flex flex-wrap items-center gap-2.5 break-words text-sm font-medium text-brutal-fg sm:gap-4',
+    {
+        variants: {
+            /* 档案插片形态：链接渲染为文件夹标签插片（等宽大写、底边开口），当前页实心高亮 */
+            variant: {
+                default: '',
+                folder:
+                    '[&_a]:font-mono [&_a]:uppercase [&_a]:tracking-widest [&_a]:text-xs [&_a]:border-3 [&_a]:border-b-transparent [&_a]:border-brutal [&_a]:bg-brutal-muted [&_a]:rounded-none [&_a]:px-3 [&_a]:py-1',
+            },
+        },
+        defaultVariants: {
+            variant: 'default',
+        },
+    },
 )
 
 export const breadcrumbItemVariants = cva(

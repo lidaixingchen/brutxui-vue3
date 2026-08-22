@@ -285,3 +285,17 @@ describe('AvatarFallback', () => {
         expect(fallback.classes()).not.toContain('bg-brutal-muted')
     })
 })
+
+describe('Avatar 工牌吊孔', () => {
+    it('lanyard=true 渲染顶部圆环挂孔（纯装饰 aria-hidden）', () => {
+        const wrapper = mount(Avatar, { props: { lanyard: true } })
+        const hole = wrapper.find('span[aria-hidden="true"]')
+        expect(hole.exists()).toBe(true)
+        expect(hole.classes()).toContain('rounded-full')
+    })
+
+    it('默认不渲染吊孔', () => {
+        const wrapper = mount(Avatar)
+        expect(wrapper.find('.rounded-full.border-3').exists()).toBe(false)
+    })
+})

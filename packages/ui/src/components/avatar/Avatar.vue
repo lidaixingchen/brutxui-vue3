@@ -16,6 +16,8 @@ interface AvatarProps {
     size?: NonNullable<AvatarVariantProps['size']>
     shape?: NonNullable<AvatarVariantProps['shape']>
     status?: AvatarStatus
+    /** 工牌吊孔装饰：顶部实体圆环挂孔（纯装饰层） */
+    lanyard?: boolean
     class?: string
 }
 
@@ -24,6 +26,7 @@ const props = withDefaults(defineProps<AvatarProps>(), {
     size: 'default',
     shape: 'square',
     status: 'none',
+    lanyard: false,
     class: undefined,
 })
 
@@ -74,6 +77,12 @@ provide(avatarKey, {
 
 <template>
     <span class="relative inline-block">
+        <!-- 工牌吊孔：顶部圆环挂孔（纯装饰层） -->
+        <span
+            v-if="lanyard"
+            aria-hidden="true"
+            class="absolute left-1/2 -translate-x-1/2 top-1 z-10 block size-2.5 rounded-full border-3 border-brutal bg-brutal-bg"
+        />
         <AvatarRoot :class="classes">
             <slot />
         </AvatarRoot>

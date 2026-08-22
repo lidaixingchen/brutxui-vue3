@@ -157,5 +157,14 @@ describe('ScrollAreaThumb', () => {
         const classes = scrollAreaThumbVariants({ variant: 'accent' })
         expect(classes).toContain('bg-brutal-accent')
     })
+
+    it('thumb 携带防滑凹槽纹理与拖拽吸附高亮', () => {
+        const classTokens = scrollAreaThumbVariants({ variant: 'default' }).split(/\s+/)
+        expect(
+            classTokens.some(c => c.startsWith('bg-[image:repeating-linear-gradient') && c.includes('var(--brutal-bg')),
+        ).toBe(true)
+        expect(classTokens).toContain('active:ring-2')
+        expect(classTokens).toContain('active:ring-inset')
+    })
 })
 

@@ -39,7 +39,8 @@ export const paginationButtonVariants = cva(
             isActive: {
                 true: [
                     'bg-brutal-primary text-brutal-primary-foreground',
-                    'shadow-brutal-sm',
+                    /* 打卡机卡片槽：激活页向上微突并以双重粗边框锁定 */
+                    'shadow-brutal-sm -translate-y-0.5 border-4 border-double border-brutal',
                     brutalPress,
                 ],
                 false: [

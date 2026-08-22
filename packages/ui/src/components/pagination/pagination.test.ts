@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import Pagination from './Pagination.vue'
+import { paginationButtonVariants } from './pagination-variants'
 
 const FIRST_PAGE = 1
 const FIRST_PAGES_COUNT = 3
@@ -412,5 +413,19 @@ describe('Pagination', () => {
             // 不会发出基于 Infinity 的非法页码更新
             expect(wrapper.emitted('update:modelValue')).toBeUndefined()
         })
+    })
+})
+
+describe('Pagination 打卡机卡片槽', () => {
+    it('激活页向上微突并以双重粗边框锁定', () => {
+        const classTokens = paginationButtonVariants({ isActive: true }).split(/\s+/)
+        expect(classTokens).toContain('-translate-y-0.5')
+        expect(classTokens).toContain('border-4')
+        expect(classTokens).toContain('border-double')
+    })
+
+    it('非激活页保持常规单边框', () => {
+        const classTokens = paginationButtonVariants({ isActive: false }).split(/\s+/)
+        expect(classTokens).not.toContain('border-double')
     })
 })

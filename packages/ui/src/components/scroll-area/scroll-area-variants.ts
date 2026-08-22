@@ -54,6 +54,9 @@ const scrollBarThumbColorVariants = {
 export const scrollAreaThumbVariants = cva(
     [
         'relative flex-1',
+        /* 防滑凹槽抓取纹理：底色细线挖槽叠加在前景色滑块上；拖拽吸附高亮（内嵌黑环） */
+        'bg-[image:repeating-linear-gradient(90deg,var(--brutal-bg,#ffffff)_0px,var(--brutal-bg,#ffffff)_2px,transparent_2px,transparent_5px)]',
+        'active:ring-2 active:ring-brutal-ring active:ring-inset',
     ],
     {
         variants: {
