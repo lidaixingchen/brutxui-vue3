@@ -103,6 +103,12 @@ export const COMPONENTS: Record<string, RegistryComponentMeta> = {
         dependencies: ['embla-carousel-vue', '@lucide/vue'],
         description: 'Image and content carousel with navigation and autoplay.',
     },
+    'card-window-header': {
+        titleZh: '卡片窗口顶栏',
+        category: 'layout',
+        dependencies: [],
+        description: 'Retro industrial window title bar for cards: token-driven tri-color lamps, mono uppercase title, ASCII controls.',
+    },
     cascader: {
         titleZh: '级联选择器',
         category: 'form',

@@ -338,6 +338,8 @@ export type { Locale, CommandLocale, ComboboxLocale, PaginationLocale, CarouselL
 // 新增新粗野主义交互与数据可视化组件导出
 export { default as Card3D } from './components/card-3d/Card3D.vue'
 export { card3dVariants, card3dShadowClasses, DEFAULT_CARD3D_OFFSET_PX } from './components/card-3d/card-3d-variants'
+export { default as CardWindowHeader } from './components/card-window-header/CardWindowHeader.vue'
+export { cardWindowHeaderVariants } from './components/card-window-header/card-window-header-variants'
 
 export { default as GlitchText } from './components/glitch-text/GlitchText.vue'
 export { glitchTextVariants } from './components/glitch-text/glitch-text-variants'

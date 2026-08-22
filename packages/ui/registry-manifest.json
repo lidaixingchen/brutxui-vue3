@@ -194,9 +194,7 @@
       "CardFooter.vue",
       "CardHeader.vue",
       "CardTitle.vue",
-      "CardWindowHeader.vue",
-      "card-variants.ts",
-      "card-window-header-variants.ts"
+      "card-variants.ts"
     ],
     "composables": [],
     "directives": [],
@@ -219,6 +217,15 @@
       "defaults.ts",
       "env.ts"
     ]
+  },
+  "card-window-header": {
+    "files": [
+      "CardWindowHeader.vue",
+      "card-window-header-variants.ts"
+    ],
+    "composables": [],
+    "directives": [],
+    "lib": []
   },
   "carousel": {
     "files": [
