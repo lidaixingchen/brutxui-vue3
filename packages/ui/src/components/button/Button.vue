@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { Loader2 } from '@lucide/vue'
 import { Primitive } from 'reka-ui'
 import { buttonVariants } from './button-variants'
+import { type ButtonFlair } from './shared-button-variants'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '@/lib/defaults'
@@ -17,6 +18,8 @@ type ButtonGlitchDirection = NonNullable<ButtonVariantProps['glitchDirection']>
 interface ButtonProps {
     variant?: NonNullable<ButtonVariantProps['variant']>
     size?: NonNullable<ButtonVariantProps['size']>
+    /** 装饰形态：多层彩虹投影 / 警戒斜纹 / 票据撕口，与色系变体正交 */
+    flair?: ButtonFlair
     asChild?: boolean
     type?: 'button' | 'submit' | 'reset'
     loading?: boolean
@@ -38,6 +41,7 @@ interface ButtonProps {
 const props = withDefaults(defineProps<ButtonProps>(), {
     variant: 'default',
     size: 'default',
+    flair: 'none',
     asChild: false,
     type: undefined,
     loading: false,
@@ -75,6 +79,7 @@ const classes = computed(() =>
         buttonVariants({
             variant: props.variant,
             size: props.size,
+            flair: props.flair,
             effect: props.effect,
             // 仅 glitch 按钮携带 glitchSpeed/glitchDirection 类，普通按钮零污染
             ...(props.effect === 'glitch'

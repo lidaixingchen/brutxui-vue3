@@ -40,6 +40,12 @@ const brutalHighlightLift = 'data-[highlighted]:shadow-brutal-lg data-[highlight
 
 export const brutalPress = `${pressX} ${pressY} active:shadow-none`
 
+// stacked 档位（shadow-brutal-stacked）最外层阴影偏移为 1.5x 刻度：
+// 盖影按压位移必须同源 calc 派生 1.5x，严禁内联手抄像素字面量造成位移与阴影脱同步
+const pressStackedX = 'active:translate-x-[calc(var(--brutal-shadow-offset-x,4px)*1.5)]'
+const pressStackedY = 'active:translate-y-[calc(var(--brutal-shadow-offset-y,4px)*1.5)]'
+export const brutalPressStacked = `${pressStackedX} ${pressStackedY} active:shadow-none`
+
 // 永久按下态（无 active: 前缀）：供 copied/selected 等「保持按下」状态引用，
 // 与 brutalPress 共享位移/阴影语义，避免两处硬编码 fallback 脱同步
 export const brutalPressedState = `${pressedStateX} ${pressedStateY} shadow-none`

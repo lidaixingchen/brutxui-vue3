@@ -112,6 +112,16 @@ const PATTERN_UTILITIES: PatternUtilityDefinition[] = [
             },
         ],
     },
+    {
+        name: 'button-ticket-notch',
+        comment: '票据撕口：左右中缝半圆缺口（ticket 变体专用形态工具类）',
+        declarations: [
+            '-webkit-mask-image: radial-gradient(circle 6px at 0 center, transparent 5px, black 6px), radial-gradient(circle 6px at 100% center, transparent 5px, black 6px);',
+            'mask-image: radial-gradient(circle 6px at 0 center, transparent 5px, black 6px), radial-gradient(circle 6px at 100% center, transparent 5px, black 6px);',
+            '-webkit-mask-composite: source-in;',
+            'mask-composite: intersect;',
+        ],
+    },
 ];
 
 interface ThemeEntry {

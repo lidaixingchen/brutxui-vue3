@@ -1,4 +1,4 @@
-import { brutalHoverLift } from '@/lib/brutal-interaction-variants'
+import { brutalHoverLift, brutalPressStacked } from '@/lib/brutal-interaction-variants'
 
 export const buttonVariantOptions = [
     'default',
@@ -12,6 +12,14 @@ export const buttonVariantOptions = [
     'link',
 ] as const
 
+/** 装饰形态维度：与色系变体正交可组合；none 为默认且不输出任何额外类 */
+export const buttonFlairOptions = [
+    'none',
+    'stacked',
+    'hazard',
+    'ticket',
+] as const
+
 export const buttonSizeOptions = [
     'sm',
     'default',
@@ -22,6 +30,7 @@ export const buttonSizeOptions = [
 
 export type ButtonVariant = (typeof buttonVariantOptions)[number]
 export type ButtonSize = (typeof buttonSizeOptions)[number]
+export type ButtonFlair = (typeof buttonFlairOptions)[number]
 
 export const baseButtonVariants = {
     variants: {
@@ -83,9 +92,28 @@ export const baseButtonVariants = {
             xl: 'h-16 px-10 py-4 text-xl',
             icon: 'h-11 w-11 p-0',
         },
+        flair: {
+            none: '',
+            stacked: [
+                // 多层彩虹投影 + 同源 1.5x 盖影按压：twMerge 同组后者胜，
+                // 覆盖基座 brutalPress 的 1x 位移，保证位移距离等于最外层阴影偏移
+                'shadow-brutal-stacked',
+                brutalPressStacked,
+            ],
+            hazard: [
+                // 警戒斜纹自带黄黑底色语义，前景锁定 fg 保证纹理上可读
+                'bg-pattern-hazard',
+                'text-brutal-fg',
+            ],
+            ticket: [
+                // 票据撕口：左右中缝半圆缺口（工具类经 prebuild:tokens 双端分发）
+                'button-ticket-notch',
+            ],
+        },
     },
     defaultVariants: {
         variant: 'default',
         size: 'default',
+        flair: 'none',
     } as const,
 }
