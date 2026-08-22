@@ -35,10 +35,23 @@ export const cardVariants = cva(
                 default: 'p-5',
                 lg: 'p-8',
             },
+            /* 背景纹理：与底色叠加，仅装饰容器使用（正文主卡默认保持干净纯色） */
+            texture: {
+                none: '',
+                grid: 'bg-pattern-grid',
+                dots: 'bg-pattern-dots',
+            },
+            /* HUD 装饰形态：四角十字准星（工业仪器标定感），纯装饰层 */
+            deco: {
+                none: '',
+                hud: 'hud-crosshairs',
+            },
         },
         defaultVariants: {
             variant: 'default',
             padding: 'default',
+            texture: 'none',
+            deco: 'none',
         },
     }
 )

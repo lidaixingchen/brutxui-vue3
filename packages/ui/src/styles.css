@@ -458,6 +458,14 @@
     -webkit-mask-composite: source-in;
     mask-composite: intersect;
 }
+
+/* HUD 四角十字准星：工业仪器标定对齐感（容器装饰层） */
+@utility hud-crosshairs {
+    background-image: linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000)), linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000)), linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000)), linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000)), linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000)), linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000)), linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000)), linear-gradient(var(--brutal-border-color, #000000), var(--brutal-border-color, #000000));
+    background-repeat: no-repeat;
+    background-size: 18px 2px, 2px 18px, 18px 2px, 2px 18px, 18px 2px, 2px 18px, 18px 2px, 2px 18px;
+    background-position: 5px 13px, 13px 5px, right 5px top 13px, right 13px top 5px, 5px bottom 13px, 13px bottom 5px, right 5px bottom 13px, right 13px bottom 5px;
+}
 /* @brutx:pattern-utilities:end */
 
 @layer utilities {

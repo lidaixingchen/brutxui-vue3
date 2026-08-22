@@ -11,6 +11,10 @@ type CardVariantProps = VariantProps<typeof cardVariants>
 interface CardProps {
     variant?: NonNullable<CardVariantProps['variant']>
     padding?: NonNullable<CardVariantProps['padding']>
+    /** 背景纹理：蓝图方格 / 半色调点阵，与底色叠加 */
+    texture?: NonNullable<CardVariantProps['texture']>
+    /** HUD 装饰形态：四角十字准星（纯装饰层） */
+    deco?: NonNullable<CardVariantProps['deco']>
     interactive?: boolean
     /** 禁用卡片交互：不可聚焦、aria-disabled，且不触发 activate */
     disabled?: boolean
@@ -20,6 +24,8 @@ interface CardProps {
 const props = withDefaults(defineProps<CardProps>(), {
     variant: 'default',
     padding: 'default',
+    texture: undefined,
+    deco: undefined,
     interactive: false,
     disabled: false,
     class: undefined,
@@ -37,6 +43,8 @@ const classes = computed(() =>
         cardVariants({
             variant: props.disabled && props.variant === 'interactive' ? 'default' : props.variant,
             padding: props.padding,
+            texture: props.texture,
+            deco: props.deco,
         }),
         props.interactive && !props.disabled && props.variant !== 'interactive' &&
             `cursor-pointer ${brutalHoverLiftNoX} transition-all`,

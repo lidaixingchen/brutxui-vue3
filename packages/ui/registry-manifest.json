@@ -194,7 +194,9 @@
       "CardFooter.vue",
       "CardHeader.vue",
       "CardTitle.vue",
-      "card-variants.ts"
+      "CardWindowHeader.vue",
+      "card-variants.ts",
+      "card-window-header-variants.ts"
     ],
     "composables": [],
     "directives": [],

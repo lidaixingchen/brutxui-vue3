@@ -336,3 +336,24 @@ describe('CardFooter', () => {
         expect(wrapper.classes()).toContain('my-footer')
     })
 })
+
+describe('Card HUD 装饰与纹理变体', () => {
+    it('texture=grid/dots 叠加对应背景纹理类，默认零污染', () => {
+        expect(mount(Card, { props: { texture: 'grid' } }).classes()).toContain('bg-pattern-grid')
+        expect(mount(Card, { props: { texture: 'dots' } }).classes()).toContain('bg-pattern-dots')
+        const plain = mount(Card).classes()
+        expect(plain).not.toContain('bg-pattern-grid')
+        expect(plain).not.toContain('bg-pattern-dots')
+    })
+
+    it('deco=hud 应用四角准星工具类（纯装饰层），默认不输出', () => {
+        expect(mount(Card, { props: { deco: 'hud' } }).classes()).toContain('hud-crosshairs')
+        expect(mount(Card).classes()).not.toContain('hud-crosshairs')
+    })
+
+    it('纹理与 HUD 可同卡片组合', () => {
+        const classes = mount(Card, { props: { texture: 'grid', deco: 'hud' } }).classes()
+        expect(classes).toContain('bg-pattern-grid')
+        expect(classes).toContain('hud-crosshairs')
+    })
+})
