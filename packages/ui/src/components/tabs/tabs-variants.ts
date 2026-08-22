@@ -56,6 +56,15 @@ export const tabsTriggerVariants = cva(
                 secondary: 'data-[state=active]:bg-brutal-secondary data-[state=active]:text-brutal-secondary-foreground',
                 accent: 'data-[state=active]:bg-brutal-accent data-[state=active]:text-brutal-accent-foreground',
                 success: 'data-[state=active]:bg-brutal-success data-[state=active]:text-brutal-success-foreground',
+                /* 打卡机插片：等宽大写标签，激活时上移插入槽位、底边厚线锁定 */
+                slots: [
+                    'font-mono text-xs uppercase tracking-widest px-2',
+                    'border-b-4 border-b-transparent rounded-none',
+                    'data-[state=active]:bg-brutal-bg data-[state=active]:text-brutal-primary',
+                    'data-[state=active]:border-b-brutal-primary data-[state=active]:shadow-none',
+                    'data-[state=active]:-translate-y-0.5',
+                    'data-[state=inactive]:shadow-none data-[state=inactive]:border-b-4 data-[state=inactive]:border-b-transparent',
+                ],
             },
         },
         defaultVariants: {

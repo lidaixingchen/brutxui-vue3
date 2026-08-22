@@ -66,14 +66,15 @@ export const accordionTriggerIconClasses =
     'shrink-0 transition-transform duration-200 border-3 border-brutal rounded-brutal bg-brutal-bg p-0.5 shadow-brutal-sm'
 
 export const accordionContentVariants = cva(
-    'border-t-3 p-6 bg-brutal-bg text-brutal-fg',
+    'border-t-3 p-6 text-brutal-fg',
     {
         variants: {
             variant: {
-                default: 'border-brutal',
+                /* 展开内容应用 muted 次级背景：与收起态的 bg-brutal-bg 形成明暗分层 */
+                default: 'border-brutal bg-brutal-muted',
                 flat: 'border-brutal bg-brutal-muted/30',
                 ghost: 'border-transparent',
-                interactive: 'border-brutal hover:bg-brutal-muted/20',
+                interactive: 'border-brutal bg-brutal-muted hover:bg-brutal-muted/20',
             },
         },
         defaultVariants: {

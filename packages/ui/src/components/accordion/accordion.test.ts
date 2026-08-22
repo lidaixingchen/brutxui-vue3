@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { accordionContentVariants } from './accordion-variants'
 import { defineComponent, ref } from 'vue'
 import { vi } from 'vitest'
 import Accordion from './Accordion.vue'
@@ -355,5 +356,17 @@ describe('AccordionContent', () => {
         expect(innerDiv.classes()).not.toContain('border-transparent')
         expect(innerDiv.classes()).toContain('border-t-3')
         expect(innerDiv.classes()).toContain('border-brutal')
+    })
+})
+
+describe('Accordion 展开态分层换色', () => {
+    it('default 变体展开内容应用 muted 次级背景（与收起态明暗分层）', () => {
+        const classes = accordionContentVariants({ variant: 'default' }).split(/\s+/)
+        expect(classes).toContain('bg-brutal-muted')
+        expect(classes).not.toContain('bg-brutal-bg')
+    })
+
+    it('展开态保留实体分隔线（content border-t-3）', () => {
+        expect(accordionContentVariants().split(/\s+/)).toContain('border-t-3')
     })
 })

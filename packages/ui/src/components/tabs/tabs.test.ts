@@ -4,6 +4,7 @@ import Tabs from './Tabs.vue'
 import TabsList from './TabsList.vue'
 import TabsTrigger from './TabsTrigger.vue'
 import TabsContent from './TabsContent.vue'
+import { tabsTriggerVariants } from './tabs-variants'
 import { TABS_ORIENTATION_KEY, type TabItem } from './types'
 
 const primitiveStub = {
@@ -444,5 +445,21 @@ describe('Tabs (slot mode, no tabs prop)', () => {
         const root = wrapper.findComponent({ name: 'TabsRoot' })
         expect(root.exists()).toBe(true)
         expect(root.props('modelValue')).toBe('overview')
+    })
+})
+
+describe('Tabs 打卡机插片变体', () => {
+    it('slots 变体采用等宽大写标签与透明圆角覆盖', () => {
+        const classTokens = tabsTriggerVariants({ variant: 'slots' }).split(/\s+/)
+        expect(classTokens).toContain('font-mono')
+        expect(classTokens).toContain('uppercase')
+        expect(classTokens).toContain('rounded-none')
+    })
+
+    it('激活片上移插入槽位并以厚底边锁定', () => {
+        const classTokens = tabsTriggerVariants({ variant: 'slots' }).split(/\s+/)
+        expect(classTokens).toContain('data-[state=active]:-translate-y-0.5')
+        expect(classTokens).toContain('data-[state=active]:border-b-brutal-primary')
+        expect(classTokens).toContain('border-b-4')
     })
 })
