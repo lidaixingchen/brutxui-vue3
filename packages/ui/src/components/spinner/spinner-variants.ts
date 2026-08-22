@@ -74,6 +74,24 @@ export const SPINNER_COLOR_CLASSES = {
     info: 'bg-brutal-info',
 } as const
 
+/** ASCII 旋转字符变体容器：等宽终端风格（渲染分支由组件按 variant === 'ascii' 处理） */
+export const spinnerAsciiVariants = cva(['inline-flex items-center justify-center'], {
+    variants: {
+        size: {
+            sm: 'h-5 w-5 text-sm',
+            default: 'h-8 w-8 text-lg',
+            lg: 'h-12 w-12 text-2xl',
+            xl: 'h-16 w-16 text-3xl',
+        },
+    },
+    defaultVariants: {
+        size: 'default',
+    },
+})
+
+/** ASCII 旋转帧序列：经典终端 spinner 字符轮 */
+export const SPINNER_ASCII_FRAMES = ['|', '/', '-', '\\'] as const
+
 export type SpinnerColor = keyof typeof SPINNER_COLOR_CLASSES | 'mixed'
 
 const MIXED_COLOR_ORDER: (keyof typeof SPINNER_COLOR_CLASSES)[] = ['primary', 'secondary', 'accent', 'info']

@@ -20,6 +20,8 @@ interface WatermarkProps {
     font?: WatermarkFont
     gap?: [number, number]
     offset?: [number, number]
+    /** 复古公章钢印构图：双实心圆环 + 中心五角星 */
+    seal?: boolean
 }
 
 const props = withDefaults(defineProps<WatermarkProps>(), {
@@ -29,6 +31,7 @@ const props = withDefaults(defineProps<WatermarkProps>(), {
     zIndex: 9999,
     image: undefined,
     content: '',
+    seal: false,
     font: () => ({
         color: 'rgba(0, 0, 0, 0.15)',
         fontSize: 14,
@@ -114,6 +117,27 @@ function toBase64(str: string): string {
     return btoa(chars.join(''))
 }
 
+/** 五角星顶点串（外内半径交替），SVG polygon 与 Canvas 路径共用几何 */
+function starPolygonPoints(cx: number, cy: number, outerRadius: number, innerRadius: number): Array<[number, number]> {
+    const points: Array<[number, number]> = []
+    for (let i = 0; i < 10; i++) {
+        const radius = i % 2 === 0 ? outerRadius : innerRadius
+        const angle = (Math.PI * i) / 5 - Math.PI / 2
+        points.push([cx + radius * Math.cos(angle), cy + radius * Math.sin(angle)])
+    }
+    return points
+}
+
+/** 钢印构图几何：双实心圆环 + 中心五角星，以标记短边为基准 */
+function getSealGeometry(baseSize: number): { outerRing: number; innerRing: number; starOuter: number; starInner: number } {
+    return {
+        outerRing: baseSize * 0.46,
+        innerRing: baseSize * 0.38,
+        starOuter: baseSize * 0.16,
+        starInner: baseSize * 0.067,
+    }
+}
+
 function drawSvgFallback() {
     const [markWidth, markHeight] = getMarkSize()
     const [gapX, gapY] = normalizedGap.value
@@ -129,15 +153,29 @@ function drawSvgFallback() {
     
     const contents = Array.isArray(props.content) ? props.content : [props.content]
     const lineHeight = fontSizePx + 4
-    
+
+    /* 钢印构图：双实心圆环 + 中心五角星（seal 模式专属装饰层） */
+    let sealSvg = ''
+    if (props.seal) {
+        const baseSize = Math.min(markWidth, markHeight)
+        const { outerRing, innerRing, starOuter, starInner } = getSealGeometry(baseSize)
+        const cx = canvasWidth / 2
+        const cy = canvasHeight / 2
+        const starPointsAttr = starPolygonPoints(cx, cy, starOuter, starInner)
+            .map(([x, y]) => `${x.toFixed(2)},${y.toFixed(2)}`)
+            .join(' ')
+        sealSvg = `<circle cx="${cx}" cy="${cy}" r="${outerRing.toFixed(2)}" fill="none" stroke="${escapeXml(color)}" stroke-width="2"/><circle cx="${cx}" cy="${cy}" r="${innerRing.toFixed(2)}" fill="none" stroke="${escapeXml(color)}" stroke-width="1"/><polygon points="${starPointsAttr}" fill="${escapeXml(color)}"/>`
+    }
+
     const textNodes = contents.map((text, index) => {
         const yOffset = (index - (contents.length - 1) / 2) * lineHeight
         return `<text x="50%" y="50%" dy="${escapeXml(String(yOffset))}" font-size="${escapeXml(String(fontSizePx))}" font-weight="${escapeXml(String(fontWeight))}" font-style="${escapeXml(String(fontStyle))}" font-family="${escapeXml(String(fontFamily))}" fill="${escapeXml(color)}" text-anchor="middle" dominant-baseline="middle">${escapeXml(text || '')}</text>`
     }).join('')
-    
+
     const svg = `
         <svg xmlns="http://www.w3.org/2000/svg" width="${escapeXml(String(canvasWidth))}" height="${escapeXml(String(canvasHeight))}">
             <g transform="rotate(${escapeXml(String(props.rotate))} ${escapeXml(String(canvasWidth / 2))} ${escapeXml(String(canvasHeight / 2))})">
+                ${sealSvg}
                 ${textNodes}
             </g>
         </svg>
@@ -237,6 +275,30 @@ function drawTextWatermark(
 
     const contents = Array.isArray(props.content) ? props.content : [props.content]
     const lineHeight = fontSizePx + 4
+
+    /* 钢印构图（canvas 路径）：双实心圆环 + 中心五角星，几何与 SVG 路径同源。
+       canvas.width 为设备像素，须除回 dpr 得到逻辑尺寸作为几何基准 */
+    if (props.seal) {
+        const logicalSize = Math.min(canvas.width, canvas.height) / getDevicePixelRatio()
+        const { outerRing, innerRing, starOuter, starInner } = getSealGeometry(logicalSize)
+        ctx.strokeStyle = color
+        ctx.fillStyle = color
+        ctx.lineWidth = 2
+        ctx.beginPath()
+        ctx.arc(0, 0, outerRing, 0, Math.PI * 2)
+        ctx.stroke()
+        ctx.lineWidth = 1
+        ctx.beginPath()
+        ctx.arc(0, 0, innerRing, 0, Math.PI * 2)
+        ctx.stroke()
+        ctx.beginPath()
+        starPolygonPoints(0, 0, starOuter, starInner).forEach(([x, y], i) => {
+            if (i === 0) ctx.moveTo(x, y)
+            else ctx.lineTo(x, y)
+        })
+        ctx.closePath()
+        ctx.fill()
+    }
 
     contents.forEach((text, index) => {
         const yOffset = (index - (contents.length - 1) / 2) * lineHeight
@@ -340,7 +402,7 @@ onBeforeUnmount(() => {
 })
 
 watch(
-    () => [props.content, props.image, props.width, props.height, props.rotate, props.gap, props.font],
+    () => [props.content, props.image, props.width, props.height, props.rotate, props.gap, props.font, props.seal],
     () => {
         recreateWatermark()
     },

@@ -203,3 +203,38 @@ describe('Descriptions', () => {
         expect(grid.attributes('style')).toContain('grid-template-columns: repeat(3, 1fr)')
     })
 })
+
+describe('Descriptions 档案质感', () => {
+    it('带边框模式下 label 列叠加点阵纹理', () => {
+        const wrapper = mount(Descriptions, {
+            props: { border: true },
+            slots: {
+                default: () => h(DescriptionsItem, { label: 'Module' }, { default: () => 'brutx-ui-vue' }),
+            },
+        })
+        expect(wrapper.html()).toContain('bg-pattern-dots')
+    })
+
+    it('stamp 插槽渲染于右上角悬浮层', () => {
+        const wrapper = mount(Descriptions, {
+            props: { border: true },
+            slots: {
+                default: () => h(DescriptionsItem, { label: 'Status' }, { default: () => 'active' }),
+                stamp: () => h('span', { class: 'stamp-mark' }, '[ CONFIDENTIAL ]'),
+            },
+        })
+        const slotWrap = wrapper.find('.absolute.right-4')
+        expect(slotWrap.exists()).toBe(true)
+        expect(slotWrap.find('.stamp-mark').exists()).toBe(true)
+    })
+
+    it('未提供 stamp 插槽时不渲染悬浮层', () => {
+        const wrapper = mount(Descriptions, {
+            props: { border: true },
+            slots: {
+                default: () => h(DescriptionsItem, { label: 'Status' }, { default: () => 'active' }),
+            },
+        })
+        expect(wrapper.find('.absolute.right-4').exists()).toBe(false)
+    })
+})

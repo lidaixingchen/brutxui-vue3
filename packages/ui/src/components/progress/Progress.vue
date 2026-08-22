@@ -14,6 +14,8 @@ interface ProgressProps {
     max?: number
     size?: NonNullable<ProgressRootVariantProps['size']>
     variant?: NonNullable<ProgressIndicatorVariantProps['variant']>
+    /** 填充纹理：LED 分段 / 警戒斜纹动画 */
+    pattern?: NonNullable<ProgressIndicatorVariantProps['pattern']>
     indeterminate?: boolean
     showLabel?: boolean
 }
@@ -24,6 +26,7 @@ const props = withDefaults(defineProps<ProgressProps>(), {
     max: 100,
     size: 'default',
     variant: 'default',
+    pattern: 'none',
     indeterminate: false,
     showLabel: false,
 })
@@ -34,7 +37,7 @@ const classes = computed(() =>
 
 const indicatorClasses = computed(() =>
     cn(
-        progressIndicatorVariants({ variant: props.variant }),
+        progressIndicatorVariants({ variant: props.variant, pattern: props.pattern }),
         props.indeterminate && 'w-1/2 animate-indeterminate',
     )
 )

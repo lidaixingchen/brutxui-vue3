@@ -1026,7 +1026,8 @@
       "spinner-variants.ts"
     ],
     "composables": [
-      "useLocale.ts"
+      "useLocale.ts",
+      "useReducedMotion.ts"
     ],
     "directives": [],
     "lib": []

@@ -313,3 +313,32 @@ describe('SkeletonTable', () => {
         expect(wrapper.classes()).toContain('custom-table')
     })
 })
+
+describe('Skeleton 加载质感效果', () => {
+    it('effect=scanlines 叠加扫描线纹理', () => {
+        const wrapper = mount(Skeleton, { props: { effect: 'scanlines' } })
+        expect(wrapper.classes()).toContain('bg-pattern-scanlines')
+    })
+
+    it('effect=ascii 渲染等宽方块字符占位（纯装饰）', () => {
+        const wrapper = mount(Skeleton, { props: { effect: 'ascii' } })
+        const glyph = wrapper.find('span[aria-hidden="true"]')
+        expect(glyph.exists()).toBe(true)
+        expect(glyph.classes()).toContain('font-mono')
+        expect(glyph.text()).toContain('█')
+    })
+
+    it('effect=ascii 时默认插槽内容优先于内置字符', () => {
+        const wrapper = mount(Skeleton, {
+            props: { effect: 'ascii' },
+            slots: { default: '<i>custom</i>' },
+        })
+        expect(wrapper.find('span[aria-hidden="true"]').exists()).toBe(false)
+    })
+
+    it('默认无质感效果类输出', () => {
+        const wrapper = mount(Skeleton)
+        expect(wrapper.classes()).not.toContain('bg-pattern-scanlines')
+        expect(wrapper.find('span[aria-hidden="true"]').exists()).toBe(false)
+    })
+})

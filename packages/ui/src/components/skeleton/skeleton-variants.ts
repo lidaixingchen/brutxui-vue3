@@ -1,33 +1,37 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 
-export const skeletonVariants = cva(
-    ['animate-pulse', 'border-3 border-brutal'],
-    {
-        variants: {
-            variant: {
-                default: 'bg-brutal-muted',
-                primary: 'bg-brutal-primary/30',
-                secondary: 'bg-brutal-secondary/30',
-                accent: 'bg-brutal-accent/30',
-            },
-            size: {
-                sm: 'h-8',
-                default: 'h-10',
-                lg: 'h-14',
-                xl: 'h-20',
-            },
-            shape: {
-                rect: 'rounded-brutal',
-                circle: 'rounded-full',
-            },
+export const skeletonVariants = cva(['animate-pulse', 'border-3 border-brutal'], {
+    variants: {
+        variant: {
+            default: 'bg-brutal-muted',
+            primary: 'bg-brutal-primary/30',
+            secondary: 'bg-brutal-secondary/30',
+            accent: 'bg-brutal-accent/30',
         },
-        defaultVariants: {
-            variant: 'default',
-            size: 'default',
-            shape: 'rect',
+        size: {
+            sm: 'h-8',
+            default: 'h-10',
+            lg: 'h-14',
+            xl: 'h-20',
         },
-    }
-)
+        shape: {
+            rect: 'rounded-brutal',
+            circle: 'rounded-full',
+        },
+        /* 加载质感效果：CRT 扫描线 / ASCII 终端块闪烁 */
+        effect: {
+            none: '',
+            scanlines: 'bg-pattern-scanlines',
+            ascii: ['flex items-center justify-center overflow-hidden'],
+        },
+    },
+    defaultVariants: {
+        variant: 'default',
+        size: 'default',
+        shape: 'rect',
+        effect: 'none',
+    },
+})
 
 type SkeletonSize = NonNullable<VariantProps<typeof skeletonVariants>['size']>
 

@@ -57,6 +57,7 @@ const labelStyle = computed(() => {
                 <div
                     :class="cn(
                         'flex items-center px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-r-3 border-brutal w-1/2 min-w-0 truncate',
+                        'bg-pattern-dots',
                     )"
                     :style="labelStyle"
                 >
@@ -77,6 +78,7 @@ const labelStyle = computed(() => {
                 <div
                     :class="cn(
                         'flex items-center px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-b-3 border-brutal w-1/2 min-w-0 truncate',
+                        'bg-pattern-dots',
                     )"
                     :style="labelStyle"
                 >
@@ -104,7 +106,7 @@ const labelStyle = computed(() => {
                 :style="spanStyle"
             >
                 <div
-                    class="px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-b-3 border-brutal"
+                    class="px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-b-3 border-brutal bg-pattern-dots"
                 >
                     <slot name="label">
                         {{ label }}

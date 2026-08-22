@@ -13,7 +13,7 @@ describe('Progress', () => {
         expect(classes).toContain('border-3')
         expect(classes).toContain('border-brutal')
         expect(classes).toContain('bg-brutal-bg')
-        expect(classes).toContain('shadow-brutal-sm')
+        expect(classes).toContain('shadow-brutal-inset')
     })
 
     it('has progress role and aria attributes', () => {
@@ -205,5 +205,24 @@ describe('Progress', () => {
             const label = wrapper.find('span.absolute.inset-0')
             expect(label.text()).toBe('0%')
         })
+    })
+
+    it('pattern=segmented 叠加 LED 分段缝隙纹理', () => {
+        const wrapper = mount(Progress, { props: { pattern: 'segmented' } })
+        const indicator = wrapper.find('[aria-hidden="true"]')
+        expect(
+            indicator.classes().some(c => c.startsWith('bg-[image:repeating-linear-gradient')),
+        ).toBe(true)
+    })
+
+    it('pattern=hazard 应用警戒斜纹与平移动画类', () => {
+        const wrapper = mount(Progress, { props: { pattern: 'hazard' } })
+        const indicator = wrapper.find('[aria-hidden="true"]')
+        expect(indicator.classes()).toContain('bg-pattern-hazard')
+        expect(indicator.classes()).toContain('animate-brutal-hazard')
+    })
+
+    it('轨道底槽为冲压凹槽阴影', () => {
+        expect(mount(Progress).classes()).toContain('shadow-brutal-inset')
     })
 })

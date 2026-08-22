@@ -414,5 +414,33 @@ describe('Watermark.vue', () => {
     })
 })
 
+describe('Watermark seal 钢印构图', () => {
+    it('seal=true 时 SVG fallback 产物包含双圆环与五角星图形', async () => {
+        vi.stubGlobal('btoa', (s: string) => Buffer.from(s, 'binary').toString('base64'))
+        const wrapper = mount(Watermark, { props: { content: 'CONFIDENTIAL', seal: true } })
+        await nextTick()
+        await nextTick()
+        const style = wrapper.find('[style*="data:image/svg+xml"]').attributes('style') ?? ''
+        const b64 = /base64,([A-Za-z0-9+/=]+)/.exec(style)![1]!
+        const svg = Buffer.from(b64, 'base64').toString('utf-8')
+        expect((svg.match(/<circle/g) ?? []).length).toBe(2)
+        expect(svg).toContain('<polygon')
+        wrapper.unmount()
+    })
+
+    it('seal 缺省时不产出钢印图形', async () => {
+        vi.stubGlobal('btoa', (s: string) => Buffer.from(s, 'binary').toString('base64'))
+        const wrapper = mount(Watermark, { props: { content: 'DRAFT' } })
+        await nextTick()
+        await nextTick()
+        const style = wrapper.find('[style*="data:image/svg+xml"]').attributes('style') ?? ''
+        const b64 = /base64,([A-Za-z0-9+/=]+)/.exec(style)![1]!
+        const svg = Buffer.from(b64, 'base64').toString('utf-8')
+        expect(svg).not.toContain('<circle')
+        expect(svg).not.toContain('<polygon')
+        wrapper.unmount()
+    })
+})
+
 
 

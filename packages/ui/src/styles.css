@@ -835,6 +835,10 @@
         animation: brutal-drum-tick 140ms ease-brutal-snap;
     }
 
+    .animate-brutal-hazard {
+        animation: brutal-hazard-slide 900ms linear infinite;
+    }
+
     /* ============================================
        Brutalism Keyframes
        ============================================ */
@@ -858,6 +862,12 @@
         100% { transform: translateY(0); opacity: 1; }
     }
 
+    /* 警戒斜纹平移：x 位移 = 轴向周期 20px / cos45°，保证 -45° 纹理循环无缝 */
+    @keyframes brutal-hazard-slide {
+        from { background-position-x: 0; }
+        to { background-position-x: 28.2842712475px; }
+    }
+
     /* ============================================
        Reduced Motion Support
        ============================================ */
@@ -866,6 +876,7 @@
         html:not([data-allow-motion="true"]) .animate-brutal-badge-pulse,
         html:not([data-allow-motion="true"]) .animate-brutal-stamp,
         html:not([data-allow-motion="true"]) .animate-brutal-drum,
+        html:not([data-allow-motion="true"]) .animate-brutal-hazard,
         html:not([data-allow-motion="true"]) .animate-indeterminate,
         html:not([data-allow-motion="true"]) .animate-marquee-left,
         html:not([data-allow-motion="true"]) .animate-marquee-right,

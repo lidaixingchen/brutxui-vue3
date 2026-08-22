@@ -4,7 +4,8 @@ export const progressRootVariants = cva(
     [
         'relative w-full overflow-hidden rounded-brutal',
         'border-3 border-brutal bg-brutal-bg',
-        'shadow-brutal-sm',
+        // 轨道底槽内嵌凹槽：进度条深陷外壳的机械物理关系
+        'shadow-brutal-inset',
     ],
     {
         variants: {
@@ -33,9 +34,17 @@ export const progressIndicatorVariants = cva(
                 success: 'bg-brutal-success',
                 danger: 'bg-brutal-destructive',
             },
+            /* 填充纹理：LED 电池格分段 / 警戒斜纹动画，与色系正交叠加 */
+            pattern: {
+                none: '',
+                segmented:
+                    'bg-[image:repeating-linear-gradient(90deg,transparent_0px,transparent_6px,var(--brutal-bg,#ffffff)_6px,var(--brutal-bg,#ffffff)_10px)]',
+                hazard: 'bg-pattern-hazard animate-brutal-hazard',
+            },
         },
         defaultVariants: {
             variant: 'default',
+            pattern: 'none',
         },
     }
 )

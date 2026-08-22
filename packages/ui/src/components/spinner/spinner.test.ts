@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { vi } from 'vitest'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import Spinner from './Spinner.vue'
@@ -210,5 +211,33 @@ describe('getSpinnerColorClasses helper', () => {
     it('returns fallback color for unknown color or prototype properties', () => {
         expect(getSpinnerColorClasses('unknown', 2)).toEqual(['bg-brutal-fg', 'bg-brutal-fg'])
         expect(getSpinnerColorClasses('toString', 2)).toEqual(['bg-brutal-fg', 'bg-brutal-fg'])
+    })
+})
+
+describe('Spinner ASCII 旋转字符变体', () => {
+    it('variant=ascii 渲染终端字符帧且保留读屏语义', () => {
+        const wrapper = mount(Spinner, {
+            props: { variant: 'ascii', label: '处理中' },
+            global: globalProvide,
+        })
+        const glyph = wrapper.find('span[aria-hidden="true"]')
+        expect(glyph.exists()).toBe(true)
+        expect(['|', '/', '-', '\\']).toContain(glyph.text())
+        expect(wrapper.attributes('aria-label')).toBe('处理中')
+        wrapper.unmount()
+    })
+
+    it('ASCII 帧随时间轮换', async () => {
+        vi.useFakeTimers()
+        const wrapper = mount(Spinner, {
+            props: { variant: 'ascii' },
+            global: globalProvide,
+        })
+        const before = wrapper.find('span[aria-hidden="true"]').text()
+        await vi.advanceTimersByTimeAsync(90)
+        const after = wrapper.find('span[aria-hidden="true"]').text()
+        expect(after).not.toBe(before)
+        vi.useRealTimers()
+        wrapper.unmount()
     })
 })

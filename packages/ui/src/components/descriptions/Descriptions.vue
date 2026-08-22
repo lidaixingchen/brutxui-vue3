@@ -81,10 +81,14 @@ const gridStyle = computed(() => {
         <div
             v-if="border"
             :class="cn(
-                'border-3 border-brutal rounded-brutal overflow-hidden',
+                'relative border-3 border-brutal rounded-brutal overflow-hidden',
                 sizeClasses,
             )"
         >
+            <!-- 技术档案印章插槽：右上角悬浮（内容由调用方提供，如 [ CONFIDENTIAL ] 图章） -->
+            <div v-if="$slots.stamp" class="absolute -top-0.5 right-4 z-10">
+                <slot name="stamp" />
+            </div>
             <div
                 class="grid"
                 :style="gridStyle"
