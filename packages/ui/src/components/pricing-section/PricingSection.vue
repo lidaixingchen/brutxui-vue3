@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { Check, HelpCircle } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import Button from '../button/Button.vue'
@@ -172,7 +171,13 @@ const popularBadgeWrapClasses = computed(() =>
 )
 
 function getPlanCardClasses(plan: BrutalistPricingPlan) {
-    return cn(showBillingToggle.value ? plan.popular && 'scale-105 shadow-brutal-lg' : plan.popular && 'bg-brutal-accent/20')
+    // 推荐主打卡片：stacked 多重彩虹阴影（twMerge 覆盖 interactive 变体的单层硬投影）；
+    // relative 承载卡内警戒缎带的 absolute 定位
+    return cn(
+        showBillingToggle.value
+            ? plan.popular && 'relative scale-105 shadow-brutal-stacked'
+            : plan.popular && 'bg-brutal-accent/20',
+    )
 }
 
 function getPlanCardVariant(plan: BrutalistPricingPlan): CardVariant {
@@ -270,6 +275,11 @@ function getButtonVariant(plan: BrutalistPricingPlan): ButtonVariant {
 </Badge>
                     </div>
                     <Card :variant="getPlanCardVariant(plan)" :class="getPlanCardClasses(plan)">
+                        <div
+                            v-if="plan.popular"
+                            aria-hidden="true"
+                            class="absolute inset-x-0 top-0 z-10 h-2 border-b-3 border-brutal bg-pattern-hazard"
+                        />
                         <CardHeader>
                             <CardTitle class="text-xl">
 {{ plan.name }}
@@ -283,12 +293,12 @@ function getButtonVariant(plan: BrutalistPricingPlan): ButtonVariant {
                             </div>
                             <ul class="space-y-3">
                                 <li v-for="(feature, fIndex) in plan.features" :key="fIndex" class="flex items-center gap-2">
-                                    <div v-if="isFeatureIncluded(feature)" class="flex h-5 w-5 items-center justify-center bg-brutal-success text-brutal-fg">
-                                        <Check class="h-3 w-3 stroke-[3]" />
-                                    </div>
-                                    <div v-else class="flex h-5 w-5 items-center justify-center bg-brutal-muted text-brutal-muted-foreground">
-                                        <HelpCircle class="h-3 w-3 stroke-[3]" />
-                                    </div>
+                                    <!-- 等宽 ASCII 复选框语言：[✓] 含 / [ ] 未含 -->
+                                    <span
+                                        aria-hidden="true"
+                                        class="font-mono text-sm font-black"
+                                        :class="isFeatureIncluded(feature) ? 'text-brutal-success' : 'text-brutal-muted-foreground'"
+                                    >{{ isFeatureIncluded(feature) ? '[✓]' : '[ ]' }}</span>
                                     <span :class="getFeatureClasses(feature)">{{ getFeatureText(feature) }}</span>
                                 </li>
                             </ul>

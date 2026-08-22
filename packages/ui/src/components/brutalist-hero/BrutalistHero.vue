@@ -8,6 +8,8 @@ import Button from '../button/Button.vue'
 import Badge from '../badge/Badge.vue'
 import Card from '../card/Card.vue'
 import CardContent from '../card/CardContent.vue'
+import CardWindowHeader from '../card-window-header/CardWindowHeader.vue'
+import BrutalShape from '../brutal-shape/BrutalShape.vue'
 
 interface BrutalistHeroProps {
     title?: string
@@ -64,7 +66,7 @@ const badgeIconClasses = cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
 {{ resolvedSubtitle }}
 </p>
                 <div class="mt-8 flex flex-wrap gap-4">
-                    <Button variant="primary" size="lg" @click="emit('primary-cta')">
+                    <Button variant="primary" size="lg" flair="stacked" @click="emit('primary-cta')">
                         {{ resolvedPrimaryCtaText }}
                         <ArrowRight :class="primaryCtaIconClasses" />
                     </Button>
@@ -75,9 +77,27 @@ const badgeIconClasses = cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
             </div>
 
             <div class="relative">
+                <!-- 背景水印字符：低透明度等宽符号，纯装饰层 -->
+                <span
+                    aria-hidden="true"
+                    class="pointer-events-none select-none absolute -top-14 right-4 font-mono text-[120px] font-black leading-none text-brutal-fg opacity-5"
+                >&lt;/&gt;</span>
+                <!-- 四角爆炸星图腾点缀 -->
+                <BrutalShape
+                    name="star-8"
+                    :size="40"
+                    class="absolute -left-5 -top-5 z-10 rotate-12"
+                />
+                <BrutalShape
+                    name="star-12"
+                    :size="26"
+                    color="var(--brutal-secondary)"
+                    class="absolute -bottom-4 -right-3 z-10 -rotate-6"
+                />
                 <div class="absolute inset-0 bg-brutal-primary border-3 border-brutal translate-x-3 translate-y-3" />
-                <Card variant="default" padding="default" class="relative bg-brutal-bg font-mono text-sm">
-                    <CardContent>
+                <Card texture="grid" variant="default" padding="none" class="relative bg-brutal-bg font-mono text-sm">
+                    <CardWindowHeader title="terminal_shell // brutxui" />
+                    <CardContent class="p-5">
                         <!-- terminal 插槽：允许调用方替换 CLI 演示内容（默认展示 brutxui 安装命令） -->
                         <slot name="terminal">
                             <div class="space-y-1">
