@@ -1,5 +1,11 @@
 # brutx-ui-vue
 
+## 0.11.1
+
+### Patch Changes
+
+- 重塑滑块与滚动条工控视觉，优化交互细节与类型导出，增强 CLI 稳定性
+
 ## 0.11.0
 
 ### Minor Changes
