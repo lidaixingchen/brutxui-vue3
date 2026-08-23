@@ -310,6 +310,9 @@ importers:
       magic-string:
         specifier: ^0.30.17
         version: 0.30.21
+      playwright:
+        specifier: ^1.60.0
+        version: 1.60.0
       size-limit:
         specifier: ^12.1.0
         version: 12.1.0(jiti@2.7.0)
