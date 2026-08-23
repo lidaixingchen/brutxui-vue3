@@ -112,4 +112,55 @@ describe('integrityNoConflictMarkersRule', () => {
         expect(results[0].fixId).toBeUndefined();
         expect(results[0].message).toContain('lines: 2, 4, 6');
     });
+
+    it('warns when reading a component file fails with an I/O error', async () => {
+        const buttonPath = path.join(projectCwd, 'src/components/ui/button/Button.vue');
+        const manifestContent = {
+            version: 1,
+            components: {
+                button: {
+                    name: 'button',
+                    version: '0.10.0',
+                    registrySource: 'official',
+                    integrity: 'sha256-mock',
+                    installedAt: '2026-08-20T00:00:00.000Z',
+                    files: ['src/components/ui/button/Button.vue'],
+                    dependencies: [],
+                    registryDependencies: [],
+                },
+            },
+        };
+
+        const fs = new MemoryFileSystemAdapter({
+            [path.join(projectCwd, 'components.json')]: JSON.stringify(sampleConfig),
+            [path.join(projectCwd, '.brutx/manifest.json')]: JSON.stringify(manifestContent),
+            [buttonPath]: '<template></template>',
+        });
+
+        const ctx = await ProjectContext.load(projectCwd, { fs });
+
+        // 仅在读取组件文件时模拟读取异常
+        const originalReadFile = fs.readFile.bind(fs);
+        fs.readFile = async (p: string) => {
+            if (p === buttonPath) {
+                throw new Error('EACCES: permission denied');
+            }
+            return originalReadFile(p);
+        };
+
+        const diagContext = {
+            cwd: projectCwd,
+            config: ctx.config,
+            env: ctx.env,
+            manifest: manifestContent as any,
+            offline: false,
+            fs,
+        };
+
+        const results = await integrityNoConflictMarkersRule.check(diagContext);
+        expect(results.length).toBe(1);
+        expect(results[0].status).toBe('warn');
+        expect(results[0].message).toContain('Failed to inspect');
+        expect(results[0].message).toContain('EACCES');
+    });
 });

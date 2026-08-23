@@ -533,16 +533,28 @@ export const integrityNoConflictMarkersRule: DiagnosticRule = {
                     if (!(await ctx.fs.pathExists(absPath))) return null;
                     const content = await ctx.fs.readFile(absPath);
                     return { relPath, content };
-                } catch {
-                    return null;
+                } catch (error) {
+                    const message = error instanceof Error ? error.message : String(error);
+                    return { relPath, error: message };
                 }
             })
         );
 
         for (const entry of fileChecks) {
             if (!entry) continue;
+            if (entry.error !== undefined) {
+                results.push({
+                    ruleId: 'integrity.no-conflict-markers',
+                    category: 'integrity',
+                    name: `conflict inspection error in ${entry.relPath}`,
+                    status: 'warn',
+                    message: `Failed to inspect "${entry.relPath}" for conflict markers: ${entry.error}`,
+                });
+                continue;
+            }
+
             const { relPath, content } = entry;
-            if (content.includes('<<<<<<<') && content.includes('>>>>>>>')) {
+            if (content !== undefined && content.includes('<<<<<<<') && content.includes('>>>>>>>')) {
                 const lines = content.split(/\r?\n/);
                 const conflictLineNumbers: number[] = [];
                 for (let i = 0; i < lines.length; i++) {
