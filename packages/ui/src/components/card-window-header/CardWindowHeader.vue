@@ -56,6 +56,10 @@ const { t } = useLocale()
 const hasCustomActions = computed(() => Boolean(slots.actions))
 const isInteractiveControls = computed(() => Boolean(props.closable || props.minimizable || props.maximizable))
 
+const isCloseInteractive = computed(() => props.interactiveLamps && (props.closable || !isInteractiveControls.value))
+const isMinimizeInteractive = computed(() => props.interactiveLamps && (props.minimizable || !isInteractiveControls.value))
+const isMaximizeInteractive = computed(() => props.interactiveLamps && (props.maximizable || !isInteractiveControls.value))
+
 const headerClasses = computed(() =>
     cn(cardWindowHeaderVariants(), props.class),
 )
@@ -73,13 +77,13 @@ const resolvedMinimizeAria = computed(() => props.minimizeAriaLabel?.trim() || t
 const resolvedMaximizeAria = computed(() => props.maximizeAriaLabel?.trim() || t('cardWindowHeader.maximize'))
 
 const lampCloseClass = computed(() =>
-    cn(cardWindowHeaderLampVariants({ interactive: props.interactiveLamps, color: 'close' })),
+    cn(cardWindowHeaderLampVariants({ interactive: isCloseInteractive.value, color: 'close' })),
 )
 const lampMinimizeClass = computed(() =>
-    cn(cardWindowHeaderLampVariants({ interactive: props.interactiveLamps, color: 'minimize' })),
+    cn(cardWindowHeaderLampVariants({ interactive: isMinimizeInteractive.value, color: 'minimize' })),
 )
 const lampMaximizeClass = computed(() =>
-    cn(cardWindowHeaderLampVariants({ interactive: props.interactiveLamps, color: 'maximize' })),
+    cn(cardWindowHeaderLampVariants({ interactive: isMaximizeInteractive.value, color: 'maximize' })),
 )
 
 function onClose(event: MouseEvent | KeyboardEvent): void {
@@ -100,29 +104,31 @@ function onMaximize(event: MouseEvent | KeyboardEvent): void {
         <!-- 左侧三色指示灯区域 -->
         <span v-if="props.interactiveLamps" class="flex shrink-0 items-center gap-1.5">
             <button
+                v-if="isCloseInteractive"
                 type="button"
                 :class="lampCloseClass"
                 :aria-label="t('cardWindowHeader.lampClose')"
                 @click="onClose"
-                @keydown.enter="onClose"
-                @keydown.space.prevent="onClose"
             />
+            <i v-else :class="lampCloseClass" aria-hidden="true" />
+
             <button
+                v-if="isMinimizeInteractive"
                 type="button"
                 :class="lampMinimizeClass"
                 :aria-label="t('cardWindowHeader.lampMinimize')"
                 @click="onMinimize"
-                @keydown.enter="onMinimize"
-                @keydown.space.prevent="onMinimize"
             />
+            <i v-else :class="lampMinimizeClass" aria-hidden="true" />
+
             <button
+                v-if="isMaximizeInteractive"
                 type="button"
                 :class="lampMaximizeClass"
                 :aria-label="t('cardWindowHeader.lampMaximize')"
                 @click="onMaximize"
-                @keydown.enter="onMaximize"
-                @keydown.space.prevent="onMaximize"
             />
+            <i v-else :class="lampMaximizeClass" aria-hidden="true" />
         </span>
         <span v-else class="flex shrink-0 items-center gap-1.5" aria-hidden="true">
             <i :class="lampCloseClass" />
@@ -144,8 +150,6 @@ function onMaximize(event: MouseEvent | KeyboardEvent): void {
                 :class="defaultBtnClasses"
                 :aria-label="resolvedMinimizeAria"
                 @click="onMinimize"
-                @keydown.enter="onMinimize"
-                @keydown.space.prevent="onMinimize"
             >[ _ ]</button>
             <button
                 v-if="props.maximizable"
@@ -153,8 +157,6 @@ function onMaximize(event: MouseEvent | KeyboardEvent): void {
                 :class="defaultBtnClasses"
                 :aria-label="resolvedMaximizeAria"
                 @click="onMaximize"
-                @keydown.enter="onMaximize"
-                @keydown.space.prevent="onMaximize"
             >[ □ ]</button>
             <button
                 v-if="props.closable"
@@ -162,8 +164,6 @@ function onMaximize(event: MouseEvent | KeyboardEvent): void {
                 :class="closeBtnClasses"
                 :aria-label="resolvedCloseAria"
                 @click="onClose"
-                @keydown.enter="onClose"
-                @keydown.space.prevent="onClose"
             >[ X ]</button>
         </span>
         <span

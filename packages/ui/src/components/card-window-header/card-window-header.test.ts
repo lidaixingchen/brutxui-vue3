@@ -97,21 +97,6 @@ describe('CardWindowHeader', () => {
             expect(closeBtn.attributes('aria-label')).toBe('关闭控制台')
         })
 
-        it('键盘 Enter / Space 触发按钮动作', async () => {
-            const wrapper = mount(CardWindowHeader, {
-                props: {
-                    title: 'Terminal',
-                    closable: true,
-                },
-            })
-            const closeBtn = wrapper.find('button')
-            await closeBtn.trigger('keydown.enter')
-            expect(wrapper.emitted('close')).toHaveLength(1)
-
-            await closeBtn.trigger('keydown.space')
-            expect(wrapper.emitted('close')).toHaveLength(2)
-        })
-
         it('开启 interactiveLamps 时左侧指示灯升级为可点击 button', async () => {
             const wrapper = mount(CardWindowHeader, {
                 props: {
@@ -134,6 +119,26 @@ describe('CardWindowHeader', () => {
 
             await lamps[2].trigger('click')
             expect(wrapper.emitted('maximize')).toHaveLength(1)
+        })
+
+        it('开启 interactiveLamps 并声明部分控制项时，仅对应指示灯升级为 button', async () => {
+            const wrapper = mount(CardWindowHeader, {
+                props: {
+                    title: 'Terminal',
+                    interactiveLamps: true,
+                    closable: true,
+                    minimizable: false,
+                    maximizable: false,
+                },
+            })
+
+            // 左侧指示灯区域红灯为 button，黄绿为 i；右侧有 1 个 [ X ] button，共 2 个 button
+            const buttons = wrapper.findAll('button')
+            expect(buttons).toHaveLength(2)
+
+            const lampSection = wrapper.findAll('span')[0]
+            expect(lampSection.findAll('button')).toHaveLength(1)
+            expect(lampSection.findAll('i')).toHaveLength(2)
         })
     })
 })
