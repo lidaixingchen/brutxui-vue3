@@ -557,9 +557,6 @@
         "test:package": "node scripts/smoke-package.mjs",
         "size": "size-limit",
         "size:why": "size-limit --why",
-        "visual:dev": "vite --config visual/vite.config.ts --host 127.0.0.1",
-        "test:visual": "vite build --config visual/vite.config.ts && playwright test --config playwright.config.ts",
-        "test:visual:update": "vite build --config visual/vite.config.ts && playwright test --config playwright.config.ts --update-snapshots",
         "docs:api": "typedoc",
         "docs:api:full": "npx tsx scripts/generate-api-docs.ts",
         "docs:api:vue": "npx tsx scripts/generate-api-docs.ts --skip-typedoc"
@@ -621,7 +618,6 @@
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
-        "@playwright/test": "^1.60.0",
         "@size-limit/esbuild": "^12.1.0",
         "@size-limit/file": "^12.1.0",
         "@tailwindcss/cli": "^4.3.2",

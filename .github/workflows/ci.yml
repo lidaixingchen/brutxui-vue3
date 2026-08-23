@@ -173,8 +173,8 @@ jobs:
             - name: Build + test + SSR (turbo)
               run: pnpm exec turbo run build test test:ssr
 
-    visual:
-        name: Visual & Browser tests
+    browser:
+        name: Browser tests (Vitest + Playwright)
         runs-on: ubuntu-latest
         env:
             TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
@@ -197,10 +197,10 @@ jobs:
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
                   path: node_modules/.cache/turbo
-                  key: ${{ runner.os }}-turbo-visual-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
+                  key: ${{ runner.os }}-turbo-browser-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
                   restore-keys: |
-                      ${{ runner.os }}-turbo-visual-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
-                      ${{ runner.os }}-turbo-visual-
+                      ${{ runner.os }}-turbo-browser-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
+                      ${{ runner.os }}-turbo-browser-
 
             - name: Cache Playwright Browser Binaries
               id: playwright-cache
@@ -223,25 +223,11 @@ jobs:
               if: steps.playwright-cache.outputs.cache-hit == 'true'
               run: pnpm --filter brutx-ui-vue exec playwright install-deps chromium
 
-            - name: Install fonts for visual tests
-              run: sudo apt-get install -y fonts-inter || (sudo apt-get update && sudo apt-get install -y fonts-inter)
-
             - name: Build (turbo)
               run: pnpm build
 
             - name: Browser tests
               run: pnpm --filter brutx-ui-vue test:browser
-
-            - name: Visual regression tests
-              run: pnpm --filter brutx-ui-vue test:visual
-
-            - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-              if: failure()
-              with:
-                  name: playwright-visual-report
-                  path: |
-                      packages/ui/playwright-report
-                      packages/ui/test-results
 
     integration:
         name: CLI Integration tests

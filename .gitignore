@@ -71,7 +71,6 @@ packages/ui/src/components/*/index.ts
 
 # VitePress
 **/.vitepress/cache
-packages/ui/visual/dist
 
 # Next.js
 next-env.d.ts
