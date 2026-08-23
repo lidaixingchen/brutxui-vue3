@@ -1,30 +1,72 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Switch } from 'brutx-ui-vue'
+import { Switch, Label } from 'brutx-ui-vue'
 
-const enabled = ref(false)
+const basicEnabled = ref(false)
 const primaryEnabled = ref(true)
-const dangerEnabled = ref(false)
-const syncEnabled = ref(false)
+const labelsEnabled = ref(true)
+const rockerEnabled = ref(false)
+const soundEnabled = ref(true)
+const smVal = ref(false)
+const mdVal = ref(true)
+const lgVal = ref(true)
 </script>
 
 <template>
-    <div class="flex flex-col gap-4">
-        <div class="flex items-center gap-3">
-            <Switch v-model="enabled" />
-            <span class="text-sm font-bold">{{ enabled ? '已启用' : '已禁用' }}</span>
+    <div class="space-y-6">
+        <div>
+            <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-brutal-muted-foreground mb-2">基础 3D 机械滑块</h4>
+            <div class="flex flex-wrap items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <Switch v-model="basicEnabled" />
+                    <Label>{{ basicEnabled ? '已接通' : '已断开' }}</Label>
+                </div>
+                <div class="flex items-center gap-3">
+                    <Switch v-model="primaryEnabled" variant="primary" />
+                    <Label>主要主题色</Label>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center gap-3">
-            <Switch v-model="primaryEnabled" variant="primary" />
-            <span class="text-sm font-bold">主要</span>
+
+        <div>
+            <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-brutal-muted-foreground mb-2">工控通断铭牌刻印 (showLabels) & 吸合音效</h4>
+            <div class="flex flex-wrap items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <Switch v-model="labelsEnabled" show-labels />
+                    <Label>工控铭牌刻线 (I / O)</Label>
+                </div>
+                <div class="flex items-center gap-3">
+                    <Switch v-model="soundEnabled" variant="accent" show-labels sound />
+                    <Label>继电器吸合音效 (sound)</Label>
+                </div>
+            </div>
         </div>
-        <div class="flex items-center gap-3">
-            <Switch v-model="dangerEnabled" variant="danger" />
-            <span class="text-sm font-bold">危险</span>
+
+        <div>
+            <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-brutal-muted-foreground mb-2">机械形态 (shape="rocker")</h4>
+            <div class="flex items-center gap-3">
+                <Switch v-model="rockerEnabled" shape="rocker" variant="danger" show-labels />
+                <Label>工控翘板形态 (Rocker)</Label>
+            </div>
         </div>
-        <div class="flex items-center gap-3">
-            <Switch v-model="syncEnabled" aria-label="自动同步数据" />
-            <span class="text-sm font-bold">自定义 aria-label</span>
+
+        <div>
+            <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-brutal-muted-foreground mb-2">尺寸矩阵 (sm / default / lg)</h4>
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-2">
+                    <Switch v-model="smVal" size="sm" show-labels />
+                    <span class="font-mono text-xs font-bold">SM</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <Switch v-model="mdVal" size="default" show-labels />
+                    <span class="font-mono text-xs font-bold">DEFAULT</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <Switch v-model="lgVal" size="lg" show-labels />
+                    <span class="font-mono text-xs font-bold">LG</span>
+                </div>
+            </div>
         </div>
     </div>
 </template>
+
