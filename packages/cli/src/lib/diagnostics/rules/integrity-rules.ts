@@ -3,16 +3,12 @@ import type { InstalledComponentManifest, RegistrySourceStatus } from '../../typ
 import type { CheckResult, DiagnosticContext, DiagnosticRepairContext, DiagnosticRule, RuleFixResult } from '../types.js';
 import { FixId } from '../types.js';
 import type { FileSystemAdapter } from '../../fs/file-system-adapter.js';
-import {
-    auditLogExists,
-    computeInstalledContentHash,
-    countAuditEntries,
-    getCacheStats,
-    getItem,
-    getRecentFailures,
-    resolveImportAlias,
-    resolveRegistrySources,
-} from '../../index.js';
+import { auditLogExists, countAuditEntries, getRecentFailures } from '../../audit.js';
+import { computeInstalledContentHash } from '../../manifest.js';
+import { getCacheStats } from '../../cache.js';
+import { getItem } from '../../registry.js';
+import { resolveImportAlias } from '../../project.js';
+import { resolveRegistrySources } from '../../registry-source.js';
 
 const ORPHAN_EXTENSIONS = new Set(['.vue', '.ts', '.tsx', '.js', '.jsx']);
 const AUDIT_FAILURE_REPORT_LIMIT = 5;
@@ -512,6 +508,66 @@ export const integrityAuditLogRule: DiagnosticRule = {
     },
 };
 
+export const integrityNoConflictMarkersRule: DiagnosticRule = {
+    id: 'integrity.no-conflict-markers',
+    category: 'integrity',
+    name: 'conflict markers inspection',
+    requiresConfig: true,
+    async check(ctx: DiagnosticContext): Promise<CheckResult[]> {
+        const manifest = ctx.manifest;
+        if (!manifest || !manifest.components) return [];
+
+        const results: CheckResult[] = [];
+        const filesToCheck = new Set<string>();
+
+        for (const entry of Object.values(manifest.components)) {
+            for (const relFile of entry.files) {
+                filesToCheck.add(relFile);
+            }
+        }
+
+        for (const relPath of filesToCheck) {
+            const absPath = path.resolve(ctx.cwd, relPath);
+            if (!(await ctx.fs.pathExists(absPath))) continue;
+
+            const content = await ctx.fs.readFile(absPath);
+            if (content.includes('<<<<<<<') && content.includes('>>>>>>>')) {
+                const lines = content.split(/\r?\n/);
+                const conflictLineNumbers: number[] = [];
+                for (let i = 0; i < lines.length; i++) {
+                    if (
+                        lines[i].startsWith('<<<<<<<') ||
+                        lines[i].startsWith('=======') ||
+                        lines[i].startsWith('>>>>>>>')
+                    ) {
+                        conflictLineNumbers.push(i + 1);
+                    }
+                }
+
+                results.push({
+                    ruleId: 'integrity.no-conflict-markers',
+                    category: 'integrity',
+                    name: `conflict markers in ${relPath}`,
+                    status: 'error',
+                    message: `Unresolved merge conflict markers detected in "${relPath}" (lines: ${conflictLineNumbers.join(', ')}). Open the file in your IDE to choose local or remote changes.`,
+                });
+            }
+        }
+
+        if (results.length === 0) {
+            return [{
+                ruleId: 'integrity.no-conflict-markers',
+                category: 'integrity',
+                name: 'conflict markers inspection',
+                status: 'pass',
+                message: 'No unresolved merge conflict markers detected in installed components.',
+            }];
+        }
+
+        return results;
+    },
+};
+
 export const integrityRules: DiagnosticRule[] = [
     integrityManifestFilesRule,
     integrityOrphansRule,
@@ -520,4 +576,5 @@ export const integrityRules: DiagnosticRule[] = [
     integrityRegistryReachabilityRule,
     integrityCacheHealthRule,
     integrityAuditLogRule,
+    integrityNoConflictMarkersRule,
 ];
