@@ -6,7 +6,7 @@ translated: true
 
 # Switch
 
-Neobrutalist-styled toggle switch built on reka-ui's Switch primitive, with v-model support.
+A mechanical toggle switch built on reka-ui's Switch primitive, featuring 3D tactile keycaps, stamped guide track recesses, and industrial status markings, with v-model support.
 
 ## Demo
 
@@ -36,20 +36,43 @@ const enabled = ref(false)
 </template>
 ```
 
-### With Label
+### Industrial Marking Labels (I / O Marks)
+
+Enable `showLabels` to render high-contrast monospace industrial markings (`I` / `O`) inside the track. Marked with `aria-hidden` for zero screen reader clutter.
 
 ```vue
 <script setup>
 import { ref } from 'vue'
 import { Switch, Label } from 'brutx-ui-vue'
 
-const notifications = ref(true)
+const power = ref(true)
 </script>
 
 <template>
-    <div class="flex items-center justify-between">
-        <Label for="notifications">Email notifications</Label>
-        <Switch v-model="notifications" />
+    <div class="flex items-center gap-3">
+        <Switch v-model="power" show-labels />
+        <Label>Main Equipment Power</Label>
+    </div>
+</template>
+```
+
+### Mechanical Shape
+
+Supports standard mechanical `slider` and industrial `rocker` switch shapes, orthogonally decoupled from the color `variant`.
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Switch } from 'brutx-ui-vue'
+
+const val1 = ref(false)
+const val2 = ref(true)
+</script>
+
+<template>
+    <div class="flex items-center gap-4">
+        <Switch v-model="val1" shape="slider" variant="primary" />
+        <Switch v-model="val2" shape="rocker" variant="accent" show-labels />
     </div>
 </template>
 ```
@@ -86,23 +109,28 @@ const sync = ref(false)
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| `modelValue` | `boolean` | — | Current value, supports `v-model` (controlled mode) |
+| `modelValue` | `boolean \| null` | — | Current value, supports `v-model` (controlled mode) |
 | `defaultValue` | `boolean` | — | Initial checked state in uncontrolled mode |
 | `defaultChecked` | `boolean` | — | Alias for `defaultValue` (initial checked state in uncontrolled mode) |
 | `disabled` | `boolean` | `false` | Whether disabled |
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger'` | `'default'` | Color variant |
+| `shape` | `'slider' \| 'rocker'` | `'slider'` | Mechanical shape variant |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Size |
+| `showLabels` | `boolean` | `false` | Whether to show industrial I/O markings inside the track |
 | `ariaLabel` | `string` | Locale default (`switch.toggle`) | Accessibility label text |
-| `class` | `string` | — | Custom style class |
+| `sound` | `boolean` | `false` | Explicitly enable mechanical relay click sound on toggle |
+| `class` | `string` | `undefined` | Custom style class |
 
 ## Events
 
 | Event | Payload | Description |
 | --- | --- | --- |
-| `update:modelValue` | `boolean` | Triggered when value changes |
+| `update:modelValue` | `(value: boolean)` | Triggered when value changes |
 
 ## Accessibility
 
 - **Keyboard**: Supports `Space` / `Enter` to toggle switch state
 - **ARIA attributes**: Automatically manages `role="switch"` and `aria-checked`; provides `aria-label` via locale by default
 - **Focus management**: Focusable via Tab key, uses `--brutal-ring` token for visible focus ring
+- **Label isolation**: `showLabels` markings carry `aria-hidden="true"`, preventing screen reader pollution
+
