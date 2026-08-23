@@ -1,4 +1,4 @@
-import { cva } from 'class-variance-authority'
+import { cva, type VariantProps } from 'class-variance-authority'
 import { brutalHoverLiftSmNoX, brutalPress } from '@/lib/brutal-interaction-variants'
 import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
