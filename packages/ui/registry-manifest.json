@@ -223,7 +223,9 @@
       "CardWindowHeader.vue",
       "card-window-header-variants.ts"
     ],
-    "composables": [],
+    "composables": [
+      "useLocale.ts"
+    ],
     "directives": [],
     "lib": []
   },

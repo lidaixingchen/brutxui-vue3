@@ -98,6 +98,15 @@ export interface BrutalistHeroLocale {
     defaultSubtitle: string
 }
 
+export interface CardWindowHeaderLocale {
+    close: string
+    minimize: string
+    maximize: string
+    lampClose: string
+    lampMinimize: string
+    lampMaximize: string
+}
+
 export interface ToastLocale {
     close: string
     container: string
@@ -476,6 +485,7 @@ export interface Locale {
     authCard: AuthCardLocale
     dashboardShell: DashboardShellLocale
     brutalistHero: BrutalistHeroLocale
+    cardWindowHeader: CardWindowHeaderLocale
     toast: ToastLocale
     message: MessageLocale
     dialog: DialogLocale

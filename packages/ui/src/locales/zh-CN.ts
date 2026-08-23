@@ -85,6 +85,14 @@ export const zhCN: Locale = {
         neoBrutalismUI: '新粗野主义 UI',
         defaultSubtitle: '',
     },
+    cardWindowHeader: {
+        close: '关闭',
+        minimize: '最小化',
+        maximize: '最大化',
+        lampClose: '关闭窗口',
+        lampMinimize: '最小化窗口',
+        lampMaximize: '最大化窗口',
+    },
     toast: {
         close: '关闭',
         container: '通知',

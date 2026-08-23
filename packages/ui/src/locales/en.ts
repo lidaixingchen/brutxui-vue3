@@ -85,6 +85,14 @@ export const en: Locale = {
         neoBrutalismUI: 'Neo-Brutalism UI',
         defaultSubtitle: '',
     },
+    cardWindowHeader: {
+        close: 'Close',
+        minimize: 'Minimize',
+        maximize: 'Maximize',
+        lampClose: 'Close window',
+        lampMinimize: 'Minimize window',
+        lampMaximize: 'Maximize window',
+    },
     toast: {
         close: 'Close',
         container: 'Notifications',
