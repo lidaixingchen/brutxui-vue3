@@ -50,12 +50,10 @@ export const sliderTrackVariants = cva(
 
 export const sliderThumbVariants = cva(
     [
-        'block rounded-brutal',
+        'flex items-center justify-center rounded-brutal',
         'border-3 border-brutal',
         'shadow-brutal-sm',
         'transition-colors duration-150',
-        // 水平防滑齿纹：底色细线挖槽叠加在滑块主题色上（抓握摩擦面的物理隐喻）
-        'bg-[image:repeating-linear-gradient(0deg,var(--brutal-bg,#ffffff)_0px,var(--brutal-bg,#ffffff)_2px,transparent_2px,transparent_5px)]',
         FOCUS_RING_CLASSES,
         'data-[disabled]:pointer-events-none',
         brutalHoverLiftSmNoX,
@@ -65,9 +63,9 @@ export const sliderThumbVariants = cva(
     {
         variants: {
             size: {
-                sm: 'h-4 w-4',
-                default: 'h-6 w-6',
-                lg: 'h-8 w-8',
+                sm: 'size-4.5',
+                default: 'size-6',
+                lg: 'size-8',
             },
             variant: {
                 default: 'bg-brutal-accent',
@@ -83,6 +81,37 @@ export const sliderThumbVariants = cva(
         },
     }
 )
+
+export const sliderThumbNotchVariants = cva(
+    'pointer-events-none rounded-brutal bg-brutal-fg/70',
+    {
+        variants: {
+            orientation: {
+                horizontal: 'w-0.5',
+                vertical: 'h-0.5',
+            },
+            size: {
+                sm: '',
+                default: '',
+                lg: '',
+            },
+        },
+        compoundVariants: [
+            { orientation: 'horizontal', size: 'sm', class: 'h-2' },
+            { orientation: 'horizontal', size: 'default', class: 'h-3' },
+            { orientation: 'horizontal', size: 'lg', class: 'h-4' },
+            { orientation: 'vertical', size: 'sm', class: 'w-2' },
+            { orientation: 'vertical', size: 'default', class: 'w-3' },
+            { orientation: 'vertical', size: 'lg', class: 'w-4' },
+        ],
+        defaultVariants: {
+            orientation: 'horizontal',
+            size: 'default',
+        },
+    }
+)
+
+export type SliderThumbNotchVariantProps = VariantProps<typeof sliderThumbNotchVariants>
 
 export const sliderRangeVariants = cva(
     [

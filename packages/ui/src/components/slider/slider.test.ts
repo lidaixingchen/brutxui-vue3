@@ -1,18 +1,64 @@
 import { mount } from '@vue/test-utils'
 import Slider from './Slider.vue'
-import { sliderTrackVariants, sliderThumbVariants } from './slider-variants'
+import {
+    sliderTrackVariants,
+    sliderThumbVariants,
+    sliderThumbNotchVariants,
+} from './slider-variants'
 
-describe('Slider 凹槽轨道与防滑齿纹', () => {
+describe('Slider 调音台推子与工控指示刻槽', () => {
     it('轨道应用冲压凹槽阴影（滑块深陷导轨内部）', () => {
         expect(sliderTrackVariants().split(/\s+/)).toContain('shadow-brutal-inset')
         expect(sliderTrackVariants().split(/\s+/)).not.toContain('shadow-brutal-sm')
     })
 
-    it('滑块携带水平防滑齿纹', () => {
+    it('滑块移除渐变伪条纹并应用立体推子样式与居中对齐', () => {
         const classTokens = sliderThumbVariants().split(/\s+/)
         expect(
-            classTokens.some(c => c.startsWith('bg-[image:repeating-linear-gradient(0deg') && c.includes('var(--brutal-bg')),
-        ).toBe(true)
+            classTokens.some(c => c.includes('repeating-linear-gradient')),
+        ).toBe(false)
+        expect(classTokens).toContain('border-3')
+        expect(classTokens).toContain('border-brutal')
+        expect(classTokens).toContain('shadow-brutal-sm')
+        expect(classTokens).toContain('flex')
+        expect(classTokens).toContain('items-center')
+        expect(classTokens).toContain('justify-center')
+    })
+
+    it('工控指示刻槽根据 orientation 与 size 输出准确尺寸与前景色', () => {
+        const hDefault = sliderThumbNotchVariants({ orientation: 'horizontal', size: 'default' }).split(/\s+/)
+        expect(hDefault).toContain('w-0.5')
+        expect(hDefault).toContain('h-3')
+        expect(hDefault).toContain('bg-brutal-fg/70')
+        expect(hDefault).toContain('rounded-brutal')
+        expect(hDefault).toContain('pointer-events-none')
+
+        const vDefault = sliderThumbNotchVariants({ orientation: 'vertical', size: 'default' }).split(/\s+/)
+        expect(vDefault).toContain('h-0.5')
+        expect(vDefault).toContain('w-3')
+
+        const hSm = sliderThumbNotchVariants({ orientation: 'horizontal', size: 'sm' }).split(/\s+/)
+        expect(hSm).toContain('w-0.5')
+        expect(hSm).toContain('h-2')
+
+        const hLg = sliderThumbNotchVariants({ orientation: 'horizontal', size: 'lg' }).split(/\s+/)
+        expect(hLg).toContain('w-0.5')
+        expect(hLg).toContain('h-4')
+
+        const vSm = sliderThumbNotchVariants({ orientation: 'vertical', size: 'sm' }).split(/\s+/)
+        expect(vSm).toContain('h-0.5')
+        expect(vSm).toContain('w-2')
+
+        const vLg = sliderThumbNotchVariants({ orientation: 'vertical', size: 'lg' }).split(/\s+/)
+        expect(vLg).toContain('h-0.5')
+        expect(vLg).toContain('w-4')
+    })
+
+    it('挂载组件渲染 thumb 内部工控刻槽 data-slider-thumb-notch', () => {
+        const wrapper = mount(Slider, { attachTo: document.body })
+        const notch = wrapper.find('[data-slider-thumb-notch]')
+        expect(notch.exists()).toBe(true)
+        expect(notch.attributes('aria-hidden')).toBe('true')
     })
 })
 
@@ -125,7 +171,7 @@ describe('Slider', () => {
     describe('marks', () => {
         it('does not render marks when marks prop is undefined', () => {
             const wrapper = mount(Slider, { attachTo: document.body })
-            const marks = wrapper.findAll('[aria-hidden="true"]')
+            const marks = wrapper.findAll('[data-slider-mark]')
             expect(marks.length).toBe(0)
         })
 
@@ -134,7 +180,7 @@ describe('Slider', () => {
                 props: { marks: [0, 25, 50, 75, 100] },
                 attachTo: document.body,
             })
-            const marks = wrapper.findAll('[aria-hidden="true"]')
+            const marks = wrapper.findAll('[data-slider-mark]')
             expect(marks.length).toBe(5)
         })
 
@@ -143,7 +189,7 @@ describe('Slider', () => {
                 props: { marks: [25, 75], min: 0, max: 100 },
                 attachTo: document.body,
             })
-            const marks = wrapper.findAll('[aria-hidden="true"]')
+            const marks = wrapper.findAll('[data-slider-mark]')
             expect(marks[0].attributes('style')).toContain('left: 25%')
             expect(marks[1].attributes('style')).toContain('left: 75%')
         })
@@ -153,7 +199,7 @@ describe('Slider', () => {
                 props: { marks: [25, 75], min: 0, max: 100, orientation: 'vertical' },
                 attachTo: document.body,
             })
-            const marks = wrapper.findAll('[aria-hidden="true"]')
+            const marks = wrapper.findAll('[data-slider-mark]')
             expect(marks[0].attributes('style')).toContain('bottom: 25%')
             expect(marks[1].attributes('style')).toContain('bottom: 75%')
         })
@@ -163,7 +209,7 @@ describe('Slider', () => {
                 props: { marks: [1, 3], min: 0, max: 4 },
                 attachTo: document.body,
             })
-            const marks = wrapper.findAll('[aria-hidden="true"]')
+            const marks = wrapper.findAll('[data-slider-mark]')
             expect(marks[0].attributes('style')).toContain('left: 25%')
             expect(marks[1].attributes('style')).toContain('left: 75%')
         })
@@ -173,7 +219,7 @@ describe('Slider', () => {
                 props: { marks: [-20, 150], min: 0, max: 100 },
                 attachTo: document.body,
             })
-            const marks = wrapper.findAll('[aria-hidden="true"]')
+            const marks = wrapper.findAll('[data-slider-mark]')
             expect(marks[0].attributes('style')).toContain('left: 0%')
             expect(marks[1].attributes('style')).toContain('left: 100%')
         })

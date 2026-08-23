@@ -12,6 +12,7 @@ import {
     sliderRootVariants,
     sliderTrackVariants,
     sliderThumbVariants,
+    sliderThumbNotchVariants,
     sliderRangeVariants,
     sliderMarkVariants,
     sliderTooltipVariants,
@@ -80,6 +81,10 @@ const trackClasses = computed(() =>
 
 const thumbClasses = computed(() =>
     cn(sliderThumbVariants({ size: props.size, variant: props.variant }))
+)
+
+const notchClasses = computed(() =>
+    cn(sliderThumbNotchVariants({ orientation: props.orientation, size: props.size }))
 )
 
 const rangeClasses = computed(() =>
@@ -201,6 +206,7 @@ function handleThumbPointerLeave(index: number) {
                     :key="`mark-${index}`"
                     :class="markClasses"
                     :style="markStyle(mark)"
+                    data-slider-mark
                     aria-hidden="true"
                 />
             </SliderTrackPrimitive>
@@ -214,7 +220,9 @@ function handleThumbPointerLeave(index: number) {
                 @blur="handleThumbBlur(index)"
                 @pointerenter="handleThumbPointerEnter(index)"
                 @pointerleave="handleThumbPointerLeave(index)"
-            />
+            >
+                <span :class="notchClasses" data-slider-thumb-notch aria-hidden="true" />
+            </SliderThumbPrimitive>
             <span
                 v-if="showTooltip && activeThumb >= 0"
                 :id="tooltipId"
