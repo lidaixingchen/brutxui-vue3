@@ -9,7 +9,7 @@ import { useBrutalHaptics } from '@/composables/useBrutalHaptics'
 
 type SwitchRootVariantProps = VariantProps<typeof switchRootVariants>
 
-interface SwitchProps {
+export interface SwitchProps {
     class?: string
     /**
      * 绑定值，支持 v-model（受控模式）。传入 null 时视作 false 关闭状态。
@@ -25,7 +25,10 @@ interface SwitchProps {
     defaultChecked?: boolean
     disabled?: boolean
     variant?: NonNullable<SwitchRootVariantProps['variant']>
+    shape?: NonNullable<SwitchRootVariantProps['shape']>
     size?: NonNullable<SwitchRootVariantProps['size']>
+    /** 是否在轨道内呈现工控 I / O 通断铭牌刻印（纯视觉层，零 a11y 负担） */
+    showLabels?: boolean
     /** 无障碍标签，未提供时使用 locale 默认值 */
     ariaLabel?: string
     /** 显式开启切换时的继电器吸合音效（snap）；默认静音 */
@@ -38,7 +41,9 @@ const props = withDefaults(defineProps<SwitchProps>(), {
     defaultChecked: undefined,
     disabled: false,
     variant: 'default',
+    shape: 'slider',
     size: 'default',
+    showLabels: false,
     class: undefined,
     ariaLabel: undefined,
     sound: false,
@@ -76,11 +81,23 @@ function onUserToggle(val: boolean | string | number): void {
 }
 
 const classes = computed(() =>
-    cn(switchRootVariants({ variant: props.variant, size: props.size }), props.class)
+    cn(
+        switchRootVariants({
+            variant: props.variant,
+            shape: props.shape,
+            size: props.size,
+        }),
+        props.class,
+    ),
 )
 
 const thumbClasses = computed(() =>
-    cn(switchThumbVariants({ size: props.size }))
+    cn(
+        switchThumbVariants({
+            shape: props.shape,
+            size: props.size,
+        }),
+    ),
 )
 </script>
 
@@ -92,6 +109,23 @@ const thumbClasses = computed(() =>
         :aria-label="resolvedAriaLabel"
         @update:model-value="onUserToggle"
     >
-        <SwitchThumb :class="thumbClasses" />
+        <!-- 工控通断铭牌刻印层（纯视觉呈现，打上 aria-hidden） -->
+        <span
+            v-if="props.showLabels"
+            class="pointer-events-none absolute inset-0 flex select-none items-center justify-between px-2 font-mono text-[10px] font-black"
+            aria-hidden="true"
+        >
+            <span :class="currentValue ? 'opacity-30' : 'opacity-100 text-brutal-fg'">O</span>
+            <span :class="currentValue ? 'opacity-100 text-brutal-primary-foreground' : 'opacity-30'">I</span>
+        </span>
+
+        <!-- 3D 机械滑块键帽 -->
+        <SwitchThumb :class="thumbClasses">
+            <span class="flex items-center justify-center gap-0.5" aria-hidden="true">
+                <span class="h-2 w-[1.5px] bg-brutal-border-color/60" />
+                <span class="h-2 w-[1.5px] bg-brutal-border-color/60" />
+            </span>
+        </SwitchThumb>
     </SwitchRoot>
 </template>
+

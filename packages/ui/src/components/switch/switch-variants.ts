@@ -4,7 +4,7 @@ import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const switchRootVariants = cva(
     [
-        'peer inline-flex shrink-0 cursor-pointer items-center',
+        'peer relative inline-flex shrink-0 cursor-pointer items-center',
         'rounded-brutal',
         /* 轨道是冲压凹槽本体：刻意不走 formToggleBaseClasses 的外凸投影/悬浮/按压反馈
            （那是按钮语言，与「沉入外壳」的凹槽物理语义矛盾）；边框、过渡、焦点环、
@@ -23,14 +23,19 @@ export const switchRootVariants = cva(
                 accent: formToggleVariantColors.accent,
                 danger: formToggleVariantColors.danger,
             },
+            shape: {
+                slider: 'rounded-brutal',
+                rocker: 'rounded-brutal',
+            },
             size: {
-                sm: 'h-6 w-10',
-                default: 'h-7 w-12',
-                lg: 'h-9 w-16',
+                sm: 'h-6 w-11',
+                default: 'h-7.5 w-14',
+                lg: 'h-9.5 w-18',
             },
         },
         defaultVariants: {
             variant: 'default',
+            shape: 'slider',
             size: 'default',
         },
     }
@@ -38,22 +43,28 @@ export const switchRootVariants = cva(
 
 export const switchThumbVariants = cva(
     [
-        'pointer-events-none block bg-brutal-fg rounded-brutal',
+        'pointer-events-none flex items-center justify-center',
+        'bg-brutal-bg border-2 border-brutal rounded-brutal',
+        'shadow-[1px_1px_0px_0px_var(--brutal-border-color,#000000)]',
         // 翘板吸合：bounce 缓动超调回弹，120ms 模拟工业磁吸继电器的干脆闭合
         'transition-transform duration-[120ms] ease-brutal-bounce',
-        // 防滑凸棱：底色细线挖槽叠加在前景色滑块上（background-image 与 background-color 叠加）
-        'bg-[image:repeating-linear-gradient(90deg,var(--brutal-bg,#ffffff)_0px,var(--brutal-bg,#ffffff)_2px,transparent_2px,transparent_6px)]',
     ],
     {
         variants: {
+            shape: {
+                slider: 'rounded-brutal',
+                rocker: 'rounded-brutal',
+            },
             size: {
-                sm: 'h-4 w-4 data-[state=checked]:translate-x-[16px] data-[state=unchecked]:translate-x-[2px]',
-                default: 'h-5 w-5 data-[state=checked]:translate-x-[20px] data-[state=unchecked]:translate-x-[2px]',
-                lg: 'h-7 w-7 data-[state=checked]:translate-x-[28px] data-[state=unchecked]:translate-x-[2px]',
+                sm: 'size-3.5 data-[state=checked]:translate-x-[20px] data-[state=unchecked]:translate-x-[2px]',
+                default: 'size-5 data-[state=checked]:translate-x-[26px] data-[state=unchecked]:translate-x-[2px]',
+                lg: 'size-7 data-[state=checked]:translate-x-[34px] data-[state=unchecked]:translate-x-[2px]',
             },
         },
         defaultVariants: {
+            shape: 'slider',
             size: 'default',
         },
     }
 )
+

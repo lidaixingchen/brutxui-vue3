@@ -173,6 +173,29 @@ describe('Switch', () => {
         await wrapper.setProps({ modelValue: null })
         expect(el.attributes('aria-checked')).toBe('false')
     })
+
+    it('supports shape prop (slider and rocker)', () => {
+        const wrapper = mount(Switch, {
+            props: { shape: 'rocker' },
+            attachTo: document.body,
+        })
+        const el = wrapper.find('[role="switch"]')
+        const expected = switchRootVariants({ shape: 'rocker' })
+        expected.split(' ').forEach((cls) => {
+            if (cls) expect(el.classes()).toContain(cls)
+        })
+    })
+
+    it('renders IO label marks with aria-hidden when showLabels is true', () => {
+        const wrapper = mount(Switch, {
+            props: { showLabels: true },
+            attachTo: document.body,
+        })
+        const labelContainer = wrapper.find('[aria-hidden="true"]')
+        expect(labelContainer.exists()).toBe(true)
+        expect(labelContainer.text()).toContain('O')
+        expect(labelContainer.text()).toContain('I')
+    })
 })
 
 describe('Switch 翘板凹槽轨道与机械动效', () => {
@@ -190,11 +213,22 @@ describe('Switch 翘板凹槽轨道与机械动效', () => {
         expect(classTokens).toContain('duration-[120ms]')
     })
 
-    it('滑块携带防滑凸棱纹理（背景色挖槽线条叠加在前景色上）', () => {
+    it('滑块呈现 3D 机械实体按键材质（实体背景、边框与硬阴影）', () => {
         const classTokens = switchThumbVariants().split(/\s+/)
-        expect(
-            classTokens.some(c => c.startsWith('bg-[image:repeating-linear-gradient') && c.includes('var(--brutal-bg')),
-        ).toBe(true)
+        expect(classTokens).toContain('bg-brutal-bg')
+        expect(classTokens).toContain('border-2')
+        expect(classTokens).toContain('border-brutal')
+        expect(classTokens.some(c => c.startsWith('shadow-['))).toBe(true)
+    })
+
+    it('滑块中心内嵌工控防滑双槽', () => {
+        const wrapper = mount(Switch, {
+            attachTo: document.body,
+        })
+        const thumb = wrapper.find('[role="switch"]').find('span')
+        const gripGroove = thumb.find('[aria-hidden="true"]')
+        expect(gripGroove.exists()).toBe(true)
+        expect(gripGroove.findAll('span')).toHaveLength(2)
     })
 
     it('sound=true 时切换触发 snap 音效，sound 选项随 prop 传递', async () => {
