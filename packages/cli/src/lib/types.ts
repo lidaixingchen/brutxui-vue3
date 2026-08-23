@@ -135,6 +135,7 @@ export interface BaseCommandOptions {
 export interface AddOptions extends BaseCommandOptions {
     all?: boolean;
     overwrite?: boolean;
+    merge?: boolean;
     path?: string;
     yes?: boolean;
     vscode?: boolean;
@@ -162,6 +163,10 @@ export interface UpdateOptions extends BaseCommandOptions {
     all?: boolean;
     yes?: boolean;
     acrossVersions?: boolean;
+    ours?: boolean;
+    theirs?: boolean;
+    force?: boolean;
+    ci?: boolean;
 }
 
 export interface ListOptions extends BaseCommandOptions {

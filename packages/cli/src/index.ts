@@ -48,6 +48,7 @@ program
     .option('-y, --yes', 'Skip confirmation prompts', false)
     .option('-a, --all', 'Add all components', false)
     .option('-o, --overwrite', 'Overwrite existing files', false)
+    .option('-m, --merge', 'Merge with existing components using 3-way merge', false)
     .option('-p, --path <path>', 'The path to add the component to')
     .option('-c, --cwd <cwd>', 'The working directory', process.cwd())
     .option('-s, --silent', 'Mute output', false)
@@ -98,6 +99,10 @@ program
     .option('--no-cache', 'Skip registry cache')
     .option('--across-versions', 'Allow updating version-pinned components across their locked version', false)
     .option('--offline', 'Use only cached data, never hit the network', false)
+    .option('--ours', 'Accept all local changes in conflicts', false)
+    .option('--theirs', 'Accept all remote changes in conflicts', false)
+    .option('-f, --force', 'Force full overwrite, ignoring local changes', false)
+    .option('--ci', 'Run in CI mode, exit with code 1 on unresolved conflicts', false)
     .action(update);
 
 program

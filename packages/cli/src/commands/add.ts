@@ -286,6 +286,7 @@ async function addInner(
             registryItems,
             {
                 overwrite: options.overwrite,
+                merge: options.merge,
                 dryRun: options.dryRun,
                 callbacks: {
                     onProgress: result => {

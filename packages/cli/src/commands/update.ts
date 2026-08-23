@@ -1,7 +1,21 @@
 import { checkbox, confirm } from '@inquirer/prompts';
 import chalk from 'chalk';
-import type { UpdateOptions, DiffResult } from '../lib/types.js';
-import { readConfigSafe, CliError, logger, readManifest, withOfflineScope, mergeDryRun, withAuditLog, ProjectContext } from '../lib/index.js';
+import type { UpdateOptions, DiffResult, RegistryItem } from '../lib/types.js';
+import {
+    readConfigSafe,
+    CliError,
+    logger,
+    readManifest,
+    withOfflineScope,
+    mergeDryRun,
+    withAuditLog,
+    ProjectContext,
+    getItem,
+    computeInstalledContentHash,
+    updateInstalledComponents,
+    DEFAULT_REGISTRY_URL,
+} from '../lib/index.js';
+import { MergeExecutor } from '../lib/merge/index.js';
 import { getInstalledComponents, diffComponent } from '../lib/services/diff-service.js';
 import { add } from './add.js';
 
@@ -178,28 +192,21 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
         return;
     }
 
-    const filesToOverwrite: Array<{ component: string; modifiedFiles: number }> = [];
-    for (const result of outdated) {
-        if (!selected.includes(result.component)) continue;
-        const modifiedFiles = result.files.filter(f => f.status === 'modified').length;
-        // 完整性漂移（本地文件相对安装记录被改动/篡改）同样会被覆盖更新，
-        // 计入待确认的 overwrite 项，避免静默覆盖本地改动。
-        const integrityDrift = result.integrityStatus === 'outdated' ? 1 : 0;
-        if (modifiedFiles + integrityDrift > 0) {
-            filesToOverwrite.push({ component: result.component, modifiedFiles: modifiedFiles + integrityDrift });
-        }
-    }
-
-    if (filesToOverwrite.length > 0) {
-        logger.newLine();
-        logger.warn('The following components have local modifications that will be overwritten:');
-        for (const item of filesToOverwrite) {
-            logger.log(`  ${chalk.yellow('●')} ${item.component} (${item.modifiedFiles} file${item.modifiedFiles !== 1 ? 's' : ''} modified)`);
+    if (options.force) {
+        // --force 显式指定时，回退到暴力全量覆盖
+        const filesToOverwrite: Array<{ component: string; modifiedFiles: number }> = [];
+        for (const result of outdated) {
+            if (!selected.includes(result.component)) continue;
+            const modifiedFiles = result.files.filter(f => f.status === 'modified').length;
+            const integrityDrift = result.integrityStatus === 'outdated' ? 1 : 0;
+            if (modifiedFiles + integrityDrift > 0) {
+                filesToOverwrite.push({ component: result.component, modifiedFiles: modifiedFiles + integrityDrift });
+            }
         }
 
-        if (!options.yes) {
+        if (filesToOverwrite.length > 0 && !options.yes) {
             const proceed = await confirm({
-                message: `Overwrite local modifications in ${filesToOverwrite.length} component(s)?`,
+                message: `Force overwrite local modifications in ${filesToOverwrite.length} component(s)?`,
                 default: false,
             });
 
@@ -208,51 +215,150 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
                 return;
             }
         }
-    }
 
-    const selectedByRegistry = new Map<string | undefined, string[]>();
-    for (const component of selected) {
-        const registrySource = options.registry ?? manifest?.components[component]?.registrySource;
-        selectedByRegistry.set(registrySource, [
-            ...(selectedByRegistry.get(registrySource) ?? []),
-            component,
-        ]);
-    }
-
-    // 错误隔离：某个分组的 add 失败不阻止其余分组更新；失败明细收集后统一汇总
-    const failedGroups: Array<{ components: string[]; message: string }> = [];
-    for (const [registrySource, groupedComponents] of selectedByRegistry) {
-        try {
-            await add(groupedComponents, {
-                overwrite: true,
-                yes: true,
-                cwd,
-                silent: options.silent,
-                dryRun: options.dryRun,
-                registry: registrySource,
-                offline: options.offline,
-            });
-        } catch (error) {
-            const message = error instanceof Error ? error.message : String(error);
-            failedGroups.push({ components: groupedComponents, message });
-            // 组内 add 失败时部分组件可能已写入并注册（如 snippets 合并失败不触发回滚），
-            // 如实提示，避免用户误以为整组组件均未更新
-            logger.warn(`⚠ Update failed for: ${groupedComponents.join(', ')} — ${message} (some components in this group may have been updated).`);
+        const selectedByRegistry = new Map<string | undefined, string[]>();
+        for (const component of selected) {
+            const registrySource = options.registry ?? manifest?.components[component]?.registrySource;
+            selectedByRegistry.set(registrySource, [
+                ...(selectedByRegistry.get(registrySource) ?? []),
+                component,
+            ]);
         }
+
+        const failedGroups: Array<{ components: string[]; message: string }> = [];
+        for (const [registrySource, groupedComponents] of selectedByRegistry) {
+            try {
+                await add(groupedComponents, {
+                    overwrite: true,
+                    yes: true,
+                    cwd,
+                    silent: options.silent,
+                    dryRun: options.dryRun,
+                    registry: registrySource,
+                    offline: options.offline,
+                });
+            } catch (error) {
+                const message = error instanceof Error ? error.message : String(error);
+                failedGroups.push({ components: groupedComponents, message });
+                logger.warn(`⚠ Update failed for: ${groupedComponents.join(', ')} — ${message}`);
+            }
+        }
+
+        const failedComponents = new Set(failedGroups.flatMap(g => g.components));
+        const succeededComponents = selected.filter(c => !failedComponents.has(c));
+
+        if (succeededComponents.length > 0) {
+            logger.newLine();
+            logger.success(`Updated ${succeededComponents.length} component(s): ${succeededComponents.join(', ')}`);
+        }
+
+        if (failedGroups.length > 0) {
+            throw new CliError(
+                `Update failed for ${failedComponents.size} component(s): ${Array.from(failedComponents).join(', ')}. First error: ${failedGroups[0].message}`,
+                { code: 'WRITE_FAILED' }
+            );
+        }
+        return;
     }
 
-    const failedComponents = new Set(failedGroups.flatMap(g => g.components));
-    const succeededComponents = selected.filter(c => !failedComponents.has(c));
+    // 默认启用 3-Way Merge 智能合并引擎与三合一原子事务
+    const conflictStrategy = options.ours ? 'ours' : options.theirs ? 'theirs' : 'markers';
+    const mergeExecutor = new MergeExecutor({ fs: context.fs });
+    const transaction = context.createTransaction();
 
-    if (succeededComponents.length > 0) {
+    logger.newLine();
+    logger.info('Applying 3-Way Merge for selected components...');
+    logger.newLine();
+
+    const succeededComponents: string[] = [];
+    const conflictedComponents: Array<{ name: string; conflictFiles: string[] }> = [];
+    const manifestEntries: Array<{
+        item: RegistryItem;
+        registrySource: string;
+        files: string[];
+        installedContentHash?: string;
+        version?: string;
+    }> = [];
+    let totalMergedFiles = 0;
+    let totalAddedFiles = 0;
+    let totalDeletedFiles = 0;
+
+    try {
+        for (const componentName of selected) {
+            const registrySource = options.registry ?? manifest?.components[componentName]?.registrySource;
+            const remoteItem = await getItem(componentName, registrySource, useCache, context.fs);
+
+            const { plan, filesWritten } = await mergeExecutor.planAndExecute(
+                context,
+                componentName,
+                remoteItem,
+                {
+                    conflictStrategy,
+                    dryRun: options.dryRun,
+                    isCi: options.ci,
+                    transaction,
+                    registrySource,
+                    useCache,
+                }
+            );
+
+            totalMergedFiles += plan.mergedFiles;
+            totalAddedFiles += plan.addedFiles;
+            totalDeletedFiles += plan.deletedFiles;
+
+            if (plan.hasConflicts && conflictStrategy === 'markers') {
+                const conflicts = plan.files
+                    .filter(f => f.status === 'conflict' || f.status === 'restore-prompt')
+                    .map(f => f.filePath);
+                conflictedComponents.push({ name: componentName, conflictFiles: conflicts });
+                logger.warn(`  ${chalk.yellow('⚠')} ${chalk.bold(componentName)}: ${conflicts.length} conflict(s) marked with <<<<<<< LOCAL ... >>>>>>> REMOTE`);
+                for (const cf of conflicts) {
+                    logger.log(`    ${chalk.dim('→')} ${cf}`);
+                }
+            } else {
+                logger.success(`  ${chalk.green('✔')} ${chalk.bold(componentName)}: merged cleanly (${plan.mergedFiles} merged, ${plan.addedFiles} added, ${plan.deletedFiles} deleted)`);
+            }
+
+            // 记录待更新的 manifest 条目
+            if (!options.dryRun) {
+                const contentHash = await computeInstalledContentHash(filesWritten, context.fs);
+                manifestEntries.push({
+                    item: remoteItem,
+                    registrySource: registrySource ?? DEFAULT_REGISTRY_URL,
+                    files: filesWritten,
+                    installedContentHash: contentHash,
+                    version: remoteItem.$schema ?? 'latest',
+                });
+            }
+
+            succeededComponents.push(componentName);
+        }
+
+        if (!options.dryRun && manifestEntries.length > 0) {
+            await updateInstalledComponents(cwd, manifestEntries, { transaction }, context.fs);
+            await transaction.commit();
+        }
+    } catch (error) {
+        await transaction.rollback();
+        const message = error instanceof Error ? error.message : String(error);
+        if (error instanceof CliError) {
+            throw error;
+        }
+        throw new CliError(`Update transaction failed and was rolled back cleanly: ${message}`, {
+            code: 'MERGE_TRANSACTION_FAILED',
+            cause: error,
+        });
+    }
+
+    logger.newLine();
+    logger.success(
+        `3-Way Merge completed for ${succeededComponents.length} component(s) (${totalMergedFiles} files merged, ${totalAddedFiles} added, ${totalDeletedFiles} deleted).`
+    );
+
+    if (conflictedComponents.length > 0) {
         logger.newLine();
-        logger.success(`Updated ${succeededComponents.length} component(s): ${succeededComponents.join(', ')}`);
-    }
-
-    if (failedGroups.length > 0) {
-        throw new CliError(
-            `Update failed for ${failedComponents.size} component(s): ${Array.from(failedComponents).join(', ')}. First error: ${failedGroups[0].message} Run "brutx-vue list --check-updates" to verify the actual state.`,
-            { code: 'WRITE_FAILED' }
+        logger.warn(
+            `Notice: ${conflictedComponents.length} component(s) have unresolved conflict markers. Please inspect and resolve them in your editor.`
         );
     }
 }

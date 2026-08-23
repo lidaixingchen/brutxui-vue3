@@ -5,6 +5,7 @@ import { resolveDeps } from '../registry.js';
 import { ProjectContext } from '../project-context.js';
 import { FileTransaction } from '../file-transaction.js';
 import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
+import { MergeExecutor } from '../merge/merge-executor.js';
 
 export interface ComponentResolutionResult {
     items: RegistryItem[];
@@ -25,6 +26,7 @@ export interface ComponentFileWriteCallbacks {
 
 export interface ComponentFileWriteOptions {
     overwrite?: AddOptions['overwrite'];
+    merge?: AddOptions['merge'];
     dryRun?: AddOptions['dryRun'];
     callbacks?: ComponentFileWriteCallbacks;
     transaction?: FileTransaction;
@@ -152,34 +154,55 @@ export async function writeComponentFiles(
             let itemAdded = false;
             let itemSkipped = false;
 
-            for (const file of item.files) {
-                const targetPath = await context.resolveTargetPath(file.path);
+            if (options.merge) {
+                const mergeExecutor = new MergeExecutor({ fs: context.fs });
+                const { plan, filesWritten: written } = await mergeExecutor.planAndExecute(
+                    context,
+                    item.name,
+                    item,
+                    {
+                        dryRun: options.dryRun,
+                        transaction,
+                    }
+                );
 
-                if (await context.fs.pathExists(targetPath) && !options.overwrite) {
-                    options.callbacks?.onSkipFile?.({ item, filePath: file.path });
-                    itemSkipped = true;
-                    continue;
+                for (const fw of written) {
+                    filesWritten.push(fw);
                 }
+                filesByComponent.set(item.name, written);
+                if (plan.mergedFiles > 0 || plan.addedFiles > 0 || plan.files.length > 0) {
+                    itemAdded = true;
+                }
+            } else {
+                for (const file of item.files) {
+                    const targetPath = await context.resolveTargetPath(file.path);
 
-                if (options.dryRun) {
-                    options.callbacks?.onDryRunFile?.({ item, targetPath });
+                    if (await context.fs.pathExists(targetPath) && !options.overwrite) {
+                        options.callbacks?.onSkipFile?.({ item, filePath: file.path });
+                        itemSkipped = true;
+                        continue;
+                    }
+
+                    if (options.dryRun) {
+                        options.callbacks?.onDryRunFile?.({ item, targetPath });
+                        itemAdded = true;
+                        filesWritten.push(targetPath);
+                        const dryRunFiles = filesByComponent.get(item.name) ?? [];
+                        dryRunFiles.push(targetPath);
+                        filesByComponent.set(item.name, dryRunFiles);
+                        continue;
+                    }
+
+                    const resolvedContent = context.resolveImportAlias(file.content);
+                    await transaction.writeFile(targetPath, resolvedContent);
+                    actualWritesCount++;
+
                     itemAdded = true;
                     filesWritten.push(targetPath);
-                    const dryRunFiles = filesByComponent.get(item.name) ?? [];
-                    dryRunFiles.push(targetPath);
-                    filesByComponent.set(item.name, dryRunFiles);
-                    continue;
+                    const componentFiles = filesByComponent.get(item.name) ?? [];
+                    componentFiles.push(targetPath);
+                    filesByComponent.set(item.name, componentFiles);
                 }
-
-                const resolvedContent = context.resolveImportAlias(file.content);
-                await transaction.writeFile(targetPath, resolvedContent);
-                actualWritesCount++;
-
-                itemAdded = true;
-                filesWritten.push(targetPath);
-                const componentFiles = filesByComponent.get(item.name) ?? [];
-                componentFiles.push(targetPath);
-                filesByComponent.set(item.name, componentFiles);
             }
 
             if (itemAdded) {

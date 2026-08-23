@@ -13,7 +13,9 @@ export type CliErrorCode =
     | 'PATH_UNSAFE_AFTER_WRITE'
     | 'MANIFEST_READ_FAILED'
     | 'WRITE_FAILED'
-    | 'INVALID_REGISTRY';
+    | 'INVALID_REGISTRY'
+    | 'MERGE_TRANSACTION_FAILED'
+    | 'MERGE_CONFLICT_CI_BLOCKED';
 
 // 运行时校验的数据源。satisfies 保证每一项都落在 CliErrorCode 联合类型内，
 // 新增错误码必须同时加进联合类型，否则编译期即报错，杜绝两者漂移
@@ -33,6 +35,8 @@ const VALID_ERROR_CODES = [
     'MANIFEST_READ_FAILED',
     'WRITE_FAILED',
     'INVALID_REGISTRY',
+    'MERGE_TRANSACTION_FAILED',
+    'MERGE_CONFLICT_CI_BLOCKED',
 ] as const satisfies readonly CliErrorCode[];
 
 export interface CliErrorOptions {
