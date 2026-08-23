@@ -2,7 +2,9 @@ const CRLF = '\r\n';
 const LF = '\n';
 
 export function detectEol(text: string): typeof LF | typeof CRLF {
-    return text.includes(CRLF) ? CRLF : LF;
+    const crlfCount = (text.match(/\r\n/g) || []).length;
+    const lfCount = (text.match(/[^\r]\n/g) || []).length;
+    return crlfCount > lfCount ? CRLF : LF;
 }
 
 export function normalizeEol(text: string): string {
@@ -27,6 +29,7 @@ export function detectIndentation(text: string): IndentationInfo {
     const lines = normalizeEol(text).split(LF);
     const spaceIndentCounts: Record<number, number> = {};
     let tabLines = 0;
+    let totalSpaceLines = 0;
 
     for (const line of lines) {
         if (!line.trim()) continue;
@@ -40,11 +43,12 @@ export function detectIndentation(text: string): IndentationInfo {
             const spaces = whitespace.length;
             if (spaces >= 2 && spaces <= 8) {
                 spaceIndentCounts[spaces] = (spaceIndentCounts[spaces] ?? 0) + 1;
+                totalSpaceLines++;
             }
         }
     }
 
-    if (tabLines > 0 && Object.keys(spaceIndentCounts).length === 0) {
+    if (tabLines > totalSpaceLines) {
         return { indentStr: '\t', size: 1, type: 'tab' };
     }
 

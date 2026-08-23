@@ -62,7 +62,9 @@ export class DirectoryMergePlanner {
                     baseName,
                 };
                 remoteFilesMap.set(relPath, fileInfo);
-                baseNameToRelPath.set(baseName, relPath);
+                if (!baseNameToRelPath.has(baseName)) {
+                    baseNameToRelPath.set(baseName, relPath);
+                }
             }
         }
 

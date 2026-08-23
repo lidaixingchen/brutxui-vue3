@@ -526,11 +526,22 @@ export const integrityNoConflictMarkersRule: DiagnosticRule = {
             }
         }
 
-        for (const relPath of filesToCheck) {
-            const absPath = path.resolve(ctx.cwd, relPath);
-            if (!(await ctx.fs.pathExists(absPath))) continue;
+        const fileChecks = await Promise.all(
+            Array.from(filesToCheck).map(async (relPath) => {
+                const absPath = path.resolve(ctx.cwd, relPath);
+                try {
+                    if (!(await ctx.fs.pathExists(absPath))) return null;
+                    const content = await ctx.fs.readFile(absPath);
+                    return { relPath, content };
+                } catch {
+                    return null;
+                }
+            })
+        );
 
-            const content = await ctx.fs.readFile(absPath);
+        for (const entry of fileChecks) {
+            if (!entry) continue;
+            const { relPath, content } = entry;
             if (content.includes('<<<<<<<') && content.includes('>>>>>>>')) {
                 const lines = content.split(/\r?\n/);
                 const conflictLineNumbers: number[] = [];

@@ -6,13 +6,9 @@ import type { FileTransaction } from '../file-transaction.js';
 import type { RegistryItem } from '../types.js';
 import { BaselineProvider, type RegistryItemFetcher } from './baseline-provider.js';
 import { DirectoryMergePlanner } from './directory-merge-planner.js';
-import type { ComponentMergePlan, ConflictStrategy } from './types.js';
+import type { ComponentMergePlan, MergeExecutionOptions } from './types.js';
 
-export interface ExecuteComponentMergeOptions {
-    conflictStrategy?: ConflictStrategy;
-    forceOverwrite?: boolean;
-    dryRun?: boolean;
-    isCi?: boolean;
+export interface ExecuteComponentMergeOptions extends MergeExecutionOptions {
     transaction?: FileTransaction;
     registrySource?: string;
     useCache?: boolean;
@@ -49,7 +45,7 @@ export class MergeExecutor {
         });
 
         const isCi = options.isCi ?? (process.env.CI === 'true' || !process.stdout.isTTY);
-        if (isCi && plan.hasConflicts && options.conflictStrategy === undefined) {
+        if (isCi && plan.hasConflicts && options.conflictStrategy !== 'ours' && options.conflictStrategy !== 'theirs') {
             const conflictedFiles = plan.files.filter(f => f.status === 'conflict' || f.status === 'restore-prompt');
             throw new CliError(
                 `[CI Blocked] Unresolved merge conflicts detected in component "${componentName}":\n` +
@@ -62,7 +58,7 @@ export class MergeExecutor {
         if (options.dryRun) {
             return {
                 plan,
-                filesWritten: plan.files.filter(f => f.action === 'write').map(f => path.resolve(context.cwd, f.filePath)),
+                filesWritten: plan.files.filter(f => f.action === 'write' && f.content !== undefined).map(f => path.resolve(context.cwd, f.filePath)),
                 filesDeleted: plan.files.filter(f => f.action === 'delete').map(f => path.resolve(context.cwd, f.filePath)),
             };
         }
@@ -77,6 +73,7 @@ export class MergeExecutor {
                 await transaction.writeFile(absPath, fileResult.content);
                 filesWritten.push(absPath);
             } else if (fileResult.action === 'delete') {
+                context.assertSafePath(absPath);
                 await transaction.remove(absPath);
                 filesDeleted.push(absPath);
             }
