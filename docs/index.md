@@ -94,6 +94,8 @@ draft ──评审通过──▶ active ──落地完成──▶ done ──
 | [CLI组件三方合并与代码升级引擎方案](plans/CLI组件三方合并与代码升级引擎方案.md) | **active** | 基于本地 Base 快照的 3-Way Merge 架构、目录级拓扑感知合并、Git 标准冲突标记生成与 IDE 协作流、命令语义契约与事务安全边界 |
 | [工控窗口交互升级与开关质感重塑方案](plans/工控窗口交互升级与开关质感重塑方案.md) | **active** | CardWindowHeader 优先级状态机与无障碍交互升级、Switch 3D 机械键帽与盒模型尺寸重塑、工控 I/O 铭牌刻印 |
 | [滑块与滚动条工控实体质感重塑方案](plans/滑块与滚动条工控实体质感重塑方案.md) | done | Slider 调音台推子键帽与工控指示刻线、ScrollArea 纯净实体滑块与工控金属导轨重塑 |
+| [CLI网络韧性与多源竞速自适应退避方案](plans/CLI网络韧性与多源竞速自适应退避方案.md) | done | 阶梯式并发竞速（Hedged Race）、有界抖动退避（Bounded Full Jitter）、Retry-After 协议感知与会话级粘滞记忆 |
+
 
 
 ## 归档方案（archive/2026/）
