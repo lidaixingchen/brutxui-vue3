@@ -161,6 +161,8 @@ export async function fetchWithSources<T>(
     const tracker = options.tracker ?? defaultRegistrySourceTracker;
     const rankedSources = tracker.rankSources(sources);
 
+    logger.debug(`[Resilience] Starting hedged race across ${rankedSources.length} source(s): ${rankedSources.join(', ')}`);
+
     const raceResult = await hedgedRace<T>(
         rankedSources,
         async (source, signal) => {
@@ -170,6 +172,7 @@ export async function fetchWithSources<T>(
     );
 
     tracker.recordSuccess(raceResult.winningSource, raceResult.durationMs);
+    logger.debug(`[Resilience] Source "${raceResult.winningSource}" won the race in ${raceResult.durationMs}ms`);
 
     if (raceResult.winningSource !== sources[0]) {
         logger.warn(`Primary registry source failed, fell back to: ${raceResult.winningSource}`);
