@@ -132,6 +132,9 @@ async function fetchRegistryManifestSummary(source: string, signal?: AbortSignal
         registryManifestCache.set(source, summary);
         return summary;
     } catch (error) {
+        if (signal?.aborted) {
+            throw error;
+        }
         // 签名失败必须冒泡（严格模式）——降级为 null 会让篡改的 manifest 静默通过
         if (error instanceof CliError && error.code === 'REGISTRY_SIGNATURE_INVALID') {
             throw error;

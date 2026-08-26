@@ -13,6 +13,26 @@ export interface ResilientFetchOptions {
     readonly singleAttemptTimeoutMs?: number;
 }
 
+async function abortableSleep(ms: number, signal?: AbortSignal): Promise<void> {
+    if (signal?.aborted) {
+        throw new CliError('Request aborted.', { code: 'REGISTRY_FETCH_FAILED' });
+    }
+    return new Promise<void>((resolve, reject) => {
+        let timer: NodeJS.Timeout;
+        const onAbort = () => {
+            clearTimeout(timer);
+            reject(new CliError('Request aborted.', { code: 'REGISTRY_FETCH_FAILED' }));
+        };
+        timer = setTimeout(() => {
+            if (signal) signal.removeEventListener('abort', onAbort);
+            resolve();
+        }, ms);
+        if (signal) {
+            signal.addEventListener('abort', onAbort, { once: true });
+        }
+    });
+}
+
 /**
  * 具备协议感知与有界指数抖动退避的单请求网络门面。
  *
@@ -54,7 +74,7 @@ export async function resilientFetch(
             }
 
             if (isTerminalHttpStatus(res.status)) {
-                // 确定性终态，不进行重试直接返回
+                // 确定性终态，不进行重试直接返回供上层做 404 等语义判断
                 return res;
             }
 
@@ -63,21 +83,22 @@ export async function resilientFetch(
                 if (attempt < maxRetries) {
                     const retryAfterMs = parseRetryAfterDelayMs(res.headers.get('retry-after'));
                     const delayMs = retryAfterMs ?? calculateBoundedJitterDelay(attempt);
-                    await new Promise(resolve => setTimeout(resolve, delayMs));
+                    await abortableSleep(delayMs, signal);
                     continue;
                 }
+                break;
             }
 
             return res;
         } catch (error: unknown) {
             clearTimeout(timer);
             if (signal?.aborted) {
-                throw error;
+                throw new CliError('Request aborted.', { code: 'REGISTRY_FETCH_FAILED', cause: error instanceof Error ? error : undefined });
             }
             lastError = error instanceof Error ? error : new Error(String(error));
             if (attempt < maxRetries) {
                 const delayMs = calculateBoundedJitterDelay(attempt);
-                await new Promise(resolve => setTimeout(resolve, delayMs));
+                await abortableSleep(delayMs, signal);
                 continue;
             }
         } finally {
