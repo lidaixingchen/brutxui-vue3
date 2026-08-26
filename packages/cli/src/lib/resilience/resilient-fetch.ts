@@ -18,12 +18,11 @@ async function abortableSleep(ms: number, signal?: AbortSignal): Promise<void> {
         throw new CliError('Request aborted.', { code: 'REGISTRY_FETCH_FAILED' });
     }
     return new Promise<void>((resolve, reject) => {
-        let timer: NodeJS.Timeout;
         const onAbort = () => {
             clearTimeout(timer);
             reject(new CliError('Request aborted.', { code: 'REGISTRY_FETCH_FAILED' }));
         };
-        timer = setTimeout(() => {
+        const timer = setTimeout(() => {
             if (signal) signal.removeEventListener('abort', onAbort);
             resolve();
         }, ms);
