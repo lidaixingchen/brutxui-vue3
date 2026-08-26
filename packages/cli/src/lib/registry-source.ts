@@ -2,6 +2,8 @@ import { DEFAULT_REGISTRY_SOURCES } from './constants.js';
 import { isOfflineMode } from './cache.js';
 import { CliError } from './error.js';
 import { logger } from './logger.js';
+import { hedgedRace } from './resilience/hedged-race.js';
+import { RegistrySourceTracker } from './resilience/source-tracker.js';
 import type { BrutalistConfig } from './types.js';
 
 /**
@@ -26,6 +28,12 @@ import type { BrutalistConfig } from './types.js';
 const TOKEN_ENV = 'BRUTX_REGISTRY_TOKEN';
 const HEADERS_ENV = 'BRUTX_REGISTRY_HEADERS';
 const OFFLINE_ENV = 'BRUTX_OFFLINE';
+
+export const defaultRegistrySourceTracker = new RegistrySourceTracker();
+
+export function resetRegistrySourceTracker(): void {
+    defaultRegistrySourceTracker.reset();
+}
 
 /**
  * 返回按优先级排列的 registry 源列表。
@@ -104,18 +112,23 @@ function isHttpUrl(str: string): boolean {
     return str.startsWith('http://') || str.startsWith('https://');
 }
 
+export interface FetchWithSourcesOptions {
+    readonly offline?: boolean;
+    readonly tracker?: RegistrySourceTracker;
+    readonly signal?: AbortSignal;
+}
+
 /**
- * 多源 fallback 执行器：按序尝试每个源，首个成功的胜出。
+ * 多源并发阶梯竞速与离线 fallback 执行器：
  *
  * - 离线模式：不触网，对每个源尝试读缓存；缓存未命中即抛 REGISTRY_OFFLINE_UNAVAILABLE
- * - 在线模式：依次尝试，首个成功即返回；失败则记录原因并尝试下一个
- * - 全部失败时抛出聚合错误（最后一个源的 CliError 作为 cause）
- * - 源切换时输出 warn 日志，便于用户感知 fallback 发生
+ * - 在线模式：基于状态机动态重排，通过 hedgedRace 阶梯并发竞速，首胜锁定并级联 abort 其余连接
+ * - 全部失败时抛出聚合错误（包含签名篡改与完整性优先级透出）
  */
 export async function fetchWithSources<T>(
     sources: string[],
-    fetcher: (source: string) => Promise<T>,
-    options: { offline: boolean } = { offline: false },
+    fetcher: (source: string, signal?: AbortSignal) => Promise<T>,
+    options: FetchWithSourcesOptions = {},
 ): Promise<{ result: T; source: string }> {
     if (sources.length === 0) {
         throw new CliError('No registry source available.', { code: 'REGISTRY_FETCH_FAILED' });
@@ -145,58 +158,27 @@ export async function fetchWithSources<T>(
         );
     }
 
-    const sourceErrors: CliError[] = [];
-    let lastError: Error | null = null;
-    for (let i = 0; i < sources.length; i++) {
-        const source = sources[i];
-        try {
-            const result = await fetcher(source);
-            if (i > 0) {
-                logger.warn(`Primary registry source failed, fell back to: ${source}`);
-            }
-            return { result, source };
-        } catch (error) {
-            const err = error instanceof Error ? error : new Error(String(error));
-            if (err instanceof CliError) sourceErrors.push(err);
-            lastError = err;
-            if (i < sources.length - 1) {
-                logger.warn(`Registry source ${source} failed: ${err.message}. Trying next source...`);
-            }
-        }
-    }
+    const tracker = options.tracker ?? defaultRegistrySourceTracker;
+    const rankedSources = tracker.rankSources(sources);
 
-    // 信任链/完整性失败不折叠成泛化 REGISTRY_FETCH_FAILED——透出原始错误码与信息，
-    // 避免把"签名被篡改/内容被篡改"误判为普通网络故障。
-    // REGISTRY_SIGNATURE_INVALID 优先（信任链断裂最严重），其次 REGISTRY_INTEGRITY_FAILED（内容被篡改）。
-    const signatureError = sourceErrors.find(e => e.code === 'REGISTRY_SIGNATURE_INVALID');
-    if (signatureError) {
-        throw signatureError;
-    }
-    const integrityError = sourceErrors.find(e => e.code === 'REGISTRY_INTEGRITY_FAILED');
-    if (integrityError) {
-        // 多源下 integrity 失败也可能是源间内容滞后（如 CDN 缓存延迟），附提示但保留原错误码
-        throw new CliError(
-            `${integrityError.message} This may indicate a consistency delay between registry sources ` +
-            `(e.g. CDN cache lag). Retry later, or force the primary source with --registry.`,
-            { code: 'REGISTRY_INTEGRITY_FAILED', cause: integrityError }
-        );
-    }
-
-    // "组件不存在"（404/本地缺失）是确定性信号：全部源均报 not-found 时透出 COMPONENT_NOT_FOUND，
-    // 供调用方区分 not-found 与 registry-unreachable；若任一源是网络/其他错误（或含非 CliError），
-    // 仍聚合为 REGISTRY_FETCH_FAILED，避免把临时网络故障误判为组件不存在
-    if (sourceErrors.length === sources.length
-        && sourceErrors.every(e => e.code === 'COMPONENT_NOT_FOUND')) {
-        throw new CliError(
-            `Component not found in any of the ${sources.length} registry source(s).`,
-            { code: 'COMPONENT_NOT_FOUND', cause: sourceErrors[0] }
-        );
-    }
-
-    throw new CliError(
-        `All ${sources.length} registry source(s) failed. Last error: ${lastError?.message ?? 'Unknown error'}`,
-        { code: 'REGISTRY_FETCH_FAILED', cause: lastError }
+    const raceResult = await hedgedRace<T>(
+        rankedSources,
+        async (source, signal) => {
+            return await fetcher(source, signal);
+        },
+        { parentSignal: options.signal },
     );
+
+    tracker.recordSuccess(raceResult.winningSource, raceResult.durationMs);
+
+    if (raceResult.winningSource !== sources[0]) {
+        logger.warn(`Primary registry source failed, fell back to: ${raceResult.winningSource}`);
+    }
+
+    return {
+        result: raceResult.result,
+        source: raceResult.winningSource,
+    };
 }
 
 /**

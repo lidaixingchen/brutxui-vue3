@@ -21,6 +21,7 @@ import { buildAuthHeaders, fetchWithSources } from './registry-source.js';
 import { logger } from './logger.js';
 import { verifyManifestIntegrityAndSignature, setTrustedPublicKeys } from './signature.js';
 import { applyRequireSignatureConfig, isRequireSignature } from './signature-mode.js';
+import { resilientFetch } from './resilience/resilient-fetch.js';
 
 function isUrl(str: string): boolean {
     return str.startsWith('http://') || str.startsWith('https://');
@@ -55,13 +56,16 @@ interface ManifestSummaryInternal extends RegistryManifestSummary {
  * 在此触发签名验证。严格模式下 REGISTRY_SIGNATURE_INVALID 必须冒泡（不降级为 null）。
  * 默认模式下签名失败仅 warn（signature.ts 的迁移期设计），integrity 复算仍兜底防篡改。
  */
-async function fetchRegistryManifestSummary(source: string): Promise<ManifestSummaryInternal | null> {
+async function fetchRegistryManifestSummary(source: string, signal?: AbortSignal): Promise<ManifestSummaryInternal | null> {
     const cached = registryManifestCache.get(source);
     if (cached !== undefined) return cached;
 
     const manifestUrl = `${source}/registry-manifest.json`;
     try {
-        const res = await fetchWithRetry(manifestUrl, 3, buildAuthHeaders(source));
+        const res = await resilientFetch(manifestUrl, {
+            headers: buildAuthHeaders(source),
+            signal,
+        });
         if (!res.ok) {
             registryManifestCache.set(source, null);
             return null;
@@ -145,52 +149,6 @@ async function fetchRegistryManifestSummary(source: string): Promise<ManifestSum
     }
 }
 
-async function fetchWithRetry(url: string, maxRetries: number = 3, headers?: Record<string, string>): Promise<Response> {
-    const delays = [1000, 2000, 4000];
-    let lastError: Error | null = null;
-
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-        let res: Response;
-        try {
-            res = await fetch(url, {
-                headers,
-                signal: AbortSignal.timeout(30000),
-            });
-        } catch (error: unknown) {
-            lastError = error instanceof Error ? error : new Error(String(error));
-            const isRetryable = lastError.name === 'TimeoutError' ||
-                lastError.name === 'AbortError' ||
-                lastError instanceof TypeError;
-
-            if (!isRetryable || attempt >= maxRetries) break;
-
-            process.stderr.write(`Network timeout, retrying (attempt ${attempt + 1}/${maxRetries})...\n`);
-            await new Promise(resolve => setTimeout(resolve, delays[attempt - 1]));
-            continue;
-        }
-
-        // #119：HTTP 5xx 是瞬时服务端错误，与网络异常一样按退避重试；
-        // 状态码记入 lastError——重试耗尽时统一抛错仍能透出最终失败信息
-        if (res.status >= 500) {
-            lastError = new Error(`HTTP ${res.status} ${res.statusText}`);
-            if (attempt >= maxRetries) break;
-
-            process.stderr.write(`Server error (HTTP ${res.status}), retrying (attempt ${attempt + 1}/${maxRetries})...\n`);
-            await new Promise(resolve => setTimeout(resolve, delays[attempt - 1]));
-            continue;
-        }
-
-        return res;
-    }
-
-    throw new CliError(
-        `Failed to fetch from "${url}" after ${maxRetries} attempts. ` +
-        `Please check your network connection or use --registry to specify a different source.\n` +
-        `Last error: ${lastError?.message ?? 'Unknown error'}`,
-        { code: 'REGISTRY_FETCH_FAILED', cause: lastError }
-    );
-}
-
 /**
  * 结构校验 + integrity 内容自校验（validateRegistryItem 现会校验 integrity 与 files 内容匹配）。
  * 内容不匹配是安全事件，统一归类为 REGISTRY_INTEGRITY_FAILED（而非普通数据错误）。
@@ -227,16 +185,22 @@ function verifyManifestItemIntegrity(item: RegistryItem, name: string, summary: 
     );
 }
 
-export async function getItem(name: string, source: string = DEFAULT_REGISTRY_URL, useCache: boolean = true, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<RegistryItem> {
+export async function getItem(
+    name: string,
+    source: string = DEFAULT_REGISTRY_URL,
+    useCache: boolean = true,
+    fsAdapter: FileSystemAdapter = defaultDiskFs,
+    signal?: AbortSignal,
+): Promise<RegistryItem> {
     if (isUrl(source)) {
         const effectiveUseCache = useCache && process.env.BRUTX_NO_CACHE !== '1';
 
         if (effectiveUseCache) {
             return dedupeInflight(name, source, async () => {
-                return await fetchItemWithConditionalRequest(name, source);
+                return await fetchItemWithConditionalRequest(name, source, true, signal);
             }) as Promise<RegistryItem>;
         }
-        return await fetchItemWithConditionalRequest(name, source, false);
+        return await fetchItemWithConditionalRequest(name, source, false, signal);
     } else {
         const sourceResolved = path.resolve(source);
         const filePath = path.resolve(source, `${name}.json`);
@@ -339,11 +303,12 @@ export async function getItemFromSources(
     name: string,
     sources: string[],
     useCache: boolean = true,
+    signal?: AbortSignal,
 ): Promise<{ item: RegistryItem; source: string }> {
     const { result, source } = await fetchWithSources(
         sources,
-        (sourceUrl) => getItem(name, sourceUrl, useCache),
-        { offline: isOfflineMode() },
+        (sourceUrl, sourceSignal) => getItem(name, sourceUrl, useCache, defaultDiskFs, sourceSignal ?? signal),
+        { offline: isOfflineMode(), signal },
     );
     return { item: result, source };
 }
@@ -359,6 +324,7 @@ async function fetchItemWithConditionalRequest(
     name: string,
     source: string,
     useCache: boolean = true,
+    signal?: AbortSignal,
 ): Promise<RegistryItem> {
     let cachedEntry: Awaited<ReturnType<typeof getCachedEntry<RegistryItem>>> = null;
     let currentRegistryVersion: string | undefined;
@@ -370,7 +336,7 @@ async function fetchItemWithConditionalRequest(
     // 失败降级为 null 不抛错，无性能负担；currentRegistryVersion 仅在缓存写入路径
     // （setCachedEntry 只存在于 useCache 分支内）被消费，此处在 useCache=false 时取值无害。
     if (!isOfflineMode()) {
-        manifestSummary = await fetchRegistryManifestSummary(source);
+        manifestSummary = await fetchRegistryManifestSummary(source, signal);
         currentRegistryVersion = manifestSummary?.registryVersion;
     }
 
@@ -412,7 +378,7 @@ async function fetchItemWithConditionalRequest(
     if (cachedEntry?.etag) headers['If-None-Match'] = cachedEntry.etag;
     if (cachedEntry?.lastModified) headers['If-Modified-Since'] = cachedEntry.lastModified;
 
-    const res = await fetchWithRetry(url, 3, headers);
+    const res = await resilientFetch(url, { headers, signal });
     if (res.status === 304 && cachedEntry) {
         // #117：304 只 touch 续期 timestamp 会让条目永久携带旧 registryVersion
         // （touchCachedEntry 不重写 header），后续 versionMatch 恒 false，即使 TTL 未过期
