@@ -47,11 +47,43 @@ export interface AliasConfig {
     utils: string;
     /** 组合式函数目录别名，如 '@/composables' */
     composables: string;
+    /** 语言包目录别名，如 '@/locales'（可选） */
+    locales?: string;
+    /** 自定义指令目录别名，如 '@/directives'（可选） */
+    directives?: string;
 }
 
 export interface TailwindConfig {
     config: string;
     css: string;
+}
+
+export type WorkspaceMode = 'standalone' | 'shared-package' | 'app-local' | 'hybrid';
+
+export interface WorkspacePackageInfo {
+    readonly name: string;
+    readonly rootDir: string;
+    readonly relativeDir: string;
+    readonly isRoot: boolean;
+    readonly role: 'shared-ui' | 'shared-utils' | 'app' | 'tooling' | 'unknown';
+    readonly hasComponentsConfig: boolean;
+    readonly packageJson: Record<string, unknown>;
+}
+
+export interface WorkspaceTopology {
+    readonly isMonorepo: boolean;
+    readonly workspaceRoot: string;
+    readonly packageManager: PackageManager;
+    readonly packages: ReadonlyMap<string, WorkspacePackageInfo>;
+    readonly sharedUiPackage?: WorkspacePackageInfo;
+    readonly sharedUtilsPackage?: WorkspacePackageInfo;
+}
+
+export interface BrutalistWorkspaceConfig {
+    readonly mode?: WorkspaceMode;
+    readonly targetPackage?: string;
+    readonly sharedUtilsPackage?: string;
+    readonly installDependenciesTo?: 'targetPackage' | 'caller' | 'both';
 }
 
 export interface BrutalistConfig {
@@ -61,6 +93,7 @@ export interface BrutalistConfig {
     tailwind: TailwindConfig;
     aliases: AliasConfig;
     sharedBase?: string;
+    workspace?: BrutalistWorkspaceConfig;
     /**
      * 多 registry 源（P1-5）：主源 + 镜像列表，CLI 按序 fallback。
      * 未配置时回退到 DEFAULT_REGISTRY_SOURCES。
@@ -139,6 +172,8 @@ export interface AddOptions extends BaseCommandOptions {
     path?: string;
     yes?: boolean;
     vscode?: boolean;
+    filter?: string;
+    shared?: boolean;
 }
 
 export type { RegistryItem };
