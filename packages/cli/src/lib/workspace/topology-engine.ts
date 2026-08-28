@@ -56,6 +56,7 @@ export class WorkspaceTopologyEngine {
         for (const pkg of packageInfos) {
             packagesMap.set(pkg.name, pkg);
             packagesMap.set(pkg.relativeDir, pkg);
+            packagesMap.set(pkg.rootDir, pkg);
 
             if (pkg.role === 'shared-ui' && !sharedUiPackage) {
                 sharedUiPackage = pkg;
@@ -122,25 +123,36 @@ export class WorkspaceTopologyEngine {
     }
 
     static async detectPackageManager(cwd: string, fsAdapter: FileSystemAdapter): Promise<PackageManager> {
-        if (await fsAdapter.pathExists(path.join(cwd, 'pnpm-lock.yaml'))) return 'pnpm';
+        if (await fsAdapter.pathExists(path.join(cwd, 'pnpm-workspace.yaml')) || await fsAdapter.pathExists(path.join(cwd, 'pnpm-lock.yaml'))) {
+            return 'pnpm';
+        }
         if (await fsAdapter.pathExists(path.join(cwd, 'yarn.lock'))) return 'yarn';
         if (await fsAdapter.pathExists(path.join(cwd, 'bun.lockb')) || await fsAdapter.pathExists(path.join(cwd, 'bun.lock'))) return 'bun';
         return 'npm';
     }
 
-    static async getWorkspaceGlobs(workspaceRoot: string, pm: PackageManager, fsAdapter: FileSystemAdapter): Promise<string[]> {
-        if (pm === 'pnpm') {
-            const pnpmYamlPath = path.join(workspaceRoot, 'pnpm-workspace.yaml');
-            if (await fsAdapter.pathExists(pnpmYamlPath)) {
-                const content = await fsAdapter.readFile(pnpmYamlPath, 'utf-8');
-                const packagesMatch = content.match(/packages:\s*\n((?:\s*-\s*['"][^'"]+['"]\s*\n?|\s*-\s*[^\s\n]+\s*\n?)+)/);
-                if (packagesMatch && packagesMatch[1]) {
-                    return packagesMatch[1]
-                        .split('\n')
-                        .map(line => line.replace(/^\s*-\s*['"]?/, '').replace(/['"]?\s*$/, '').trim())
-                        .filter(Boolean);
+    static async getWorkspaceGlobs(workspaceRoot: string, _pm: PackageManager, fsAdapter: FileSystemAdapter): Promise<string[]> {
+        const pnpmYamlPath = path.join(workspaceRoot, 'pnpm-workspace.yaml');
+        if (await fsAdapter.pathExists(pnpmYamlPath)) {
+            const content = await fsAdapter.readFile(pnpmYamlPath, 'utf-8');
+            const lines = content.split(/\r?\n/);
+            const globs: string[] = [];
+            let inPackages = false;
+            for (const line of lines) {
+                if (/^\s*packages:\s*$/.test(line)) {
+                    inPackages = true;
+                    continue;
+                }
+                if (inPackages) {
+                    if (/^\s*-\s+/.test(line)) {
+                        const clean = line.replace(/^\s*-\s+['"]?/, '').replace(/['"]?\s*$/, '').trim();
+                        if (clean) globs.push(clean);
+                    } else if (/^\S/.test(line)) {
+                        inPackages = false;
+                    }
                 }
             }
+            if (globs.length > 0) return globs;
         }
 
         const rootPkgPath = path.join(workspaceRoot, 'package.json');
@@ -162,7 +174,7 @@ export class WorkspaceTopologyEngine {
     ): Promise<WorkspacePackageInfo[]> {
         const results: WorkspacePackageInfo[] = [];
         for (const pattern of globs) {
-            const cleanBase = pattern.replace(/\/\*$/, '');
+            const cleanBase = pattern.replace(/\/\*$/, '').replace(/^['"]/, '').replace(/['"]$/, '');
             const baseDir = path.join(workspaceRoot, cleanBase);
             if (!await fsAdapter.pathExists(baseDir)) continue;
 

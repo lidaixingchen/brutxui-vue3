@@ -1,9 +1,9 @@
 import path from 'node:path';
-import { parse as parseModuleImports, type ImportSpecifier } from 'es-module-lexer';
 import { DiskFileSystemAdapter, type FileSystemAdapter } from 'brutx-shared-vue/fs';
+import { SfcAstEngine } from 'brutx-shared-vue/ast';
 import type { BrutalistConfig, InstalledComponentInfo, InstalledComponentManifest } from './types.js';
 import { readManifest } from './manifest.js';
-import { extractScriptBlocks, resolveAliasPath } from './project.js';
+import { resolveAliasPath } from './project.js';
 import { logger } from './logger.js';
 
 const defaultDiskFs = new DiskFileSystemAdapter();
@@ -76,22 +76,13 @@ async function extractDependencies(componentDir: string, fsAdapter: FileSystemAd
         if (ext !== '.vue' && ext !== '.ts' && ext !== '.js') continue;
 
         const content = await fsAdapter.readFile(path.join(componentDir, file), 'utf-8');
-
-        const scripts = ext === '.vue'
-            ? extractScriptBlocks(content).map(block => block.code)
-            : [content];
-
-        for (const script of scripts) {
-            let imports: readonly ImportSpecifier[];
-            try {
-                [imports] = parseModuleImports(script);
-            } catch (error) {
-                logger.warn(`Failed to parse imports in '${file}': ${error instanceof Error ? error.message : String(error)}`);
-                continue;
+        try {
+            const specifiers = SfcAstEngine.extractModuleSpecifiers(content, file);
+            for (const item of specifiers) {
+                collectDependency(deps, item.specifier);
             }
-            for (const imp of imports) {
-                collectDependency(deps, imp.n);
-            }
+        } catch (error) {
+            logger.warn(`Failed to parse imports in '${file}': ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 

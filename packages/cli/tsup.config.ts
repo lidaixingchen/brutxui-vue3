@@ -10,6 +10,8 @@ export default defineConfig([
         dts: false,
         sourcemap: true,
         target: 'node22',
+        platform: 'node',
+        shims: true,
         noExternal: ['brutx-shared-vue'],
         banner: {
             js: '#!/usr/bin/env node',
@@ -29,6 +31,8 @@ export default defineConfig([
         dts: true,
         sourcemap: true,
         target: 'node22',
+        platform: 'node',
+        shims: true,
         noExternal: ['brutx-shared-vue'],
     },
 ]);

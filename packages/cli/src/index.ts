@@ -57,6 +57,8 @@ program
     .option('--no-cache', 'Skip registry cache')
     .option('--offline', 'Use only cached data, never hit the network', false)
     .option('--vscode', 'Update VS Code snippets with new components')
+    .option('--filter <package>', 'Target workspace package in a monorepo')
+    .option('--shared', 'Target the shared UI package in a monorepo', false)
     .action(add);
 
 program
