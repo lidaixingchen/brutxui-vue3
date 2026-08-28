@@ -14,9 +14,10 @@ export class SfcAstEngine {
      * 解析 Vue SFC 或纯 TS/JS 源码，构建标准化 Descriptor
      */
     static parse(rawSource: string, filename = 'component.vue'): ParsedSfcDescriptor {
-        const isVueFile = filename.endsWith('.vue') || rawSource.includes('<template') || rawSource.includes('<script');
+        const hasSfcTags = rawSource.includes('<template') || rawSource.includes('<script') || rawSource.includes('<style');
+        const isVueFile = filename.endsWith('.vue') || hasSfcTags;
 
-        if (!isVueFile) {
+        if (!isVueFile && !hasSfcTags) {
             return {
                 filename,
                 rawSource,
@@ -34,6 +35,17 @@ export class SfcAstEngine {
 
         if (errors.length > 0) {
             // 尽力而为（Best-effort）
+        }
+
+        const hasAnySfcBlock = Boolean(descriptor.script || descriptor.scriptSetup || descriptor.template || descriptor.styles.length > 0);
+        if (!hasAnySfcBlock && !hasSfcTags) {
+            return {
+                filename,
+                rawSource,
+                isSfc: false,
+                styles: [],
+                customBlocks: [],
+            };
         }
 
         const mapScript = (
@@ -78,7 +90,7 @@ export class SfcAstEngine {
         const descriptor = SfcAstEngine.parse(rawSource, filename);
         const scriptBlocks: Array<{ content: string; offset: number }> = [];
 
-        if (descriptor.isSfc) {
+        if (descriptor.isSfc && (descriptor.script || descriptor.scriptSetup)) {
             if (descriptor.script) scriptBlocks.push({ content: descriptor.script.content, offset: descriptor.script.startOffset });
             if (descriptor.scriptSetup) scriptBlocks.push({ content: descriptor.scriptSetup.content, offset: descriptor.scriptSetup.startOffset });
         } else {
@@ -89,7 +101,7 @@ export class SfcAstEngine {
 
         for (const block of scriptBlocks) {
             const sourceFile = ts.createSourceFile(
-                filename,
+                filename.endsWith('.vue') ? 'component.tsx' : filename,
                 block.content,
                 ts.ScriptTarget.Latest,
                 true,
@@ -119,7 +131,7 @@ export class SfcAstEngine {
         const s = new MagicString(rawSource);
 
         const scriptBlocks: Array<{ content: string; baseOffset: number }> = [];
-        if (descriptor.isSfc) {
+        if (descriptor.isSfc && (descriptor.script || descriptor.scriptSetup)) {
             if (descriptor.script) scriptBlocks.push({ content: descriptor.script.content, baseOffset: descriptor.script.startOffset });
             if (descriptor.scriptSetup) scriptBlocks.push({ content: descriptor.scriptSetup.content, baseOffset: descriptor.scriptSetup.startOffset });
         } else {
@@ -128,7 +140,7 @@ export class SfcAstEngine {
 
         for (const block of scriptBlocks) {
             const sourceFile = ts.createSourceFile(
-                filename,
+                filename.endsWith('.vue') ? 'component.tsx' : filename,
                 block.content,
                 ts.ScriptTarget.Latest,
                 true,

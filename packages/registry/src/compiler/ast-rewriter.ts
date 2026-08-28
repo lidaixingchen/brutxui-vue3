@@ -1,26 +1,45 @@
-import ts from 'typescript';
 import {
     AVAILABLE_COMPONENTS,
     COMPONENT_METADATA,
     type RegistryFileType,
 } from 'brutx-shared-vue';
 import {
-    extractClassifiedModuleSpecifiers,
-    extractModuleSpecifiers,
+    SfcAstEngine,
     type ClassifiedModuleSpecifier,
-} from 'brutx-shared-vue/scan';
-import type { AstReplacementSpan, RewriteContext } from './types.js';
+} from 'brutx-shared-vue/ast';
+import type { RewriteContext } from './types.js';
 
 export {
-    extractClassifiedModuleSpecifiers,
-    extractModuleSpecifiers,
     type ClassifiedModuleSpecifier,
 };
 
-interface ScriptBlockInfo {
-    content: string;
-    start: number;
-    end: number;
+/**
+ * 提取代码中所有模块导入（纯字符串数组）
+ */
+export function extractModuleSpecifiers(code: string): string[] {
+    return SfcAstEngine.extractModuleSpecifiers(code).map(item => item.specifier);
+}
+
+/**
+ * 提取代码中分类的模块导入（含 isTypeOnly, isDynamic）
+ */
+export function extractClassifiedModuleSpecifiers(code: string): ClassifiedModuleSpecifier[] {
+    return SfcAstEngine.extractModuleSpecifiers(code);
+}
+
+/**
+ * 提取 Vue SFC 中所有的 <script> 块及其在源码中的绝对字符起止偏移量（基于 SfcAstEngine 单一信源）。
+ */
+export function extractScriptBlocksWithOffsets(code: string): Array<{ content: string; start: number; end: number }> {
+    const desc = SfcAstEngine.parse(code);
+    const blocks: Array<{ content: string; start: number; end: number }> = [];
+    if (desc.isSfc && (desc.script || desc.scriptSetup)) {
+        if (desc.script) blocks.push({ content: desc.script.content, start: desc.script.startOffset, end: desc.script.endOffset });
+        if (desc.scriptSetup) blocks.push({ content: desc.scriptSetup.content, start: desc.scriptSetup.startOffset, end: desc.scriptSetup.endOffset });
+    } else {
+        blocks.push({ content: code, start: 0, end: code.length });
+    }
+    return blocks;
 }
 
 const CONTEXT_ALIAS_PREFIX: Record<RewriteContext, string> = {
@@ -37,143 +56,6 @@ const KNOWN_DIR_PREFIXES: Record<string, string> = {
     locales: '@/locales/',
     directives: '@/directives/',
 };
-
-/**
- * 提取 Vue SFC 中所有的 <script> 块及其在源码中的绝对字符起止偏移量。
- * 纯 TS/JS 文件则返回整段源码区间 [0, code.length]。
- */
-export function extractScriptBlocksWithOffsets(code: string): ScriptBlockInfo[] {
-    const blocks: ScriptBlockInfo[] = [];
-    let state: 'text' | 'html-comment' | 'tag' | 'tag-quote' | 'script' = 'text';
-    let tagName = '';
-    let tagQuote: '"' | '\'' | null = null;
-    let bodyStart = 0;
-    let i = 0;
-
-    while (i < code.length) {
-        switch (state) {
-            case 'text': {
-                const ch = code[i];
-                if (ch === '\'' || ch === '"' || ch === '`') {
-                    i = skipQuotedString(code, i);
-                } else if (code.startsWith('<!--', i)) {
-                    state = 'html-comment';
-                    i += 4;
-                } else if (ch === '<' && /[a-zA-Z]/.test(code[i + 1] ?? '')) {
-                    tagName = /^[a-zA-Z][^\s/>]*/.exec(code.slice(i + 1))?.[0] ?? '';
-                    state = 'tag';
-                    i += 1 + tagName.length;
-                } else {
-                    i += 1;
-                }
-                break;
-            }
-            case 'html-comment': {
-                if (code.startsWith('-->', i)) {
-                    state = 'text';
-                    i += 3;
-                } else {
-                    i += 1;
-                }
-                break;
-            }
-            case 'tag': {
-                const ch = code[i];
-                if (ch === '"' || ch === '\'') {
-                    tagQuote = ch;
-                    state = 'tag-quote';
-                    i += 1;
-                } else if (ch === '>') {
-                    if (tagName.toLowerCase() === 'script') {
-                        state = 'script';
-                        bodyStart = i + 1;
-                    } else {
-                        state = 'text';
-                    }
-                    i += 1;
-                } else {
-                    i += 1;
-                }
-                break;
-            }
-            case 'tag-quote': {
-                if (code[i] === tagQuote) {
-                    state = 'tag';
-                    tagQuote = null;
-                    i += 1;
-                } else if (code[i] === '\n' || code[i] === '\r') {
-                    state = 'text';
-                    tagQuote = null;
-                    i += 1;
-                } else {
-                    i += 1;
-                }
-                break;
-            }
-            case 'script': {
-                const close = findScriptClose(code, bodyStart);
-                if (close === -1) {
-                    blocks.push({
-                        content: code.slice(bodyStart),
-                        start: bodyStart,
-                        end: code.length,
-                    });
-                    return blocks;
-                }
-                blocks.push({
-                    content: code.slice(bodyStart, close),
-                    start: bodyStart,
-                    end: close,
-                });
-                i = close + '</script'.length;
-                state = 'text';
-                break;
-            }
-        }
-    }
-
-    return blocks.length > 0 ? blocks : [{ content: code, start: 0, end: code.length }];
-}
-
-function findScriptClose(code: string, from: number): number {
-    let i = from;
-    while (i < code.length) {
-        const ch = code[i];
-        if (ch === '\'' || ch === '"' || ch === '`') {
-            i = skipQuotedString(code, i);
-        } else if (ch === '/' && code[i + 1] === '/') {
-            const newline = code.indexOf('\n', i + 2);
-            i = newline === -1 ? code.length : newline + 1;
-        } else if (ch === '/' && code[i + 1] === '*') {
-            const end = code.indexOf('*/', i + 2);
-            i = end === -1 ? code.length : end + 2;
-        } else if (ch === '<' && code.slice(i, i + '</script'.length).toLowerCase() === '</script') {
-            const after = code[i + '</script'.length] ?? '';
-            if (!/\w/.test(after)) return i;
-            i += '</script'.length;
-        } else {
-            i += 1;
-        }
-    }
-    return -1;
-}
-
-function skipQuotedString(code: string, from: number): number {
-    const quote = code[from];
-    let j = from + 1;
-    while (j < code.length) {
-        if (code[j] === '\\') {
-            j += 2;
-        } else if (code[j] === quote) {
-            return j + 1;
-        } else if (quote !== '`' && (code[j] === '\n' || code[j] === '\r')) {
-            return j;
-        } else {
-            j += 1;
-        }
-    }
-    return code.length;
-}
 
 /**
  * 计算单个 import/export specifier 重写后的目标别名。
@@ -224,7 +106,7 @@ export function resolveRewrittenSpecifier(
 }
 
 /**
- * 基于 AST 定位与倒序字符切片替换重写源码中的相对导入路径。
+ * 基于 SfcAstEngine 与 MagicString 保真重写源码中的相对导入路径。
  * 完全保留原始缩进、空格、换行、行内注释与 Vue SFC 模板。
  */
 export function rewriteImports(
@@ -234,65 +116,9 @@ export function rewriteImports(
     knownComponents?: Set<string>
 ): string {
     const known = knownComponents ?? new Set(AVAILABLE_COMPONENTS);
-    const blocks = extractScriptBlocksWithOffsets(code);
-    const replacements: AstReplacementSpan[] = [];
-
-    for (const block of blocks) {
-        const sourceFile = ts.createSourceFile(
-            'virtual.tsx',
-            block.content,
-            ts.ScriptTarget.Latest,
-            true,
-            ts.ScriptKind.TSX
-        );
-
-        const checkAndRecord = (node: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral): void => {
-            const rawSpecifier = node.text;
-            const rewritten = resolveRewrittenSpecifier(rawSpecifier, componentName, context, known);
-            if (rewritten !== rawSpecifier) {
-                const nodeStart = node.getStart(sourceFile);
-                const nodeEnd = node.getEnd();
-                const quote = block.content[nodeStart] ?? '\'';
-                replacements.push({
-                    start: block.start + nodeStart,
-                    end: block.start + nodeEnd,
-                    replacement: `${quote}${rewritten}${quote}`,
-                });
-            }
-        };
-
-        const visit = (node: ts.Node): void => {
-            if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
-                checkAndRecord(node.moduleSpecifier);
-            } else if (ts.isExportDeclaration(node) && node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
-                checkAndRecord(node.moduleSpecifier);
-            } else if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword) {
-                const arg = node.arguments[0];
-                if (arg && (ts.isStringLiteral(arg) || ts.isNoSubstitutionTemplateLiteral(arg))) {
-                    checkAndRecord(arg);
-                }
-            }
-            ts.forEachChild(node, visit);
-        };
-
-        for (const stmt of sourceFile.statements) {
-            visit(stmt);
-        }
-    }
-
-    if (replacements.length === 0) {
-        return code;
-    }
-
-    // 按起始偏移量倒序排序，防止切片替换影响前置索引
-    replacements.sort((a, b) => b.start - a.start);
-
-    let result = code;
-    for (const rep of replacements) {
-        result = result.slice(0, rep.start) + rep.replacement + result.slice(rep.end);
-    }
-
-    return result;
+    return SfcAstEngine.transformImports(code, ctx => {
+        return resolveRewrittenSpecifier(ctx.specifier, componentName, context, known);
+    });
 }
 
 /**
