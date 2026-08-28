@@ -41,8 +41,17 @@ export class TargetResolver {
 
         // 1. P1: 命令行显式指定 --filter
         if (filterArg) {
+            const rawNormalized = filterArg.replace(/\\/g, '/').replace(/^\.\//, '').replace(/\/$/, '');
             const targetPkg = topology.packages.get(filterArg) ??
-                Array.from(topology.packages.values()).find(p => p.name === filterArg || p.relativeDir === filterArg || p.rootDir === path.resolve(filterArg));
+                topology.packages.get(rawNormalized) ??
+                Array.from(topology.packages.values()).find(p =>
+                    p.name === filterArg ||
+                    p.name === rawNormalized ||
+                    p.relativeDir === rawNormalized ||
+                    p.relativeDir === filterArg ||
+                    p.rootDir === path.resolve(callerCwd, filterArg) ||
+                    p.rootDir === path.resolve(topology.workspaceRoot, rawNormalized)
+                );
             if (!targetPkg) {
                 throw new Error(`Workspace package '${filterArg}' not found in monorepo.`);
             }
@@ -52,8 +61,15 @@ export class TargetResolver {
         // 2. P2: 配置文件显式声明 workspace.targetPackage
         if (rootConfig?.workspace?.targetPackage) {
             const targetName = rootConfig.workspace.targetPackage;
+            const normTarget = targetName.replace(/\\/g, '/').replace(/^\.\//, '').replace(/\/$/, '');
             const targetPkg = topology.packages.get(targetName) ??
-                Array.from(topology.packages.values()).find(p => p.name === targetName || p.relativeDir === targetName);
+                topology.packages.get(normTarget) ??
+                Array.from(topology.packages.values()).find(p =>
+                    p.name === targetName ||
+                    p.name === normTarget ||
+                    p.relativeDir === normTarget ||
+                    p.rootDir === path.resolve(topology.workspaceRoot, normTarget)
+                );
             if (targetPkg) {
                 return TargetResolver.buildPlanForPackage(targetPkg, rootConfig);
             }

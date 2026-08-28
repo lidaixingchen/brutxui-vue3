@@ -30,25 +30,6 @@ import {
     PackageManagerAdapter,
 } from '../lib/index.js';
 
-async function ensureInitialized(cwd: string): Promise<ProjectContext> {
-    try {
-        return await ProjectContext.load(cwd);
-    } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        if (message.includes('not found') || (error instanceof CliError && error.code === 'CONFIG_NOT_FOUND')) {
-            throw new CliError('Brutx-Vue is not initialized. Run: npx brutx-vue@latest init', {
-                code: 'CONFIG_NOT_FOUND',
-                cause: error,
-            });
-        } else {
-            throw new CliError(`Invalid components.json. ${message}. Run: npx brutx-vue@latest init --force to regenerate.`, {
-                code: 'CONFIG_INVALID',
-                cause: error,
-            });
-        }
-    }
-}
-
 async function validateComponents(components: string[], registryOverride?: string): Promise<void> {
     const MAX_COMPONENT_NAME_LENGTH = 100;
 
@@ -178,14 +159,22 @@ async function addInner(
     targetCwd: string,
     useCache: boolean,
 ): Promise<void> {
-    const callerContext = await ensureInitialized(cwd);
-    const rootConfig = callerContext.requireConfig();
+    const callerContext = await ProjectContext.loadUninitialized(cwd);
     const topology = await WorkspaceTopologyEngine.resolveTopology(cwd, callerContext.fs);
+    const rootConfig = callerContext.config;
+
+    if (!callerContext.isConfigured && !topology.isMonorepo) {
+        throw new CliError(`components.json not found in "${cwd}". Run "brutx init" first.`, {
+            code: 'CONFIG_NOT_FOUND',
+            exitCode: 1,
+        });
+    }
+
     const plan = TargetResolver.resolvePlan(cwd, options.filter, topology, rootConfig);
 
     let context = callerContext;
     const effectiveTargetCwd = targetCwd !== cwd ? targetCwd : plan.targetPackageRoot;
-    if (effectiveTargetCwd !== cwd) {
+    if (effectiveTargetCwd !== cwd || !context.isConfigured) {
         context = await ProjectContext.loadUninitialized(effectiveTargetCwd, {
             fs: callerContext.fs,
             configOverride: plan.effectiveConfig,

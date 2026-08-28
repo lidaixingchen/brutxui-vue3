@@ -38,7 +38,7 @@ export class SfcAstEngine {
         }
 
         const hasAnySfcBlock = Boolean(descriptor.script || descriptor.scriptSetup || descriptor.template || descriptor.styles.length > 0);
-        if (!hasAnySfcBlock && !hasSfcTags) {
+        if (!hasAnySfcBlock) {
             return {
                 filename,
                 rawSource,
@@ -90,7 +90,7 @@ export class SfcAstEngine {
         const descriptor = SfcAstEngine.parse(rawSource, filename);
         const scriptBlocks: Array<{ content: string; offset: number }> = [];
 
-        if (descriptor.isSfc && (descriptor.script || descriptor.scriptSetup)) {
+        if (descriptor.isSfc) {
             if (descriptor.script) scriptBlocks.push({ content: descriptor.script.content, offset: descriptor.script.startOffset });
             if (descriptor.scriptSetup) scriptBlocks.push({ content: descriptor.scriptSetup.content, offset: descriptor.scriptSetup.startOffset });
         } else {
@@ -131,7 +131,7 @@ export class SfcAstEngine {
         const s = new MagicString(rawSource);
 
         const scriptBlocks: Array<{ content: string; baseOffset: number }> = [];
-        if (descriptor.isSfc && (descriptor.script || descriptor.scriptSetup)) {
+        if (descriptor.isSfc) {
             if (descriptor.script) scriptBlocks.push({ content: descriptor.script.content, baseOffset: descriptor.script.startOffset });
             if (descriptor.scriptSetup) scriptBlocks.push({ content: descriptor.scriptSetup.content, baseOffset: descriptor.scriptSetup.startOffset });
         } else {

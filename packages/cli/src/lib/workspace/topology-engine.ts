@@ -144,10 +144,11 @@ export class WorkspaceTopologyEngine {
                     continue;
                 }
                 if (inPackages) {
-                    if (/^\s*-\s+/.test(line)) {
-                        const clean = line.replace(/^\s*-\s+['"]?/, '').replace(/['"]?\s*$/, '').trim();
+                    const lineWithoutComment = line.replace(/#.*$/, '').trim();
+                    if (/^-\s+/.test(lineWithoutComment)) {
+                        const clean = lineWithoutComment.replace(/^-\s+['"]?/, '').replace(/['"]?\s*$/, '').trim();
                         if (clean) globs.push(clean);
-                    } else if (/^\S/.test(line)) {
+                    } else if (lineWithoutComment.length > 0 && /^\S/.test(lineWithoutComment)) {
                         inPackages = false;
                     }
                 }
@@ -173,30 +174,45 @@ export class WorkspaceTopologyEngine {
         fsAdapter: FileSystemAdapter
     ): Promise<WorkspacePackageInfo[]> {
         const results: WorkspacePackageInfo[] = [];
-        for (const pattern of globs) {
-            const cleanBase = pattern.replace(/\/\*$/, '').replace(/^['"]/, '').replace(/['"]$/, '');
-            const baseDir = path.join(workspaceRoot, cleanBase);
-            if (!await fsAdapter.pathExists(baseDir)) continue;
+        const visitedDirs = new Set<string>();
 
-            const entries = await fsAdapter.readdir(baseDir);
-            for (const entry of entries) {
-                const subPkgDir = path.join(baseDir, entry);
-                const pkgJsonPath = path.join(subPkgDir, 'package.json');
-                if (await fsAdapter.pathExists(pkgJsonPath)) {
-                    try {
-                        const pkgJson = await fsAdapter.readJson<Record<string, unknown>>(pkgJsonPath);
-                        const relDir = path.relative(workspaceRoot, subPkgDir).replace(/\\/g, '/');
-                        const hasComponentsConfig = await fsAdapter.pathExists(path.join(subPkgDir, 'components.json'));
-                        results.push({
-                            name: String(pkgJson['name'] ?? entry),
-                            rootDir: path.resolve(subPkgDir),
-                            relativeDir: relDir,
-                            isRoot: false,
-                            role: WorkspaceTopologyEngine.inferPackageRole(pkgJson, relDir),
-                            hasComponentsConfig,
-                            packageJson: pkgJson,
-                        });
-                    } catch { /* 忽略损坏的 package.json */ }
+        const inspectAndAdd = async (subPkgDir: string): Promise<void> => {
+            const resolvedPath = path.resolve(subPkgDir);
+            if (visitedDirs.has(resolvedPath)) return;
+            visitedDirs.add(resolvedPath);
+
+            const pkgJsonPath = path.join(subPkgDir, 'package.json');
+            if (await fsAdapter.pathExists(pkgJsonPath)) {
+                try {
+                    const pkgJson = await fsAdapter.readJson<Record<string, unknown>>(pkgJsonPath);
+                    const relDir = path.relative(workspaceRoot, subPkgDir).replace(/\\/g, '/');
+                    const hasComponentsConfig = await fsAdapter.pathExists(path.join(subPkgDir, 'components.json'));
+                    results.push({
+                        name: String(pkgJson['name'] ?? path.basename(subPkgDir)),
+                        rootDir: resolvedPath,
+                        relativeDir: relDir,
+                        isRoot: false,
+                        role: WorkspaceTopologyEngine.inferPackageRole(pkgJson, relDir),
+                        hasComponentsConfig,
+                        packageJson: pkgJson,
+                    });
+                } catch { /* 忽略损坏的 package.json */ }
+            }
+        };
+
+        for (const pattern of globs) {
+            const cleanPattern = pattern.replace(/^['"]/, '').replace(/['"]$/, '').replace(/\\/g, '/');
+            if (cleanPattern.endsWith('/*')) {
+                const baseDir = path.join(workspaceRoot, cleanPattern.replace(/\/\*$/, ''));
+                if (!await fsAdapter.pathExists(baseDir)) continue;
+                const entries = await fsAdapter.readdir(baseDir);
+                for (const entry of entries) {
+                    await inspectAndAdd(path.join(baseDir, entry));
+                }
+            } else {
+                const targetDir = path.join(workspaceRoot, cleanPattern);
+                if (await fsAdapter.pathExists(targetDir)) {
+                    await inspectAndAdd(targetDir);
                 }
             }
         }
