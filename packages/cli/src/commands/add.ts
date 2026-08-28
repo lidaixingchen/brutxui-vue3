@@ -9,9 +9,6 @@ import {
     DEFAULT_REGISTRY_URL,
     resolveRegistrySources,
     CliError,
-    detectPackageManager,
-    installPackages,
-    getInstallCommand,
     readManifest,
     isSafePath,
     logger,
@@ -28,6 +25,9 @@ import {
     mergeDryRun,
     withAuditLog,
     ProjectContext,
+    WorkspaceTopologyEngine,
+    TargetResolver,
+    PackageManagerAdapter,
 } from '../lib/index.js';
 
 async function ensureInitialized(cwd: string): Promise<ProjectContext> {
@@ -100,31 +100,6 @@ async function selectComponents(inputComponents: string[], options: AddOptions):
     });
 
     return selected;
-}
-
-async function installComponentDeps(deps: string[], cwd: string, dryRun: boolean): Promise<boolean> {
-    if (deps.length === 0) return true;
-
-    const packageManager = await detectPackageManager(cwd);
-    logger.newLine();
-
-    if (dryRun) {
-        logger.bold(`[Dry Run] Would install dependencies using ${packageManager}:`);
-        logger.info(`  ${deps.join(', ')}`);
-        return true;
-    }
-
-    logger.bold(`Installing dependencies with ${packageManager}...`);
-
-    try {
-        await installPackages(packageManager, deps, cwd);
-        logger.success('✓ Dependencies installed');
-        return true;
-    } catch {
-        logger.warn('⚠ Failed to install dependencies automatically.');
-        logger.info(`  Run manually: ${getInstallCommand(packageManager, deps)}`);
-        return false;
-    }
 }
 
 function toPascalCase(str: string): string {
@@ -203,12 +178,17 @@ async function addInner(
     targetCwd: string,
     useCache: boolean,
 ): Promise<void> {
-    let context = await ensureInitialized(cwd);
-    const config = context.requireConfig();
-    if (targetCwd !== cwd) {
-        context = await ProjectContext.loadUninitialized(targetCwd, {
-            fs: context.fs,
-            configOverride: config,
+    const callerContext = await ensureInitialized(cwd);
+    const rootConfig = callerContext.requireConfig();
+    const topology = await WorkspaceTopologyEngine.resolveTopology(cwd, callerContext.fs);
+    const plan = TargetResolver.resolvePlan(cwd, options.filter, topology, rootConfig);
+
+    let context = callerContext;
+    const effectiveTargetCwd = targetCwd !== cwd ? targetCwd : plan.targetPackageRoot;
+    if (effectiveTargetCwd !== cwd) {
+        context = await ProjectContext.loadUninitialized(effectiveTargetCwd, {
+            fs: callerContext.fs,
+            configOverride: plan.effectiveConfig,
         });
     }
 
@@ -221,7 +201,7 @@ async function addInner(
         return;
     }
 
-    const sources = resolveRegistrySources(config, options.registry);
+    const sources = resolveRegistrySources(plan.effectiveConfig, options.registry);
 
     const spinner = options.silent ? null : ora('Resolving components and checking dependencies...').start();
 
@@ -239,6 +219,7 @@ async function addInner(
         }
 
         logger.bold('\n📦 Brutx-Vue CLI - Installation Plan:');
+        logger.info(`   Target package: ${plan.targetPackageName} (${plan.targetPackageRoot})`);
         logger.info(`   Registry source: ${options.registry || 'Default Brutx-Vue hosted registry'}`);
         logger.newLine();
 
@@ -281,7 +262,10 @@ async function addInner(
             }
         }
 
-        const { added, skipped, filesWritten, filesByComponent, rollback, transaction } = await writeComponentFiles(
+        // ==========================================
+        // 阶段一：文件事务与组件源码写入（原子提交）
+        // ==========================================
+        const { added, skipped, filesWritten, filesByComponent, transaction } = await writeComponentFiles(
             context,
             registryItems,
             {
@@ -318,110 +302,103 @@ async function addInner(
             logger.newLine();
             logger.bold('💾 Files written to disk:');
             for (const filePath of filesWritten) {
-                const relativePath = path.relative(targetCwd, filePath);
+                const relativePath = path.relative(effectiveTargetCwd, filePath);
                 logger.success(`   ✓ ${relativePath}`);
             }
         }
 
-        // 标记 manifest 是否已更新成功：决定失败回滚是否还安全（见下方 catch 注释）
-        let manifestUpdated = false;
+        if (!options.dryRun && added.length > 0) {
+            const versionByName = new Map<string, string>();
+            for (const inputName of components) {
+                const match = inputName.match(/^(@[a-z0-9-]+\/[a-z0-9-]+|[a-z0-9-]+)@([a-zA-Z0-9._-]+)$/);
+                if (match) {
+                    versionByName.set(match[1], match[2]);
+                }
+            }
 
-        try {
-            const depsInstalled = await installComponentDeps(allDeps, targetCwd, options.dryRun ?? false);
-
-            if (!options.dryRun && added.length > 0) {
-                if (allDeps.length > 0 && !depsInstalled) {
-                    // 依赖安装失败：回滚本次已写入的文件，避免组件陷入"文件已写、manifest 未记录"的不可恢复半安装状态
-                    // （否则重跑 add 时文件已存在会被全部 skip，永远无法注册）
-                    const { rollbackFailures } = await rollback();
-                    logger.warn('⚠ Dependency installation failed. Rolled back written component files.');
-                    if (rollbackFailures > 0) {
-                        logger.warn(`⚠ Rollback failed for ${rollbackFailures} file(s). You may need to restore them manually.`);
-                    }
-                    logger.info('  Install dependencies manually, then re-run the add command.');
-                    // 清空 added：避免末尾对"已回滚、未注册"的组件打印误导性的 Usage 示例
-                    added.length = 0;
-                } else {
-                    // 解析用户输入的 @version（若有），用于 manifest 记录版本契约
-                    const versionByName = new Map<string, string>();
-                    for (const inputName of components) {
-                        const match = inputName.match(/^(@[a-z0-9-]+\/[a-z0-9-]+|[a-z0-9-]+)@([a-zA-Z0-9._-]+)$/);
-                        if (match) {
-                            versionByName.set(match[1], match[2]);
+            if (versionByName.size > 0) {
+                const existingManifest = await readManifest(effectiveTargetCwd);
+                if (existingManifest) {
+                    for (const [name, newVersion] of versionByName) {
+                        const existing = existingManifest.components[name];
+                        if (existing?.version && existing.version !== newVersion) {
+                            logger.warn(`⚠ Version mismatch: "${name}" is already installed at version ${existing.version}, but you requested ${newVersion}. Mixing versions may cause compatibility issues.`);
                         }
-                    }
-
-                    // 版本混用兼容性提示：检测已安装组件与即将安装组件的版本差异。
-                    // 已装版本为 'latest'（manifest 未记录具体版本）时同样告警——实际已装版本未知，
-                    // 混用具体版本可能引入兼容性问题
-                    if (versionByName.size > 0) {
-                        const existingManifest = await readManifest(targetCwd);
-                        if (existingManifest) {
-                            for (const [name, newVersion] of versionByName) {
-                                const existing = existingManifest.components[name];
-                                if (existing?.version && existing.version !== newVersion) {
-                                    logger.warn(`⚠ Version mismatch: "${name}" is already installed at version ${existing.version}, but you requested ${newVersion}. Mixing versions may cause compatibility issues.`);
-                                }
-                            }
-                        }
-                    }
-
-                    const manifestEntries = await Promise.all(
-                        registryItems
-                            .filter(item => added.includes(item.name))
-                            .map(async item => {
-                                const files = filesByComponent[item.name] ?? [];
-                                const installedContentHash = files.length > 0
-                                    ? await computeInstalledContentHash(files)
-                                    : undefined;
-                                return {
-                                    item,
-                                    registrySource: hitRegistrySources[item.name] ?? options.registry ?? DEFAULT_REGISTRY_URL,
-                                    files,
-                                    installedContentHash,
-                                    version: versionByName.get(item.name) ?? 'latest',
-                                };
-                            })
-                    );
-                    await updateInstalledComponents(targetCwd, manifestEntries);
-                    await transaction?.commit();
-                    manifestUpdated = true;
-
-                    const shouldUpdateSnippets = options.vscode === true
-                        || (options.vscode !== false && await hasVscodeDir(targetCwd));
-
-                    if (shouldUpdateSnippets) {
-                        const snippetPath = await mergeSnippetsFile(targetCwd, added);
-                        logger.success(`✓ VS Code snippets updated at ${path.relative(targetCwd, snippetPath)}`);
                     }
                 }
             }
-        } catch (error: unknown) {
-            if (!manifestUpdated) {
-                // 失败发生在 manifest 更新之前（依赖安装/manifest 更新本身失败）：
-                // 回滚已写入的组件文件 → "文件已删、manifest 未记录"，两侧状态一致。
-                // rollback 基于写入快照、幂等（重复调用安全）；依赖安装失败分支已自行回滚且不再抛错，
-                // 不会重复触发这里的回滚。
-                try {
-                    await rollback();
-                    logger.warn('⚠ Installation failed after writing files. Rolled back written component files.');
-                } catch (rollbackError) {
-                    const rollbackMessage = rollbackError instanceof Error ? rollbackError.message : String(rollbackError);
-                    logger.error(`⚠ Rollback failed: ${rollbackMessage}`);
-                    logger.info('  Run "brutx-vue doctor --fix" to repair.');
-                }
+
+            const manifestEntries = await Promise.all(
+                registryItems
+                    .filter(item => added.includes(item.name))
+                    .map(async item => {
+                        const files = filesByComponent[item.name] ?? [];
+                        const installedContentHash = files.length > 0
+                            ? await computeInstalledContentHash(files)
+                            : undefined;
+                        return {
+                            item,
+                            registrySource: hitRegistrySources[item.name] ?? options.registry ?? DEFAULT_REGISTRY_URL,
+                            files,
+                            installedContentHash,
+                            version: versionByName.get(item.name) ?? 'latest',
+                        };
+                    })
+            );
+            await updateInstalledComponents(effectiveTargetCwd, manifestEntries);
+            await transaction?.commit();
+
+            const shouldUpdateSnippets = options.vscode === true
+                || (options.vscode !== false && await hasVscodeDir(effectiveTargetCwd));
+
+            if (shouldUpdateSnippets) {
+                const snippetPath = await mergeSnippetsFile(effectiveTargetCwd, added);
+                logger.success(`✓ VS Code snippets updated at ${path.relative(effectiveTargetCwd, snippetPath)}`);
+            }
+        }
+
+        // ==========================================
+        // 阶段二：跨包依赖安装调度与自愈输出
+        // ==========================================
+        if (allDeps.length > 0) {
+            logger.newLine();
+            if (options.dryRun) {
+                const manualCmd = PackageManagerAdapter.getManualInstallCommand(
+                    topology.packageManager,
+                    allDeps,
+                    plan.depInstallTarget.packageName,
+                    topology.isMonorepo
+                );
+                logger.bold(`[Dry Run] Would install dependencies using ${topology.packageManager}:`);
+                logger.info(`  ${manualCmd}`);
             } else {
-                // manifest 已登记、组件文件已写入，两侧已一致（失败仅发生在 snippets 合并等后续步骤）：
-                // 不再回滚文件，避免产生"manifest 有记录、文件缺失"的反向半安装状态；仅提示失败步骤
-                logger.warn('⚠ Component files and manifest are in sync, but a post-write step failed (e.g. VS Code snippets merge). Re-run the command or fix the failing step manually.');
+                logger.bold(`Installing dependencies with ${topology.packageManager}...`);
+                try {
+                    await PackageManagerAdapter.executeInstall(
+                        topology.packageManager,
+                        allDeps,
+                        topology.workspaceRoot,
+                        plan.depInstallTarget.packageName,
+                        topology.isMonorepo
+                    );
+                    logger.success('✓ Dependencies installed');
+                } catch {
+                    const manualCmd = PackageManagerAdapter.getManualInstallCommand(
+                        topology.packageManager,
+                        allDeps,
+                        plan.depInstallTarget.packageName,
+                        topology.isMonorepo
+                    );
+                    logger.warn('⚠ Failed to install dependencies automatically.');
+                    logger.info(`  Run manually: ${manualCmd}`);
+                }
             }
-            throw error;
         }
 
         if (added.length > 0) {
             logger.newLine();
             logger.bold('Usage:');
-            printUsageExample(added[0], config.aliases.components);
+            printUsageExample(added[0], plan.effectiveConfig.aliases.components);
         }
 
     } catch (error: unknown) {

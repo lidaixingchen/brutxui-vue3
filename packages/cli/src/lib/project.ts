@@ -1,14 +1,12 @@
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { parse as parseJsonc } from 'jsonc-parser';
-import { initSync, parse as parseModuleImports } from 'es-module-lexer';
 import { DiskFileSystemAdapter, type FileSystemAdapter } from 'brutx-shared-vue/fs';
+import { SfcAstEngine } from 'brutx-shared-vue/ast';
 import type { ProjectType, TsConfig, AliasConfig, PackageManager, BrutalistConfig } from './types.js';
 import { CONFIG_FILES, CSS_LOCATIONS, DEFAULT_ALIASES } from './constants.js';
 import { logger } from './logger.js';
 import { ProjectContext } from './project-context.js';
-
-initSync();
 
 const defaultDiskFs = new DiskFileSystemAdapter();
 
@@ -278,18 +276,13 @@ export async function getDefaultAliases(cwd: string, fsAdapter: FileSystemAdapte
 }
 
 export function extractScriptBlocks(content: string): Array<{ start: number; end: number; code: string }> {
+    const desc = SfcAstEngine.parse(content);
     const blocks: Array<{ start: number; end: number; code: string }> = [];
-    const scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script\b[^>]*>/gi;
-    let match;
-    while ((match = scriptRegex.exec(content)) !== null) {
-        const scriptCode = match[1];
-        const openTagEnd = match[0].indexOf('>') + 1;
-        const codeStart = match.index + openTagEnd;
-        blocks.push({
-            start: codeStart,
-            end: codeStart + scriptCode.length,
-            code: scriptCode,
-        });
+    if (desc.isSfc && (desc.script || desc.scriptSetup)) {
+        if (desc.script) blocks.push({ start: desc.script.startOffset, end: desc.script.endOffset, code: desc.script.content });
+        if (desc.scriptSetup) blocks.push({ start: desc.scriptSetup.startOffset, end: desc.scriptSetup.endOffset, code: desc.scriptSetup.content });
+    } else {
+        blocks.push({ start: 0, end: content.length, code: content });
     }
     return blocks;
 }
@@ -297,70 +290,38 @@ export function extractScriptBlocks(content: string): Array<{ start: number; end
 export function resolveImportAlias(content: string, config: BrutalistConfig): string {
     const sharedBase = config.sharedBase;
     const composablesAlias = config.aliases.composables ?? config.aliases.utils.replace(/\/utils$/, '/composables');
-    const localesAlias = `${path.dirname(composablesAlias)}/locales`;
-    const directivesAlias = `${path.dirname(composablesAlias)}/directives`;
+    const localesAlias = config.aliases.locales ?? `${path.dirname(composablesAlias)}/locales`;
+    const directivesAlias = config.aliases.directives ?? `${path.dirname(composablesAlias)}/directives`;
     const libAlias = path.dirname(config.aliases.utils);
-    const scriptBlocks = extractScriptBlocks(content);
 
-    interface Replacement { start: number; end: number; replacement: string }
-    const replacements: Replacement[] = [];
+    return SfcAstEngine.transformImports(content, ctx => {
+        const spec = ctx.specifier;
+        if (!spec.startsWith('@/')) return spec;
 
-    const collectReplacements = (code: string, offset: number): void => {
-        try {
-            const [imports] = parseModuleImports(code);
-            for (const imp of imports) {
-                if (!imp.n || !imp.n.startsWith('@/')) continue;
-
-                let newPath: string | null = null;
-                if (imp.n === '@/lib/utils') {
-                    newPath = sharedBase ? `${sharedBase}/utils` : config.aliases.utils;
-                } else if (imp.n.startsWith('@/components/')) {
-                    newPath = imp.n.replace('@/components', config.aliases.components);
-                } else if (imp.n.startsWith('@/composables/')) {
-                    newPath = sharedBase
-                        ? imp.n.replace('@/composables', `${sharedBase}/hooks`)
-                        : imp.n.replace('@/composables', composablesAlias);
-                } else if (imp.n.startsWith('@/lib/')) {
-                    if (sharedBase) {
-                        newPath = imp.n.replace('@/lib', `${sharedBase}/lib`);
-                    } else {
-                        newPath = imp.n.replace('@/lib', libAlias);
-                    }
-                } else if (imp.n.startsWith('@/locales/')) {
-                    newPath = imp.n.replace('@/locales', localesAlias);
-                } else if (imp.n.startsWith('@/directives/')) {
-                    newPath = imp.n.replace('@/directives', directivesAlias);
-                }
-
-                if (newPath) {
-                    replacements.push({
-                        start: offset + imp.s,
-                        end: offset + imp.e,
-                        replacement: newPath,
-                    });
-                }
-            }
-        } catch { /* ignore parse failures in import rewriting */ }
-    };
-
-    if (scriptBlocks.length > 0) {
-        for (const block of scriptBlocks) {
-            collectReplacements(block.code, block.start);
+        if (spec === '@/lib/utils') {
+            return sharedBase ? `${sharedBase}/utils` : config.aliases.utils;
         }
-    } else {
-        collectReplacements(content, 0);
-    }
-
-    if (replacements.length === 0) return content;
-
-    replacements.sort((a, b) => b.start - a.start);
-
-    let result = content;
-    for (const { start, end, replacement } of replacements) {
-        result = result.slice(0, start) + replacement + result.slice(end);
-    }
-
-    return result;
+        if (spec.startsWith('@/components/')) {
+            return spec.replace('@/components', config.aliases.components);
+        }
+        if (spec.startsWith('@/composables/')) {
+            return sharedBase
+                ? spec.replace('@/composables', `${sharedBase}/hooks`)
+                : spec.replace('@/composables', composablesAlias);
+        }
+        if (spec.startsWith('@/lib/')) {
+            return sharedBase
+                ? spec.replace('@/lib', `${sharedBase}/lib`)
+                : spec.replace('@/lib', libAlias);
+        }
+        if (spec.startsWith('@/locales/')) {
+            return spec.replace('@/locales', localesAlias);
+        }
+        if (spec.startsWith('@/directives/')) {
+            return spec.replace('@/directives', directivesAlias);
+        }
+        return spec;
+    });
 }
 
 export { assertSafePath, isSafePath, verifyWrittenPath } from './security.js';

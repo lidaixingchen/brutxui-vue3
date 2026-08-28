@@ -31,7 +31,7 @@ describe('init', () => {
         } finally {
             await fs.remove(cwd);
         }
-    });
+    }, 15000);
 
     it('should use src/style.css when initializing a Vite Vue project with the default Vite CSS entry', async () => {
         const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-init-'));

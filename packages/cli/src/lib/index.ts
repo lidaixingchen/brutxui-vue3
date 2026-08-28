@@ -186,3 +186,5 @@ export type {
     ProjectSbomResult,
 } from './services/sbom-service.js';
 
+export * from './workspace/index.js';
+
