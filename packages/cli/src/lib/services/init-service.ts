@@ -92,9 +92,13 @@ async function addBrutalistStyles(
     cwd: string,
     tailwind: TailwindConfig,
     transaction: FileTransaction,
-    fsAdapter?: FileSystemAdapter
+    fsAdapter?: FileSystemAdapter,
+    context?: ProjectContext
 ): Promise<boolean> {
-    const fullMainPath = path.join(cwd, tailwind.css);
+    const fs = fsAdapter ?? defaultDiskFs;
+    const fullMainPath = context
+        ? await context.resolveAliasPath(tailwind.css)
+        : path.resolve(cwd, tailwind.css);
 
     if (!(await isSafePath(fullMainPath, cwd, fsAdapter))) {
         throw new Error(`Security Error: CSS path traversal detected. Access denied to path "${fullMainPath}".`);
@@ -102,11 +106,27 @@ async function addBrutalistStyles(
 
     const brutalistCss = await getBrutalistCssStyles();
     const brutxBlock = `${BRUTX_CSS_START_MARKER}\n${brutalistCss}\n${BRUTX_CSS_END_MARKER}`;
-    const fs = fsAdapter ?? defaultDiskFs;
+
+    const resolveForCompare = async (targetPath: string): Promise<string> => {
+        try {
+            return await fs.realpath(targetPath);
+        } catch {
+            return path.resolve(targetPath);
+        }
+    };
 
     const trimmedTokensFile = tailwind.tokensFile?.trim();
-    if (trimmedTokensFile && path.resolve(cwd, trimmedTokensFile) !== path.resolve(fullMainPath)) {
-        const fullTokensPath = path.join(cwd, trimmedTokensFile);
+    let fullTokensPath: string | null = null;
+    if (trimmedTokensFile) {
+        fullTokensPath = context
+            ? await context.resolveAliasPath(trimmedTokensFile)
+            : path.resolve(cwd, trimmedTokensFile);
+    }
+
+    if (
+        fullTokensPath &&
+        (await resolveForCompare(fullTokensPath)) !== (await resolveForCompare(fullMainPath))
+    ) {
         if (!(await isSafePath(fullTokensPath, cwd, fsAdapter))) {
             throw new Error(`Security Error: CSS path traversal detected. Access denied to path "${fullTokensPath}".`);
         }
@@ -510,7 +530,7 @@ export async function initializeProjectFiles(options: ProjectInitializationOptio
         await transaction.ensureDir(path.join(componentsDir, 'ui'));
         callbacks?.onComponentsDirectory?.({ path: componentsDir });
 
-        const stylesAdded = await addBrutalistStyles(cwd, settings.tailwind, transaction, context.fs);
+        const stylesAdded = await addBrutalistStyles(cwd, settings.tailwind, transaction, context.fs, context);
         callbacks?.onStyles?.({ cssPath: settings.tailwind.css, added: stylesAdded });
 
         const nuxt = projectType === 'nuxt'

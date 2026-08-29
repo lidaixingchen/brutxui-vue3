@@ -214,7 +214,56 @@ describe('init service', () => {
         expect(mainCss).toContain('@import "./styles/brutx-tokens.css";');
         expect(mainCss).toContain('body { margin: 0; }');
     });
+
+    it('safely falls back to inline mode when tokensFile points to the same file as main CSS (alias or path)', async () => {
+        const selfRefSettings: ProjectInitializationSettings = {
+            tailwind: {
+                config: '',
+                css: 'src/index.css',
+                tokensFile: '@/index.css', // 别名指向同一文件
+            },
+            aliases: defaultSettings.aliases,
+        };
+
+        const result = await initializeProjectFiles({
+            cwd: tmpDir,
+            projectType: 'vite-vue-src',
+            settings: selfRefSettings,
+        });
+
+        expect(result.stylesAdded).toBe(true);
+
+        const mainCss = await fs.readFile(path.join(tmpDir, 'src', 'index.css'), 'utf-8');
+        expect(mainCss).toContain(BRUTX_CSS_START_MARKER);
+        expect(mainCss).toContain('--color-brutal-bg');
+        expect(mainCss).not.toContain('@import "./index.css";');
+        expect(mainCss).not.toContain('@import "@/index.css";');
+    });
+
+    it('safely treats whitespace-only tokensFile as unconfigured inline mode', async () => {
+        const whitespaceSettings: ProjectInitializationSettings = {
+            tailwind: {
+                config: '',
+                css: 'src/index.css',
+                tokensFile: '   ',
+            },
+            aliases: defaultSettings.aliases,
+        };
+
+        const result = await initializeProjectFiles({
+            cwd: tmpDir,
+            projectType: 'vite-vue-src',
+            settings: whitespaceSettings,
+        });
+
+        expect(result.stylesAdded).toBe(true);
+
+        const mainCss = await fs.readFile(path.join(tmpDir, 'src', 'index.css'), 'utf-8');
+        expect(mainCss).toContain(BRUTX_CSS_START_MARKER);
+        expect(mainCss).toContain('--color-brutal-bg');
+    });
 });
+
 
 
 describe('injectNuxtConfig root-key detection', () => {
