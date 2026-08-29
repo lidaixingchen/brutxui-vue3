@@ -200,8 +200,6 @@ export interface DoctorOptions extends BaseCommandOptions {
     fixOnly?: string;
     category?: string;
     rule?: string;
-    offline?: boolean;
-    json?: boolean;
     reporter?: ReporterType;
     ci?: boolean;
     failOn?: FailOnLevel;

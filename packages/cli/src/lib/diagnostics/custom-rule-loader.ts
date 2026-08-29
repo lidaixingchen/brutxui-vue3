@@ -1,5 +1,7 @@
 import { createJiti } from 'jiti';
 import path from 'path';
+import os from 'os';
+import crypto from 'crypto';
 import type { CheckResult, DiagnosticRule } from './types.js';
 
 /**
@@ -26,10 +28,19 @@ export class CustomRuleLoader {
         });
     }
 
+    resolvePluginPath(pluginPath: string): string {
+        let normalized = pluginPath;
+        if (normalized.startsWith('~')) {
+            normalized = path.join(os.homedir(), normalized.slice(1));
+        }
+        if (normalized.startsWith('.') || path.isAbsolute(normalized)) {
+            return path.resolve(this.cwd, normalized);
+        }
+        return normalized;
+    }
+
     async loadPlugin(pluginPath: string): Promise<DiagnosticRule[]> {
-        const resolvedPath = pluginPath.startsWith('.')
-            ? path.resolve(this.cwd, pluginPath)
-            : pluginPath;
+        const resolvedPath = this.resolvePluginPath(pluginPath);
 
         try {
             const rawModule = await this.jiti.import(resolvedPath);
@@ -59,8 +70,9 @@ export class CustomRuleLoader {
     }
 
     private createLoaderErrorRule(pluginPath: string, message: string): DiagnosticRule {
+        const hash = crypto.createHash('sha256').update(pluginPath).digest('hex').slice(0, 8);
         const baseName = path.basename(pluginPath).replace(/[^a-zA-Z0-9_-]/g, '-');
-        const ruleId = `custom.loader-error.${baseName}`;
+        const ruleId = `custom.loader-error.${baseName}-${hash}`;
         return {
             id: ruleId,
             category: 'custom',
@@ -85,6 +97,8 @@ export class CustomRuleLoader {
             rule !== null &&
             'id' in rule &&
             typeof (rule as DiagnosticRule).id === 'string' &&
+            'name' in rule &&
+            typeof (rule as DiagnosticRule).name === 'string' &&
             'check' in rule &&
             typeof (rule as DiagnosticRule).check === 'function'
         );

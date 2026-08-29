@@ -19,8 +19,14 @@ import {
     type DiagnosticReporter,
 } from '../lib/diagnostics/reporters/index.js';
 
+const VALID_REPORTERS: readonly ReporterType[] = ['pretty', 'github', 'json', 'sarif', 'junit'];
+const VALID_FAIL_ON: readonly FailOnLevel[] = ['error', 'warn', 'drift'];
+
 export function resolveDoctorReporter(options: DoctorOptions): ReporterType {
     if (options.reporter) {
+        if (!VALID_REPORTERS.includes(options.reporter)) {
+            throw new CliError(`Invalid --reporter "${options.reporter}". Valid options: ${VALID_REPORTERS.join(', ')}`);
+        }
         return options.reporter;
     }
     if (options.json) {
@@ -33,6 +39,9 @@ export function resolveDoctorReporter(options: DoctorOptions): ReporterType {
 }
 
 export function determineExitCode(report: DiagnosticReport, failOn: FailOnLevel = 'error'): number {
+    if (failOn && !VALID_FAIL_ON.includes(failOn)) {
+        throw new CliError(`Invalid --fail-on "${failOn}". Valid options: ${VALID_FAIL_ON.join(', ')}`);
+    }
     if (failOn === 'warn') {
         return report.hasErrors || report.hasWarnings ? 1 : 0;
     }
@@ -141,7 +150,7 @@ export async function doctor(options: DoctorOptions): Promise<void> {
         // 4. 细粒度退出码判定
         const exitCode = determineExitCode(report, options.failOn);
         if (exitCode !== 0) {
-            throw new CliError('Doctor check failed with issues', { exitCode: 1 });
+            throw new CliError('Doctor check failed with issues', { exitCode });
         }
     } finally {
         restoreOffline();

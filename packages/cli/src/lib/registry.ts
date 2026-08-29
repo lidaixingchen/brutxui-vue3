@@ -6,7 +6,7 @@ import {
     RegistryIntegrityMismatchError,
     validateRegistryItem,
 } from 'brutx-shared-vue';
-import type { RegistryItem, BrutalistConfig, RegistryManifestSummary, TrustedPublicKey } from './types.js';
+import type { RegistryItem, BrutalistConfig, RegistryManifestSummary, TrustedPublicKey, RuleSeverity } from './types.js';
 import {
     DEFAULT_REGISTRY_URL,
     DEFAULT_REGISTRY_SOURCES,
@@ -506,6 +506,22 @@ function validateBrutalistConfig(data: unknown): asserts data is Record<string, 
             }
         }
     }
+    if (config.plugins !== undefined) {
+        if (!Array.isArray(config.plugins) || config.plugins.some(p => typeof p !== 'string' || p.length === 0)) {
+            throw new Error('Invalid components.json: "plugins" must be an array of non-empty strings.');
+        }
+    }
+
+    if (config.rules !== undefined) {
+        if (typeof config.rules !== 'object' || config.rules === null || Array.isArray(config.rules)) {
+            throw new Error('Invalid components.json: "rules" must be an object.');
+        }
+        for (const [ruleId, severity] of Object.entries(config.rules as Record<string, unknown>)) {
+            if (severity !== 'off' && severity !== 'warn' && severity !== 'error') {
+                throw new Error(`Invalid components.json: rule "${ruleId}" severity must be "off", "warn", or "error".`);
+            }
+        }
+    }
 }
 
 export async function migrateConfig(raw: Record<string, unknown>): Promise<Record<string, unknown>> {
@@ -582,6 +598,16 @@ export async function readConfig(cwd: string, fsAdapter: FileSystemAdapter = def
         sharedBase: typeof raw.sharedBase === 'string' ? raw.sharedBase : undefined,
         registries: Array.isArray(raw.registries)
             ? raw.registries.filter((url): url is string => typeof url === 'string' && url.length > 0)
+            : undefined,
+        plugins: Array.isArray(raw.plugins)
+            ? raw.plugins.filter((p): p is string => typeof p === 'string' && p.length > 0)
+            : undefined,
+        rules: (typeof raw.rules === 'object' && raw.rules !== null && !Array.isArray(raw.rules))
+            ? Object.fromEntries(
+                Object.entries(raw.rules as Record<string, unknown>).filter(
+                    ([, v]) => v === 'off' || v === 'warn' || v === 'error'
+                )
+            ) as Record<string, RuleSeverity>
             : undefined,
         requireSignature: typeof raw.requireSignature === 'boolean' ? raw.requireSignature : undefined,
         trustedPublicKeys: Array.isArray(raw.trustedPublicKeys)

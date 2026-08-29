@@ -36,7 +36,8 @@ function toPosixRelativePath(cwd: string, filePath: string): string {
     const relative = path.isAbsolute(filePath)
         ? path.relative(cwd, filePath)
         : filePath;
-    return relative.split(path.sep).join('/');
+    const posix = relative.split(path.sep).join('/');
+    return encodeURI(posix).replace(/#/g, '%23');
 }
 
 export class SarifReporter implements DiagnosticReporter {

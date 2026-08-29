@@ -25,7 +25,14 @@ export class GithubReporter implements DiagnosticReporter {
                 const file = escapeGithubProperty(check.location.file);
                 const line = check.location.line ?? 1;
                 const col = check.location.column ?? 1;
-                write(`::${command} file=${file},line=${line},col=${col},title=${title}::${message}`);
+                let range = '';
+                if (check.location.endLine !== undefined) {
+                    range = `,endLine=${check.location.endLine}`;
+                    if (check.location.endColumn !== undefined) {
+                        range += `,endColumn=${check.location.endColumn}`;
+                    }
+                }
+                write(`::${command} file=${file},line=${line},col=${col}${range},title=${title}::${message}`);
             } else {
                 write(`::${command} title=${title}::${message}`);
             }
@@ -60,7 +67,7 @@ export class GithubReporter implements DiagnosticReporter {
             const displayedIssues = issueChecks.slice(0, MAX_SUMMARY_ISSUES);
             for (const issue of displayedIssues) {
                 const locStr = issue.location?.file
-                    ? ` (\`${issue.location.file}${issue.location.line ? `:${issue.location.line}` : ''}\`)`
+                    ? ` (\`${issue.location.file}${issue.location.line !== undefined ? `:${issue.location.line}` : ''}\`)`
                     : '';
                 lines.push(`- **${issue.name}**${locStr}`);
                 lines.push(`  - 规则 ID: \`${issue.ruleId}\``);
@@ -77,6 +84,11 @@ export class GithubReporter implements DiagnosticReporter {
             lines.push('');
         }
 
-        await fs.appendFile(summaryPath, lines.join('\n'), 'utf-8');
+        try {
+            await fs.appendFile(summaryPath, lines.join('\n'), 'utf-8');
+        } catch (err) {
+            const reason = err instanceof Error ? err.message : String(err);
+            process.stderr.write(`[github-reporter] failed to append step summary: ${reason}\n`);
+        }
     }
 }

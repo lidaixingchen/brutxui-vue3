@@ -5,6 +5,7 @@ import type { DiagnosticReporter, ReporterOptions } from './types.js';
 
 function escapeXml(unsafe: string): string {
     return unsafe
+        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '')
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
@@ -20,7 +21,7 @@ export class JunitReporter implements DiagnosticReporter {
         const testcases: string[] = [];
 
         for (const check of report.checks) {
-            const classname = check.category ?? 'diagnostics';
+            const classname = escapeXml(check.category ?? 'diagnostics');
             const name = escapeXml(check.name);
 
             if (check.status === 'pass') {

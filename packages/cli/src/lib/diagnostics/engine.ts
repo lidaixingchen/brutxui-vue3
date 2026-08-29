@@ -20,6 +20,8 @@ import { readManifest } from '../manifest.js';
 import { readConfigSafe } from '../registry.js';
 import { CliError } from '../error.js';
 
+import { CustomRuleLoader } from './custom-rule-loader.js';
+
 export function createDiagnosticReport(checks: CheckResult[]): DiagnosticReport {
     let passed = 0;
     let warnings = 0;
@@ -62,8 +64,6 @@ export function createDiagnosticReport(checks: CheckResult[]): DiagnosticReport 
     };
 }
 
-import { CustomRuleLoader } from './custom-rule-loader.js';
-
 export class DiagnosticEngine {
     private readonly rules: DiagnosticRule[];
     private readonly ruleMap: Map<string, DiagnosticRule>;
@@ -81,10 +81,11 @@ export class DiagnosticEngine {
     async loadPlugins(plugins: string[], cwd: string): Promise<void> {
         const loader = new CustomRuleLoader(cwd);
         for (const pluginPath of plugins) {
-            if (this.loadedPluginPaths.has(pluginPath)) {
+            const resolvedPath = loader.resolvePluginPath(pluginPath);
+            if (this.loadedPluginPaths.has(resolvedPath)) {
                 continue;
             }
-            this.loadedPluginPaths.add(pluginPath);
+            this.loadedPluginPaths.add(resolvedPath);
             const loadedRules = await loader.loadPlugin(pluginPath);
             for (const rule of loadedRules) {
                 if (!this.ruleMap.has(rule.id)) {
@@ -160,23 +161,24 @@ export class DiagnosticEngine {
                         continue;
                     }
 
-                    if (override && result.status !== 'pass') {
-                        checks.push({
-                            ...result,
-                            status: override,
-                        });
-                    } else {
-                        checks.push(result);
-                    }
+                    const normalizedResult: CheckResult = {
+                        ...result,
+                        category: result.category ?? rule.category,
+                        helpUrl: result.helpUrl ?? rule.helpUrl,
+                        status: (override && result.status !== 'pass') ? override : result.status,
+                    };
+
+                    checks.push(normalizedResult);
                 }
             } catch (ruleError) {
                 const message = ruleError instanceof Error ? ruleError.message : String(ruleError);
                 checks.push({
                     ruleId: rule.id,
-                    category: rule.category ?? 'custom',
+                    category: rule.category,
                     name: rule.name,
                     status: 'error',
                     message,
+                    helpUrl: rule.helpUrl,
                 });
             }
         }
