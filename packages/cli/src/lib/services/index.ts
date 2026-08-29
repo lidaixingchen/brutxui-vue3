@@ -47,6 +47,9 @@ export {
     diagnose,
     repair,
     DiagnosticEngine,
+    defineDiagnosticRule,
+    defineDiagnosticRules,
+    CustomRuleLoader,
 } from './diagnostic-service.js';
 export type {
     CheckResult,
@@ -62,7 +65,9 @@ export type {
     RepairReport,
     RepairItemReport,
     RuleFixStatus,
+    FileLocation,
 } from '../diagnostics/types.js';
+export type { RuleSeverity } from '../types.js';
 
 export {
     generateProjectSbom,

@@ -19,6 +19,9 @@ export {
     diagnose,
     repair,
     DiagnosticEngine,
+    defineDiagnosticRule,
+    defineDiagnosticRules,
+    CustomRuleLoader,
     generateProjectSbom,
 } from './lib/services/index.js';
 export type {
@@ -50,6 +53,8 @@ export type {
     RepairReport,
     RepairItemReport,
     RuleFixStatus,
+    FileLocation,
+    RuleSeverity,
     ProjectSbomComponent,
     ProjectSbomOptions,
     ProjectSbomResult,

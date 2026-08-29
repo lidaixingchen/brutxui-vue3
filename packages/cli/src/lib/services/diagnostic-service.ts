@@ -24,3 +24,8 @@ export async function repair(
 }
 
 export { DiagnosticEngine };
+export {
+    defineDiagnosticRule,
+    defineDiagnosticRules,
+    CustomRuleLoader,
+} from '../diagnostics/custom-rule-loader.js';

@@ -62,9 +62,12 @@ export function createDiagnosticReport(checks: CheckResult[]): DiagnosticReport 
     };
 }
 
+import { CustomRuleLoader } from './custom-rule-loader.js';
+
 export class DiagnosticEngine {
     private readonly rules: DiagnosticRule[];
     private readonly ruleMap: Map<string, DiagnosticRule>;
+    private readonly loadedPluginPaths = new Set<string>();
 
     constructor(customRules?: DiagnosticRule[]) {
         this.rules = customRules ? [...customRules] : [...BUILTIN_RULES];
@@ -73,6 +76,23 @@ export class DiagnosticEngine {
 
     getRegisteredRules(): readonly DiagnosticRule[] {
         return this.rules;
+    }
+
+    async loadPlugins(plugins: string[], cwd: string): Promise<void> {
+        const loader = new CustomRuleLoader(cwd);
+        for (const pluginPath of plugins) {
+            if (this.loadedPluginPaths.has(pluginPath)) {
+                continue;
+            }
+            this.loadedPluginPaths.add(pluginPath);
+            const loadedRules = await loader.loadPlugin(pluginPath);
+            for (const rule of loadedRules) {
+                if (!this.ruleMap.has(rule.id)) {
+                    this.rules.push(rule);
+                    this.ruleMap.set(rule.id, rule);
+                }
+            }
+        }
     }
 
     async diagnose(options: DiagnoseOptions = {}): Promise<DiagnosticReport> {
@@ -109,8 +129,11 @@ export class DiagnosticEngine {
             offline,
         };
 
-        const checks: CheckResult[] = [];
+        if (ctx.config?.plugins && ctx.config.plugins.length > 0) {
+            await this.loadPlugins(ctx.config.plugins, cwd);
+        }
 
+        const checks: CheckResult[] = [];
         const rulesOverrides = ctx.config?.rules ?? {};
 
         for (const rule of this.rules) {
@@ -127,23 +150,34 @@ export class DiagnosticEngine {
                 continue;
             }
 
-            const ruleResults = await rule.check(ctx);
-            const resultsArray = Array.isArray(ruleResults) ? ruleResults : [ruleResults];
+            try {
+                const ruleResults = await rule.check(ctx);
+                const resultsArray = Array.isArray(ruleResults) ? ruleResults : [ruleResults];
 
-            for (const result of resultsArray) {
-                const override = rulesOverrides[result.ruleId];
-                if (override === 'off') {
-                    continue;
-                }
+                for (const result of resultsArray) {
+                    const override = rulesOverrides[result.ruleId];
+                    if (override === 'off') {
+                        continue;
+                    }
 
-                if (override && result.status !== 'pass') {
-                    checks.push({
-                        ...result,
-                        status: override,
-                    });
-                } else {
-                    checks.push(result);
+                    if (override && result.status !== 'pass') {
+                        checks.push({
+                            ...result,
+                            status: override,
+                        });
+                    } else {
+                        checks.push(result);
+                    }
                 }
+            } catch (ruleError) {
+                const message = ruleError instanceof Error ? ruleError.message : String(ruleError);
+                checks.push({
+                    ruleId: rule.id,
+                    category: rule.category ?? 'custom',
+                    name: rule.name,
+                    status: 'error',
+                    message,
+                });
             }
         }
 
