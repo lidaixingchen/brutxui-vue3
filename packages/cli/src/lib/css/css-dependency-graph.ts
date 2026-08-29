@@ -38,7 +38,6 @@ export interface CssGraphScanOptions {
     readonly resolveAlias?: (specifier: string) => Promise<string> | string;
 }
 
-const IMPORT_PATTERN = /@import\s+(?:url\(['"]?([^'")]+)['"]?\)|['"]([^'"]+)['"])([^;]*);/g;
 const THEME_PATTERN = /@theme\s*\{/;
 const TW_CORE_PATTERN = /@import\s+['"]tailwindcss['"][^;]*;/;
 
@@ -57,7 +56,7 @@ export async function scanCssGraph(
     const tokenNodePaths: string[] = [];
 
     async function traverse(currentPath: string, visitStack: string[]): Promise<void> {
-        const normalizedPath = path.resolve(currentPath);
+        const normalizedPath = path.resolve(cwd, currentPath);
 
         if (visitStack.includes(normalizedPath)) {
             circularPaths.push([...visitStack, normalizedPath]);
@@ -84,28 +83,46 @@ export async function scanCssGraph(
             return;
         }
 
-        const content = await fs.readFile(normalizedPath, 'utf-8');
+        let content = '';
+        try {
+            content = await fs.readFile(normalizedPath, 'utf-8');
+        } catch {
+            const rel = path.relative(cwd, normalizedPath).replace(/\\/g, '/');
+            nodes.set(normalizedPath, {
+                absolutePath: normalizedPath,
+                relativePath: rel,
+                exists: false,
+                content: '',
+                imports: [],
+                hasTokensBlock: false,
+                hasTailwindCore: false,
+                hasThemeBlock: false,
+            });
+            return;
+        }
+
         const hasTokens = hasBrutxCssBlock(content);
-        const hasTailwindCore = TW_CORE_PATTERN.test(content);
-        const hasThemeBlock = THEME_PATTERN.test(content);
+        const sanitizedContent = stripCssComments(content);
+        const hasTailwindCore = TW_CORE_PATTERN.test(sanitizedContent);
+        const hasThemeBlock = THEME_PATTERN.test(sanitizedContent);
 
         if (hasTokens) {
             tokenNodePaths.push(normalizedPath);
         }
 
-        const sanitizedContent = stripCssComments(content);
         const imports: CssImportStatement[] = [];
+        const importPattern = /@import\s+(?:url\(['"]?([^'")]+)['"]?\)|['"]([^'"]+)['"])([^;]*);/g;
         let match: RegExpExecArray | null;
-        IMPORT_PATTERN.lastIndex = 0;
 
-        while ((match = IMPORT_PATTERN.exec(sanitizedContent)) !== null) {
+        while ((match = importPattern.exec(sanitizedContent)) !== null) {
             const specifier = (match[1] ?? match[2]).trim();
             const modifiers = (match[3] ?? '').trim();
             const isExternal =
-                !specifier.startsWith('.') &&
-                !specifier.startsWith('/') &&
-                !specifier.startsWith('@/') &&
-                !specifier.startsWith('~/');
+                specifier.startsWith('//') ||
+                (!specifier.startsWith('.') &&
+                    !specifier.startsWith('/') &&
+                    !specifier.startsWith('@/') &&
+                    !specifier.startsWith('~/'));
             const line = content.slice(0, match.index).split('\n').length;
 
             let resolvedPath: string | null = null;
@@ -131,9 +148,17 @@ export async function scanCssGraph(
                 resolvedPath,
             });
 
-            if (resolvedPath) {
-                const subExists = await fs.pathExists(resolvedPath);
-                if (!subExists) {
+            if (!isExternal) {
+                if (resolvedPath) {
+                    const subExists = await fs.pathExists(resolvedPath);
+                    if (!subExists) {
+                        missingImports.push({
+                            from: normalizedPath,
+                            specifier,
+                            line,
+                        });
+                    }
+                } else {
                     missingImports.push({
                         from: normalizedPath,
                         specifier,
@@ -164,19 +189,8 @@ export async function scanCssGraph(
 
     await traverse(entryPath, []);
 
-    const rootPath = path.resolve(entryPath);
-    const rootNode =
-        nodes.get(rootPath) ??
-        ({
-            absolutePath: rootPath,
-            relativePath: path.relative(cwd, rootPath).replace(/\\/g, '/'),
-            exists: false,
-            content: '',
-            imports: [],
-            hasTokensBlock: false,
-            hasTailwindCore: false,
-            hasThemeBlock: false,
-        } as CssNode);
+    const rootPath = path.resolve(cwd, entryPath);
+    const rootNode = nodes.get(rootPath)!;
 
     return {
         rootNode,
@@ -197,10 +211,13 @@ export function computeRelativeImportSpecifier(fromFile: string, toFile: string)
 }
 
 export function injectImportStatement(mainContent: string, importSpecifier: string): string {
-    const statement = `@import "${importSpecifier}";`;
-    if (mainContent.includes(statement)) {
+    const escaped = importSpecifier.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const existingPattern = new RegExp(`@import\\s+(?:url\\(['"]?${escaped}['"]?\\)|['"]${escaped}['"])[^;]*;`);
+    if (existingPattern.test(mainContent)) {
         return mainContent;
     }
+
+    const statement = `@import "${importSpecifier}";`;
 
     const twMatch = /@import\s+['"]tailwindcss['"][^;]*;/.exec(mainContent);
     if (twMatch) {

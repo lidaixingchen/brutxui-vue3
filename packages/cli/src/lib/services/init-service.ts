@@ -104,8 +104,9 @@ async function addBrutalistStyles(
     const brutxBlock = `${BRUTX_CSS_START_MARKER}\n${brutalistCss}\n${BRUTX_CSS_END_MARKER}`;
     const fs = fsAdapter ?? defaultDiskFs;
 
-    if (tailwind.tokensFile) {
-        const fullTokensPath = path.join(cwd, tailwind.tokensFile);
+    const trimmedTokensFile = tailwind.tokensFile?.trim();
+    if (trimmedTokensFile && path.resolve(cwd, trimmedTokensFile) !== path.resolve(fullMainPath)) {
+        const fullTokensPath = path.join(cwd, trimmedTokensFile);
         if (!(await isSafePath(fullTokensPath, cwd, fsAdapter))) {
             throw new Error(`Security Error: CSS path traversal detected. Access denied to path "${fullTokensPath}".`);
         }

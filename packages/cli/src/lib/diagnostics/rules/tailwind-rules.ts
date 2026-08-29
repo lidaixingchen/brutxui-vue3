@@ -51,7 +51,7 @@ export const tailwindTokensRule: DiagnosticRule = {
     requiresConfig: true,
     async check(ctx: DiagnosticContext): Promise<CheckResult> {
         const cssAlias = ctx.config!.tailwind.css;
-        const tokensAlias = ctx.config!.tailwind.tokensFile;
+        const tokensAlias = ctx.config!.tailwind.tokensFile?.trim();
         const cssPath = await ctx.projectContext.resolveAliasPath(cssAlias);
 
         if (!(await ctx.fs.pathExists(cssPath))) {
@@ -97,36 +97,38 @@ export const tailwindTokensRule: DiagnosticRule = {
 
         if (tokensAlias) {
             const tokensPath = await ctx.projectContext.resolveAliasPath(tokensAlias);
-            const tokensExist = await ctx.fs.pathExists(tokensPath);
-            let tokensValid = false;
-            if (tokensExist) {
-                const tokenContent = await ctx.fs.readFile(tokensPath, 'utf-8');
-                tokensValid = hasBrutxCssBlock(tokenContent);
-            }
+            if (tokensPath !== cssPath) {
+                const tokensExist = await ctx.fs.pathExists(tokensPath);
+                let tokensValid = false;
+                if (tokensExist) {
+                    const tokenContent = await ctx.fs.readFile(tokensPath, 'utf-8');
+                    tokensValid = hasBrutxCssBlock(tokenContent);
+                }
 
-            const isImported = graph.nodes.has(tokensPath);
+                const isImported = graph.nodes.has(tokensPath);
 
-            if (!tokensValid || !isImported) {
+                if (!tokensValid || !isImported) {
+                    return {
+                        ruleId: 'tailwind.tokens',
+                        category: 'tailwind',
+                        name: 'tailwind.css contains BrutxUI tokens',
+                        status: 'error',
+                        message: !tokensValid
+                            ? `Decoupled tokens file missing or incomplete: ${tokensAlias}`
+                            : `Main CSS does not import decoupled tokens file: ${tokensAlias}`,
+                        fixId: FixId.InjectCssTokens,
+                        fixDescription: 'Inject BrutxUI CSS tokens',
+                    };
+                }
+
                 return {
                     ruleId: 'tailwind.tokens',
                     category: 'tailwind',
                     name: 'tailwind.css contains BrutxUI tokens',
-                    status: 'error',
-                    message: !tokensValid
-                        ? `Decoupled tokens file missing or incomplete: ${tokensAlias}`
-                        : `Main CSS does not import decoupled tokens file: ${tokensAlias}`,
-                    fixId: FixId.InjectCssTokens,
-                    fixDescription: 'Inject BrutxUI CSS tokens',
+                    status: 'pass',
+                    message: 'CSS file contains BrutxUI tokens.',
                 };
             }
-
-            return {
-                ruleId: 'tailwind.tokens',
-                category: 'tailwind',
-                name: 'tailwind.css contains BrutxUI tokens',
-                status: 'pass',
-                message: 'CSS file contains BrutxUI tokens.',
-            };
         }
 
         if (!graph.hasBrutxTokens) {
@@ -151,7 +153,7 @@ export const tailwindTokensRule: DiagnosticRule = {
     },
     async fix(ctx: DiagnosticRepairContext): Promise<RuleFixResult> {
         const cssAlias = ctx.config!.tailwind.css;
-        const tokensAlias = ctx.config!.tailwind.tokensFile;
+        const tokensAlias = ctx.config!.tailwind.tokensFile?.trim();
         const cssPath = await ctx.projectContext.resolveAliasPath(cssAlias);
 
         if (!(await isSafePath(cssPath, ctx.projectContext.cwd, ctx.fs))) {
@@ -163,9 +165,10 @@ export const tailwindTokensRule: DiagnosticRule = {
 
         if (tokensAlias) {
             const tokensPath = await ctx.projectContext.resolveAliasPath(tokensAlias);
-            if (!(await isSafePath(tokensPath, ctx.projectContext.cwd, ctx.fs))) {
-                throw new Error(`Security Error: CSS path traversal detected. Access denied to path "${tokensPath}".`);
-            }
+            if (tokensPath !== cssPath) {
+                if (!(await isSafePath(tokensPath, ctx.projectContext.cwd, ctx.fs))) {
+                    throw new Error(`Security Error: CSS path traversal detected. Access denied to path "${tokensPath}".`);
+                }
 
             await ctx.transaction.ensureDir(path.dirname(tokensPath));
 
@@ -203,10 +206,11 @@ export const tailwindTokensRule: DiagnosticRule = {
 
             await ctx.transaction.writeFile(cssPath, mainContent);
 
-            return {
-                status: 'applied',
-                message: 'Injected BrutxUI CSS tokens into decoupled tokens file.',
-            };
+                return {
+                    status: 'applied',
+                    message: 'Injected BrutxUI CSS tokens into decoupled tokens file.',
+                };
+            }
         }
 
         let existing = '';
