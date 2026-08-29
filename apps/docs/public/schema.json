@@ -82,6 +82,26 @@
                 "$ref": "#/$defs/trustedPublicKey"
             },
             "description": "项目级追加信任公钥列表，在官方 Root 公钥（OFFICIAL_PUBLIC_KEYS）之外追加信任。未配置时回退到 BRUTX_REGISTRY_PUBLIC_KEYS 环境变量，再回退到内置官方公钥。"
+        },
+        "plugins": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "minLength": 1
+            },
+            "description": "自定义诊断规则插件路径列表（相对路径或 npm 包名）。"
+        },
+        "rules": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "string",
+                "enum": [
+                    "off",
+                    "warn",
+                    "error"
+                ]
+            },
+            "description": "诊断规则严重级别调优与开关配置映射表（键为 ruleId，值为 off | warn | error）。"
         }
     },
     "$defs": {

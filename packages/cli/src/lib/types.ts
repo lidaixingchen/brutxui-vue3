@@ -111,7 +111,20 @@ export interface BrutalistConfig {
      * 未配置时回退到 BRUTX_REGISTRY_PUBLIC_KEYS 环境变量，再回退到官方内置公钥。
      */
     trustedPublicKeys?: TrustedPublicKey[];
+    /**
+     * 自定义诊断规则插件列表。
+     * 支持本地相对路径（如 "./scripts/my-rule.ts"）或 npm 包（如 "@org/brutx-rules"）。
+     */
+    plugins?: string[];
+    /**
+     * 规则严重级别调优与开关映射表。
+     * 键为 ruleId（如 "tailwind.tokens" 或 "custom.no-global-store"），
+     * 值为 "off"（禁用）、"warn"（警告）或 "error"（错误）。
+     */
+    rules?: Record<string, RuleSeverity>;
 }
+
+export type RuleSeverity = 'off' | 'warn' | 'error';
 
 /**
  * 解析后的 registry 源描述（P1-5）。

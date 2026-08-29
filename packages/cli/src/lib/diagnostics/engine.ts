@@ -111,6 +111,8 @@ export class DiagnosticEngine {
 
         const checks: CheckResult[] = [];
 
+        const rulesOverrides = ctx.config?.rules ?? {};
+
         for (const rule of this.rules) {
             if (options.categories && !options.categories.includes(rule.category)) {
                 continue;
@@ -121,12 +123,27 @@ export class DiagnosticEngine {
             if (rule.requiresConfig && !ctx.config) {
                 continue;
             }
+            if (rulesOverrides[rule.id] === 'off') {
+                continue;
+            }
 
             const ruleResults = await rule.check(ctx);
-            if (Array.isArray(ruleResults)) {
-                checks.push(...ruleResults);
-            } else {
-                checks.push(ruleResults);
+            const resultsArray = Array.isArray(ruleResults) ? ruleResults : [ruleResults];
+
+            for (const result of resultsArray) {
+                const override = rulesOverrides[result.ruleId];
+                if (override === 'off') {
+                    continue;
+                }
+
+                if (override && result.status !== 'pass') {
+                    checks.push({
+                        ...result,
+                        status: override,
+                    });
+                } else {
+                    checks.push(result);
+                }
             }
         }
 

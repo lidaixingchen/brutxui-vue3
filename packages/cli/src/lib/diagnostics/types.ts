@@ -6,12 +6,25 @@ import type { FileTransaction } from '../file-transaction.js';
 
 export type { CheckStatus };
 export { FixId };
-export type DiagnosticCategory = 'env' | 'config' | 'tailwind' | 'structure' | 'integrity';
+export type DiagnosticCategory = 'env' | 'config' | 'tailwind' | 'structure' | 'integrity' | 'custom';
 
 export type RuleFixStatus = 'applied' | 'skipped' | 'failed';
 
+export interface FileLocation {
+    /** 相对工作区根目录的文件路径（统一使用 POSIX 格式） */
+    readonly file: string;
+    /** 起始行号（1-indexed） */
+    readonly line?: number;
+    /** 起始列号（1-indexed） */
+    readonly column?: number;
+    /** 结束行号（1-indexed） */
+    readonly endLine?: number;
+    /** 结束列号（1-indexed） */
+    readonly endColumn?: number;
+}
+
 export interface CheckResult {
-    /** 产生该检查项的规则唯一标识，如 'env.node-version' */
+    /** 产生该检查项的规则唯一标识，如 'env.node-version', 'custom.no-global-store' */
     readonly ruleId: string;
     /** 人类可读的检查项名称 */
     readonly name: string;
@@ -19,14 +32,18 @@ export interface CheckResult {
     readonly status: CheckStatus;
     /** 详细描述信息 */
     readonly message: string;
-    /** 可自愈的修复 ID 枚举 */
-    readonly fixId?: FixId;
+    /** 可选的具体文件行列位置（用于 CI Annotation 与 IDE 定位） */
+    readonly location?: FileLocation;
+    /** 可自愈的修复 ID 枚举或自定义修复标识 */
+    readonly fixId?: FixId | string;
     /** 修复操作简要说明 */
     readonly fixDescription?: string;
     /** 关联的组件名（若为组件级检查） */
     readonly componentName?: string;
     /** 领域分类 */
     readonly category?: DiagnosticCategory;
+    /** 规则帮助文档 URL（在 CI / SARIF 中提供一键直达指引） */
+    readonly helpUrl?: string;
 }
 
 export interface RuleFixResult {
@@ -67,10 +84,14 @@ export interface DiagnosticRule {
     readonly category: DiagnosticCategory;
     /** 人类可读名称 */
     readonly name: string;
+    /** 默认严重级别（默认为 error） */
+    readonly defaultSeverity?: 'warn' | 'error';
     /** 是否需要有效的 components.json 配置（为 true 且 config 为 null 时引擎自动短路跳过） */
     readonly requiresConfig?: boolean;
     /** 是否涉及远端网络请求（离线模式下由规则优雅降级） */
     readonly network?: boolean;
+    /** 帮助文档链接 */
+    readonly helpUrl?: string;
     /** 巡检函数：纯只读、无副作用 */
     check(ctx: DiagnosticContext): Promise<CheckResult | CheckResult[]>;
     /** 可选的修复算子：通过 DiagnosticRepairContext 执行原子写操作 */
@@ -117,7 +138,7 @@ export interface RepairOptions extends DiagnoseOptions {
 export interface RepairItemReport {
     readonly ruleId: string;
     readonly checkName: string;
-    readonly fixId: FixId;
+    readonly fixId: FixId | string;
     readonly status: RuleFixStatus;
     readonly message?: string;
 }
