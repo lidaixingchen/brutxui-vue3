@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import type { DoctorOptions } from '../lib/types.js';
+import type { DoctorOptions, FailOnLevel, ReporterType } from '../lib/types.js';
 import {
     CliError,
     diagnose,
@@ -9,35 +9,56 @@ import {
     repair,
     withOfflineScope,
 } from '../lib/index.js';
-import type { DiagnosticReport, RepairReport } from '../lib/diagnostics/types.js';
+import type { DiagnosticCategory, DiagnosticReport, RepairReport } from '../lib/diagnostics/types.js';
+import {
+    PrettyReporter,
+    GithubReporter,
+    JsonReporter,
+    SarifReporter,
+    JunitReporter,
+    type DiagnosticReporter,
+} from '../lib/diagnostics/reporters/index.js';
 
-function renderDoctorReport(report: DiagnosticReport): void {
-    logger.newLine();
-    logger.bold(' Brutx-Vue Doctor');
-    logger.newLine();
-
-    for (const check of report.checks) {
-        let icon: string;
-        if (check.status === 'pass') {
-            icon = chalk.green('✅');
-        } else if (check.status === 'warn') {
-            icon = chalk.yellow('⚠️');
-        } else {
-            icon = chalk.red('❌');
-        }
-        logger.log(`  ${icon} ${check.name} — ${check.message}`);
-
-        if (check.status !== 'pass' && check.fixDescription) {
-            logger.dim(`     → Fix: ${check.fixDescription}`);
-        }
+export function resolveDoctorReporter(options: DoctorOptions): ReporterType {
+    if (options.reporter) {
+        return options.reporter;
     }
+    if (options.json) {
+        return 'json';
+    }
+    if (options.ci || process.env.GITHUB_ACTIONS === 'true') {
+        return 'github';
+    }
+    return 'pretty';
+}
 
-    logger.newLine();
-    const { passed, warnings, errors } = report.summary;
-    logger.log(
-        `  Summary: ${chalk.green(`${passed} passed`)}, ${chalk.yellow(`${warnings} warning${warnings !== 1 ? 's' : ''}`)}, ${chalk.red(`${errors} error${errors !== 1 ? 's' : ''}`)}`
-    );
-    logger.newLine();
+export function determineExitCode(report: DiagnosticReport, failOn: FailOnLevel = 'error'): number {
+    if (failOn === 'warn') {
+        return report.hasErrors || report.hasWarnings ? 1 : 0;
+    }
+    if (failOn === 'drift') {
+        const hasDrift = report.checks.some(
+            c => c.category === 'integrity' && c.status !== 'pass'
+        );
+        return report.hasErrors || hasDrift ? 1 : 0;
+    }
+    return report.hasErrors ? 1 : 0;
+}
+
+function createReporterInstance(reporterType: ReporterType): DiagnosticReporter {
+    switch (reporterType) {
+        case 'github':
+            return new GithubReporter();
+        case 'json':
+            return new JsonReporter();
+        case 'sarif':
+            return new SarifReporter();
+        case 'junit':
+            return new JunitReporter();
+        case 'pretty':
+        default:
+            return new PrettyReporter();
+    }
 }
 
 function renderRepairSummary(repairReport: RepairReport): void {
@@ -76,7 +97,15 @@ export async function doctor(options: DoctorOptions): Promise<void> {
     const restoreOffline = withOfflineScope(offline);
 
     try {
-        let report = await diagnose({ cwd, offline });
+        const categories = options.category ? [options.category as DiagnosticCategory] : undefined;
+        const ruleIds = options.rule ? [options.rule] : undefined;
+
+        let report = await diagnose({
+            cwd,
+            offline,
+            categories,
+            ruleIds,
+        });
 
         // 2. 自愈修复流程与 CI 安全防御
         if (options.fix || options.fixOnly) {
@@ -90,21 +119,29 @@ export async function doctor(options: DoctorOptions): Promise<void> {
                     cwd,
                     fixOnly: options.fixOnly,
                     offline,
+                    categories,
+                    ruleIds,
                 });
                 renderRepairSummary(repairReport);
                 report = repairReport.freshReport;
             }
         }
 
-        // 3. 结果输出
-        if (options.json) {
-            process.stdout.write(JSON.stringify(report.checks, null, 2) + '\n');
-        } else {
-            renderDoctorReport(report);
-        }
+        // 3. 多态 Reporter 渲染分发
+        const reporterType = resolveDoctorReporter(options);
+        const reporter = createReporterInstance(reporterType);
 
-        if (report.hasErrors) {
-            throw new CliError('Doctor check failed with errors');
+        await reporter.render(report, {
+            cwd,
+            failOn: options.failOn,
+            silent: options.silent,
+            outputFile: options.outputFile,
+        });
+
+        // 4. 细粒度退出码判定
+        const exitCode = determineExitCode(report, options.failOn);
+        if (exitCode !== 0) {
+            throw new CliError('Doctor check failed with issues', { exitCode: 1 });
         }
     } finally {
         restoreOffline();

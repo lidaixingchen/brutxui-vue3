@@ -7,15 +7,7 @@ export class JsonReporter implements DiagnosticReporter {
     readonly name = 'json';
 
     async render(report: DiagnosticReport, options: ReporterOptions): Promise<void> {
-        const payload = {
-            summary: report.summary,
-            hasErrors: report.hasErrors,
-            hasWarnings: report.hasWarnings,
-            fixableCount: report.fixableCount,
-            checks: report.checks,
-        };
-
-        const jsonString = JSON.stringify(payload, null, 2);
+        const jsonString = JSON.stringify(report.checks, null, 2);
 
         if (options.outputFile) {
             const targetPath = path.resolve(options.cwd, options.outputFile);

@@ -191,10 +191,21 @@ export interface AddOptions extends BaseCommandOptions {
 
 export type { RegistryItem };
 
+export type ReporterType = 'pretty' | 'github' | 'json' | 'sarif' | 'junit';
+export type FailOnLevel = 'error' | 'warn' | 'drift';
+
 export interface DoctorOptions extends BaseCommandOptions {
     fix?: boolean;
     yes?: boolean;
     fixOnly?: string;
+    category?: string;
+    rule?: string;
+    offline?: boolean;
+    json?: boolean;
+    reporter?: ReporterType;
+    ci?: boolean;
+    failOn?: FailOnLevel;
+    outputFile?: string;
     /** 生成用户项目 SBOM（CycloneDX 格式）后退出，不运行常规检查 */
     sbom?: boolean;
     /** SBOM 输出文件路径，默认 ./brutx-sbom.json */

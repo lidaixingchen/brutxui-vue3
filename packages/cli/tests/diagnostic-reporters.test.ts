@@ -172,12 +172,12 @@ describe('Multi-Reporter Matrix & GitHub CI Native Support (Ticket 3: #97)', () 
 
             expect(await fs.pathExists(outputFile)).toBe(true);
             const savedData = await fs.readJson(outputFile);
-            expect(savedData.summary.total).toBe(2);
-            expect(savedData.checks).toHaveLength(2);
-            expect(savedData.summary.warnings).toBe(1);
+            expect(savedData).toHaveLength(2);
+            expect(savedData[0].ruleId).toBe('env.node');
+            expect(savedData[1].status).toBe('warn');
 
             const stdoutJson = JSON.parse(printed.join(''));
-            expect(stdoutJson.summary.total).toBe(2);
+            expect(stdoutJson).toHaveLength(2);
         });
     });
 
