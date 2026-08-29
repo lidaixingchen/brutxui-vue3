@@ -18,6 +18,7 @@ import { isSafePath } from '../project.js';
 import { CliError } from '../error.js';
 
 import { ProjectContext } from '../project-context.js';
+import { computeRelativeImportSpecifier, injectImportStatement } from '../css/index.js';
 
 export interface ProjectInitializationSettings {
     tailwind: TailwindConfig;
@@ -89,25 +90,69 @@ async function createConfigFile(
 
 async function addBrutalistStyles(
     cwd: string,
-    cssPath: string,
+    tailwind: TailwindConfig,
     transaction: FileTransaction,
     fsAdapter?: FileSystemAdapter
 ): Promise<boolean> {
-    const fullPath = path.join(cwd, cssPath);
+    const fullMainPath = path.join(cwd, tailwind.css);
 
-    if (!(await isSafePath(fullPath, cwd, fsAdapter))) {
-        throw new Error(`Security Error: CSS path traversal detected. Access denied to path "${fullPath}".`);
+    if (!(await isSafePath(fullMainPath, cwd, fsAdapter))) {
+        throw new Error(`Security Error: CSS path traversal detected. Access denied to path "${fullMainPath}".`);
     }
-
-    await transaction.ensureDir(path.dirname(fullPath));
 
     const brutalistCss = await getBrutalistCssStyles();
     const brutxBlock = `${BRUTX_CSS_START_MARKER}\n${brutalistCss}\n${BRUTX_CSS_END_MARKER}`;
+    const fs = fsAdapter ?? defaultDiskFs;
+
+    if (tailwind.tokensFile) {
+        const fullTokensPath = path.join(cwd, tailwind.tokensFile);
+        if (!(await isSafePath(fullTokensPath, cwd, fsAdapter))) {
+            throw new Error(`Security Error: CSS path traversal detected. Access denied to path "${fullTokensPath}".`);
+        }
+
+        await transaction.ensureDir(path.dirname(fullTokensPath));
+
+        let tokenContent: string;
+        const tokensExist = await fs.pathExists(fullTokensPath);
+        if (tokensExist) {
+            tokenContent = await fs.readFile(fullTokensPath, 'utf-8');
+            if (hasBrutxCssBlock(tokenContent)) {
+                tokenContent = replaceBrutxCssBlock(tokenContent, brutxBlock);
+            } else {
+                if (!tokenContent.endsWith('\n') && tokenContent.length > 0) {
+                    tokenContent += '\n';
+                }
+                tokenContent += brutxBlock;
+            }
+        } else {
+            tokenContent = brutxBlock;
+        }
+        await transaction.writeFile(fullTokensPath, tokenContent);
+
+        await transaction.ensureDir(path.dirname(fullMainPath));
+        const importSpecifier = computeRelativeImportSpecifier(fullMainPath, fullTokensPath);
+
+        let mainContent: string;
+        const mainExists = await fs.pathExists(fullMainPath);
+        if (mainExists) {
+            mainContent = await fs.readFile(fullMainPath, 'utf-8');
+            if (hasBrutxCssBlock(mainContent)) {
+                mainContent = replaceBrutxCssBlock(mainContent, '').trimEnd();
+            }
+            mainContent = injectImportStatement(mainContent, importSpecifier);
+        } else {
+            mainContent = `@import "tailwindcss";\n@import "${importSpecifier}";\n`;
+        }
+        await transaction.writeFile(fullMainPath, mainContent);
+        return true;
+    }
+
+    await transaction.ensureDir(path.dirname(fullMainPath));
 
     let content: string;
-    const exists = await (fsAdapter ?? defaultDiskFs).pathExists(fullPath);
+    const exists = await fs.pathExists(fullMainPath);
     if (exists) {
-        content = await (fsAdapter ?? defaultDiskFs).readFile(fullPath, 'utf-8');
+        content = await fs.readFile(fullMainPath, 'utf-8');
         if (hasBrutxCssBlock(content)) {
             content = replaceBrutxCssBlock(content, brutxBlock);
         } else {
@@ -120,9 +165,10 @@ async function addBrutalistStyles(
         content = `@import "tailwindcss";\n${brutxBlock}`;
     }
 
-    await transaction.writeFile(fullPath, content);
+    await transaction.writeFile(fullMainPath, content);
     return true;
 }
+
 
 async function findNuxtConfig(cwd: string, fsAdapter?: FileSystemAdapter): Promise<string | null> {
     for (const file of CONFIG_FILES.nuxt) {
@@ -463,7 +509,7 @@ export async function initializeProjectFiles(options: ProjectInitializationOptio
         await transaction.ensureDir(path.join(componentsDir, 'ui'));
         callbacks?.onComponentsDirectory?.({ path: componentsDir });
 
-        const stylesAdded = await addBrutalistStyles(cwd, settings.tailwind.css, transaction, context.fs);
+        const stylesAdded = await addBrutalistStyles(cwd, settings.tailwind, transaction, context.fs);
         callbacks?.onStyles?.({ cssPath: settings.tailwind.css, added: stylesAdded });
 
         const nuxt = projectType === 'nuxt'

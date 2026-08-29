@@ -56,6 +56,7 @@ export interface AliasConfig {
 export interface TailwindConfig {
     config: string;
     css: string;
+    tokensFile?: string;
 }
 
 export type WorkspaceMode = 'standalone' | 'shared-package' | 'app-local' | 'hybrid';

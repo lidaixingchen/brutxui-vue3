@@ -42,6 +42,10 @@
                 "css": {
                     "type": "string",
                     "description": "全局 CSS 文件路径（注入 BrutxUI 设计 token）。"
+                },
+                "tokensFile": {
+                    "type": "string",
+                    "description": "独立的 BrutxUI 设计令牌文件路径或别名（可选，如 src/styles/brutx-tokens.css）。配置后启用解耦 Token 模式，主 CSS 入口仅保留单行 @import。"
                 }
             }
         },

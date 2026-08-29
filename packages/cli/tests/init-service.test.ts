@@ -155,7 +155,67 @@ describe('init service', () => {
         expect(onNuxtConfig).toHaveBeenCalledWith(result.nuxt);
         expect(await fs.readFile(path.join(tmpDir, 'nuxt.config.ts'), 'utf-8')).toBe('export default {}\n');
     });
+
+    it('supports decoupled tokensFile mode by generating standalone token file and single import in main CSS', async () => {
+        const decoupledSettings: ProjectInitializationSettings = {
+            tailwind: {
+                config: '',
+                css: 'src/index.css',
+                tokensFile: 'src/styles/brutx-tokens.css',
+            },
+            aliases: defaultSettings.aliases,
+        };
+
+        const result = await initializeProjectFiles({
+            cwd: tmpDir,
+            projectType: 'vite-vue-src',
+            settings: decoupledSettings,
+        });
+
+        expect(result.stylesAdded).toBe(true);
+
+        const tokensFilePath = path.join(tmpDir, 'src', 'styles', 'brutx-tokens.css');
+        expect(await fs.pathExists(tokensFilePath)).toBe(true);
+        const tokensContent = await fs.readFile(tokensFilePath, 'utf-8');
+        expect(tokensContent).toContain(BRUTX_CSS_START_MARKER);
+        expect(tokensContent).toContain('--color-brutal-bg');
+        expect(tokensContent).toContain(BRUTX_CSS_END_MARKER);
+
+        const mainCss = await fs.readFile(path.join(tmpDir, 'src', 'index.css'), 'utf-8');
+        expect(mainCss).toContain('@import "tailwindcss";');
+        expect(mainCss).toContain('@import "./styles/brutx-tokens.css";');
+        expect(mainCss).not.toContain(BRUTX_CSS_START_MARKER);
+    });
+
+    it('cleans up legacy inline marker block in main CSS when initializing with tokensFile', async () => {
+        const mainCssPath = path.join(tmpDir, 'src', 'index.css');
+        await fs.writeFile(
+            mainCssPath,
+            `@import "tailwindcss";\n${BRUTX_CSS_START_MARKER}\n:root { --old: 1; }\n${BRUTX_CSS_END_MARKER}\nbody { margin: 0; }`
+        );
+
+        const decoupledSettings: ProjectInitializationSettings = {
+            tailwind: {
+                config: '',
+                css: 'src/index.css',
+                tokensFile: 'src/styles/brutx-tokens.css',
+            },
+            aliases: defaultSettings.aliases,
+        };
+
+        await initializeProjectFiles({
+            cwd: tmpDir,
+            projectType: 'vite-vue-src',
+            settings: decoupledSettings,
+        });
+
+        const mainCss = await fs.readFile(mainCssPath, 'utf-8');
+        expect(mainCss).not.toContain(BRUTX_CSS_START_MARKER);
+        expect(mainCss).toContain('@import "./styles/brutx-tokens.css";');
+        expect(mainCss).toContain('body { margin: 0; }');
+    });
 });
+
 
 describe('injectNuxtConfig root-key detection', () => {
     it('detects top-level components/css keys only (not nested objects)', () => {
@@ -248,3 +308,5 @@ describe('injectNuxtConfig root-key detection', () => {
         expect(firstLine.endsWith('<{ modules: string[] }>({')).toBe(true);
     });
 });
+
+
