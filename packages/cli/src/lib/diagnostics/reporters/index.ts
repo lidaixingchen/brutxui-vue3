@@ -4,3 +4,4 @@ export * from './pretty-reporter.js';
 export * from './github-reporter.js';
 export * from './json-reporter.js';
 export * from './junit-reporter.js';
+export * from './sarif-reporter.js';
