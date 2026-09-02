@@ -1,5 +1,4 @@
 import { cva } from 'class-variance-authority'
-import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { validationBorderColors } from '../input/shared-input-variants'
 
 export const numberInputRootVariants = cva(
@@ -32,20 +31,14 @@ export const numberInputButtonVariants = cva(
         'flex items-center justify-center',
         'transition-all duration-150',
         'disabled:opacity-50 disabled:pointer-events-none select-none cursor-pointer',
-        brutalPress,
-        'hover:shadow-brutal-sm hover:-translate-y-0.5',
-        /* 3D 机械键帽：底边加厚形成侧面厚度（border-brutal 深色描边自带反差），
-           按压时消除侧面完成「按下」物理隐喻；与 Kbd 键帽语言同源。
-           active:translate-x-0 显式中和 brutalPress 的 X 轴盖影位移——键帽按压是纯垂直下沉，
-           依赖 twMerge 后置胜出属隐式行为，此处显式声明意图 */
-        'border-b-4',
-        'active:border-b-0 active:translate-y-1 active:translate-x-0',
+        'hover:bg-brutal-fg hover:text-brutal-bg',
+        'active:scale-95 transition-transform',
     ],
     {
         variants: {
             position: {
-                decrement: 'bg-brutal-accent hover:bg-brutal-muted',
-                increment: 'bg-brutal-primary hover:bg-brutal-muted',
+                decrement: 'bg-brutal-accent text-brutal-fg',
+                increment: 'bg-brutal-primary text-brutal-fg',
             },
             layout: {
                 split: 'px-4 border-brutal',

@@ -168,7 +168,7 @@ describe('NumberInput', () => {
     })
 })
 
-describe('NumberInput 机械键帽与 Drum Ticker', () => {
+describe('NumberInput 步进按钮交互与 Drum Ticker', () => {
     beforeEach(() => {
         hapticsMocks.click.mockClear()
         hapticsMocks.useBrutalHaptics.mockClear()
@@ -180,12 +180,13 @@ describe('NumberInput 机械键帽与 Drum Ticker', () => {
         reducedMotionMocks.useReducedMotion.mockReturnValue({ value: false })
     })
 
-    it('步进按钮带 3D 键帽侧面厚度（border-b-4）与按压消除侧面', () => {
+    it('步进按钮应用平整结构与高反差悬浮反色契约', () => {
         const wrapper = mount(NumberInput)
         for (const btn of wrapper.findAll('button')) {
-            expect(btn.classes()).toContain('border-b-4')
-            expect(btn.classes()).toContain('active:border-b-0')
-            expect(btn.classes()).toContain('active:translate-y-1')
+            expect(btn.classes()).not.toContain('border-b-4')
+            expect(btn.classes()).not.toContain('hover:-translate-y-0.5')
+            expect(btn.classes()).toContain('hover:bg-brutal-fg')
+            expect(btn.classes()).toContain('hover:text-brutal-bg')
         }
     })
 

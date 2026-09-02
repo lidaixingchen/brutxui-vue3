@@ -805,7 +805,6 @@
     ],
     "directives": [],
     "lib": [
-      "brutal-interaction-variants.ts",
       "icon-size-variants.ts"
     ]
   },
