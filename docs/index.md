@@ -96,6 +96,10 @@ draft ──评审通过──▶ active ──落地完成──▶ done ──
 | [滑块与滚动条工控实体质感重塑方案](plans/滑块与滚动条工控实体质感重塑方案.md) | done | Slider 调音台推子键帽与工控指示刻线、ScrollArea 纯净实体滑块与工控金属导轨重塑 |
 | [CLI网络韧性与多源竞速自适应退避方案](plans/CLI网络韧性与多源竞速自适应退避方案.md) | done | 阶梯式并发竞速（Hedged Race）、有界抖动退避（Bounded Full Jitter）、Retry-After 协议感知与会话级粘滞记忆 |
 | [CLI语法树解析升级与Monorepo工作区感知方案](plans/CLI语法树解析升级与Monorepo工作区感知方案.md) | **done** | SfcAstEngine 标准 AST 与 MagicString 源码保真变换管线、WorkspaceTopologyEngine 拓扑感知与分层配置继承模型 |
+| [CLI诊断引擎开放化与CI原生支持方案](plans/CLI诊断引擎开放化与CI原生支持方案.md) | **active** | 声明式自定义规则插件体系（TS/ESM 动态加载与沙箱）、多态 Reporter 矩阵（GitHub Annotations/SARIF 2.1.0/JSON/JUnit）、CI 智能感知与门禁看板 |
+| [Tailwind模块化依赖图扫描与样式解耦方案](plans/Tailwind模块化依赖图扫描与样式解耦方案.md) | **active** | 基于 Tailwind v4 @import 机制的独立 Token 解耦模式（tokensFile）、CSS 依赖 DAG 拓扑扫描器（CssDependencyGraphEngine）与层叠顺序防御 |
+| [CLI注册表深模块客户端重构方案](plans/CLI注册表深模块客户端重构方案.md) | **active** | RegistryClient 深模块封装、浅模块收敛与删除（cache/signature-mode）、依赖注入隔离与零 IO 测试沙箱 |
+| [NumberInput视觉优化设计](plans/NumberInput视觉优化设计.md) | **active** | 移除内部按钮位移与厚边框割裂、重构高反差反色悬浮效果、完善暗色模式与测试契约 |
 
 
 
