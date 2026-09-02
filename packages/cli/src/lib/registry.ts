@@ -12,17 +12,16 @@ import {
     DEFAULT_REGISTRY_SOURCES,
 } from './constants.js';
 import { CliError } from './error.js';
-import { createDefaultCacheStorage, isOfflineMode } from './storage/cache-storage.js';
+import { createDefaultCacheStorage, isOfflineMode, type CacheWriteInput } from './storage/cache-storage.js';
 import { buildAuthHeaders, fetchWithSources } from './registry-source.js';
 import { logger } from './logger.js';
 import { verifyManifestIntegrityAndSignature, isRequireSignature } from './signature.js';
 import { resilientFetch } from './resilience/resilient-fetch.js';
 
-const defaultStorage = createDefaultCacheStorage();
-const getCachedEntry = defaultStorage.get.bind(defaultStorage);
-const setCachedEntry = defaultStorage.set.bind(defaultStorage);
-const touchCachedEntry = defaultStorage.touch.bind(defaultStorage);
-const dedupeInflight = defaultStorage.dedupe.bind(defaultStorage);
+const getCachedEntry = <T>(name: string, source: string, ttl?: number) => createDefaultCacheStorage().get<T>(name, source, ttl);
+const setCachedEntry = <T>(name: string, source: string, data: T, meta?: CacheWriteInput) => createDefaultCacheStorage().set<T>(name, source, data, meta);
+const touchCachedEntry = (name: string, source: string) => createDefaultCacheStorage().touch(name, source);
+const dedupeInflight = <T>(name: string, source: string, fn: () => Promise<T | null>) => createDefaultCacheStorage().dedupe(name, source, fn);
 
 function isUrl(str: string): boolean {
     return str.startsWith('http://') || str.startsWith('https://');

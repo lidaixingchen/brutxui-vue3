@@ -9,8 +9,7 @@ import { logger } from '../src/lib/logger.js';
 import { generateEd25519KeyPair, signManifestIntegrity } from '../src/lib/signature.js';
 import { CliError } from '../src/lib/error.js';
 
-const defaultStorage = createDefaultCacheStorage();
-const setCachedEntry = defaultStorage.set.bind(defaultStorage);
+const setCachedEntry = <T>(name: string, source: string, data: T, meta?: any) => createDefaultCacheStorage().set<T>(name, source, data, meta);
 
 function setRequireSignature(enabled: boolean): void {
     if (enabled) process.env.BRUTX_REQUIRE_SIGNATURE = '1';

@@ -658,10 +658,18 @@ export class RegistryClient {
     }
 }
 
-/** 判定是否为“组件在注册表中不存在”（404 或本地文件缺失）的精准守卫 */
+/** 判定是否为“组件在注册表中不存在”（404 或本地文件缺失）的精准守卫（支持展开 cause 链） */
 export function isComponentNotFoundError(error: unknown): boolean {
-    if (error instanceof CliError && error.code === 'COMPONENT_NOT_FOUND') {
-        return true;
+    let current = error;
+    while (current) {
+        if (current instanceof CliError && current.code === 'COMPONENT_NOT_FOUND') {
+            return true;
+        }
+        if (current instanceof Error && current.cause && current.cause !== current) {
+            current = current.cause;
+        } else {
+            break;
+        }
     }
     return false;
 }
@@ -671,7 +679,8 @@ export function isRegistrySecurityError(error: unknown): boolean {
     if (error instanceof CliError) {
         return error.code === 'REGISTRY_SIGNATURE_INVALID' ||
             error.code === 'REGISTRY_INTEGRITY_FAILED' ||
-            error.code === 'PATH_UNSAFE';
+            error.code === 'PATH_UNSAFE' ||
+            error.code === 'PATH_UNSAFE_AFTER_WRITE';
     }
     return false;
 }
