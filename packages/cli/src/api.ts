@@ -4,6 +4,20 @@
  * 后续在 lib/services 中新增的导出不会自动成为公共 API，避免 semver 兼容性负担。
  */
 export {
+    RegistryClient,
+    REGISTRY_ERROR_CODES,
+    isComponentNotFoundError,
+    isRegistrySecurityError,
+} from './lib/index.js';
+export type {
+    RegistryClientOptions,
+    ResolvedDependenciesResult,
+    FetchItemOptions,
+    ListComponentsOptions,
+    RegistryErrorCode,
+} from './lib/index.js';
+
+export {
     ensureUtilsFile,
     resolveComponents,
     resolveComponentFilePath,

@@ -1,5 +1,6 @@
 import path from 'path';
 import type { BrutxManifest, RegistryItem } from '../types.js';
+import { getItem } from '../registry.js';
 import { removeInstalledComponents } from '../manifest.js';
 import { getInstalledComponentNames } from '../installed-components.js';
 import { logger } from '../logger.js';
@@ -449,10 +450,7 @@ async function getDependents(
     for (const name of componentsToRemove) {
         for (const other of remaining) {
             try {
-                const otherItem: RegistryItem = await context.registry.fetchItem(other, {
-                    sourceOverride: manifest?.components[other]?.registrySource,
-                    useCache,
-                });
+                const otherItem: RegistryItem = await getItem(other, manifest?.components[other]?.registrySource, useCache);
                 if (otherItem.registryDependencies?.includes(name)) {
                     if (!dependents.has(name)) {
                         dependents.set(name, []);

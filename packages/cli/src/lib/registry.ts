@@ -6,22 +6,23 @@ import {
     RegistryIntegrityMismatchError,
     validateRegistryItem,
 } from 'brutx-shared-vue';
-import type { RegistryItem, BrutalistConfig, RegistryManifestSummary, TrustedPublicKey, RuleSeverity } from './types.js';
+import type { RegistryItem, RegistryManifestSummary } from './types.js';
 import {
     DEFAULT_REGISTRY_URL,
     DEFAULT_REGISTRY_SOURCES,
-    SCHEMA_URL,
-    DEFAULT_ALIASES,
-    DEFAULT_TAILWIND_CONFIG,
-    CURRENT_CONFIG_VERSION,
 } from './constants.js';
 import { CliError } from './error.js';
-import { getCachedEntry, setCachedEntry, touchCachedEntry, dedupeInflight, isOfflineMode } from './cache.js';
+import { createDefaultCacheStorage, isOfflineMode } from './storage/cache-storage.js';
 import { buildAuthHeaders, fetchWithSources } from './registry-source.js';
 import { logger } from './logger.js';
-import { verifyManifestIntegrityAndSignature, setTrustedPublicKeys } from './signature.js';
-import { applyRequireSignatureConfig, isRequireSignature } from './signature-mode.js';
+import { verifyManifestIntegrityAndSignature, isRequireSignature } from './signature.js';
 import { resilientFetch } from './resilience/resilient-fetch.js';
+
+const defaultStorage = createDefaultCacheStorage();
+const getCachedEntry = defaultStorage.get.bind(defaultStorage);
+const setCachedEntry = defaultStorage.set.bind(defaultStorage);
+const touchCachedEntry = defaultStorage.touch.bind(defaultStorage);
+const dedupeInflight = defaultStorage.dedupe.bind(defaultStorage);
 
 function isUrl(str: string): boolean {
     return str.startsWith('http://') || str.startsWith('https://');

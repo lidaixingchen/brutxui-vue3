@@ -10,7 +10,7 @@ import {
 } from './constants.js';
 import { CliError } from './error.js';
 import { logger } from './logger.js';
-import { createDefaultCacheStorage, isOfflineMode, type CacheStorage, type CacheReadResult } from './cache.js';
+import { createDefaultCacheStorage, isOfflineMode, type CacheStorage, type CacheReadResult } from './storage/cache-storage.js';
 import { resilientFetch } from './resilience/resilient-fetch.js';
 import { RegistrySourceTracker } from './resilience/source-tracker.js';
 import { hedgedRace } from './resilience/hedged-race.js';
@@ -656,4 +656,22 @@ export class RegistryClient {
             .map(f => f.replace(/\.json$/, ''))
             .sort();
     }
+}
+
+/** 判定是否为“组件在注册表中不存在”（404 或本地文件缺失）的精准守卫 */
+export function isComponentNotFoundError(error: unknown): boolean {
+    if (error instanceof CliError && error.code === 'COMPONENT_NOT_FOUND') {
+        return true;
+    }
+    return false;
+}
+
+/** 判定是否为安全类错误（签名无效、完整性篡改、路径穿越） */
+export function isRegistrySecurityError(error: unknown): boolean {
+    if (error instanceof CliError) {
+        return error.code === 'REGISTRY_SIGNATURE_INVALID' ||
+            error.code === 'REGISTRY_INTEGRITY_FAILED' ||
+            error.code === 'PATH_UNSAFE';
+    }
+    return false;
 }

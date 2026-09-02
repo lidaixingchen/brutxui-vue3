@@ -6,8 +6,6 @@ import {
     readConfig,
     readConfigSafe,
 } from '../src/lib/config.js';
-import { isRequireSignature, resetRequireSignature } from '../src/lib/signature-mode.js';
-import { resetTrustedPublicKeys } from '../src/lib/signature.js';
 import { CURRENT_CONFIG_VERSION, SCHEMA_URL } from '../src/lib/constants.js';
 
 describe('Config Domain Module (Ticket 1 / #105)', () => {
@@ -15,13 +13,9 @@ describe('Config Domain Module (Ticket 1 / #105)', () => {
 
     beforeEach(() => {
         memoryFs = new MemoryFileSystemAdapter();
-        resetRequireSignature();
-        resetTrustedPublicKeys();
     });
 
     afterEach(() => {
-        resetRequireSignature();
-        resetTrustedPublicKeys();
     });
 
     describe('migrateConfig', () => {
@@ -105,8 +99,8 @@ describe('Config Domain Module (Ticket 1 / #105)', () => {
             expect(parsed.trustedPublicKeys).toHaveLength(1);
             expect(parsed.trustedPublicKeys?.[0].keyId).toBe('official-1');
 
-            // 核心断言：纯函数读取配置不会隐式改变模块级全局状态
-            expect(isRequireSignature()).toBe(false);
+            // 核心断言：纯函数读取配置不会隐式改变全局状态或环境变量
+            expect(process.env.BRUTX_REQUIRE_SIGNATURE).toBeUndefined();
         });
     });
 });

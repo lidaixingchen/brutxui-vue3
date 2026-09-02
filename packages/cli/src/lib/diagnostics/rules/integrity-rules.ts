@@ -5,7 +5,7 @@ import { FixId } from '../types.js';
 import type { FileSystemAdapter } from '../../fs/file-system-adapter.js';
 import { auditLogExists, countAuditEntries, getRecentFailures } from '../../audit.js';
 import { computeInstalledContentHash } from '../../manifest.js';
-import { getCacheStats } from '../../cache.js';
+import { getCacheStats } from '../../storage/cache-storage.js';
 import { RegistryClient } from '../../registry-client.js';
 import { resolveImportAlias } from '../../project.js';
 import { resolveRegistrySources } from '../../registry-source.js';

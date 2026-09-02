@@ -4,11 +4,22 @@ import os from 'os';
 import path from 'path';
 import { computeRegistryIntegrity, computeRegistryManifestIntegrity } from 'brutx-shared-vue';
 import * as registry from '../src/lib/registry.js';
-import { setCachedEntry } from '../src/lib/cache.js';
+import { createDefaultCacheStorage } from '../src/lib/storage/cache-storage.js';
 import { logger } from '../src/lib/logger.js';
 import { generateEd25519KeyPair, signManifestIntegrity } from '../src/lib/signature.js';
-import { setRequireSignature, resetRequireSignature } from '../src/lib/signature-mode.js';
 import { CliError } from '../src/lib/error.js';
+
+const defaultStorage = createDefaultCacheStorage();
+const setCachedEntry = defaultStorage.set.bind(defaultStorage);
+
+function setRequireSignature(enabled: boolean): void {
+    if (enabled) process.env.BRUTX_REQUIRE_SIGNATURE = '1';
+    else delete process.env.BRUTX_REQUIRE_SIGNATURE;
+}
+
+function resetRequireSignature(): void {
+    delete process.env.BRUTX_REQUIRE_SIGNATURE;
+}
 
 function createRegistryItem(name: string, overrides: Record<string, any> = {}) {
     const files = overrides.files ?? [{

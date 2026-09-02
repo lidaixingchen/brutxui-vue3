@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import path from 'node:path';
 import os from 'node:os';
-import type { FileSystemAdapter } from 'brutx-shared-vue/fs';
+import { DiskFileSystemAdapter, type FileSystemAdapter } from 'brutx-shared-vue/fs';
 
 const DEFAULT_CACHE_DIR = path.join(os.homedir(), '.brutx-vue', 'cache');
 const DEFAULT_TTL = 3600000;
@@ -277,4 +277,52 @@ export class CacheStorage {
 
         return { dir: this.cacheDir, entryCount, totalBytes };
     }
+}
+
+const defaultDiskFs = new DiskFileSystemAdapter();
+
+export function isOfflineMode(): boolean {
+    return process.env.BRUTX_OFFLINE === '1';
+}
+
+function getCacheDir(): string {
+    return process.env.BRUTX_CACHE_DIR ?? DEFAULT_CACHE_DIR;
+}
+
+function isCacheDisabled(): boolean {
+    return process.env.BRUTX_NO_CACHE === '1';
+}
+
+function getMaxEntries(): number {
+    const raw = process.env.BRUTX_CACHE_MAX;
+    if (!raw) return DEFAULT_MAX_ENTRIES;
+    const parsed = Number.parseInt(raw, 10);
+    return Number.isNaN(parsed) || parsed < 1 ? DEFAULT_MAX_ENTRIES : parsed;
+}
+
+function getMaxBytes(): number {
+    const raw = process.env.BRUTX_CACHE_MAX_BYTES;
+    if (!raw) return DEFAULT_MAX_BYTES;
+    const parsed = Number.parseInt(raw, 10);
+    return Number.isNaN(parsed) || parsed < 1024 ? DEFAULT_MAX_BYTES : parsed;
+}
+
+export function createDefaultCacheStorage(fsAdapter: FileSystemAdapter = defaultDiskFs): CacheStorage {
+    return new CacheStorage({
+        fs: fsAdapter,
+        cacheDir: getCacheDir(),
+        maxEntries: getMaxEntries(),
+        maxBytes: getMaxBytes(),
+        defaultTtl: DEFAULT_TTL,
+        disabled: isCacheDisabled(),
+        offline: isOfflineMode(),
+    });
+}
+
+export async function clearCache(maxAgeDays?: number): Promise<void> {
+    return createDefaultCacheStorage().clear(maxAgeDays);
+}
+
+export async function getCacheStats(): Promise<CacheStats> {
+    return createDefaultCacheStorage().getStats();
 }

@@ -3,14 +3,16 @@ import fs from 'fs-extra';
 import os from 'node:os';
 import path from 'node:path';
 
-const {
-    getCachedEntry,
-    setCachedEntry,
-    touchCachedEntry,
+import {
+    createDefaultCacheStorage,
     clearCache,
-    dedupeInflight,
     getCacheStats,
-} = await import('../src/lib/cache.js');
+} from '../src/lib/storage/cache-storage.js';
+
+const getCachedEntry = <T>(name: string, source: string, ttl?: number) => createDefaultCacheStorage().get<T>(name, source, ttl);
+const setCachedEntry = <T>(name: string, source: string, data: T, meta?: any) => createDefaultCacheStorage().set<T>(name, source, data, meta);
+const touchCachedEntry = (name: string, source: string) => createDefaultCacheStorage().touch(name, source);
+const dedupeInflight = <T>(name: string, source: string, fn: () => Promise<T | null>) => createDefaultCacheStorage().dedupe(name, source, fn);
 
 let tmpRoot: string;
 let cacheDir: string;

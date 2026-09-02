@@ -52,22 +52,24 @@ export {
     type RegistryErrorCode,
 } from './registry-types.js';
 
-export { RegistryClient } from './registry-client.js';
+export {
+    RegistryClient,
+    isComponentNotFoundError,
+    isRegistrySecurityError,
+} from './registry-client.js';
 
 export { getItem, getItemFromSources, resolveDeps, listLocalRegistryComponents } from './registry.js';
 
 export {
+    CacheStorage,
+    createDefaultCacheStorage,
     clearCache,
-    getCachedEntry,
-    setCachedEntry,
-    touchCachedEntry,
-    dedupeInflight,
     isOfflineMode,
     getCacheStats,
     type CacheReadResult,
     type CacheWriteInput,
     type CacheStats,
-} from './cache.js';
+} from './storage/cache-storage.js';
 export {
     resolveRegistrySources,
     isOfflineRequested,
@@ -123,12 +125,9 @@ export {
 } from './global-dry-run.js';
 
 export {
-    isRequireSignatureEnvActive,
     isRequireSignature,
-    setRequireSignature,
-    resetRequireSignature,
     applyRequireSignatureConfig,
-} from './signature-mode.js';
+} from './signature.js';
 
 export {
     getInstalledComponentInfos,

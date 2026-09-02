@@ -2,9 +2,18 @@ import crypto from 'crypto';
 import { computeRegistryManifestIntegrity } from 'brutx-shared-vue';
 import { CliError } from './error.js';
 import { logger } from './logger.js';
-import { isRequireSignature } from './signature-mode.js';
 import { OFFICIAL_PUBLIC_KEYS } from './constants.js';
 import type { TrustedPublicKey } from './types.js';
+
+export function isRequireSignature(override?: boolean): boolean {
+    return override ?? (process.env.BRUTX_REQUIRE_SIGNATURE === '1');
+}
+
+export function applyRequireSignatureConfig(config: { requireSignature?: boolean } | null | undefined): void {
+    if (config?.requireSignature === true && !process.env.BRUTX_REQUIRE_SIGNATURE) {
+        process.env.BRUTX_REQUIRE_SIGNATURE = '1';
+    }
+}
 
 export type { TrustedPublicKey } from './types.js';
 

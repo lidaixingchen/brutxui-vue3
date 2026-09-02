@@ -12,7 +12,6 @@ import { create } from './commands/create.js';
 import { registryList, registryAdd, registryRemove } from './commands/registry.js';
 import { CliError, getCliErrorAdvice, logger, clearCache } from './lib/index.js';
 import { setGlobalDryRun } from './lib/global-dry-run.js';
-import { setRequireSignature } from './lib/signature-mode.js';
 import { VERBOSE_LEVEL_NONE, VERBOSE_LEVEL_STEP, VERBOSE_LEVEL_TRACE } from './lib/logger.js';
 
 const require = createRequire(import.meta.url);
@@ -307,7 +306,7 @@ function applyGlobalOptionsFromArgv(argv: string[]): void {
     // 基础设施闭环 P1：--require-signature 全局 flag 激活严格签名模式（优先级最高，
     // 高于 BRUTX_REQUIRE_SIGNATURE 环境变量与 config.requireSignature）。
     if (optionsArgv.includes('--require-signature')) {
-        setRequireSignature(true);
+        process.env.BRUTX_REQUIRE_SIGNATURE = '1';
     }
 
     let verboseLevel = VERBOSE_LEVEL_NONE;

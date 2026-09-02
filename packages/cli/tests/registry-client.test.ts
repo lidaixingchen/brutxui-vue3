@@ -1,7 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { MemoryFileSystemAdapter } from 'brutx-shared-vue/fs';
 import { computeRegistryIntegrity, computeRegistryManifestIntegrity } from 'brutx-shared-vue';
-import { RegistryClient } from '../src/lib/registry-client.js';
+import {
+    RegistryClient,
+    isComponentNotFoundError,
+    isRegistrySecurityError,
+} from '../src/lib/registry-client.js';
 import { CacheStorage } from '../src/lib/storage/cache-storage.js';
 import { CliError } from '../src/lib/error.js';
 import { generateEd25519KeyPair, signManifestIntegrity } from '../src/lib/signature.js';
@@ -340,6 +344,25 @@ describe('RegistryClient Dependencies & Listing (Ticket 3 / #107)', () => {
 
         const components = await client.listComponents();
         expect(components).toEqual(['badge', 'select', 'table']);
+    });
+
+    it('provides type guards for component not found and security errors (Ticket 5 / #109)', () => {
+        const notFoundError = new CliError('Component missing', { code: 'COMPONENT_NOT_FOUND' });
+        const signatureError = new CliError('Invalid signature', { code: 'REGISTRY_SIGNATURE_INVALID' });
+        const integrityError = new CliError('Integrity mismatch', { code: 'REGISTRY_INTEGRITY_FAILED' });
+        const pathError = new CliError('Path traversal', { code: 'PATH_UNSAFE' });
+        const otherError = new CliError('Generic failure', { code: 'REGISTRY_FETCH_FAILED' });
+        const regularError = new Error('Random error');
+
+        expect(isComponentNotFoundError(notFoundError)).toBe(true);
+        expect(isComponentNotFoundError(otherError)).toBe(false);
+        expect(isComponentNotFoundError(regularError)).toBe(false);
+
+        expect(isRegistrySecurityError(signatureError)).toBe(true);
+        expect(isRegistrySecurityError(integrityError)).toBe(true);
+        expect(isRegistrySecurityError(pathError)).toBe(true);
+        expect(isRegistrySecurityError(notFoundError)).toBe(false);
+        expect(isRegistrySecurityError(regularError)).toBe(false);
     });
 });
 

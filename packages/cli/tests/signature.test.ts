@@ -11,13 +11,21 @@ import {
     signManifestIntegrity,
     type TrustedPublicKey,
 } from '../src/lib/signature.js';
-import {
-    setRequireSignature,
-    resetRequireSignature,
-} from '../src/lib/signature-mode.js';
 import { OFFICIAL_PUBLIC_KEYS } from '../src/lib/constants.js';
 import { CliError } from '../src/lib/error.js';
 import { logger } from '../src/lib/logger.js';
+
+function setRequireSignature(enabled: boolean): void {
+    if (enabled) {
+        process.env.BRUTX_REQUIRE_SIGNATURE = '1';
+    } else {
+        delete process.env.BRUTX_REQUIRE_SIGNATURE;
+    }
+}
+
+function resetRequireSignature(): void {
+    delete process.env.BRUTX_REQUIRE_SIGNATURE;
+}
 
 const PUBLIC_KEYS_ENV = 'BRUTX_REGISTRY_PUBLIC_KEYS';
 

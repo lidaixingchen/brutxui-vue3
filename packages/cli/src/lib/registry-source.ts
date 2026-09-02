@@ -1,5 +1,5 @@
 import { DEFAULT_REGISTRY_SOURCES } from './constants.js';
-import { isOfflineMode } from './cache.js';
+import { isOfflineMode } from './storage/cache-storage.js';
 import { CliError } from './error.js';
 import { logger } from './logger.js';
 import { hedgedRace } from './resilience/hedged-race.js';
