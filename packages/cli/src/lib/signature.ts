@@ -150,27 +150,30 @@ export function loadTrustedPublicKeys(): TrustedPublicKey[] {
 export function verifyManifestSignature(
     manifest: { integrity?: string; signature?: string; keyId?: string },
     trustedKeys: TrustedPublicKey[] = loadTrustedPublicKeys(),
+    requireSignatureOverride?: boolean,
 ): boolean {
     // 缺失签名/信任公钥：严格模式下不得静默放行（否则删除 signature/keyId 即可绕过强制验签），
     // 默认模式保持原有的跳过（debug 日志）语义。
     if (!manifest.signature || !manifest.keyId) {
-        return handleSignatureFailure('Manifest is unsigned (signature/keyId missing). Strict signature mode requires a signed manifest.', 'debug');
+        return handleSignatureFailure('Manifest is unsigned (signature/keyId missing). Strict signature mode requires a signed manifest.', 'debug', requireSignatureOverride);
     }
 
     // #109：integrity 为必填契约，缺 integrity 无法验签不再是预期内的跳过（debug），
     // 而是需要用户知晓的降级（默认 warn；严格模式抛 REGISTRY_SIGNATURE_INVALID）。
     if (!manifest.integrity) {
-        return handleSignatureFailure('Manifest has signature but no integrity field, cannot verify.');
+        return handleSignatureFailure('Manifest has signature but no integrity field, cannot verify.', 'warn', requireSignatureOverride);
     }
 
     if (trustedKeys.length === 0) {
-        return handleSignatureFailure(`No trusted public keys configured (set ${PUBLIC_KEYS_ENV} env var). Strict signature mode requires a trusted key.`, 'debug');
+        return handleSignatureFailure(`No trusted public keys configured (set ${PUBLIC_KEYS_ENV} env var). Strict signature mode requires a trusted key.`, 'debug', requireSignatureOverride);
     }
 
     const key = trustedKeys.find(k => k.keyId === manifest.keyId);
     if (!key) {
         return handleSignatureFailure(
             `Manifest signed with unknown keyId "${manifest.keyId}". No matching trusted public key found.`,
+            'warn',
+            requireSignatureOverride,
         );
     }
 
@@ -181,6 +184,8 @@ export function verifyManifestSignature(
         // parsePublicKey 抛通用 Error——统一走降级路径（warn / 严格模式抛 REGISTRY_SIGNATURE_INVALID）
         return handleSignatureFailure(
             `Failed to parse trusted public key: ${error instanceof Error ? error.message : String(error)}`,
+            'warn',
+            requireSignatureOverride,
         );
     }
 
@@ -197,6 +202,8 @@ export function verifyManifestSignature(
         if (!valid) {
             return handleSignatureFailure(
                 'Manifest signature verification failed. The manifest may have been tampered with.',
+                'warn',
+                requireSignatureOverride,
             );
         }
         return true;
@@ -206,6 +213,8 @@ export function verifyManifestSignature(
         if (error instanceof CliError) throw error;
         return handleSignatureFailure(
             `Manifest signature verification failed: ${error instanceof Error ? error.message : String(error)}`,
+            'warn',
+            requireSignatureOverride,
         );
     }
 }
@@ -274,14 +283,15 @@ function recomputeManifestIntegrity(manifest: SignedManifestVerifyInput): string
 export function verifyManifestIntegrityAndSignature(
     manifest: SignedManifestVerifyInput,
     trustedKeys: TrustedPublicKey[] = loadTrustedPublicKeys(),
+    requireSignatureOverride?: boolean,
 ): boolean {
     // 未签名 / 缺 integrity / 无信任公钥 → 交给 verifyManifestSignature 处理
     // （缺 integrity 由 handleSignatureFailure 走 warn 降级，见 #109）
     if (!manifest.signature || !manifest.keyId || !manifest.integrity) {
-        return verifyManifestSignature(manifest, trustedKeys);
+        return verifyManifestSignature(manifest, trustedKeys, requireSignatureOverride);
     }
     if (trustedKeys.length === 0) {
-        return verifyManifestSignature(manifest, trustedKeys);
+        return verifyManifestSignature(manifest, trustedKeys, requireSignatureOverride);
     }
 
     // 内容 ↔ integrity 自洽：复算并比对（与 build 侧共用 computeRegistryManifestIntegrity）
@@ -290,10 +300,12 @@ export function verifyManifestIntegrityAndSignature(
         return handleSignatureFailure(
             'Manifest integrity mismatch: manifest content does not match its integrity field. ' +
             'The manifest may have been tampered with.',
+            'warn',
+            requireSignatureOverride,
         );
     }
 
-    return verifyManifestSignature(manifest, trustedKeys);
+    return verifyManifestSignature(manifest, trustedKeys, requireSignatureOverride);
 }
 
 /**
@@ -301,8 +313,9 @@ export function verifyManifestIntegrityAndSignature(
  * 返回 false 表示已降级为 warn/debug，调用方应继续流程（integrity 会兜底校验）。
  * @param logLevel 默认模式下记录日志的级别；'debug' 用于"未签名/无法校验"这类预期内的跳过场景。
  */
-function handleSignatureFailure(message: string, logLevel: 'debug' | 'warn' = 'warn'): false {
-    if (isRequireSignature()) {
+function handleSignatureFailure(message: string, logLevel: 'debug' | 'warn' = 'warn', requireSignatureOverride?: boolean): false {
+    const isStrict = requireSignatureOverride ?? isRequireSignature();
+    if (isStrict) {
         throw new CliError(message, { code: 'REGISTRY_SIGNATURE_INVALID' });
     }
     if (logLevel === 'debug') {

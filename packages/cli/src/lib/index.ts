@@ -52,6 +52,8 @@ export {
     type RegistryErrorCode,
 } from './registry-types.js';
 
+export { RegistryClient } from './registry-client.js';
+
 export { getItem, getItemFromSources, resolveDeps, listLocalRegistryComponents } from './registry.js';
 
 export {
