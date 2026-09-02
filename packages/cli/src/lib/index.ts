@@ -35,7 +35,24 @@ export {
     VERBOSE_LEVEL_TRACE,
 } from './logger.js';
 
-export { getItem, getItemFromSources, resolveDeps, readConfig, readConfigSafe, migrateConfig, listLocalRegistryComponents } from './registry.js';
+export {
+    validateBrutalistConfig,
+    migrateConfig,
+    readConfigSafe,
+    readConfig,
+} from './config.js';
+
+export {
+    REGISTRY_ERROR_CODES,
+    type HttpFetcher,
+    type RegistryClientOptions,
+    type ResolvedDependenciesResult,
+    type FetchItemOptions,
+    type ListComponentsOptions,
+    type RegistryErrorCode,
+} from './registry-types.js';
+
+export { getItem, getItemFromSources, resolveDeps, listLocalRegistryComponents } from './registry.js';
 
 export {
     clearCache,
