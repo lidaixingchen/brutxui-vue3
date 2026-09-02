@@ -1,10 +1,11 @@
-import fs from 'fs-extra';
-import path from 'path';
+import { mkdir, writeFile } from 'node:fs/promises';
+import path from 'node:path';
 import type { DiagnosticReport } from '../types.js';
 import type { DiagnosticReporter, ReporterOptions } from './types.js';
 
 function escapeXml(unsafe: string): string {
     return unsafe
+        // eslint-disable-next-line no-control-regex
         .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '')
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
@@ -53,8 +54,8 @@ export class JunitReporter implements DiagnosticReporter {
 
         if (options.outputFile) {
             const targetPath = path.resolve(options.cwd, options.outputFile);
-            await fs.ensureDir(path.dirname(targetPath));
-            await fs.writeFile(targetPath, xmlContent, 'utf-8');
+            await mkdir(path.dirname(targetPath), { recursive: true });
+            await writeFile(targetPath, xmlContent, 'utf-8');
         }
 
         const write = options.write ?? ((msg: string) => process.stdout.write(msg + '\n'));

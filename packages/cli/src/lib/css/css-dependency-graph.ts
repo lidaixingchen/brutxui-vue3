@@ -83,7 +83,7 @@ export async function scanCssGraph(
             return;
         }
 
-        let content = '';
+        let content: string;
         try {
             content = await fs.readFile(normalizedPath, 'utf-8');
         } catch {

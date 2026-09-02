@@ -6,7 +6,6 @@ import {
 } from 'brutx-shared-vue';
 import type { RegistryItem, RegistryManifestSummary, TrustedPublicKey } from './types.js';
 import {
-    DEFAULT_REGISTRY_URL,
     DEFAULT_REGISTRY_SOURCES,
 } from './constants.js';
 import { CliError } from './error.js';
@@ -100,7 +99,7 @@ export class RegistryClient {
             const { item } = await this.fetchWithSourcesPipeline(
                 name,
                 effectiveSources,
-                options?.signal,
+                options,
             );
             return item;
         });
@@ -186,8 +185,9 @@ export class RegistryClient {
     private async fetchWithSourcesPipeline(
         name: string,
         sources: readonly string[],
-        signal?: AbortSignal,
+        options?: FetchItemOptions,
     ): Promise<{ item: RegistryItem; source: string }> {
+        const signal = options?.signal;
         if (sources.length === 0) {
             throw new CliError('No registry source available.', { code: 'REGISTRY_FETCH_FAILED' });
         }
@@ -196,7 +196,7 @@ export class RegistryClient {
             let firstError: CliError | null = null;
             for (const source of sources) {
                 try {
-                    const item = await this.fetchSingleSource(name, source, signal);
+                    const item = await this.fetchSingleSource(name, source, options);
                     return { item, source };
                 } catch (error) {
                     if (firstError === null && error instanceof CliError) {
@@ -212,7 +212,7 @@ export class RegistryClient {
 
         if (sources.length === 1) {
             const source = sources[0];
-            const item = await this.fetchSingleSource(name, source, signal);
+            const item = await this.fetchSingleSource(name, source, options);
             return { item, source };
         }
 
@@ -220,7 +220,7 @@ export class RegistryClient {
         const raceResult = await hedgedRace<RegistryItem>(
             rankedSources,
             async (source, sourceSignal) => {
-                return await this.fetchSingleSource(name, source, sourceSignal ?? signal);
+                return await this.fetchSingleSource(name, source, { ...options, signal: sourceSignal ?? signal });
             },
             { parentSignal: signal },
         );
@@ -239,10 +239,10 @@ export class RegistryClient {
     private async fetchSingleSource(
         name: string,
         source: string,
-        signal?: AbortSignal,
+        options?: FetchItemOptions,
     ): Promise<RegistryItem> {
         if (isHttpUrl(source)) {
-            return await this.fetchRemoteHttp(name, source, signal);
+            return await this.fetchRemoteHttp(name, source, options);
         }
         return await this.fetchLocalDisk(name, source);
     }
@@ -304,8 +304,10 @@ export class RegistryClient {
     private async fetchRemoteHttp(
         name: string,
         source: string,
-        signal?: AbortSignal,
+        options?: FetchItemOptions,
     ): Promise<RegistryItem> {
+        const signal = options?.signal;
+        const effectiveUseCache = options?.useCache ?? this.useCache;
         let cachedEntry: CacheReadResult<RegistryItem> | null = null;
         let manifestSummary: ManifestSummaryInternal | null = null;
         let currentRegistryVersion: string | undefined;
@@ -315,7 +317,7 @@ export class RegistryClient {
             currentRegistryVersion = manifestSummary?.registryVersion;
         }
 
-        if (this.useCache) {
+        if (effectiveUseCache) {
             cachedEntry = await this.cache.get<RegistryItem>(name, source);
             if (cachedEntry) {
                 const versionMatch = !currentRegistryVersion ||
@@ -346,7 +348,7 @@ export class RegistryClient {
             ...buildAuthHeaders(source),
         };
 
-        if (this.useCache && cachedEntry) {
+        if (effectiveUseCache && cachedEntry) {
             if (cachedEntry.etag) headers['If-None-Match'] = cachedEntry.etag;
             if (cachedEntry.lastModified) headers['If-Modified-Since'] = cachedEntry.lastModified;
         }
@@ -376,7 +378,7 @@ export class RegistryClient {
         this.validateItemIntegrity(data, name);
         this.verifyManifestItemCrossCheck(data, name, manifestSummary);
 
-        if (this.useCache) {
+        if (effectiveUseCache) {
             const etag = res.headers.get('etag') ?? undefined;
             const lastModified = res.headers.get('last-modified') ?? undefined;
             await this.cache.set(name, source, data, {
@@ -565,8 +567,8 @@ export class RegistryClient {
             active.add(dedupeKey);
 
             try {
-                const { item, source: hitSource } = await this.dedupeInflight(cleanName, sourceKey, async () => {
-                    return await this.fetchWithSourcesPipeline(cleanName, effectiveSources, options?.signal);
+                const { item, source: hitSource } = await this.dedupeInflight<{ item: RegistryItem; source: string }>(cleanName, sourceKey, async () => {
+                    return await this.fetchWithSourcesPipeline(cleanName, effectiveSources, options);
                 });
 
                 hitSources.set(cleanName, hitSource);

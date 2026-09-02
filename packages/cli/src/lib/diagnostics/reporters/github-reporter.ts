@@ -1,4 +1,4 @@
-import fs from 'fs-extra';
+import { appendFile } from 'node:fs/promises';
 import type { DiagnosticReport } from '../types.js';
 import type { DiagnosticReporter, ReporterOptions } from './types.js';
 import { escapeGithubData, escapeGithubProperty } from './escape.js';
@@ -85,7 +85,7 @@ export class GithubReporter implements DiagnosticReporter {
         }
 
         try {
-            await fs.appendFile(summaryPath, lines.join('\n'), 'utf-8');
+            await appendFile(summaryPath, lines.join('\n'), 'utf-8');
         } catch (err) {
             const reason = err instanceof Error ? err.message : String(err);
             process.stderr.write(`[github-reporter] failed to append step summary: ${reason}\n`);

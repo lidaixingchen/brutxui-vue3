@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import type { DoctorOptions, FailOnLevel, ReporterType } from '../lib/types.js';
 import {
     CliError,

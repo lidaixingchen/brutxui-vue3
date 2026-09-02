@@ -1,5 +1,5 @@
-import fs from 'fs-extra';
-import path from 'path';
+import { mkdir, writeFile } from 'node:fs/promises';
+import path from 'node:path';
 import type { CheckResult, DiagnosticReport } from '../types.js';
 import type { DiagnosticReporter, ReporterOptions } from './types.js';
 
@@ -122,8 +122,8 @@ export class SarifReporter implements DiagnosticReporter {
 
         if (options.outputFile) {
             const targetPath = path.resolve(options.cwd, options.outputFile);
-            await fs.ensureDir(path.dirname(targetPath));
-            await fs.writeFile(targetPath, jsonString + '\n', 'utf-8');
+            await mkdir(path.dirname(targetPath), { recursive: true });
+            await writeFile(targetPath, jsonString + '\n', 'utf-8');
         }
 
         const write = options.write ?? ((msg: string) => process.stdout.write(msg + '\n'));
