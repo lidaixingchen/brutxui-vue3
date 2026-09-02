@@ -66,7 +66,7 @@ export class RegistryClient {
     public readonly tracker: RegistrySourceTracker;
 
     private readonly manifestCache = new Map<string, ManifestSummaryInternal | null>();
-    private readonly inflightItems = new Map<string, Promise<RegistryItem>>();
+    private readonly inflightItems = new Map<string, Promise<unknown>>();
 
     public constructor(options?: RegistryClientOptions) {
         this.sources = options?.sources && options.sources.length > 0
@@ -504,7 +504,7 @@ export class RegistryClient {
     /**
      * 请求去重。
      */
-    private dedupeInflight<T extends RegistryItem>(name: string, sourceKey: string, fn: () => Promise<T>): Promise<T> {
+    private dedupeInflight<T>(name: string, sourceKey: string, fn: () => Promise<T>): Promise<T> {
         const key = `${name}::${sourceKey}`;
         const existing = this.inflightItems.get(key);
         if (existing) {
@@ -518,53 +518,137 @@ export class RegistryClient {
         this.inflightItems.set(key, promise);
         return promise;
     }
-
     /**
-     * 拓扑解析与依赖展开（Ticket 3 实现完整版，此处先提供接口占位）。
+     * 拓扑解析与依赖展开。
+     * 对组件及其 registryDependencies 执行深度优先搜索（DFS），
+     * 通过 active 栈防御循环依赖，通过 visited 集合同源同名去重，
+     * 保证返回的 items 数组满足拓扑排序（被依赖组件在前）。
      */
     public async resolveDependencies(
         specifiers: readonly string[],
         options?: FetchItemOptions,
     ): Promise<ResolvedDependenciesResult> {
-        // 先拉取直接指定的组件
-        const items: RegistryItem[] = [];
+        const resolved: RegistryItem[] = [];
         const hitSources = new Map<string, string>();
+        const visited = new Set<string>();
+        const active = new Set<string>();
         const dependencies = new Set<string>();
         const devDependencies = new Set<string>();
 
-        for (const specifier of specifiers) {
-            const item = await this.fetchItem(specifier, options);
-            items.push(item);
-            hitSources.set(item.name, this.sources[0]);
-            item.dependencies?.forEach((dep: string) => dependencies.add(dep));
-            const itemDevDeps = (item as unknown as Record<string, unknown>).devDependencies;
-            if (Array.isArray(itemDevDeps)) {
-                itemDevDeps.forEach((dep: unknown) => {
-                    if (typeof dep === 'string') devDependencies.add(dep);
-                });
+        const targetSources = options?.sourceOverride
+            ? [options.sourceOverride]
+            : this.sources;
+
+        const dfs = async (specifier: string, parentSource?: string): Promise<void> => {
+            const { name: cleanName, version } = this.parseSpecifier(specifier);
+            this.assertSafeComponentName(cleanName);
+
+            // 如果有父级源且无显式覆盖，优先沿用父级命中源；否则使用 targetSources
+            const effectiveSources = (parentSource ? [parentSource] : targetSources)
+                .map(source => this.resolveVersionedSource(source, version));
+
+            const sourceKey = effectiveSources.join(',');
+            const dedupeKey = `${cleanName}::${sourceKey}`;
+
+            if (active.has(dedupeKey)) {
+                const cycle = Array.from(active).map(k => k.split('::')[0]).concat(cleanName).join(' -> ');
+                throw new CliError(
+                    `Circular dependency detected: ${cycle}`,
+                    { code: 'INVALID_REGISTRY' }
+                );
             }
+
+            if (visited.has(dedupeKey)) {
+                return;
+            }
+
+            active.add(dedupeKey);
+
+            try {
+                const { item, source: hitSource } = await this.dedupeInflight(cleanName, sourceKey, async () => {
+                    return await this.fetchWithSourcesPipeline(cleanName, effectiveSources, options?.signal);
+                });
+
+                hitSources.set(cleanName, hitSource);
+
+                if (item.registryDependencies && item.registryDependencies.length > 0) {
+                    for (const dep of item.registryDependencies) {
+                        await dfs(dep, hitSource);
+                    }
+                }
+
+                active.delete(dedupeKey);
+                visited.add(dedupeKey);
+                resolved.push(item);
+
+                // 收集依赖
+                item.dependencies?.forEach((dep: string) => dependencies.add(dep));
+                const itemDevDeps = (item as unknown as Record<string, unknown>).devDependencies;
+                if (Array.isArray(itemDevDeps)) {
+                    itemDevDeps.forEach((dep: unknown) => {
+                        if (typeof dep === 'string') devDependencies.add(dep);
+                    });
+                }
+            } catch (error) {
+                active.delete(dedupeKey);
+                throw error;
+            }
+        };
+
+        for (const specifier of specifiers) {
+            await dfs(specifier);
         }
 
         return {
-            items,
+            items: resolved,
             hitSources,
-            dependencies: Array.from(dependencies),
-            devDependencies: Array.from(devDependencies),
+            dependencies: Array.from(dependencies).sort(),
+            devDependencies: Array.from(devDependencies).sort(),
         };
     }
 
     /**
-     * 枚举组件名称（Ticket 3 实现完整版，此处先提供接口占位）。
+     * 枚举组件名称。
+     * 本地源遍历目标目录中的 *.json 文件；
+     * 远程 HTTP 源拉取 registry-manifest.json 提取 items 字段。
      */
     public async listComponents(options?: ListComponentsOptions): Promise<readonly string[]> {
         const targetSource = options?.source ?? this.sources[0];
         if (isHttpUrl(targetSource)) {
+            const summary = await this.fetchManifestSummary(targetSource, options?.signal);
+            if (summary && summary.itemIntegrities) {
+                return Object.keys(summary.itemIntegrities).sort();
+            }
+
+            const manifestUrl = `${targetSource}/registry-manifest.json`;
+            try {
+                const res = await this.fetcher(manifestUrl, {
+                    headers: buildAuthHeaders(targetSource),
+                    signal: options?.signal,
+                });
+                if (res.ok) {
+                    const manifest = await res.json() as { items?: Record<string, unknown> };
+                    if (manifest.items && typeof manifest.items === 'object') {
+                        return Object.keys(manifest.items).sort();
+                    }
+                }
+            } catch {
+                // fallthrough to throw CliError
+            }
+
             throw new CliError('Remote registry does not support listing components.', {
                 code: 'REGISTRY_LIST_UNSUPPORTED',
             });
         }
 
-        const entries = await this.fs.readdir(targetSource);
+        const sourceResolved = path.resolve(targetSource);
+        if (!(await this.fs.pathExists(sourceResolved))) {
+            throw new CliError(`Registry directory not found: ${sourceResolved}`, {
+                code: 'INVALID_REGISTRY',
+            });
+        }
+
+        const entries = await this.fs.readdir(sourceResolved);
         return entries
             .filter(f => f.endsWith('.json') && !f.startsWith('registry-') && f !== 'index.json')
             .map(f => f.replace(/\.json$/, ''))

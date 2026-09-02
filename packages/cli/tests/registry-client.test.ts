@@ -218,3 +218,128 @@ describe('RegistryClient Base Pipeline (Ticket 2 / #106)', () => {
         expect(mockFetcher).not.toHaveBeenCalled();
     });
 });
+
+describe('RegistryClient Dependencies & Listing (Ticket 3 / #107)', () => {
+    let memoryFs: MemoryFileSystemAdapter;
+    let cacheStorage: CacheStorage;
+
+    beforeEach(() => {
+        memoryFs = new MemoryFileSystemAdapter();
+        cacheStorage = new CacheStorage({
+            fs: memoryFs,
+            cacheDir: '/cache',
+            maxEntries: 100,
+            maxBytes: 10 * 1024 * 1024,
+            defaultTtl: 3600000,
+            disabled: false,
+            offline: false,
+        });
+    });
+
+    it('topologically sorts dependencies and deduplicates shared components', async () => {
+        const button = createMockItem('button', {
+            dependencies: ['clsx'],
+        });
+        const popover = createMockItem('popover', {
+            registryDependencies: ['button'],
+            dependencies: ['@floating-ui/dom'],
+        });
+        const combobox = createMockItem('combobox', {
+            registryDependencies: ['button', 'popover'],
+            dependencies: ['@floating-ui/dom', 'fast-deep-equal'],
+            devDependencies: ['@types/fast-deep-equal'],
+        });
+
+        const mockFetcher = vi.fn(async (url: string) => {
+            if (url.endsWith('/combobox.json')) return new Response(JSON.stringify(combobox), { status: 200 });
+            if (url.endsWith('/popover.json')) return new Response(JSON.stringify(popover), { status: 200 });
+            if (url.endsWith('/button.json')) return new Response(JSON.stringify(button), { status: 200 });
+            return new Response('Not Found', { status: 404 });
+        });
+
+        const client = new RegistryClient({
+            sources: ['https://registry.example.com'],
+            fsAdapter: memoryFs,
+            cacheStorage,
+            httpFetcher: mockFetcher,
+        });
+
+        const result = await client.resolveDependencies(['combobox']);
+        expect(result.items.map(i => i.name)).toEqual(['button', 'popover', 'combobox']);
+        expect(result.hitSources.get('button')).toBe('https://registry.example.com');
+        expect(result.hitSources.get('combobox')).toBe('https://registry.example.com');
+        expect(result.dependencies).toEqual(['@floating-ui/dom', 'clsx', 'fast-deep-equal']);
+        expect(result.devDependencies).toEqual(['@types/fast-deep-equal']);
+    });
+
+    it('detects and prevents circular dependencies with diagnostic path', async () => {
+        const itemA = createMockItem('comp-a', { registryDependencies: ['comp-b'] });
+        const itemB = createMockItem('comp-b', { registryDependencies: ['comp-a'] });
+
+        const mockFetcher = vi.fn(async (url: string) => {
+            if (url.endsWith('/comp-a.json')) return new Response(JSON.stringify(itemA), { status: 200 });
+            if (url.endsWith('/comp-b.json')) return new Response(JSON.stringify(itemB), { status: 200 });
+            return new Response('Not Found', { status: 404 });
+        });
+
+        const client = new RegistryClient({
+            sources: ['https://registry.example.com'],
+            fsAdapter: memoryFs,
+            cacheStorage,
+            httpFetcher: mockFetcher,
+        });
+
+        await expect(client.resolveDependencies(['comp-a'])).rejects.toMatchObject({
+            code: 'INVALID_REGISTRY',
+            message: expect.stringContaining('Circular dependency detected'),
+        });
+    });
+
+    it('lists components from local file system directory', async () => {
+        await memoryFs.ensureDir('/custom-local-registry');
+        await memoryFs.writeFile('/custom-local-registry/button.json', '{}');
+        await memoryFs.writeFile('/custom-local-registry/dialog.json', '{}');
+        await memoryFs.writeFile('/custom-local-registry/registry-manifest.json', '{}');
+        await memoryFs.writeFile('/custom-local-registry/index.json', '{}');
+
+        const client = new RegistryClient({
+            sources: ['/custom-local-registry'],
+            fsAdapter: memoryFs,
+            cacheStorage,
+        });
+
+        const components = await client.listComponents();
+        expect(components).toEqual(['button', 'dialog']);
+    });
+
+    it('lists components from remote registry manifest when available', async () => {
+        const manifest = {
+            name: 'brutx-registry',
+            schemaVersion: 1,
+            registryVersion: '1.0.0',
+            items: {
+                table: {},
+                select: {},
+                badge: {},
+            },
+        };
+
+        const mockFetcher = vi.fn(async (url: string) => {
+            if (url.endsWith('registry-manifest.json')) {
+                return new Response(JSON.stringify(manifest), { status: 200 });
+            }
+            return new Response('Not Found', { status: 404 });
+        });
+
+        const client = new RegistryClient({
+            sources: ['https://registry.example.com'],
+            fsAdapter: memoryFs,
+            cacheStorage,
+            httpFetcher: mockFetcher,
+        });
+
+        const components = await client.listComponents();
+        expect(components).toEqual(['badge', 'select', 'table']);
+    });
+});
+
