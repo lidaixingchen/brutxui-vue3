@@ -43,6 +43,8 @@ export interface FetchItemOptions {
     readonly sourceOverride?: string;
     /** 请求级 AbortSignal */
     readonly signal?: AbortSignal;
+    /** 请求级覆盖是否使用缓存（缺省沿用客户端全局配置） */
+    readonly useCache?: boolean;
 }
 
 export interface ListComponentsOptions {

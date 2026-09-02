@@ -6,7 +6,7 @@ import type { FileSystemAdapter } from '../../fs/file-system-adapter.js';
 import { auditLogExists, countAuditEntries, getRecentFailures } from '../../audit.js';
 import { computeInstalledContentHash } from '../../manifest.js';
 import { getCacheStats } from '../../cache.js';
-import { getItem } from '../../registry.js';
+import { RegistryClient } from '../../registry-client.js';
 import { resolveImportAlias } from '../../project.js';
 import { resolveRegistrySources } from '../../registry-source.js';
 
@@ -65,7 +65,14 @@ export async function restoreComponentFromRegistry(
     }
 
     try {
-        const item = await getItem(componentName, entry.registrySource, true);
+        const client = new RegistryClient({
+            sources: ctx.config?.registries,
+            useCache: true,
+        });
+        const item = await client.fetchItem(componentName, {
+            sourceOverride: entry.registrySource,
+            useCache: true,
+        });
         if (entry.files.length !== item.files.length) {
             return {
                 status: 'failed',

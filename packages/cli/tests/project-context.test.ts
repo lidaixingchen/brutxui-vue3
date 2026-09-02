@@ -57,6 +57,8 @@ describe('ProjectContext', () => {
         expect(ctx.env.projectType).toBe('vite-vue-src');
         expect(ctx.env.hasSrc).toBe(true);
         expect(ctx.env.isNuxt).toBe(false);
+        expect(ctx.registry).toBeDefined();
+        expect(ctx.registry).toBe(ctx.registry);
     });
 
     it('should throw when loading uninitialized project via ProjectContext.load', async () => {

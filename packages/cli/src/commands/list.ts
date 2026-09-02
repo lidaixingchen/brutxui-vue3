@@ -8,7 +8,7 @@ async function attachUpdateInfo(
     infos: InstalledComponentInfo[],
     config: BrutalistConfig,
     registryOverride: string | undefined,
-    useCache: boolean
+    useCache: boolean,
 ): Promise<InstalledComponentInfo[]> {
     const sources = resolveRegistrySources(config, registryOverride);
 

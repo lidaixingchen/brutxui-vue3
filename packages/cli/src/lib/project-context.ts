@@ -20,6 +20,8 @@ import { CliError } from './error.js';
 import { isSafePath } from './security.js';
 import { FileTransaction } from './file-transaction.js';
 
+import { RegistryClient } from './registry-client.js';
+
 export interface ProjectEnvironmentInfo {
     projectType: ProjectType;
     packageManager: PackageManager;
@@ -32,6 +34,7 @@ export interface ProjectContextOptions {
     fs?: FileSystemAdapter;
     configOverride?: BrutalistConfig;
     optionalConfig?: boolean;
+    registryClient?: RegistryClient;
 }
 
 interface RawTsConfig extends TsConfig {
@@ -46,6 +49,7 @@ export class ProjectContext {
     readonly auditLog: AuditLogStorage;
 
     private _config?: BrutalistConfig;
+    private _registryClient?: RegistryClient;
     private _aliasesCache?: AliasConfig;
     private _componentsDirCache?: string;
     private _utilsFilePathCache?: string;
@@ -55,14 +59,28 @@ export class ProjectContext {
         fsAdapter: FileSystemAdapter,
         env: ProjectEnvironmentInfo,
         tsConfig: TsConfig | null,
-        config?: BrutalistConfig
+        config?: BrutalistConfig,
+        registryClient?: RegistryClient,
     ) {
         this.cwd = path.resolve(cwd);
         this.fs = fsAdapter;
         this.env = env;
         this.tsConfig = tsConfig;
         this._config = config;
+        this._registryClient = registryClient;
         this.auditLog = new AuditLogStorage({ fs: fsAdapter, cwd: this.cwd });
+    }
+
+    get registry(): RegistryClient {
+        if (!this._registryClient) {
+            this._registryClient = new RegistryClient({
+                sources: this._config?.registries,
+                requireSignature: this._config?.requireSignature,
+                trustedPublicKeys: this._config?.trustedPublicKeys,
+                fsAdapter: this.fs,
+            });
+        }
+        return this._registryClient;
     }
 
     get config(): BrutalistConfig | undefined {
@@ -134,7 +152,7 @@ export class ProjectContext {
             }
         }
 
-        return new ProjectContext(resolvedCwd, fsAdapter, env, tsConfig, config);
+        return new ProjectContext(resolvedCwd, fsAdapter, env, tsConfig, config, options.registryClient);
     }
 
     bindConfig(config: BrutalistConfig): void {
@@ -143,6 +161,7 @@ export class ProjectContext {
     }
 
     private clearDerivedCaches(): void {
+        this._registryClient = undefined;
         this._aliasesCache = undefined;
         this._componentsDirCache = undefined;
         this._utilsFilePathCache = undefined;

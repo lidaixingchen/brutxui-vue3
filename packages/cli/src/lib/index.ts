@@ -40,7 +40,7 @@ export {
     migrateConfig,
     readConfigSafe,
     readConfig,
-} from './config.js';
+} from './registry.js';
 
 export {
     REGISTRY_ERROR_CODES,

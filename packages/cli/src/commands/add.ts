@@ -19,7 +19,6 @@ import {
     ensureUtilsFile,
     resolveComponents,
     writeComponentFiles,
-    listLocalRegistryComponents,
     withOfflineScope,
     type ComponentFileWriteFailure,
     mergeDryRun,
@@ -28,6 +27,7 @@ import {
     WorkspaceTopologyEngine,
     TargetResolver,
     PackageManagerAdapter,
+    RegistryClient,
 } from '../lib/index.js';
 
 async function validateComponents(components: string[], registryOverride?: string): Promise<void> {
@@ -51,15 +51,18 @@ async function validateComponents(components: string[], registryOverride?: strin
     }
 }
 
-async function selectComponents(inputComponents: string[], options: AddOptions): Promise<string[]> {
+async function selectComponents(inputComponents: string[], options: AddOptions, client?: RegistryClient): Promise<string[]> {
     if (options.all) {
         // AVAILABLE_COMPONENTS 仅对默认注册表有效；自定义 registry 可能不含这些组件
         if (options.registry) {
-            // 本地目录 registry 支持枚举组件（--all 合法）；远程 HTTP registry 协议
-            // 不支持列表，强制显式指定组件名
-            const componentsFromRegistry = await listLocalRegistryComponents(options.registry);
-            if (componentsFromRegistry !== null) {
-                return componentsFromRegistry;
+            try {
+                const effectiveClient = client ?? new RegistryClient({ sources: [options.registry] });
+                const list = await effectiveClient.listComponents({ source: options.registry });
+                if (list && list.length > 0) {
+                    return [...list];
+                }
+            } catch {
+                throw new CliError('--all is not supported with a remote --registry (component listing unavailable). Specify component names explicitly.');
             }
             throw new CliError('--all is not supported with a remote --registry (component listing unavailable). Specify component names explicitly.');
         }
@@ -183,7 +186,7 @@ async function addInner(
 
     await validateComponents(components, options.registry);
 
-    const selectedComponents = await selectComponents(components, options);
+    const selectedComponents = await selectComponents(components, options, context.registry);
 
     if (selectedComponents.length === 0) {
         logger.warn('No components selected.');
@@ -196,7 +199,7 @@ async function addInner(
 
     try {
         const { items: registryItems, dependencies: allDeps, registrySources: hitRegistrySources } =
-            await resolveComponents(selectedComponents, options.registry, useCache, sources);
+            await resolveComponents(selectedComponents, options.registry, useCache, sources, context.registry);
 
         if (spinner) {
             spinner.stop();

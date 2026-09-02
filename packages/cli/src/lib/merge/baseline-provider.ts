@@ -2,7 +2,6 @@ import type { FileSystemAdapter } from 'brutx-shared-vue/fs';
 import type { ProjectContext } from '../project-context.js';
 import type { RegistryItem, InstalledComponentManifest } from '../types.js';
 import { readManifest } from '../manifest.js';
-import { getItem } from '../registry.js';
 import { resolveImportAlias } from '../project.js';
 
 export interface ComponentBaselineResult {
@@ -28,11 +27,11 @@ export interface BaselineProviderOptions {
 
 export class BaselineProvider {
     private readonly fsAdapter?: FileSystemAdapter;
-    private readonly itemFetcher: RegistryItemFetcher;
+    private readonly itemFetcher?: RegistryItemFetcher;
 
     constructor(options: BaselineProviderOptions = {}) {
         this.fsAdapter = options.fs;
-        this.itemFetcher = options.itemFetcher ?? getItem;
+        this.itemFetcher = options.itemFetcher;
     }
 
     async getComponentBaseline(
@@ -62,12 +61,17 @@ export class BaselineProvider {
         const source = options.registrySource ?? manifestEntry.registrySource;
 
         try {
-            const rawItem = await this.itemFetcher(
-                componentName,
-                source,
-                useCache,
-                fsAdapter
-            );
+            const rawItem = this.itemFetcher
+                ? await this.itemFetcher(
+                    componentName,
+                    source,
+                    useCache,
+                    fsAdapter
+                )
+                : await context.registry.fetchItem(componentName, {
+                    sourceOverride: source,
+                    useCache,
+                });
 
             const config = context.config;
             const filesMap = new Map<string, string>();

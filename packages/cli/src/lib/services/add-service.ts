@@ -47,12 +47,28 @@ export interface ComponentFileWriteFailure {
     rollbackCount: number;
 }
 
+import { RegistryClient } from '../registry-client.js';
+
 export async function resolveComponents(
     components: string[],
     registry?: string,
     useCache: boolean = true,
-    sources?: string[]
+    sources?: string[],
+    client?: RegistryClient,
 ): Promise<ComponentResolutionResult> {
+    if (client) {
+        const result = await client.resolveDependencies(components, {
+            sourceOverride: registry,
+            useCache,
+        });
+
+        return {
+            items: [...result.items],
+            dependencies: [...result.dependencies],
+            registrySources: Object.fromEntries(result.hitSources),
+        };
+    }
+
     const hitSources = new Map<string, string>();
     const items = await resolveDeps(components, registry, useCache, sources, hitSources);
     const dependencies = new Set<string>();
