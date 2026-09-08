@@ -1,5 +1,5 @@
 import type { ComponentMetadataEntry, MergedRegistryEntry, RegistryIndex, RegistryIndexItem, RegistryItem } from 'brutx-shared-vue'
-import { extractClassifiedModuleSpecifiers } from 'brutx-shared-vue/scan'
+import { extractClassifiedModuleSpecifiers } from 'brutx-shared-vue/ast'
 
 export const REGISTRY_MANIFEST_SCHEMA_URL = 'https://lidaixingchen.github.io/brutxui-vue3/registry-manifest.schema.json'
 
@@ -127,7 +127,7 @@ export function formatRegistryDependencyGraph(items: RegistryReferenceItem[]): s
 }
 
 /**
- * P1-7: Dependency graph node metadata.
+ * Dependency graph node metadata.
  */
 export interface DependencyGraphNode {
     name: string
@@ -138,7 +138,7 @@ export interface DependencyGraphNode {
 }
 
 /**
- * P1-7: Dependency graph edge.
+ * Dependency graph edge.
  */
 export interface DependencyGraphEdge {
     from: string
@@ -146,11 +146,11 @@ export interface DependencyGraphEdge {
 }
 
 /**
- * P1-7: Serializable dependency graph for tools / docs consumption.
+ * Serializable dependency graph for tools / docs consumption.
  *
  * Nodes are derived from `items` (every item is a node, even if it has no
  * edges). Edges come from `registryDependencies` (registry-component deps).
- * `locale-zh-cn` and similar non-component entries are filtered out — they
+ * `locale-zh-cn` and similar standalone entries are filtered out — they
  * are not registry components and would clutter the visualization.
  */
 export interface DependencyGraph {
@@ -158,7 +158,7 @@ export interface DependencyGraph {
     edges: DependencyGraphEdge[]
 }
 
-const NON_COMPONENT_DEP_NAMES = new Set<string>([
+const STANDALONE_DEP_NAMES = new Set<string>([
     'locale-zh-cn',
 ])
 
@@ -175,7 +175,7 @@ export function buildDependencyGraph(items: RegistryReferenceItem[]): Dependency
 
     for (const item of items) {
         for (const dep of new Set(item.registryDependencies)) {
-            if (NON_COMPONENT_DEP_NAMES.has(dep)) continue
+            if (STANDALONE_DEP_NAMES.has(dep)) continue
             if (!knownNames.has(dep)) continue
             if (dep === item.name) continue
             edges.push({ from: item.name, to: dep })
@@ -202,7 +202,7 @@ export function buildDependencyGraph(items: RegistryReferenceItem[]): Dependency
 }
 
 /**
- * P1-7: Render the dependency graph as a Graphviz DOT document.
+ * Render the dependency graph as a Graphviz DOT document.
  *
  * Output is deterministic — nodes are emitted in alphabetical order, edges
  * are emitted in (from, to) alphabetical order. Cycles are preserved (DOT
@@ -225,7 +225,7 @@ export function formatDependencyGraphDot(items: RegistryReferenceItem[]): string
 }
 
 /**
- * P1-7: Serialize the dependency graph to a JSON-compatible object.
+ * Serialize the dependency graph to a JSON-compatible object.
  *
  * The returned object is stable (sorted by node name and edge endpoint),
  * making it suitable for committing to the registry alongside the manifest.
@@ -552,7 +552,7 @@ export function validateRegistryItemInternalImports(
 }
 
 /**
- * P1-7: Classify a module specifier into one of four registry-relevant categories.
+ * Classify a module specifier into one of four registry-relevant categories.
  *
  * - `registry-component`: cross-component import (`@/components/ui/{other}/...`)
  * - `registry-shared`: composables / lib / directives / locales / internal files
@@ -642,16 +642,10 @@ function isStyleAssetSpecifier(specifier: string): boolean {
     return /\.(?:css|scss|sass|less|styl|pcss|postcss)$/.test(specifier)
 }
 
-// Replaced by AST-based extractClassifiedModuleSpecifiers. The previous regex
-// matched import/export statements but could not distinguish `import type { ... }`
-// from value imports, causing type-only cross-component imports to be flagged
-// as missing registryDependencies (see P1-7).
-
 function extractCrossComponentImports(itemName: string, code: string): string[] {
     const deps = new Set<string>()
 
     for (const classified of extractClassifiedModuleSpecifiers(code)) {
-        // P1-7: type-only imports don't create runtime registry dependencies.
         if (classified.isTypeOnly) continue
 
         const cleanSpecifier = classified.specifier.split(/[?#]/)[0]

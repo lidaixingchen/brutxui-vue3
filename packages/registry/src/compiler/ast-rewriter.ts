@@ -16,15 +16,15 @@ export {
 /**
  * 提取代码中所有模块导入（纯字符串数组）
  */
-export function extractModuleSpecifiers(code: string): string[] {
-    return SfcAstEngine.extractModuleSpecifiers(code).map(item => item.specifier);
+export function extractModuleSpecifiers(code: string, filename = 'component.vue'): string[] {
+    return SfcAstEngine.extractModuleSpecifiers(code, filename).map(item => item.specifier);
 }
 
 /**
  * 提取代码中分类的模块导入（含 isTypeOnly, isDynamic）
  */
-export function extractClassifiedModuleSpecifiers(code: string): ClassifiedModuleSpecifier[] {
-    return SfcAstEngine.extractModuleSpecifiers(code);
+export function extractClassifiedModuleSpecifiers(code: string, filename = 'component.vue'): ClassifiedModuleSpecifier[] {
+    return SfcAstEngine.extractModuleSpecifiers(code, filename);
 }
 
 /**
@@ -113,12 +113,14 @@ export function rewriteImports(
     code: string,
     componentName: string,
     context: RewriteContext = 'component',
-    knownComponents?: Set<string>
+    knownComponents?: Set<string>,
+    filename?: string
 ): string {
     const known = knownComponents ?? new Set(AVAILABLE_COMPONENTS);
+    const actualFilename = filename ?? (context === 'component' ? 'component.vue' : `${context}.ts`);
     return SfcAstEngine.transformImports(code, ctx => {
         return resolveRewrittenSpecifier(ctx.specifier, componentName, context, known);
-    });
+    }, actualFilename);
 }
 
 /**

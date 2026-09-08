@@ -7,7 +7,7 @@ import {
     validateRegistryIndex,
     validateRegistryItem,
 } from 'brutx-shared-vue';
-import { extractModuleSpecifiers, extractClassifiedModuleSpecifiers } from 'brutx-shared-vue/scan';
+import { extractModuleSpecifiers, extractClassifiedModuleSpecifiers } from 'brutx-shared-vue/ast';
 import {
     assertRegistryDependencyGraph,
     assertKnownRegistryDeps,
@@ -334,10 +334,7 @@ describe('build-registry helpers', () => {
     });
 });
 
-// 产物不入库后（见 docs/REGISTRY_ARTIFACTS_PUBLISH_TIME_PLAN.md），integrity 是
-// ui 源码的内容哈希，随源码改动而变；用快照固化具体 integrity 值会使测试与
-// 源码哈希耦合，任何 composables/组件改动都导致快照失效。故改为结构断言：
-// 校验构建产物的关键字段与依赖关系，integrity 只校验格式，不断言具体值。
+// 结构断言：校验构建产物的关键字段与依赖关系，integrity 校验格式
 describe('registry build items', () => {
     it('builds button with expected structure', () => {
         const item = buildRegistryItem('button');
@@ -418,12 +415,12 @@ describe('computeSourceHash (P0-4 cache key)', () => {
     });
 });
 
-describe('extractClassifiedModuleSpecifiers (P1-7)', () => {
+describe('extractClassifiedModuleSpecifiers', () => {
     it('marks `import type { ... }` as type-only', () => {
         const code = "import type { ButtonVariant } from '@/components/ui/button/types'";
         const result = extractClassifiedModuleSpecifiers(code);
         expect(result).toEqual([
-            { specifier: '@/components/ui/button/types', isTypeOnly: true, isDynamic: false },
+            { specifier: '@/components/ui/button/types', isTypeOnly: true, isDynamic: false, hasVerbatimSideEffect: false },
         ]);
     });
 
@@ -431,7 +428,7 @@ describe('extractClassifiedModuleSpecifiers (P1-7)', () => {
         const code = "export type { ChartPoint } from '@/lib/chart-types'";
         const result = extractClassifiedModuleSpecifiers(code);
         expect(result).toEqual([
-            { specifier: '@/lib/chart-types', isTypeOnly: true, isDynamic: false },
+            { specifier: '@/lib/chart-types', isTypeOnly: true, isDynamic: false, hasVerbatimSideEffect: false },
         ]);
     });
 
@@ -440,7 +437,7 @@ describe('extractClassifiedModuleSpecifiers (P1-7)', () => {
         const code = "import { type ButtonVariant, useButton } from '@/components/ui/button/use-button'";
         const result = extractClassifiedModuleSpecifiers(code);
         expect(result).toEqual([
-            { specifier: '@/components/ui/button/use-button', isTypeOnly: false, isDynamic: false },
+            { specifier: '@/components/ui/button/use-button', isTypeOnly: false, isDynamic: false, hasVerbatimSideEffect: false },
         ]);
     });
 
@@ -448,7 +445,7 @@ describe('extractClassifiedModuleSpecifiers (P1-7)', () => {
         const code = "const lazy = import('@/components/ui/dialog/DialogContent.vue')";
         const result = extractClassifiedModuleSpecifiers(code);
         expect(result).toEqual([
-            { specifier: '@/components/ui/dialog/DialogContent.vue', isTypeOnly: false, isDynamic: true },
+            { specifier: '@/components/ui/dialog/DialogContent.vue', isTypeOnly: false, isDynamic: true, hasVerbatimSideEffect: false },
         ]);
     });
 
@@ -456,7 +453,7 @@ describe('extractClassifiedModuleSpecifiers (P1-7)', () => {
         const code = "import '@/components/ui/code-block/brutx-prism.css'";
         const result = extractClassifiedModuleSpecifiers(code);
         expect(result).toEqual([
-            { specifier: '@/components/ui/code-block/brutx-prism.css', isTypeOnly: false, isDynamic: false },
+            { specifier: '@/components/ui/code-block/brutx-prism.css', isTypeOnly: false, isDynamic: false, hasVerbatimSideEffect: false },
         ]);
     });
 
@@ -464,7 +461,7 @@ describe('extractClassifiedModuleSpecifiers (P1-7)', () => {
         const code = "export { useForwardProps } from '@/composables/useForwardProps'";
         const result = extractClassifiedModuleSpecifiers(code);
         expect(result).toEqual([
-            { specifier: '@/composables/useForwardProps', isTypeOnly: false, isDynamic: false },
+            { specifier: '@/composables/useForwardProps', isTypeOnly: false, isDynamic: false, hasVerbatimSideEffect: false },
         ]);
     });
 
@@ -474,7 +471,7 @@ describe('extractClassifiedModuleSpecifiers (P1-7)', () => {
         const code = "export * from '@/components/ui/button'";
         const result = extractClassifiedModuleSpecifiers(code);
         expect(result).toEqual([
-            { specifier: '@/components/ui/button', isTypeOnly: false, isDynamic: false },
+            { specifier: '@/components/ui/button', isTypeOnly: false, isDynamic: false, hasVerbatimSideEffect: false },
         ]);
     });
 
@@ -487,7 +484,7 @@ describe('extractClassifiedModuleSpecifiers (P1-7)', () => {
         ].join('\n');
         const result = extractClassifiedModuleSpecifiers(code);
         expect(result).toEqual([
-            { specifier: '@/components/ui/button/types', isTypeOnly: false, isDynamic: false },
+            { specifier: '@/components/ui/button/types', isTypeOnly: false, isDynamic: false, hasVerbatimSideEffect: false },
         ]);
     });
 
@@ -505,11 +502,13 @@ describe('extractClassifiedModuleSpecifiers (P1-7)', () => {
             specifier: '@/components/ui/button/Button.vue',
             isTypeOnly: false,
             isDynamic: false,
+            hasVerbatimSideEffect: false,
         });
         expect(bySpecifier.get('@/components/ui/button/types')).toEqual({
             specifier: '@/components/ui/button/types',
             isTypeOnly: true,
             isDynamic: false,
+            hasVerbatimSideEffect: false,
         });
     });
 
@@ -519,11 +518,8 @@ describe('extractClassifiedModuleSpecifiers (P1-7)', () => {
     });
 });
 
-describe('extractRegistryDeps type-only handling (P1-7)', () => {
+describe('extractRegistryDeps type-only handling', () => {
     it('skips type-only cross-component imports', () => {
-        // `import type { Foo } from '@/components/ui/button/types'` does not
-        // create a runtime registry dep. Before P1-7, this would have added
-        // `button` to the result, inflating the dependency tree.
         const code = "import type { ButtonVariant } from '@/components/ui/button/types'";
         expect(extractRegistryDeps(code, 'dialog')).toEqual([]);
     });
@@ -554,16 +550,12 @@ describe('extractRegistryDeps type-only handling (P1-7)', () => {
     });
 
     it('extractUnknownRegistryDeps still surfaces type-only unknown imports (typo detection)', () => {
-        // P1-7: even type-only imports should be checked for typos. If the
-        // user wrote `@/components/ui/buton/types` (typo: missing `t`), the
-        // validator must flag it — otherwise typos in type-only imports would
-        // silently slip through.
         const code = "import type { Foo } from '@/components/ui/buton/types'";
         expect(extractUnknownRegistryDeps(code)).toEqual(['buton']);
     });
 });
 
-describe('buildRegistrySbom (P1-6)', () => {
+describe('buildRegistrySbom', () => {
     const sampleIndex = {
         $schema: 'https://ui.shadcn.com/schema/registry.json',
         name: 'brutx-vue',
@@ -659,7 +651,7 @@ describe('buildRegistrySbom (P1-6)', () => {
     });
 });
 
-describe('signManifestFromEnv (基础设施闭环 P0 自动签发)', () => {
+describe('signManifestFromEnv (自动签发)', () => {
     const ENV_KEYS = ['BRUTX_REGISTRY_PRIVATE_KEY', 'BRUTX_REGISTRY_KEY_ID'] as const;
 
     afterEach(() => {

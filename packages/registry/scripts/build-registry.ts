@@ -120,8 +120,8 @@ export function runPrebuildScan(): void {
     fs.writeFileSync(MANIFEST_PATH, output, 'utf-8');
 }
 
-export function rewriteImports(code: string, componentName: string, context: RewriteContext = 'component'): string {
-    return coreRewriteImports(code, componentName, context);
+export function rewriteImports(code: string, componentName: string, context: RewriteContext = 'component', filename?: string): string {
+    return coreRewriteImports(code, componentName, context, undefined, filename);
 }
 
 export function extractDeps(code: string, dirPrefix: string): string[] {

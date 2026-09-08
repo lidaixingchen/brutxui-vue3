@@ -287,7 +287,7 @@ export function extractScriptBlocks(content: string): Array<{ start: number; end
     return blocks;
 }
 
-export function resolveImportAlias(content: string, config: BrutalistConfig): string {
+export function resolveImportAlias(content: string, config: BrutalistConfig, filename = 'component.vue'): string {
     const sharedBase = config.sharedBase;
     const composablesAlias = config.aliases.composables ?? config.aliases.utils.replace(/\/utils$/, '/composables');
     const localesAlias = config.aliases.locales ?? `${path.dirname(composablesAlias)}/locales`;
@@ -321,7 +321,7 @@ export function resolveImportAlias(content: string, config: BrutalistConfig): st
             return spec.replace('@/directives', directivesAlias);
         }
         return spec;
-    });
+    }, filename);
 }
 
 export { assertSafePath, isSafePath, verifyWrittenPath } from './security.js';
