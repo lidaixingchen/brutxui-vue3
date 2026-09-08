@@ -27,6 +27,13 @@ packages/shared/
 │   │   ├── disk-fs.ts               # 基于 node:fs/promises 的原生磁盘适配器
 │   │   ├── memory-fs.ts             # 具备深拷贝隔离与原子子树迁移的纯内存适配器
 │   │   └── index.ts                 # fs 模块统一出口
+│   ├── ast/                    # AST 解析与代码转换引擎单一信源
+│   │   ├── types.ts                 # 语法树、描述符与模块契约定义
+│   │   ├── source-parser.ts         # Vue SFC 与纯脚本容错解析器
+│   │   ├── module-references.ts     # 模块导入/导出 AST 分析器
+│   │   ├── import-transformer.ts    # 基于 MagicString 的原地代码转换器
+│   │   ├── sfc-ast-engine.ts        # 高阶抽象引擎单一入口
+│   │   └── index.ts                 # ast 模块导出
 │   │
 │   ├── design-tokens.ts        # 全工程设计令牌单一信源（禁止手动硬编码）
 │   ├── scan.ts                 # 组件目录静态扫描器
@@ -34,10 +41,9 @@ packages/shared/
 │   └── index.ts                # 顶层公共类型导出
 │
 └── tests/                      # VFS 与共享工具单元测试
-    ├── fs/
-    │   ├── disk-fs.test.ts          # 物理磁盘适配器契约测试
-    │   └── memory-fs.test.ts        # 内存适配器严格契约与异常测试
-    └── extract-module-specifiers.test.ts
+    └── fs/
+        ├── disk-fs.test.ts          # 物理磁盘适配器契约测试
+        └── memory-fs.test.ts        # 内存适配器严格契约与异常测试
 ```
 
 ---
