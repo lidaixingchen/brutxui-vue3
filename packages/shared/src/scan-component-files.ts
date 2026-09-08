@@ -1,17 +1,13 @@
 /**
  * Prebuild component file scanner.
  *
- * Traverses a components directory, uses extractModuleSpecifiers to discover
+ * Traverses components directory using SfcAstEngine to discover
  * each component's file dependencies (internal files, composables, lib, directives),
  * and returns a manifest suitable for registry building.
- *
- * This replaces the hand-maintained file mapping for the
- * files/composables/directives/lib fields. Human-maintained metadata
- * (title/description/category etc.) stays in COMPONENT_METADATA.
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { extractModuleSpecifiers } from './extract-module-specifiers.js';
+import { SfcAstEngine } from './ast/index.js';
 import type { ComponentFileManifest } from './registry-manifest.types.js';
 import {
     DEFAULT_LIB_EXCLUDE,
@@ -144,12 +140,7 @@ function classifySpecifier(
 }
 
 /**
- * 相对导入分类：基于导入文件所在目录做路径规范化，而非字符串前缀匹配。
- *
- * 相比前缀匹配，能正确处理：
- * - 子目录内指向组件根的 `../`（如 `sub/Foo.ts` 导入 `../Button.vue` → 组件内部文件）；
- * - 跨层导入（如 `../../composables/useX` → composables 兄弟目录）；
- * 从而避免内部依赖被误判为 cross-component / 被丢进 other 而遍历不完整。
+ * 相对导入分类：基于导入文件所在目录规范化路径，解析内部组件依赖与跨目录引用
  */
 function classifyRelativeSpecifier(
     specifier: string,
@@ -213,8 +204,7 @@ function scanComponent(
     const visited = new Set<string>();
     const libExclude = options.libExclude ?? DEFAULT_LIB_EXCLUDE;
 
-    // 用游标代替 queue.shift()：数组头部出队是 O(n)，文件较多时整体退化为 O(n²)；
-    // 遍历顺序不影响结果正确性，游标即可
+    // 使用游标遍历待处理队列
     let cursor = 0;
     while (cursor < queue.length) {
         const file = queue[cursor];
@@ -230,7 +220,14 @@ function scanComponent(
         if (!fs.existsSync(filePath)) continue;
         const content = fs.readFileSync(filePath, 'utf-8');
 
-        for (const specifier of extractModuleSpecifiers(content)) {
+        const analysis = SfcAstEngine.analyzeModules(content, file);
+        if (analysis.completeness === 'invalid') {
+            const errMsgs = analysis.diagnostics.map(d => d.message).join('; ');
+            throw new Error(`Failed to parse file "${file}" in component "${componentName}": ${errMsgs}`);
+        }
+
+        for (const dep of analysis.dependencies) {
+            const specifier = dep.specifier;
             const classified = classifySpecifier(specifier, componentName, options, file);
             switch (classified.kind) {
                 case 'composable': {
@@ -287,7 +284,7 @@ function scanComponent(
 }
 
 /** componentsDir 下不应被当作组件扫描的已知非组件目录（测试/依赖/元数据） */
-const NON_COMPONENT_DIR_NAMES = new Set(['node_modules', '__tests__', '__snapshots__']);
+const IGNORED_DIR_NAMES = new Set(['node_modules', '__tests__', '__snapshots__']);
 
 export function scanComponentFiles(options: ScanOptions): Record<string, ComponentFileManifest> {
     // 显式校验路径存在且为目录：existsSync 对普通文件也返回 true，但 readdirSync 会抛 ENOTDIR，
@@ -308,7 +305,7 @@ export function scanComponentFiles(options: ScanOptions): Record<string, Compone
         .filter((e) => e.isDirectory())
         .map((e) => e.name)
         // 过滤隐藏目录（.DS_Store 等）与已知非组件目录，避免污染 manifest 或读取到非源码文件抛异常
-        .filter((name) => !name.startsWith('.') && !NON_COMPONENT_DIR_NAMES.has(name))
+        .filter((name) => !name.startsWith('.') && !IGNORED_DIR_NAMES.has(name))
         .sort();
 
     for (const dir of componentDirs) {
