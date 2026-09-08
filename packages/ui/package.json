@@ -557,6 +557,7 @@
         "test:package": "node scripts/smoke-package.mjs",
         "size": "size-limit",
         "size:why": "size-limit --why",
+        "check:isolation": "tsx scripts/check-bundle-isolation.ts",
         "docs:api": "typedoc",
         "docs:api:full": "npx tsx scripts/generate-api-docs.ts",
         "docs:api:vue": "npx tsx scripts/generate-api-docs.ts --skip-typedoc"
@@ -652,6 +653,7 @@
         "vite-plugin-dts": "^5.0.2",
         "vitest": "^4.1.10",
         "vue": "^3.5.0",
+        "vue-component-meta": "^3.3.11",
         "vue-tsc": "^3.3.3"
     },
     "keywords": [

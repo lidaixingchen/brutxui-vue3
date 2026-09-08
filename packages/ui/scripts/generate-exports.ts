@@ -26,6 +26,7 @@
 import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import ts from 'typescript'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -217,7 +218,7 @@ function mergeAndWrite(autoExports: Record<string, ExportEntry>, dryRun: boolean
 }
 
 /**
- * 组件主入口导出核对（审查报告 §10.10 校验链缺口）：
+ * 组件主入口导出核对：
  * exports-manifest 中的每个组件都必须在 src/index.ts 有对应 re-export，
  * 否则新增组件会静默丢失主入口 API（子路径存在但主入口不可用）。
  * 有意不挂主入口的组件须登记于 SKIP_MAIN_ENTRY_COMPONENTS 并注明理由。
@@ -228,21 +229,55 @@ const SKIP_MAIN_ENTRY_COMPONENTS: Record<string, string> = {
     message: '命令式单例内部组件（useMessage 自动挂载），文档化用法为函数式 API',
 }
 
+function getCoveredMainEntryComponents(indexSrc: string): Set<string> {
+    const sourceFile = ts.createSourceFile(
+        'index.ts',
+        indexSrc,
+        ts.ScriptTarget.Latest,
+        true,
+        ts.ScriptKind.TS
+    )
+
+    const covered = new Set<string>()
+
+    for (const stmt of sourceFile.statements) {
+        if (!ts.isExportDeclaration(stmt)) continue
+        if (stmt.isTypeOnly) continue
+        if (!stmt.moduleSpecifier || !ts.isStringLiteral(stmt.moduleSpecifier)) continue
+
+        const specifier = stmt.moduleSpecifier.text
+
+        if (specifier.startsWith('./components/')) {
+            const rel = specifier.slice('./components/'.length)
+            const parts = rel.split('/')
+            const compName = parts[0]
+            if (!compName) continue
+
+            // 仅整目录 barrel、index 或 .vue 组件文件重导出算组件覆盖；子路径（如 variants .ts）不算
+            if (parts.length === 1) {
+                covered.add(compName)
+            } else if (parts.length === 2 && (parts[1]?.endsWith('.vue') || parts[1]?.startsWith('index'))) {
+                covered.add(compName)
+            }
+        }
+    }
+
+    return covered
+}
+
 function verifyMainEntryCoverage(manifest: ExportsManifest): void {
     const indexPath = resolve(PACKAGE_ROOT, 'src', 'index.ts')
     const indexSrc = readFileSync(indexPath, 'utf-8')
+    const covered = getCoveredMainEntryComponents(indexSrc)
     const missing: string[] = []
+
     for (const component of manifest.components) {
         if (component in SKIP_MAIN_ENTRY_COMPONENTS) continue
-        const escaped = component.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-        // 收紧（OCR 审查）：仅存在子路径 re-export（如 variants 的 .ts 导出）不算主入口覆盖，
-        // 必须命中组件 .vue 文件 re-export 或整目录 barrel（export * from './components/<name>'）
-        const barrelRe = new RegExp(`export \\* from\\s+['"]\\./components/${escaped}['"]`)
-        const vueRe = new RegExp(`from\\s+['"]\\./components/${escaped}/[^'"]+\\.vue['"]`)
-        if (!barrelRe.test(indexSrc) && !vueRe.test(indexSrc)) {
+        if (!covered.has(component)) {
             missing.push(component)
         }
     }
+
     if (missing.length > 0) {
         throw new Error(
             `components missing from main entry src/index.ts (${missing.length}):\n` +
@@ -250,12 +285,13 @@ function verifyMainEntryCoverage(manifest: ExportsManifest): void {
             '\nAdd a re-export in src/index.ts, or register in SKIP_MAIN_ENTRY_COMPONENTS with justification.',
         )
     }
-    console.log(`✓ All ${manifest.components.length} manifest components re-exported from src/index.ts`)
+    const coveredCount = manifest.components.length - Object.keys(SKIP_MAIN_ENTRY_COMPONENTS).length
+    console.log(`✓ All ${coveredCount} required manifest components re-exported from src/index.ts`)
 }
 
 /** 与 prebuild-scan.ts 保持一致的采集规则：components 目录全量（排除隐藏/测试目录），
  *  composables/directives 取非测试、非 index.ts 的 .ts 文件 */
-const NON_COMPONENT_DIR_NAMES = new Set(['node_modules', '__tests__', '__snapshots__'])
+const IGNORED_DIR_NAMES = new Set(['node_modules', '__tests__', '__snapshots__'])
 const TEST_FILE_PATTERN = /\.(test|spec)\.(ts|js|tsx|jsx)$/
 
 function listPublicSourceFiles(dir: string): string[] {
@@ -271,9 +307,7 @@ function listPublicSourceFiles(dir: string): string[] {
 }
 
 /**
- * 清单新鲜度核对（审查报告 §10.10 校验链缺口）：新增组件/组合式函数/指令但未重跑
- * `pnpm prebuild:scan` 时，exports-manifest 与 package.json exports 会一起保持陈旧且自洽，
- * 既有 check:exports 只比「package.json vs manifest」无法发现。此处反向核对「源码 ⊆ manifest」。
+ * 清单新鲜度核对：反向核对「源码 ⊆ manifest」，确保源码目录变动及时同步。
  */
 function verifyManifestFreshness(manifest: ExportsManifest): void {
     const componentsDir = resolve(PACKAGE_ROOT, 'src', 'components')
@@ -283,7 +317,7 @@ function verifyManifestFreshness(manifest: ExportsManifest): void {
     const sourceComponents = readdirSync(componentsDir, { withFileTypes: true })
         .filter((e) => e.isDirectory())
         .map((e) => e.name)
-        .filter((name) => !name.startsWith('.') && !NON_COMPONENT_DIR_NAMES.has(name))
+        .filter((name) => !name.startsWith('.') && !IGNORED_DIR_NAMES.has(name))
         .sort()
     const sourceComposables = listPublicSourceFiles(resolve(PACKAGE_ROOT, 'src', 'composables'))
     const sourceDirectives = listPublicSourceFiles(resolve(PACKAGE_ROOT, 'src', 'directives'))

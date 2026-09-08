@@ -15,6 +15,7 @@ import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { COMPONENT_METADATA, CATEGORY_LABELS_ZH } from 'brutx-shared-vue'
+import { createChecker, type ComponentMetaChecker } from 'vue-component-meta'
 
 // ES 模块中获取 __dirname
 const __filename = fileURLToPath(import.meta.url)
@@ -102,252 +103,78 @@ function getComponentCategoryLabel(dirName: string): string {
 }
 
 // ============================================================================
-// Vue SFC 解析器
+// Vue SFC 解析器 (vue-component-meta)
 // ============================================================================
 
-/**
- * 从 Vue SFC 文件中提取 JSDoc 注释
- */
-function extractJSDocComment(content: string, startIndex: number): string {
-    const beforeContent = content.substring(Math.max(0, startIndex - 500), startIndex)
-    const commentMatch = beforeContent.match(/\/\*\*\s*\n([^*]|\*[^/])*\*\/\s*$/)
-    if (commentMatch) {
-        return commentMatch[0]
-            .replace(/\/\*\*\s*\n/, '')
-            .replace(/\s*\*\/\s*$/, '')
-            .split('\n')
-            .map(line => line.replace(/^\s*\*\s?/, '').trim())
-            .filter(line => line.length > 0)
-            .join(' ')
+let checkerInstance: ComponentMetaChecker | null = null
+
+function getChecker(): ComponentMetaChecker {
+    if (!checkerInstance) {
+        const tsconfigPath = path.resolve(__dirname, '../tsconfig.json')
+        checkerInstance = createChecker(tsconfigPath)
     }
-    return ''
+    return checkerInstance
 }
 
-/**
- * 从 TypeScript 类型字符串中解析 Props 定义
- */
-function parsePropsFromTypeScript(content: string): ComponentProp[] {
-    const props: ComponentProp[] = []
+const IGNORED_PROP_NAMES = new Set(['key', 'ref', 'ref_for', 'ref_key', 'style'])
 
-    // 匹配 interface 或 type 定义的 Props
-    const propsInterfaceMatch = content.match(
-        /(?:interface|type)\s+(\w*Props)\s*(?:=\s*)?{([^}]*)}/s
-    )
-
-    if (!propsInterfaceMatch) return props
-
-    const propsBlock = propsInterfaceMatch[2]
-    const lines = propsBlock.split('\n')
-
-    let currentComment = ''
-
-    for (const line of lines) {
-        const trimmedLine = line.trim()
-
-        // 收集注释
-        if (trimmedLine.startsWith('//') || trimmedLine.startsWith('*') || trimmedLine.startsWith('/**')) {
-            currentComment += trimmedLine.replace(/^\/?\*?\*?\s?/, '') + ' '
-            continue
-        }
-
-        // 解析属性定义
-        const propMatch = trimmedLine.match(
-            /^(\w+)(\?)?:\s*(.+?)(?:\s*=\s*(.+?))?[,;]?$/
-        )
-
-        if (propMatch) {
-            const [, name, optional, type, defaultVal] = propMatch
-            props.push({
-                name,
-                type: type.trim(),
-                required: !optional,
-                default: defaultVal?.trim() || '-',
-                description: currentComment.trim() || '-',
-            })
-            currentComment = ''
-        }
-    }
-
-    return props
+function escapeMarkdownTable(str: string): string {
+    return str.replace(/\|/g, '\\|')
 }
 
-/**
- * 从 Vue SFC 的 defineProps 中解析 Props
- */
-function parsePropsFromDefineProps(content: string): ComponentProp[] {
-    const props: ComponentProp[] = []
-
-    // 匹配 defineProps<{ ... }>() 模式
-    const definePropsMatch = content.match(
-        /defineProps\s*<\s*{([^}]*)}\s*>\s*\(\s*\)/s
-    )
-
-    if (definePropsMatch) {
-        const propsBlock = definePropsMatch[1]
-        const lines = propsBlock.split('\n')
-
-        let currentComment = ''
-
-        for (const line of lines) {
-            const trimmedLine = line.trim()
-
-            if (trimmedLine.startsWith('//') || trimmedLine.startsWith('*') || trimmedLine.startsWith('/**')) {
-                currentComment += trimmedLine.replace(/^\/?\*?\*?\s?/, '') + ' '
-                continue
-            }
-
-            const propMatch = trimmedLine.match(
-                /^(\w+)(\?)?:\s*(.+?)(?:\s*=\s*(.+?))?[,;]?$/
-            )
-
-            if (propMatch) {
-                const [, name, optional, type, defaultVal] = propMatch
-                props.push({
-                    name,
-                    type: type.trim(),
-                    required: !optional,
-                    default: defaultVal?.trim() || '-',
-                    description: currentComment.trim() || '-',
-                })
-                currentComment = ''
-            }
-        }
+function cleanPropType(rawType: string): string {
+    let t = rawType.trim()
+    // 仅剔除顶层的联合 undefined
+    t = t.replace(/\s*\|\s*undefined$/g, '').replace(/^undefined\s*\|\s*/g, '').trim()
+    const nonNullableMatch = t.match(/^NonNullable<([\s\S]+)>$/)
+    if (nonNullableMatch) {
+        t = nonNullableMatch[1].trim()
+        t = t.replace(/\s*\|\s*null$/g, '').replace(/^null\s*\|\s*/g, '').trim()
     }
-
-    // 匹配 withDefaults(defineProps<{ ... }>(), { ... }) 模式
-    const withDefaultsMatch = content.match(
-        /withDefaults\s*\(\s*defineProps\s*<\s*{([^}]*)}\s*>\s*\(\s*\)\s*,\s*{([^}]*)}\s*\)/s
-    )
-
-    if (withDefaultsMatch) {
-        const propsBlock = withDefaultsMatch[1]
-        const defaultsBlock = withDefaultsMatch[2]
-
-        // 解析默认值
-        const defaults: Record<string, string> = {}
-        const defaultMatches = defaultsBlock.matchAll(/(\w+):\s*(.+?)[,;]/g)
-        for (const match of defaultMatches) {
-            defaults[match[1]] = match[2].trim()
-        }
-
-        const lines = propsBlock.split('\n')
-        let currentComment = ''
-
-        for (const line of lines) {
-            const trimmedLine = line.trim()
-
-            if (trimmedLine.startsWith('//') || trimmedLine.startsWith('*') || trimmedLine.startsWith('/**')) {
-                currentComment += trimmedLine.replace(/^\/?\*?\*?\s?/, '') + ' '
-                continue
-            }
-
-            const propMatch = trimmedLine.match(
-                /^(\w+)(\?)?:\s*(.+?)[,;]?$/
-            )
-
-            if (propMatch) {
-                const [, name, optional, type] = propMatch
-                props.push({
-                    name,
-                    type: type.trim(),
-                    required: !optional,
-                    default: defaults[name] || '-',
-                    description: currentComment.trim() || '-',
-                })
-                currentComment = ''
-            }
-        }
-    }
-
-    return props
+    t = t.replace(/""([^"']+)""/g, "'$1'")
+    t = t.replace(/"([^"']+)"/g, "'$1'")
+    t = t.replace(/\r?\n\s*/g, ' ')
+    return t || 'unknown'
 }
 
-/**
- * 从 Vue SFC 中解析 Emits
- */
-function parseEmits(content: string): ComponentEvent[] {
-    const events: ComponentEvent[] = []
-
-    // 匹配 defineEmits 模式
-    const emitPatterns = [
-        /defineEmits\s*<\s*{([^}]*)}\s*>\s*\(\s*\)/s,
-        /defineEmits\s*\(\s*{([^}]*)}\s*\)/s,
-        /defineEmits\s*\(\s*\[([^\]]*)\]\s*\)/s,
-    ]
-
-    for (const pattern of emitPatterns) {
-        const match = content.match(pattern)
-        if (match) {
-            const emitsBlock = match[1]
-
-            // 解析事件定义
-            const eventMatches = emitsBlock.matchAll(
-                /\(e:\s*['"](\w+)['"]\s*(?:,\s*(.+?))?\)/g
-            )
-
-            for (const eventMatch of eventMatches) {
-                events.push({
-                    name: eventMatch[1],
-                    payload: eventMatch[2]?.trim() || 'void',
-                    description: '-',
-                })
-            }
-
-            // 简单格式：'event1' | 'event2'
-            const simpleMatches = emitsBlock.matchAll(/['"](\w+)['"]/g)
-            for (const simpleMatch of simpleMatches) {
-                if (!events.find(e => e.name === simpleMatch[1])) {
-                    events.push({
-                        name: simpleMatch[1],
-                        payload: 'void',
-                        description: '-',
-                    })
-                }
-            }
-
-            break
-        }
+function cleanDefaultValue(rawDefault?: string): string {
+    if (!rawDefault) return '-'
+    let d = rawDefault.trim()
+    if (d === 'undefined' || d === '') return '-'
+    if (d.startsWith('""') && d.endsWith('""') && d.length >= 4) {
+        return `'${d.slice(2, -2)}'`
     }
-
-    return events
+    if (d.startsWith('"') && d.endsWith('"') && d.length >= 2) {
+        return `'${d.slice(1, -1)}'`
+    }
+    d = d.replace(/\r?\n\s*/g, ' ')
+    return d
 }
 
-/**
- * 从 Vue SFC 模板中解析 Slots
- */
-function parseSlots(content: string): ComponentSlot[] {
-    const slots: ComponentSlot[] = []
-
-    // 匹配 <slot name="xxx" :prop="value" /> 模式
-    const slotMatches = content.matchAll(
-        /<slot\s+(?:name="(\w+)")?\s*(?::([\w]+)="([^"]*)")?\s*(?:\/>|>[\s\S]*?<\/slot>)/g
-    )
-
-    for (const match of slotMatches) {
-        const name = match[1] || 'default'
-        const propName = match[2]
-        const propType = match[3]
-
-        if (!slots.find(s => s.name === name)) {
-            slots.push({
-                name,
-                props: propName ? `${propName}: ${propType || 'any'}` : '-',
-                description: '-',
-            })
-        }
+function formatEventPayload(rawType: string): string {
+    const trimmed = rawType.trim()
+    if (!trimmed || trimmed === '[]' || trimmed === 'void') {
+        return 'void'
     }
-
-    // 匹配 <slot> 标签
-    const defaultSlot = content.match(/<slot\s*\/?>/)
-    if (defaultSlot && !slots.find(s => s.name === 'default')) {
-        slots.unshift({
-            name: 'default',
-            props: '-',
-            description: '默认插槽',
-        })
+    if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+        const inner = trimmed.slice(1, -1).trim()
+        return inner || 'void'
     }
+    return trimmed.replace(/\r?\n\s*/g, ' ')
+}
 
-    return slots
+function formatSlotProps(rawType: string): string {
+    const trimmed = rawType.trim()
+    if (!trimmed || trimmed === '{}' || trimmed === 'void') {
+        return '-'
+    }
+    return trimmed.replace(/\r?\n\s*/g, ' ')
+}
+
+function cleanExposeType(rawType: string): string {
+    let t = rawType.trim()
+    t = t.replace(/\s*\|\s*undefined$/g, '').replace(/^undefined\s*\|\s*/g, '').trim()
+    return t.replace(/\r?\n\s*/g, ' ') || 'unknown'
 }
 
 /**
@@ -370,30 +197,56 @@ function parseVueSFC(filePath: string): ComponentDoc | null {
             .join(' ')
         : ''
 
-    // 解析 script setup 内容
-    const scriptMatch = content.match(
-        /<script\s+setup[^>]*>([\s\S]*?)<\/script>/
-    )
+    let meta
+    try {
+        const checker = getChecker()
+        meta = checker.getComponentMeta(filePath)
+    } catch (error) {
+        console.warn(`⚠️ [generate-api-docs] Failed to extract meta for ${filePath}:`, error)
+        return null
+    }
 
-    if (!scriptMatch) return null
+    const props: ComponentProp[] = []
+    for (const p of meta.props) {
+        if (IGNORED_PROP_NAMES.has(p.name) || p.name.startsWith('onVue:')) continue
+        props.push({
+            name: p.name,
+            type: cleanPropType(p.type),
+            required: p.required,
+            default: cleanDefaultValue(p.default),
+            description: p.description?.replace(/\r?\n/g, '<br>').trim() || '-',
+        })
+    }
 
-    const scriptContent = scriptMatch[1]
+    const events: ComponentEvent[] = []
+    for (const e of meta.events) {
+        if (e.name.startsWith('vue:') || e.name.startsWith('onVue:') || e.name.startsWith('hook:')) continue
+        events.push({
+            name: e.name,
+            payload: formatEventPayload(e.type),
+            description: e.description?.replace(/\r?\n/g, '<br>').trim() || '-',
+        })
+    }
 
-    // 解析各类 API
-    const props = [
-        ...parsePropsFromDefineProps(scriptContent),
-        ...parsePropsFromTypeScript(scriptContent),
-    ]
+    const slots: ComponentSlot[] = []
+    for (const s of meta.slots) {
+        slots.push({
+            name: s.name,
+            props: formatSlotProps(s.type),
+            description: s.description?.replace(/\r?\n/g, '<br>').trim() || (s.name === 'default' ? '默认插槽' : '-'),
+        })
+    }
 
-    // 去重
-    const uniqueProps = props.filter(
-        (prop, index, self) => self.findIndex(p => p.name === prop.name) === index
-    )
+    const exposes: ComponentExpose[] = []
+    for (const exp of meta.exposed) {
+        if (exp.name.startsWith('$')) continue
+        exposes.push({
+            name: exp.name,
+            type: cleanExposeType(exp.type),
+            description: exp.description?.replace(/\r?\n/g, '<br>').trim() || '-',
+        })
+    }
 
-    const events = parseEmits(scriptContent)
-    const slots = parseSlots(content)
-
-    // 确定分类
     const category = getComponentCategoryLabel(dirName)
 
     return {
@@ -401,10 +254,10 @@ function parseVueSFC(filePath: string): ComponentDoc | null {
         category,
         description: description || `${fileName} 组件`,
         filePath: path.relative(path.resolve(__dirname, '..'), filePath),
-        props: uniqueProps,
+        props,
         events,
         slots,
-        exposes: [],
+        exposes,
     }
 }
 
@@ -506,8 +359,8 @@ function generateComponentMarkdown(doc: ComponentDoc): string {
 
         for (const prop of doc.props) {
             const required = prop.required ? '✅' : '❌'
-            const type = `\`${prop.type}\``
-            lines.push(`| ${prop.name} | ${type} | ${required} | \`${prop.default}\` | ${prop.description} |`)
+            const type = `\`${escapeMarkdownTable(prop.type)}\``
+            lines.push(`| ${prop.name} | ${type} | ${required} | \`${escapeMarkdownTable(prop.default)}\` | ${escapeMarkdownTable(prop.description)} |`)
         }
         lines.push('')
     }
@@ -520,7 +373,7 @@ function generateComponentMarkdown(doc: ComponentDoc): string {
         lines.push('|--------|------|------|')
 
         for (const event of doc.events) {
-            lines.push(`| ${event.name} | \`${event.payload}\` | ${event.description} |`)
+            lines.push(`| ${event.name} | \`${escapeMarkdownTable(event.payload)}\` | ${escapeMarkdownTable(event.description)} |`)
         }
         lines.push('')
     }
@@ -533,7 +386,7 @@ function generateComponentMarkdown(doc: ComponentDoc): string {
         lines.push('|--------|-------|------|')
 
         for (const slot of doc.slots) {
-            lines.push(`| ${slot.name} | \`${slot.props}\` | ${slot.description} |`)
+            lines.push(`| ${slot.name} | \`${escapeMarkdownTable(slot.props)}\` | ${escapeMarkdownTable(slot.description)} |`)
         }
         lines.push('')
     }
@@ -546,7 +399,7 @@ function generateComponentMarkdown(doc: ComponentDoc): string {
         lines.push('|-----------|------|------|')
 
         for (const expose of doc.exposes) {
-            lines.push(`| ${expose.name} | \`${expose.type}\` | ${expose.description} |`)
+            lines.push(`| ${expose.name} | \`${escapeMarkdownTable(expose.type)}\` | ${escapeMarkdownTable(expose.description)} |`)
         }
         lines.push('')
     }
