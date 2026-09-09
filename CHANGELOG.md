@@ -2,7 +2,94 @@
 
 根 `CHANGELOG.md` 仅保留**最近 3 个版本**的完整变更记录，历史版本详见[归档版本](#归档版本)。
 
-## [Unreleased](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.11.1...HEAD)
+## [Unreleased](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.11.2...HEAD)
+
+## [0.11.2](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.11.1...v0.11.2) - 2026-09-09
+
+### ✨ Features
+
+* **scripts:** 重构文档链接检查工具并接入动态自愈引擎 ([c9488d4](https://github.com/lidaixingchen/brutxui-vue3/commit/c9488d47c767a8e76f802a3e5817137c7fc301f6))
+* **scripts:** 聚合契约与文档门禁并接入Result Envelope ([14f967f](https://github.com/lidaixingchen/brutxui-vue3/commit/14f967ff5c24a624aed0eb553ecb23fbc0c68d1b))
+* **ui:** 升级 API 文档生成引擎并加固产物隔离门禁 ([240245c](https://github.com/lidaixingchen/brutxui-vue3/commit/240245ca15478ebad75bfeb44ce5e2ce82909ae7))
+* **shared:** 统一 AST 语法解析引擎与模块依赖分析 ([2d39b09](https://github.com/lidaixingchen/brutxui-vue3/commit/2d39b092490b158e6b802e03aab6cdcd828f08ad))
+* **cli:** 浅包装模块物理清理与公共 API 终态收尾 (#109) ([7ee2dd4](https://github.com/lidaixingchen/brutxui-vue3/commit/7ee2dd480e00b4805d72f05d3d65d242eca52e90))
+* **cli:** ProjectContext 惰性单例集成与命令层迁移 (#108) ([1f96072](https://github.com/lidaixingchen/brutxui-vue3/commit/1f96072f813bb91e8ccd66151e671154979ed83c))
+* **cli:** 实现依赖图拓扑解析与通用组件列表枚举 (#107) ([4f5f552](https://github.com/lidaixingchen/brutxui-vue3/commit/4f5f552a80704f7db0bb59e99f464a0d3f67f834))
+* **cli:** 实现 RegistryClient 基础拉取管道与可注入 Ports 适配器 (#106) ([ea4a751](https://github.com/lidaixingchen/brutxui-vue3/commit/ea4a7513b9cf760d2cd649c5a3215c114d8c7d31))
+* **cli:** 配置管理领域独立与参数契约解耦 (#105) ([54b4b2b](https://github.com/lidaixingchen/brutxui-vue3/commit/54b4b2b6f7a547e31f2e8c1226dbd8b650aa00eb))
+* **cli:** 升级 tailwind.tokens 为图感知规则 (#103) ([65fd394](https://github.com/lidaixingchen/brutxui-vue3/commit/65fd39400f0907b9dd034473f98324d7ef21ae30))
+* **cli:** 支持 tokensFile 与 init 样式解耦 (#102) ([efd13bc](https://github.com/lidaixingchen/brutxui-vue3/commit/efd13bc59e15372399239cb79ab4177b76c0dcff))
+* **cli:** 实现 CSS 依赖有向无环图扫描引擎与相对路径注入器 (#101) ([0dad7d6](https://github.com/lidaixingchen/brutxui-vue3/commit/0dad7d6bdcef7e87ea9ee7a5c9c7427ecdb1f95c))
+* **cli:** 支持 doctor CI智能嗅探与细粒度退出码 (close #99) ([356741a](https://github.com/lidaixingchen/brutxui-vue3/commit/356741af55e9bf27ee36622146ecb5be0f7f99ac))
+* **cli:** 支持 OASIS SARIF 2.1.0 报告器 (close #98) ([73fd107](https://github.com/lidaixingchen/brutxui-vue3/commit/73fd107a569442c17f20f91829941aeabe254310))
+* **cli:** 支持多态 Reporter 矩阵与 GitHub CI (close #97) ([15e7275](https://github.com/lidaixingchen/brutxui-vue3/commit/15e72755c22df6e3dc1737fe9d7026889ae47443))
+* **cli:** 支持自定义规则插件加载与沙箱隔离 (close #96) ([8f8d3af](https://github.com/lidaixingchen/brutxui-vue3/commit/8f8d3afc096f3ef8b3bf299ef87726bdfa3eb5dd))
+* **cli:** 支持 components.json 规则严重级别覆盖 (close #95) ([330f310](https://github.com/lidaixingchen/brutxui-vue3/commit/330f310da33f4c9ba843ff641aa607c3062790df))
+* **cli:** bundle CLI standalone and add monorepo E2E ([50e1a93](https://github.com/lidaixingchen/brutxui-vue3/commit/50e1a9354c34d807e85adbf39abd8e4239764621))
+* **cli:** implement two-phase execution and router ([738744c](https://github.com/lidaixingchen/brutxui-vue3/commit/738744c8de616fda6985d0b969ccd936cc303c21))
+* **registry:** migrate AST pipeline to SfcAstEngine ([8c5abe1](https://github.com/lidaixingchen/brutxui-vue3/commit/8c5abe15556948fbee12e15b2f7286629efeef50))
+* **cli:** implement WorkspaceTopologyEngine and resolver ([ad756d6](https://github.com/lidaixingchen/brutxui-vue3/commit/ad756d64e96aa370d133f94404f2b2b1411569ea))
+* **shared:** implement SfcAstEngine pipeline ([f30b4df](https://github.com/lidaixingchen/brutxui-vue3/commit/f30b4dfa7df658992ed49d62338a4755597b3f51))
+* **cli:** 补充多源竞速调试追踪与健康探针测试 (#87) ([fdae20f](https://github.com/lidaixingchen/brutxui-vue3/commit/fdae20ff1c48ad09d47c1d868421b1e571a85f19))
+* **cli:** 业务层接入阶梯竞速与弹性门面，清除旧版硬超时重试 (#86) ([a59de42](https://github.com/lidaixingchen/brutxui-vue3/commit/a59de42cdf6c9b9ebb9d2a397e4bc3c0db2290aa))
+* **cli:** 实现链式自适应阶梯竞速调度引擎与弹性网络门面 (#85) ([47f8a3a](https://github.com/lidaixingchen/brutxui-vue3/commit/47f8a3a553f38b5417e17293885130c8bd920f14))
+* **cli:** 实现网络退避抖动算法与会话级源健康状态机 (#84) ([16c9b77](https://github.com/lidaixingchen/brutxui-vue3/commit/16c9b7708615e116e9cd8a53d7b8dd4651d085a1))
+* **cli:** CLI update / add 命令流水线与三合一原子事务提交 (#81) ([a31cf65](https://github.com/lidaixingchen/brutxui-vue3/commit/a31cf65f3f189f9376bd931ccaa889811b5c29dd))
+* **cli:** DirectoryMergePlanner 组件多文件目录级拓扑感知调度 (#80) ([a2b54b5](https://github.com/lidaixingchen/brutxui-vue3/commit/a2b54b59032c1ec4b275da9b2ad160b48546af4d))
+* **cli:** BaselineProvider 清单元数据按需 Base 动态重构器 (#79) ([8aa3daf](https://github.com/lidaixingchen/brutxui-vue3/commit/8aa3daf38e3192a18c83f6795af160eeb09f2fe7))
+* **cli:** 纯数据 3-Way Merge 核心算法与换行缩进容差引擎 (#78) ([4eeddc6](https://github.com/lidaixingchen/brutxui-vue3/commit/4eeddc66827690b08a5921970a92097759603782))
+
+### ♻️ Code Refactoring
+
+* **scripts:** 重构巡检与契约守卫脚本 ([18457ba](https://github.com/lidaixingchen/brutxui-vue3/commit/18457ba188e9560606a89ed286b6b717cfc96ea5))
+* 清理工作流脚本及全包代码历史方案注释 ([a0173f9](https://github.com/lidaixingchen/brutxui-vue3/commit/a0173f917e056bfe58f5e4516a174b0bbc26b4e7))
+* **registry,cli:** 消费端适配统一 AST 引擎与路径重写 ([989c7c2](https://github.com/lidaixingchen/brutxui-vue3/commit/989c7c23f240d2f981c335a309af219cfc2393ed))
+* **shared:** 清单扫描器接入统一 AST 引擎并清理重复实现 ([95a22a1](https://github.com/lidaixingchen/brutxui-vue3/commit/95a22a18b2d50e3f36fe5bd74573c249d3c0299c))
+* **ui:** 优化 NumberInput 步进按钮悬浮与按压交互 ([0b7b1fe](https://github.com/lidaixingchen/brutxui-vue3/commit/0b7b1fe116465ee1adf1d2e2d44af02c5608b754))
+* **cli:** 完善 init 服务别名解析与自引用防御 ([82eb339](https://github.com/lidaixingchen/brutxui-vue3/commit/82eb33912eb8bd608374bbfe7f5884ee261d20c5))
+* **cli:** 优化 CSS 依赖图引擎并发安全与路径防御 ([879d0c6](https://github.com/lidaixingchen/brutxui-vue3/commit/879d0c686a7f7178e4cbe696f86bce05a540c06d))
+* **cli:** 优化诊断引擎配置透传与 Reporter 异常防御 ([77c88b9](https://github.com/lidaixingchen/brutxui-vue3/commit/77c88b91cd666d216165c1ce63083d79ae7ca914))
+* **cli:** 优化 3-Way Merge 引擎代码审查发现项与边界异常防护 ([cb9a8db](https://github.com/lidaixingchen/brutxui-vue3/commit/cb9a8dbe81f4d65cfa740014b030dda1088ccdd2))
+
+### 🐛 Bug Fixes
+
+* **deps:** 修复安全中心依赖漏洞并升级相关补丁版本 ([28c4d64](https://github.com/lidaixingchen/brutxui-vue3/commit/28c4d6447b07108ce3bd214fb6378b5ba17c98b0))
+* **scripts:** 修复文档链接引擎边界缺陷并对齐诊断信封协议 ([b02917c](https://github.com/lidaixingchen/brutxui-vue3/commit/b02917cbb4e8f22dce6557a9d91cb6746f578e2a))
+* **cli:** 完善注册表客户端错误守卫与动态缓存隔离 ([fcd2ecc](https://github.com/lidaixingchen/brutxui-vue3/commit/fcd2ecc461792e62d57626ebed060625d762fbeb))
+* **cli:** 修复 lint 告警并替换 reporters 为原生 fs ([c25ea76](https://github.com/lidaixingchen/brutxui-vue3/commit/c25ea7668d150a293f2e94ee65811869a3748a36))
+* **cli:** refine SFC edge cases and workspace resolver ([c4e7e32](https://github.com/lidaixingchen/brutxui-vue3/commit/c4e7e320c596210897c22668c1f58f1bd9793fe5))
+* **cli:** 修正 resilient-fetch 中 abortableSleep 的 const 声明 ([09abab0](https://github.com/lidaixingchen/brutxui-vue3/commit/09abab00aee4a5462401a4036b742166091c234e))
+* **cli:** 强化退避中断即时响应与重试耗尽判定 ([3d32f38](https://github.com/lidaixingchen/brutxui-vue3/commit/3d32f3825a5a4c39e30314f4c2adcf06394b1ec3))
+* **cli:** Doctor 冲突巡检细化文件读取异常诊断避免假阴性 ([205ebcd](https://github.com/lidaixingchen/brutxui-vue3/commit/205ebcd0a5ae83d7eb1ee0c956e2b345421a8d9b))
+* **ui:** 显式声明 playwright 开发依赖以保障浏览器测试稳定性 ([3958c1f](https://github.com/lidaixingchen/brutxui-vue3/commit/3958c1f2fc7142697d64cc8c9a5ab34b2d183af1))
+
+### 📝 Documentation
+
+* **core:** 补充工程门禁与巡检脚本工具链重构方案 ([b0b3ebe](https://github.com/lidaixingchen/brutxui-vue3/commit/b0b3ebe3a9c991eb2aaedf5d6f80d1e96c407a69))
+* **core:** 新增文档链接检查与自愈引擎改进方案 ([adc78b5](https://github.com/lidaixingchen/brutxui-vue3/commit/adc78b5d2c357491c2fbe081e092825c54a4b266))
+* 汇总存量方案至系统演进方案并归档原文档 ([1669a4c](https://github.com/lidaixingchen/brutxui-vue3/commit/1669a4c0a776e496cb0fbadb930edac3cfcf403b))
+* **guides:** 新增COMMANDS手册并精简AGENTS自检表 ([3557289](https://github.com/lidaixingchen/brutxui-vue3/commit/3557289c47479305e1b15f75121af25cd6762e71))
+* 落实文档生命周期分流与领域镜像分仓 ([40b456c](https://github.com/lidaixingchen/brutxui-vue3/commit/40b456c3a2e5a311b197c378489872eec244fbe8))
+* **plans:** 完成 AST 解析统一与源码工具链治理方案 ([dd48066](https://github.com/lidaixingchen/brutxui-vue3/commit/dd480666c2191a137639469b5b207db508c50dd5))
+* **plans:** 完成 CLI 注册表深模块客户端重构方案 ([b69b067](https://github.com/lidaixingchen/brutxui-vue3/commit/b69b067f8815b3ae4881444457cc003130a398a5))
+* **number-input:** add visual optimization design spec ([90f4817](https://github.com/lidaixingchen/brutxui-vue3/commit/90f481784621c67867a801f7792a1307695bc365))
+* **plans:** mark CLI AST and workspace plan as done ([c4245e9](https://github.com/lidaixingchen/brutxui-vue3/commit/c4245e9a37f172eed0157ef9bded03744821f438))
+* **plans:** add CLI AST and workspace plan ([932b042](https://github.com/lidaixingchen/brutxui-vue3/commit/932b04273d9def0263065109b2fd6109b010a576))
+* **plans:** 归档 CLI 网络韧性与多源竞速自适应退避方案为完成态 ([e42f794](https://github.com/lidaixingchen/brutxui-vue3/commit/e42f7944ad17c2466f0fda624550a8481f926458))
+
+### ✅ Tests
+
+* **shared:** 修复 Linux CI 下绝对路径 URL 断言的跨平台兼容性 ([3d176e0](https://github.com/lidaixingchen/brutxui-vue3/commit/3d176e086613e0763c80ff46dbe528d83c85ebbc))
+* **shared:** 增加文档链接检查与自愈引擎单元测试 ([c8dc614](https://github.com/lidaixingchen/brutxui-vue3/commit/c8dc6145b8d61d1d30dddccb0c955e7d4839785a))
+* **cli:** Doctor 冲突巡检规则与全生命周期零 I/O 内存集成验证 (#82) ([ca27fbf](https://github.com/lidaixingchen/brutxui-vue3/commit/ca27fbf12163234446406d38ca67554292602a17))
+
+### 📦 Build
+
+* **deps:** override sourcemap-codec to 1.5.0 ([4a43a31](https://github.com/lidaixingchen/brutxui-vue3/commit/4a43a312384a137916843cf59294a23b3ce23196))
+
+### 🔧 CI
+
+* **deps:** bump actions/deploy-pages in the actions-official group (#110) ([446a123](https://github.com/lidaixingchen/brutxui-vue3/commit/446a1235f886ff322fda0cca7cb16e081013eb0a))
 
 ## [0.11.1](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.11.0...v0.11.1) - 2026-08-24
 
@@ -337,123 +424,12 @@
 * 清理 registry 测试中未使用变量与导入 ([38e1084](https://github.com/lidaixingchen/brutxui-vue3/commit/38e10843ea6a74cb1b616372db7897f6b7a5a290))
 * 修复组件 lint 警告（默认值、属性顺序、void 元素自闭合） ([aa74ba7](https://github.com/lidaixingchen/brutxui-vue3/commit/aa74ba76cc778b4dabc30d66e0b351306d833708))
 
-## [0.10.2](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.10.1...v0.10.2) - 2026-08-13
-
-### ✨ Features
-
-* **changelog:** 版本历史页内联最新版本并发布脚本自动同步 ([afe0e08](https://github.com/lidaixingchen/brutxui-vue3/commit/afe0e088ef0be42996c4e593c73cec798572dac4))
-* **theme:** 状态令牌与危险态阴影令牌补全 ([b3996d1](https://github.com/lidaixingchen/brutxui-vue3/commit/b3996d151b1d850e38769d60d2144ac66e739542))
-
-### ♻️ Code Refactoring
-
-* **ui:** 焦点与选中指示统一到 outline，根除 ring 与 brutal 阴影争用 ([19c725b](https://github.com/lidaixingchen/brutxui-vue3/commit/19c725bdd3a17b9872477827d9a58b3b47aba833))
-
-### 🐛 Bug Fixes
-
-* **release:** OCR 审查修复——guide 同步转义、dry-run 守卫与门禁排除收窄 ([1ab3549](https://github.com/lidaixingchen/brutxui-vue3/commit/1ab35490aa17fd1ea03d40ac7dd1306950e2df0c))
-* **ui:** 清理 docs 侧 ring 残留并扩展 check:deprecated 门禁覆盖 ([4d0354f](https://github.com/lidaixingchen/brutxui-vue3/commit/4d0354f1a235d872e4d47d8c9d495baad5889c37))
-* **ui:** 低等级审查发现修复 ([2e941aa](https://github.com/lidaixingchen/brutxui-vue3/commit/2e941aa2da5af429e1f86b81e3107ffcc6565bb6))
-* **ci:** open-code-review 审查发现的令牌门禁与安全加固 ([7c75501](https://github.com/lidaixingchen/brutxui-vue3/commit/7c755017942849d6ae0a6ad982ece73deadfac82))
-* **ci:** 跨包令牌契约与构建链路加固 ([0aaad80](https://github.com/lidaixingchen/brutxui-vue3/commit/0aaad808cf28ac975dad6aa5312ce85c842468bd))
-* **ui:** 主题子系统去重与原型链防护 ([20a3177](https://github.com/lidaixingchen/brutxui-vue3/commit/20a3177e1b980173d44bde54d61340a2d4127d9f))
-* **ui:** composables 生命周期与健壮性修复 ([634896c](https://github.com/lidaixingchen/brutxui-vue3/commit/634896c2a7a8b0ba6f99d8690a69b78780b79ba0))
-* **ui:** 共享交互变体清理与按压反馈共享化 ([f814b73](https://github.com/lidaixingchen/brutxui-vue3/commit/f814b7304c1e3e9255406b53a6ba49925b3f20a2))
-* **ui:** 高亮按压反馈复合变体抽取共享常量 ([0fa9b9f](https://github.com/lidaixingchen/brutxui-vue3/commit/0fa9b9fc4b1df536251c07bd25ca44b6fc0143d1))
-* **ui:** 已废弃工具类门禁与样式注释修复 ([0e8d81a](https://github.com/lidaixingchen/brutxui-vue3/commit/0e8d81adeee4abb30c8bbf11e063a98299cbc94b))
-* **ci:** 约定门禁脚本审查问题修复 ([858cd4b](https://github.com/lidaixingchen/brutxui-vue3/commit/858cd4b64b190db90e2d7b43d6332e049dfc9ec6))
-* **ci:** 约定门禁 CI 接线与 commitlint PR 校验修复 ([bee24c9](https://github.com/lidaixingchen/brutxui-vue3/commit/bee24c974cd5cf59fc109f00195b74b4b2209df1))
-* **ui:** 日格子过渡显式声明与复制按钮反馈修复 ([479f7a3](https://github.com/lidaixingchen/brutxui-vue3/commit/479f7a3de40194f9e4d36f3d07a3603ba31adf54))
-* **ui:** 硬编码 shadow 与颜色回归令牌化 ([b3ba04b](https://github.com/lidaixingchen/brutxui-vue3/commit/b3ba04b480e2c6ea713a75fb0afbe8eb96c7bbd4))
-* **ui:** command 焦点指示与高亮按压反馈复合变体 ([fdeaf17](https://github.com/lidaixingchen/brutxui-vue3/commit/fdeaf170a299a16097696c10702d3bd69c092d6e))
-* **ui:** 焦点体系 a11y 修复与惰性 outline-none 清理 ([39ca3cc](https://github.com/lidaixingchen/brutxui-vue3/commit/39ca3cc5c2e297a03a19b8700bbd10a21cf71af4))
-* **ui:** 共享交互变体契约与 toggle/separator 修复 ([0c4abfc](https://github.com/lidaixingchen/brutxui-vue3/commit/0c4abfc8ccdbd062e3812b3fa38139fb937ecbc3))
-* **ui:** 组件视觉令牌化迁移样板 ([9699162](https://github.com/lidaixingchen/brutxui-vue3/commit/9699162cbc69047266ab77372615ce56c8c1ffc1))
-* **ui:** pagination 省略号焦点类改引用统一常量 ([5cabed2](https://github.com/lidaixingchen/brutxui-vue3/commit/5cabed265606fed0ab9eee953f91bfe0936cf86d))
-* **ui:** cascader 叶子路径缓存下沉消除首渲染重复递归 ([04bfe78](https://github.com/lidaixingchen/brutxui-vue3/commit/04bfe782fdcc8b7002f985286922c71cf64d938d))
-* **ui:** counter 千分位分隔符改函数形式防特殊模式转义 ([bca6095](https://github.com/lidaixingchen/brutxui-vue3/commit/bca6095d22359b4fb99177cd5eaf768455c61b15))
-* **ui:** command 隐藏子元素文本不入搜索索引 + 测试 ([05df874](https://github.com/lidaixingchen/brutxui-vue3/commit/05df874ec6076e05e9a4466ad160fbb044d97d2b))
-* **ui:** code-block prism-languages 依赖校验降级与失败计数清零 + 测试 ([504e7d7](https://github.com/lidaixingchen/brutxui-vue3/commit/504e7d7733280cd349de0c69fed3588d995bea1b))
-* **ui:** chat-bubble 无时间戳消息不触发日期边界 + 公共变体契约注释 ([2fe3a7e](https://github.com/lidaixingchen/brutxui-vue3/commit/2fe3a7e413125513e7965152118cb0f84136cda1))
-* **ui:** color-picker 多指拖拽仅末会话结束确认 + 非法色块透明度清理 ([103ee3c](https://github.com/lidaixingchen/brutxui-vue3/commit/103ee3caffad98ee9961ab5ede9ad1f00f4776e0))
-* **ui:** card-3d 修复程序化/辅助技术 click 被误吞的回归 + 测试 ([e34de3d](https://github.com/lidaixingchen/brutxui-vue3/commit/e34de3d0949f7586a40e60c320e91c7b7f5bb6ae))
-* **ui:** color-mode-switcher OCR 修复——1 条 ([0664858](https://github.com/lidaixingchen/brutxui-vue3/commit/06648582a71e4c7b99c0e3e42d7dada186b4b32c))
-* **ui:** brutal-interaction-variants OCR 修复——1 条 ([73359ae](https://github.com/lidaixingchen/brutxui-vue3/commit/73359ae30e1069ee1844ae81de19d31604e34276))
-* **ui:** counter OCR 修复——1 条 + 约束注释 ([d02981b](https://github.com/lidaixingchen/brutxui-vue3/commit/d02981b6d4d5129776ad64cc30f7a41994c79ac4))
-* **ui:** color-picker OCR 修复——6 条全处理 ([3cebd47](https://github.com/lidaixingchen/brutxui-vue3/commit/3cebd47767ae1d25e364cbc6d0a72fc5d9a146f1))
-* **ui:** code-block OCR 修复——5 条全处理 ([3fce770](https://github.com/lidaixingchen/brutxui-vue3/commit/3fce7709895a4acdcb6e3649f1727180c1955501))
-* **ui:** checkbox OCR 修复——1 条 ([b3313f2](https://github.com/lidaixingchen/brutxui-vue3/commit/b3313f2fa3003cbb9918b238c183e9d2ece67e27))
-* **ui:** chat-bubble OCR 修复——4 修 1 跳 ([96b058b](https://github.com/lidaixingchen/brutxui-vue3/commit/96b058b704065ebf1168667f0269fe4cfecda2fa))
-* **ui:** calendar OCR 修复——1 条 ([663bfad](https://github.com/lidaixingchen/brutxui-vue3/commit/663bfade499c6a869e067b48aca873b75b91ddf5))
-* **ui:** copy-to-clipboard OCR 修复——2 条全处理 ([53342dc](https://github.com/lidaixingchen/brutxui-vue3/commit/53342dce055cb5ad87c5b87c7c6277cb03f85b94))
-* **ui:** command OCR 修复——3 条全处理 ([e20fd1c](https://github.com/lidaixingchen/brutxui-vue3/commit/e20fd1cc0c333954f8571d938607bc50eae9c8ac))
-* **ui:** card-3d OCR 修复——4 条全处理 ([b997029](https://github.com/lidaixingchen/brutxui-vue3/commit/b997029f57f6e5166ffc94b71ea5edc1c5077b5a))
-* **ui:** card OCR 修复——3 条全处理 ([308e272](https://github.com/lidaixingchen/brutxui-vue3/commit/308e272ab9d30f98ee158fee636be31cdd5cb29a))
-* **ui:** shadow 令牌移出 @theme 单层化，消除悬停/按压双影鬼影 ([904774b](https://github.com/lidaixingchen/brutxui-vue3/commit/904774b531e68ec224a30234f14127914f176d5e))
-* **ui:** command 语义化与契约修复 ([adb46fc](https://github.com/lidaixingchen/brutxui-vue3/commit/adb46fcbad31409939b93390806c3f36e4517769))
-* **ui:** command-input 双向同步，v-model 仅回显用户输入 ([614d2bc](https://github.com/lidaixingchen/brutxui-vue3/commit/614d2bc283a775c5a0f41bc458bfb228c3d392ce))
-* **ui:** command 过滤注册同步化，消除首渲闪烁与隐藏项键盘导航 ([77633f4](https://github.com/lidaixingchen/brutxui-vue3/commit/77633f4bd33a433287e5a13e630ed2d5d0c48422))
-* **ui:** counter OCR 修复——5 条全处理 ([aad5aeb](https://github.com/lidaixingchen/brutxui-vue3/commit/aad5aeb508d5db0bd804c958311e6c0ab4cc63b9))
-* **ui:** color-picker OCR 修复——21 条全处理（aria-controls 接线、swatch 语义、拖拽会话、lastEmitted、Enter 防重） ([126b562](https://github.com/lidaixingchen/brutxui-vue3/commit/126b562276ca749d46a83997896b10937024ba95))
-* **ui:** color-mode-switcher OCR 修复——3 条全处理（indexOf -1 保持现状、select 值归一化、拒绝隐藏的 system） ([37e1f24](https://github.com/lidaixingchen/brutxui-vue3/commit/37e1f244793d37f35783cd52d68cfee49379df19))
-* **ui:** copy-to-clipboard OCR 修复——失败反馈、aria 播报、共享按下态 ([2da7bd4](https://github.com/lidaixingchen/brutxui-vue3/commit/2da7bd4b2fd1c805314ee24bd020ca0ba963b072))
-* **ui:** cookie-consent OCR 修复——emit 顺序、空串回退、region 语义 ([46d948c](https://github.com/lidaixingchen/brutxui-vue3/commit/46d948c19f4107c9f779e4b9dd02c392ee2ba3b4))
-* **ui:** combobox OCR 修复——create 值 trim、label 运行时兜底、受控 open 契约 ([b28d876](https://github.com/lidaixingchen/brutxui-vue3/commit/b28d8765a5cc88986d5570158d69126680c91f3c))
-* **ui:** code-block OCR 修复——13 条全处理 ([734b404](https://github.com/lidaixingchen/brutxui-vue3/commit/734b404dcdde905aff8a975649cb1d57034620f8))
-* **ui:** chat-bubble OCR 修复——12 条全处理（阴影重构、乱序稳定排序、码点 initials、STATUS_META 穷尽表） ([a711a71](https://github.com/lidaixingchen/brutxui-vue3/commit/a711a71033cdeb0978f9bffe716debc9a8ed4d30))
-* **ui:** checkbox OCR 修复——5 条全处理（选中态前景色、defaultValue 透传、size 兜底、name/value/required 表单属性） ([f41bd7f](https://github.com/lidaixingchen/brutxui-vue3/commit/f41bd7f221c1bbdae9fdf3da8c437b7e9828c97a))
-* **ui:** cascader OCR 修复——偏移/类冲突、disabled 过滤、缓存与键盘可访问性 ([e0e4221](https://github.com/lidaixingchen/brutxui-vue3/commit/e0e4221f4c0573325f62b8c47dbb123e44638915))
-* **ui:** carousel OCR 修复——11 条全处理（未消费配置四项实现、ARIA 语义、dots 二选一、enabled 变体） ([cb4b13d](https://github.com/lidaixingchen/brutxui-vue3/commit/cb4b13dc29983f7fc14f86075235fe57902d00cc))
-* **ui:** card OCR 修复——嵌套交互/主键过滤、键盘 keyup 语义、disabled 支持、CardTitle as 白名单 ([80277a2](https://github.com/lidaixingchen/brutxui-vue3/commit/80277a23c1bdc23313f0d270c4755ee33dc216e4))
-* **ui:** card-3d OCR 修复——偏移配置表字面量类名、悬停状态重置、clickable 键盘可访问性 ([71843d7](https://github.com/lidaixingchen/brutxui-vue3/commit/71843d764da5e8fe83a0add047b7a76382419d43))
-* **ui:** calendar OCR 修复——5 修 1 跳过（缓存键 JSON 序列化、drag isRange 防护、事件 key 去重、单元素归一化、事件预分组） ([8e8fc07](https://github.com/lidaixingchen/brutxui-vue3/commit/8e8fc07af51faa87bc5b1d359d4c82cf905f4528))
-
-### 📝 Documentation
-
-* 同步 ring 门禁覆盖范围并补充英文 changelog 中文界面提示 ([e24d848](https://github.com/lidaixingchen/brutxui-vue3/commit/e24d848b0dd7d7d64e0f314244a72b482bada738))
-* 审查报告补主题前景对比度发现 ([d6fc289](https://github.com/lidaixingchen/brutxui-vue3/commit/d6fc289e9613a86ce2817bd4d010b1466f3cc5d2))
-* 压缩审查报告修复记录为状态总览 ([bd4c74d](https://github.com/lidaixingchen/brutxui-vue3/commit/bd4c74da6af42a1e14b7283ffac6784894123b46))
-* 审查报告机械可修项修复进展 ([3fcd280](https://github.com/lidaixingchen/brutxui-vue3/commit/3fcd280cfff221faa3a05178cae0e8e066713510))
-* 约定体系既有债修复进展 ([de94362](https://github.com/lidaixingchen/brutxui-vue3/commit/de94362f8076459f11b3ca4dc587e3f1b8bc62d1))
-* **guides:** 视觉规则边框配对说明 ([aa29302](https://github.com/lidaixingchen/brutxui-vue3/commit/aa29302b592bbc531182ad5ae91b7d046840e209))
-* **ui:** 组件文档补全必须章节 ([07a2dc1](https://github.com/lidaixingchen/brutxui-vue3/commit/07a2dc12819940970bd42fad868db2cc6dd0d7a5))
-* 约定体系未纳入债清单与方案引用 ([aeac000](https://github.com/lidaixingchen/brutxui-vue3/commit/aeac000a7a33f65915f4524d53a0fce2757779cc))
-* **guides:** 约定体系修复——机制文档与措辞定稿 ([f10169f](https://github.com/lidaixingchen/brutxui-vue3/commit/f10169fd2da2fb89e9774fcf9db15b1b0b349694))
-* 约定体系修复方案——7 条系统性弱点修复与 6 阶段执行 ([d34a73a](https://github.com/lidaixingchen/brutxui-vue3/commit/d34a73aa0de11081097f26018314f863394d1487))
-* 约定体系审查——8 条违反指控裁决与约定质量审计 ([204c1d0](https://github.com/lidaixingchen/brutxui-vue3/commit/204c1d063ad70124ec72684a2e8d61cb98845bc4))
-* 基座并行审查补强——跨包令牌契约/构建链路/composables/lib 共享层 30 项发现 ([11fc81e](https://github.com/lidaixingchen/brutxui-vue3/commit/11fc81e391a082d2fba7cb6df41b99c1a7042552))
-* **ui:** color-mode-switcher 同步边界态展示值回退说明 ([fb17634](https://github.com/lidaixingchen/brutxui-vue3/commit/fb17634aa390dd9eb61c97650b0c3cdd549e01bb))
-* **ui:** chat-bubble/checkbox/color-picker 同步分组排序、indeterminate 与表单语义 ([442f268](https://github.com/lidaixingchen/brutxui-vue3/commit/442f268c3bac4484e8d0db25e63adc795276fc24))
-* **ui:** command/copy-to-clipboard 同步双向绑定契约与反馈时长说明 ([40d270a](https://github.com/lidaixingchen/brutxui-vue3/commit/40d270a0b870e9e7f84309f6465e9646423f3674))
-* **ui:** card/card-3d 同步禁用视觉、键盘守卫与 ariaLabel 说明 ([bcbab37](https://github.com/lidaixingchen/brutxui-vue3/commit/bcbab37bf591c0ebcc2176dd7e63ba6926a2d215))
-* 阴影过渡与焦点体系统一方案实施文档与焦点态约定 ([0d7b237](https://github.com/lidaixingchen/brutxui-vue3/commit/0d7b237f99d17f460da10286c959b0f928b90aa9))
-* 补充组件/发布/视觉规范并修正焦点与过渡表述 ([093519f](https://github.com/lidaixingchen/brutxui-vue3/commit/093519f85d8a314702223520db602c40f2632a89))
-* **ui:** command 同步受控、回写与 class 类型说明 ([c084458](https://github.com/lidaixingchen/brutxui-vue3/commit/c084458b161508077a4a1366bcf4bb40527c6df3))
-* **ui:** counter 同步 separator 空串语义与 accent 使用提示 ([64b44c6](https://github.com/lidaixingchen/brutxui-vue3/commit/64b44c698a24e2c93c108caaa3583a15e04d5aef))
-* **ui:** color-mode-switcher/color-picker 同步边界行为、表单提交与色块语义说明 ([8205f85](https://github.com/lidaixingchen/brutxui-vue3/commit/8205f851274311e2e2325328f74f4f2e66fef67e))
-* **ui:** locale 指南修正 CodeBlock 键——补 expand/collapse、删幻影键 ([0bd3666](https://github.com/lidaixingchen/brutxui-vue3/commit/0bd3666cae922554c698c2aacef2d31cb791d952))
-* **ui:** code-block 同步 --brutal-code-foreground 变量与对比度校准说明 ([a4f9142](https://github.com/lidaixingchen/brutxui-vue3/commit/a4f91423d170f4666e9994b7998daab845107805))
-* **ui:** combobox/cookie-consent/copy-to-clipboard 同步契约与行为说明 ([67ac478](https://github.com/lidaixingchen/brutxui-vue3/commit/67ac4788be2a18561d0b0428975189e40105781e))
-* **ui:** code-block 同步插槽与 code prop 契约说明 ([39c1f21](https://github.com/lidaixingchen/brutxui-vue3/commit/39c1f21808ba2f565fe5c507447f0f4511ea84d9))
-* **ui:** chat-bubble/checkbox 同步分组排序与间隔时间标签、受控/非受控与表单属性说明 ([98975ac](https://github.com/lidaixingchen/brutxui-vue3/commit/98975acf91b380f9226c3b353c98ca71ebe988ea))
-* **ui:** cascader 同步 CascaderOption 泛型与键盘可访问性说明 ([1ef7ae8](https://github.com/lidaixingchen/brutxui-vue3/commit/1ef7ae8902ac4c5d7968b743b9e45f26950bdd4f))
-* **ui:** card/card-3d 同步 disabled prop、CardTitle as 类型收窄与键盘可访问性说明 ([4af7336](https://github.com/lidaixingchen/brutxui-vue3/commit/4af7336027d15e9a603baa4ab133615b7e750a2f))
-* 更新根 CHANGELOG 至 0.10.1 并归档 0.9.11 ([f83006f](https://github.com/lidaixingchen/brutxui-vue3/commit/f83006f6de13abf0f7978b45ea065faa7c6c0853))
-
-### ✅ Tests
-
-* **ui:** toggle 补保持按下态类断言 ([8e1b3c9](https://github.com/lidaixingchen/brutxui-vue3/commit/8e1b3c9c6fffeebed3cfb447c211b6e3622dff90))
-* **ui:** cascader 补充 OCR 修复回归测试 ([e65ae28](https://github.com/lidaixingchen/brutxui-vue3/commit/e65ae288785a21d48af21d59519dbab67b319758))
-* **ui:** command 契约更新并补充同步回归用例 ([d836383](https://github.com/lidaixingchen/brutxui-vue3/commit/d836383551f16a421d2ee89431342fbe62e9d3f2))
-
-### 🔧 CI
-
-* 约定体系自动化门禁与提交门禁 ([a4c939e](https://github.com/lidaixingchen/brutxui-vue3/commit/a4c939e2dbc8f5c6159d1bc08e573d4339d2d312))
-
 
 ## 归档版本
 
 > 以下版本已归档至 [apps/docs/changelog/](apps/docs/changelog/)，点击版本号查看完整变更记录：
 
+* **[0.10.2](apps/docs/changelog/v0.10.2.md)** - 2026-08-13
 * **[0.10.1](apps/docs/changelog/v0.10.1.md)** - 2026-08-11
 * **[0.10.0](apps/docs/changelog/v0.10.0.md)** - 2026-08-11
 * **[0.9.12](apps/docs/changelog/v0.9.12.md)** - 2026-08-09

@@ -1,5 +1,11 @@
 # brutx-vue
 
+## 0.11.2
+
+### Patch Changes
+
+- fix(deps): 升级依赖并配置 overrides 修复安全中心警报
+
 ## 0.11.1
 
 ### Patch Changes
