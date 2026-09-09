@@ -6,32 +6,20 @@
  *   - 纯只读源码与 AST 静态扫描，多任务异步高并发调度；
  *   - 默认模式：遵循 Unix 沉默原则，成功输出单行极简确认（~1.6s），失败打破静默精准定位；
  *   - --json 模式：输出严格的 Agent Result Envelope 结构（status、result、error、control、effect、meta），
- *     五态状态机建模（success / partial_success / error），提供结构化建议自愈动作（suggested_actions）。
- *
- * 聚合检查项（纯静态只读，免 build）：
- *   1. phantom-deps: Monorepo 幽灵依赖扫描（scripts/scan-phantom-deps.mjs）
- *   2. fallback-vars: 设计令牌 fallback 覆盖率基线守卫（packages/ui/scripts/audit-brutal-fallback.ts）
- *   3. class-literals: Tailwind @source 源码完整类名字面量规约（packages/ui/scripts/check-class-literals.ts）
- *   4. deprecated-utils: 已废弃工具类防回潮基线守卫（packages/ui/scripts/check-deprecated-utilities.ts）
- *   5. tokens-alignment: CLI brutalist.css 与 UI 令牌同步性守卫（packages/cli/scripts/check-brutalist-tokens.ts）
- *   6. exports-sync: 组件重导出、manifest 新鲜度与 package exports 同步守卫（packages/ui/scripts/check-exports.ts）
- *
- * 用法：
- *   pnpm check:contracts            # 默认高频自检（全绿极简确认；失败精准定位）
- *   pnpm check:contracts --json     # 输出机器可读的 Result Envelope JSON
- *   pnpm check:contracts --verbose  # 展开各项详细执行日志
+ *     三态状态机建模（success / partial_success / error），提供结构化建议自愈动作（suggested_actions）。
  */
 
 import { spawn } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { StringDecoder } from 'node:string_decoder'
 
 const ROOT = path.resolve(fileURLToPath(new URL('../', import.meta.url)))
 const isJson = process.argv.includes('--json')
 const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v')
+const TIMEOUT_MS = 25000 // 25s 契约超时熔断
 
-// 定位 tsx cli 入口，直接通过 node 启动以规避 pnpm/npx 跨平台子进程包装开销
 const LOCAL_TSX = path.resolve(ROOT, 'node_modules/tsx/dist/cli.mjs')
 const HAS_LOCAL_TSX = existsSync(LOCAL_TSX)
 
@@ -119,38 +107,114 @@ const CONTRACTS = [
 
 function runContract(contract) {
   return new Promise((resolve) => {
-    const child = spawn(contract.cmd, contract.args, {
+    const finalArgs = [...contract.args]
+    if (isJson && !finalArgs.includes('--json')) {
+      finalArgs.push('--json')
+    }
+
+    const child = spawn(contract.cmd, finalArgs, {
       cwd: ROOT,
       env: process.env,
       stdio: ['ignore', 'pipe', 'pipe'],
     })
 
+    const stdoutDecoder = new StringDecoder('utf8')
+    const stderrDecoder = new StringDecoder('utf8')
     let stdout = ''
     let stderr = ''
+    let isSettled = false
+
+    const timer = setTimeout(() => {
+      if (!isSettled) {
+        isSettled = true
+        child.kill('SIGKILL')
+        resolve({
+          ...contract,
+          code: 124,
+          stdout: stdout.trim(),
+          stderr: (stderr + `\n执行超时（超过 ${TIMEOUT_MS / 1000}s 熔断）`).trim(),
+          diagnostics: [
+            {
+              file: contract.id,
+              line: 1,
+              ruleId: `${contract.id}/timeout`,
+              message: `契约检查执行超时，超过 ${TIMEOUT_MS / 1000} 秒被熔断终止`,
+              severity: 'error',
+            },
+          ],
+          jsonSummary: null,
+        })
+      }
+    }, TIMEOUT_MS)
 
     child.stdout.on('data', (data) => {
-      stdout += data.toString()
+      stdout += stdoutDecoder.write(data)
     })
 
     child.stderr.on('data', (data) => {
-      stderr += data.toString()
+      stderr += stderrDecoder.write(data)
     })
 
     child.on('close', (code) => {
+      if (isSettled) return
+      isSettled = true
+      clearTimeout(timer)
+      stdout += stdoutDecoder.end()
+      stderr += stderrDecoder.end()
+
+      let diagnostics = []
+      let jsonSummary = null
+
+      if (isJson && stdout.trim()) {
+        try {
+          const parsed = JSON.parse(stdout.trim())
+          if (parsed && Array.isArray(parsed.diagnostics)) {
+            diagnostics = parsed.diagnostics
+            jsonSummary = parsed.summary ?? null
+          }
+        } catch {}
+      }
+
+      // 降级防呆：若子进程失败且无结构化诊断，生成合成诊断
+      if (code !== 0 && diagnostics.length === 0) {
+        diagnostics.push({
+          file: contract.id,
+          line: 1,
+          ruleId: `${contract.id}/unstructured-failure`,
+          message: stderr.trim() || stdout.trim() || `契约检查 ${contract.id} 失败（退出码: ${code}）`,
+          severity: 'error',
+        })
+      }
+
       resolve({
         ...contract,
         code: code ?? 0,
         stdout: stdout.trim(),
         stderr: stderr.trim(),
+        diagnostics,
+        jsonSummary,
       })
     })
 
     child.on('error', (err) => {
+      if (isSettled) return
+      isSettled = true
+      clearTimeout(timer)
       resolve({
         ...contract,
         code: 1,
         stdout,
         stderr: `${stderr}\n子进程拉起失败: ${err.message}`.trim(),
+        diagnostics: [
+          {
+            file: contract.id,
+            line: 1,
+            ruleId: `${contract.id}/process-error`,
+            message: `子进程拉起失败: ${err.message}`,
+            severity: 'error',
+          },
+        ],
+        jsonSummary: null,
       })
     })
   })
@@ -160,7 +224,6 @@ async function main() {
   const startedAt = new Date().toISOString()
   const startTs = Date.now()
 
-  // 并发拉起所有契约检查
   const results = await Promise.all(CONTRACTS.map(runContract))
   const finishedAt = new Date().toISOString()
   const durationMs = Date.now() - startTs
@@ -169,7 +232,6 @@ async function main() {
   const failures = results.filter((r) => r.code !== 0)
   const successes = results.filter((r) => r.code === 0)
 
-  // 状态机判定：success / partial_success / error
   let status = 'success'
   if (failures.length === results.length) {
     status = 'error'
@@ -177,7 +239,6 @@ async function main() {
     status = 'partial_success'
   }
 
-  // 构建统一 Agent Result Envelope
   const envelope = {
     status,
     result: {
@@ -191,6 +252,8 @@ async function main() {
         desc: r.desc,
         status: r.code === 0 ? 'success' : 'error',
         exit_code: r.code,
+        summary: r.jsonSummary,
+        diagnostics: r.diagnostics,
         stdout: r.stdout,
         stderr: r.stderr,
       })),
@@ -203,6 +266,7 @@ async function main() {
           retryable: false,
           details: {
             failed_check_ids: failures.map((f) => f.id),
+            diagnostics: failures.flatMap((f) => f.diagnostics),
           },
         }
       : null,
@@ -228,7 +292,6 @@ async function main() {
     },
   }
 
-  // 1. --json 模式：输出机器可读的结构化 Result Envelope
   if (isJson) {
     console.log(JSON.stringify(envelope, null, 2))
     if (status !== 'success') {
@@ -237,9 +300,8 @@ async function main() {
     return
   }
 
-  // 2. 人类/CLI 文本模式：存在失败项打破静默
   if (failures.length > 0) {
-    console.error(`\n✖ [check:contracts] 代码契约门禁未通过（耗时 ${durationSec}s）：\n`)
+    console.error('\n✖ [check:contracts] 规范契约门禁检查未通过：\n')
     for (const f of failures) {
       console.error(`--- 【${f.desc} (${f.id}) 失败】---`)
       if (f.stdout) console.error(f.stdout)
@@ -254,16 +316,14 @@ async function main() {
     process.exit(1)
   }
 
-  // 3. 人类/CLI 文本模式：全部通过
   if (isVerbose) {
-    console.log(`\n=== BrutxUI 代码契约门禁巡检报告（耗时 ${durationSec}s）===`)
+    console.log(`\n=== BrutxUI 规范契约门禁详细报告（耗时 ${durationSec}s）===`)
     for (const r of results) {
       console.log(`\n--- ${r.desc} (${r.id}) ---`)
-      console.log(r.stdout || '(无控制台输出)')
+      console.log(r.stdout)
     }
     console.log(`\n✓ contracts check passed (${results.length} checks, ${durationSec}s)`)
   } else {
-    // Unix 沉默原则：全绿极简单行确认
     console.log('✓ contracts check passed')
   }
 }
@@ -281,16 +341,16 @@ main().catch((err) => {
             category: 'runtime_error',
             retryable: false,
           },
-          control: { retry: { allowed: false }, suggested_actions: [] },
+          control: { retry: { allowed: false, after_ms: null }, suggested_actions: [] },
           effect: { type: 'none' },
-          meta: { error: err.stack },
+          meta: { started_at: null, finished_at: null, duration_ms: null, error: err.stack },
         },
         null,
         2,
       ),
     )
   } else {
-    console.error('契约门禁执行发生未知异常：', err)
+    console.error('规范契约门禁未知异常：', err)
   }
   process.exit(1)
 })

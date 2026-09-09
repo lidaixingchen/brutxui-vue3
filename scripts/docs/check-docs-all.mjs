@@ -6,38 +6,49 @@
  *   - 纯只读文档与 AST 静态扫描，多任务异步高并发调度；
  *   - 默认模式：遵循 Unix 沉默原则，成功输出单行极简确认（~0.3s），失败打破静默精准定位；
  *   - --json 模式：输出严格的 Agent Result Envelope 结构（status、result、error、control、effect、meta），
- *     五态状态机建模（success / partial_success / error），提供结构化建议自愈动作（suggested_actions）。
- *
- * 聚合检查项：
- *   1. links: 文档内部相对链接与绝对路径检查 (check-doc-links.mjs check)
- *   2. status: 方案 Frontmatter 与生命周期契约守卫 (scan-doc-status.mjs --check)
- *   3. guides: 规范指南类名禁令守卫 (check-guide-conventions.mjs)
- *   4. refs: 已废弃/删除符号拦截与组件文档存在性 (check-guide-refs.mjs)
- *   5. templates: 组件双语使用文档必须章节结构 (check-doc-template.mjs)
- *
- * 用法：
- *   pnpm check:docs            # 默认高频自检（全绿极简确认；失败精准定位）
- *   pnpm check:docs --fix      # 自动修复链接等可自愈项目后复测
- *   pnpm check:docs --json     # 输出机器可读的 Result Envelope JSON
- *   pnpm check:docs --verbose  # 展开各项详细执行日志
+ *     三态状态机建模（success / partial_success / error），提供结构化建议自愈动作（suggested_actions）。
  */
 
 import { spawn, spawnSync } from 'node:child_process'
+import { existsSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { StringDecoder } from 'node:string_decoder'
 
 const ROOT = path.resolve(fileURLToPath(new URL('../../', import.meta.url)))
 
 const isFix = process.argv.includes('--fix')
 const isJson = process.argv.includes('--json')
 const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v')
+const TIMEOUT_MS = 15000 // 15s 进程超时熔断
+
+const LOCAL_TSX = path.resolve(ROOT, 'node_modules/tsx/dist/cli.mjs')
+const HAS_LOCAL_TSX = existsSync(LOCAL_TSX)
+
+function getRunner(scriptRelPath, extraArgs = []) {
+  if (scriptRelPath.endsWith('.ts')) {
+    if (HAS_LOCAL_TSX) {
+      return {
+        cmd: process.execPath,
+        args: [LOCAL_TSX, scriptRelPath, ...extraArgs],
+      }
+    }
+    return {
+      cmd: process.platform === 'win32' ? 'npx.cmd' : 'npx',
+      args: ['tsx', scriptRelPath, ...extraArgs],
+    }
+  }
+  return {
+    cmd: process.execPath,
+    args: [scriptRelPath, ...extraArgs],
+  }
+}
 
 const CHECKS = [
   {
     name: 'links',
     desc: '文档链接与绝对路径',
-    cmd: process.execPath,
-    args: ['scripts/docs/check-doc-links.mjs', 'check'],
+    ...getRunner('scripts/docs/check-doc-links.mjs', ['check']),
     action: {
       type: 'auto_fix',
       command: 'pnpm check:docs:fix',
@@ -47,8 +58,7 @@ const CHECKS = [
   {
     name: 'status',
     desc: '方案 Frontmatter 契约',
-    cmd: process.execPath,
-    args: ['scripts/docs/scan-doc-status.mjs', '--check'],
+    ...getRunner('scripts/docs/scan-doc-status.mjs', ['--check']),
     action: {
       type: 'manual_fix',
       command: null,
@@ -58,8 +68,7 @@ const CHECKS = [
   {
     name: 'guides',
     desc: '规范指南类名守卫',
-    cmd: process.execPath,
-    args: ['scripts/docs/check-guide-conventions.mjs'],
+    ...getRunner('scripts/docs/check-guide-conventions.mjs'),
     action: {
       type: 'manual_fix',
       command: null,
@@ -68,20 +77,18 @@ const CHECKS = [
   },
   {
     name: 'refs',
-    desc: '废弃符号与组件覆盖',
-    cmd: process.execPath,
-    args: ['scripts/check-guide-refs.mjs'],
+    desc: '组件文档覆盖率守卫',
+    ...getRunner('scripts/check-guide-refs.ts'),
     action: {
       type: 'manual_fix',
       command: null,
-      description: '指南中引用了已删除符号或缺少组件对应文档，请按指引补充或删除。',
+      description: '已登记组件缺少对应中英文使用文档或大小写不匹配，请按指引补充。',
     },
   },
   {
     name: 'templates',
     desc: '组件使用文档章节规范',
-    cmd: process.execPath,
-    args: ['scripts/check-doc-template.mjs'],
+    ...getRunner('scripts/check-doc-template.mjs'),
     action: {
       type: 'manual_fix',
       command: null,
@@ -92,53 +99,137 @@ const CHECKS = [
 
 function runCheck(check) {
   return new Promise((resolve) => {
-    const child = spawn(check.cmd, check.args, {
+    const finalArgs = [...check.args]
+    if (isJson && !finalArgs.includes('--json')) {
+      finalArgs.push('--json')
+    }
+
+    const child = spawn(check.cmd, finalArgs, {
       cwd: ROOT,
       env: process.env,
       stdio: ['ignore', 'pipe', 'pipe'],
     })
 
+    const stdoutDecoder = new StringDecoder('utf8')
+    const stderrDecoder = new StringDecoder('utf8')
     let stdout = ''
     let stderr = ''
+    let isSettled = false
+
+    const timer = setTimeout(() => {
+      if (!isSettled) {
+        isSettled = true
+        child.kill('SIGKILL')
+        resolve({
+          ...check,
+          code: 124,
+          stdout: stdout.trim(),
+          stderr: (stderr + `\n执行超时（超过 ${TIMEOUT_MS / 1000}s 熔断）`).trim(),
+          diagnostics: [
+            {
+              file: check.args[0] ?? check.name,
+              line: 1,
+              ruleId: `${check.name}/timeout`,
+              message: `检查执行超时，超过 ${TIMEOUT_MS / 1000} 秒被熔断终止`,
+              severity: 'error',
+            },
+          ],
+          jsonSummary: null,
+        })
+      }
+    }, TIMEOUT_MS)
 
     child.stdout.on('data', (data) => {
-      stdout += data.toString()
+      stdout += stdoutDecoder.write(data)
     })
 
     child.stderr.on('data', (data) => {
-      stderr += data.toString()
+      stderr += stderrDecoder.write(data)
     })
 
     child.on('close', (code) => {
+      if (isSettled) return
+      isSettled = true
+      clearTimeout(timer)
+      stdout += stdoutDecoder.end()
+      stderr += stderrDecoder.end()
+
+      let diagnostics = []
+      let jsonSummary = null
+
+      if (isJson && stdout.trim()) {
+        try {
+          const parsed = JSON.parse(stdout.trim())
+          if (parsed && Array.isArray(parsed.diagnostics)) {
+            diagnostics = parsed.diagnostics
+            jsonSummary = parsed.summary ?? null
+          }
+        } catch {}
+      }
+
+      // 降级防呆：若子进程失败且无结构化诊断，生成合成诊断，防止返回空数组
+      if (code !== 0 && diagnostics.length === 0) {
+        diagnostics.push({
+          file: check.args[0] ?? check.name,
+          line: 1,
+          ruleId: `${check.name}/unstructured-failure`,
+          message: stderr.trim() || stdout.trim() || `检查 ${check.name} 失败（退出码: ${code}）`,
+          severity: 'error',
+        })
+      }
+
       resolve({
         ...check,
         code: code ?? 0,
         stdout: stdout.trim(),
         stderr: stderr.trim(),
+        diagnostics,
+        jsonSummary,
       })
     })
 
     child.on('error', (err) => {
+      if (isSettled) return
+      isSettled = true
+      clearTimeout(timer)
       resolve({
         ...check,
         code: 1,
         stdout,
         stderr: `${stderr}\n子进程执行异常: ${err.message}`.trim(),
+        diagnostics: [
+          {
+            file: check.args[0] ?? check.name,
+            line: 1,
+            ruleId: `${check.name}/process-error`,
+            message: `子进程拉起失败: ${err.message}`,
+            severity: 'error',
+          },
+        ],
+        jsonSummary: null,
       })
     })
   })
 }
 
 function handleFix() {
-  const fixRes = spawnSync(process.execPath, ['scripts/docs/check-doc-links.mjs', 'fix'], {
-    cwd: ROOT,
-    encoding: 'utf-8',
-    env: process.env,
-  })
-  return {
-    success: fixRes.status === 0,
-    stdout: fixRes.stdout?.trim() ?? '',
-    stderr: fixRes.stderr?.trim() ?? '',
+  try {
+    const fixRes = spawnSync(process.execPath, ['scripts/docs/check-doc-links.mjs', 'fix'], {
+      cwd: ROOT,
+      encoding: 'utf-8',
+      env: process.env,
+    })
+    return {
+      success: fixRes.status === 0,
+      stdout: fixRes.stdout?.trim() ?? '',
+      stderr: fixRes.stderr?.trim() ?? '',
+    }
+  } catch (err) {
+    return {
+      success: false,
+      stdout: '',
+      stderr: `自动修复进程拉起异常: ${err.message}`,
+    }
   }
 }
 
@@ -166,7 +257,6 @@ async function main() {
   const failures = results.filter((r) => r.code !== 0)
   const successes = results.filter((r) => r.code === 0)
 
-  // 状态机判定：success / partial_success / error
   let status = 'success'
   if (failures.length === results.length) {
     status = 'error'
@@ -174,7 +264,6 @@ async function main() {
     status = 'partial_success'
   }
 
-  // 构建统一 Agent Result Envelope
   const envelope = {
     status,
     result: {
@@ -188,6 +277,8 @@ async function main() {
         desc: r.desc,
         status: r.code === 0 ? 'success' : 'error',
         exit_code: r.code,
+        summary: r.jsonSummary,
+        diagnostics: r.diagnostics,
         stdout: r.stdout,
         stderr: r.stderr,
       })),
@@ -200,6 +291,7 @@ async function main() {
           retryable: false,
           details: {
             failed_check_ids: failures.map((f) => f.name),
+            diagnostics: failures.flatMap((f) => f.diagnostics),
           },
         }
       : null,
@@ -225,7 +317,6 @@ async function main() {
     },
   }
 
-  // 1. --json 模式：输出机器可读的结构化 Result Envelope
   if (isJson) {
     console.log(JSON.stringify(envelope, null, 2))
     if (status !== 'success') {
@@ -234,7 +325,6 @@ async function main() {
     return
   }
 
-  // 2. 人类/CLI 文本模式：存在失败
   if (failures.length > 0) {
     console.error('\n✖ [check:docs] 文档门禁检查未通过：\n')
     for (const f of failures) {
@@ -251,7 +341,6 @@ async function main() {
     process.exit(1)
   }
 
-  // 3. 人类/CLI 文本模式：全部成功
   if (isVerbose) {
     console.log(`\n=== BrutxUI 文档健康度巡检详细报告（耗时 ${durationSec}s）===`)
     for (const r of results) {
@@ -260,7 +349,6 @@ async function main() {
     }
     console.log(`\n✓ docs check passed (${results.length} checks, ${durationSec}s)`)
   } else {
-    // 遵循 Unix 沉默原则：全绿极简确认
     console.log('✓ docs check passed')
   }
 }
@@ -278,9 +366,9 @@ main().catch((err) => {
             category: 'runtime_error',
             retryable: false,
           },
-          control: { retry: { allowed: false }, suggested_actions: [] },
+          control: { retry: { allowed: false, after_ms: null }, suggested_actions: [] },
           effect: { type: 'none' },
-          meta: { error: err.stack },
+          meta: { started_at: null, finished_at: null, duration_ms: null, error: err.stack },
         },
         null,
         2,
