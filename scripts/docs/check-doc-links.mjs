@@ -17,16 +17,16 @@
  */
 
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { getRepoRoot } from '../shared/path.mjs'
 import { DocLinkEngine } from './lib/doc-link-engine.mjs'
 import { DiskFileSystemAdapter } from './lib/doc-link-fs.mjs'
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
+const ROOT = getRepoRoot()
 const args = process.argv.slice(2)
 const mode = args.find((a) => a === 'check' || a === 'fix') ?? 'check'
 const dryRun = mode === 'fix' && args.includes('--dry')
-const verbose = args.includes('--verbose') || args.includes('-v')
-const isJson = args.includes('--json')
+const verbose = args.includes('--verbose') || process.argv.includes('-v')
+const isJson = process.argv.includes('--json')
 
 const fsAdapter = new DiskFileSystemAdapter()
 const engine = new DocLinkEngine(fsAdapter, {
@@ -35,13 +35,77 @@ const engine = new DocLinkEngine(fsAdapter, {
 })
 
 async function run() {
-  const startTime = Date.now()
   if (mode === 'check') {
     const report = await engine.scan()
 
     if (isJson) {
+      const diagnostics = []
+
+      // 1. 死链
+      for (const d of report.dead) {
+        diagnostics.push({
+          file: d.rel,
+          line: d.line,
+          ruleId: 'doc-links/dead-link',
+          message: `链接目标不存在: ${d.target}（${d.reason}）${d.heuristicFix ? `，建议自愈为: ${d.heuristicFix}` : ''}`,
+          severity: 'error',
+        })
+      }
+
+      // 2. 绝对路径
+      for (const a of report.absLinks) {
+        diagnostics.push({
+          file: a.rel,
+          line: a.line,
+          ruleId: 'doc-links/absolute-path',
+          message: `发现绝对物理路径引用残留: ${a.rawTarget}，应改为相对路径`,
+          severity: 'error',
+        })
+      }
+
+      // 3. 大小写错误
+      for (const c of report.caseErrors) {
+        diagnostics.push({
+          file: c.rel,
+          line: c.line,
+          ruleId: 'doc-links/casing-mismatch',
+          message: `路径大小写与物理磁盘不吻合: ${c.target}（磁盘真实路径应为: ${c.realTarget}）`,
+          severity: 'error',
+        })
+      }
+
+      // 4. 锚点警告
+      for (const w of report.anchorWarn) {
+        diagnostics.push({
+          file: w.rel,
+          line: w.line,
+          ruleId: 'doc-links/missing-anchor',
+          message: `目标文档缺少对应标题锚点: #${w.anchor}`,
+          severity: 'warning',
+        })
+      }
+
+      // 5. 常青区失效源码引用
+      const tier1Stale = report.staleSnapshots.filter((s) => !s.isSnapshot)
+      for (const s of tier1Stale) {
+        diagnostics.push({
+          file: s.rel,
+          line: s.line,
+          ruleId: 'doc-links/stale-source-reference',
+          message: `常青规范引用的源码路径已失效: ${s.target}`,
+          severity: 'warning',
+        })
+      }
+
+      const totalErrors = report.dead.length + report.absLinks.length + report.caseErrors.length
+      const isClean = totalErrors === 0
+
       const envelope = {
-        status: report.failed ? 'error' : 'success',
+        status: isClean ? 'success' : 'error',
+        summary: isClean
+          ? `Doc links check: passed (${report.scannedCount} markdown files scanned)`
+          : `Doc links check: ${totalErrors} link violations detected`,
+        diagnostics,
         result: {
           scannedCount: report.scannedCount,
           deadCount: report.dead.length,
@@ -49,45 +113,10 @@ async function run() {
           caseErrorsCount: report.caseErrors.length,
           anchorWarnCount: report.anchorWarn.length,
           staleSnapshotsCount: report.staleSnapshots.length,
-          details: {
-            dead: report.dead,
-            absLinks: report.absLinks,
-            caseErrors: report.caseErrors,
-            anchorWarn: report.anchorWarn,
-            staleSnapshots: verbose ? report.staleSnapshots : undefined,
-          },
-        },
-        error: report.failed
-          ? {
-              code: 'DOC_LINK_CHECK_FAILED',
-              message: `检测到 ${report.dead.length} 处死链、${report.absLinks.length} 处绝对路径残留、${report.caseErrors.length} 处大小写不匹配`,
-            }
-          : null,
-        control: {
-          can_auto_fix: true,
-          suggested_actions: report.failed
-            ? [
-                {
-                  type: 'auto_fix',
-                  command: 'pnpm check:docs:fix',
-                  description: '基于 Basename 倒排拓扑索引与物理真实路径自动自愈相对链接。',
-                },
-              ]
-            : [],
-        },
-        effect: {
-          type: 'read_only_scan',
-          dryRun: false,
-        },
-        meta: {
-          started_at: new Date(startTime).toISOString(),
-          finished_at: new Date().toISOString(),
-          duration_ms: Date.now() - startTime,
         },
       }
       console.log(JSON.stringify(envelope, null, 2))
-      process.exitCode = report.failed ? 1 : 0
-      return
+      process.exit(isClean ? 0 : 1)
     }
 
     console.log(`[check] 扫描 ${report.scannedCount} 个 md 文件`)

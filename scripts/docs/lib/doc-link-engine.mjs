@@ -11,6 +11,7 @@
  */
 
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 /** 忽略扫描的目录集合 */
 const IGNORED_DIRS = new Set(['node_modules', '.git', 'dist', '.turbo', 'coverage'])
@@ -61,15 +62,14 @@ export function splitTarget(rawTarget) {
 }
 
 /**
- * 将 file:/// URL 还原为标准绝对路径
+ * 将 file:/// URL 还原为标准绝对物理路径（自动剥离 fragment 与 query）
  */
 export function fileUrlToAbsPath(fileUrl) {
-  let p = fileUrl.replace(/^file:\/\//i, '')
-  p = p.replace(/^localhost\//i, '')
-  if (/^\/[a-zA-Z]:/.test(p)) {
-    p = p.slice(1)
+  if (typeof fileUrl === 'string' && fileUrl.startsWith('file:')) {
+    const cleanUrl = fileUrl.split(/[?#]/)[0]
+    return path.resolve(fileURLToPath(cleanUrl))
   }
-  return path.resolve(safeDecodeURI(p))
+  return path.resolve(fileUrl)
 }
 
 /**
@@ -103,36 +103,60 @@ export function extractMarkdownLinks(content) {
   const lines = content.split('\n')
   let currentOffset = 0
   let activeFence = null
+  let inHtmlComment = false
 
   for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
     const line = lines[lineIndex]
     const trimmed = line.trim()
 
-    // 1. 代码围栏识别（3+ 个 ` 或 ~）
-    const fenceMatch = trimmed.match(/^(`{3,}|~{3,})/)
-    if (fenceMatch) {
-      const markerChar = fenceMatch[1][0]
-      const markerLen = fenceMatch[1].length
-
-      if (!activeFence) {
-        // 进入代码块
-        activeFence = { markerChar, markerLen }
+    // 1. 处理 HTML 注释区间
+    if (!activeFence) {
+      if (inHtmlComment) {
+        if (trimmed.includes('-->')) {
+          inHtmlComment = false
+        }
         currentOffset += line.length + 1
         continue
-      } else if (activeFence.markerChar === markerChar && markerLen >= activeFence.markerLen) {
-        // 闭合代码块（必须同种字符且长度 >= 起始标记）
-        activeFence = null
+      }
+      if (trimmed.startsWith('<!--')) {
+        if (!trimmed.includes('-->')) {
+          inHtmlComment = true
+        }
         currentOffset += line.length + 1
         continue
       }
     }
 
+    // 2. 代码围栏识别（3+ 个 ` 或 ~）
     if (activeFence) {
+      const closeMatch = trimmed.match(/^(`{3,}|~{3,})\s*$/)
+      if (closeMatch && closeMatch[1][0] === activeFence.markerChar && closeMatch[1].length >= activeFence.markerLen) {
+        activeFence = null
+        currentOffset += line.length + 1
+        continue
+      }
       currentOffset += line.length + 1
       continue
     }
 
-    // 2. 遮蔽行内代码块干扰，保证字符偏移量完全一致
+    // 起始围栏判定
+    const openMatch = trimmed.match(/^(`{3,}|~{3,})/)
+    if (openMatch) {
+      const markerChar = openMatch[1][0]
+      const markerLen = openMatch[1].length
+      const remainder = trimmed.slice(markerLen)
+      const sameLineClose = remainder.includes(openMatch[1])
+
+      if (!sameLineClose) {
+        if (markerChar !== '`' || !remainder.includes('`')) {
+          activeFence = { markerChar, markerLen }
+          currentOffset += line.length + 1
+          continue
+        }
+      }
+    }
+
+    // 3. 遮蔽行内代码块干扰，保证字符偏移量完全一致
     const maskedLine = maskInlineCodeSpans(line)
 
     // 3. 扫描 Markdown 链接: [text](target) 或 ![alt](target)
@@ -365,7 +389,7 @@ export class DocLinkEngine {
   }
 
   /**
-   * 跨平台大小写全路径穿透核验（抹平 Windows 11 NTFS 假阳性）
+   * 跨平台大小写全路径穿透核验（抹平 Windows 11 NTFS 假阳性与软链基准对齐）
    */
   async verifyCase(absPath) {
     const exists = await this.fs.pathExists(absPath)
@@ -375,21 +399,38 @@ export class DocLinkEngine {
 
     try {
       const realPath = await this.fs.realpath(absPath)
-      const normInput = path.normalize(absPath).replace(/\\/g, '/')
-      const normReal = path.normalize(realPath).replace(/\\/g, '/')
+      const cleanPath = (p) => path.normalize(p).replace(/^\\\\\?\\UNC\\/i, '//').replace(/^\\\\\?\\/, '').replace(/\\/g, '/')
+      const normInput = cleanPath(absPath)
+      const normReal = cleanPath(realPath)
 
       // 统一 Windows 驱动器盘符为大写后比对全等
       const formatDrive = (p) => p.replace(/^[a-zA-Z]:/, (m) => m.toUpperCase())
-      const exactCase = formatDrive(normInput) === formatDrive(normReal)
+      const driveNormInput = formatDrive(normInput)
+      const driveNormReal = formatDrive(normReal)
 
+      // 若提供了 rootDir，同时对 rootDir 取 realpath 进行物理基准对齐
+      if (this.options?.rootDir) {
+        let physicalRootDir = this.options.rootDir
+        try {
+          physicalRootDir = await this.fs.realpath(this.options.rootDir)
+        } catch {}
+        const normRoot = formatDrive(cleanPath(physicalRootDir))
+
+        if (driveNormInput.startsWith(normRoot + '/') && driveNormReal.startsWith(normRoot + '/')) {
+          const relInput = driveNormInput.slice(normRoot.length + 1)
+          const relReal = driveNormReal.slice(normRoot.length + 1)
+          return { exists: true, exactCase: relInput === relReal, realPath: normReal }
+        }
+      }
+
+      const exactCase = driveNormInput === driveNormReal
       return {
         exists: true,
         exactCase,
         realPath: normReal,
       }
     } catch {
-      // 若 realpath 异常但 pathExists 为 true，判定为文件存在且默认大小写匹配
-      return { exists: true, exactCase: true, realPath: absPath }
+      return { exists: false, exactCase: false, realPath: null }
     }
   }
 

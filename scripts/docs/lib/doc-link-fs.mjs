@@ -45,10 +45,14 @@ export class DiskFileSystemAdapter {
   }
 
   /**
-   * 原生物理路径解析：穿透所有中间目录与文件名，返回操作系统注册的真实大小写形式
+   * 原生物理路径解析：穿透所有中间目录与文件名，返回操作系统注册的真实大小写形式（剥离 Win32 扩展前缀）
    */
   async realpath(filePath) {
-    return fs.realpathSync.native(filePath)
+    const raw = fs.realpathSync.native(filePath)
+    return path.normalize(raw)
+      .replace(/^\\\\\?\\UNC\\/i, '//')
+      .replace(/^\\\\\?\\/, '')
+      .replace(/\\/g, '/')
   }
 }
 
