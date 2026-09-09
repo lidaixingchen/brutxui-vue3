@@ -4,17 +4,19 @@
 
 ## 自动生成文件（勿手动编辑）
 
+> **执行上下文**：生成脚本位于 `packages/ui`，在根目录调用时须携带包限定符：`pnpm --filter brutx-ui-vue <cmd>`。
+
 | 文件 | 触发更新的命令 |
 | --- | --- |
-| `packages/ui/registry-manifest.json` | `pnpm build` / `prebuild:scan`（lint、typecheck 也会前置执行，幂等） |
-| `packages/ui/exports-manifest.json` | `prebuild:scan`（build、typecheck、lint 也会前置执行，幂等） |
-| `packages/ui/package.json` 的 `exports` 字段 | `prebuild:exports`（build、typecheck、lint 也会前置执行，幂等） |
-| `packages/ui/src/styles.css` 的 `@theme`、`:root/.dark` 与预设 tokens | `prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
-| `packages/ui/src/preflight.css` 的 body 字体栈 | `prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
-| `packages/ui/src/lib/utils.ts` 的 `BRUTAL_COLOR_NAMES` 列表 | `prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
-| `packages/cli/src/styles/brutalist.css` 的令牌与预设标记块 | `prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
-| `packages/cli/src/lib/constants.ts` 的 `UTILS_TEMPLATE` 模板块 | `prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
-| `packages/ui/src/components/*/index.ts` 组件级导出文件 | `prebuild:component-index`（唯一数据源组件目录结构与变体） |
+| `packages/ui/registry-manifest.json` | `pnpm build` / `pnpm --filter brutx-ui-vue prebuild:scan`（lint、typecheck 也会前置执行，幂等） |
+| `packages/ui/exports-manifest.json` | `pnpm --filter brutx-ui-vue prebuild:scan`（build、typecheck、lint 也会前置执行，幂等） |
+| `packages/ui/package.json` 的 `exports` 字段 | `pnpm --filter brutx-ui-vue prebuild:exports`（build、typecheck、lint 也会前置执行，幂等） |
+| `packages/ui/src/styles.css` 的 `@theme`、`:root/.dark` 与预设 tokens | `pnpm --filter brutx-ui-vue prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
+| `packages/ui/src/preflight.css` 的 body 字体栈 | `pnpm --filter brutx-ui-vue prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
+| `packages/ui/src/lib/utils.ts` 的 `BRUTAL_COLOR_NAMES` 列表 | `pnpm --filter brutx-ui-vue prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
+| `packages/cli/src/styles/brutalist.css` 的令牌与预设标记块 | `pnpm --filter brutx-ui-vue prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
+| `packages/cli/src/lib/constants.ts` 的 `UTILS_TEMPLATE` 模板块 | `pnpm --filter brutx-ui-vue prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
+| `packages/ui/src/components/*/index.ts` 组件级导出文件 | `pnpm --filter brutx-ui-vue prebuild:component-index`（唯一数据源组件目录结构与变体） |
 
 
 ## 单体仓库
@@ -27,7 +29,9 @@
 | `brutx-shared-vue` | `packages/shared/` | 共享类型和元数据 |
 | `docs` | `apps/docs/` | VitePress 文档站点 |
 
-## 命令
+## 常用高频命令
+
+日常开发仅使用以下聚焦指令。完整指令字典、发布时序、性能压测与底层逃生通道详见 [完整指令参考手册](docs/guides/COMMANDS.md)。
 
 ```bash
 pnpm build          # Turbo 并行构建所有包（--filter <pkg> build 仅构建指定包）
@@ -35,11 +39,7 @@ pnpm lint           # 对所有包执行 lint
 pnpm typecheck      # 对所有包执行类型检查
 pnpm test           # 运行所有子包测试（--filter <pkg> test 仅运行指定包）
 pnpm test:ssr       # SSR 测试
-pnpm release        # 构建门禁 + changeset publish
-pnpm changelog      # 生成根 CHANGELOG.md 新版本段（详见 docs/RELEASE.md）
 ```
-
-完整命令清单见根 `package.json`（含 `test:watch`、`test:coverage`、`check:i18n` / `check:i18n:strict`、`version-packages` 等）。
 
 ### 脚手架（组件与页面生成）
 
@@ -64,13 +64,14 @@ pnpm --filter brutx-registry-vue validate       # 校验完整性 + 依赖图；
 ### 开发自检约定
 
 - **包管理器限定**：开发阶段仅允许 `pnpm`，严禁 `npm`/`yarn`（避免不一致 lockfile）。
-- **校验最小化（核心）**：严禁在开发阶段运行全局 `pnpm test`/`lint`/`typecheck`，只跑改动范围：
+- **校验最小化与场景匹配（核心）**：严禁在开发阶段无脑运行全局 `pnpm test`/`lint`。依据代码触碰领域触发对应最小化检查：
 
-| 校验 | 最小化命令 |
-| --- | --- |
-| 测试 | `pnpm --filter <pkg> test <相对路径>`（如 `src/components/button/button.test.ts`） |
-| lint | `npx eslint <file> --fix` |
-| typecheck | `pnpm --filter <pkg> typecheck` |
+| 变动领域 | 最小化自检命令 | 说明 |
+| --- | --- | --- |
+| 业务逻辑 / 组件 / 函数 | `pnpm --filter <pkg> test <相对路径>`<br>`npx eslint <file> --fix` | 跑针对性单测与代码格式修复 |
+| 类型接口 / 跨包导出 | `pnpm --filter <pkg> typecheck` | 验证 TS 类型严苛性与接口兼容 |
+| 样式 / 令牌 / 导出 / 依赖 | `pnpm check:contracts` | 静态契约并发 6 合 1 门禁（~2s，全绿放行） |
+| 文档 / 规范 / 技能 / 链接 | `pnpm check:docs` | 文档健康度并发 5 合 1 门禁（~0.4s，可加 `--fix` 自愈） |
 
 ## 技术栈
 
@@ -122,6 +123,7 @@ Vue 3（`<script setup>`）· TypeScript（strict）· Tailwind CSS v4 · reka-u
 
 - [提交信息规范](docs/guides/COMMIT_CONVENTION.md)（含 Shell 注意事项）
 - [发布流程与 Changelog](docs/guides/RELEASE.md)
+- [完整指令参考手册](docs/guides/COMMANDS.md)
 - [组件开发指南](docs/guides/COMPONENT_GUIDE.md)
 - [视觉系统指南](docs/guides/VISUAL_SYSTEM.md)
 - [CVA 变体声明规范](docs/guides/CVA.md)
@@ -131,13 +133,12 @@ Vue 3（`<script setup>`）· TypeScript（strict）· Tailwind CSS v4 · reka-u
 
 ## docs/ 文档落位约定
 
-`docs/` 按生命周期分四类，索引见 [docs/index.md](docs/index.md)：
+`docs/` 采用“生命周期分流 + 领域镜像分仓”，索引见 [docs/index.md](docs/index.md)，治理总则详见 [docs/guides/DOC_GOVERNANCE.md](docs/guides/DOC_GOVERNANCE.md)：
 
-- **规范 / 操作手册** → `docs/guides/`，英文全大写命名（如 `VISUAL_SYSTEM.md`、`TAILWIND_V4_MECHANISMS.md`），标题可保持英文。
-- **方案计划** → `docs/plans/`，中文命名 `<中文主题>方案.md`（功能设计类用 `<主题>设计.md`）；标题下补 frontmatter（`方案类型 / 状态 / 日期 / 关联文档 / 修订记录`），状态取 `draft | active | done`。
-- **审计 / 扫描报告** → `docs/reports/`，快照型命名 `<YYYY-MM-DD>-<中文主题>报告.md`（日期前置便于排序），结论型不带日期。
-- **旧方案被新版本取代** → 立即移入 `docs/archive/YYYY/`，文件名保留版本号。
-- **链接一律相对路径**，禁止 `file:///` 绝对链接；新增 / 修改文档后跑 `node scripts/docs/check-doc-links.mjs check` 校验（文档间互链 0 死链、0 处 `file:///`；源码引用失效属历史快照告警，不计失败）。
+- **规范 / 操作手册** → `docs/guides/`，英文全大写命名（如 `VISUAL_SYSTEM.md`、`DOC_GOVERNANCE.md`），常青维护。
+- **活跃方案计划** → `docs/plans/<domain>/`（`cli`、`ui`、`styles`、`core`），中文命名 `<中文主题>方案.md`（功能设计类用 `<主题>设计.md`），仅收纳 `draft` 与 `active`；顶部必须包含标准 YAML Frontmatter（单一事实源）。
+- **审计 / 调研报告** → `docs/reports/` 三分类：周期扫描快照 `scans/<YYYY-MM-DD>-*`、体系审计 `audits/*`、技术调研 `research/*`。
+- **链接一律相对路径**，禁止 `file:///` 绝对链接；修改/新增文档后统一运行 `pnpm check:docs`（全量门禁校验；可加 `--fix` 自动修复链接）。
 
 ## 处理 AI 代码审查报告（open-code-review）
 

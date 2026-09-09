@@ -1,6 +1,6 @@
 # 发布架构与原理
 
-> 本文档解释发布**系统**的工作原理与一次性配置；**每次发布的操作手册见 [RELEASE.md](RELEASE.md)**。
+> 本文档解释发布**系统**的工作原理与一次性配置；**每次发布的操作手册见 [RELEASE.md](./RELEASE.md)**。
 > 结构性问题（谁调用谁、改动破坏面）优先用 CodeGraph 查询。
 
 ## 版本发布链路
@@ -44,7 +44,7 @@ Breaking Change 标记方式：
 - `feat(ui)!: 重命名 Button API`（加 `!`）
 - commit body 中写 `BREAKING CHANGE: description`
 
-根 CHANGELOG 生成依赖 commit message 质量，请严格遵守 [提交信息规范](COMMIT_CONVENTION.md)。
+根 CHANGELOG 生成依赖 commit message 质量，请严格遵守 [提交信息规范](./COMMIT_CONVENTION.md)。
 
 ## 根 CHANGELOG.md 生成
 
@@ -131,7 +131,7 @@ apps/docs/changelog/                          # 归档目录（VitePress srcDir 
 
 ## Breaking Change 迁移文档规范
 
-任何包含 breaking change 的发布都必须提供迁移指南，让用户能低成本完成手动的版本升级。本规范是 v2.2 改进计划 [Item 9（组件迁移引擎）](../plans/辅助包改进方案-v2.md#9-组件迁移引擎) 暂缓期间的轻量替代方案——在缺少 codemod 自动迁移的前提下，把"迁移成本"压到最低。
+任何包含 breaking change 的发布都必须提供迁移指南，让用户能低成本完成手动的版本升级。本规范是 v2.2 改进计划 [Item 9（组件迁移引擎）](../archive/2026/core/辅助包改进方案-v2.md#9-组件迁移引擎) 暂缓期间的轻量替代方案——在缺少 codemod 自动迁移的前提下，把"迁移成本"压到最低。
 
 ### Commit 标记
 
