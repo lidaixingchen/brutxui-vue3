@@ -13,7 +13,7 @@ concurrency:
 permissions:
     contents: read
 
-# Turbo Remote Cache — Vercel Remote Cache（方案 §5.1 强制要求，禁止不配置远程缓存就上线 turbo）
+# Turbo Remote Cache — Vercel Remote Cache
 # 配置步骤（仅需一次）：
 #   1. 在仓库根目录运行 `pnpm dlx turbo login`，浏览器授权 Vercel 账号
 #   2. 运行 `pnpm dlx turbo link`，选择目标 Vercel 团队并启用 Remote Caching
@@ -86,35 +86,17 @@ jobs:
             - name: Validate registry
               run: pnpm exec turbo run validate --filter=brutx-registry-vue
 
-            - name: Verify exports field consistency
-              run: pnpm --filter brutx-ui-vue check:exports
+            - name: Verify code and spec contracts (parallel)
+              run: pnpm check:contracts
+
+            - name: Verify documentation integrity (parallel)
+              run: pnpm check:docs
 
             - name: Package smoke test (exports subpaths + consumer resolution)
               run: pnpm --filter brutx-ui-vue test:package
 
             - name: Check bundle size limits
               run: pnpm --filter brutx-ui-vue size
-
-            - name: Audit CSS fallback coverage
-              run: pnpm --filter brutx-ui-vue audit:fallback:check
-
-            - name: Check @source class literals
-              run: pnpm --filter brutx-ui-vue check:class-literals
-
-            - name: Check deprecated utilities (ring / shadow-rgba)
-              run: pnpm --filter brutx-ui-vue check:deprecated:check
-
-            - name: Check CLI brutalist.css token alignment
-              run: pnpm --filter brutx-vue check:tokens
-
-            - name: Check component doc template sections
-              run: pnpm check:doc-template
-
-            - name: Check guide conventions (R3/R6/R7 guard)
-              run: pnpm check:guides
-
-            - name: Check guide references (removed symbols / docs existence)
-              run: pnpm check:guide-refs
 
             - name: Commitlint on PR commits
               if: github.event_name == 'pull_request'
