@@ -1,504 +1,184 @@
 #!/usr/bin/env node
 /**
- * 仓库 markdown 链接检查与修复工具
+ * 仓库 markdown 链接检查与自愈工具
  *
- * 定位：维护 docs/、AGENTS.md 及根 README 的 markdown 链接健康——
- *   文档移动 / 重命名后重算相对链接深度、清除 `file:///` 绝对链接、校验死链与锚点。
- *   适用于任何文档结构调整，非一次性迁移脚本。
+ * 定位：守护 docs/、AGENTS.md、README.md 与技能文档的 markdown 链接健康——
+ *   - 文档移动 / 归档后动态拓扑重算相对链接深度；
+ *   - 清除 file:/// 绝对链接；
+ *   - Windows 11 下原生穿透大小写核验，消除 Linux CI 404 盲区；
+ *   - 历史快照源码失效自动静默聚合降噪；
+ *   - 纯动态无状态架构，无须维护任何历史别名映射表。
  *
- * 三种模式：
- *   node scripts/docs/check-doc-links.mjs check        # 校验：报告死链 / 绝对链接残留 / 锚点告警
- *   node scripts/docs/check-doc-links.mjs fix --dry    # 预览改写（不落盘）
- *   node scripts/docs/check-doc-links.mjs fix          # 执行改写
- *
- * 链接判定原则：
- *   - https:// / mailto: 外链不动、不检查
- *   - file:/// 绝对链接计入「残留」，应清零（换机器即失效）
- *   - 文档间相对链接目标不存在计死链（硬错误）
- *   - 指向 packages/apps 等源码的相对链接目标不存在 → 历史快照告警（不阻塞）
- *   - 指向 .md 的 `#锚点` 做标题匹配（GitHub 风格 slug），不匹配仅告警；`#L行号` 锚点不校验
- *
- * 修复机制：
- *   - fix 依据内置「路径移动映射表」重写文档间链接，并按文档当前位置重算相对深度
- *   - 自动回退修正按仓库根书写的相对路径（`packages/...`、`turbo.json` 等）
- *   - 幂等：已指向正确位置的链接不再二次重算
+ * 用法：
+ *   node scripts/docs/check-doc-links.mjs check        # 校验：报告死链 / 绝对链接 / 大小写 / 锚点
+ *   node scripts/docs/check-doc-links.mjs fix --dry    # 预览自愈改写（不落盘）
+ *   node scripts/docs/check-doc-links.mjs fix          # 执行无损原位改写
+ *   node scripts/docs/check-doc-links.mjs check --json # 输出 Agent Result Envelope 结构
  */
 
-import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { DocLinkEngine } from './lib/doc-link-engine.mjs'
+import { DiskFileSystemAdapter } from './lib/doc-link-fs.mjs'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
-const mode = process.argv[2] ?? 'check'
-const dryRun = mode === 'fix' && process.argv.includes('--dry')
-const verbose = process.argv.includes('--verbose') || process.argv.includes('-v')
+const args = process.argv.slice(2)
+const mode = args.find((a) => a === 'check' || a === 'fix') ?? 'check'
+const dryRun = mode === 'fix' && args.includes('--dry')
+const verbose = args.includes('--verbose') || args.includes('-v')
+const isJson = args.includes('--json')
 
-/** 归一化为 posix 风格相对路径（映射表 key 与输出用） */
-const toPosix = (p) => p.split(path.sep).join('/')
+const fsAdapter = new DiskFileSystemAdapter()
+const engine = new DocLinkEngine(fsAdapter, {
+  rootDir: ROOT,
+  verbose,
+})
 
-/** 仓库相对路径（posix） */
-const relOf = (abs) => toPosix(path.relative(ROOT, abs))
+async function run() {
+  const startTime = Date.now()
+  if (mode === 'check') {
+    const report = await engine.scan()
 
-/** 是否位于仓库内（Windows 盘符大小写不敏感，统一小写比较） */
-const inRepo = (abs) => {
-  const a = abs.toLowerCase()
-  const r = ROOT.toLowerCase()
-  return a === r || a.startsWith(r + path.sep)
-}
-
-// ---------------------------------------------------------------------------
-// 路径移动映射表：旧路径 → 当前路径（仓库相对、posix 风格）
-// 记录文档的历史移动（目录改造迁移 + 落地后归档），fix 据此重写链接：
-//   链接目标在表中 → 改指向当前位置；文档自身在表中 → 以移动前位置为基准解析旧链接。
-// 未来再移动文档时在此追加「旧路径 → 新路径」条目。
-// ---------------------------------------------------------------------------
-const MIGRATE = {
-  // guides/（8）
-  'docs/COMMIT_CONVENTION.md': 'docs/guides/COMMIT_CONVENTION.md',
-  'docs/COMPONENT_GUIDE.md': 'docs/guides/COMPONENT_GUIDE.md',
-  'docs/COMPONENT_DOC_TEMPLATE.md': 'docs/guides/COMPONENT_DOC_TEMPLATE.md',
-  'docs/CVA.md': 'docs/guides/CVA.md',
-  'docs/VISUAL_SYSTEM.md': 'docs/guides/VISUAL_SYSTEM.md',
-  'docs/RELEASE.md': 'docs/guides/RELEASE.md',
-  'docs/RELEASE_ARCHITECTURE.md': 'docs/guides/RELEASE_ARCHITECTURE.md',
-  'docs/superpowers/demo-translation-guide.md': 'docs/guides/demo-translation-guide.md',
-
-  // plans/（现行唯一活跃方案）
-  'docs/plans/系统演进与存量任务收敛方案.md': 'docs/plans/core/系统演进与存量任务收敛方案.md',
-
-  // archive/2026/cli/
-  'docs/plans/Tailwind模块化依赖图扫描与样式解耦方案.md': 'docs/archive/2026/cli/Tailwind模块化依赖图扫描与样式解耦方案.md',
-  'docs/plans/cli/Tailwind模块化依赖图扫描与样式解耦方案.md': 'docs/archive/2026/cli/Tailwind模块化依赖图扫描与样式解耦方案.md',
-  'docs/plans/CLI组件三方合并与代码升级引擎方案.md': 'docs/archive/2026/cli/CLI组件三方合并与代码升级引擎方案.md',
-  'docs/plans/CLI诊断引擎开放化与CI原生支持方案.md': 'docs/archive/2026/cli/CLI诊断引擎开放化与CI原生支持方案.md',
-  'docs/plans/CLI声明式诊断巡检与自愈引擎方案.md': 'docs/archive/2026/cli/CLI声明式诊断巡检与自愈引擎方案.md',
-  'docs/plans/CLI网络韧性与多源竞速自适应退避方案.md': 'docs/archive/2026/cli/CLI网络韧性与多源竞速自适应退避方案.md',
-  'docs/plans/CLI项目上下文与路径解析引擎封装方案.md': 'docs/archive/2026/cli/CLI项目上下文与路径解析引擎封装方案.md',
-  'docs/plans/CLI样式自动生成与单一信源治理方案.md': 'docs/archive/2026/cli/CLI样式自动生成与单一信源治理方案.md',
-  'docs/plans/CLI语法树解析升级与Monorepo工作区感知方案.md': 'docs/archive/2026/cli/CLI语法树解析升级与Monorepo工作区感知方案.md',
-  'docs/plans/CLI注册表深模块客户端重构方案.md': 'docs/archive/2026/cli/CLI注册表深模块客户端重构方案.md',
-  'docs/plans/CLI基础设施闭环方案.md': 'docs/archive/2026/cli/CLI基础设施闭环方案.md',
-  'docs/archive/2026/CLI基础设施闭环方案.md': 'docs/archive/2026/cli/CLI基础设施闭环方案.md',
-  'docs/INFRASTRUCTURE_CLOSURE_PLAN.md': 'docs/archive/2026/cli/CLI基础设施闭环方案.md',
-  'docs/plans/registry产物发布时构建方案.md': 'docs/archive/2026/cli/registry产物发布时构建方案.md',
-  'docs/archive/2026/registry产物发布时构建方案.md': 'docs/archive/2026/cli/registry产物发布时构建方案.md',
-  'docs/REGISTRY_ARTIFACTS_PUBLISH_TIME_PLAN.md': 'docs/archive/2026/cli/registry产物发布时构建方案.md',
-
-  // archive/2026/ui/
-  'docs/plans/组件设计规范与视觉效果优化方案.md': 'docs/archive/2026/ui/组件设计规范与视觉效果优化方案.md',
-  'docs/plans/ui/组件设计规范与视觉效果优化方案.md': 'docs/archive/2026/ui/组件设计规范与视觉效果优化方案.md',
-  'docs/plans/组件深化与拓展方案.md': 'docs/archive/2026/ui/组件深化与拓展方案.md',
-  'docs/plans/ui/组件深化与拓展方案.md': 'docs/archive/2026/ui/组件深化与拓展方案.md',
-  'docs/deepening.md': 'docs/archive/2026/ui/组件深化与拓展方案.md',
-  'docs/plans/NumberInput视觉优化设计.md': 'docs/archive/2026/ui/NumberInput视觉优化设计.md',
-  'docs/plans/工控窗口交互升级与开关质感重塑方案.md': 'docs/archive/2026/ui/工控窗口交互升级与开关质感重塑方案.md',
-  'docs/plans/滑块与滚动条工控实体质感重塑方案.md': 'docs/archive/2026/ui/滑块与滚动条工控实体质感重塑方案.md',
-  'docs/plans/按压反馈盖影设计.md': 'docs/archive/2026/ui/按压反馈盖影设计.md',
-  'docs/plans/组件视觉效果深化与质感进阶方案.md': 'docs/archive/2026/ui/组件视觉效果深化与质感进阶方案.md',
-  'docs/plans/组件选中态统一与交互无障碍补齐方案.md': 'docs/archive/2026/ui/组件选中态统一与交互无障碍补齐方案.md',
-  'docs/plans/命令式弹层宿主深化与MessageBox解耦方案.md': 'docs/archive/2026/ui/命令式弹层宿主深化与MessageBox解耦方案.md',
-  'docs/archive/2026/组件拓展方案.md': 'docs/archive/2026/ui/组件拓展方案.md',
-  'docs/superpowers/component/component-extension-plan.md': 'docs/archive/2026/ui/组件拓展方案.md',
-
-  // archive/2026/styles/
-  'docs/plans/阴影组装化重构方案.md': 'docs/archive/2026/styles/阴影组装化重构方案.md',
-  'docs/plans/Tailwind颜色双轨与工具函数单一信源治理方案.md': 'docs/archive/2026/styles/Tailwind颜色双轨与工具函数单一信源治理方案.md',
-  'docs/plans/主题系统三套合一与色彩对比度治理方案.md': 'docs/archive/2026/styles/主题系统三套合一与色彩对比度治理方案.md',
-  'docs/plans/状态生命周期色彩与组件双轨治理方案.md': 'docs/archive/2026/styles/状态生命周期色彩与组件双轨治理方案.md',
-  'docs/plans/阴影过渡与焦点体系统一方案.md': 'docs/archive/2026/styles/阴影过渡与焦点体系统一方案.md',
-  'docs/archive/2026/阴影过渡与焦点体系统一方案.md': 'docs/archive/2026/styles/阴影过渡与焦点体系统一方案.md',
-
-  // archive/2026/core/
-  'docs/plans/架构优化方案-v3.md': 'docs/archive/2026/core/架构优化方案-v3.md',
-  'docs/plans/core/架构优化方案-v3.md': 'docs/archive/2026/core/架构优化方案-v3.md',
-  'docs/ARCHITECTURE_OPTIMIZATION_PLAN_V3.md': 'docs/archive/2026/core/架构优化方案-v3.md',
-  'docs/plans/AST解析统一与源码工具链治理方案.md': 'docs/archive/2026/core/AST解析统一与源码工具链治理方案.md',
-  'docs/plans/全工程虚拟文件系统统一与持久化深模块重构方案.md': 'docs/archive/2026/core/全工程虚拟文件系统统一与持久化深模块重构方案.md',
-  'docs/plans/注册表编译与AST静态转换管线模块化方案.md': 'docs/archive/2026/core/注册表编译与AST静态转换管线模块化方案.md',
-  'docs/plans/编译扫描排除清单与覆盖规则下沉方案.md': 'docs/archive/2026/core/编译扫描排除清单与覆盖规则下沉方案.md',
-  'docs/plans/共享常量收割与构建校验防漂移方案.md': 'docs/archive/2026/core/共享常量收割与构建校验防漂移方案.md',
-  'docs/plans/元数据脚手架树模型与层级体系治理方案.md': 'docs/archive/2026/core/元数据脚手架树模型与层级体系治理方案.md',
-  'docs/plans/死代码与动效预设清理方案.md': 'docs/archive/2026/core/死代码与动效预设清理方案.md',
-  'docs/plans/代码质量与性能改进方案.md': 'docs/archive/2026/core/代码质量与性能改进方案.md',
-  'docs/plans/约定体系修复方案.md': 'docs/archive/2026/core/约定体系修复方案.md',
-  'docs/plans/辅助包改进方案-v2.md': 'docs/archive/2026/core/辅助包改进方案-v2.md',
-  'docs/AUXILIARY_PACKAGES_IMPROVEMENT_PLAN_V2.md': 'docs/archive/2026/core/辅助包改进方案-v2.md',
-  'docs/archive/2026/架构优化方案-v1.md': 'docs/archive/2026/core/架构优化方案-v1.md',
-  'docs/ARCHITECTURE_OPTIMIZATION_PLAN.md': 'docs/archive/2026/core/架构优化方案-v1.md',
-  'docs/archive/2026/架构优化方案-v2.md': 'docs/archive/2026/core/架构优化方案-v2.md',
-  'docs/ARCHITECTURE_OPTIMIZATION_PLAN_V2.md': 'docs/archive/2026/core/架构优化方案-v2.md',
-  'docs/archive/2026/辅助包改进方案-v1.md': 'docs/archive/2026/core/辅助包改进方案-v1.md',
-  'docs/AUXILIARY_PACKAGES_IMPROVEMENT_PLAN.md': 'docs/archive/2026/core/辅助包改进方案-v1.md',
-  'docs/plans/composables状态只读化方案.md': 'docs/archive/2026/core/composables状态只读化方案.md',
-  'docs/archive/2026/composables状态只读化方案.md': 'docs/archive/2026/core/composables状态只读化方案.md',
-  'docs/COMPOSABLES_STATE_READONLY_PLAN.md': 'docs/archive/2026/core/composables状态只读化方案.md',
-  'docs/plans/changelog自动化设计.md': 'docs/archive/2026/core/changelog自动化设计.md',
-  'docs/archive/2026/changelog自动化设计.md': 'docs/archive/2026/core/changelog自动化设计.md',
-  'docs/superpowers/2026-06-25-changelog-automation-design.md': 'docs/archive/2026/core/changelog自动化设计.md',
-  'docs/plans/文档目录改造方案.md': 'docs/archive/2026/core/文档目录改造方案.md',
-  'docs/archive/2026/文档目录改造方案.md': 'docs/archive/2026/core/文档目录改造方案.md',
-  'docs/DOCS_RESTRUCTURE_PLAN.md': 'docs/archive/2026/core/文档目录改造方案.md',
-
-  // reports/（三分类收敛）
-  'docs/reports/2026-07-11-ui界面bug扫描报告.md': 'docs/reports/scans/2026-07-11-ui界面bug扫描报告.md',
-  'docs/review/ui-bug-scan-2026-07-11.md': 'docs/reports/scans/2026-07-11-ui界面bug扫描报告.md',
-  'docs/reports/2026-07-18-ui界面bug扫描报告.md': 'docs/reports/scans/2026-07-18-ui界面bug扫描报告.md',
-  'docs/review/ui-bug-scan-2026-07-18.md': 'docs/reports/scans/2026-07-18-ui界面bug扫描报告.md',
-  'docs/reports/2026-07-12-根仓库扫描报告.md': 'docs/reports/scans/2026-07-12-根仓库扫描报告.md',
-  'docs/review/root-scan-2026-07-12.md': 'docs/reports/scans/2026-07-12-根仓库扫描报告.md',
-  'docs/reports/2026-07-18-根仓库扫描报告.md': 'docs/reports/scans/2026-07-18-根仓库扫描报告.md',
-  'docs/review/root-scan-2026-07-18.md': 'docs/reports/scans/2026-07-18-根仓库扫描报告.md',
-  'docs/reports/2026-07-12-辅助包bug扫描报告.md': 'docs/reports/scans/2026-07-12-辅助包bug扫描报告.md',
-  'docs/review/auxiliary-packages-bug-scan-2026-07-12.md': 'docs/reports/scans/2026-07-12-辅助包bug扫描报告.md',
-  'docs/reports/2026-07-18-辅助包bug扫描报告.md': 'docs/reports/scans/2026-07-18-辅助包bug扫描报告.md',
-  'docs/review/auxiliary-packages-bug-scan-2026-07-18.md': 'docs/reports/scans/2026-07-18-辅助包bug扫描报告.md',
-
-  'docs/reports/技术债审查报告.md': 'docs/reports/audits/技术债审查报告.md',
-  'docs/review/TECH_DEBT_REPORT.md': 'docs/reports/audits/技术债审查报告.md',
-  'docs/reports/性能审计报告.md': 'docs/reports/audits/性能审计报告.md',
-  'docs/audit/perf-audit.md': 'docs/reports/audits/性能审计报告.md',
-  'docs/reports/样式与架构优化机会审查报告.md': 'docs/reports/audits/样式与架构优化机会审查报告.md',
-  'docs/reports/约定体系未纳入债清单.md': 'docs/reports/audits/约定体系未纳入债清单.md',
-  'docs/reports/约定与代码裁决审查报告.md': 'docs/reports/audits/约定与代码裁决审查报告.md',
-  'docs/audit/hoist-failures.md': 'docs/reports/audits/shamefullyHoist审计报告.md',
-
-  'docs/reports/2026-09-08-AST工程实践调研报告.md': 'docs/reports/research/2026-09-08-AST工程实践调研报告.md',
-  'docs/reports/2026-09-08-AST工具选型资料.md': 'docs/reports/research/2026-09-08-AST工具选型资料.md',
-}
-
-/** 本次删除的文件（check 时其被引用视作死链；fix 不生成） */
-const DELETED = ['docs/audit/hoist-deps-list.txt', 'docs/audit/hoist-scan-output.txt']
-
-/** 保留原位但需特例修复链接的文件 */
-const SPECIAL = {
-  'docs/README-en.md': {
-    'README.md': '../README.md',
-    'LICENSE': '../LICENSE',
-  },
-}
-
-// 新路径 → 旧路径（fix 时解析旧基准：若有多条历史旧路径，优先选取层级最深/最接近当前的）
-const NEW2OLD = {}
-for (const [o, n] of Object.entries(MIGRATE)) {
-  if (!NEW2OLD[n] || o.split('/').length > NEW2OLD[n].split('/').length) {
-    NEW2OLD[n] = o
-  }
-}
-
-// ---------------------------------------------------------------------------
-// 文件收集
-// ---------------------------------------------------------------------------
-const SKIP_DIRS = new Set(['node_modules', '.git', 'dist', '.turbo', 'coverage'])
-
-function collectMd(root, base, acc = []) {
-  let entries
-  try {
-    entries = readdirSync(base, { withFileTypes: true })
-  } catch {
-    return acc
-  }
-  for (const e of entries) {
-    if (e.isDirectory()) {
-      if (!SKIP_DIRS.has(e.name)) collectMd(root, path.join(base, e.name), acc)
-    } else if (e.name.endsWith('.md')) {
-      acc.push(path.join(base, e.name))
-    }
-  }
-  return acc
-}
-
-/** check 与 fix 共用的文件集：docs/** 下全部 md + 根 AGENTS.md + 根 README.md */
-function targetFiles() {
-  const files = collectMd(ROOT, path.join(ROOT, 'docs'))
-  for (const name of ['AGENTS.md', 'README.md']) {
-    const p = path.join(ROOT, name)
-    if (existsSync(p)) files.push(p)
-  }
-  return files.sort()
-}
-
-// ---------------------------------------------------------------------------
-// 链接提取（跳过围栏代码块与行内代码）
-// ---------------------------------------------------------------------------
-const LINK_RE = /(!?)\[([^\]]*)\]\(([^)]+)\)/g
-
-function extractLinks(content) {
-  const links = []
-  let inFence = false
-  content.split('\n').forEach((line, i) => {
-    if (line.trim().startsWith('```')) {
-      inFence = !inFence
+    if (isJson) {
+      const envelope = {
+        status: report.failed ? 'error' : 'success',
+        result: {
+          scannedCount: report.scannedCount,
+          deadCount: report.dead.length,
+          absLinksCount: report.absLinks.length,
+          caseErrorsCount: report.caseErrors.length,
+          anchorWarnCount: report.anchorWarn.length,
+          staleSnapshotsCount: report.staleSnapshots.length,
+          details: {
+            dead: report.dead,
+            absLinks: report.absLinks,
+            caseErrors: report.caseErrors,
+            anchorWarn: report.anchorWarn,
+            staleSnapshots: verbose ? report.staleSnapshots : undefined,
+          },
+        },
+        error: report.failed
+          ? {
+              code: 'DOC_LINK_CHECK_FAILED',
+              message: `检测到 ${report.dead.length} 处死链、${report.absLinks.length} 处绝对路径残留、${report.caseErrors.length} 处大小写不匹配`,
+            }
+          : null,
+        control: {
+          can_auto_fix: true,
+          suggested_actions: report.failed
+            ? [
+                {
+                  type: 'auto_fix',
+                  command: 'pnpm check:docs:fix',
+                  description: '基于 Basename 倒排拓扑索引与物理真实路径自动自愈相对链接。',
+                },
+              ]
+            : [],
+        },
+        effect: {
+          type: 'read_only_scan',
+          dryRun: false,
+        },
+        meta: {
+          started_at: new Date(startTime).toISOString(),
+          finished_at: new Date().toISOString(),
+          duration_ms: Date.now() - startTime,
+        },
+      }
+      console.log(JSON.stringify(envelope, null, 2))
+      process.exitCode = report.failed ? 1 : 0
       return
     }
-    if (inFence) return
-    const stripped = line.replace(/`[^`\n]*`/g, '')
-    let m
-    LINK_RE.lastIndex = 0
-    while ((m = LINK_RE.exec(stripped)) !== null) {
-      links.push({ line: i + 1, text: m[2], target: m[3].split(/\s+/)[0] })
-    }
-  })
-  return links
-}
 
-/** 拆分为 href 与锚点 */
-function splitTarget(target) {
-  const idx = target.indexOf('#')
-  if (idx === -1) return { href: target, anchor: '' }
-  return { href: target.slice(0, idx), anchor: target.slice(idx + 1) }
-}
+    console.log(`[check] 扫描 ${report.scannedCount} 个 md 文件`)
 
-/**
- * file:/// URL → 仓库内绝对路径
- * 兼容两种形态：file:///e:/project/...（Windows）与 file:///home/user/...（Unix）
- */
-function urlToAbs(href) {
-  let p = href.replace(/^file:\/\//i, '')
-  p = p.replace(/^localhost\//i, '')
-  if (/^\/[a-zA-Z]:/.test(p)) p = p.slice(1) // Windows：file:///e:/... → e:/...
-  return path.resolve(p)
-}
-
-/** 目标是否外链（http/mailto 等 scheme；file:// 另行处理） */
-const isExternal = (t) => /^[a-z][a-z0-9+.-]*:/i.test(t)
-
-// ---------------------------------------------------------------------------
-// 锚点校验（GitHub 风格 slug，仅对 .md 目标、非 #L 锚点；不匹配仅告警）
-// ---------------------------------------------------------------------------
-function slugify(heading) {
-  return heading
-    .trim()
-    .toLowerCase()
-    .replace(/[`*_~]/g, '')
-    .replace(/[^\p{L}\p{N}\s-]/gu, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
-}
-
-function headingAnchors(abs) {
-  const anchors = new Set()
-  const counts = new Map()
-  let inFence = false
-  for (const line of readFileSync(abs, 'utf8').split('\n')) {
-    if (line.trim().startsWith('```')) {
-      inFence = !inFence
-      continue
-    }
-    if (inFence) continue
-    const m = /^#{1,6}\s+(.+)$/.exec(line)
-    if (!m) continue
-    const base = slugify(m[1])
-    const n = counts.get(base) ?? 0
-    counts.set(base, n + 1)
-    anchors.add(n === 0 ? base : `${base}-${n}`)
-  }
-  return anchors
-}
-
-// ---------------------------------------------------------------------------
-// check 模式
-// ---------------------------------------------------------------------------
-function runCheck() {
-  const files = targetFiles()
-  const dead = []
-  const stale = []
-  const absLinks = []
-  const anchorWarn = []
-
-  for (const abs of files) {
-    const rel = relOf(abs)
-    for (const { line, target } of extractLinks(readFileSync(abs, 'utf8'))) {
-      if (target.toLowerCase().startsWith('file:///')) {
-        const { href, anchor } = splitTarget(target)
-        const t = urlToAbs(href)
-        absLinks.push({ rel, line, target: href })
-        if (!inRepo(t) || !existsSync(t)) {
-          stale.push({ rel, line, target: href, reason: 'file:// 目标不存在（历史快照引用已失效源码）' })
-        }
-        if (anchor && !anchor.startsWith('L') && existsSync(t) && t.toLowerCase().endsWith('.md')) {
-          checkMdAnchor(anchorWarn, rel, line, t, anchor)
-        }
-        continue
-      }
-      if (isExternal(target)) continue
-      if (target.startsWith('#')) {
-        checkMdAnchor(anchorWarn, rel, line, abs, target.slice(1))
-        continue
-      }
-      const { href, anchor } = splitTarget(target)
-      const t = path.resolve(path.dirname(abs), href)
-      if (DELETED.includes(relOf(t))) {
-        dead.push({ rel, line, target: href, reason: '目标文件已删除' })
-        continue
-      }
-      if (!existsSync(t)) {
-        // 文档间 .md 互链失效计硬死链；源码/配置文件失效计历史快照告警
-        if (href.toLowerCase().endsWith('.md')) dead.push({ rel, line, target: href, reason: '目标文档不存在' })
-        else stale.push({ rel, line, target: href, reason: '目标不存在（历史快照引用已失效源码）' })
-        continue
-      }
-      if (anchor && !anchor.startsWith('L') && t.toLowerCase().endsWith('.md')) {
-        checkMdAnchor(anchorWarn, rel, line, t, anchor)
-      }
-    }
-  }
-
-  const fmt = (item) => `  ${item.rel}:${item.line} → ${item.target}（${item.reason}）`
-  console.log(`[check] 扫描 ${files.length} 个 md 文件`)
-
-  if (dead.length > 0) {
-    console.log(`[check] ✗ 死链 ${dead.length} 处：`)
-    dead.forEach((d) => console.log(fmt(d)))
-  } else {
-    console.log(`[check] ✓ 死链 0 处`)
-  }
-
-  if (absLinks.length > 0) {
-    console.log(`[check] ✗ file:/// 绝对链接 ${absLinks.length} 处：`)
-    absLinks.forEach((a) => console.log(`  ${a.rel}:${a.line} → ${a.target}`))
-  } else {
-    console.log(`[check] ✓ file:/// 绝对链接 0 处`)
-  }
-
-  if (anchorWarn.length > 0) {
-    console.log(`[check] ⚠ 锚点未匹配告警 ${anchorWarn.length} 处${verbose ? '：' : '（加 --verbose 展开）'}`)
-    if (verbose) {
-      anchorWarn.forEach((w) => console.log(`  ${w.rel}:${w.line} → ${w.target}（标题「${w.heading}」找不到锚点 ${w.anchor}）`))
-    }
-  }
-
-  if (stale.length > 0) {
-    console.log(`[check] ⚠ 源码引用失效（历史快照，告警） ${stale.length} 处${verbose ? '：' : '（加 --verbose 展开）'}`)
-    if (verbose) {
-      stale.forEach((s) => console.log(fmt(s)))
-    }
-  }
-
-  const failed = dead.length > 0 || absLinks.length > 0
-  console.log(`[check] 结论：${failed ? `未通过（死链 ${dead.length}、绝对链接 ${absLinks.length}）` : '通过（0 死链、0 绝对链接）'}`)
-  process.exitCode = failed ? 1 : 0
-}
-
-function checkMdAnchor(report, rel, line, targetAbs, anchor) {
-  const anchors = headingAnchors(targetAbs)
-  const decoded = safeDecode(anchor)
-  if (!anchors.has(anchor) && !anchors.has(decoded) && !anchors.has(slugify(decoded))) {
-    report.push({ rel, line, target: relOf(targetAbs), anchor, heading: findHeading(targetAbs, anchor) })
-  }
-}
-
-function safeDecode(s) {
-  try {
-    return decodeURIComponent(s)
-  } catch {
-    return s
-  }
-}
-
-function findHeading(targetAbs, anchor) {
-  const want = safeDecode(anchor)
-  for (const line of readFileSync(targetAbs, 'utf8').split('\n')) {
-    const m = /^#{1,6}\s+(.+)$/.exec(line)
-    if (m && slugify(m[1]) === want) return m[1]
-  }
-  return want
-}
-
-// ---------------------------------------------------------------------------
-// fix 模式
-// ---------------------------------------------------------------------------
-/** 单个链接目标重写（abs = 当前文件新绝对路径） */
-function rewriteTarget(abs, target) {
-  if (target.toLowerCase().startsWith('file:///')) {
-    const { href, anchor } = splitTarget(target)
-    const t = urlToAbs(href)
-    if (!inRepo(t)) return target
-    return toPosix(path.relative(path.dirname(abs), t)) + (anchor ? `#${anchor}` : '')
-  }
-  if (isExternal(target) || target.startsWith('#')) return target
-
-  const { href, anchor } = splitTarget(target)
-  const rel = relOf(abs)
-  if (SPECIAL[rel] && SPECIAL[rel][href] !== undefined) {
-    return SPECIAL[rel][href] + (anchor ? `#${anchor}` : '')
-  }
-
-  // 幂等保护：链接按当前新位置已能解析到真实文件 → 已是新基准（如首轮 fix 生成的），
-  // 不得再按旧基准二次重算（否则 `../guides/x.md` 会被改成 `../../guides/x.md` 双重偏移）
-  const currentAbs = path.resolve(path.dirname(abs), href)
-  if (existsSync(currentAbs)) {
-    return target
-  }
-
-  // 以「旧位置」为基准解析旧链接，再映射到新位置
-  const oldFile = NEW2OLD[rel] ?? rel
-  const oldAbs = path.resolve(path.dirname(path.join(ROOT, oldFile)), href)
-  let newTarget = oldAbs
-  const mapped = MIGRATE[relOf(oldAbs)]
-  if (mapped) {
-    newTarget = path.resolve(ROOT, mapped)
-  } else if (!existsSync(oldAbs)) {
-    // 根基准 fallback：作者常按仓库根书写 `packages/...`、`turbo.json` 等相对路径，
-    // 文档身处 docs/ 下按旧位置解析必然失败，此时尝试以仓库根为基准。
-    const rootAbs = path.resolve(ROOT, href)
-    if (existsSync(rootAbs)) {
-      newTarget = MIGRATE[relOf(rootAbs)] ? path.resolve(ROOT, MIGRATE[relOf(rootAbs)]) : rootAbs
-    }
-  }
-  if (!mapped && !existsSync(newTarget)) {
-    return target
-  }
-  return toPosix(path.relative(path.dirname(abs), newTarget)) + (anchor ? `#${anchor}` : '')
-}
-
-function rewriteFileContent(abs, content) {
-  let inFence = false
-  return content
-    .split('\n')
-    .map((line) => {
-      if (line.trim().startsWith('```')) {
-        inFence = !inFence
-        return line
-      }
-      if (inFence) return line
-      return line.replace(LINK_RE, (whole, bang, text, target) => {
-        const t = target.split(/\s+/)[0]
-        return `${bang}[${text}](${rewriteTarget(abs, t)})`
+    // 1. 死链
+    if (report.dead.length > 0) {
+      console.log(`[check] ✗ 死链 ${report.dead.length} 处：`)
+      report.dead.forEach((d) => {
+        const hint = d.heuristicFix ? `（智能推荐自愈为：${d.heuristicFix}）` : ''
+        console.log(`  ${d.rel}:${d.line} → ${d.target}（${d.reason}）${hint}`)
       })
-    })
-    .join('\n')
-}
-
-function runFix() {
-  const files = targetFiles()
-  let changedFiles = 0
-  let changedLinks = 0
-
-  for (const abs of files) {
-    const before = readFileSync(abs, 'utf8')
-    const after = rewriteFileContent(abs, before)
-    if (after === before) continue
-    changedFiles++
-    const n = (before.split('\n').filter((l, i) => l !== after.split('\n')[i])).length
-    changedLinks += n
-    if (dryRun) {
-      console.log(`[fix:dry] ${relOf(abs)}：${n} 行将被改写`)
     } else {
-      writeFileSync(abs, after)
-      console.log(`[fix] ${relOf(abs)}：${n} 行已改写`)
+      console.log(`[check] ✓ 死链 0 处`)
     }
+
+    // 2. file:/// 绝对路径
+    if (report.absLinks.length > 0) {
+      console.log(`[check] ✗ file:/// 绝对链接 ${report.absLinks.length} 处：`)
+      report.absLinks.forEach((a) => {
+        console.log(`  ${a.rel}:${a.line} → ${a.target}`)
+      })
+    } else {
+      console.log(`[check] ✓ file:/// 绝对链接 0 处`)
+    }
+
+    // 3. 跨平台大小写不匹配
+    if (report.caseErrors.length > 0) {
+      console.log(`[check] ✗ 路径大小写不匹配（Linux CI 隐患） ${report.caseErrors.length} 处：`)
+      report.caseErrors.forEach((c) => {
+        console.log(`  ${c.rel}:${c.line} → ${c.target}（真实路径应为：${c.realTarget}）`)
+      })
+    } else {
+      console.log(`[check] ✓ 路径大小写全匹配 0 错误`)
+    }
+
+    // 4. 锚点告警
+    if (report.anchorWarn.length > 0) {
+      console.log(
+        `[check] ⚠ 锚点未匹配告警 ${report.anchorWarn.length} 处${verbose ? '：' : '（加 --verbose 展开）'}`
+      )
+      if (verbose) {
+        report.anchorWarn.forEach((w) => {
+          console.log(`  ${w.rel}:${w.line} → ${w.target}#${w.anchor}（目标标题找不到对应 slug）`)
+        })
+      }
+    }
+
+    // 5. 源码引用失效（生命周期分层与静默降噪）
+    if (report.staleSnapshots.length > 0) {
+      const snapshotCount = report.staleSnapshots.filter((s) => s.isSnapshot).length
+      const tier1Stale = report.staleSnapshots.filter((s) => !s.isSnapshot)
+
+      if (tier1Stale.length > 0) {
+        console.log(`[check] ⚠ 常青文档源码引用失效 ${tier1Stale.length} 处：`)
+        tier1Stale.forEach((s) => console.log(`  ${s.rel}:${s.line} → ${s.target}（${s.reason}）`))
+      }
+
+      if (snapshotCount > 0) {
+        console.log(
+          `[check] ℹ 历史快照源码引用已失效 ${snapshotCount} 处（时间点快照静默收敛${verbose ? '，如下' : '，加 --verbose 展开'}）`
+        )
+        if (verbose) {
+          report.staleSnapshots
+            .filter((s) => s.isSnapshot)
+            .forEach((s) => console.log(`  ${s.rel}:${s.line} → ${s.target}`))
+        }
+      }
+    }
+
+    const failed = report.failed
+    console.log(
+      `[check] 结论：${failed ? `未通过（死链 ${report.dead.length}、绝对路径 ${report.absLinks.length}、大小写 ${report.caseErrors.length}）` : '通过（0 死链、0 绝对链接、0 大小写错误）'}`
+    )
+    process.exitCode = failed ? 1 : 0
+  } else if (mode === 'fix') {
+    const result = await engine.fix(dryRun)
+
+    for (const item of result.changeLog) {
+      console.log(`[fix${dryRun ? ':dry' : ''}] ${item.rel}：${item.count} 处链接已纠偏`)
+    }
+
+    console.log(
+      `[fix${dryRun ? ':dry' : ''}] 处理完成：${result.changedFiles} 个文件、约 ${result.changedLinks} 处链接`
+    )
+  } else {
+    console.error(`用法：node scripts/docs/check-doc-links.mjs <check|fix [--dry]> [--verbose] [--json]`)
+    process.exitCode = 2
   }
-
-  console.log(`[fix${dryRun ? ':dry' : ''}] ${changedFiles} 个文件、约 ${changedLinks} 处链接`)
 }
 
-// ---------------------------------------------------------------------------
-// 入口
-// ---------------------------------------------------------------------------
-if (mode === 'check') runCheck()
-else if (mode === 'fix') runFix()
-else {
-  console.error(`用法：node scripts/docs/check-doc-links.mjs <check|fix [--dry]>（实际传入：${mode}）`)
-  process.exitCode = 2
-}
+run().catch((err) => {
+  console.error('[check-doc-links] 执行异常:', err)
+  process.exitCode = 1
+})
