@@ -1,156 +1,84 @@
-# docs/ 文档目录
+# BrutxUI 文档中心
 
-> 本文档是 `docs/` 目录的索引，也是文档治理规则的落点；维护 `docs/` 时依本文档执行。
-> `README-en.md` 为项目英文简介（与根 README 对应），**不是**目录索引。
+> 本文档是 BrutxUI 工程内部 `docs/` 目录的全局知识地图与高阶导航索引。
+> 文档生命周期与编写规范详见 [文档治理指南（DOC_GOVERNANCE.md）](guides/DOC_GOVERNANCE.md)。
+> `README-en.md` 为项目英文简介（与根 README 对应），不是目录索引。
 
-## 目录总览
+---
 
-| 目录 | 内容 | 生命周期 |
-| --- | --- | --- |
-| [guides/](guides) | 规范与操作手册（英文全大写命名，如 UPPERCASE_SNAKE_CASE.md） | 常青，持续维护 |
-| [plans/](plans) | 方案计划（中文命名，frontmatter 标注状态） | 提出 → 落地 → 过期 |
-| [reports/](reports) | 审计与扫描报告（快照型日期前置） | 时间点快照，持续累积 |
-| [archive/](archive) | 归档：被取代 / 完结的旧版方案（按年分区） | 不再维护 |
-| [README-en.md](README-en.md) | 项目英文简介 | 常青 |
+## 一、 核心规范与操作手册（Guides）
 
-## 文档治理规则
+位于 [`docs/guides/`](guides/)，为工程常青文档，随技术演进持续维护：
 
-### 生命周期与分类
+| 规范文档 | 核心领域 | 定位说明 |
+| :--- | :--- | :--- |
+| [DOC_GOVERNANCE.md](guides/DOC_GOVERNANCE.md) | **治理规范** | 文档目录分级拓扑、生命周期状态机、YAML Frontmatter 契约与 CI 自动化门禁 |
+| [VISUAL_SYSTEM.md](guides/VISUAL_SYSTEM.md) | **设计系统** | Neo-Brutalism 视觉哲学、硬边框、纯色几何、Subtle 色系与物理动效 |
+| [TAILWIND_V4_MECHANISMS.md](guides/TAILWIND_V4_MECHANISMS.md) | **样式机制** | Tailwind CSS v4 `@theme` 编译、单一信源派生、CSS 依赖图解耦与运行时注入 |
+| [CVA.md](guides/CVA.md) | **变体体系** | Class Variance Authority 严苛规范、CompoundVariants、类型推导与防重叠 |
+| [COMPONENT_GUIDE.md](guides/COMPONENT_GUIDE.md) | **组件规范** | 组件生命周期、Reka UI 无头原语封装、变体隔离与无障碍 A11y 合规 |
+| [COMPONENT_DOC_TEMPLATE.md](guides/COMPONENT_DOC_TEMPLATE.md) | **组件文档** | 组件中英文使用文档章节结构与必填门禁标准 |
+| [COMMANDS.md](guides/COMMANDS.md) | **指令手册** | 全工程高低频指令分层、版本发布流水线、性能压测与底层契约检查逃生通道 |
+| [RELEASE.md](guides/RELEASE.md) | **发布流程** | Changeset 发版流程、npm 发布门禁与 CHANGELOG 自动化生成规范 |
+| [RELEASE_ARCHITECTURE.md](guides/RELEASE_ARCHITECTURE.md) | **发布架构** | Monorepo 跨包版本锁定、拓扑排序构建、Registry 预编译与发布时一致性 |
+| [COMMIT_CONVENTION.md](guides/COMMIT_CONVENTION.md) | **提交规范** | 约定式提交（Conventional Commits）风格与 Shell 脚本规范 |
 
-`docs/` 文档按生命周期分三类，互不混杂：
+---
 
-| 目录 | 内容 | 生命周期 |
-| --- | --- | --- |
-| `guides/` | 规范 / 操作手册 | 常青，持续维护 |
-| `plans/` | 方案计划 | 提出 → 落地 → 过期（done 后视情况归档） |
-| `reports/` | 审计 / 扫描报告 | 时间点快照，持续累积 |
+## 二、 现行活跃方案（Active Plans）
 
-被取代或完结的方案移入 `archive/YYYY/`（按年分区，不再维护）。
+位于 [`docs/plans/`](plans/)，仅收纳当前正在评审（`draft`）或推进实施（`active`）的方案。落地后即移入归档区：
 
-### frontmatter 规范（plans/ 与 archive/ 的方案文档）
+### 1. CLI 工具链与命令引擎
+- [Tailwind模块化依赖图扫描与样式解耦方案](plans/cli/Tailwind模块化依赖图扫描与样式解耦方案.md)（状态：`active`）  
+  *基于 Tailwind v4 `@import` 机制的独立 Token 解耦模式、CSS 依赖 DAG 拓扑扫描器（CssDependencyGraphEngine）与层叠顺序防御。*
 
-所有方案文档在标题下、正文前统一文档头：
+### 2. UI 组件与交互质感
+- [组件设计规范与视觉效果优化方案](plans/ui/组件设计规范与视觉效果优化方案.md)（状态：`active`）  
+  *R8 排版体系、Subtle 浅色语义令牌流水线、交互尺寸对齐、机械弹性动效与复合区块 CVA 抽离。*
+- [组件深化与拓展方案](plans/ui/组件深化与拓展方案.md)（状态：`active`）  
+  *组件库 2.0 规划，已完成绝大部分高级组件开发，推进 Statistic 数值统计组件与键盘导航抽象。*
 
-```markdown
-> 方案类型：重构 / 流程改造 / 功能设计 / 优化 …
-> 状态：**draft** | active | done | archived
-> 日期：YYYY-MM-DD
-> 关联文档：[xxx](../guides/xxx.md)、[yyy](../reports/yyy.md)   ← 可选
-> 修订记录：YYYY-MM-DD 本次改动摘要            ← 有修改才写
-```
+### 3. 全局核心架构
+- [架构优化方案-v3](plans/core/架构优化方案-v3.md)（状态：`active`）  
+  *现行核心架构推进纲领：主入口动态自动化重导出、类型层回归测试门禁、文档 Props 表格自动生成。*
 
-### 状态机
+---
 
-```text
-draft ──评审通过──▶ active ──落地完成──▶ done ──作者决定归档──▶ archived
-                    │                        │
-                    └──被新版本取代───────────┘   （如 v3 落地后 v1/v2 → archived）
-```
+## 三、 历史沉淀归档库（Archive）
 
-- `draft`：未定稿，正在评审
-- `active`：已定稿，正在实施，或实施完成且**仍是读者应遵从的权威指引**（读者照它干活）
-- `done`：已全部落地，保留在 plans/ 供追溯，**不再作为操作指引**，作者决定归档时机
-- `archived`：已被取代或完结归档，位于 `archive/YYYY/`，不再维护
-- **一句话判据**：读者还要照着做 = active；读完不用做 = done
-- **同一主题只保留一份 active/done**：新版本接管后，旧版本立即移入 archive。plans/ 内同主题带 `-v{n}` 区分世代，archive/ 保留原名。
+位于 [`docs/archive/`](archive/)，收纳已 100% 落地完结（`done`）或已被新世代取代（`archived`）的历史方案。与活跃区保持 1:1 领域镜像对称：
 
-### 命名规范
+### 2026 年度落地方案（[`docs/archive/2026/`](archive/2026/)）
 
-- 方案 / 报告 / 归档文档一律**中文文件名**：`<中文主题>方案.md` / `<中文主题>报告.md`；功能设计类用 `<中文主题>设计.md`。英文专有名词保留原文（如 `composables状态只读化方案.md`、`registry产物发布时构建方案.md`）。
-- **报告分两类**：
-  - **快照型**（周期扫描）：日期前置 `<YYYY-MM-DD>-<中文主题>报告.md`，目录内按日期自然排序（如 `2026-07-11-ui界面bug扫描报告.md`）
-  - **结论型**（一次性审计）：不带日期 `<中文主题>报告.md`（如 `技术债审查报告.md`、`性能审计报告.md`）
-- **guides/ 豁免**：规范与操作手册保持英文全大写命名与英文标题（如 `VISUAL_SYSTEM.md`、`TAILWIND_V4_MECHANISMS.md`），不使用中文文件名。
-- **约定名**：目录索引固定 `index.md`；`README-en.md` 为项目英文简介。
-- **标题一律中文**（guides/ 除外）。
-- **链接一律相对路径**，禁止 `file:///` 绝对链接。
+- **[CLI 领域（10 篇）](archive/2026/cli/)**：3-Way Merge 冲突合并引擎、声明式巡检与自愈、Jiti 沙箱插件与多态 Reporter、网络韧性与竞速退避、VFS 项目上下文、样式自动生成、语法树 AST 升级、注册表深模块客户端、发布时构建等。
+- **[UI 组件领域（8 篇）](archive/2026/ui/)**：NumberInput 视觉优化、工控窗口与 Switch 机械键帽重塑、滑块与滚动条实体质感、按压反馈盖影、视觉质感进阶、组件选中态统一、命令式弹层与 MessageBox 解耦等。
+- **[样式与设计系统（5 篇）](archive/2026/styles/)**：阴影组装化重构（`--shadow-brutal-*` 标准 5 层）、Tailwind 颜色双轨收敛、主题系统三套合一、状态生命周期色彩、阴影过渡与焦点体系等。
+- **[核心架构与基建（16 篇）](archive/2026/core/)**：AST 解析统一与工具链治理、全工程 VFS 抽象、注册表编译管线、排除清单下沉、共享常量防漂移、树模型与 Z-Index、死代码清理、代码质量改进、约定体系修复、辅助包 v1/v2、架构优化 v1/v2、只读状态化等。
 
-## 方案状态表
+---
 
-| 方案 | 状态 | 说明 |
-| --- | --- | --- |
-| [AST解析统一与源码工具链治理方案](plans/AST解析统一与源码工具链治理方案.md) | **done** | 共享解析契约、语言与错误边界、消费端收敛、API 文档及导出检查迁移 |
-| [架构优化方案-v3](plans/架构优化方案-v3.md) | **active** | 现行架构方向，三大方向推进中（v1/v2 已归档） |
-| [辅助包改进方案-v2](plans/辅助包改进方案-v2.md) | done | P0/P1 已全部落地（v1 已归档） |
-| [组件深化与拓展方案](plans/组件深化与拓展方案.md) | **active** | v2.0，Statistic 与键盘导航未落地 |
-| [阴影组装化重构方案](plans/阴影组装化重构方案.md) | **active** | 阴影工具类回归 `@theme` 标准组装 + 焦点体系回退 ring（取代《阴影过渡与焦点体系统一方案》） |
-| [按压反馈盖影设计](plans/按压反馈盖影设计.md) | done | 按压反馈改盖影语义（位移=阴影偏移），含 --brutal-pressed-offset 移除，已落地 |
-| [组件设计规范与视觉效果优化方案](plans/组件设计规范与视觉效果优化方案.md) | **active** | R8 排版体系、Subtle 浅色语义令牌、交互尺寸对齐与机械弹性动效 |
-| [主题系统三套合一与色彩对比度治理方案](plans/主题系统三套合一与色彩对比度治理方案.md) | done | 主题链路收敛至 shared、删除 JS 冗余主题层、预设 CSS 生成化、全主题对比度达标 WCAG AA |
-| [死代码与动效预设清理方案](plans/死代码与动效预设清理方案.md) | done | 清理公共死导出与关联类型、移除 13 个死动效与 6 个辅助类、废除 useAnimation 组合式函数 |
-| [组件选中态统一与交互无障碍补齐方案](plans/组件选中态统一与交互无障碍补齐方案.md) | done | 选中态三态正交统一、Menu Roving Focus 键盘导航、Transfer 粗野主义对齐、Canvas 晚挂载自愈 |
-| [共享常量收割与构建校验防漂移方案](plans/共享常量收割与构建校验防漂移方案.md) | **active** | UI 共享常量全面收割、构建脚本单一来源收敛、Fallback 真实值校验升级、文档元数据纠偏 |
-| [CLI样式自动生成与单一信源治理方案](plans/CLI样式自动生成与单一信源治理方案.md) | done | 将 CLI brutalist.css 纳入 generate-styles-tokens 自动化生成管道，实现全库设计令牌单一事实来源闭环 |
-| [组件视觉效果深化与质感进阶方案](plans/组件视觉效果深化与质感进阶方案.md) | **active** | 材质纹理系统、多重立体与内嵌凹槽阴影、机械微动效与音效联动、工控装配与 HUD 版式四大维度深化 |
-| [命令式弹层宿主深化与MessageBox解耦方案](plans/命令式弹层宿主深化与MessageBox解耦方案.md) | **active** | 命令式 UI 全生命周期宿主深模块构建、LIFO 活动栈与 ESC 路由、MessageBox 独立解耦 |
-| [CLI项目上下文与路径解析引擎封装方案](plans/CLI项目上下文与路径解析引擎封装方案.md) | done | ProjectContext 深模块聚合实体、FileSystemAdapter 双适配器 Seam（Disk/Memory）、路径解析引擎全量收拢与零 IO 测试 |
-| [CLI声明式诊断巡检与自愈引擎方案](plans/CLI声明式诊断巡检与自愈引擎方案.md) | done | 声明式 DiagnosticEngine 规则引擎、五大领域规则集解耦、单事务拓扑原子自愈与 CycloneDX 1.5 SBOM 独立服务 |
-| [注册表编译与AST静态转换管线模块化方案](plans/注册表编译与AST静态转换管线模块化方案.md) | done | RegistryCompiler 深模块编译流水线、SourceProvider 内存/磁盘双适配器 Seam、AST 语义安全重写与发射器解耦 |
-| [全工程虚拟文件系统统一与持久化深模块重构方案](plans/全工程虚拟文件系统统一与持久化深模块重构方案.md) | done | 跨包 VFS 基础设施（`brutx-shared-vue/fs`）、CLI 缓存/审计持久化深模块、清除双轨适配器、设计令牌纯计算编译器与脚手架事务引擎 |
-| [Tailwind颜色双轨与工具函数单一信源治理方案](plans/Tailwind颜色双轨与工具函数单一信源治理方案.md) | done | 颜色令牌单一信源派生 BRUTAL_COLOR_NAMES、UI 与 CLI 工具函数模板同源生成、FOCUS_RING_CLASSES 导出闭环与四端 CI 门禁 |
-| [编译扫描排除清单与覆盖规则下沉方案](plans/编译扫描排除清单与覆盖规则下沉方案.md) | done | 将 DEFAULT_LIB_EXCLUDE、DEFAULT_MANIFEST_OVERRIDES 与 applyManifestOverrides 下沉至 shared，消除 registry 跨包非法引用与硬编码 |
-| [元数据脚手架树模型与层级体系治理方案](plans/元数据脚手架树模型与层级体系治理方案.md) | **done** | 脚手架与元数据自动同步闭环、统一 TreeNode 领域模型、Z-Index 五级阶梯尺度与设计令牌治理 |
-| [状态生命周期色彩与组件双轨治理方案](plans/状态生命周期色彩与组件双轨治理方案.md) | **active** | useMessage 接入 createFallbackManager、useDialogGeometry 规范重构、WCAG 对比度算法下沉 shared、Tabs 双轨状态对称性治理 |
-| [代码质量与性能改进方案](plans/代码质量与性能改进方案.md) | done | 注册表 schema 独立单测、子进程命令注入防护、Devtools 日志收敛、事务并发安全与批量移除并行化 |
-| [CLI组件三方合并与代码升级引擎方案](plans/CLI组件三方合并与代码升级引擎方案.md) | **active** | 基于本地 Base 快照的 3-Way Merge 架构、目录级拓扑感知合并、Git 标准冲突标记生成与 IDE 协作流、命令语义契约与事务安全边界 |
-| [工控窗口交互升级与开关质感重塑方案](plans/工控窗口交互升级与开关质感重塑方案.md) | **active** | CardWindowHeader 优先级状态机与无障碍交互升级、Switch 3D 机械键帽与盒模型尺寸重塑、工控 I/O 铭牌刻印 |
-| [滑块与滚动条工控实体质感重塑方案](plans/滑块与滚动条工控实体质感重塑方案.md) | done | Slider 调音台推子键帽与工控指示刻线、ScrollArea 纯净实体滑块与工控金属导轨重塑 |
-| [CLI网络韧性与多源竞速自适应退避方案](plans/CLI网络韧性与多源竞速自适应退避方案.md) | done | 阶梯式并发竞速（Hedged Race）、有界抖动退避（Bounded Full Jitter）、Retry-After 协议感知与会话级粘滞记忆 |
-| [CLI语法树解析升级与Monorepo工作区感知方案](plans/CLI语法树解析升级与Monorepo工作区感知方案.md) | **done** | SfcAstEngine 标准 AST 与 MagicString 源码保真变换管线、WorkspaceTopologyEngine 拓扑感知与分层配置继承模型 |
-| [CLI诊断引擎开放化与CI原生支持方案](plans/CLI诊断引擎开放化与CI原生支持方案.md) | **active** | 声明式自定义规则插件体系（TS/ESM 动态加载与沙箱）、多态 Reporter 矩阵（GitHub Annotations/SARIF 2.1.0/JSON/JUnit）、CI 智能感知与门禁看板 |
-| [Tailwind模块化依赖图扫描与样式解耦方案](plans/Tailwind模块化依赖图扫描与样式解耦方案.md) | **active** | 基于 Tailwind v4 @import 机制的独立 Token 解耦模式（tokensFile）、CSS 依赖 DAG 拓扑扫描器（CssDependencyGraphEngine）与层叠顺序防御 |
-| [CLI注册表深模块客户端重构方案](plans/CLI注册表深模块客户端重构方案.md) | **active** | RegistryClient 深模块封装、浅模块收敛与删除（cache/signature-mode）、依赖注入隔离与零 IO 测试沙箱 |
-| [NumberInput视觉优化设计](plans/NumberInput视觉优化设计.md) | **active** | 移除内部按钮位移与厚边框割裂、重构高反差反色悬浮效果、完善暗色模式与测试契约 |
+## 四、 报告中心（Reports）
 
+位于 [`docs/reports/`](reports/)，分为三大类持续沉淀：
 
+- **[周期性扫描快照（scans/）](reports/scans/)**：以日期为前缀的定期自动化扫描与缺陷排查快照（如 `2026-07-*-ui界面bug扫描报告.md`、`根仓库扫描报告.md`、`辅助包bug扫描报告.md`）。
+- **[体系化审计与审查（audits/）](reports/audits/)**：技术债审查、性能审计、样式与架构优化机会审查、约定与代码裁决审查、未纳入债清单等深度审计结论。
+- **[技术调研与选型（research/）](reports/research/)**：AST 选型工程资料与实践调研报告。
 
-## 归档方案（archive/2026/）
+---
 
-已完结或被取代、不再维护：
+## 五、 文档治理工具与门禁
 
-- [架构优化方案-v1](archive/2026/架构优化方案-v1.md)（被 v3 取代）
-- [架构优化方案-v2](archive/2026/架构优化方案-v2.md)（被 v3 取代）
-- [辅助包改进方案-v1](archive/2026/辅助包改进方案-v1.md)（被 v2 取代）
-- [组件拓展方案](archive/2026/组件拓展方案.md)（被组件深化与拓展方案 v2.0 取代）
-- [阴影过渡与焦点体系统一方案](archive/2026/阴影过渡与焦点体系统一方案.md)（被阴影组装化重构方案取代）
-- [CLI基础设施闭环方案](archive/2026/CLI基础设施闭环方案.md)（已闭环完结）
-- [registry产物发布时构建方案](archive/2026/registry产物发布时构建方案.md)（已落地完结）
-- [composables状态只读化方案](archive/2026/composables状态只读化方案.md)（M1-M7 已全量落地）
-- [changelog自动化设计](archive/2026/changelog自动化设计.md)（自动化脚本已落地）
-- [文档目录改造方案](archive/2026/文档目录改造方案.md)（docs 目录改造已完成）
-
-## 报告索引
-
-| 报告 | 类型 | 日期 |
-| --- | --- | --- |
-| [AST 工程实践调研报告](reports/2026-09-08-AST工程实践调研报告.md) | 快照型 | 2026-09-08 |
-| [AST 工具选型资料](reports/2026-09-08-AST工具选型资料.md) | 调研资料 | 2026-09-08 |
-| [技术债审查报告](reports/技术债审查报告.md) | 结论型 | 2026-06-30 |
-| [性能审计报告](reports/性能审计报告.md) | 结论型 | 2026-07-17 |
-| [2026-07-11-ui界面bug扫描报告](reports/2026-07-11-ui界面bug扫描报告.md) | 快照型 | 2026-07-11 |
-| [2026-07-18-ui界面bug扫描报告](reports/2026-07-18-ui界面bug扫描报告.md) | 快照型 | 2026-07-18 |
-| [2026-07-12-根仓库扫描报告](reports/2026-07-12-根仓库扫描报告.md) | 快照型 | 2026-07-12 |
-| [2026-07-18-根仓库扫描报告](reports/2026-07-18-根仓库扫描报告.md) | 快照型 | 2026-07-18 |
-| [2026-07-12-辅助包bug扫描报告](reports/2026-07-12-辅助包bug扫描报告.md) | 快照型 | 2026-07-12 |
-| [2026-07-18-辅助包bug扫描报告](reports/2026-07-18-辅助包bug扫描报告.md) | 快照型 | 2026-07-18 |
-
-## 新增文档流程
-
-1. **判断类型**：规范 → `guides/`；方案 → `plans/`；报告 → `reports/`（详见「文档治理规则 · 生命周期」）。
-2. **命名**：按「文档治理规则 · 命名规范」。
-3. **补 frontmatter**：plans/ 与 archive/ 的方案文档按「文档治理规则 · frontmatter 规范」补文档头，状态取 `draft | active | done`。
-4. **校验链接**：新增 / 移动 / 重命名后跑「链接校验工具」。
-5. **旧方案被取代**：立即移入 `archive/YYYY/`，文件名保留版本号。
-
-## 链接校验工具
-
-新增、移动或重命名文档后，用 [check-doc-links.mjs](../scripts/docs/check-doc-links.mjs) 维护链接健康：
+为杜绝人工记账带来的数据脑裂，工程配备了遵循 Unix 哲学的全自动文档门禁工具体系：
 
 ```bash
-node scripts/docs/check-doc-links.mjs check        # 校验：0 死链、0 处 file:///
-node scripts/docs/check-doc-links.mjs fix --dry    # 预览链接改写（文档移动后重算深度，不落盘）
-node scripts/docs/check-doc-links.mjs fix          # 执行改写
-```
+# 1. 统一全量文档门禁（推荐，成功极简确认，失败精准报错）
+pnpm check:docs
 
-- **校验口径**：文档间 `.md` 互链 0 死链 + 0 处 `file:///` 为硬指标；指向源码的相对链接失效属历史快照告警（不阻塞）。
-- **文档移动 / 重命名后**：先 `fix --dry` 预览改写，确认无误后 `fix` 执行。
+# 2. 自动修复链接并复测
+pnpm check:docs:fix
+
+# 3. 终端打印各领域方案全景矩阵看板
+node scripts/docs/scan-doc-status.mjs --table
+```
