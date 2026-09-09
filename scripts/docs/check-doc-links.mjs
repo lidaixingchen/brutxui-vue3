@@ -63,15 +63,12 @@ const MIGRATE = {
   'docs/RELEASE_ARCHITECTURE.md': 'docs/guides/RELEASE_ARCHITECTURE.md',
   'docs/superpowers/demo-translation-guide.md': 'docs/guides/demo-translation-guide.md',
 
-  // plans/（4 篇活跃方案分仓）
-  'docs/plans/Tailwind模块化依赖图扫描与样式解耦方案.md': 'docs/plans/cli/Tailwind模块化依赖图扫描与样式解耦方案.md',
-  'docs/plans/组件设计规范与视觉效果优化方案.md': 'docs/plans/ui/组件设计规范与视觉效果优化方案.md',
-  'docs/plans/组件深化与拓展方案.md': 'docs/plans/ui/组件深化与拓展方案.md',
-  'docs/deepening.md': 'docs/plans/ui/组件深化与拓展方案.md',
-  'docs/plans/架构优化方案-v3.md': 'docs/plans/core/架构优化方案-v3.md',
-  'docs/ARCHITECTURE_OPTIMIZATION_PLAN_V3.md': 'docs/plans/core/架构优化方案-v3.md',
+  // plans/（现行唯一活跃方案）
+  'docs/plans/系统演进与存量任务收敛方案.md': 'docs/plans/core/系统演进与存量任务收敛方案.md',
 
   // archive/2026/cli/
+  'docs/plans/Tailwind模块化依赖图扫描与样式解耦方案.md': 'docs/archive/2026/cli/Tailwind模块化依赖图扫描与样式解耦方案.md',
+  'docs/plans/cli/Tailwind模块化依赖图扫描与样式解耦方案.md': 'docs/archive/2026/cli/Tailwind模块化依赖图扫描与样式解耦方案.md',
   'docs/plans/CLI组件三方合并与代码升级引擎方案.md': 'docs/archive/2026/cli/CLI组件三方合并与代码升级引擎方案.md',
   'docs/plans/CLI诊断引擎开放化与CI原生支持方案.md': 'docs/archive/2026/cli/CLI诊断引擎开放化与CI原生支持方案.md',
   'docs/plans/CLI声明式诊断巡检与自愈引擎方案.md': 'docs/archive/2026/cli/CLI声明式诊断巡检与自愈引擎方案.md',
@@ -88,6 +85,11 @@ const MIGRATE = {
   'docs/REGISTRY_ARTIFACTS_PUBLISH_TIME_PLAN.md': 'docs/archive/2026/cli/registry产物发布时构建方案.md',
 
   // archive/2026/ui/
+  'docs/plans/组件设计规范与视觉效果优化方案.md': 'docs/archive/2026/ui/组件设计规范与视觉效果优化方案.md',
+  'docs/plans/ui/组件设计规范与视觉效果优化方案.md': 'docs/archive/2026/ui/组件设计规范与视觉效果优化方案.md',
+  'docs/plans/组件深化与拓展方案.md': 'docs/archive/2026/ui/组件深化与拓展方案.md',
+  'docs/plans/ui/组件深化与拓展方案.md': 'docs/archive/2026/ui/组件深化与拓展方案.md',
+  'docs/deepening.md': 'docs/archive/2026/ui/组件深化与拓展方案.md',
   'docs/plans/NumberInput视觉优化设计.md': 'docs/archive/2026/ui/NumberInput视觉优化设计.md',
   'docs/plans/工控窗口交互升级与开关质感重塑方案.md': 'docs/archive/2026/ui/工控窗口交互升级与开关质感重塑方案.md',
   'docs/plans/滑块与滚动条工控实体质感重塑方案.md': 'docs/archive/2026/ui/滑块与滚动条工控实体质感重塑方案.md',
@@ -107,6 +109,9 @@ const MIGRATE = {
   'docs/archive/2026/阴影过渡与焦点体系统一方案.md': 'docs/archive/2026/styles/阴影过渡与焦点体系统一方案.md',
 
   // archive/2026/core/
+  'docs/plans/架构优化方案-v3.md': 'docs/archive/2026/core/架构优化方案-v3.md',
+  'docs/plans/core/架构优化方案-v3.md': 'docs/archive/2026/core/架构优化方案-v3.md',
+  'docs/ARCHITECTURE_OPTIMIZATION_PLAN_V3.md': 'docs/archive/2026/core/架构优化方案-v3.md',
   'docs/plans/AST解析统一与源码工具链治理方案.md': 'docs/archive/2026/core/AST解析统一与源码工具链治理方案.md',
   'docs/plans/全工程虚拟文件系统统一与持久化深模块重构方案.md': 'docs/archive/2026/core/全工程虚拟文件系统统一与持久化深模块重构方案.md',
   'docs/plans/注册表编译与AST静态转换管线模块化方案.md': 'docs/archive/2026/core/注册表编译与AST静态转换管线模块化方案.md',
@@ -172,8 +177,13 @@ const SPECIAL = {
   },
 }
 
-// 新路径 → 旧路径（fix 时解析旧基准）
-const NEW2OLD = Object.fromEntries(Object.entries(MIGRATE).map(([o, n]) => [n, o]))
+// 新路径 → 旧路径（fix 时解析旧基准：若有多条历史旧路径，优先选取层级最深/最接近当前的）
+const NEW2OLD = {}
+for (const [o, n] of Object.entries(MIGRATE)) {
+  if (!NEW2OLD[n] || o.split('/').length > NEW2OLD[n].split('/').length) {
+    NEW2OLD[n] = o
+  }
+}
 
 // ---------------------------------------------------------------------------
 // 文件收集
@@ -435,6 +445,9 @@ function rewriteTarget(abs, target) {
     if (existsSync(rootAbs)) {
       newTarget = MIGRATE[relOf(rootAbs)] ? path.resolve(ROOT, MIGRATE[relOf(rootAbs)]) : rootAbs
     }
+  }
+  if (!mapped && !existsSync(newTarget)) {
+    return target
   }
   return toPosix(path.relative(path.dirname(abs), newTarget)) + (anchor ? `#${anchor}` : '')
 }
