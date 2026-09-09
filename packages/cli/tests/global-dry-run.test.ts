@@ -9,7 +9,7 @@ const {
     printDryRunAction,
 } = await import('../src/lib/global-dry-run.js');
 
-describe('global dry-run (P1-8)', () => {
+describe('global dry-run', () => {
     beforeEach(() => {
         resetGlobalDryRun();
         delete process.env.BRUTX_DRY_RUN;

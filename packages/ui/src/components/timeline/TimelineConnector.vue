@@ -15,7 +15,7 @@ const orientation = inject(timelineOrientationKey, computed(() => 'vertical' as 
 
 const classes = computed(() =>
     cn(
-        // PCB 双平行总线：双线中缝透出底色（电路板走线隐喻），取代单实线条
+        // PCB 双平行总线：双线中缝透出底色（电路板走线隐喻）
         'shrink-0 transition-colors',
         orientation.value === 'vertical'
             ? 'w-[9px] border-l-3 border-r-3 border-brutal flex-1 min-h-8'

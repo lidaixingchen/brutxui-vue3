@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 const { Logger, VERBOSE_LEVEL_NONE, VERBOSE_LEVEL_STEP, VERBOSE_LEVEL_DETAIL, VERBOSE_LEVEL_TRACE } =
     await import('../src/lib/logger.js');
 
-describe('Logger verbose levels (P1-8)', () => {
+describe('Logger verbose levels', () => {
     let logSpy: ReturnType<typeof vi.spyOn>;
 
     beforeEach(() => {

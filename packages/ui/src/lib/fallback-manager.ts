@@ -1,9 +1,8 @@
 /**
  * 共享 fallback 单例管理工具：统一处理「懒创建 + 组件引用计数清理 + beforeunload 监听注册/移除」。
  *
- * useTheme / useToast 的 fallback 单例逻辑原为两份逐字重复（模块级 instance/refCount/
- * beforeUnloadHandler + eager 注册 + onUnmounted 守卫），后续修复其一极易漏改另一处。
- * 抽为本模块单一实现（见审查报告 §12.2 相关），两处 composable 仅注入各自的创建/销毁钩子。
+ * 为 useTheme / useToast 等 composable 提供统一的 fallback 单例生命周期管理，
+ * 各 composable 仅需注入各自的创建、初始化与销毁钩子。
  */
 import { getCurrentInstance, onUnmounted } from 'vue'
 import { getWindow } from './env'

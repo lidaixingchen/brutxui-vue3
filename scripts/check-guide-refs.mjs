@@ -28,7 +28,7 @@ const ROOT = process.cwd()
 const REPORT = process.argv.includes('--report')
 const STRICT_CHECK2 = process.argv.includes('--strict-check2')
 
-/** 已删除/已合并符号黑名单（依据 v0.9.0 changelog 维护，勿删） */
+/** 已删除/已合并符号黑名单 */
 const REMOVED_SYMBOLS = [
     'SaaSPricing',
     'SubmitButton',

@@ -15,7 +15,7 @@ export const commandItemVariants = cva(
     [
         'relative flex cursor-pointer items-center gap-3 px-3 py-2',
         'text-sm font-semibold',
-        // listbox 项不可聚焦（高亮由 reka Listbox 键盘导航管理），不携带 outline-none（见 C1 豁免规则）
+        // listbox 项不可聚焦（高亮由 reka Listbox 键盘导航管理），不携带 outline-none
         'select-none',
         'border-3 border-transparent',
         'data-[highlighted]:bg-brutal-secondary data-[highlighted]:text-brutal-fg',

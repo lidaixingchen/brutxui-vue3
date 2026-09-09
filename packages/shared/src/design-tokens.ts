@@ -96,7 +96,7 @@ export const BASE_THEME: Readonly<Record<ThemeMode, Readonly<ThemeTokens>>> = Ob
         statusError: '#EF476F',
         statusErrorForeground: PALETTE_BLACK,
         overlay: 'rgba(0, 0, 0, 0.5)',
-        // 5% 微妙叠色（拖拽指示等浅层覆盖，取代硬编码 bg-black/5，见审查报告 §3.4）
+        // 5% 微妙叠色（拖拽指示等浅层覆盖）
         overlaySubtle: 'rgba(0, 0, 0, 0.05)',
         placeholder: '#9CA3AF',
         black: PALETTE_BLACK,

@@ -27,7 +27,7 @@ export type Alignment = 'start' | 'center' | 'end'
 
 /**
  * 图标组件类型（支持组件实例、异步组件、函数式组件）。
- * string：图标名或 URL（编译期无法校验具体图标名，按运行时图标方案解析）。
+ * string：图标名或 URL（编译期无法校验具体图标名，按运行时图标解析）。
  * 函数式组件分支使用 FunctionalComponent（返回 VNode 的函数式组件形态）。
  */
 export type IconComponent = string | ConcreteComponent | FunctionalComponent

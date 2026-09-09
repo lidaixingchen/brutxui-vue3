@@ -27,7 +27,7 @@ export async function remove(components: string[], options: RemoveOptions): Prom
 
     logger.setSilent(options.silent ?? false);
 
-    // P1-8: 合并全局 dry-run
+    // 合并全局 dry-run
     const effectiveDryRun = mergeDryRun(options.dryRun);
 
     await withAuditLog(
@@ -77,7 +77,7 @@ async function removeInner(components: string[], options: RemoveOptions, cwd: st
         logger.newLine();
     }
 
-    // 依赖检查失败告警（#102：registry 不可达降级提示）
+    // 依赖检查失败告警（registry 不可达降级提示）
     if (removal.dependencyCheckFailures.length > 0) {
         logger.warn(`Warning: dependency check failed for ${removal.dependencyCheckFailures.length} component(s) — registry may be unreachable. Hidden dependencies could exist for the components being removed: ${removal.dependencyCheckFailures.join(', ')}`);
         logger.newLine();

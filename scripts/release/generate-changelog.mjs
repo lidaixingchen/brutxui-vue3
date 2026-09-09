@@ -199,9 +199,6 @@ function archiveOldestVersion(fullContent, newVersion) {
 
     // 1. 使用正则匹配所有的版本标题 (包括刚刚 prepended 的新版本)
     // 匹配版本标题：`## [x.y.z](compare-url) - date`。
-    // 注意版本号必须用 `\d+\.\d+\.\d+`，不能写成 `(0|[1-9]\d*\.\d+\.\d+)`——
-    // 后者 `0` 分支只匹配裸 "0"、`[1-9]` 分支不匹配 0 开头，导致 0.x.y 版本段全部匹配不到，
-    // 归档裁剪永不触发（历史曾因此让根文件累积超过 3 个版本）。
     const versionHeaderRegex = /## \[(\d+\.\d+\.\d+)\]\([^\)]+\)\s+-\s+(\d{4}-\d{2}-\d{2})/g;
     const matches = [...fullContent.matchAll(versionHeaderRegex)];
 
@@ -227,7 +224,7 @@ function archiveOldestVersion(fullContent, newVersion) {
 
     // 4. 提取该段归档内容并清洗格式
     //    转义裸尖括号，防止 commit subject 里的 `Promise<boolean>` 之类被 markdown-it
-    //    当作未闭合 HTML 标签，导致 VitePress/Vue 模板构建失败（历史 v0.9.4 / v0.9.8 均踩过）。
+    //    当作未闭合 HTML 标签导致 VitePress/Vue 模板构建失败。
     const rawArchiveText = fullContent.slice(oldestStartIndex, oldestEndIndex).trim();
     const archiveFileContent = `# v${oldestVersion}\n\n> [← 返回主 CHANGELOG](../guide/changelog.md)\n\n${escapeBareAngles(rawArchiveText)}\n`;
 
@@ -302,8 +299,7 @@ function syncDocsChangelogGuide(changelogContent) {
     }
     const archiveStart = changelogContent.indexOf('\n## 归档版本');
     const endIndex = archiveStart !== -1 ? archiveStart : changelogContent.length;
-    // 与归档路径一致（archiveOldestVersion 第 232 行）：版本段可能含手工编辑混入的裸尖括号
-    // （历史 v0.9.4/v0.9.8 曾因 `Promise<boolean>` 破坏 docs 构建），复用 escapeBareAngles 转义；
+    // 与归档路径一致：版本段可能混入裸尖括号，复用 escapeBareAngles 转义；
     // 函数保留反引号代码内原文，对已转义的 &lt; 幂等
     const latestVersions = escapeBareAngles(changelogContent.slice(startMatch + 1, endIndex).trim());
 

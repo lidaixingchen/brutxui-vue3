@@ -1,5 +1,5 @@
 /**
- * SSR smoke tests (§3.3)
+ * SSR smoke tests
  *
  * Three layers:
  *   1a. Simple component rendering — standalone-renderable components produce
@@ -13,7 +13,7 @@
  * Environment: node (no window/document). env.ts isClient/hasDocument return false,
  * exercising the SSR-safe code paths in all migrated components/composables.
  *
- * Coverage goal (方案 §3.3): all publicly-exported components + all composables
+ * Coverage goal: all publicly-exported components + all composables
  * under src/composables/.
  */
 import { describe, it, expect } from 'vitest'

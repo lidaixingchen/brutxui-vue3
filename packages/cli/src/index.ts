@@ -303,7 +303,7 @@ function applyGlobalOptionsFromArgv(argv: string[]): void {
         setGlobalDryRun(true);
     }
 
-    // 基础设施闭环 P1：--require-signature 全局 flag 激活严格签名模式（优先级最高，
+    // --require-signature 全局 flag 激活严格签名模式（优先级最高，
     // 高于 BRUTX_REQUIRE_SIGNATURE 环境变量与 config.requireSignature）。
     if (optionsArgv.includes('--require-signature')) {
         process.env.BRUTX_REQUIRE_SIGNATURE = '1';

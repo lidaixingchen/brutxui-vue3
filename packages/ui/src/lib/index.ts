@@ -43,9 +43,8 @@ export type { IconSize } from './icon-size-variants'
 export { EMAIL_REGEX } from './validation'
 
 // 默认值
-// 注意：仅导出组件公共 props/配置默认值。AUDIO_*/CANVAS_*/GLITCH_*/HARDCORE_INPUT_*
-// 等音效/画布/特效内部调优参数不再从聚合入口导出（各组件直接 import './defaults'），
-// 以保持公共 API 面精简，允许内部自由调整。
+// 注意：仅导出组件公共 props/配置默认值。
+// 音效/画布/特效等内部调优参数由各组件按需直接引用 defaults 模块，以保持公共 API 面精简。
 export {
     DEFAULT_AUTOPLAY_INTERVAL_MS,
     HSV_PERCENT_PRECISION,

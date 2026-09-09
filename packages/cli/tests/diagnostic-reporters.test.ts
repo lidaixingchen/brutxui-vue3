@@ -14,7 +14,7 @@ import {
 } from '../src/lib/diagnostics/reporters/index.js';
 import type { CheckResult } from '../src/lib/diagnostics/types.js';
 
-describe('Multi-Reporter Matrix & GitHub CI Native Support (Ticket 3: #97)', () => {
+describe('Multi-Reporter Matrix & GitHub CI Native Support', () => {
     const testDir = path.resolve(process.cwd(), 'tests/.tmp-reporters');
 
     beforeEach(async () => {

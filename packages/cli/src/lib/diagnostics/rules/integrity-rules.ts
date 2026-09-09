@@ -277,7 +277,7 @@ export const integrityHashDriftRule: DiagnosticRule = {
                     category: 'integrity',
                     name: `component ${componentName} integrity`,
                     status: 'warn',
-                    message: 'No installedContentHash recorded (pre-P0-1 manifest). Run update to enable drift detection.',
+                    message: 'No installedContentHash recorded in manifest. Run update to enable drift detection.',
                     componentName,
                 });
                 continue;

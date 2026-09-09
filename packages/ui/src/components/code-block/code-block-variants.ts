@@ -27,6 +27,6 @@ export const codeBlockLineNumbersVariants = cva(
 export const codeBlockCopyButtonVariants = cva(
     // 窄化 overlay 竞争类：bg/shadow/transition/hover 交还 CopyToClipboard variants 按状态接管，
     // 只保留尺寸/文字/边框，避免 twMerge 击穿 copied/failed 的 bg-brutal-success/destructive、
-    // shadow-none 与 transition-none（见裁决报告 §C5）
+    // shadow-none 与 transition-none
     'h-7 px-3 text-xs border-3 border-brutal'
 )

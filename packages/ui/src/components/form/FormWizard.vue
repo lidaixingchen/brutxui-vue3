@@ -72,7 +72,7 @@ watch(() => props.modelValue, () => {
     // flush: 'post' 合并同一帧内的多次输入更新，避免每次击键都执行下游步骤清理
 }, { deep: true, flush: 'post' })
 
-// 注意：进入步骤时不清除该步骤历史错误（删除原 watch(currentStep)）——
+// 注意：进入步骤时不清除该步骤历史错误——
 // 错误保留到该步骤被重新校验（validateCurrentStep 成功时清除），
 // 否则返回再进入时 canGoNext 会提前变为 true，下一步按钮被错误启用
 

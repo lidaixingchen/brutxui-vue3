@@ -21,8 +21,7 @@ export interface LocaleOptions {
  *   与 `LocaleOptions` 结构互斥，不会互相混淆。
  * - `LocaleOptions`：`{ locale, fallbackLocale? }` 结构，locale 必填。
  *
- * 运行时以对象是否含顶层 `locale` 键区分两种形态（isRef 方案无法区分「纯对象语言包」
- * 与 LocaleOptions，会破坏 `provideLocale(en)` 这类文档用法，故不采用）。
+ * 运行时以对象是否含顶层 `locale` 键区分两种形态。
  */
 export function provideLocale(localeOrOptions: MaybeRef<Locale> | LocaleOptions): void {
     // 检查是否是 LocaleOptions 格式（包含 locale 属性）
@@ -37,7 +36,7 @@ export function provideLocale(localeOrOptions: MaybeRef<Locale> | LocaleOptions)
         // 避免后代组件静默继承祖先作用域注入的 fallback，与「只使用新 locale + 内置 zhCN」的预期一致
         provide(FALLBACK_LOCALE_INJECTION_KEY, options.fallbackLocale ?? {})
     } else {
-        // 直接传入 MaybeRef<Locale> 格式（向后兼容）
+        // 直接传入 MaybeRef<Locale> 格式
         provide(LOCALE_INJECTION_KEY, localeOrOptions as MaybeRef<Locale>)
     }
 }

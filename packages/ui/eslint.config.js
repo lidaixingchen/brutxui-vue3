@@ -3,7 +3,7 @@ import tseslint from 'typescript-eslint'
 import pluginVue from 'eslint-plugin-vue'
 import globals from 'globals'
 
-// SSR-unsafe globals that must be accessed via @/lib/env wrappers (§3.2).
+// SSR-unsafe globals that must be accessed via @/lib/env wrappers.
 // `no-restricted-globals` intercepts bare references (e.g. `document`);
 // `no-restricted-syntax` intercepts member access (e.g. `window.localStorage`).
 const SSR_UNSAFE_GLOBALS = [
@@ -71,7 +71,7 @@ export default tseslint.config(
             '@typescript-eslint/no-unsafe-function-type': 'off',
         },
     },
-    // §3.2 SSR-safe lint: production code must route DOM/BOM access through @/lib/env.
+    // SSR-safe lint: production code must route DOM/BOM access through @/lib/env.
     {
         files: ['src/**/*.ts', 'src/**/*.vue', 'src/**/*.tsx'],
         ignores: ['src/lib/env.ts', 'src/test-utils/**'],
@@ -86,7 +86,7 @@ export default tseslint.config(
             }))],
         },
     },
-    // §3.2 SSR-safe lint: env.ts (tool layer impl) + test files are exempt.
+    // SSR-safe lint: env.ts (tool layer impl) + test files are exempt.
     {
         files: [
             'src/lib/env.ts',

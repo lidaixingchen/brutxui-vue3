@@ -130,7 +130,7 @@ interface ThemeEntry {
 function extractThemeEntries(blockText: string): Map<string, ThemeEntry> {
     const entries = new Map<string, ThemeEntry>()
     // 与 extractVars 同形：捕获完整声明值，随后过滤「不含 var(--brutal-」的非令牌条目（如 --default-font-family）。
-    // 先剥离注释再匹配（OCR 审查）：注释内含形如 --xxx: var(--brutal-... 的文本会产生幽灵条目
+    // 先剥离注释再匹配：注释内含形如 --xxx: var(--brutal-... 的文本会产生幽灵条目
     const entryRe = /--([a-z0-9-]+):\s*([^;]+?)\s*(?:;|$)/g
     const cleaned = blockText.replace(/\/\*[\s\S]*?\*\//g, ' ')
     let m: RegExpExecArray | null
@@ -154,7 +154,7 @@ function extractThemeEntries(blockText: string): Map<string, ThemeEntry> {
  * 变量名不以 --brutal- 开头，extractVars（@theme 块检查）不覆盖，需单独提取；
  * 返回 key 为完整变量名（shadow-brutal / shadow-brutal-sm / ...）。
  * 先剥离注释再扫描（注释内含 { } / 伪令牌声明会导致块边界错位或幽灵条目），
- * 并收集全部 :root 块合并（OCR 审查：命中首个即返回会在生成区布局变化时静默缺失）。
+ * 并收集全部 :root 块合并（命中首个即返回会在生成区布局变化时静默缺失）。
  */
 function extractShadowEntries(css: string): Record<string, string> {
     const shadows: Record<string, string> = {}
@@ -250,7 +250,7 @@ function verifyThemeArea(uiCss: string, cliCss: string, failures: string[]): voi
 
     // 阴影：ui :root 生成区（styles.css）↔ CLI @theme（手写区），双向集合与剥离 fallback 的值比对
     const uiShadowVars = extractShadowEntries(uiCss)
-    // fail-closed（OCR 审查）：提取为空说明生成区布局变化或解析失效，门禁须显式失败而非静默假绿
+    // fail-closed：提取为空说明生成区布局变化或解析失效，门禁须显式失败而非静默假绿
     if (Object.keys(uiShadowVars).length === 0) {
         failures.push('ui :root 未提取到任何 --shadow-brutal-* 条目（生成区布局变化？门禁 fail-closed 拦截）')
     }

@@ -170,7 +170,7 @@ describe('Accordion keyboard navigation support', () => {
                 },
             })
 
-            // 旋转/过渡类施加在 [data-accordion-icon] 容器上（图标容器方案 #9），而非 svg 本身
+            // 旋转/过渡类施加在 [data-accordion-icon] 容器上，而非 svg 本身
             const container = wrapper.find('[data-accordion-icon]')
             expect(container.exists()).toBe(true)
             expect(container.classes()).toContain('shrink-0')

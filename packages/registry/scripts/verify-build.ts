@@ -1,7 +1,7 @@
 /**
  * build:verify —— 证明"增量 build 结果 == 全量 build 结果"
  *
- * 流程（P0-4 增量正确性校验）：
+ * 流程（增量正确性校验）：
  *   1. 备份当前 registry 输出 + .registry-cache.json 到临时目录
  *   2. 删除 .registry-cache.json，跑一次全量 build → 输出集 A
  *   3. 把 A 移到临时目录，恢复 cache，跑一次增量 build → 输出集 B
@@ -19,8 +19,7 @@
  * 注：本脚本假设当前 working tree 已是干净状态——首次 build 用现有 cache（可能是
  * 增量），第二次 build 会复用第一次全量 build 写入的 cache（必然全命中）。
  * 这与"增量 vs 全量"的语义一致：验证"命中缓存复用旧输出"与"重算输出"等价。
- * 产物不入库（.gitignore 覆盖 registry/ 与 .registry-cache.json，见
- * docs/REGISTRY_ARTIFACTS_PUBLISH_TIME_PLAN.md），本脚本写回磁盘不受 git 跟踪影响。
+ * 产物不入库（.gitignore 覆盖 registry/ 与 .registry-cache.json），本脚本写回磁盘不受 git 跟踪影响。
  */
 import fs from 'fs';
 import path from 'path';
@@ -39,7 +38,7 @@ const TMP_DIR = path.resolve(REGISTRY_DIR, '.verify-tmp');
  * 文件级排除字段配置。
  * - registry-manifest.json: buildTimestamp（由 BRUTX_REGISTRY_BUILD_TIMESTAMP 注入，两次 build 必不同）
  * - registry-sbom.json: serialNumber（内容哈希派生的确定性值，见 build-registry.ts computeSbomSerialNumber；
- *   两次 build 相同内容产出相同 serialNumber，排除配置无实际作用，保留为防御性防回归）
+ *   两次 build 相同内容产出相同 serialNumber，排除配置保留为防御性守卫）
  *   注：metadata.timestamp 来自 BRUTX_REGISTRY_BUILD_TIMESTAMP，verify-build 流程中两
  *   次共用同一 process.env，故 timestamp 字段天然一致，无需排除。
  */

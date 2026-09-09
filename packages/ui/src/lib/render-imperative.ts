@@ -283,7 +283,7 @@ export interface RenderImperativeReturn {
 }
 
 /**
- * 命令式渲染挂载组件的兼容包装工具（保持向后兼容并提供宿主深模块能力）
+ * 命令式渲染挂载组件的包装工具（提供宿主深模块能力）
  */
 export function renderImperative(
     component: Component,

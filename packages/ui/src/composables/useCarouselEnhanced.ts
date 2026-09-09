@@ -18,7 +18,7 @@ export function useCarouselEnhanced(options: UseCarouselEnhancedOptions = {}) {
     // 若这些回调依赖后声明的 let/const 变量会因 TDZ 抛出 ReferenceError，
     // 消除对生命周期时序的隐式依赖
     // 复用外部传入的 reduced-motion 引用（若宿主已实例化），否则自建一份并下传给 useCarousel，
-    // 消除 useCarousel 内部重复实例化同一媒体查询与监听（§12.4）
+    // 消除 useCarousel 内部重复实例化同一媒体查询与监听
     const prefersReducedMotion = options.prefersReducedMotion ?? useReducedMotion()
     const autoplayProgress = ref(0)
     let progressTimer: ReturnType<typeof setInterval> | null = null

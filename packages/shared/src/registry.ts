@@ -112,7 +112,7 @@ export interface RegistryManifestIntegrityInput {
 }
 
 /**
- * 计算 registry-manifest 自身完整性哈希（基础设施闭环 P1 安全契约）。
+ * 计算 registry-manifest 自身完整性哈希（安全契约）。
  *
  * 规范化契约（CLI 验签侧与 build 侧共用同一实现，严禁单独修改其一）：
  *   1. items 按 name 字典序排序（Object.entries 再 sort，与字段写入顺序无关）

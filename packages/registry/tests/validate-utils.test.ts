@@ -412,10 +412,9 @@ describe('validate-registry helpers', () => {
     })
 
     it('ignores type-only cross-component imports when checking registryDependencies', () => {
-        // P1-7: `import type { Foo } from '@/components/ui/button/types'` does not
-        // create a runtime registry dependency. Without this fix, the validator
-        // would flag `button` as a missing registryDependency even though no
-        // runtime value is imported.
+        // `import type { Foo } from '@/components/ui/button/types'` does not
+        // create a runtime registry dependency; type-only imports do not require
+        // `button` in registryDependencies.
         const item = createRegistryItem('dialog', {
             description: 'Dialog component',
             files: [
@@ -444,7 +443,7 @@ describe('validate-registry helpers', () => {
     })
 })
 
-describe('classifyRegistryImport (P1-7)', () => {
+describe('classifyRegistryImport', () => {
     it('classifies cross-component @/components/ui imports as registry-component', () => {
         const result = classifyRegistryImport('@/components/ui/button/Button.vue', 'dialog', false, false)
         expect(result).toEqual({
@@ -506,7 +505,7 @@ describe('classifyRegistryImport (P1-7)', () => {
     })
 })
 
-describe('buildDependencyGraph / formatDependencyGraphDot / formatDependencyGraphJson (P1-7)', () => {
+describe('buildDependencyGraph / formatDependencyGraphDot / formatDependencyGraphJson', () => {
     const items = [
         { name: 'alert-dialog', registryDependencies: ['button', 'dialog'] },
         { name: 'button', registryDependencies: [] },

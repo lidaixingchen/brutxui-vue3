@@ -36,7 +36,7 @@ function createMockItem(name: string, overrides: Record<string, unknown> = {}) {
     };
 }
 
-describe('RegistryClient Base Pipeline (Ticket 2 / #106)', () => {
+describe('RegistryClient Base Pipeline', () => {
     let memoryFs: MemoryFileSystemAdapter;
     let cacheStorage: CacheStorage;
 
@@ -223,7 +223,7 @@ describe('RegistryClient Base Pipeline (Ticket 2 / #106)', () => {
     });
 });
 
-describe('RegistryClient Dependencies & Listing (Ticket 3 / #107)', () => {
+describe('RegistryClient Dependencies & Listing', () => {
     let memoryFs: MemoryFileSystemAdapter;
     let cacheStorage: CacheStorage;
 
@@ -346,7 +346,7 @@ describe('RegistryClient Dependencies & Listing (Ticket 3 / #107)', () => {
         expect(components).toEqual(['badge', 'select', 'table']);
     });
 
-    it('provides type guards for component not found and security errors (Ticket 5 / #109)', () => {
+    it('provides type guards for component not found and security errors', () => {
         const notFoundError = new CliError('Component missing', { code: 'COMPONENT_NOT_FOUND' });
         const signatureError = new CliError('Invalid signature', { code: 'REGISTRY_SIGNATURE_INVALID' });
         const integrityError = new CliError('Integrity mismatch', { code: 'REGISTRY_INTEGRITY_FAILED' });

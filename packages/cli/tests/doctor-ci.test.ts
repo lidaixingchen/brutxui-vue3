@@ -7,7 +7,7 @@ import { doctor, resolveDoctorReporter, determineExitCode } from '../src/command
 import { createDiagnosticReport } from '../src/lib/diagnostics/engine.js';
 import type { CheckResult } from '../src/lib/diagnostics/types.js';
 
-describe('Doctor CI Mode & Exit Code Strategy (Ticket 5: #99)', () => {
+describe('Doctor CI Mode & Exit Code Strategy', () => {
     let tmpDir: string;
 
     beforeEach(async () => {

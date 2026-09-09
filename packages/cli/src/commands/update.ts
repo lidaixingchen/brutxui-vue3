@@ -25,7 +25,7 @@ export async function update(components: string[], options: UpdateOptions): Prom
 
     logger.setSilent(options.silent ?? false);
 
-    // P1-8: 合并全局 dry-run
+    // 合并全局 dry-run
     const effectiveDryRun = mergeDryRun(options.dryRun);
 
     const restoreOffline = withOfflineScope(options.offline === true);
@@ -68,7 +68,7 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
     logger.info('Checking for updates...');
     const manifest = await readManifest(cwd).catch(() => null);
 
-    // 版本约束（P0-3 延续）：version-pinned 组件默认锁定，需 --across-versions 才跨版本更新。
+    // 版本约束：version-pinned 组件默认锁定，需 --across-versions 才跨版本更新。
     // 语义：name@version 是 git ref（非 semver），用户显式锁定即不应被 update 擅自改变。
     // version='latest' 或无 version 字段的组件视为未锁定，正常更新。
     const acrossVersions = options.acrossVersions === true;

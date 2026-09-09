@@ -4,7 +4,7 @@
  * 比对中文目录（apps/docs/ 根，不含 en/）与英文目录（apps/docs/en/）下的
  * 所有 .md 文件相对路径，输出「一侧缺失」的清单。
  *
- * 设计目标（见 docs/ARCHITECTURE_OPTIMIZATION_PLAN_V2.md §6.1）：
+ * 设计目标：
  * - 轻量、零依赖（仅用 node:fs / node:path）
  * - 适合纯 markdown 双语站点的「翻译滞后」发现
  * - 接入 CI：`pnpm check:i18n`，存在缺失时 exit 1

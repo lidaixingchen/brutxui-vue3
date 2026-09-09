@@ -18,7 +18,7 @@ const {
 
 let tmpDir: string;
 
-describe('audit log (P1-8)', () => {
+describe('audit log', () => {
     beforeEach(async () => {
         tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-audit-test-'));
     });

@@ -473,8 +473,7 @@ function createDevtoolsContext(options: Required<DevtoolsPluginOptions>): BrutxU
  * 通过 Vue Devtools 事件协议注册插件（等价于 @vue/devtools-api 的 setupDevToolsPlugin）。
  *
  * 真实 hook 是事件总线：emit('devtools:plugin:add', descriptor) 后由 devtools 端创建 api 并回调 setupFn。
- * 与旧实现不同，这里不再直接调用 hook 上不存在的同步方法（addInspector/on.visitComponentTree 等），
- * 避免 TypeErorr 被 try/catch 静默吞掉导致功能全部失效。
+ * 通过事件协议注册，避免直接调用不存在的同步方法导致错误。
  */
 function setupBrutxDevtoolsPlugin(descriptor: VueDevtoolsPluginDescriptor): boolean {
     // 仅浏览器环境存在 Vue Devtools hook

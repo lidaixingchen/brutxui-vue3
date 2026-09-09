@@ -27,7 +27,7 @@ function makeConfig(overrides: Partial<BrutalistConfig> = {}): BrutalistConfig {
 
 const ENV_KEYS = ['BRUTX_OFFLINE', 'BRUTX_REGISTRY_TOKEN', 'BRUTX_REGISTRY_HEADERS'] as const;
 
-describe('resolveRegistrySources (P1-5)', () => {
+describe('resolveRegistrySources', () => {
     it('returns only override when provided, ignoring config and default', () => {
         const config = makeConfig({ registries: ['https://config.example.com'] });
         expect(resolveRegistrySources(config, 'https://override.example.com')).toEqual([
@@ -68,7 +68,7 @@ describe('resolveRegistrySources (P1-5)', () => {
     });
 });
 
-describe('isOfflineRequested (P1-5)', () => {
+describe('isOfflineRequested', () => {
     beforeEach(() => {
         delete process.env.BRUTX_OFFLINE;
     });
@@ -97,7 +97,7 @@ describe('isOfflineRequested (P1-5)', () => {
     });
 });
 
-describe('buildAuthHeaders (P1-5)', () => {
+describe('buildAuthHeaders', () => {
     beforeEach(() => {
         delete process.env.BRUTX_REGISTRY_TOKEN;
         delete process.env.BRUTX_REGISTRY_HEADERS;
@@ -165,7 +165,7 @@ describe('buildAuthHeaders (P1-5)', () => {
     });
 });
 
-describe('fetchWithSources (P1-5)', () => {
+describe('fetchWithSources', () => {
     beforeEach(() => {
         delete process.env.BRUTX_OFFLINE;
         vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -224,7 +224,7 @@ describe('fetchWithSources (P1-5)', () => {
         expect(fetcher).toHaveBeenCalledTimes(2);
     });
 
-    // --- 基础设施闭环 P0：信任链/完整性失败不透出泛化 REGISTRY_FETCH_FAILED ---
+    // --- 信任链/完整性失败不透出泛化 REGISTRY_FETCH_FAILED ---
 
     it('rethrows REGISTRY_SIGNATURE_INVALID when all sources fail with signature error', async () => {
         const fetcher = vi.fn(async () => {
@@ -403,7 +403,7 @@ describe('fetchWithSources (P1-5)', () => {
     });
 });
 
-describe('withOfflineScope (P1-5)', () => {
+describe('withOfflineScope', () => {
     afterEach(() => {
         delete process.env.BRUTX_OFFLINE;
     });

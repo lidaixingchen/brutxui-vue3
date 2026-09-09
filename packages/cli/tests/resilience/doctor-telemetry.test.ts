@@ -21,7 +21,7 @@ function makeMockConfig(overrides: Partial<BrutalistConfig> = {}): BrutalistConf
     };
 }
 
-describe('integrityRegistryReachabilityRule (Ticket 4)', () => {
+describe('integrityRegistryReachabilityRule', () => {
     beforeEach(() => {
         vi.restoreAllMocks();
     });
@@ -94,7 +94,7 @@ describe('integrityRegistryReachabilityRule (Ticket 4)', () => {
     });
 });
 
-describe('fetchWithSources Telemetry & Verbose Logging (Ticket 4)', () => {
+describe('fetchWithSources Telemetry & Verbose Logging', () => {
     afterEach(() => {
         vi.restoreAllMocks();
     });

@@ -7,7 +7,7 @@ export interface LoggerOptions {
 }
 
 /**
- * Verbose 等级（P1-8）：
+ * Verbose 等级：
  * - 0: 默认，不输出 verbose 信息
  * - 1: 步骤级（-v），如"正在解析依赖"
  * - 2: 缓存/网络细节（-vv），如"缓存命中 button@v1"
@@ -129,7 +129,7 @@ export class Logger {
     }
 
     /**
-     * 按等级输出 verbose 信息（P1-8）。
+     * 按等级输出 verbose 信息。
      * level=1 步骤（-v），level=2 细节（-vv），level=3 堆栈（-vvv）。
      */
     verbose(level: number, message: string): void {
@@ -146,5 +146,5 @@ export class Logger {
     }
 }
 
-// 默认实例，保持向后兼容
+// 默认单例
 export const logger = new Logger();

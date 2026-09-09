@@ -98,7 +98,7 @@ describe('add service', () => {
 
         const result = await resolveComponents(['badge', 'card'], 'local-registry');
 
-        // 基础设施闭环 P0：resolveDeps 额外接收多源列表与命中源记录 Map（此处均未提供）
+        // resolveDeps 额外接收多源列表与命中源记录 Map（此处均未提供）
         expect(resolveDeps).toHaveBeenCalledWith(
             ['badge', 'card'],
             'local-registry',

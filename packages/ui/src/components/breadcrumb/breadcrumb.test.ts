@@ -70,7 +70,7 @@ describe('BreadcrumbList', () => {
     })
 
     it('keeps breadcrumb-list static hook class', () => {
-        // styles.css @layer base 以 .breadcrumb-list 重置外部 Markdown 样式污染，误删会回归
+        // styles.css @layer base 以 .breadcrumb-list 重置外部 Markdown 样式污染
         const wrapper = mount(BreadcrumbList, { ...localeProvide })
         expect(wrapper.classes()).toContain('breadcrumb-list')
     })

@@ -264,7 +264,7 @@ describe('TimelineConnector', () => {
     it('renders with vertical orientation by default', () => {
         const wrapper = mount(TimelineConnector)
         const classes = wrapper.classes()
-        // PCB 双平行总线：双边框中缝透底，取代单实线条
+        // PCB 双平行总线：双边框中缝透底
         expect(classes).toContain('border-l-3')
         expect(classes).toContain('border-r-3')
         expect(classes).toContain('w-[9px]')

@@ -18,7 +18,7 @@ export function applyRequireSignatureConfig(config: { requireSignature?: boolean
 export type { TrustedPublicKey } from './types.js';
 
 /**
- * 供应链安全：manifest 签名与验签（P1-6）
+ * 供应链安全：manifest 签名与验签
  *
  * 信任模型：
  *   - integrity 字段保证 manifest 内容自洽（防篡改可见内容）
@@ -34,18 +34,17 @@ export type { TrustedPublicKey } from './types.js';
  * 公钥分发：
  *   - 通过 BRUTX_REGISTRY_PUBLIC_KEYS 环境变量注入（JSON 数组 [{keyId, publicKey}]）
  *   - publicKey 格式为 base64 编码的 SPKI DER（单行，便于嵌入 JSON）
- *   - 未设置环境变量时验签降级为跳过（向后兼容，不强制启用）
+ *   - 未设置环境变量时验签降级为跳过（不强制启用）
  *
  * 密钥轮换：
  *   - 公钥列表按 keyId 索引，manifest.keyId 指定所用密钥
  *   - 旧 key 签发的 manifest 在过渡期（旧 key 仍在列表中）仍可信
  *   - 撤销旧 key 时从环境变量中移除即可
  *
- * 严格模式（P1-6 v2.2 修正）：
+ * 严格模式：
  *   - 默认行为：签名无效时 `warn`（不阻塞发布，避免迁移期卡死）
  *   - 严格模式：`--require-signature` flag 或 `BRUTX_REQUIRE_SIGNATURE=1` 激活，
  *     签名无效时升级为抛 REGISTRY_SIGNATURE_INVALID
- *   - 详见 AUXILIARY_PACKAGES_IMPROVEMENT_PLAN_V2.md 风险与取舍
  */
 
 const PUBLIC_KEYS_ENV = 'BRUTX_REGISTRY_PUBLIC_KEYS';
@@ -54,7 +53,7 @@ const PUBLIC_KEYS_ENV = 'BRUTX_REGISTRY_PUBLIC_KEYS';
 let trustedPublicKeysOverride: TrustedPublicKey[] | undefined;
 
 /**
- * 设置项目级受信任公钥 override（基础设施闭环 P1）。
+ * 设置项目级受信任公钥 override。
  * 传入空数组/null/undefined 时清空 override，回退到 env 与官方内置公钥。
  */
 export function setTrustedPublicKeys(keys: TrustedPublicKey[] | null | undefined): void {
@@ -125,7 +124,7 @@ function mergeTrustedKeys(configured: TrustedPublicKey[]): TrustedPublicKey[] {
 }
 
 /**
- * 加载受信任公钥列表（基础设施闭环 P1）。
+ * 加载受信任公钥列表。
  * 优先级：项目级 setTrustedPublicKeys → BRUTX_REGISTRY_PUBLIC_KEYS 环境变量 → OFFICIAL_PUBLIC_KEYS。
  * 官方 Root 公钥始终作为信任锚并入结果（配置同名 keyId 时以配置为准）。
  * 零配置时返回 OFFICIAL_PUBLIC_KEYS，实现官方 Registry 签名开箱即验。
@@ -140,7 +139,7 @@ export function loadTrustedPublicKeys(): TrustedPublicKey[] {
  *
  * 规则（按顺序短路）：
  *   1. manifest.signature 或 manifest.keyId 缺失 → 跳过验签（debug 日志），返回 false
- *   2. manifest.integrity 缺失 → 无法验签（warn 降级，见 #109：integrity 为必填契约，
+ *   2. manifest.integrity 缺失 → 无法验签（warn 降级：integrity 为必填契约，
  *      解析层已保证拉取路径不会产出缺 integrity 的 manifest），返回 false
  *   3. trustedKeys 为空 → 跳过验签（debug 日志），返回 false
  *   4. keyId 匹配的公钥不存在 → handleSignatureFailure()
@@ -167,8 +166,8 @@ export function verifyManifestSignature(
         return handleSignatureFailure('Manifest is unsigned (signature/keyId missing). Strict signature mode requires a signed manifest.', 'debug', requireSignatureOverride);
     }
 
-    // #109：integrity 为必填契约，缺 integrity 无法验签不再是预期内的跳过（debug），
-    // 而是需要用户知晓的降级（默认 warn；严格模式抛 REGISTRY_SIGNATURE_INVALID）。
+    // integrity 为必填契约，缺 integrity 无法验签需进行降级提示
+    // （默认 warn；严格模式抛 REGISTRY_SIGNATURE_INVALID）。
     if (!manifest.integrity) {
         return handleSignatureFailure('Manifest has signature but no integrity field, cannot verify.', 'warn', requireSignatureOverride);
     }
@@ -273,16 +272,16 @@ function recomputeManifestIntegrity(manifest: SignedManifestVerifyInput): string
 }
 
 /**
- * 完整校验已签名 manifest（基础设施闭环 P0 安全契约）：integrity 自洽 + 签名真实性。
+ * 完整校验已签名 manifest（安全契约）：integrity 自洽 + 签名真实性。
  *
  * 在 verifyManifestSignature（仅对 integrity 字符串验签）之上，先复算 integrity 并比对
  * manifest.integrity，封堵"攻击者改写 registryVersion/items 等内容字段、保留原 integrity+签名"
  * 的空子——签名不再只是"绑定一个字符串"，而是真正绑定 manifest 内容。
  *
  * 规则（短路顺序）：
- *   1. 未签名（缺 signature/keyId）→ 交给 verifyManifestSignature 跳过（向后兼容旧 registry）
+ *   1. 未签名（缺 signature/keyId）→ 交给 verifyManifestSignature 跳过
  *   2. 缺 integrity → 交给 verifyManifestSignature，由 handleSignatureFailure 处理
- *      （#109：integrity 为必填契约，缺 integrity 无法验签走 warn 降级，不再 debug 跳过）
+ *      （integrity 为必填契约，缺 integrity 无法验签走 warn 降级）
  *   3. trustedKeys 为空 → 跳过（用户未配置任何信任公钥，不强制校验）
  *   4. 复算 integrity 与 manifest.integrity 不一致 → handleSignatureFailure()
  *   5. 剩余校验（keyId 匹配、公钥解析、签名验证）→ 交给 verifyManifestSignature
@@ -295,7 +294,7 @@ export function verifyManifestIntegrityAndSignature(
     requireSignatureOverride?: boolean,
 ): boolean {
     // 未签名 / 缺 integrity / 无信任公钥 → 交给 verifyManifestSignature 处理
-    // （缺 integrity 由 handleSignatureFailure 走 warn 降级，见 #109）
+    // （缺 integrity 由 handleSignatureFailure 走 warn 降级）
     if (!manifest.signature || !manifest.keyId || !manifest.integrity) {
         return verifyManifestSignature(manifest, trustedKeys, requireSignatureOverride);
     }

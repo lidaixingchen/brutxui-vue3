@@ -361,7 +361,7 @@ describe('registry build items', () => {
     });
 });
 
-describe('computeSourceHash (P0-4 cache key)', () => {
+describe('computeSourceHash cache key', () => {
     const registry = loadMergedRegistry();
 
     it('returns a stable hash for the same component and file mapping', () => {

@@ -438,7 +438,7 @@ describe('update command', () => {
         });
     });
 
-    describe('version-pinned components (P0-3 update version constraints)', () => {
+    describe('version-pinned components (update version constraints)', () => {
         // Helper: build a modified DiffResult whose `component` matches the name being diffed.
         // update.ts reads `result.component` (not the input name) when grouping selected updates,
         // so reusing a constant result with a mismatched name causes wrong components to be selected.

@@ -39,7 +39,7 @@ describe('getCliErrorAdvice', () => {
         expect(advice.join('\n')).toContain('rebuild and validate');
     });
 
-    it('suggests disabling offline mode for offline-unavailable errors (P1-5)', () => {
+    it('suggests disabling offline mode for offline-unavailable errors', () => {
         const advice = getCliErrorAdvice(new CliError('Offline miss', {
             code: 'REGISTRY_OFFLINE_UNAVAILABLE',
         }));
@@ -48,7 +48,7 @@ describe('getCliErrorAdvice', () => {
         expect(advice.join('\n')).toContain('pre-cache');
     });
 
-    it('suggests verifying public keys for signature-invalid errors (P1-6)', () => {
+    it('suggests verifying public keys for signature-invalid errors', () => {
         const advice = getCliErrorAdvice(new CliError('Bad signature', {
             code: 'REGISTRY_SIGNATURE_INVALID',
         }));

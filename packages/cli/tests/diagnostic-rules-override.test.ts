@@ -4,7 +4,7 @@ import { diagnose } from '../src/lib/services/diagnostic-service.js';
 import { ProjectContext } from '../src/lib/project-context.js';
 import type { BrutalistConfig } from '../src/lib/types.js';
 
-describe('Diagnostic Rules Override & Severity Tuning (Ticket 1: #95)', () => {
+describe('Diagnostic Rules Override & Severity Tuning', () => {
     it('skips rule execution when rule is configured with "off"', async () => {
         const fs = new MemoryFileSystemAdapter();
         await fs.ensureDir('/project');

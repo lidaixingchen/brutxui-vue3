@@ -4,7 +4,7 @@ import { diagnose, repair, DiagnosticEngine } from '../src/lib/services/diagnost
 import { isNodeVersionSupported, nodeVersionRule, workspaceHintRule } from '../src/lib/diagnostics/rules/env-rules.js';
 import type { DiagnosticRule } from '../src/lib/diagnostics/types.js';
 
-describe('DiagnosticEngine & Env Rules (Ticket 1)', () => {
+describe('DiagnosticEngine & Env Rules', () => {
     describe('isNodeVersionSupported', () => {
         it('supports >= 22.5.0', () => {
             expect(isNodeVersionSupported('22.5.0')).toBe(true);
@@ -101,7 +101,7 @@ describe('DiagnosticEngine & Env Rules (Ticket 1)', () => {
         });
     });
 
-    describe('Config Domain Rules & Atomic Repair (Ticket 2)', () => {
+    describe('Config Domain Rules & Atomic Repair', () => {
         it('reports error when components.json does not exist', async () => {
             const fs = new MemoryFileSystemAdapter();
             await fs.ensureDir('/app');
@@ -219,7 +219,7 @@ describe('DiagnosticEngine & Env Rules (Ticket 1)', () => {
         });
     });
 
-    describe('Tailwind & Structure Rules with Topological Repair (Ticket 3)', () => {
+    describe('Tailwind & Structure Rules with Topological Repair', () => {
         it('diagnoses and fixes tailwind tokens missing in existing css file', async () => {
             const fs = new MemoryFileSystemAdapter();
             await fs.ensureDir('/app/src');
@@ -390,7 +390,7 @@ describe('DiagnosticEngine & Env Rules (Ticket 1)', () => {
     });
 
 
-    describe('Integrity Domain Rules & Offline Semantics (Ticket 4)', () => {
+    describe('Integrity Domain Rules & Offline Semantics', () => {
         it('detects missing component files recorded in manifest', async () => {
             const fs = new MemoryFileSystemAdapter();
             await fs.ensureDir('/app/src/components/ui/button');

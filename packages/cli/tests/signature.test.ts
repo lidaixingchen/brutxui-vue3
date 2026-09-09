@@ -29,7 +29,7 @@ function resetRequireSignature(): void {
 
 const PUBLIC_KEYS_ENV = 'BRUTX_REGISTRY_PUBLIC_KEYS';
 
-describe('loadTrustedPublicKeys (P1-6 / 基础设施闭环 P1)', () => {
+describe('loadTrustedPublicKeys', () => {
     beforeEach(() => {
         delete process.env[PUBLIC_KEYS_ENV];
         resetTrustedPublicKeys();
@@ -126,7 +126,7 @@ describe('loadTrustedPublicKeys (P1-6 / 基础设施闭环 P1)', () => {
     });
 });
 
-describe('verifyManifestSignature (P1-6)', () => {
+describe('verifyManifestSignature', () => {
     let keyPair: { keyId: string; publicKey: string; privateKey: string };
     let validSignature: string;
     const manifestIntegrity = 'a'.repeat(64);
@@ -173,7 +173,7 @@ describe('verifyManifestSignature (P1-6)', () => {
     });
 
     it('returns false (warn) when manifest is signed but missing integrity field', () => {
-        // #109：integrity 为必填契约，缺 integrity 无法验签从"debug 跳过"升级为"warn 降级"
+        // integrity 为必填契约，缺 integrity 无法验签进行 warn 降级
         // （默认模式 warn + 返回 false；严格模式抛 REGISTRY_SIGNATURE_INVALID）
         const warnSpy = vi.spyOn(logger, 'warn').mockImplementation(() => {});
         const result = verifyManifestSignature(
@@ -451,7 +451,7 @@ describe('verifyManifestSignature (P1-6)', () => {
     });
 });
 
-describe('generateEd25519KeyPair + signManifestIntegrity (P1-6)', () => {
+describe('generateEd25519KeyPair + signManifestIntegrity', () => {
     it('generates a valid Ed25519 keypair with base64 SPKI public key', () => {
         const pair = generateEd25519KeyPair();
         expect(pair.keyId).toMatch(/^key-[0-9a-f]+$/);
@@ -514,7 +514,7 @@ describe('generateEd25519KeyPair + signManifestIntegrity (P1-6)', () => {
     });
 });
 
-describe('verifyManifestIntegrityAndSignature (基础设施闭环 P0 内容↔integrity 自洽)', () => {
+describe('verifyManifestIntegrityAndSignature (内容↔integrity 自洽)', () => {
     let keyPair: { keyId: string; publicKey: string; privateKey: string };
 
     const PUBLIC_KEYS_ENV = 'BRUTX_REGISTRY_PUBLIC_KEYS';

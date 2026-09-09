@@ -203,7 +203,7 @@ describe('AvatarImage', () => {
     })
 
     it('keeps image primitive mounted and shows fallback when src becomes empty', async () => {
-        // 回归：AvatarImage 不再用 v-if 卸载原语，src 从有值变空时 img 元素应保持挂载（由 v-show 控制显隐），fallback 正常显示
+        // AvatarImage 由 v-show 控制显隐，src 从有值变空时 img 元素保持挂载，fallback 正常显示
         const wrapper = mount(AvatarWithImageAndFallback, {
             props: { src: '/photo.jpg' },
         })

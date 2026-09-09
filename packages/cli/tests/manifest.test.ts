@@ -102,7 +102,7 @@ describe('install manifest helpers', () => {
         expect(await fs.pathExists(getManifestPath(tmpDir))).toBe(true);
     });
 
-    it('persists the version field when provided (P0-3 version governance)', async () => {
+    it('persists the version field when provided', async () => {
         await updateInstalledComponents(tmpDir, [
             {
                 item: makeRegistryItem('button'),

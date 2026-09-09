@@ -171,15 +171,11 @@ describe('FormWizard', () => {
     })
 
     it('clears completedSteps of downstream steps when modelValue changes', async () => {
-        // 区分修复前后行为的关键场景：
+        // 测试流程：
         // 1. 完成步骤 0、1（completedSteps={0,1}）
-        // 2. 返回步骤 0，修改 modelValue
-        //    - 修复版：清除 0 及下游 1、2 → completedSteps={}
-        //    - 未修复：仅清除 0 → completedSteps={1}
+        // 2. 返回步骤 0，修改 modelValue，应清除 0 及下游 1、2（completedSteps={}）
         // 3. 点击 Next 完成步骤 0（completedSteps={0}，currentStep=1）
-        // 4. linear 跳到步骤 2：
-        //    - 修复版：i=1 不在 completedSteps → navigation-blocked
-        //    - 未修复：i=1 在 completedSteps → 通过 step-change
+        // 4. linear 模式跳到步骤 2 时，因步骤 1 未完成应被 navigation-blocked 阻止
         const wrapper = mount(FormWizard, {
             props: {
                 steps: testSteps,
@@ -201,7 +197,7 @@ describe('FormWizard', () => {
         await prevButton().trigger('click') // 2 → 1
         await prevButton().trigger('click') // 1 → 0
 
-        // 修改 modelValue：修复版应清除 0、1、2 的 completedSteps
+        // 修改 modelValue：应清除 0、1、2 的 completedSteps
         await wrapper.setProps({ modelValue: { name: 'Bob' } })
 
         // 点击 Next 完成步骤 0，currentStep → 1
@@ -211,14 +207,14 @@ describe('FormWizard', () => {
         const blockedBefore = wrapper.emitted('navigation-blocked')?.length ?? 0
         const stepChangeBefore = wrapper.emitted('step-change')?.length ?? 0
 
-        // linear 跳到步骤 2：修复版应阻塞（步骤 1 不在 completedSteps）
+        // linear 跳到步骤 2：应阻塞（步骤 1 不在 completedSteps）
         const stepButtons = wrapper.findAll('[role="listitem"] button')
         await stepButtons[2].trigger('click')
 
         const blockedAfter = wrapper.emitted('navigation-blocked')?.length ?? 0
         const stepChangeAfter = wrapper.emitted('step-change')?.length ?? 0
 
-        // 修复版：navigation-blocked 次数增加，step-change 次数不变
+        // navigation-blocked 次数增加，step-change 次数不变
         expect(blockedAfter).toBeGreaterThan(blockedBefore)
         expect(stepChangeAfter).toBe(stepChangeBefore)
     })

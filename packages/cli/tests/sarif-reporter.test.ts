@@ -9,7 +9,7 @@ import {
 } from '../src/lib/diagnostics/reporters/index.js';
 import type { CheckResult } from '../src/lib/diagnostics/types.js';
 
-describe('OASIS SARIF 2.1.0 Reporter (Ticket 4: #98)', () => {
+describe('OASIS SARIF 2.1.0 Reporter', () => {
     const testDir = path.resolve(process.cwd(), 'tests/.tmp-sarif');
 
     beforeEach(async () => {

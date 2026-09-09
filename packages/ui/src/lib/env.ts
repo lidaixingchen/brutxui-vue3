@@ -127,9 +127,9 @@ export function safeSetStorageItem(key: string, value: string): void {
 }
 
 // ============================================================================
-// SSR-safe 工具层扩展（§3.1）
+// SSR-safe 工具层扩展
 // 所有 DOM/BOM 访问必须经此层封装，禁止生产代码直接引用 window/document 等。
-// 现有 API 返回 null，新增 API 返回 undefined（与 plan 代码示例一致）。
+// 现有 API 返回 null，以下 API 返回 undefined。
 // ============================================================================
 
 /** Whether the code is running in an SSR environment (not a browser). */

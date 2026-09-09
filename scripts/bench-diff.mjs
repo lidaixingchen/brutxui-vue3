@@ -1,5 +1,5 @@
 /**
- * bench-diff.mjs — 性能基准 PR 对比脚本（§4.1）
+ * bench-diff.mjs — 性能基准 PR 对比脚本
  *
  * 用法：
  *   node scripts/bench-diff.mjs bench-main.json bench-pr.json

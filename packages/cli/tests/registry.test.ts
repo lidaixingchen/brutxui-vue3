@@ -381,7 +381,7 @@ describe('migrateConfig', () => {
     });
 });
 
-describe('resolveDeps version-pinned deduplication (P0-3)', () => {
+describe('resolveDeps version-pinned deduplication', () => {
     const mockRegistry: Record<string, any> = {
         aV1: {
             ...createRegistryItem('button'),
@@ -411,9 +411,9 @@ describe('resolveDeps version-pinned deduplication (P0-3)', () => {
         vi.unstubAllGlobals();
     });
 
-    it('should resolve both button@v1 and button@v2 without silently dropping either (bug 4 fix)', async () => {
+    it('should resolve both button@v1 and button@v2 without silently dropping either', async () => {
         const fetchedUrls: string[] = [];
-        // 版本化能力仅在 GitHub raw 源生效（默认 Release 源忽略版本，见 T2 降级语义），显式传 raw 源
+        // 版本化能力仅在 GitHub raw 源生效（默认 Release 源忽略版本），显式传 raw 源
         const raw = 'https://raw.githubusercontent.com/lidaixingchen/brutxui-vue3/main/packages/registry/registry';
         vi.stubGlobal('fetch', async (url: string) => {
             fetchedUrls.push(url);
@@ -448,7 +448,7 @@ describe('resolveDeps version-pinned deduplication (P0-3)', () => {
 
     it('should still deduplicate same-version dependencies (button@v1 appears once)', async () => {
         const fetchedUrls: string[] = [];
-        // 版本化能力仅在 GitHub raw 源生效（默认 Release 源忽略版本，见 T2 降级语义），显式传 raw 源
+        // 版本化能力仅在 GitHub raw 源生效（默认 Release 源忽略版本），显式传 raw 源
         const raw = 'https://raw.githubusercontent.com/lidaixingchen/brutxui-vue3/main/packages/registry/registry';
         const parentC = createRegistryItem('parentC', { registryDependencies: ['button@v1'] });
         vi.stubGlobal('fetch', async (url: string) => {
@@ -494,9 +494,9 @@ describe('resolveDeps version-pinned deduplication (P0-3)', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Manifest signature verification integration (P1-6)
+// Manifest signature verification integration
 // ---------------------------------------------------------------------------
-describe('getItem with manifest signature verification (P1-6)', () => {
+describe('getItem with manifest signature verification', () => {
     let tempCacheDir: string;
     let keyPair: { keyId: string; publicKey: string; privateKey: string };
 
@@ -759,7 +759,7 @@ describe('getItem with manifest signature verification (P1-6)', () => {
         }
     });
 
-    // --- 基础设施闭环 P0：manifest 内容 ↔ integrity 自洽校验 ---
+    // --- manifest 内容 ↔ integrity 自洽校验 ---
     // 攻击场景：篡改内容字段（registryVersion/items）但保留原 integrity + signature，
     // 签名对 integrity 字符串仍有效——必须通过复算比对识破。
 
@@ -810,7 +810,7 @@ describe('getItem with manifest signature verification (P1-6)', () => {
     });
 });
 
-describe('offline cache hit (基础设施闭环 P2)', () => {
+describe('offline cache hit', () => {
     let tempCacheDir: string;
 
     beforeEach(() => {

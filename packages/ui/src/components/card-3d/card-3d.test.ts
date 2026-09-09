@@ -142,7 +142,7 @@ describe('Card3D clickable', () => {
 
     it('emits click for programmatic .click() / AT-synthesized click (detail 0) without keyboard context', async () => {
         // detail 为 0 的 click 不必然是键盘激活：程序化 .click() 与辅助技术派发的
-        // 合成 click detail 同为 0，无键盘 emit 前置时不应被吞掉（行为回归守卫）
+        // 合成 click detail 同为 0，无键盘 emit 前置时不应被吞掉
         const wrapper = mount(Card3D, { props: { clickable: true } })
         const card = wrapper.find('[role="group"] > div:first-child')
         await card.trigger('click', { detail: 0 })

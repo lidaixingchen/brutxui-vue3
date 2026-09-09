@@ -102,7 +102,7 @@ interface AliasDirEntry {
     absDir: string;
 }
 
-/** 解析各 alias 配置对应的绝对目录，供 import 图引用校验（#103）匹配使用。 */
+/** 解析各 alias 配置对应的绝对目录，供 import 图引用校验匹配使用。 */
 async function resolveAliasDirs(context: ProjectContext): Promise<AliasDirEntry[]> {
     const config = context.requireConfig();
     const componentsPath = await context.resolveComponentsDir();
@@ -125,9 +125,9 @@ async function resolveAliasDirs(context: ProjectContext): Promise<AliasDirEntry[
 }
 
 /**
- * 组件间 import 图：specifier → 组件名集合（#102 依赖检查、孤立判定共用）。
+ * 组件间 import 图：specifier → 组件名集合（依赖检查、孤立判定共用）。
  * 相对导入额外记录 importer 文件路径集合：其解析基准是 importer 实际文件所在目录，
- * 而非组件根目录（#B）。
+ * 而非组件根目录。
  */
 interface ImportGraph {
     /** import specifier → 发起该 import 的组件名集合 */
@@ -185,7 +185,7 @@ async function resolveRelativeImportUncached(importerFile: string, specifier: st
 /**
  * 判断目标文件是否仍被 remaining 组件以 import 引用：
  * 覆盖 alias 形式（@/composables/x 等）与相对路径形式（./../x）两类 import，
- * 供 manifest 孤立判定在删除前用 import 图交叉确认（#103）。
+ * 供 manifest 孤立判定在删除前用 import 图交叉确认。
  */
 async function isReferencedByRemainingComponents(
     absoluteFile: string,

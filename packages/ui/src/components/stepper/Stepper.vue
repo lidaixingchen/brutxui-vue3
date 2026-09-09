@@ -49,8 +49,7 @@ const currentStep = computed(() => {
     return Math.min(Math.max(props.modelValue, 0), totalSteps.value - 1)
 })
 // 空 steps 时（totalSteps===0）currentStep 为 -1，须显式加 totalSteps>0 守卫，
-// 使 isFirstStep/isLastStep 对称地均为 false（空步无首末之分），修复原先 isLastStep 为 true、
-// isFirstStep 为 false 的不对称判定。真正拦截空 steps 导航由 nextStep/previousStep 内的
+// 使 isFirstStep/isLastStep 对称地均为 false（空步无首末之分）。真正拦截空 steps 导航由 nextStep/previousStep 内的
 // totalSteps===0 守卫承担——否则两侧 flag 均为 false 时，!isFirstStep/!isLastStep 反而判真，
 // 会让 previousStep/nextStep 绕过拦截 emit 越界值
 const isFirstStep = computed(() => totalSteps.value > 0 && currentStep.value === 0)

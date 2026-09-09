@@ -4,7 +4,7 @@ import os from 'os';
 import path from 'path';
 import { registryAdd, registryRemove, registryList } from '../src/commands/registry.js';
 
-describe('registry command (基础设施闭环 P1 源管理)', () => {
+describe('registry command (源管理)', () => {
     let tmpDir: string;
 
     beforeEach(async () => {
@@ -87,7 +87,7 @@ describe('registry command (基础设施闭环 P1 源管理)', () => {
         await expect(registryAdd('   ', { cwd: tmpDir })).rejects.toThrow();
     });
 
-    describe('registryList (基础设施闭环 P1/P2)', () => {
+    describe('registryList', () => {
         it('lists default sources without a config', async () => {
             // stub fetch 避免真实网络探测
             const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue({

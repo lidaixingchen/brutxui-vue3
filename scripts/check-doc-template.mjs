@@ -25,7 +25,7 @@ const EN_DIR = join(ROOT, 'apps', 'docs', 'en', 'components')
 
 /** 已知未达标、待补节的文档（补节后须移除，否则自清空报错）。key 为相对仓库根路径。 */
 const DOC_EXCEPTIONS = new Set([
-    // 待补节：已列入的本方案补节清单之外的存量缺口
+    // 待补节文档清单
 ])
 
 const ZH_REQUIRED = ['## 预览', '## 安装', '## 用法', '## Props', '## 可访问性']

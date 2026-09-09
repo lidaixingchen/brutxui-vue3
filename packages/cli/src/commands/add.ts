@@ -134,7 +134,7 @@ export async function add(components: string[], options: AddOptions): Promise<vo
 
     logger.setSilent(options.silent ?? false);
 
-    // P1-8: 合并全局 dry-run（BRUTX_DRY_RUN=1 或 --dry-run 全局 flag）
+    // 合并全局 dry-run（BRUTX_DRY_RUN=1 或 --dry-run 全局 flag）
     const effectiveDryRun = mergeDryRun(options.dryRun);
 
     const restoreOffline = withOfflineScope(options.offline === true);

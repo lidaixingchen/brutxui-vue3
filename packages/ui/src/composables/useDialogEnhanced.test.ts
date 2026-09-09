@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { useDialogEnhanced, isInteractiveElement } from './useDialogEnhanced'
 import { useDialogGeometry, isInteractiveElement as isInteractiveGeometry } from './useDialogGeometry'
 
-describe('useDialogEnhanced 向后兼容导出', () => {
+describe('useDialogEnhanced 别名导出', () => {
     it('useDialogEnhanced 引用等于 useDialogGeometry', () => {
         expect(useDialogEnhanced).toBe(useDialogGeometry)
     })

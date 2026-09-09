@@ -1103,7 +1103,7 @@ describe('Dialog 百叶窗入场与遮罩点阵', () => {
         expect(classTokens).not.toContain('data-[state=open]:zoom-in-95')
     })
 
-    it('entrance 默认 fade-zoom（既有行为零回归）', () => {
+    it('entrance 默认 fade-zoom', () => {
         const classTokens = dialogContentVariants().split(/\s+/)
         expect(classTokens).toContain('data-[state=open]:animate-in')
         expect(classTokens).not.toContain('data-[state=open]:animate-brutal-shutter')

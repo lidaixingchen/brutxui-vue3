@@ -7,7 +7,7 @@ import { RegistrySourceTracker } from './resilience/source-tracker.js';
 import type { BrutalistConfig } from './types.js';
 
 /**
- * 多 registry 源与离线韧性（P1-5 / 基础设施闭环 P0）
+ * 多 registry 源与离线韧性
  *
  * 解析优先级（高 → 低）：
  *   1. 命令行 --registry（覆盖整个源列表）
@@ -201,8 +201,7 @@ export function withOfflineScope(offline: boolean): () => void {
     offlineScopeCount++;
     process.env[OFFLINE_ENV] = '1';
     return () => {
-        // 防重入：重复调用同一 restore 不再递减，避免计数变负导致后续
-        // BRUTX_OFFLINE 永久残留为 '1'（旧实现幂等，无此回归）
+        // 防重入：重复调用同一 restore 不再递减，避免计数变负导致状态残留
         if (offlineScopeCount <= 0) return;
         offlineScopeCount--;
         if (offlineScopeCount === 0) {

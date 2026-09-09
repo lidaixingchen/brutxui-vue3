@@ -10,7 +10,7 @@ import { DiagnosticEngine } from '../src/lib/diagnostics/engine.js';
 import { MemoryFileSystemAdapter } from '../src/lib/fs/memory-fs.js';
 import type { BrutalistConfig, DiagnosticRule } from '../src/lib/index.js';
 
-describe('Custom Rules Loader & Fault Isolation Sandbox (Ticket 2: #96)', () => {
+describe('Custom Rules Loader & Fault Isolation Sandbox', () => {
     describe('DSL Factory Functions', () => {
         it('defineDiagnosticRule returns the same rule object with type inference', () => {
             const rule: DiagnosticRule = {

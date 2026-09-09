@@ -8,7 +8,7 @@ import {
 } from '../src/lib/config.js';
 import { CURRENT_CONFIG_VERSION, SCHEMA_URL } from '../src/lib/constants.js';
 
-describe('Config Domain Module (Ticket 1 / #105)', () => {
+describe('Config Domain Module', () => {
     let memoryFs: MemoryFileSystemAdapter;
 
     beforeEach(() => {

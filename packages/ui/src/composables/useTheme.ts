@@ -190,7 +190,7 @@ export function createTheme(): UseThemeReturn {
 }
 
 // 共享 fallback 单例：懒创建 + 引用计数清理 + beforeunload 注册/移除统一由 lib/fallback-manager 管理
-// （与 useToast 共用同一实现，见审查报告 §12.2；destroy 后重建的单例会重新注册 beforeunload 监听）
+// （destroy 后重建的单例会重新注册 beforeunload 监听）
 const fallbackManager = createFallbackManager<UseThemeReturn>({
     isClient,
     createInstance: () => createTheme(),

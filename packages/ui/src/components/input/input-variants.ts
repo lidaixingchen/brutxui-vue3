@@ -31,7 +31,7 @@ export const inputContainerVariants = cva(
 
 export const inputVariants = cva(
     [
-        // 内层 input 抑制 UA 焦点环：焦点指示由 inputContainerVariants 的 focus-within:* 统一提供（C1 豁免）
+        // 内层 input 抑制 UA 焦点环：焦点指示由 inputContainerVariants 的 focus-within:* 统一提供
         'w-full h-full bg-transparent border-0 outline-none focus:outline-none text-current',
         'font-medium placeholder:text-brutal-placeholder placeholder:font-normal',
         'disabled:cursor-not-allowed'

@@ -13,12 +13,12 @@ jobs:
     publish:
         runs-on: ubuntu-latest
         env:
-            # Turbo Remote Cache — Vercel Remote Cache（方案 §5.1；发布门禁 turbo run build/test/typecheck/lint 同样受益）
+            # Turbo Remote Cache — Vercel Remote Cache（发布门禁 turbo run build/test/typecheck/lint 同样受益）
             # 配置步骤见 ci.yml 同名注释（TURBO_TOKEN 用 secrets，TURBO_TEAM 用 vars）
             TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
             TURBO_TEAM: ${{ vars.TURBO_TEAM }}
-            # 基础设施闭环 P0：发布环境注入官方签名私钥，构建时自动签发 registry-manifest。
-            # 仅受信发布环境持有私钥；未配置时 build-registry.ts 保持产物未签名（向后兼容）。
+            # 发布环境注入官方签名私钥，构建时自动签发 registry-manifest。
+            # 仅受信发布环境持有私钥；未配置时 build-registry.ts 保持产物未签名。
             BRUTX_REGISTRY_PRIVATE_KEY: ${{ secrets.BRUTX_REGISTRY_PRIVATE_KEY }}
             BRUTX_REGISTRY_KEY_ID: ${{ secrets.BRUTX_REGISTRY_KEY_ID }}
         permissions:

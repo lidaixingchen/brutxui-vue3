@@ -157,8 +157,7 @@ async function listInner(options: ListOptions, cwd: string): Promise<void> {
     }
 
     if (options.json) {
-        // #107：fileCount 已从类型层移除（恒等于 files.length），JSON 输出仍保留该键
-        // 以便下游消费者继续读取——输出契约保持不变，仅改为读取时派生
+        // JSON 输出保留 fileCount 键，以便下游消费者继续读取（由 files.length 派生）
         const output = infos.map((info) => ({
             ...info,
             fileCount: info.files.length,

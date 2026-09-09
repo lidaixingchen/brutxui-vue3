@@ -4,7 +4,7 @@ import path from 'path';
 import { resolveRegistrySources, readConfigSafe, isOfflineRequested, CliError, logger } from '../lib/index.js';
 
 /**
- * registry 源管理子命令（基础设施闭环 P1）：
+ * registry 源管理子命令：
  *   - `brutx registry list`   —— 打印当前解析生效的所有源及其连通性状态
  *   - `brutx registry add`    —— 向 components.json 的 registries 列表添加源
  *   - `brutx registry remove` —— 移除指定源
@@ -73,7 +73,7 @@ export async function registryList(options: { cwd?: string; json?: boolean; offl
     const cwd = options.cwd ?? process.cwd();
     const config = await readConfigSafe(cwd);
     const sources = resolveRegistrySources(config);
-    // 基础设施闭环 P2：离线模式下跳过网络探测（与 doctor 一致），仅报告已配置源列表。
+    // 离线模式下跳过网络探测（与 doctor 一致），仅报告已配置源列表。
     const offline = isOfflineRequested(options.offline);
     const results: RegistrySourceStatus[] = offline
         ? sources.map(url => ({ url, reachable: false, skipped: true, error: 'Offline mode, reachability check skipped.' }))

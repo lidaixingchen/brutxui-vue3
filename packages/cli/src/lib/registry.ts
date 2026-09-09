@@ -41,7 +41,7 @@ const registryManifestCache = new Map<string, ManifestSummaryInternal | null>();
 
 /**
  * 拉取的 manifest 摘要（进程级缓存）。在 RegistryManifestSummary 基础上扩展
- * itemIntegrities：#120 交叉校验所需——manifest.items 中声明的各组件 integrity 映射
+ * itemIntegrities：交叉校验所需——manifest.items 中声明的各组件 integrity 映射
  * （manifest 内容已由完整性复算 + 签名校验背书，可用作 item 校验的信任锚）。
  */
 interface ManifestSummaryInternal extends RegistryManifestSummary {
@@ -52,9 +52,9 @@ interface ManifestSummaryInternal extends RegistryManifestSummary {
  * 拉取 registry-manifest.json 获取 registryVersion 与 integrity。
  * 拉取失败时返回 null——缓存版本绑定降级为"不校验版本"，由 integrity 兜底。
  *
- * P1-6：若 manifest 含 signature/keyId 字段且 BRUTX_REGISTRY_PUBLIC_KEYS 已配置，
+ * 若 manifest 含 signature/keyId 字段且 BRUTX_REGISTRY_PUBLIC_KEYS 已配置，
  * 在此触发签名验证。严格模式下 REGISTRY_SIGNATURE_INVALID 必须冒泡（不降级为 null）。
- * 默认模式下签名失败仅 warn（signature.ts 的迁移期设计），integrity 复算仍兜底防篡改。
+ * 默认模式下签名失败仅 warn，integrity 复算仍兜底防篡改。
  */
 async function fetchRegistryManifestSummary(source: string, signal?: AbortSignal): Promise<ManifestSummaryInternal | null> {
     const cached = registryManifestCache.get(source);
@@ -83,18 +83,17 @@ async function fetchRegistryManifestSummary(source: string, signal?: AbortSignal
             registryManifestCache.set(source, null);
             return null;
         }
-        // #109：integrity 为必填契约。manifest 缺失/类型错误的 integrity 与 registryVersion
-        // 缺失同构处理——降级为"不信任该 manifest"（返回 null），不再产出无 integrity 的摘要。
+        // integrity 为必填契约。manifest 缺失/类型错误的 integrity 与 registryVersion
+        // 缺失同构处理——降级为"不信任该 manifest"（返回 null），不产出无 integrity 的摘要。
         if (typeof manifest.integrity !== 'string' || manifest.integrity.length === 0) {
             logger.warn(`Registry manifest from "${source}" is missing the integrity field, manifest not trusted (version binding skipped).`);
             registryManifestCache.set(source, null);
             return null;
         }
-        // 基础设施闭环 P1：完整性复算 + 签名校验。严格模式下签名失败抛
+        // 完整性复算 + 签名校验。严格模式下签名失败抛
         // REGISTRY_SIGNATURE_INVALID，由 catch 块特判冒泡——签名失败绝不降级为 null
         // （否则篡改的 manifest 会静默通过）。
-        // #116：返回值检查为 P1-6 兜底——即使验签函数未来改为"返回 false 而非抛错"，
-        // 严格模式下签名失败仍必须冒泡，不能被忽略后继续使用 manifest。
+        // 严格模式下签名失败必须冒泡，不能被忽略后继续使用 manifest。
         const signatureValid = verifyManifestIntegrityAndSignature(manifest);
         if (!signatureValid && isRequireSignature()) {
             throw new CliError(
@@ -103,7 +102,7 @@ async function fetchRegistryManifestSummary(source: string, signal?: AbortSignal
             );
         }
 
-        // #120：提取 manifest.items 中声明的各组件 integrity，供 item 与签名 manifest 交叉校验。
+        // 提取 manifest.items 中声明的各组件 integrity，供 item 与签名 manifest 交叉校验。
         // 仅收录字符串 integrity 的条目；manifest 无 items/条目缺 integrity 时跳过对应组件
         // （不误伤未收录该组件的兼容性 registry）。
         const itemIntegrities: Record<string, string> = {};
@@ -113,7 +112,7 @@ async function fetchRegistryManifestSummary(source: string, signal?: AbortSignal
                 if (typeof integrity === 'string' && integrity.length > 0) {
                     itemIntegrities[itemName] = integrity;
                 } else {
-                    // #120：条目存在但 integrity 缺失/类型非法时不能静默丢弃——否则该组件
+                    // 条目存在但 integrity 缺失/类型非法时不能静默丢弃——否则该组件
                     // 的交叉校验会在无告警的情况下失效，warn 提示声明格式非法
                     logger.warn(
                         `Registry manifest declares component "${itemName}" with a missing or invalid integrity value, ` +
@@ -125,7 +124,7 @@ async function fetchRegistryManifestSummary(source: string, signal?: AbortSignal
 
         const summary: ManifestSummaryInternal = {
             registryVersion: manifest.registryVersion,
-            // #109：解析层已保证 integrity 为字符串（非字符串时提前降级 null），此处可直接赋值
+            // 解析层已保证 integrity 为字符串（非字符串时提前降级 null），此处可直接赋值
             integrity: manifest.integrity,
             itemIntegrities: Object.keys(itemIntegrities).length > 0 ? itemIntegrities : undefined,
         };
@@ -139,9 +138,9 @@ async function fetchRegistryManifestSummary(source: string, signal?: AbortSignal
         if (error instanceof CliError && error.code === 'REGISTRY_SIGNATURE_INVALID') {
             throw error;
         }
-        // #116：区分异常来源，签名校验不再被静默关闭。
+        // 区分异常来源，避免签名校验被静默关闭。
         // 网络/解析失败（REGISTRY_FETCH_FAILED）为设计内降级，debug 记录供排障；
-        // 其余异常（未来新增错误码、验签侧运行时异常）意味着签名校验可能被静默关闭，必须 warn。
+        // 其余异常意味着签名校验可能被静默关闭，必须 warn。
         if (error instanceof CliError && error.code === 'REGISTRY_FETCH_FAILED') {
             logger.debug(`Registry manifest fetch failed for "${source}", version binding skipped: ${error.message}`);
         } else {
@@ -171,7 +170,7 @@ function validateItemWithIntegrity(data: unknown, name: string): asserts data is
 }
 
 /**
- * #120：item 与已签名 manifest 的交叉校验。
+ * item 与已签名 manifest 的交叉校验。
  *
  * verifyRegistryIntegrity 只保证 item 内部"files ↔ integrity 自洽"——攻击者同时改写
  * 两者即可保持自洽通过校验（manifest 签名在默认模式下又仅 warn 不拦截）。
@@ -220,7 +219,7 @@ export async function getItem(
                 { code: 'COMPONENT_NOT_FOUND' }
             );
         }
-        // #118：词法前缀校验无法识别符号链接——本地 registry 内的 symlink 可指向目录外，
+        // 词法前缀校验无法识别符号链接——本地 registry 内的 symlink 可指向目录外，
         // realpath 归一化后再做前缀校验，封堵 PATH_UNSAFE 绕过。
         let realFilePath: string;
         try {
@@ -239,7 +238,7 @@ export async function getItem(
             // source 目录本身无法解析（不存在等）时按词法路径比较，后续 readJson 自会报错
             realSource = sourceResolved;
         }
-        // #120：改用 path.relative 判定越界（与 remove-service 的 isInsideDirectory 同语义）——
+        // 改用 path.relative 判定越界（与 remove-service 的 isInsideDirectory 同语义）——
         // startsWith 词法比较在 realSource 为文件系统根目录（如 `/`）时 realSource + path.sep
         // 为 `//`，任何路径都不以它开头，本地 registry 全部组件被误拒。relative 结果以 `..`
         // 开头（越界）或为绝对路径（跨盘）即越界；rel 为空串（realFilePath === realSource）
@@ -295,7 +294,7 @@ export async function listLocalRegistryComponents(registryPath: string, fsAdapte
 }
 
 /**
- * 多源拉取（基础设施闭环 P0）：按序尝试 sources，首个成功即返回。
+ * 多源拉取：按序尝试 sources，首个成功即返回。
  * - 在线模式：某源 integrity/signature 校验失败会 fallback 下一源（CDN 冗余）；
  *   全部失败抛聚合错误，并在一致性失败时提示可能的多源延迟。
  * - 离线模式：依次尝试各源缓存，全部 miss 才抛 REGISTRY_OFFLINE_UNAVAILABLE。
@@ -320,7 +319,7 @@ export async function getItemFromSources(
  * 带条件请求的 fetch：先查缓存，TTL 过期则发 If-None-Match/If-Modified-Since，
  * 304 则 touch 复用 body，200 则校验 integrity 后写入缓存。
  *
- * 离线模式（P1-5）：BRUTX_OFFLINE=1 时只读缓存，TTL 过期也复用（integrity 仍校验），
+ * 离线模式：BRUTX_OFFLINE=1 时只读缓存，TTL 过期也复用（integrity 仍校验），
  * 缓存未命中则抛 REGISTRY_OFFLINE_UNAVAILABLE。
  */
 async function fetchItemWithConditionalRequest(
@@ -333,7 +332,7 @@ async function fetchItemWithConditionalRequest(
     let currentRegistryVersion: string | undefined;
     let manifestSummary: ManifestSummaryInternal | null = null;
 
-    // #120：信任锚（manifest）与缓存开关解耦——BRUTX_NO_CACHE=1 / useCache=false 时
+    // 信任锚（manifest）与缓存开关解耦——BRUTX_NO_CACHE=1 / useCache=false 时
     // 交叉校验不能整体跳过，否则绕过缓存同样绕过了签名背书。离线模式仍不拉 manifest
     // （manifest 也走网络），直接读缓存。fetchRegistryManifestSummary 有进程级缓存且
     // 失败降级为 null 不抛错，无性能负担；currentRegistryVersion 仅在缓存写入路径
@@ -356,10 +355,10 @@ async function fetchItemWithConditionalRequest(
             const onlineFresh = !cachedEntry.expired && versionMatch;
             if (offlineOk || onlineFresh) {
                 if (offlineOk) {
-                    // 离线命中显性提示（基础设施闭环 P2）：让用户感知未发起网络请求
+                    // 离线命中显性提示：让用户感知未发起网络请求
                     logger.info(`[OFFLINE CACHE HIT] ${name} (source: ${source})`);
                 }
-                // #120：缓存命中早退前交叉校验——旧版本 CLI 写入的缓存条目未经交叉校验，
+                // 缓存命中早退前交叉校验——未经验证的缓存条目不能直接放行，
                 // 升级后不能静默放行（manifest 未收录该组件时校验内部跳过，不会误伤）。
                 // 离线模式下 manifestSummary 为 null 同样跳过，不破坏离线可用性。
                 verifyManifestItemIntegrity(cachedEntry.data, name, manifestSummary);
@@ -383,7 +382,7 @@ async function fetchItemWithConditionalRequest(
 
     const res = await resilientFetch(url, { headers, signal });
     if (res.status === 304 && cachedEntry) {
-        // #117：304 只 touch 续期 timestamp 会让条目永久携带旧 registryVersion
+        // 304 只 touch 续期 timestamp 会让条目永久携带旧 registryVersion
         // （touchCachedEntry 不重写 header），后续 versionMatch 恒 false，即使 TTL 未过期
         // 也永远无法命中缓存分支——用 setCachedEntry 同步写入当前 registryVersion
         // （etag/lastModified 沿用旧值）。manifest 拉取失败（currentRegistryVersion 为空）
@@ -397,7 +396,7 @@ async function fetchItemWithConditionalRequest(
         } else {
             await touchCachedEntry(name, source).catch(() => {});
         }
-        // #120：304 复用缓存 body 同样未经交叉校验（#117 只补版本绑定），返回前补齐；
+        // 304 复用缓存 body 同样需交叉校验（补齐版本绑定与完整性校验），返回前执行；
         // manifest 拉取失败（manifestSummary 为 null）时校验内部跳过，不误伤。
         verifyManifestItemIntegrity(cachedEntry.data, name, manifestSummary);
         return cachedEntry.data;
@@ -455,7 +454,7 @@ export async function resolveDeps(
     const visited = new Set<string>();
     const active = new Set<string>();
     const effectiveUseCache = useCache && process.env.BRUTX_NO_CACHE !== '1';
-    // 多源解析（基础设施闭环 P0）：sources 非空时按序 fallback；否则退回单源。
+    // 多源解析：sources 非空时按序 fallback；否则退回单源。
     const effectiveSources = sources && sources.length > 0 ? sources : [source];
 
     function makeKey(cleanName: string, itemSource: string): string {
@@ -466,8 +465,8 @@ export async function resolveDeps(
      * 把 @version 解析为相对当前 source 的 ref URL。
      * 仅支持 GitHub raw URL 结构（raw.githubusercontent.com/{owner}/{repo}/{ref}/...）；
      * 默认源（GitHub Release 资产端点，releases/latest/download）无版本化能力，
-     * 忽略版本按 latest 拉取（产物发布时构建方案 T2 降级语义）；
-     * 其他自定义结构仍显式报错而非静默忽略（v2.2 补强：去硬编码，与 --registry 一致）。
+     * 忽略版本按 latest 拉取（降级为最新版本）；
+     * 其他自定义结构仍显式报错而非静默忽略（与 --registry 一致）。
      */
     function resolveVersionedSource(baseSource: string, version: string): string {
         const match = baseSource.match(GITHUB_RAW_URL_PATTERN);

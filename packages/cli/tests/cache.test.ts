@@ -246,7 +246,7 @@ describe('cache layer', () => {
         });
     });
 
-    describe('getCacheStats (基础设施闭环 P2 缓存可观测性)', () => {
+    describe('getCacheStats (缓存可观测性)', () => {
         it('reports entry count and total bytes', async () => {
             await setCachedEntry('a', 'https://reg.test', { x: 1 });
             await setCachedEntry('b', 'https://reg2.test', { x: 2 });

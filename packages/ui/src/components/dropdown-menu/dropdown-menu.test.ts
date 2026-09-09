@@ -223,9 +223,9 @@ describe('DropdownMenuSubContent', () => {
     })
 })
 
-// ── 回归修复测试：inset 变体、attrs 透传、indeterminate 图标、disabled、装饰 aria-hidden ──
+// ── 功能与变体测试：inset 变体、attrs 透传、indeterminate 图标、disabled、装饰 aria-hidden ──
 
-describe('DropdownMenu regression fixes', () => {
+describe('DropdownMenu features and edge cases', () => {
     it('item: user class overrides inset padding via twMerge', () => {
         const wrapper = mount(DropdownMenuItem, {
             props: { inset: true, class: 'pl-4' },

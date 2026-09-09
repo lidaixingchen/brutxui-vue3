@@ -246,7 +246,7 @@ describe('DataTable', () => {
     })
 })
 
-// === Visual / Behavior Tests (spec §7.3) ===
+// === Visual / Behavior Tests ===
 
 describe('DataTable visual compliance', () => {
     it('striped default true applies even:bg-brutal-muted/50 to rows', () => {
@@ -361,7 +361,7 @@ describe('DataTable visual compliance', () => {
     })
 })
 
-// === Style Guard: Neo-Brutalist anti-pattern regression (spec §7.4) ===
+// === Style Guard: Neo-Brutalist anti-patterns ===
 // Update these assertions when styles intentionally change.
 
 describe('DataTable style guard', () => {
@@ -623,7 +623,7 @@ describe('DataTable programmatic control (defineExpose)', () => {
     })
 })
 
-describe('DataTable regression fixes', () => {
+describe('DataTable features and edge cases', () => {
     const selectCols: DataTableColumn<TestRow>[] = [
         { id: 'name', header: 'Name', accessorKey: 'name' },
         { id: 'age', header: 'Age', accessorKey: 'age', filterType: 'select', filterOptions: [{ label: '25', value: 25 }, { label: '30', value: 30 }] },
@@ -977,9 +977,7 @@ describe('DataTable filter UI binding links', () => {
         await nextTick()
         expect(wrapper.findAll('[role="row"]')).toHaveLength(1)
 
-        // 再设 age 多选过滤 = 25（Alice）：global='Bob' AND age=25 → 0 行。
-        // 若虚拟滚动分支仍绑定 setFilterState（整体替换），global 会被重置为 '',
-        // 只剩 age=25 → Alice 1 行——该断言即暴露此回归
+        // 再设 age 多选过滤 = 25（Alice）：global='Bob' AND age=25 → 0 行
         await openColumnFilter(wrapper, 'age')
         await nextTick()
         const content = document.body.querySelector<HTMLElement>('[role="dialog"]')
@@ -989,8 +987,6 @@ describe('DataTable filter UI binding links', () => {
         await nextTick()
         // global='Bob' AND age=25 → 0 数据行 → 虚拟滚动渲染空态。
         // 虚拟滚动布局为「表头（1 role=row）+ 内容行（此处空态 1 role=row）」共 2 行。
-        // 若虚拟滚动分支仍用 setFilterState 整体替换（513 bug），global 被重置为 '',
-        // 只剩 age=25 → 渲染 Alice 数据行（而非空态）——文本断言即暴露回归
         expect(wrapper.findAll('[role="row"]')).toHaveLength(2)
         expect(wrapper.text()).not.toContain('Alice')
         // 关闭 popover（reka-ui dismissable 监听 outside pointerdown），避免 teleport 残留污染后续测试

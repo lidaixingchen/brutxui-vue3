@@ -4,7 +4,7 @@ import { MemoryFileSystemAdapter } from '../src/lib/fs/memory-fs.js';
 import { generateProjectSbom } from '../src/lib/services/sbom-service.js';
 import { CliError } from '../src/lib/error.js';
 
-describe('Project SBOM Service (Ticket 5)', () => {
+describe('Project SBOM Service', () => {
     it('throws CONFIG_NOT_FOUND when manifest does not exist or is empty', async () => {
         const fs = new MemoryFileSystemAdapter();
         await fs.ensureDir('/app');

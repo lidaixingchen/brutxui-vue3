@@ -184,9 +184,8 @@ export * from './components/carousel'
 export * from './components/code-block'
 export * from './components/form'
 
-// 以下 composables 仅来自 composables/ 目录——calendar/carousel 子模块目前只导出组件及各自 types，
-// 不再导出 useDatePicker/useCarousel。注意上方 `export *` 与显式具名导出并存时，
-// 子模块若新增同名导出会造成静默遮蔽，新增同名导出应改为显式具名导出。
+// 以下 composables 统一来自 composables/ 目录。注意上方 `export *` 与显式具名导出并存时，
+// 子模块若新增同名导出会造成静默遮蔽，新增同名导出应保持显式具名导出。
 export { useDatePicker } from './composables/useDatePicker'
 export type { UseDatePickerOptions, UseDatePickerReturn } from './composables/useDatePicker'
 export { useCarousel, DEFAULT_AUTOPLAY_DELAY } from './composables/useCarousel'

@@ -9,7 +9,7 @@ export type ProjectType =
 export type PackageManager = 'pnpm' | 'yarn' | 'bun' | 'npm';
 
 /**
- * 受信任的 manifest 签名公钥（P1-6 信任链）。
+ * 受信任的 manifest 签名公钥。
  * publicKey 为 base64 编码的 SPKI DER 格式 Ed25519 公钥。
  * status 用于标识密钥生命周期，便于轮换与撤销审计。
  */
@@ -31,7 +31,7 @@ export interface TsConfig {
 }
 
 /**
- * 路径别名配置（components.json 的 aliases 字段，P0-1）。
+ * 路径别名配置（components.json 的 aliases 字段）。
  *
  * 路径语义约定：
  * - 推荐写法为 `@/` 或 `~/` 前缀别名（如默认值 '@/components'、'@/lib/utils'），
@@ -96,19 +96,19 @@ export interface BrutalistConfig {
     sharedBase?: string;
     workspace?: BrutalistWorkspaceConfig;
     /**
-     * 多 registry 源（P1-5）：主源 + 镜像列表，CLI 按序 fallback。
+     * 多 registry 源：主源 + 镜像列表，CLI 按序 fallback。
      * 未配置时回退到 DEFAULT_REGISTRY_SOURCES。
      * 命令行 --registry 临时覆盖整个列表。
      */
     registries?: string[];
     /**
-     * 严格签名模式（基础设施闭环 P1）：为 true 时强制 manifest 签名校验。
+     * 严格签名模式：为 true 时强制 manifest 签名校验。
      * 优先级低于 BRUTX_REQUIRE_SIGNATURE 环境变量与 --require-signature flag，
      * 用于团队在项目中声明强制验签，旧版本 components.json 缺省时静默兼容。
      */
     requireSignature?: boolean;
     /**
-     * 项目级追加信任公钥（基础设施闭环 P1）：在官方 Root 公钥之外追加信任。
+     * 项目级追加信任公钥：在官方 Root 公钥之外追加信任。
      * 未配置时回退到 BRUTX_REGISTRY_PUBLIC_KEYS 环境变量，再回退到官方内置公钥。
      */
     trustedPublicKeys?: TrustedPublicKey[];
@@ -128,7 +128,7 @@ export interface BrutalistConfig {
 export type RuleSeverity = 'off' | 'warn' | 'error';
 
 /**
- * 解析后的 registry 源描述（P1-5）。
+ * 解析后的 registry 源描述。
  * 用于 doctor 健康检查与日志输出。
  */
 export interface RegistrySourceStatus {

@@ -120,7 +120,7 @@ beforeEach(() => {
         return path.join(cwd, 'src', relativePath);
     });
     mockedGetBrutalistCssStyles.mockResolvedValue('/* injected brutalist css tokens */');
-    // P1-5：避免 checkRegistryReachability 发真实网络请求，默认返回 200 OK
+    // 避免 checkRegistryReachability 发真实网络请求，默认返回 200 OK
     vi.spyOn(global, 'fetch').mockResolvedValue(
         new Response('{}', { status: 200, statusText: 'OK' }),
     );
@@ -850,7 +850,7 @@ describe('edge cases', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Manifest-driven integrity drift detection (P0-1)
+// Manifest-driven integrity drift detection
 // ---------------------------------------------------------------------------
 
 function makeManifestEntry(
@@ -1122,9 +1122,9 @@ describe('manifest-driven integrity checks', () => {
 });
 
 // ---------------------------------------------------------------------------
-// checkRegistryReachability (P1-5)
+// checkRegistryReachability
 // ---------------------------------------------------------------------------
-describe('checkRegistryReachability (P1-5)', () => {
+describe('checkRegistryReachability', () => {
     it('reports pass for default registry when fetch returns 200', async () => {
         const cwd = await createTempProject();
         try {
@@ -1136,7 +1136,7 @@ describe('checkRegistryReachability (P1-5)', () => {
 
             const results = await runDoctor(cwd, { silent: true });
             const reachChecks = results.filter((r) => r.name.startsWith('registry source'));
-            // 产物发布时构建方案：默认源 = GitHub Release 资产（releases/latest/download，单源）
+            // 默认源 = GitHub Release 资产（releases/latest/download，单源）
             expect(reachChecks).toHaveLength(1);
             for (const check of reachChecks) {
                 expect(check.status).toBe('pass');
@@ -1264,7 +1264,7 @@ describe('checkRegistryReachability (P1-5)', () => {
     });
 });
 
-describe('doctor --sbom (P1-6)', () => {
+describe('doctor --sbom', () => {
     beforeEach(() => {
         vi.clearAllMocks();
     });

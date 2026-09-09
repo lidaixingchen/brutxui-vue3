@@ -63,7 +63,7 @@ describe('devtoolsPlugin', () => {
 
             const context = app.config.globalProperties.__BRUTX_UI_DEVTOOLS__ as BrutxUIDevtoolsContext
             expect(context.libraryName).toBe('BrutxUI')
-            // 版本号与 package.json 保持同步（修复后不再硬编码）
+            // 版本号与 package.json 保持同步
             expect(context.version).toBe(packageJson.version)
         })
 
