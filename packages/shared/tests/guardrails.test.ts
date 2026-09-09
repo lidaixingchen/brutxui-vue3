@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import path from 'node:path'
+import { pathToFileURL } from 'node:url'
 import { getRepoRoot, toPosixPath, normalizeAbsPath } from '../../../scripts/shared/path.mjs'
 import { normalizeRealPath, verifyCaseSync, existsExactCaseSync } from '../../../scripts/shared/fs-native.mjs'
 import { maskInlineCodeSpans, traverseMarkdownLines } from '../../../scripts/shared/markdown-lexer.mjs'
@@ -24,9 +25,9 @@ describe('scripts/shared 基础工具链套件', () => {
       const absPkg = path.join(root, 'package.json')
       expect(normalizeAbsPath(absPkg)).toBe(absPkg)
 
-      // 带 fragment/query 的 URL 剥离测试
-      const fileUrl = 'file:///C:/project/foo.md#L10-L20?v=1'
-      expect(normalizeAbsPath(fileUrl)).toBe(path.resolve('C:/project/foo.md'))
+      // 带 fragment/query 的 URL 剥离测试（使用跨平台标准 URL 构造）
+      const fileUrl = `${pathToFileURL(absPkg).href}#L10-L20?v=1`
+      expect(normalizeAbsPath(fileUrl)).toBe(absPkg)
     })
   })
 
