@@ -1,5 +1,5 @@
 import path from 'path';
-import type { CheckResult, DiagnosticContext, DiagnosticRepairContext, DiagnosticRule, RuleFixResult } from '../types.js';
+import type { CheckResult, DiagnosticContext, DiagnosticRule, PlanFixResult, RepairAction } from '../types.js';
 import { FixId } from '../types.js';
 import { BASE_DEPENDENCIES, CN_FUNCTION_BODY_TEMPLATE, UTILS_TEMPLATE } from '../../constants.js';
 
@@ -43,12 +43,22 @@ export const structureAliasesRule: DiagnosticRule = {
             fixDescription: 'Create directory',
         };
     },
-    async fix(ctx: DiagnosticRepairContext): Promise<RuleFixResult> {
+    async planFix(ctx: DiagnosticContext): Promise<PlanFixResult> {
         const componentsDir = await ctx.projectContext.resolveComponentsDir();
-        await ctx.transaction.ensureDir(componentsDir);
         return {
-            status: 'applied',
-            message: 'Created components directory.',
+            status: 'planned',
+            plan: {
+                fixId: FixId.CreateComponentsDir,
+                ruleId: 'structure.aliases',
+                description: 'Create components directory',
+                actions: [
+                    {
+                        type: 'ensure-dir',
+                        dirPath: componentsDir,
+                        description: 'Ensure components directory exists',
+                    },
+                ],
+            },
         };
     },
 };
@@ -84,13 +94,24 @@ export const structureUtilsFileRule: DiagnosticRule = {
             message: 'File exists.',
         };
     },
-    async fix(ctx: DiagnosticRepairContext): Promise<RuleFixResult> {
+    async planFix(ctx: DiagnosticContext): Promise<PlanFixResult> {
         const basePath = await resolveUtilsBasePath(ctx);
         const targetPath = basePath + '.ts';
-        await ctx.transaction.writeFile(targetPath, UTILS_TEMPLATE);
         return {
-            status: 'applied',
-            message: 'Created utils file.',
+            status: 'planned',
+            plan: {
+                fixId: FixId.CreateUtilsFile,
+                ruleId: 'structure.utils-file',
+                description: 'Create utils file',
+                actions: [
+                    {
+                        type: 'write-file',
+                        filePath: targetPath,
+                        content: UTILS_TEMPLATE,
+                        description: 'Create utils.ts with template',
+                    },
+                ],
+            },
         };
     },
 };
@@ -163,12 +184,12 @@ export const structureUtilsCnRule: DiagnosticRule = {
             message: 'cn() function and FOCUS_RING_CLASSES found with Brutalism color extensions.',
         };
     },
-    async fix(ctx: DiagnosticRepairContext): Promise<RuleFixResult> {
+    async planFix(ctx: DiagnosticContext): Promise<PlanFixResult> {
         const existingUtilsFile = await findExistingUtilsFile(ctx);
         if (!existingUtilsFile) {
             return {
-                status: 'failed',
-                message: 'Utils file not found on disk. Create utils file first.',
+                status: 'skipped',
+                reason: 'Utils file not found on disk. Create utils file first.',
             };
         }
 
@@ -180,9 +201,11 @@ export const structureUtilsCnRule: DiagnosticRule = {
         if (hasCnDeclaration && hasFocusRing && hasBrutalMerge) {
             return {
                 status: 'skipped',
-                message: 'cn() function and FOCUS_RING_CLASSES are already fully configured.',
+                reason: 'cn() function and FOCUS_RING_CLASSES are already fully configured.',
             };
         }
+
+        let modified = existing;
 
         if (!hasCnDeclaration) {
             const importLines: string[] = [];
@@ -202,54 +225,56 @@ export const structureUtilsCnRule: DiagnosticRule = {
                 ? `${importLines.join('\n')}\n${CN_FUNCTION_BODY_TEMPLATE}`
                 : CN_FUNCTION_BODY_TEMPLATE;
 
-            const newContent = existing.trim().length > 0 ? `${existing}\n${addition}` : addition;
-            await ctx.transaction.writeFile(existingUtilsFile, newContent);
-
-            return {
-                status: 'applied',
-                message: 'Added cn() function with Brutalism color extensions and FOCUS_RING_CLASSES.',
-            };
-        }
-
-        let modified = existing;
-
-        if (!hasFocusRing) {
-            const focusRingDeclaration = `export const FOCUS_RING_CLASSES =
+            modified = existing.trim().length > 0 ? `${existing}\n${addition}` : addition;
+        } else {
+            if (!hasFocusRing) {
+                const focusRingDeclaration = `export const FOCUS_RING_CLASSES =
     "focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden";
 `;
-            modified = `${modified.trim()}\n\n${focusRingDeclaration}`;
-        }
-
-        if (!hasBrutalMerge) {
-            if (!/^\s*import\b.*?\bfrom\s+["']tailwind-merge["']/m.test(modified)) {
-                modified = `import { extendTailwindMerge } from "tailwind-merge";\n${modified}`;
-            } else if (!/extendTailwindMerge/.test(modified)) {
-                modified = modified.replace(
-                    /import\s+\{([^}]+)\}\s+from\s+["']tailwind-merge["']/,
-                    'import { $1, extendTailwindMerge } from "tailwind-merge"',
-                );
+                modified = `${modified.trim()}\n\n${focusRingDeclaration}`;
             }
 
-            const colorAndMergeBlock = CN_FUNCTION_BODY_TEMPLATE.replace(
-                /export\s+const\s+FOCUS_RING_CLASSES[\s\S]*?;/,
-                '',
-            ).trim();
+            if (!hasBrutalMerge) {
+                if (!/^\s*import\b.*?\bfrom\s+["']tailwind-merge["']/m.test(modified)) {
+                    modified = `import { extendTailwindMerge } from "tailwind-merge";\n${modified}`;
+                } else if (!/extendTailwindMerge/.test(modified)) {
+                    modified = modified.replace(
+                        /import\s+\{([^}]+)\}\s+from\s+["']tailwind-merge["']/,
+                        'import { $1, extendTailwindMerge } from "tailwind-merge"',
+                    );
+                }
 
-            if (/^\s*export\s+(?:function|const)\s+cn\b[\s\S]*?\{[\s\S]*?\}/m.test(modified)) {
-                modified = modified.replace(
-                    /^\s*export\s+(?:function|const)\s+cn\b[\s\S]*?\{[\s\S]*?\}/m,
-                    colorAndMergeBlock,
-                );
-            } else {
-                modified = `${modified.trim()}\n\n${colorAndMergeBlock}`;
+                const colorAndMergeBlock = CN_FUNCTION_BODY_TEMPLATE.replace(
+                    /export\s+const\s+FOCUS_RING_CLASSES[\s\S]*?;/,
+                    '',
+                ).trim();
+
+                if (/^\s*export\s+(?:function|const)\s+cn\b[\s\S]*?\{[\s\S]*?\}/m.test(modified)) {
+                    modified = modified.replace(
+                        /^\s*export\s+(?:function|const)\s+cn\b[\s\S]*?\{[\s\S]*?\}/m,
+                        colorAndMergeBlock,
+                    );
+                } else {
+                    modified = `${modified.trim()}\n\n${colorAndMergeBlock}`;
+                }
             }
         }
-
-        await ctx.transaction.writeFile(existingUtilsFile, modified);
 
         return {
-            status: 'applied',
-            message: 'Upgraded utils file with Brutalism color extensions and FOCUS_RING_CLASSES.',
+            status: 'planned',
+            plan: {
+                fixId: FixId.AddCnFunction,
+                ruleId: 'structure.utils-cn',
+                description: 'Configure cn() function with Brutalism color extensions and FOCUS_RING_CLASSES',
+                actions: [
+                    {
+                        type: 'write-file',
+                        filePath: existingUtilsFile,
+                        content: modified,
+                        description: 'Upgrade utils file with cn() and FOCUS_RING_CLASSES',
+                    },
+                ],
+            },
         };
     },
 };

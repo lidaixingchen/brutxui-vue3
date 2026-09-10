@@ -1,5 +1,5 @@
 import path from 'path';
-import type { CheckResult, DiagnosticContext, DiagnosticRepairContext, DiagnosticRule, RuleFixResult } from '../types.js';
+import type { CheckResult, DiagnosticContext, DiagnosticRule, PlanFixResult } from '../types.js';
 import { FixId } from '../types.js';
 import { CONFIG_FILES, CURRENT_CONFIG_VERSION, SCHEMA_URL } from '../../constants.js';
 
@@ -53,12 +53,21 @@ export const configSchemaRule: DiagnosticRule = {
             message: '$schema field is present.',
         };
     },
-    async fix(ctx: DiagnosticRepairContext): Promise<RuleFixResult> {
-        ctx.mutableConfig.$schema = SCHEMA_URL;
-        ctx.markConfigDirty();
+    async planFix(): Promise<PlanFixResult> {
         return {
-            status: 'applied',
-            message: 'Added $schema field.',
+            status: 'planned',
+            plan: {
+                fixId: FixId.AddSchema,
+                ruleId: 'config.schema',
+                description: 'Add $schema URL to components.json',
+                actions: [
+                    {
+                        type: 'patch-config',
+                        patch: { $schema: SCHEMA_URL },
+                        description: 'Add $schema field',
+                    },
+                ],
+            },
         };
     },
 };
@@ -99,12 +108,21 @@ export const configVersionRule: DiagnosticRule = {
             message: `Configuration version is ${ctx.config.$version}.`,
         };
     },
-    async fix(ctx: DiagnosticRepairContext): Promise<RuleFixResult> {
-        ctx.mutableConfig.$version = CURRENT_CONFIG_VERSION;
-        ctx.markConfigDirty();
+    async planFix(): Promise<PlanFixResult> {
         return {
-            status: 'applied',
-            message: `Set $version to ${CURRENT_CONFIG_VERSION}.`,
+            status: 'planned',
+            plan: {
+                fixId: FixId.AddConfigVersion,
+                ruleId: 'config.version',
+                description: `Update $version to ${CURRENT_CONFIG_VERSION}`,
+                actions: [
+                    {
+                        type: 'patch-config',
+                        patch: { $version: CURRENT_CONFIG_VERSION },
+                        description: `Set $version to ${CURRENT_CONFIG_VERSION}`,
+                    },
+                ],
+            },
         };
     },
 };
@@ -134,12 +152,21 @@ export const configStyleRule: DiagnosticRule = {
             message: `style is "${ctx.config.style}".`,
         };
     },
-    async fix(ctx: DiagnosticRepairContext): Promise<RuleFixResult> {
-        ctx.mutableConfig.style = 'brutalism';
-        ctx.markConfigDirty();
+    async planFix(): Promise<PlanFixResult> {
         return {
-            status: 'applied',
-            message: 'Set style to "brutalism".',
+            status: 'planned',
+            plan: {
+                fixId: FixId.SetStyle,
+                ruleId: 'config.style',
+                description: 'Set style to "brutalism"',
+                actions: [
+                    {
+                        type: 'patch-config',
+                        patch: { style: 'brutalism' },
+                        description: 'Set style to "brutalism"',
+                    },
+                ],
+            },
         };
     },
 };

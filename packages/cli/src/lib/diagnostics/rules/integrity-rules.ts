@@ -1,6 +1,6 @@
 import path from 'path';
 import type { InstalledComponentManifest, RegistrySourceStatus } from '../../types.js';
-import type { CheckResult, DiagnosticContext, DiagnosticRepairContext, DiagnosticRule, RuleFixResult } from '../types.js';
+import type { CheckResult, DiagnosticContext, DiagnosticRule, PlanFixResult, RepairAction } from '../types.js';
 import { FixId } from '../types.js';
 import type { FileSystemAdapter } from '../../fs/file-system-adapter.js';
 import { auditLogExists, countAuditEntries, getRecentFailures } from '../../audit.js';
@@ -12,11 +12,15 @@ import { resolveRegistrySources } from '../../registry-source.js';
 
 const ORPHAN_EXTENSIONS = new Set(['.vue', '.ts', '.tsx', '.js', '.jsx']);
 const AUDIT_FAILURE_REPORT_LIMIT = 5;
+const REGISTRY_PROBE_TIMEOUT_MS = 10000;
+const BYTES_PER_KB = 1024;
+const BYTES_PER_MB = 1024 * 1024;
 
 export async function findOrphanFilesInVfs(
     cwd: string,
     entry: InstalledComponentManifest,
-    fsAdapter: FileSystemAdapter
+    fsAdapter: FileSystemAdapter,
+    allManifestFiles?: ReadonlySet<string>
 ): Promise<string[]> {
     const orphans: string[] = [];
     if (entry.files.length === 0) return orphans;
@@ -24,10 +28,10 @@ export async function findOrphanFilesInVfs(
     const manifestAbsSet = new Set(entry.files.map((f: string) => path.resolve(cwd, f)));
     const directories = new Set<string>();
     for (const relFile of entry.files) {
-        let dir = path.dirname(path.resolve(cwd, relFile));
-        while (dir !== cwd && path.dirname(dir) !== dir) {
+        const absFile = path.resolve(cwd, relFile);
+        const dir = path.dirname(absFile);
+        if (dir !== cwd) {
             directories.add(dir);
-            dir = path.dirname(dir);
         }
     }
 
@@ -42,6 +46,9 @@ export async function findOrphanFilesInVfs(
                 if (!ORPHAN_EXTENSIONS.has(ext)) continue;
                 const absPath = path.join(dir, e.name);
                 if (!manifestAbsSet.has(absPath)) {
+                    if (allManifestFiles && allManifestFiles.has(absPath)) {
+                        continue;
+                    }
                     dirOrphans.push(path.relative(cwd, absPath).split(path.sep).join('/'));
                 }
             }
@@ -52,15 +59,16 @@ export async function findOrphanFilesInVfs(
     return dirResults.flat();
 }
 
-export async function restoreComponentFromRegistry(
-    ctx: DiagnosticRepairContext,
-    componentName: string
-): Promise<RuleFixResult> {
+export async function planRestoreComponentFromRegistry(
+    ctx: DiagnosticContext,
+    componentName: string,
+    ruleId: string
+): Promise<PlanFixResult> {
     const entry = ctx.manifest?.components[componentName];
     if (!entry) {
         return {
             status: 'failed',
-            message: `Manifest entry not found for "${componentName}".`,
+            reason: `Manifest entry not found for "${componentName}".`,
         };
     }
 
@@ -68,6 +76,8 @@ export async function restoreComponentFromRegistry(
         const client = new RegistryClient({
             sources: ctx.config?.registries,
             useCache: true,
+            offline: ctx.offline,
+            fsAdapter: ctx.fs,
         });
         const item = await client.fetchItem(componentName, {
             sourceOverride: entry.registrySource,
@@ -76,24 +86,40 @@ export async function restoreComponentFromRegistry(
         if (entry.files.length !== item.files.length) {
             return {
                 status: 'failed',
-                message: `File count mismatch for ${componentName} (manifest: ${entry.files.length}, registry: ${item.files.length}). Run update manually.`,
+                reason: `File count mismatch for ${componentName} (manifest: ${entry.files.length}, registry: ${item.files.length}). Run update manually.`,
             };
         }
 
-        for (let i = 0; i < item.files.length; i++) {
-            const targetPath = path.resolve(ctx.cwd, entry.files[i]);
-            const resolvedContent = resolveImportAlias(item.files[i].content, ctx.config!);
-            await ctx.transaction.writeFile(targetPath, resolvedContent);
+        const actions: RepairAction[] = [];
+        for (const itemFile of item.files) {
+            const itemBaseName = path.basename(itemFile.path);
+            const matchedEntryFile = entry.files.find((f: string) =>
+                path.basename(f) === itemBaseName || f.endsWith(itemFile.path)
+            ) ?? itemFile.path;
+
+            const targetPath = path.resolve(ctx.cwd, matchedEntryFile);
+            const resolvedContent = resolveImportAlias(itemFile.content, ctx.config!);
+            actions.push({
+                type: 'write-file',
+                filePath: targetPath,
+                content: resolvedContent,
+                description: `Restore ${matchedEntryFile} from registry`,
+            });
         }
 
         return {
-            status: 'applied',
-            message: `Restored ${componentName} from registry.`,
+            status: 'planned',
+            plan: {
+                fixId: FixId.RestoreIntegrity,
+                ruleId,
+                description: `Restore ${componentName} from registry.`,
+                actions,
+            },
         };
     } catch (error) {
         return {
             status: 'failed',
-            message: `Could not restore ${componentName} from registry: ${error instanceof Error ? error.message : String(error)}`,
+            reason: `Could not restore ${componentName} from registry: ${error instanceof Error ? error.message : String(error)}`,
         };
     }
 }
@@ -189,11 +215,11 @@ export const integrityManifestFilesRule: DiagnosticRule = {
 
         return results;
     },
-    async fix(ctx: DiagnosticRepairContext, result: CheckResult): Promise<RuleFixResult> {
+    async planFix(ctx: DiagnosticContext, result: CheckResult): Promise<PlanFixResult> {
         if (!result.componentName) {
-            return { status: 'skipped', message: 'No component name specified.' };
+            return { status: 'skipped', reason: 'No component name specified.' };
         }
-        return await restoreComponentFromRegistry(ctx, result.componentName);
+        return await planRestoreComponentFromRegistry(ctx, result.componentName, 'integrity.manifest-files');
     },
 };
 
@@ -208,8 +234,13 @@ export const integrityOrphansRule: DiagnosticRule = {
         }
 
         const results: CheckResult[] = [];
+        const allManifestFiles = new Set(
+            Object.values(ctx.manifest.components).flatMap((c) =>
+                c.files.map((f: string) => path.resolve(ctx.cwd, f))
+            )
+        );
         for (const [componentName, entry] of Object.entries(ctx.manifest.components)) {
-            const orphans = await findOrphanFilesInVfs(ctx.cwd, entry, ctx.fs);
+            const orphans = await findOrphanFilesInVfs(ctx.cwd, entry, ctx.fs, allManifestFiles);
             if (orphans.length > 0) {
                 results.push({
                     ruleId: 'integrity.orphans',
@@ -235,26 +266,45 @@ export const integrityOrphansRule: DiagnosticRule = {
 
         return results;
     },
-    async fix(ctx: DiagnosticRepairContext, result: CheckResult): Promise<RuleFixResult> {
+    async planFix(ctx: DiagnosticContext, result: CheckResult): Promise<PlanFixResult> {
         if (!result.componentName) {
-            return { status: 'skipped', message: 'No component name specified.' };
+            return { status: 'skipped', reason: 'No component name specified.' };
         }
         const entry = ctx.manifest?.components[result.componentName];
         if (!entry) {
-            return { status: 'failed', message: `Component "${result.componentName}" not found in manifest.` };
+            return { status: 'failed', reason: `Component "${result.componentName}" not found in manifest.` };
         }
 
-        const orphans = await findOrphanFilesInVfs(ctx.cwd, entry, ctx.fs);
-        await Promise.all(
-            orphans.map(async (orphan) => {
-                const absPath = path.resolve(ctx.cwd, orphan);
-                await ctx.transaction.remove(absPath);
-            })
-        );
+        const allManifestFiles = ctx.manifest
+            ? new Set(
+                  Object.values(ctx.manifest.components).flatMap((c) =>
+                      c.files.map((f: string) => path.resolve(ctx.cwd, f))
+                  )
+              )
+            : undefined;
+        const orphans = await findOrphanFilesInVfs(ctx.cwd, entry, ctx.fs, allManifestFiles);
+        if (orphans.length === 0) {
+            return { status: 'skipped', reason: `No orphan files found for ${result.componentName}.` };
+        }
+
+        const actions: RepairAction[] = orphans.map((orphan) => {
+            const absPath = path.resolve(ctx.cwd, orphan);
+            return {
+                type: 'remove-path',
+                targetPath: absPath,
+                recursive: false,
+                description: `Remove orphan file ${orphan}`,
+            };
+        });
 
         return {
-            status: 'applied',
-            message: `Removed ${orphans.length} orphan file(s) for ${result.componentName}.`,
+            status: 'planned',
+            plan: {
+                fixId: FixId.RemoveOrphans,
+                ruleId: 'integrity.orphans',
+                description: `Removed ${orphans.length} orphan file(s) for ${result.componentName}.`,
+                actions,
+            },
         };
     },
 };
@@ -316,11 +366,11 @@ export const integrityHashDriftRule: DiagnosticRule = {
 
         return results;
     },
-    async fix(ctx: DiagnosticRepairContext, result: CheckResult): Promise<RuleFixResult> {
+    async planFix(ctx: DiagnosticContext, result: CheckResult): Promise<PlanFixResult> {
         if (!result.componentName) {
-            return { status: 'skipped', message: 'No component name specified.' };
+            return { status: 'skipped', reason: 'No component name specified.' };
         }
-        return await restoreComponentFromRegistry(ctx, result.componentName);
+        return await planRestoreComponentFromRegistry(ctx, result.componentName, 'integrity.hash-drift');
     },
 };
 
@@ -372,7 +422,7 @@ async function probeHttpSource(source: string): Promise<RegistrySourceStatus> {
     try {
         const res = await fetch(probeUrl, {
             method: 'HEAD',
-            signal: AbortSignal.timeout(10000),
+            signal: AbortSignal.timeout(REGISTRY_PROBE_TIMEOUT_MS),
         });
         const latencyMs = Date.now() - start;
         return {
@@ -447,9 +497,9 @@ export const integrityRegistryReachabilityRule: DiagnosticRule = {
 };
 
 function formatBytes(bytes: number): string {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    if (bytes < BYTES_PER_KB) return `${bytes} B`;
+    if (bytes < BYTES_PER_MB) return `${(bytes / BYTES_PER_KB).toFixed(1)} KB`;
+    return `${(bytes / BYTES_PER_MB).toFixed(1)} MB`;
 }
 
 export const integrityCacheHealthRule: DiagnosticRule = {

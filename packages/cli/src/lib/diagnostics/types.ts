@@ -2,13 +2,16 @@ import type { BrutalistConfig, BrutxManifest, CheckStatus } from '../types.js';
 import { FixId } from '../types.js';
 import type { ProjectContext } from '../project-context.js';
 import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
-import type { FileTransaction } from '../file-transaction.js';
 
 export type { CheckStatus };
 export { FixId };
 export type DiagnosticCategory = 'env' | 'config' | 'tailwind' | 'structure' | 'integrity' | 'custom';
 
 export type RuleFixStatus = 'applied' | 'skipped' | 'failed';
+
+export type DeepPartial<T> = {
+    [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};
 
 export interface FileLocation {
     /** 相对工作区根目录的文件路径（统一使用 POSIX 格式） */
@@ -46,13 +49,6 @@ export interface CheckResult {
     readonly helpUrl?: string;
 }
 
-export interface RuleFixResult {
-    /** 修复执行状态 */
-    readonly status: RuleFixStatus;
-    /** 状态附带的详细说明或失败原因 */
-    readonly message?: string;
-}
-
 export interface DiagnosticContext {
     /** 工作目录绝对路径 */
     readonly cwd: string;
@@ -68,14 +64,53 @@ export interface DiagnosticContext {
     readonly offline: boolean;
 }
 
-export interface DiagnosticRepairContext extends DiagnosticContext {
-    /** 当前自愈会话绑定的统一事务实例（确保原子写回与回滚） */
-    readonly transaction: FileTransaction;
-    /** 当前可变的内存配置引用（与 projectContext.config 保持同源绑定） */
-    readonly mutableConfig: BrutalistConfig;
-    /** 标记配置对象是否被修复规则修改（引擎据此在事务中写回 components.json） */
-    markConfigDirty: () => void;
+/** 纯数据自愈原子动作（100% 可序列化、无写副作用） */
+export type RepairAction =
+    | {
+          readonly type: 'write-file';
+          readonly filePath: string;
+          readonly content: string;
+          readonly description?: string;
+      }
+    | {
+          readonly type: 'ensure-dir';
+          readonly dirPath: string;
+          readonly description?: string;
+      }
+    | {
+          readonly type: 'remove-path';
+          readonly targetPath: string;
+          readonly recursive?: boolean;
+          readonly description?: string;
+      }
+    | {
+          readonly type: 'patch-config';
+          readonly patch: DeepPartial<BrutalistConfig>;
+          readonly description?: string;
+      };
+
+/** 单项自愈计划 */
+export interface RepairPlan {
+    readonly fixId: FixId | string;
+    readonly ruleId: string;
+    readonly description: string;
+    readonly actions: readonly RepairAction[];
 }
+
+/** 规则自愈规划结果判别联合体 */
+export type PlanFixResult =
+    | {
+          readonly status: 'planned';
+          readonly plan: RepairPlan;
+      }
+    | {
+          readonly status: 'skipped';
+          readonly reason: string;
+      }
+    | {
+          readonly status: 'failed';
+          readonly reason: string;
+      };
 
 export interface DiagnosticRule {
     /** 规则唯一标识，如 'config.schema', 'tailwind.tokens', 'integrity.hash-drift' */
@@ -94,8 +129,8 @@ export interface DiagnosticRule {
     readonly helpUrl?: string;
     /** 巡检函数：纯只读、无副作用 */
     check(ctx: DiagnosticContext): Promise<CheckResult | CheckResult[]>;
-    /** 可选的修复算子：通过 DiagnosticRepairContext 执行原子写操作 */
-    fix?(ctx: DiagnosticRepairContext, result: CheckResult): Promise<RuleFixResult>;
+    /** 纯声明式自愈方案生成器（无写副作用） */
+    planFix?(ctx: DiagnosticContext, result: CheckResult): Promise<PlanFixResult>;
 }
 
 export interface DiagnosticSummary {
@@ -135,6 +170,27 @@ export interface RepairOptions extends DiagnoseOptions {
     dryRun?: boolean;
 }
 
+/** 文件级差异预览项 */
+export interface FileDiffPreview {
+    readonly filePath: string;
+    readonly changeType: 'create' | 'modify' | 'delete';
+    readonly oldContent: string | null;
+    readonly newContent: string | null;
+    readonly unifiedDiff: string;
+}
+
+/** 全局自愈预览报告（用于 --dry-run 与交互式确认） */
+export interface RepairPreviewReport {
+    readonly plans: readonly RepairPlan[];
+    readonly skipped: ReadonlyArray<{ readonly ruleId: string; readonly reason: string }>;
+    readonly failed: ReadonlyArray<{ readonly ruleId: string; readonly reason: string }>;
+    readonly fileDiffs: readonly FileDiffPreview[];
+    readonly configChanges?: {
+        readonly before: BrutalistConfig | null;
+        readonly after: BrutalistConfig;
+    };
+}
+
 export interface RepairItemReport {
     readonly ruleId: string;
     readonly checkName: string;
@@ -149,5 +205,6 @@ export interface RepairReport {
     readonly failed: RepairItemReport[];
     readonly totalAttempted: number;
     readonly configUpdated: boolean;
+    readonly preview?: RepairPreviewReport;
     readonly freshReport: DiagnosticReport;
 }
