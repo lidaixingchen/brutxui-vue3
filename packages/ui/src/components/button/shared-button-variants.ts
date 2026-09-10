@@ -97,7 +97,7 @@ export const baseButtonVariants = {
             stacked: [
                 // 多层彩虹投影 + 同源 1.5x 盖影按压：twMerge 同组后者胜，
                 // 覆盖基座 brutalPress 的 1x 位移，保证位移距离等于最外层阴影偏移
-                'shadow-brutal-stacked',
+                'shadow-brutal-stacked hover:shadow-brutal-stacked',
                 brutalPressStacked,
             ],
             hazard: [

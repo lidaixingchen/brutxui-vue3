@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { brutalPressStacked } from './brutal-interaction-variants'
 import { cn } from './utils'
 import { buttonVariants } from '@/components/button/button-variants'
+import { buttonVariantOptions, type ButtonVariant } from '@/components/button/shared-button-variants'
 
 /** 模拟组件真实消费路径：cva 输出必须经 cn()（twMerge）合并后再断言 */
 function renderButtonClasses(props: Parameters<typeof buttonVariants>[0]): string[] {
@@ -24,6 +25,14 @@ describe('brutalPressStacked 盖影等值契约', () => {
 })
 
 describe('buttonVariants flair 装饰形态变体', () => {
+    it.each(buttonVariantOptions)('stacked 与 %s 组合时悬停保留多层投影并支持按压去影', (variant: ButtonVariant): void => {
+        const classTokens: string[] = renderButtonClasses({ variant, flair: 'stacked' })
+        expect(classTokens).toContain('shadow-brutal-stacked')
+        expect(classTokens).toContain('hover:shadow-brutal-stacked')
+        expect(classTokens).not.toContain('hover:shadow-brutal-lg')
+        expect(classTokens).toContain('active:shadow-none')
+    })
+
     it('stacked 绑定多层彩虹阴影与同源盖影按压，且覆盖基座 4px 按压位移', () => {
         const classTokens = renderButtonClasses({ flair: 'stacked' })
         expect(classTokens).toContain('shadow-brutal-stacked')
