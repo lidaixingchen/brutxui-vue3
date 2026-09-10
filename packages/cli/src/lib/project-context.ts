@@ -1,27 +1,32 @@
 import path from 'path';
-import { createRequire } from 'module';
-import { parse as parseJsonc } from 'jsonc-parser';
 import { DiskFileSystemAdapter, type FileSystemAdapter } from 'brutx-shared-vue/fs';
 import { SfcAstEngine } from 'brutx-shared-vue/ast';
 import type {
     AliasConfig,
     BrutalistConfig,
+    InstalledComponentInfo,
     PackageManager,
     ProjectType,
     TsConfig,
 } from './types.js';
 import { AuditLogStorage } from './storage/audit-storage.js';
 import {
-    CONFIG_FILES,
     CSS_LOCATIONS,
     REGISTRY_PATH_PREFIXES,
 } from './constants.js';
 import { CliError } from './error.js';
 import { isSafePath } from './security.js';
 import { FileTransaction } from './file-transaction.js';
-
 import { RegistryClient } from './registry-client.js';
 import type { RegistryClientOptions } from './registry-types.js';
+import {
+    detectProjectType,
+    detectPackageManager,
+    detectWorkspaceRoot,
+    readTsConfig,
+    clearProjectTypeCache,
+} from './env-detector.js';
+import { ComponentScanner } from './component-scanner.js';
 
 export interface ProjectEnvironmentInfo {
     projectType: ProjectType;
@@ -36,10 +41,6 @@ export interface ProjectContextOptions {
     configOverride?: BrutalistConfig;
     optionalConfig?: boolean;
     registryClient?: RegistryClient;
-}
-
-interface RawTsConfig extends TsConfig {
-    extends?: string | string[];
 }
 
 export class ProjectContext {
@@ -127,10 +128,10 @@ export class ProjectContext {
         const resolvedCwd = path.resolve(cwd);
 
         const [projectType, packageManager, workspaceRoot, tsConfig] = await Promise.all([
-            ProjectContext.detectProjectType(resolvedCwd, fsAdapter),
-            ProjectContext.detectPackageManager(resolvedCwd, fsAdapter),
-            ProjectContext.detectWorkspaceRoot(resolvedCwd, fsAdapter),
-            ProjectContext.readTsConfig(resolvedCwd, fsAdapter),
+            detectProjectType(resolvedCwd, fsAdapter),
+            detectPackageManager(resolvedCwd, fsAdapter),
+            detectWorkspaceRoot(resolvedCwd, fsAdapter),
+            readTsConfig(resolvedCwd, fsAdapter),
         ]);
 
         const hasSrc = await fsAdapter.pathExists(path.join(resolvedCwd, 'src'));
@@ -333,13 +334,13 @@ export class ProjectContext {
         return path.join(this.cwd, base, relativePath);
     }
 
-    resolveImportAlias(content: string): string {
+    transformImports(content: string, filename = 'component.vue'): string {
         const config = this.requireConfig();
         const sharedBase = config.sharedBase;
         const composablesAlias = config.aliases.composables ?? config.aliases.utils.replace(/\/utils$/, '/composables');
-        const localesAlias = config.aliases.locales ?? `${path.dirname(composablesAlias)}/locales`;
-        const directivesAlias = config.aliases.directives ?? `${path.dirname(composablesAlias)}/directives`;
-        const libAlias = path.dirname(config.aliases.utils);
+        const localesAlias = config.aliases.locales ?? `${path.posix.dirname(composablesAlias)}/locales`;
+        const directivesAlias = config.aliases.directives ?? `${path.posix.dirname(composablesAlias)}/directives`;
+        const libAlias = path.posix.dirname(config.aliases.utils);
 
         return SfcAstEngine.transformImports(content, ctx => {
             const spec = ctx.specifier;
@@ -368,7 +369,21 @@ export class ProjectContext {
                 return spec.replace('@/directives', directivesAlias);
             }
             return spec;
-        });
+        }, filename);
+    }
+
+    resolveImportAlias(content: string, filename = 'component.vue'): string {
+        return this.transformImports(content, filename);
+    }
+
+    async getInstalledComponentNames(): Promise<string[]> {
+        const scanner = new ComponentScanner(this);
+        return scanner.getInstalledNames();
+    }
+
+    async getInstalledComponentInfos(): Promise<InstalledComponentInfo[]> {
+        const scanner = new ComponentScanner(this);
+        return scanner.getInstalledInfos();
     }
 
     toRelativePosixPath(absolutePath: string): string {
@@ -383,7 +398,7 @@ export class ProjectContext {
         return new FileTransaction(this.fs, this.cwd);
     }
 
-    // Static Helpers
+    // Static Helpers & Compatibility
     static extractScriptBlocks(content: string): Array<{ start: number; end: number; code: string }> {
         const desc = SfcAstEngine.parse(content);
         const blocks: Array<{ start: number; end: number; code: string }> = [];
@@ -396,151 +411,23 @@ export class ProjectContext {
         return blocks;
     }
 
+    static clearProjectTypeCache(): void {
+        clearProjectTypeCache();
+    }
+
     static async detectProjectType(cwd: string, fsAdapter: FileSystemAdapter): Promise<ProjectType> {
-        for (const file of CONFIG_FILES.nuxt) {
-            if (await fsAdapter.pathExists(path.join(cwd, file))) return 'nuxt';
-        }
-        const pkgPath = path.join(cwd, 'package.json');
-        if (await fsAdapter.pathExists(pkgPath)) {
-            try {
-                const pkg = await fsAdapter.readJson<{ dependencies?: Record<string, string>; devDependencies?: Record<string, string> }>(pkgPath);
-                const hasVue = Boolean(pkg.dependencies?.['vue'] || pkg.devDependencies?.['vue'] || pkg.dependencies?.['nuxt'] || pkg.devDependencies?.['nuxt']);
-                if (hasVue) {
-                    const hasSrc = await fsAdapter.pathExists(path.join(cwd, 'src'));
-                    return hasSrc ? 'vite-vue-src' : 'vite-vue';
-                }
-            } catch { /* ignore malformed package.json */ }
-        }
-        return 'unknown';
+        return detectProjectType(cwd, fsAdapter);
     }
 
     static async detectPackageManager(cwd: string, fsAdapter: FileSystemAdapter): Promise<PackageManager> {
-        const { lockfiles } = CONFIG_FILES;
-        let current = path.resolve(cwd);
-        const root = path.parse(current).root;
-
-        while (current !== root) {
-            if (await fsAdapter.pathExists(path.join(current, lockfiles.pnpm))) return 'pnpm';
-            if (await fsAdapter.pathExists(path.join(current, lockfiles.yarn))) return 'yarn';
-            if (await fsAdapter.pathExists(path.join(current, lockfiles.bun))) return 'bun';
-
-            const parent = path.dirname(current);
-            if (parent === current) break;
-            current = parent;
-        }
-
-        return 'npm';
+        return detectPackageManager(cwd, fsAdapter);
     }
 
     static async detectWorkspaceRoot(cwd: string, fsAdapter: FileSystemAdapter): Promise<string | null> {
-        let current = path.resolve(cwd);
-        const root = path.parse(current).root;
-
-        while (current !== root) {
-            if (await fsAdapter.pathExists(path.join(current, 'pnpm-workspace.yaml'))) return current;
-            if (await fsAdapter.pathExists(path.join(current, 'lerna.json'))) return current;
-            if (await fsAdapter.pathExists(path.join(current, 'turbo.json'))) return current;
-
-            const pkgPath = path.join(current, 'package.json');
-            if (await fsAdapter.pathExists(pkgPath)) {
-                try {
-                    const pkg = await fsAdapter.readJson<Record<string, unknown>>(pkgPath);
-                    if (pkg.workspaces) return current;
-                } catch { /* ignore malformed package.json */ }
-            }
-
-            const parent = path.dirname(current);
-            if (parent === current) break;
-            current = parent;
-        }
-
-        return null;
+        return detectWorkspaceRoot(cwd, fsAdapter);
     }
 
     static async readTsConfig(cwd: string, fsAdapter: FileSystemAdapter): Promise<TsConfig | null> {
-        for (const configFile of CONFIG_FILES.tsconfig) {
-            const configPath = path.join(cwd, configFile);
-            if (await fsAdapter.pathExists(configPath)) {
-                const parsed = await ProjectContext.readTsConfigFile(configPath, new Set<string>(), fsAdapter);
-                if (parsed) return parsed;
-            }
-        }
-        return null;
-    }
-
-    private static async readTsConfigFile(
-        configPath: string,
-        visited: Set<string>,
-        fsAdapter: FileSystemAdapter
-    ): Promise<TsConfig | null> {
-        let realPath: string;
-        try {
-            realPath = await fsAdapter.realpath(configPath);
-        } catch {
-            realPath = path.resolve(configPath);
-        }
-        if (visited.has(realPath)) return null;
-        visited.add(realPath);
-
-        let content: string;
-        try {
-            content = await fsAdapter.readFile(configPath, 'utf-8');
-        } catch {
-            return null;
-        }
-        const parsed = parseJsonc(content) as RawTsConfig | undefined;
-        if (!parsed) return null;
-
-        const mergedOptions: NonNullable<TsConfig['compilerOptions']> = {};
-        const extendsValue = parsed.extends;
-        const extendsList = typeof extendsValue === 'string' ? [extendsValue] : (Array.isArray(extendsValue) ? extendsValue : undefined);
-
-        if (extendsList) {
-            for (const extend of extendsList) {
-                const extendPath = await ProjectContext.resolveTsConfigExtendsPath(extend, path.dirname(configPath), fsAdapter);
-                if (!extendPath) continue;
-                const base = await ProjectContext.readTsConfigFile(extendPath, visited, fsAdapter);
-                if (base?.compilerOptions) {
-                    Object.assign(mergedOptions, base.compilerOptions);
-                }
-            }
-        }
-
-        Object.assign(mergedOptions, parsed.compilerOptions);
-        return { compilerOptions: mergedOptions };
-    }
-
-    private static async resolveTsConfigExtendsPath(
-        extend: string,
-        baseDir: string,
-        fsAdapter: FileSystemAdapter
-    ): Promise<string | null> {
-        const candidates: string[] = [];
-        if (path.isAbsolute(extend)) {
-            candidates.push(extend);
-        } else if (extend.startsWith('.')) {
-            candidates.push(path.resolve(baseDir, extend));
-        } else {
-            // 先尝试在 VFS 的 node_modules 查找
-            const vfsCandidate = path.join(baseDir, 'node_modules', extend);
-            candidates.push(vfsCandidate);
-
-            try {
-                const requireFromBase = createRequire(path.join(baseDir, 'package.json'));
-                candidates.push(requireFromBase.resolve(extend));
-            } catch {
-                candidates.push(path.resolve(baseDir, extend));
-            }
-        }
-
-        for (const candidate of candidates) {
-            if (await fsAdapter.pathExists(candidate)) return candidate;
-            if (!path.extname(candidate)) {
-                const withJson = `${candidate}.json`;
-                if (await fsAdapter.pathExists(withJson)) return withJson;
-            }
-        }
-
-        return null;
+        return readTsConfig(cwd, fsAdapter);
     }
 }

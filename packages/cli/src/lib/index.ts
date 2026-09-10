@@ -133,6 +133,14 @@ export {
 } from './installed-components.js';
 
 export {
+    ComponentScanner,
+    type ComponentScanOptions,
+    scanComponentFiles,
+    extractDependencies,
+    mapWithConcurrency,
+} from './component-scanner.js';
+
+export {
     generateSnippets,
     generateSnippetsForComponents,
     writeSnippetsFile,

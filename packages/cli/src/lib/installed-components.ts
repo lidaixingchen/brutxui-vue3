@@ -1,172 +1,19 @@
-import path from 'node:path';
 import { DiskFileSystemAdapter, type FileSystemAdapter } from 'brutx-shared-vue/fs';
-import { SfcAstEngine } from 'brutx-shared-vue/ast';
-import type { BrutalistConfig, InstalledComponentInfo, InstalledComponentManifest } from './types.js';
-import { readManifest } from './manifest.js';
-import { resolveAliasPath } from './project.js';
-import { logger } from './logger.js';
+import type { BrutalistConfig, InstalledComponentInfo } from './types.js';
+import { ProjectContext } from './project-context.js';
+import { ComponentScanner, scanComponentFiles, extractDependencies, mapWithConcurrency } from './component-scanner.js';
+
+export { scanComponentFiles, extractDependencies, mapWithConcurrency, ComponentScanner };
 
 const defaultDiskFs = new DiskFileSystemAdapter();
-
-/** 组件目录扫描的并发上限，避免组件较多时瞬时占用过多文件描述符 */
-const SCAN_CONCURRENCY = 8;
-
-/**
- * 以固定并发上限执行异步映射，限制同时运行的任务数。
- * mapper 抛错时置停止标志，阻止后续新任务派发（不保证已领取/进行中的任务中止）。
- */
-async function mapWithConcurrency<T, R>(
-    items: T[],
-    limit: number,
-    mapper: (item: T) => Promise<R>,
-): Promise<R[]> {
-    const results = new Array<R>(items.length);
-    let nextIndex = 0;
-    let stopped = false;
-
-    async function worker(): Promise<void> {
-        while (!stopped) {
-            const index = nextIndex;
-            nextIndex += 1;
-            if (index >= items.length) return;
-            results[index] = await mapper(items[index]);
-        }
-    }
-
-    try {
-        await Promise.all(Array.from({ length: Math.min(limit, items.length) }, () => worker()));
-    } catch (error) {
-        stopped = true;
-        throw error;
-    }
-    return results;
-}
-
-async function scanComponentFiles(dir: string, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<string[]> {
-    const files: string[] = [];
-
-    async function walk(currentDir: string, base: string): Promise<void> {
-        const entries = await fsAdapter.readdir(currentDir, { withFileTypes: true });
-
-        for (const entry of entries) {
-            const fullPath = path.join(currentDir, entry.name);
-            const relative = base ? `${base}/${entry.name}` : entry.name;
-
-            if (entry.isDirectory()) {
-                if (entry.name === 'node_modules' || entry.name.startsWith('.')) {
-                    continue;
-                }
-                await walk(fullPath, relative);
-            } else {
-                files.push(relative);
-            }
-        }
-    }
-
-    await walk(dir, '');
-    return files;
-}
-
-async function extractDependencies(componentDir: string, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<string[]> {
-    const deps = new Set<string>();
-    const files = await scanComponentFiles(componentDir, fsAdapter);
-
-    for (const file of files) {
-        const ext = path.extname(file);
-        if (ext !== '.vue' && ext !== '.ts' && ext !== '.js') continue;
-
-        const content = await fsAdapter.readFile(path.join(componentDir, file), 'utf-8');
-        try {
-            const specifiers = SfcAstEngine.extractModuleSpecifiers(content, file);
-            for (const item of specifiers) {
-                collectDependency(deps, item.specifier);
-            }
-        } catch (error) {
-            logger.warn(`Failed to parse imports in '${file}': ${error instanceof Error ? error.message : String(error)}`);
-        }
-    }
-
-    return [...deps].sort();
-}
-
-function collectDependency(deps: Set<string>, specifier: string | undefined): void {
-    if (!specifier) return;
-    if (specifier.startsWith('.') || specifier.startsWith('/')) return;
-    if (specifier.startsWith('@')) {
-        const parts = specifier.split('/');
-        if (parts.length >= 2 && parts[0].length > 1) {
-            deps.add(parts.slice(0, 2).join('/'));
-        }
-    } else {
-        deps.add(specifier.split('/')[0]);
-    }
-}
-
-async function getScannedComponentNames(componentsPath: string, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<string[]> {
-    const exists = await fsAdapter.pathExists(componentsPath);
-    if (!exists) {
-        return [];
-    }
-
-    const dirs = await fsAdapter.readdir(componentsPath, { withFileTypes: true });
-
-    return dirs
-        .filter((dir) => dir.isDirectory())
-        .map((dir) => dir.name)
-        .sort();
-}
-
-interface ComponentScanBase {
-    name: string;
-    files: string[];
-    dependencies: string[];
-}
-
-function withManifestDefaults(
-    base: ComponentScanBase,
-    manifestEntry: InstalledComponentManifest | undefined,
-): InstalledComponentInfo {
-    return {
-        ...base,
-        dependencies: manifestEntry?.dependencies ?? base.dependencies,
-        category: manifestEntry?.category,
-        examples: manifestEntry?.examples,
-        status: manifestEntry?.status,
-        replacement: manifestEntry?.replacement,
-        registryDependencies: manifestEntry?.registryDependencies,
-        registrySource: manifestEntry?.registrySource,
-        integrity: manifestEntry?.integrity,
-        installedAt: manifestEntry?.installedAt,
-        manifestFiles: manifestEntry?.files,
-        managed: manifestEntry !== undefined,
-    };
-}
-
-function createManifestInfo(entry: InstalledComponentManifest): InstalledComponentInfo {
-    return {
-        ...withManifestDefaults(
-            {
-                name: entry.name,
-                files: entry.files,
-                dependencies: entry.dependencies,
-            },
-            entry,
-        ),
-        version: entry.version,
-    };
-}
 
 export async function getInstalledComponentNames(
     cwd: string,
     config: BrutalistConfig,
     fsAdapter: FileSystemAdapter = defaultDiskFs
 ): Promise<string[]> {
-    const manifest = await readManifest(cwd, fsAdapter).catch(() => null);
-    const manifestNames = Object.keys(manifest?.components ?? {});
-    const componentsPath = await resolveAliasPath(config.aliases.components, cwd, fsAdapter);
-    const scannedNames = await getScannedComponentNames(componentsPath, fsAdapter);
-
-    return [...new Set([...manifestNames, ...scannedNames])].sort();
+    const ctx = await ProjectContext.loadUninitialized(cwd, { configOverride: config, fs: fsAdapter });
+    return ctx.getInstalledComponentNames();
 }
 
 export async function getInstalledComponentInfos(
@@ -174,39 +21,6 @@ export async function getInstalledComponentInfos(
     config: BrutalistConfig,
     fsAdapter: FileSystemAdapter = defaultDiskFs
 ): Promise<InstalledComponentInfo[]> {
-    const manifest = await readManifest(cwd, fsAdapter).catch(() => null);
-    const componentsPath = await resolveAliasPath(config.aliases.components, cwd, fsAdapter);
-    const componentNames = await getInstalledComponentNames(cwd, config, fsAdapter);
-
-    const infos = await mapWithConcurrency(componentNames, SCAN_CONCURRENCY, async (name) => {
-        const componentDir = path.join(componentsPath, name);
-        const manifestEntry = manifest?.components[name];
-
-        try {
-            const exists = await fsAdapter.pathExists(componentDir);
-            if (!exists) {
-                return manifestEntry ? createManifestInfo(manifestEntry) : null;
-            }
-
-            const files = await scanComponentFiles(componentDir, fsAdapter);
-            const hasVueFile = files.some(f => f.endsWith('.vue'));
-
-            if (files.length === 0 || !hasVueFile) {
-                return manifestEntry ? createManifestInfo(manifestEntry) : null;
-            }
-
-            const dependencies = await extractDependencies(componentDir, fsAdapter);
-            return withManifestDefaults(
-                { name, files, dependencies },
-                manifestEntry,
-            );
-        } catch (error) {
-            logger.warn(`Failed to scan component '${name}': ${error instanceof Error ? error.message : String(error)}`);
-            return manifestEntry ? createManifestInfo(manifestEntry) : null;
-        }
-    });
-
-    return infos
-        .filter((info): info is InstalledComponentInfo => info !== null)
-        .sort((a, b) => a.name.localeCompare(b.name));
+    const ctx = await ProjectContext.loadUninitialized(cwd, { configOverride: config, fs: fsAdapter });
+    return ctx.getInstalledComponentInfos();
 }
