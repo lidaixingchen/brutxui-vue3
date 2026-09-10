@@ -473,7 +473,18 @@ export interface TourLocale {
     skip: string
 }
 
+export interface StatisticLocale {
+    empty: string
+    up: string
+    down: string
+}
+
+export interface CountdownLocale {
+    finished: string
+}
+
 export interface Locale {
+    code?: string
     command: CommandLocale
     combobox: ComboboxLocale
     pagination: PaginationLocale
@@ -531,4 +542,6 @@ export interface Locale {
     upload: UploadLocale
     infiniteScroll: InfiniteScrollLocale
     tour: TourLocale
+    statistic: StatisticLocale
+    countdown: CountdownLocale
 }

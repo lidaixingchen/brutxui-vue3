@@ -401,4 +401,13 @@ export const en: Locale = {
         finish: 'Finish',
         skip: 'Skip',
     },
+    code: 'en-US',
+    statistic: {
+        empty: 'No data',
+        up: 'Up',
+        down: 'Down',
+    },
+    countdown: {
+        finished: 'Countdown finished',
+    },
 }

@@ -94,6 +94,8 @@ describe('SSR smoke: simple components', () => {
         { name: 'Result', comp: BrutxUI.Result, expectContains: '<div' },
         { name: 'Loading', comp: BrutxUI.Loading, expectContains: '<div' },
         { name: 'CopyToClipboard', comp: BrutxUI.CopyToClipboard, expectContains: '<' },
+        { name: 'Statistic', comp: BrutxUI.Statistic, expectContains: '<div', props: { value: 12345 } },
+        { name: 'Countdown', comp: BrutxUI.Countdown, expectContains: '<div', props: { value: 1700000000000 } },
 
         // Spinner 变体
         { name: 'BlockSpinner', comp: BrutxUI.BlockSpinner, expectContains: '<' },

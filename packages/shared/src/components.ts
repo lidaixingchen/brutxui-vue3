@@ -171,6 +171,12 @@ export const COMPONENTS: Record<string, RegistryComponentMeta> = {
         dependencies: ['@lucide/vue'],
         description: 'Click-to-copy button with success feedback.',
     },
+    countdown: {
+        titleZh: '倒计时',
+        category: 'data-display',
+        dependencies: ['@lucide/vue'],
+        description: 'Absolute drift-free countdown timer with accessibility live notifications.',
+    },
     counter: {
         titleZh: '数字滚动',
         category: 'data-display',
@@ -449,6 +455,12 @@ export const COMPONENTS: Record<string, RegistryComponentMeta> = {
         category: 'feedback',
         dependencies: [],
         description: 'Loading spinners with bars, blocks, and dots animation variants.',
+    },
+    statistic: {
+        titleZh: '统计数值',
+        category: 'data-display',
+        dependencies: ['@lucide/vue'],
+        description: 'Formatted numerical statistics display with big number precision safety.',
     },
     stepper: {
         titleZh: '步骤条',

@@ -401,4 +401,13 @@ export const zhCN: Locale = {
         finish: '结束',
         skip: '跳过',
     },
+    code: 'zh-CN',
+    statistic: {
+        empty: '暂无数据',
+        up: '上升',
+        down: '下降',
+    },
+    countdown: {
+        finished: '倒计时已结束',
+    },
 }
