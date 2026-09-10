@@ -85,6 +85,7 @@ export { default as TooltipContent } from './components/tooltip/TooltipContent.v
 export { tooltipContentVariants } from './components/tooltip/tooltip-variants'
 
 export { default as Select } from './components/select/Select.vue'
+export type { SelectOption, SelectProps } from './components/select/Select.vue'
 export { default as SelectTrigger } from './components/select/SelectTrigger.vue'
 export { default as SelectContent } from './components/select/SelectContent.vue'
 export { default as SelectItem } from './components/select/SelectItem.vue'
@@ -190,6 +191,33 @@ export { useDatePicker } from './composables/useDatePicker'
 export type { UseDatePickerOptions, UseDatePickerReturn } from './composables/useDatePicker'
 export { useCarousel, DEFAULT_AUTOPLAY_DELAY } from './composables/useCarousel'
 export type { UseCarouselOptions, UseCarouselReturn } from './composables/useCarousel'
+export { useBrutalHaptics } from './composables/useBrutalHaptics'
+export type { UseBrutalHapticsOptions, UseBrutalHapticsReturn } from './composables/useBrutalHaptics'
+export { useCarouselEnhanced } from './composables/useCarouselEnhanced'
+export type { UseCarouselEnhancedOptions } from './composables/useCarouselEnhanced'
+export { useClearableSelection } from './composables/useClearableSelection'
+export type { UseClearableSelectionOptions, UseClearableSelectionReturn } from './composables/useClearableSelection'
+export { useDialogEnhanced } from './composables/useDialogEnhanced'
+export type { UseDialogEnhancedOptions, UseDialogEnhancedReturn } from './composables/useDialogEnhanced'
+export { useDialogGeometry } from './composables/useDialogGeometry'
+export type {
+    UseDialogGeometryOptions,
+    UseDialogGeometryReturn,
+    DraggableDialogOptions,
+    ResizableDialogOptions,
+} from './composables/useDialogGeometry'
+export { useGlitchEffect } from './composables/useGlitchEffect'
+export type { GlitchTrigger, UseGlitchEffectOptions } from './composables/useGlitchEffect'
+export { useKanban } from './composables/useKanban'
+export type { UseKanbanOptions, UseKanbanReturn } from './composables/useKanban'
+export { useSelectableTrigger } from './composables/useSelectableTrigger'
+export type { SelectableTriggerClass, SelectableTriggerState, UseSelectableTriggerOptions, UseSelectableTriggerReturn } from './composables/useSelectableTrigger'
+export { useSelectionDisplayText } from './composables/useSelectionDisplayText'
+export type { UseSelectionDisplayTextOptions } from './composables/useSelectionDisplayText'
+export { useStepper } from './composables/useStepper'
+export type { Step, UseStepperOptions, UseStepperReturn } from './composables/useStepper'
+export { useTransferPanelSelection } from './composables/useTransferPanelSelection'
+export type { TransferPanelItem, TransferPanelKey, UseTransferPanelSelectionOptions, UseTransferPanelSelectionReturn } from './composables/useTransferPanelSelection'
 
 
 
@@ -237,7 +265,7 @@ export { default as CookieConsent } from './components/cookie-consent/CookieCons
 
 export { default as DataTable } from './components/data-table/DataTable.vue'
 export { dataTableRootVariants, dataTableHeaderVariants, dataTableHeadVariants, dataTableRowVariants, dataTableCellVariants, dataTableToolbarVariants, dataTablePaginationVariants, dataTableEmptyVariants, dataTableLoadingVariants } from './components/data-table/data-table-variants'
-export type { DataTableColumn, DataTableColumnHeaderContext, DataTableVirtualScroll, DataTableSortState, DataTableFilterState, DataTablePaginationState } from './components/data-table/types'
+export type { DataTableProps, DataTableColumn, DataTableColumnHeaderContext, DataTableVirtualScroll, DataTableSortState, DataTableFilterState, DataTablePaginationState } from './components/data-table/types'
 
 export { default as Accordion } from './components/accordion/Accordion.vue'
 export { default as AccordionItem } from './components/accordion/AccordionItem.vue'
@@ -485,3 +513,12 @@ export { imageCardVariants } from './components/image-card/image-card-variants'
 export { default as BrutalShape } from './components/brutal-shape/BrutalShape.vue'
 export { brutalShapeVariants } from './components/brutal-shape/brutal-shape-variants'
 
+export { default as Statistic } from './components/statistic/Statistic.vue'
+export type * from './components/statistic/types'
+export * from './components/statistic/statistic-variants'
+export * from './components/statistic/statistic-format'
+
+export { default as Countdown } from './components/countdown/Countdown.vue'
+export type * from './components/countdown/types'
+export * from './components/countdown/countdown-variants'
+export * from './components/countdown/countdown-format'

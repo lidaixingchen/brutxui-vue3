@@ -124,6 +124,10 @@
             "types": "./dist/components/copy-to-clipboard/index.d.ts",
             "import": "./dist/components/copy-to-clipboard/index.js"
         },
+        "./countdown": {
+            "types": "./dist/components/countdown/index.d.ts",
+            "import": "./dist/components/countdown/index.js"
+        },
         "./counter": {
             "types": "./dist/components/counter/index.d.ts",
             "import": "./dist/components/counter/index.js"
@@ -299,6 +303,10 @@
         "./spinner": {
             "types": "./dist/components/spinner/index.d.ts",
             "import": "./dist/components/spinner/index.js"
+        },
+        "./statistic": {
+            "types": "./dist/components/statistic/index.d.ts",
+            "import": "./dist/components/statistic/index.js"
         },
         "./stepper": {
             "types": "./dist/components/stepper/index.d.ts",
@@ -546,6 +554,7 @@
         "check:deprecated:check": "tsx scripts/check-deprecated-utilities.ts --check-baseline",
         "check:deprecated:update": "tsx scripts/check-deprecated-utilities.ts --update-baseline",
         "typecheck": "pnpm prebuild:scan && pnpm prebuild:component-index && pnpm prebuild:exports && tsx scripts/check-twmerge-colors.ts && vue-tsc --noEmit",
+        "test:types": "vue-tsc --project test-d/consumer/tsconfig.json --noEmit",
         "lint": "pnpm prebuild:scan && pnpm prebuild:component-index && pnpm prebuild:exports && eslint src",
         "test": "vitest run",
         "test:browser": "vitest run --config vitest.browser.config.ts",
@@ -559,8 +568,9 @@
         "size:why": "size-limit --why",
         "check:isolation": "tsx scripts/check-bundle-isolation.ts",
         "docs:api": "typedoc",
-        "docs:api:full": "npx tsx scripts/generate-api-docs.ts",
-        "docs:api:vue": "npx tsx scripts/generate-api-docs.ts --skip-typedoc"
+        "docs:api:full": "tsx scripts/generate-api-docs.ts",
+        "docs:api:vue": "tsx scripts/generate-api-docs.ts --skip-typedoc",
+        "docs:manifest": "tsx scripts/generate-api-docs.ts --manifest-only --skip-typedoc"
     },
     "size-limit": [
         {

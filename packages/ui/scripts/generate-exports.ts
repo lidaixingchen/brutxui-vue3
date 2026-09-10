@@ -229,7 +229,7 @@ const SKIP_MAIN_ENTRY_COMPONENTS: Record<string, string> = {
     message: '命令式单例内部组件（useMessage 自动挂载），文档化用法为函数式 API',
 }
 
-function getCoveredMainEntryComponents(indexSrc: string): Set<string> {
+function getCoveredMainEntryEntities(indexSrc: string): { components: Set<string>; composables: Set<string> } {
     const sourceFile = ts.createSourceFile(
         'index.ts',
         indexSrc,
@@ -238,7 +238,8 @@ function getCoveredMainEntryComponents(indexSrc: string): Set<string> {
         ts.ScriptKind.TS
     )
 
-    const covered = new Set<string>()
+    const components = new Set<string>()
+    const composables = new Set<string>()
 
     for (const stmt of sourceFile.statements) {
         if (!ts.isExportDeclaration(stmt)) continue
@@ -255,38 +256,61 @@ function getCoveredMainEntryComponents(indexSrc: string): Set<string> {
 
             // 仅整目录 barrel、index 或 .vue 组件文件重导出算组件覆盖；子路径（如 variants .ts）不算
             if (parts.length === 1) {
-                covered.add(compName)
+                components.add(compName)
             } else if (parts.length === 2 && (parts[1]?.endsWith('.vue') || parts[1]?.startsWith('index'))) {
-                covered.add(compName)
+                components.add(compName)
+            }
+        } else if (specifier.startsWith('./composables/')) {
+            const rel = specifier.slice('./composables/'.length)
+            const name = rel.replace(/\.ts$/, '')
+            if (name) {
+                composables.add(name)
             }
         }
     }
 
-    return covered
+    return { components, composables }
 }
 
 function verifyMainEntryCoverage(manifest: ExportsManifest): void {
     const indexPath = resolve(PACKAGE_ROOT, 'src', 'index.ts')
     const indexSrc = readFileSync(indexPath, 'utf-8')
-    const covered = getCoveredMainEntryComponents(indexSrc)
-    const missing: string[] = []
+    const { components, composables } = getCoveredMainEntryEntities(indexSrc)
+    const missingComponents: string[] = []
 
     for (const component of manifest.components) {
         if (component in SKIP_MAIN_ENTRY_COMPONENTS) continue
-        if (!covered.has(component)) {
-            missing.push(component)
+        if (!components.has(component)) {
+            missingComponents.push(component)
         }
     }
 
-    if (missing.length > 0) {
+    if (missingComponents.length > 0) {
         throw new Error(
-            `components missing from main entry src/index.ts (${missing.length}):\n` +
-            missing.map((m) => `  - ${m}`).join('\n') +
+            `components missing from main entry src/index.ts (${missingComponents.length}):\n` +
+            missingComponents.map((m) => `  - ${m}`).join('\n') +
             '\nAdd a re-export in src/index.ts, or register in SKIP_MAIN_ENTRY_COMPONENTS with justification.',
         )
     }
+
+    const missingComposables: string[] = []
+    for (const composable of manifest.composables) {
+        const name = composable.replace(/\.ts$/, '')
+        if (!composables.has(name)) {
+            missingComposables.push(name)
+        }
+    }
+
+    if (missingComposables.length > 0) {
+        throw new Error(
+            `composables missing from main entry src/index.ts (${missingComposables.length}):\n` +
+            missingComposables.map((m) => `  - ${m}`).join('\n') +
+            '\nAdd a re-export in src/index.ts.',
+        )
+    }
+
     const coveredCount = manifest.components.length - Object.keys(SKIP_MAIN_ENTRY_COMPONENTS).length
-    console.log(`✓ All ${coveredCount} required manifest components re-exported from src/index.ts`)
+    console.log(`✓ All ${coveredCount} required manifest components and ${manifest.composables.length} composables re-exported from src/index.ts`)
 }
 
 /** 与 prebuild-scan.ts 保持一致的采集规则：components 目录全量（排除隐藏/测试目录），
