@@ -27,7 +27,7 @@ jobs:
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
-                  fetch-depth: 1 # 发布门禁不需要 git 历史；gh release --generate-notes 走 API
+                  fetch-depth: 1 # 发布门禁不需要 git 历史；extract-release-notes 直接从 CHANGELOG.md 读取
 
             - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
 
@@ -98,6 +98,11 @@ jobs:
                     echo "无同名 Draft release，跳过"
                   fi
 
+            - name: Extract Release Notes from CHANGELOG
+              env:
+                  TAG: ${{ github.ref_name }}
+              run: node scripts/release/extract-release-notes.mjs --tag "$TAG" --out "${{ runner.temp }}/release-notes.md"
+
             - name: Create GitHub Release
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -105,8 +110,10 @@ jobs:
               run: |
                   gh release create "$TAG" \
                       --title "Release $TAG" \
-                      --generate-notes \
-                  || gh release edit "$TAG" --title "Release $TAG"
+                      --notes-file "${{ runner.temp }}/release-notes.md" \
+                  || gh release edit "$TAG" \
+                      --title "Release $TAG" \
+                      --notes-file "${{ runner.temp }}/release-notes.md"
 
             # 上传前校验：产物齐全（index.json / registry-manifest.json / registry-sbom.json）、
             # 数量与 index.json 的 items 派生一致（排除本地可能遗留的 deps.json）、

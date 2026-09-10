@@ -10,7 +10,7 @@
 1. **发布门禁**：`turbo run build test typecheck lint`（test 依赖 build 自动等待）
 2. **changeset 消费校验**：`.changeset/` 下不得残留未消费 changeset（否则报错）
 3. **生成物一致性门禁**：`git diff --exit-code` 校验 `packages/ui/registry-manifest.json`、`packages/ui/src/styles.css` 与 commit 一致（registry 产物发布时构建、不入库，不在此列）
-4. **创建/更新 GitHub Release**（`gh release create|edit`，幂等可重跑）
+4. **提取与同步 GitHub Release**：运行 `scripts/release/extract-release-notes.mjs` 从 `CHANGELOG.md`（或历史归档）提取当前版本的结构化更新日志，并在末尾保留 Full Changelog 对比链接，通过 `gh release create|edit --notes-file` 幂等写入 Release 描述
 5. **上传 registry 产物**为 Release 资产（扁平命名，可寻址 `releases/latest/download/{name}.json`，重跑 `--clobber` 覆盖并清理已删除的旧资产）
 6. **发布 npm**：`pnpm publish`（provenance），版本已存在时由 `EPUBLISHCONFLICT` 幂等跳过
 
@@ -63,6 +63,10 @@ Breaking Change 标记方式：
 - 该脚本仅维护根 `CHANGELOG.md`；各包 CHANGELOG 仍由 changeset 在 `pnpm version-packages` 时生成
 - dependabot 等 bot 的 PR body 默认会被忽略（脚本只取 subject + body，不展开多行表格）
 - `pnpm changelog:dry` 可干跑预览（不写文件）；`--from` / `--version` / `--date` / `--scope` 可显式指定参数
+
+## GitHub 发行版描述（Release Notes）同步
+
+发布时通过 [scripts/release/extract-release-notes.mjs](../../scripts/release/extract-release-notes.mjs) 将 `CHANGELOG.md`（若已归档则回退至 `apps/docs/changelog/`）中对应版本的结构化变更日志提取为独立 Markdown 文件，并在末尾追加 `**Full Changelog**: https://github.com/.../compare/...`。在 CI (`publish.yml`) 中通过 `gh release create|edit --notes-file` 同步至 GitHub Release 页面，保证单一事实源。
 
 ## CHANGELOG 归档机制
 
