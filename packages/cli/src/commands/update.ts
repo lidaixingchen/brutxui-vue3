@@ -10,7 +10,6 @@ import {
     mergeDryRun,
     withAuditLog,
     ProjectContext,
-    getItem,
     computeInstalledContentHash,
     updateInstalledComponents,
     DEFAULT_REGISTRY_URL,
@@ -286,7 +285,11 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
     try {
         for (const componentName of selected) {
             const registrySource = options.registry ?? manifest?.components[componentName]?.registrySource;
-            const remoteItem = await getItem(componentName, registrySource, useCache, context.fs);
+            const client = context.getRegistryClient({
+                sources: registrySource ? [registrySource] : undefined,
+                useCache,
+            });
+            const remoteItem = await client.fetchItem(componentName);
 
             const { plan, filesWritten } = await mergeExecutor.planAndExecute(
                 context,

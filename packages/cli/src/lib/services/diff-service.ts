@@ -8,7 +8,6 @@ import type {
     InstalledComponentManifest,
     RegistryItem,
 } from '../types.js';
-import { getItemFromSources } from '../registry.js';
 import { resolveRegistrySources } from '../registry-source.js';
 import { getInstalledComponentNames } from '../installed-components.js';
 import { REGISTRY_PATH_PREFIXES } from '../constants.js';
@@ -139,10 +138,11 @@ export async function diffComponent(
     let registryItem: RegistryItem | null;
     let registryError: Error | null = null;
 
-    const sources = resolveRegistrySources(config, registryOverride);
+    const client = registryOverride
+        ? context.getRegistryClient({ sources: resolveRegistrySources(config, registryOverride) })
+        : context.getRegistryClient();
     try {
-        const { item } = await getItemFromSources(componentName, sources, shouldCache);
-        registryItem = item;
+        registryItem = await client.fetchItem(componentName, { useCache: shouldCache });
     } catch (error) {
         registryItem = null;
         registryError = error instanceof Error ? error : new Error(String(error));

@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import type { BrutalistConfig, ListOptions, InstalledComponentInfo } from '../lib/types.js';
 import { readConfigSafe, CliError, getInstalledComponentInfos, withOfflineScope, resolveRegistrySources } from '../lib/index.js';
-import { getItemFromSources } from '../lib/registry.js';
+import { RegistryClient } from '../lib/registry-client.js';
 import { logger } from '../lib/logger.js';
 
 async function attachUpdateInfo(
@@ -11,6 +11,7 @@ async function attachUpdateInfo(
     useCache: boolean,
 ): Promise<InstalledComponentInfo[]> {
     const sources = resolveRegistrySources(config, registryOverride);
+    const client = new RegistryClient({ sources, useCache });
 
     return Promise.all(infos.map(async (info) => {
         // 显式请求 --check-updates 但缺少本地 integrity（旧版本/手工编辑的 manifest）：
@@ -23,7 +24,7 @@ async function attachUpdateInfo(
         }
 
         try {
-            const { item: latest } = await getItemFromSources(info.name, sources, useCache);
+            const latest = await client.fetchItem(info.name, { useCache });
             // 远端项缺失 integrity 时不能比较：显式判空，避免恒为"可更新"的误判
             if (!latest.integrity) {
                 return {

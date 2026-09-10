@@ -1,11 +1,11 @@
 import path from 'path';
 import type { AddOptions, BrutalistConfig, RegistryItem } from '../types.js';
 import { UTILS_TEMPLATE } from '../constants.js';
-import { resolveDeps } from '../registry.js';
 import { ProjectContext } from '../project-context.js';
 import { FileTransaction } from '../file-transaction.js';
 import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
 import { MergeExecutor } from '../merge/merge-executor.js';
+import { RegistryClient } from '../registry-client.js';
 
 export interface ComponentResolutionResult {
     items: RegistryItem[];
@@ -47,8 +47,6 @@ export interface ComponentFileWriteFailure {
     rollbackCount: number;
 }
 
-import { RegistryClient } from '../registry-client.js';
-
 export async function resolveComponents(
     components: string[],
     registry?: string,
@@ -56,31 +54,20 @@ export async function resolveComponents(
     sources?: string[],
     client?: RegistryClient,
 ): Promise<ComponentResolutionResult> {
-    if (client) {
-        const result = await client.resolveDependencies(components, {
-            sourceOverride: registry,
-            useCache,
-        });
+    const effectiveClient = client ?? new RegistryClient({
+        sources,
+        useCache,
+    });
 
-        return {
-            items: [...result.items],
-            dependencies: [...result.dependencies],
-            registrySources: Object.fromEntries(result.hitSources),
-        };
-    }
-
-    const hitSources = new Map<string, string>();
-    const items = await resolveDeps(components, registry, useCache, sources, hitSources);
-    const dependencies = new Set<string>();
-
-    for (const item of items) {
-        item.dependencies?.forEach(dep => dependencies.add(dep));
-    }
+    const result = await effectiveClient.resolve(components, {
+        sourceOverride: registry,
+        useCache,
+    });
 
     return {
-        items,
-        dependencies: Array.from(dependencies),
-        registrySources: Object.fromEntries(hitSources),
+        items: [...result.items],
+        dependencies: [...result.npmDependencies],
+        registrySources: Object.fromEntries(result.hitSources),
     };
 }
 

@@ -1,6 +1,5 @@
 import path from 'path';
 import type { BrutxManifest, RegistryItem } from '../types.js';
-import { getItem } from '../registry.js';
 import { resolveRegistrySources } from '../registry-source.js';
 import { removeInstalledComponents } from '../manifest.js';
 import { getInstalledComponentNames } from '../installed-components.js';
@@ -453,7 +452,10 @@ async function getDependents(
             try {
                 const configuredSources = resolveRegistrySources(context.requireConfig(), manifest?.components[other]?.registrySource);
                 const effectiveSource = manifest?.components[other]?.registrySource ?? configuredSources[0];
-                const otherItem: RegistryItem = await getItem(other, effectiveSource, useCache);
+                const otherItem: RegistryItem = await context.getRegistryClient().fetchItem(other, {
+                    sourceOverride: effectiveSource,
+                    useCache,
+                });
                 if (otherItem.registryDependencies?.includes(name)) {
                     if (!dependents.has(name)) {
                         dependents.set(name, []);

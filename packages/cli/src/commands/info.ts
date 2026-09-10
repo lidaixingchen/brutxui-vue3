@@ -3,7 +3,7 @@ const defaultDiskFs = new DiskFileSystemAdapter();
 import path from 'path';
 import chalk from 'chalk';
 import type { BrutalistConfig, InfoOptions, RegistryItem } from '../lib/types.js';
-import { getItemFromSources } from '../lib/registry.js';
+import { RegistryClient, isComponentNotFoundError } from '../lib/registry-client.js';
 import { readConfigSafe, CliError, resolveRegistrySources, withOfflineScope } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
 import { logger } from '../lib/logger.js';
@@ -81,26 +81,6 @@ async function getLocalFiles(cwd: string, config: BrutalistConfig, componentName
     }
 }
 
-/**
- * 判断注册表错误是否为"组件不存在"（HTTP 404 / 本地 registry 文件缺失）。
- * 按 COMPONENT_NOT_FOUND 错误码精确判定（registry 在 404/本地缺失时透出该错误码），
- * 沿 cause 链逐层匹配（fetchWithSources 会把各源错误聚合，真实原因在 cause 链上）。
- */
-function isComponentNotFoundError(error: Error | null): boolean {
-    let current: unknown = error;
-    while (current instanceof Error) {
-        if (current instanceof CliError && current.code === 'COMPONENT_NOT_FOUND') {
-            return true;
-        }
-        const cause = (current as Error & { cause?: unknown }).cause;
-        if (!(cause instanceof Error) || cause === current) {
-            break;
-        }
-        current = cause;
-    }
-    return false;
-}
-
 async function getComponentInfo(
     cwd: string,
     config: BrutalistConfig,
@@ -125,10 +105,15 @@ async function getComponentInfo(
     let registryItem: RegistryItem | null;
     let registryFetchError: Error | null = null;
 
+    const client = new RegistryClient({
+        sources,
+        fsAdapter: defaultDiskFs,
+    });
+
     try {
-        const result = await getItemFromSources(componentName, sources);
-        registryItem = result.item;
-        source = result.source;
+        const item = await client.fetchItem(componentName);
+        registryItem = item;
+        source = client.getLastHitSource(componentName) ?? sources[0];
     } catch (error) {
         registryItem = null;
         registryFetchError = error instanceof Error ? error : new Error(String(error));
