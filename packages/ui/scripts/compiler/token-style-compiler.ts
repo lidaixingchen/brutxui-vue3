@@ -47,6 +47,8 @@ interface PatternUtilityDefinition {
     nestedRules?: Array<{ selector: string; declarations: string[] }>;
 }
 
+const HAZARD_PATTERN: string = 'repeating-linear-gradient(-45deg, var(--brutal-accent, #FFE66D), var(--brutal-accent, #FFE66D) 10px, var(--brutal-border-color, #000000) 10px, var(--brutal-border-color, #000000) 20px)';
+
 const PATTERN_UTILITIES: PatternUtilityDefinition[] = [
     {
         name: 'bg-pattern-dots',
@@ -68,7 +70,18 @@ const PATTERN_UTILITIES: PatternUtilityDefinition[] = [
         name: 'bg-pattern-hazard',
         comment: '警戒斜纹：工业警示柱、施工重型机械',
         declarations: [
-            'background-image: repeating-linear-gradient(-45deg, var(--brutal-accent, #FFE66D), var(--brutal-accent, #FFE66D) 10px, var(--brutal-border-color, #000000) 10px, var(--brutal-border-color, #000000) 20px);',
+            `background-image: ${HAZARD_PATTERN};`,
+        ],
+    },
+    {
+        name: 'button-hazard-label',
+        comment: '警戒按钮：中央纯色文字底板与外围斜纹',
+        declarations: [
+            `background-image: linear-gradient(var(--brutal-yellow, ${BASE_THEME.light.yellow}), var(--brutal-yellow, ${BASE_THEME.light.yellow})), ${HAZARD_PATTERN};`,
+            'background-size: calc(100% - var(--spacing) * 2) calc(100% - var(--spacing) * 2), 100% 100%;',
+            'background-position: center;',
+            'background-repeat: no-repeat;',
+            'background-origin: padding-box;',
         ],
     },
     {

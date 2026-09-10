@@ -125,13 +125,13 @@ describe('SHADOW_DEFINITIONS stacked 档位', () => {
         expect(value).not.toMatch(/(?:^|,\s*)\d+px\s+\d+px\s+0px/);
     });
 
-    it('沿用 sm/base/lg 系数族：内层 0.5x、中层 1x、外层 1.5x', () => {
+    it('三层偏移比例：内层 0.25x、中层 1x、外层 1.5x', () => {
         const xMultipliers = layers.map(layer =>
             layer
                 .filter(token => /^(?:calc\()?var\(--brutal-shadow-offset-x/.test(token))
                 .map(token => /calc\(var\(--brutal-shadow-offset-x,[^)]*\)\s*\*\s*([\d.]+)\)/.exec(token)?.[1] ?? '1'),
         );
-        expect(xMultipliers[0]).toEqual(['0.5']);
+        expect(xMultipliers[0]).toEqual(['0.25']);
         expect(xMultipliers[1]).toEqual(['1']);
         expect(xMultipliers[2]).toEqual(['1.5']);
     });

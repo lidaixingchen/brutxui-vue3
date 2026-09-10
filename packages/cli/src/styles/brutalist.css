@@ -57,7 +57,7 @@
     --shadow-brutal-primary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B);
     --shadow-brutal-secondary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary, #4ECDC4);
     --shadow-brutal-destructive: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px color-mix(in srgb, var(--brutal-destructive, #EF476F) 30%, transparent);
-    --shadow-brutal-stacked: calc(var(--brutal-shadow-offset-x, 4px) * 0.5) calc(var(--brutal-shadow-offset-y, 4px) * 0.5) 0px 0px var(--brutal-border-color, #000000), var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B), calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-border-color, #000000);
+    --shadow-brutal-stacked: calc(var(--brutal-shadow-offset-x, 4px) * 0.25) calc(var(--brutal-shadow-offset-y, 4px) * 0.25) 0px 0px var(--brutal-border-color, #000000), var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B), calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-border-color, #000000);
     --shadow-brutal-inset: inset calc(var(--brutal-shadow-offset-x, 4px) * 0.5) calc(var(--brutal-shadow-offset-y, 4px) * 0.5) 0px 0px var(--brutal-border-color, #000000);
 
     /* Mechanical motion easing curves */
@@ -126,7 +126,7 @@
     --shadow-brutal-primary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B);
     --shadow-brutal-secondary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary, #4ECDC4);
     --shadow-brutal-destructive: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px color-mix(in srgb, var(--brutal-destructive, #EF476F) 30%, transparent);
-    --shadow-brutal-stacked: calc(var(--brutal-shadow-offset-x, 4px) * 0.5) calc(var(--brutal-shadow-offset-y, 4px) * 0.5) 0px 0px var(--brutal-border-color, #000000), var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B), calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-border-color, #000000);
+    --shadow-brutal-stacked: calc(var(--brutal-shadow-offset-x, 4px) * 0.25) calc(var(--brutal-shadow-offset-y, 4px) * 0.25) 0px 0px var(--brutal-border-color, #000000), var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B), calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-border-color, #000000);
     --shadow-brutal-inset: inset calc(var(--brutal-shadow-offset-x, 4px) * 0.5) calc(var(--brutal-shadow-offset-y, 4px) * 0.5) 0px 0px var(--brutal-border-color, #000000);
     --brutal-primary-subtle: color-mix(in srgb, var(--brutal-primary, #FF6B6B) 12%, var(--brutal-bg, #ffffff));
     --brutal-secondary-subtle: color-mix(in srgb, var(--brutal-secondary, #4ECDC4) 12%, var(--brutal-bg, #ffffff));
@@ -438,6 +438,15 @@
 /* 警戒斜纹：工业警示柱、施工重型机械 */
 .bg-pattern-hazard {
     background-image: repeating-linear-gradient(-45deg, var(--brutal-accent, #FFE66D), var(--brutal-accent, #FFE66D) 10px, var(--brutal-border-color, #000000) 10px, var(--brutal-border-color, #000000) 20px);
+}
+
+/* 警戒按钮：中央纯色文字底板与外围斜纹 */
+.button-hazard-label {
+    background-image: linear-gradient(var(--brutal-yellow, #FFE66D), var(--brutal-yellow, #FFE66D)), repeating-linear-gradient(-45deg, var(--brutal-accent, #FFE66D), var(--brutal-accent, #FFE66D) 10px, var(--brutal-border-color, #000000) 10px, var(--brutal-border-color, #000000) 20px);
+    background-size: calc(100% - var(--spacing) * 2) calc(100% - var(--spacing) * 2), 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-origin: padding-box;
 }
 
 /* 细斜线填充：工程制图剖面线、表头底纹 */

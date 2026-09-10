@@ -101,9 +101,8 @@ export const baseButtonVariants = {
                 brutalPressStacked,
             ],
             hazard: [
-                // 警戒斜纹自带黄黑底色语义，前景锁定 fg 保证纹理上可读
-                'bg-pattern-hazard',
-                'text-brutal-fg',
+                'button-hazard-label bg-brutal-yellow',
+                'text-brutal-black hover:text-brutal-black',
             ],
             ticket: [
                 // 票据撕口：左右中缝半圆缺口（工具类经 prebuild:tokens 双端分发）

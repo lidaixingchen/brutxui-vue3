@@ -65,7 +65,7 @@
 - **合法例外**：
   - *标度外偏移逃生口*：偏移不在 sm/base/lg/xl 档位时，使用 `shadow-brutal [--brutal-shadow-offset-x:Npx] [--brutal-shadow-offset-y:Npx]` 本地覆盖；若手写偏移数字，颜色必须走 `var(--brutal-shadow-color, #000000)` 以跟随主题。
   - *危险态半透明红阴影*：统一使用 `shadow-brutal-destructive`（引用 `--brutal-destructive` 30% 透明 `color-mix` 派生，随主题预设联动）。
-- **stacked 多层彩虹投影**：三层刻度沿用 sm/base/lg 系数族（0.5x/1x/1.5x），全部经 `--brutal-shadow-offset-x/y` 运行时变量 calc 派生、随主题偏移覆盖联动；三明治配色仅中间层引用 `--brutal-primary`，两侧边框层恒为 `--brutal-border-color`，亮暗预设下层次对比恒定。用于核心 CTA 与推荐卡等需强实体突起的场景，禁止大面积滥用。
+- **stacked 多层彩虹投影**：三层刻度为 0.25x/1x/1.5x（默认偏移 1px/4px/6px），近层采用较细刻度以平衡与边框相连后的视觉厚度；全部经 `--brutal-shadow-offset-x/y` 运行时变量 calc 派生、随主题偏移覆盖联动；三明治配色仅中间层引用 `--brutal-primary`，两侧边框层恒为 `--brutal-border-color`，亮暗预设下层次对比恒定。用于核心 CTA 与推荐卡等需强实体突起的场景，禁止大面积滥用。
 - **inset 冲压凹槽**：凹槽深度取 0.5x 刻度与 sm 档系数同源派生。专用于表达「冲压进外壳」的物理纵深语义：输入类控件内槽、Switch/Slider 轨道、Progress 底槽、Kbd 按压态；严禁作为普通容器的默认阴影形态。
 - **防回潮守卫**：源码内新增 `shadow-[*rgba*]` 任意值由 CI 门禁 `check:deprecated:check` 拦截；新增档位经 `SHADOW_DEFINITIONS` 单一数据源注册后由生成器同步至 CLI 直挂区，完备性由 `check:tokens` 门禁校验。
 

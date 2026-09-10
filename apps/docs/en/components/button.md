@@ -164,7 +164,7 @@ The `flair` dimension composes orthogonally with color variants, offering three 
 | ---- | ---- |
 | `none` | Default; outputs no extra decoration classes |
 | `stacked` | Multi-layer rainbow hard shadow with matched 1.5x press displacement |
-| `hazard` | Yellow-black warning stripes; foreground is locked for readability on the texture |
+| `hazard` | Warning stripes surround a solid yellow label with black text, preserving text contrast on hover |
 | `ticket` | Ticket tear — semicircle notches at the left/right midpoints |
 
 ```vue

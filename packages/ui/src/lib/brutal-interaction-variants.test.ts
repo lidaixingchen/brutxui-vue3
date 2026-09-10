@@ -42,10 +42,13 @@ describe('buttonVariants flair 装饰形态变体', () => {
         expect(classTokens).not.toContain('active:translate-y-[var(--brutal-shadow-offset-y,4px)]')
     })
 
-    it('hazard 应用警戒斜纹纹理并以前景令牌保证可读性', () => {
-        const classTokens = renderButtonClasses({ flair: 'hazard' })
-        expect(classTokens).toContain('bg-pattern-hazard')
-        expect(classTokens).toContain('text-brutal-fg')
+    it.each(buttonVariantOptions)('hazard 与 %s 组合时使用黄色底板并在悬停时保持黑字', (variant: ButtonVariant): void => {
+        const classTokens: string[] = renderButtonClasses({ variant, flair: 'hazard' })
+        expect(classTokens).toContain('button-hazard-label')
+        expect(classTokens).toContain('bg-brutal-yellow')
+        expect(classTokens).toContain('text-brutal-black')
+        expect(classTokens).toContain('hover:text-brutal-black')
+        expect(classTokens).not.toContain('hover:text-brutal-bg')
     })
 
     it('ticket 应用票据撕口工具类', () => {
@@ -55,7 +58,7 @@ describe('buttonVariants flair 装饰形态变体', () => {
     it('默认不输出任何装饰形态类（DOM 零污染）', () => {
         const out = renderButtonClasses({})
         expect(out).not.toContain('shadow-brutal-stacked')
-        expect(out).not.toContain('bg-pattern-hazard')
+        expect(out).not.toContain('button-hazard-label')
         expect(out).not.toContain('button-ticket-notch')
     })
 
