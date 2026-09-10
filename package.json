@@ -26,6 +26,7 @@
         "check:deps": "node scripts/scan-phantom-deps.mjs",
         "check:docs": "node scripts/docs/check-docs-all.mjs",
         "check:docs:fix": "node scripts/docs/check-docs-all.mjs --fix",
+        "doc:archive": "node scripts/docs/archive-plan.mjs",
         "check:i18n": "node scripts/check-i18n.mjs --report",
         "check:i18n:strict": "node scripts/check-i18n.mjs",
         "commit:check": "node scripts/check-last-commit.mjs",

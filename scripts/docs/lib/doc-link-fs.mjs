@@ -44,6 +44,15 @@ export class DiskFileSystemAdapter {
     }
   }
 
+  async rename(oldPath, newPath) {
+    await fsp.mkdir(path.dirname(newPath), { recursive: true })
+    await fsp.rename(oldPath, newPath)
+  }
+
+  async unlink(filePath) {
+    await fsp.unlink(filePath)
+  }
+
   /**
    * 原生物理路径解析：穿透所有中间目录与文件名，返回操作系统注册的真实大小写形式（剥离 Win32 扩展前缀）
    */
@@ -158,6 +167,17 @@ export class MemoryFileSystemAdapter {
       isDirectory: () => node.isDir,
       isFile: () => !node.isDir,
     }
+  }
+
+  async unlink(filePath) {
+    const key = this.normalizeKey(filePath)
+    this.nodes.delete(key)
+  }
+
+  async rename(oldPath, newPath) {
+    const content = await this.readFile(oldPath)
+    await this.writeFile(newPath, content)
+    await this.unlink(oldPath)
   }
 
   /**

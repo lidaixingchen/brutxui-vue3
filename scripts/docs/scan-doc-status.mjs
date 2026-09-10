@@ -140,6 +140,13 @@ function main() {
       errors.push({ file: rel, error: '缺失 [日期] 字段' })
     }
 
+    if (fm.status === 'done' && !rel.startsWith('docs/archive')) {
+      errors.push({
+        file: rel,
+        error: '方案状态已为 [done]，但仍滞留在 docs/plans/ 尚未归档。请运行 pnpm doc:archive 一键归档并同步知识地图',
+      })
+    }
+
     items.push({
       file: rel,
       fileName: file.split(/[\\/]/).pop(),
