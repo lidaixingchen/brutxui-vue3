@@ -149,7 +149,7 @@ onBeforeUnmount(() => {
 })
 
 const rootClasses = computed(() =>
-    cn(virtualScrollRootVariants({ size: props.size }), props.class)
+    cn(virtualScrollRootVariants({ size: props.size, variant: props.variant }), props.class)
 )
 
 function scrollToIndex(index: number) {

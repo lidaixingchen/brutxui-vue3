@@ -11,6 +11,11 @@ export const virtualScrollRootVariants = cva(
     ],
     {
         variants: {
+            variant: {
+                default: '',
+                striped: 'bg-brutal-bg',
+                bordered: '',
+            },
             size: {
                 sm: 'max-h-64',
                 default: 'max-h-96',
@@ -21,6 +26,7 @@ export const virtualScrollRootVariants = cva(
             },
         },
         defaultVariants: {
+            variant: 'default',
             size: 'default',
         },
     }
