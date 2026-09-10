@@ -28,6 +28,7 @@ export class FileTransaction {
 
     async ensureDir(dirPath: string): Promise<void> {
         this.assertActive();
+        await assertSafePath(dirPath, this.projectCwd, this.fs);
         await this.snapshotMissingAncestors(dirPath);
         await this.fs.ensureDir(dirPath);
     }
@@ -58,6 +59,7 @@ export class FileTransaction {
 
     async remove(targetPath: string, options: FsRemoveOptions = {}): Promise<void> {
         this.assertActive();
+        await assertSafePath(targetPath, this.projectCwd, this.fs);
         await this.snapshot(targetPath);
         await this.fs.remove(targetPath, options);
     }

@@ -135,4 +135,12 @@ describe('FileTransaction with MemoryFS', () => {
         await expect(transaction.rollback()).resolves.toEqual([]);
         expect(await fs.readFile(existingPath, 'utf-8')).toBe('a');
     });
+
+    it('rejects ensureDir and remove outside project directory', async () => {
+        const transaction = new FileTransaction(fs, projectCwd);
+        const outsidePath = path.join(projectCwd, '..', 'evil-dir');
+
+        await expect(transaction.ensureDir(outsidePath)).rejects.toThrow(/outside the project directory/);
+        await expect(transaction.remove(outsidePath)).rejects.toThrow(/outside the project directory/);
+    });
 });
