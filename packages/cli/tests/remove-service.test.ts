@@ -2,24 +2,14 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
-import * as registry from '../src/lib/registry.js';
 import type { BrutalistConfig, RegistryItem } from '../src/lib/types.js';
+import { RegistryClient } from '../src/lib/registry-client.js';
 import { readManifest, updateInstalledComponents } from '../src/lib/manifest.js';
 import {
     prepareRemoveComponents,
     removeComponents,
 } from '../src/lib/services/remove-service.js';
 import { ProjectContext } from '../src/lib/project-context.js';
-
-vi.mock('../src/lib/registry.js', async (importOriginal) => {
-    const original = await importOriginal<typeof registry>();
-    return {
-        ...original,
-        getItem: vi.fn(),
-    };
-});
-
-const mockedGetItem = vi.mocked(registry.getItem);
 
 const defaultConfig: BrutalistConfig = {
     $schema: 'https://example.com/schema.json',
@@ -112,7 +102,7 @@ describe('remove service', () => {
     beforeEach(async () => {
         vi.clearAllMocks();
         tmpDir = await createTmpProject();
-        mockedGetItem.mockImplementation(async (name: string) => {
+        vi.spyOn(RegistryClient.prototype, 'fetchItem').mockImplementation(async (name: string) => {
             if (name === 'card') return makeRegistryItem('card', ['button']);
             if (name === 'button') return makeRegistryItem('button');
             throw new Error(`Unknown component: ${name}`);

@@ -4,9 +4,9 @@ import os from 'os';
 import path from 'path';
 import type { BrutalistConfig, ListOptions, InstalledComponentInfo } from '../src/lib/types.js';
 
-vi.mock('../src/lib/registry.js', async (importOriginal) => {
-    const actual = await importOriginal<typeof import('../src/lib/registry.js')>();
-    return { ...actual, readConfigSafe: vi.fn(), getItemFromSources: vi.fn() };
+vi.mock('../src/lib/config.js', async (importOriginal) => {
+    const actual = await importOriginal<typeof import('../src/lib/config.js')>();
+    return { ...actual, readConfigSafe: vi.fn() };
 });
 
 vi.mock('../src/lib/project.js', async (importOriginal) => {
@@ -14,14 +14,13 @@ vi.mock('../src/lib/project.js', async (importOriginal) => {
     return { ...actual, resolveAliasPath: vi.fn() };
 });
 
-import * as registry from '../src/lib/registry.js';
+import { readConfigSafe } from '../src/lib/config.js';
+import { RegistryClient } from '../src/lib/registry-client.js';
 import * as project from '../src/lib/project.js';
 import { list } from '../src/commands/list.js';
 import { CliError } from '../src/lib/error.js';
-import { DEFAULT_REGISTRY_SOURCES } from '../src/lib/constants.js';
 
-const mockedReadConfigSafe = vi.mocked(registry.readConfigSafe);
-const mockedGetItemFromSources = vi.mocked(registry.getItemFromSources);
+const mockedReadConfigSafe = vi.mocked(readConfigSafe);
 const mockedResolveAliasPath = vi.mocked(project.resolveAliasPath);
 
 function makeConfig(overrides: Partial<BrutalistConfig> = {}): BrutalistConfig {
@@ -58,7 +57,6 @@ describe('list command', () => {
     beforeEach(async () => {
         tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-list-'));
         mockedReadConfigSafe.mockReset();
-        mockedGetItemFromSources.mockReset();
         mockedResolveAliasPath.mockReset();
 
         mockedResolveAliasPath.mockImplementation(async (alias: string) => {
@@ -249,26 +247,23 @@ describe('list command', () => {
 
         it('checks manifest integrity against registry when requested', async () => {
             mockedReadConfigSafe.mockResolvedValue(makeConfig());
-            mockedGetItemFromSources.mockResolvedValue({
-                item: {
-                    name: 'button',
-                    type: 'registry:ui',
-                    title: 'Button',
-                    description: 'Button component',
-                    dependencies: [],
-                    registryDependencies: [],
-                    files: [
-                        {
-                            path: 'components/ui/button/Button.vue',
-                            content: '<template><button /></template>',
-                            type: 'registry:ui',
-                        },
-                    ],
-                    tailwind: {},
-                    cssVars: {},
-                    integrity: 'sha256-button-new',
-                },
-                source: 'https://example.test/registry',
+            const fetchItemSpy = vi.spyOn(RegistryClient.prototype, 'fetchItem').mockResolvedValue({
+                name: 'button',
+                type: 'registry:ui',
+                title: 'Button',
+                description: 'Button component',
+                dependencies: [],
+                registryDependencies: [],
+                files: [
+                    {
+                        path: 'components/ui/button/Button.vue',
+                        content: '<template><button /></template>',
+                        type: 'registry:ui',
+                    },
+                ],
+                tailwind: {},
+                cssVars: {},
+                integrity: 'sha256-button-new',
             });
 
             const buttonDir = path.join(tmpDir, 'src', 'components', 'button');
@@ -295,9 +290,90 @@ describe('list command', () => {
             const { parsed } = await captureListJson({ cwd: tmpDir, json: true, silent: true, checkUpdates: true });
             const button = parsed.find(c => c.name === 'button')!;
 
-            expect(mockedGetItemFromSources).toHaveBeenCalledWith('button', [...DEFAULT_REGISTRY_SOURCES], true);
+            expect(fetchItemSpy).toHaveBeenCalledWith('button', { useCache: true });
             expect(button.latestIntegrity).toBe('sha256-button-new');
             expect(button.updateAvailable).toBe(true);
+        });
+
+        it('handles missing local integrity during update check', async () => {
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+
+            const buttonDir = path.join(tmpDir, 'src', 'components', 'button');
+            await fs.ensureDir(buttonDir);
+            await fs.writeFile(path.join(buttonDir, 'Button.vue'), '<template><button /></template>');
+
+            const { parsed } = await captureListJson({ cwd: tmpDir, json: true, silent: true, checkUpdates: true });
+            const button = parsed.find(c => c.name === 'button')!;
+            expect(button.updateCheckError).toBe('missing installed integrity, cannot compare');
+        });
+
+        it('handles missing remote integrity during update check', async () => {
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+            vi.spyOn(RegistryClient.prototype, 'fetchItem').mockResolvedValue({
+                name: 'button',
+                type: 'registry:ui',
+                title: 'Button',
+                description: 'Button component',
+                dependencies: [],
+                registryDependencies: [],
+                files: [],
+                tailwind: {},
+                cssVars: {},
+                integrity: '',
+            });
+
+            const buttonDir = path.join(tmpDir, 'src', 'components', 'button');
+            await fs.ensureDir(buttonDir);
+            await fs.writeFile(path.join(buttonDir, 'Button.vue'), '<template><button /></template>');
+            const manifestPath = path.join(tmpDir, '.brutx', 'manifest.json');
+            await fs.ensureDir(path.dirname(manifestPath));
+            await fs.writeJson(manifestPath, {
+                version: 1,
+                components: {
+                    button: {
+                        name: 'button',
+                        registrySource: 'https://example.test/registry',
+                        integrity: 'sha256-button-old',
+                        installedAt: '2026-07-07T00:00:00.000Z',
+                        files: ['src/components/button/Button.vue'],
+                        dependencies: [],
+                        registryDependencies: [],
+                    },
+                },
+            });
+
+            const { parsed } = await captureListJson({ cwd: tmpDir, json: true, silent: true, checkUpdates: true });
+            const button = parsed.find(c => c.name === 'button')!;
+            expect(button.updateCheckError).toBe('registry item missing integrity');
+        });
+
+        it('handles remote fetch failure gracefully during update check', async () => {
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+            vi.spyOn(RegistryClient.prototype, 'fetchItem').mockRejectedValue(new Error('Connection timeout'));
+
+            const buttonDir = path.join(tmpDir, 'src', 'components', 'button');
+            await fs.ensureDir(buttonDir);
+            await fs.writeFile(path.join(buttonDir, 'Button.vue'), '<template><button /></template>');
+            const manifestPath = path.join(tmpDir, '.brutx', 'manifest.json');
+            await fs.ensureDir(path.dirname(manifestPath));
+            await fs.writeJson(manifestPath, {
+                version: 1,
+                components: {
+                    button: {
+                        name: 'button',
+                        registrySource: 'https://example.test/registry',
+                        integrity: 'sha256-button-old',
+                        installedAt: '2026-07-07T00:00:00.000Z',
+                        files: ['src/components/button/Button.vue'],
+                        dependencies: [],
+                        registryDependencies: [],
+                    },
+                },
+            });
+
+            const { parsed } = await captureListJson({ cwd: tmpDir, json: true, silent: true, checkUpdates: true });
+            const button = parsed.find(c => c.name === 'button')!;
+            expect(button.updateCheckError).toBe('Connection timeout');
         });
     });
 

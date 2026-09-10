@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
-import * as registry from '../src/lib/registry.js';
+import { RegistryClient } from '../src/lib/registry-client.js';
 import type { BrutalistConfig, RegistryItem, InstalledComponentManifest } from '../src/lib/types.js';
 import { updateInstalledComponents } from '../src/lib/manifest.js';
 import {
@@ -12,19 +12,10 @@ import {
 } from '../src/lib/services/diff-service.js';
 import { ProjectContext } from '../src/lib/project-context.js';
 
-vi.mock('../src/lib/registry.js', async (importOriginal) => {
-    const original = await importOriginal<typeof registry>();
-    return {
-        ...original,
-        getItemFromSources: vi.fn(),
-    };
-});
+let fetchItemSpy: ReturnType<typeof vi.spyOn>;
 
-const mockedGetItemFromSources = vi.mocked(registry.getItemFromSources);
-
-/** stub getItemFromSources：接受裸 item，包装为 { item, source }。 */
-function stubRegistryItem(item: RegistryItem, source = 'https://example.test/registry') {
-    mockedGetItemFromSources.mockResolvedValue({ item, source });
+function stubRegistryItem(item: RegistryItem) {
+    fetchItemSpy.mockResolvedValue(item);
 }
 
 const defaultConfig: BrutalistConfig = {
@@ -87,6 +78,7 @@ describe('diff service', () => {
 
     beforeEach(async () => {
         vi.clearAllMocks();
+        fetchItemSpy = vi.spyOn(RegistryClient.prototype, 'fetchItem');
         tmpDir = await createTmpProject();
     });
 
@@ -213,7 +205,7 @@ describe('diff service', () => {
             manifestEntry
         );
 
-        expect(mockedGetItemFromSources).toHaveBeenCalledWith('button', ['https://example.test/registry'], true);
+        expect(fetchItemSpy).toHaveBeenCalledWith('button', { useCache: true });
         expect(result).toMatchObject({
             installedIntegrity: 'sha256-old',
             latestIntegrity: 'sha256-new',
@@ -238,16 +230,13 @@ describe('diff service', () => {
                 files: [cardFile],
             },
         ]);
-        mockedGetItemFromSources.mockImplementation(async (name) => ({
-            item: makeRegistryItem(name, [
-                {
-                    path: `components/ui/${name}/${name === 'button' ? 'Button' : 'Card'}.vue`,
-                    content: `<template>${name}</template>\n`,
-                    type: 'registry:ui',
-                },
-            ], `sha256-${name}-new`),
-            source: `https://example.test/${name === 'button' ? 'a' : 'b'}`,
-        }));
+        fetchItemSpy.mockImplementation(async (name) => makeRegistryItem(name, [
+            {
+                path: `components/ui/${name}/${name === 'button' ? 'Button' : 'Card'}.vue`,
+                content: `<template>${name}</template>\n`,
+                type: 'registry:ui',
+            },
+        ], `sha256-${name}-new`));
 
         const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
         const installed = await getInstalledComponents(context);
@@ -270,12 +259,12 @@ describe('diff service', () => {
         expect(installed).toEqual(['button', 'card']);
         expect(results.map(result => result.component)).toEqual(['button', 'card']);
         expect(results.every(result => result.integrityStatus === 'outdated')).toBe(true);
-        expect(mockedGetItemFromSources).toHaveBeenCalledWith('button', ['https://example.test/a'], true);
-        expect(mockedGetItemFromSources).toHaveBeenCalledWith('card', ['https://example.test/b'], true);
+        expect(fetchItemSpy).toHaveBeenCalledWith('button', { useCache: true });
+        expect(fetchItemSpy).toHaveBeenCalledWith('card', { useCache: true });
     });
 
     it('returns registry-unreachable when registry lookup fails', async () => {
-        mockedGetItemFromSources.mockRejectedValue(new Error('not found'));
+        fetchItemSpy.mockRejectedValue(new Error('not found'));
 
         const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
         const result = await diffComponent(context, 'missing');

@@ -268,12 +268,13 @@ describe('RegistryClient Dependencies & Listing', () => {
             httpFetcher: mockFetcher,
         });
 
-        const result = await client.resolveDependencies(['combobox']);
+        const result = await client.resolve(['combobox']);
         expect(result.items.map(i => i.name)).toEqual(['button', 'popover', 'combobox']);
         expect(result.hitSources.get('button')).toBe('https://registry.example.com');
         expect(result.hitSources.get('combobox')).toBe('https://registry.example.com');
-        expect(result.dependencies).toEqual(['@floating-ui/dom', 'clsx', 'fast-deep-equal']);
-        expect(result.devDependencies).toEqual(['@types/fast-deep-equal']);
+        expect(result.npmDependencies).toEqual(['@floating-ui/dom', 'clsx', 'fast-deep-equal']);
+        expect(result.npmDevDependencies).toEqual(['@types/fast-deep-equal']);
+        expect(result.registryDependencies).toEqual(['button', 'popover']);
     });
 
     it('detects and prevents circular dependencies with diagnostic path', async () => {
@@ -293,7 +294,7 @@ describe('RegistryClient Dependencies & Listing', () => {
             httpFetcher: mockFetcher,
         });
 
-        await expect(client.resolveDependencies(['comp-a'])).rejects.toMatchObject({
+        await expect(client.resolve(['comp-a'])).rejects.toMatchObject({
             code: 'INVALID_REGISTRY',
             message: expect.stringContaining('Circular dependency detected'),
         });
@@ -363,6 +364,127 @@ describe('RegistryClient Dependencies & Listing', () => {
         expect(isRegistrySecurityError(pathError)).toBe(true);
         expect(isRegistrySecurityError(notFoundError)).toBe(false);
         expect(isRegistrySecurityError(regularError)).toBe(false);
+    });
+
+    it('resolves diamond dependencies concurrently without false circular dependency errors', async () => {
+        const itemD = createMockItem('d');
+        const itemB = createMockItem('b', { registryDependencies: ['d'] });
+        const itemC = createMockItem('c', { registryDependencies: ['d'] });
+        const itemA = createMockItem('a', { registryDependencies: ['b', 'c'] });
+
+        const mockFetcher = vi.fn(async (url: string) => {
+            if (url.endsWith('/a.json')) return new Response(JSON.stringify(itemA), { status: 200 });
+            if (url.endsWith('/b.json')) return new Response(JSON.stringify(itemB), { status: 200 });
+            if (url.endsWith('/c.json')) return new Response(JSON.stringify(itemC), { status: 200 });
+            if (url.endsWith('/d.json')) return new Response(JSON.stringify(itemD), { status: 200 });
+            return new Response('Not Found', { status: 404 });
+        });
+
+        const client = new RegistryClient({
+            sources: ['https://registry.example.com'],
+            fsAdapter: memoryFs,
+            cacheStorage,
+            httpFetcher: mockFetcher,
+        });
+
+        const result = await client.resolve(['a']);
+        expect(result.items.map(i => i.name)).toEqual(['d', 'b', 'c', 'a']);
+    });
+
+    it('deduplicates inflight requests between concurrent fetchItem and resolve', async () => {
+        const item = createMockItem('shared-comp');
+        let callCount = 0;
+        const mockFetcher = vi.fn(async (url: string) => {
+            if (url.endsWith('/shared-comp.json')) {
+                callCount++;
+                return new Response(JSON.stringify(item), { status: 200 });
+            }
+            return new Response('Not Found', { status: 404 });
+        });
+
+        const client = new RegistryClient({
+            sources: ['https://registry.example.com'],
+            fsAdapter: memoryFs,
+            cacheStorage,
+            httpFetcher: mockFetcher,
+        });
+
+        const [fetched, resolved] = await Promise.all([
+            client.fetchItem('shared-comp'),
+            client.resolve(['shared-comp']),
+        ]);
+
+        expect(fetched.name).toBe('shared-comp');
+        expect(resolved.items[0].name).toBe('shared-comp');
+        expect(callCount).toBe(1);
+    });
+
+    it('fails closed in strict signature mode when manifest fails to fetch', async () => {
+        const mockFetcher = vi.fn(async (url: string) => {
+            if (url.endsWith('/registry-manifest.json')) {
+                return new Response('Server Error', { status: 500 });
+            }
+            return new Response('Not Found', { status: 404 });
+        });
+
+        const client = new RegistryClient({
+            sources: ['https://registry.example.com'],
+            fsAdapter: memoryFs,
+            cacheStorage,
+            httpFetcher: mockFetcher,
+            requireSignature: true,
+        });
+
+        await expect(client.fetchItem('button')).rejects.toMatchObject({
+            code: 'REGISTRY_SIGNATURE_INVALID',
+        });
+    });
+
+    it('throws REGISTRY_OFFLINE_UNAVAILABLE in offline mode when listing uncached remote components', async () => {
+        const mockFetcher = vi.fn();
+        const client = new RegistryClient({
+            sources: ['https://registry.example.com'],
+            fsAdapter: memoryFs,
+            cacheStorage,
+            httpFetcher: mockFetcher,
+            offline: true,
+        });
+
+        await expect(client.listComponents()).rejects.toMatchObject({
+            code: 'REGISTRY_OFFLINE_UNAVAILABLE',
+        });
+        expect(mockFetcher).not.toHaveBeenCalled();
+    });
+
+    it('rejects tampered cached data during integrity validation on cache hit', async () => {
+        const item = createMockItem('tampered-comp');
+        const mockFetcher = vi.fn(async (url: string) => {
+            if (url.endsWith('/tampered-comp.json')) {
+                return new Response(JSON.stringify(item), { status: 200 });
+            }
+            return new Response('Not Found', { status: 404 });
+        });
+
+        const client = new RegistryClient({
+            sources: ['https://registry.example.com'],
+            fsAdapter: memoryFs,
+            cacheStorage,
+            httpFetcher: mockFetcher,
+        });
+
+        // 首次正常拉取并写入缓存
+        await client.fetchItem('tampered-comp');
+
+        // 直接篡改缓存中的数据内容
+        const cached = await cacheStorage.get<any>('tampered-comp', 'https://registry.example.com');
+        expect(cached).toBeDefined();
+        cached!.data.files[0].content = '<template>malicious payload</template>';
+        await cacheStorage.set('tampered-comp', 'https://registry.example.com', cached!.data);
+
+        // 缓存命中时必须抛出 REGISTRY_INTEGRITY_FAILED
+        await expect(client.fetchItem('tampered-comp')).rejects.toMatchObject({
+            code: 'REGISTRY_INTEGRITY_FAILED',
+        });
     });
 });
 

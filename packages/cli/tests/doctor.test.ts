@@ -6,8 +6,8 @@ import type { BrutalistConfig, CheckResult, DoctorOptions, BrutxManifest, Instal
 import { FixId } from '../src/lib/types.js';
 import { computeInstalledContentHash } from '../src/lib/manifest.js';
 
-vi.mock('../src/lib/registry.js', async (importOriginal) => {
-    const actual = await importOriginal<typeof import('../src/lib/registry.js')>();
+vi.mock('../src/lib/config.js', async (importOriginal) => {
+    const actual = await importOriginal<typeof import('../src/lib/config.js')>();
     return { ...actual, readConfigSafe: vi.fn() };
 });
 
@@ -24,12 +24,12 @@ vi.mock('../src/lib/project.js', async (importOriginal) => {
     return { ...actual, resolveAliasPath: vi.fn() };
 });
 
-import * as registry from '../src/lib/registry.js';
+import * as configLib from '../src/lib/config.js';
 import * as constants from '../src/lib/constants.js';
 import * as project from '../src/lib/project.js';
 import { doctor } from '../src/commands/doctor.js';
 
-const mockedReadConfigSafe = vi.mocked(registry.readConfigSafe);
+const mockedReadConfigSafe = vi.mocked(configLib.readConfigSafe);
 const mockedGetBrutalistCssStyles = vi.mocked(constants.getBrutalistCssStyles);
 const mockedResolveAliasPath = vi.mocked(project.resolveAliasPath);
 

@@ -3,12 +3,11 @@ import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
 
-vi.mock('../src/lib/registry.js', async (importOriginal) => {
-    const original = await importOriginal<typeof import('../src/lib/registry.js')>();
+vi.mock('../src/lib/config.js', async (importOriginal) => {
+    const original = await importOriginal<typeof import('../src/lib/config.js')>();
     return {
         ...original,
         readConfigSafe: vi.fn(),
-        getItemFromSources: vi.fn(),
     };
 });
 
@@ -17,20 +16,20 @@ vi.mock('../src/lib/project.js', async (importOriginal) => {
     return { ...original, resolveAliasPath: vi.fn() };
 });
 
-import * as registry from '../src/lib/registry.js';
+import * as configLib from '../src/lib/config.js';
 import * as project from '../src/lib/project.js';
+import { RegistryClient } from '../src/lib/registry-client.js';
 import { info } from '../src/commands/info.js';
 import type { BrutalistConfig, InfoOptions, RegistryItem } from '../src/lib/types.js';
 import { DEFAULT_REGISTRY_URL, DEFAULT_REGISTRY_SOURCES } from '../src/lib/constants.js';
 import { CliError } from '../src/lib/error.js';
 
-const mockedReadConfigSafe = vi.mocked(registry.readConfigSafe);
-const mockedGetItemFromSources = vi.mocked(registry.getItemFromSources);
+const mockedReadConfigSafe = vi.mocked(configLib.readConfigSafe);
+let fetchItemSpy: ReturnType<typeof vi.spyOn>;
 const mockedResolveAliasPath = vi.mocked(project.resolveAliasPath);
 
-/** stub getItemFromSources：接受裸 item，包装为 { item, source }（source 默认官方主源）。 */
-function stubRegistryItem(item: RegistryItem, source: string = DEFAULT_REGISTRY_URL) {
-    mockedGetItemFromSources.mockResolvedValue({ item, source });
+function stubRegistryItem(item: RegistryItem) {
+    fetchItemSpy.mockResolvedValue(item);
 }
 
 const defaultConfig: BrutalistConfig = {
@@ -70,6 +69,7 @@ describe('info command', () => {
     let tmpDir: string;
 
     beforeEach(() => {
+        fetchItemSpy = vi.spyOn(RegistryClient.prototype, 'fetchItem');
         mockedResolveAliasPath.mockImplementation(async (alias: string, cwd: string) => {
             const match = alias.match(/^(@[^/]*|~)\/(.*)/);
             if (!match) return path.join(cwd, alias);
@@ -153,7 +153,7 @@ describe('info command', () => {
 
             await runInfoJson('button', { cwd: tmpDir });
 
-            expect(mockedGetItemFromSources).toHaveBeenCalledWith('button', [...DEFAULT_REGISTRY_SOURCES]);
+            expect(fetchItemSpy).toHaveBeenCalledWith('button');
         });
     });
 
@@ -202,7 +202,7 @@ describe('info command', () => {
         it('should report status as registry-unreachable when registry throws but local files exist', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
-            mockedGetItemFromSources.mockRejectedValue(new Error('Network error'));
+            fetchItemSpy.mockRejectedValue(new Error('Network error'));
 
             const componentDir = path.join(tmpDir, 'src', 'components', 'button');
             await fs.mkdirp(componentDir);
@@ -220,7 +220,7 @@ describe('info command', () => {
         it('should gracefully handle various registry error types', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
-            mockedGetItemFromSources.mockRejectedValue(new Error('ETIMEDOUT'));
+            fetchItemSpy.mockRejectedValue(new Error('ETIMEDOUT'));
 
             const componentDir = path.join(tmpDir, 'src', 'components', 'button');
             await fs.mkdirp(componentDir);
@@ -237,7 +237,7 @@ describe('info command', () => {
         it('should report status as registry-unreachable when both registry and local files are unavailable', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
-            mockedGetItemFromSources.mockRejectedValue(new Error('Network error'));
+            fetchItemSpy.mockRejectedValue(new Error('Network error'));
 
             const result = await runInfoJson('nonexistent', { cwd: tmpDir });
 
@@ -250,7 +250,7 @@ describe('info command', () => {
         it('should report registry-unreachable when component directory is empty and registry fails', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
-            mockedGetItemFromSources.mockRejectedValue(new Error('Network error'));
+            fetchItemSpy.mockRejectedValue(new Error('Network error'));
 
             await fs.mkdirp(path.join(tmpDir, 'src', 'components', 'ghost'));
 
@@ -340,7 +340,7 @@ describe('info command', () => {
 
             await runInfoJson('button', { cwd: tmpDir, registry: customRegistry });
 
-            expect(mockedGetItemFromSources).toHaveBeenCalledWith('button', [customRegistry]);
+            expect(fetchItemSpy).toHaveBeenCalledWith('button');
         });
 
         it('should reflect custom registry source in JSON output', async () => {
@@ -371,7 +371,7 @@ describe('info command', () => {
 
             const result = await runInfoJson('button', { cwd: tmpDir });
 
-            expect(mockedGetItemFromSources).toHaveBeenCalledWith('button', [...DEFAULT_REGISTRY_SOURCES]);
+            expect(fetchItemSpy).toHaveBeenCalledWith('button');
             expect(result.source).toBe(DEFAULT_REGISTRY_URL);
         });
     });
@@ -502,7 +502,7 @@ describe('info command', () => {
         it('should report registry-unreachable with subdirectory files even when registry is unreachable', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
-            mockedGetItemFromSources.mockRejectedValue(new Error('Network error'));
+            fetchItemSpy.mockRejectedValue(new Error('Network error'));
 
             const baseDir = path.join(tmpDir, 'src', 'components', 'data-table');
             await fs.mkdirp(baseDir);
@@ -524,7 +524,7 @@ describe('info command', () => {
         it('should use cwd from options instead of process.cwd()', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
-            mockedGetItemFromSources.mockRejectedValue(new Error('Network error'));
+            fetchItemSpy.mockRejectedValue(new Error('Network error'));
 
             await runInfoJson('button', { cwd: tmpDir });
 
@@ -582,7 +582,7 @@ describe('info command', () => {
         it('should correctly resolve alias path using config aliases', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
-            mockedGetItemFromSources.mockRejectedValue(new Error('Network error'));
+            fetchItemSpy.mockRejectedValue(new Error('Network error'));
 
             await runInfoJson('button', { cwd: tmpDir });
 
@@ -594,7 +594,7 @@ describe('info command', () => {
         it('should report not-found when registry returns 404 for the component', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
-            mockedGetItemFromSources.mockRejectedValue(
+            fetchItemSpy.mockRejectedValue(
                 new CliError('Component "button" not found in registry: Not Found', {
                     code: 'COMPONENT_NOT_FOUND',
                 })
@@ -609,7 +609,7 @@ describe('info command', () => {
         it('should report not-found when local registry file is missing', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
-            mockedGetItemFromSources.mockRejectedValue(
+            fetchItemSpy.mockRejectedValue(
                 new CliError('Component "button" not found in local registry: /tmp/registry', {
                     code: 'COMPONENT_NOT_FOUND',
                 })
@@ -623,7 +623,7 @@ describe('info command', () => {
         it('should keep registry-unreachable for network errors', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
-            mockedGetItemFromSources.mockRejectedValue(
+            fetchItemSpy.mockRejectedValue(
                 new CliError('All 1 registry source(s) failed. Last error: ETIMEDOUT', {
                     code: 'REGISTRY_FETCH_FAILED',
                 })
@@ -664,7 +664,7 @@ describe('info command', () => {
         it('should allow scoped component names (containing "/") inside the components dir', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
-            mockedGetItemFromSources.mockRejectedValue(
+            fetchItemSpy.mockRejectedValue(
                 new CliError('All 1 registry source(s) failed. Last error: ETIMEDOUT', {
                     code: 'REGISTRY_FETCH_FAILED',
                 })

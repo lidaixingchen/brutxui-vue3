@@ -2,8 +2,9 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
+import { computeRegistryIntegrity } from 'brutx-shared-vue';
 import type { BrutalistConfig, RegistryItem } from '../src/lib/types.js';
-import { resolveDeps } from '../src/lib/registry.js';
+import { RegistryClient } from '../src/lib/registry-client.js';
 import { FileTransaction } from '../src/lib/file-transaction.js';
 import {
     ensureUtilsFile,
@@ -11,14 +12,6 @@ import {
     resolveComponentFilePath,
     writeComponentFiles,
 } from '../src/lib/services/add-service.js';
-
-vi.mock('../src/lib/registry.js', async importOriginal => {
-    const actual = await importOriginal<typeof import('../src/lib/registry.js')>();
-    return {
-        ...actual,
-        resolveDeps: vi.fn(),
-    };
-});
 
 const config: BrutalistConfig = {
     style: 'brutalism',
@@ -33,6 +26,14 @@ const config: BrutalistConfig = {
     },
 };
 
+const badgeFiles = [
+    {
+        path: 'components/ui/badge/Badge.vue',
+        content: "import { cn } from '@/lib/utils'\n",
+        type: 'registry:ui',
+    },
+];
+
 const badgeItem = {
     name: 'badge',
     type: 'registry:ui',
@@ -41,13 +42,10 @@ const badgeItem = {
     dependencies: [],
     registryDependencies: [],
     examples: [],
-    files: [
-        {
-            path: 'components/ui/badge/Badge.vue',
-            content: "import { cn } from '@/lib/utils'\n",
-            type: 'registry:ui',
-        },
-    ],
+    tailwind: {},
+    cssVars: {},
+    files: badgeFiles,
+    integrity: computeRegistryIntegrity(badgeFiles),
 } as RegistryItem;
 
 async function createTmpProject(): Promise<string> {
@@ -66,7 +64,6 @@ describe('add service', () => {
     let tmpDir: string;
 
     beforeEach(async () => {
-        vi.mocked(resolveDeps).mockReset();
         tmpDir = await createTmpProject();
     });
 
@@ -86,32 +83,38 @@ describe('add service', () => {
     });
 
     it('resolves components and deduplicates npm dependencies', async () => {
+        const cardFiles = [{
+            path: 'components/ui/card/Card.vue',
+            content: '<template><div /></template>',
+            type: 'registry:ui',
+        }];
         const cardItem = {
             ...badgeItem,
             name: 'card',
+            files: cardFiles,
+            integrity: computeRegistryIntegrity(cardFiles),
             dependencies: ['clsx', 'reka-ui'],
         } as RegistryItem;
-        vi.mocked(resolveDeps).mockResolvedValue([
-            { ...badgeItem, dependencies: ['clsx'] } as RegistryItem,
-            cardItem,
-        ]);
 
-        const result = await resolveComponents(['badge', 'card'], 'local-registry');
+        const client = new RegistryClient({
+            sources: ['https://registry.example.com'],
+            httpFetcher: async (url: string) => {
+                if (url.endsWith('badge.json')) {
+                    return new Response(JSON.stringify({ ...badgeItem, dependencies: ['clsx'] }), { status: 200 });
+                }
+                if (url.endsWith('card.json')) {
+                    return new Response(JSON.stringify(cardItem), { status: 200 });
+                }
+                return new Response('Not Found', { status: 404 });
+            },
+        });
 
-        // resolveDeps 额外接收多源列表与命中源记录 Map（此处均未提供）
-        expect(resolveDeps).toHaveBeenCalledWith(
-            ['badge', 'card'],
-            'local-registry',
-            true,
-            undefined,
-            expect.any(Map),
-        );
-        expect(result.items).toEqual([
-            { ...badgeItem, dependencies: ['clsx'] },
-            cardItem,
-        ]);
+        const result = await resolveComponents(['badge', 'card'], undefined, true, undefined, client);
+
+        expect(result.items.map(i => i.name)).toEqual(['badge', 'card']);
         expect(result.dependencies).toEqual(['clsx', 'reka-ui']);
-        expect(result.registrySources).toEqual({});
+        expect(result.registrySources['badge']).toBe('https://registry.example.com');
+        expect(result.registrySources['card']).toBe('https://registry.example.com');
     });
 
     it('resolves registry component paths through configured aliases', async () => {

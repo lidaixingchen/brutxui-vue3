@@ -6,15 +6,6 @@ import { writeComponentFiles, ensureUtilsFile } from '../src/lib/services/add-se
 import { initializeProjectFiles } from '../src/lib/services/init-service.js';
 import { prepareRemoveComponents, removeComponents } from '../src/lib/services/remove-service.js';
 import type { BrutalistConfig, RegistryItem } from '../src/lib/types.js';
-import * as registry from '../src/lib/registry.js';
-
-vi.mock('../src/lib/registry.js', async (importOriginal) => {
-    const original = await importOriginal<typeof registry>();
-    return {
-        ...original,
-        getItem: vi.fn().mockRejectedValue(new Error('not found in test')),
-    };
-});
 
 describe('Services with ProjectContext (VFS)', () => {
     let fs: MemoryFileSystemAdapter;

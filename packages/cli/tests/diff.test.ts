@@ -2,27 +2,18 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
-import * as registry from '../src/lib/registry.js';
+import * as configLib from '../src/lib/config.js';
+import { RegistryClient } from '../src/lib/registry-client.js';
 import * as project from '../src/lib/project.js';
 import { diff } from '../src/commands/diff.js';
 import { logger } from '../src/lib/logger.js';
 import type { BrutalistConfig, DiffResult, RegistryItem } from '../src/lib/types.js';
 
-vi.mock('../src/lib/registry.js', async (importOriginal) => {
-    const original = await importOriginal<typeof registry>();
-    return {
-        ...original,
-        readConfigSafe: vi.fn(),
-        getItemFromSources: vi.fn(),
-    };
-});
+let mockedReadConfigSafe: ReturnType<typeof vi.spyOn>;
+let fetchItemSpy: ReturnType<typeof vi.spyOn>;
 
-const mockedReadConfigSafe = vi.mocked(registry.readConfigSafe);
-const mockedGetItemFromSources = vi.mocked(registry.getItemFromSources);
-
-/** stub getItemFromSources：接受裸 item，包装为 { item, source }。 */
 function stubRegistryItem(item: RegistryItem, source = 'https://example.test/registry') {
-    mockedGetItemFromSources.mockResolvedValue({ item, source });
+    fetchItemSpy.mockResolvedValue(item);
 }
 
 function createConfig(overrides: Partial<BrutalistConfig> = {}): BrutalistConfig {
@@ -88,6 +79,8 @@ describe('diff command', () => {
     let savedEnv: string | undefined;
 
     beforeEach(async () => {
+        mockedReadConfigSafe = vi.spyOn(configLib, 'readConfigSafe');
+        fetchItemSpy = vi.spyOn(RegistryClient.prototype, 'fetchItem');
         tmpDir = await createTmpProject();
         savedEnv = process.env.BRUTX_NO_CACHE;
     });
@@ -345,7 +338,7 @@ describe('diff command', () => {
             expect(results[0].integrityStatus).toBe('outdated');
             expect(results[0].registrySource).toBe('https://example.test/registry');
             expect(results[0].installedAt).toBe('2026-07-07T00:00:00.000Z');
-            expect(mockedGetItemFromSources).toHaveBeenCalledWith('button', ['https://example.test/registry'], true);
+            expect(fetchItemSpy).toHaveBeenCalledWith('button', { useCache: true });
         });
 
         it('should let --registry override manifest registry source', async () => {
@@ -383,7 +376,7 @@ describe('diff command', () => {
                 registry: 'https://override.test/registry',
             });
 
-            expect(mockedGetItemFromSources).toHaveBeenCalledWith('button', ['https://override.test/registry'], true);
+            expect(fetchItemSpy).toHaveBeenCalledWith('button', { useCache: true });
         });
 
         it('should include unified diff patch for modified files', async () => {
@@ -514,31 +507,28 @@ describe('diff command', () => {
             await writeLocalFile(tmpDir, 'button', 'Button.vue', buttonContent);
             await writeLocalFile(tmpDir, 'input', 'Input.vue', inputContent);
 
-            mockedGetItemFromSources.mockImplementation(async (name: string) => {
-                const item = (() => {
-                    if (name === 'button') {
-                        return {
-                            name: 'button',
-                            type: 'registry:ui',
-                            files: [{
-                                path: 'components/ui/button/Button.vue',
-                                content: buttonContent,
-                            }],
-                        };
-                    }
-                    if (name === 'input') {
-                        return {
-                            name: 'input',
-                            type: 'registry:ui',
-                            files: [{
-                                path: 'components/ui/input/Input.vue',
-                                content: '<template>different</template>\n',
-                            }],
-                        };
-                    }
-                    throw new Error(`Component "${name}" not found`);
-                })();
-                return { item, source: 'https://example.test/registry' };
+            fetchItemSpy.mockImplementation(async (name: string) => {
+                if (name === 'button') {
+                    return {
+                        name: 'button',
+                        type: 'registry:ui',
+                        files: [{
+                            path: 'components/ui/button/Button.vue',
+                            content: buttonContent,
+                        }],
+                    } as RegistryItem;
+                }
+                if (name === 'input') {
+                    return {
+                        name: 'input',
+                        type: 'registry:ui',
+                        files: [{
+                            path: 'components/ui/input/Input.vue',
+                            content: '<template>different</template>\n',
+                        }],
+                    } as RegistryItem;
+                }
+                throw new Error(`Component "${name}" not found`);
             });
 
             const results = await runDiffJson(tmpDir, {
@@ -771,7 +761,7 @@ describe('diff command', () => {
             mockedReadConfigSafe.mockResolvedValue(createConfig());
             await writeLocalFile(tmpDir, 'button', 'Button.vue', '<template>btn</template>');
 
-            mockedGetItemFromSources.mockRejectedValue(new Error('Network error: registry unreachable'));
+            fetchItemSpy.mockRejectedValue(new Error('Network error: registry unreachable'));
 
             const results = await runDiffJson(tmpDir, { components: ['button'] });
 
@@ -785,7 +775,7 @@ describe('diff command', () => {
         it('should return registry-unreachable when registry is unreachable and no local files exist', async () => {
             mockedReadConfigSafe.mockResolvedValue(createConfig());
 
-            mockedGetItemFromSources.mockRejectedValue(new Error('Network error: registry unreachable'));
+            fetchItemSpy.mockRejectedValue(new Error('Network error: registry unreachable'));
 
             const results = await runDiffJson(tmpDir, { components: ['button'] });
 

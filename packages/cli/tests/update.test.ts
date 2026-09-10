@@ -7,29 +7,11 @@ vi.mock('../src/lib/audit.js', async (importOriginal) => {
     };
 });
 
-vi.mock('../src/lib/registry.js', async (importOriginal) => {
-    const original = await importOriginal<typeof import('../src/lib/registry.js')>();
+vi.mock('../src/lib/config.js', async (importOriginal) => {
+    const original = await importOriginal<typeof import('../src/lib/config.js')>();
     return {
         ...original,
         readConfigSafe: vi.fn(),
-        getItem: vi.fn().mockResolvedValue({
-            name: 'button',
-            type: 'registry:ui',
-            title: 'Button',
-            description: 'Button',
-            dependencies: [],
-            registryDependencies: [],
-            tailwind: {},
-            cssVars: {},
-            integrity: 'sha256-test',
-            files: [
-                {
-                    path: 'components/ui/button/Button.vue',
-                    type: 'registry:ui',
-                    content: '<template><button>Updated</button></template>',
-                },
-            ],
-        }),
     };
 });
 
@@ -51,15 +33,17 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
-import * as registry from '../src/lib/registry.js';
+import { readConfigSafe } from '../src/lib/config.js';
+import { RegistryClient } from '../src/lib/registry-client.js';
 import * as diffService from '../src/lib/services/diff-service.js';
 import * as addModule from '../src/commands/add.js';
 import * as prompts from '@inquirer/prompts';
 import { update } from '../src/commands/update.js';
 import type { DiffResult } from '../src/lib/types.js';
 import { ProjectContext } from '../src/lib/project-context.js';
+import { MergeExecutor } from '../src/lib/merge/merge-executor.js';
 
-const mockedReadConfigSafe = vi.mocked(registry.readConfigSafe);
+const mockedReadConfigSafe = vi.mocked(readConfigSafe);
 const mockedGetInstalledComponents = vi.mocked(diffService.getInstalledComponents);
 const mockedDiffComponent = vi.mocked(diffService.diffComponent);
 const mockedAdd = vi.mocked(addModule.add);
@@ -115,6 +99,24 @@ describe('update command', () => {
         savedEnv = process.env.BRUTX_NO_CACHE;
         process.env.BRUTX_NO_CACHE = '1';
         mockedReadConfigSafe.mockResolvedValue(defaultConfig);
+        vi.spyOn(RegistryClient.prototype, 'fetchItem').mockResolvedValue({
+            name: 'button',
+            type: 'registry:ui',
+            title: 'Button',
+            description: 'Button',
+            dependencies: [],
+            registryDependencies: [],
+            tailwind: {},
+            cssVars: {},
+            integrity: 'sha256-test',
+            files: [
+                {
+                    path: 'components/ui/button/Button.vue',
+                    type: 'registry:ui',
+                    content: '<template><button>Updated</button></template>',
+                },
+            ],
+        });
     });
 
     afterEach(async () => {
@@ -613,6 +615,91 @@ describe('update command', () => {
                 undefined,
                 false,
             );
+        });
+    });
+
+    describe('default 3-way merge path (without --force)', () => {
+        it('should execute 3-way merge and commit transaction when updates are available', async () => {
+            const tmpDir = await createProjectWithManifest({
+                button: { registrySource: 'https://example.test/registry' },
+            });
+            const buttonFile = path.join(tmpDir, 'src/components/ui/button/Button.vue');
+            await fs.ensureDir(path.dirname(buttonFile));
+            await fs.writeFile(buttonFile, '<template><button>3way</button></template>');
+
+            mockedGetInstalledComponents.mockResolvedValue(['button']);
+            mockedDiffComponent.mockResolvedValue(modifiedResult);
+
+            const planAndExecuteSpy = vi.spyOn(MergeExecutor.prototype, 'planAndExecute').mockResolvedValue({
+                plan: {
+                    componentName: 'button',
+                    hasConflicts: false,
+                    mergedFiles: 1,
+                    addedFiles: 0,
+                    deletedFiles: 0,
+                    files: [{ filePath: 'src/components/ui/button/Button.vue', status: 'clean', action: 'write', content: '<template><button>3way</button></template>' }],
+                },
+                filesWritten: [buttonFile],
+                filesDeleted: [],
+            });
+
+            await update([], { cwd: tmpDir, silent: true, yes: true, all: true });
+
+            expect(mockedAdd).not.toHaveBeenCalled();
+            expect(planAndExecuteSpy).toHaveBeenCalledTimes(1);
+            expect(planAndExecuteSpy).toHaveBeenCalledWith(
+                expect.any(ProjectContext),
+                'button',
+                expect.objectContaining({ name: 'button' }),
+                expect.objectContaining({
+                    conflictStrategy: 'markers',
+                    registrySource: 'https://example.test/registry',
+                    useCache: true,
+                }),
+            );
+        });
+
+        it('should pass conflictStrategy when --ours or --theirs is specified', async () => {
+            const tmpDir = await createProjectWithManifest({
+                button: { registrySource: 'https://example.test/registry' },
+            });
+            mockedGetInstalledComponents.mockResolvedValue(['button']);
+            mockedDiffComponent.mockResolvedValue(modifiedResult);
+
+            const planAndExecuteSpy = vi.spyOn(MergeExecutor.prototype, 'planAndExecute').mockResolvedValue({
+                plan: {
+                    componentName: 'button',
+                    hasConflicts: false,
+                    mergedFiles: 1,
+                    addedFiles: 0,
+                    deletedFiles: 0,
+                    files: [],
+                },
+                filesWritten: [],
+                filesDeleted: [],
+            });
+
+            await update([], { cwd: tmpDir, silent: true, yes: true, all: true, ours: true });
+
+            expect(planAndExecuteSpy).toHaveBeenCalledWith(
+                expect.any(ProjectContext),
+                'button',
+                expect.anything(),
+                expect.objectContaining({ conflictStrategy: 'ours' }),
+            );
+        });
+
+        it('should rollback transaction cleanly when merge execution fails', async () => {
+            const tmpDir = await createProjectWithManifest({
+                button: { registrySource: 'https://example.test/registry' },
+            });
+            mockedGetInstalledComponents.mockResolvedValue(['button']);
+            mockedDiffComponent.mockResolvedValue(modifiedResult);
+
+            vi.spyOn(MergeExecutor.prototype, 'planAndExecute').mockRejectedValue(new Error('Merge disk I/O error'));
+
+            await expect(update([], { cwd: tmpDir, silent: true, yes: true, all: true }))
+                .rejects.toThrow('Update transaction failed and was rolled back cleanly: Merge disk I/O error');
         });
     });
 });

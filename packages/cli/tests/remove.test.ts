@@ -2,22 +2,13 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
-import * as registry from '../src/lib/registry.js';
 import * as project from '../src/lib/project.js';
 import * as prompts from '@inquirer/prompts';
 import { remove } from '../src/commands/remove.js';
 import { CliError } from '../src/lib/error.js';
 import { logger } from '../src/lib/logger.js';
 import type { BrutalistConfig, RegistryItem } from '../src/lib/types.js';
-
-vi.mock('../src/lib/registry.js', async (importOriginal) => {
-    const original = await importOriginal<typeof registry>();
-    return {
-        ...original,
-        readConfigSafe: vi.fn(),
-        getItem: vi.fn(),
-    };
-});
+import { RegistryClient } from '../src/lib/registry-client.js';
 
 vi.mock('../src/lib/project.js', async (importOriginal) => {
     const original = await importOriginal<typeof project>();
@@ -31,8 +22,7 @@ vi.mock('@inquirer/prompts', () => ({
     confirm: vi.fn().mockResolvedValue(true),
 }));
 
-const mockedReadConfigSafe = vi.mocked(registry.readConfigSafe);
-const mockedGetItem = vi.mocked(registry.getItem);
+const mockedReadConfigSafe = { mockResolvedValue: vi.fn() };
 const mockedResolveAliasPath = vi.mocked(project.resolveAliasPath);
 const mockedConfirm = vi.mocked(prompts.confirm);
 
@@ -74,7 +64,7 @@ describe('remove command', () => {
             return path.join(tmpDir, 'src', cleaned);
         });
 
-        mockedGetItem.mockImplementation(async (name: string) => {
+        vi.spyOn(RegistryClient.prototype, 'fetchItem').mockImplementation(async (name: string) => {
             if (name === 'button') {
                 return {
                     name: 'button',
@@ -82,6 +72,8 @@ describe('remove command', () => {
                     files: [],
                     dependencies: [],
                     registryDependencies: [],
+                    tailwind: {},
+                    cssVars: {},
                 } satisfies RegistryItem;
             }
             if (name === 'card') {
@@ -91,6 +83,8 @@ describe('remove command', () => {
                     files: [],
                     dependencies: [],
                     registryDependencies: ['button'],
+                    tailwind: {},
+                    cssVars: {},
                 } satisfies RegistryItem;
             }
             throw new Error(`Unknown component: ${name}`);
@@ -402,7 +396,7 @@ describe('remove command', () => {
         it('should warn when other installed components depend on the removed component', async () => {
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
 
-            mockedGetItem.mockImplementation(async (name: string) => {
+            vi.spyOn(RegistryClient.prototype, 'fetchItem').mockImplementation(async (name: string) => {
                 if (name === 'button') {
                     return {
                         name: 'button',
@@ -410,6 +404,8 @@ describe('remove command', () => {
                         files: [],
                         dependencies: [],
                         registryDependencies: ['some-base'],
+                        tailwind: {},
+                        cssVars: {},
                     } satisfies RegistryItem;
                 }
                 if (name === 'card') {
@@ -419,6 +415,8 @@ describe('remove command', () => {
                         files: [],
                         dependencies: [],
                         registryDependencies: ['button'],
+                        tailwind: {},
+                        cssVars: {},
                     } satisfies RegistryItem;
                 }
                 throw new Error(`Unknown component: ${name}`);
@@ -439,6 +437,7 @@ describe('remove command', () => {
 
         it('should check remaining component dependencies from their installed registry source', async () => {
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
+            const fetchItemSpy = vi.spyOn(RegistryClient.prototype, 'fetchItem');
 
             await createComponent('button', {
                 'Button.vue': '<template>btn</template>',
@@ -475,7 +474,10 @@ describe('remove command', () => {
 
             await remove(['button'], { cwd: tmpDir, silent: true, yes: true });
 
-            expect(mockedGetItem).toHaveBeenCalledWith('card', 'https://custom.example.test/registry', true);
+            expect(fetchItemSpy).toHaveBeenCalledWith('card', {
+                sourceOverride: 'https://custom.example.test/registry',
+                useCache: true,
+            });
             const warnMessages = getLoggedMessages(warnSpy);
             expect(warnMessages.some(m => m.includes('card') && m.includes('depends on') && m.includes('button'))).toBe(true);
         });
@@ -483,7 +485,7 @@ describe('remove command', () => {
         it('should not warn when no other component depends on the removed component', async () => {
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
 
-            mockedGetItem.mockImplementation(async (name: string) => {
+            vi.spyOn(RegistryClient.prototype, 'fetchItem').mockImplementation(async (name: string) => {
                 if (name === 'button') {
                     return {
                         name: 'button',
@@ -491,6 +493,8 @@ describe('remove command', () => {
                         files: [],
                         dependencies: [],
                         registryDependencies: [],
+                        tailwind: {},
+                        cssVars: {},
                     } satisfies RegistryItem;
                 }
                 throw new Error(`Unknown component: ${name}`);
