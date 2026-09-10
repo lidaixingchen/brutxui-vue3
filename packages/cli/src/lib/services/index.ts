@@ -45,6 +45,7 @@ export type {
 
 export {
     diagnose,
+    previewRepair,
     repair,
     DiagnosticEngine,
     defineDiagnosticRule,
@@ -56,7 +57,6 @@ export type {
     CheckStatus,
     DiagnosticCategory,
     DiagnosticContext,
-    DiagnosticRepairContext,
     DiagnosticReport,
     DiagnosticRule,
     DiagnosticSummary,
@@ -66,6 +66,11 @@ export type {
     RepairItemReport,
     RuleFixStatus,
     FileLocation,
+    RepairAction,
+    RepairPlan,
+    PlanFixResult,
+    FileDiffPreview,
+    RepairPreviewReport,
 } from '../diagnostics/types.js';
 export type { RuleSeverity } from '../types.js';
 

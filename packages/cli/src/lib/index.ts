@@ -197,6 +197,7 @@ export type {
 
 export {
     diagnose,
+    previewRepair,
     repair,
     DiagnosticEngine,
 } from './services/diagnostic-service.js';

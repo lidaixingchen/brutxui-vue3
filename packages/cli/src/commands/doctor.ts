@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import type { DoctorOptions, FailOnLevel, ReporterType } from '../lib/types.js';
 import {
     CliError,
@@ -5,10 +6,11 @@ import {
     generateProjectSbom,
     isOfflineRequested,
     logger,
+    previewRepair,
     repair,
     withOfflineScope,
 } from '../lib/index.js';
-import type { DiagnosticCategory, DiagnosticReport, RepairReport } from '../lib/diagnostics/types.js';
+import type { DiagnosticCategory, DiagnosticReport, RepairPreviewReport, RepairReport } from '../lib/diagnostics/types.js';
 import {
     PrettyReporter,
     GithubReporter,
@@ -86,6 +88,66 @@ function renderRepairSummary(repairReport: RepairReport): void {
     logger.log(`Applied ${repairReport.applied.length}/${repairReport.totalAttempted} fixes.`);
 }
 
+function renderDryRunPreview(preview: RepairPreviewReport): void {
+    logger.log(chalk.bold('\n--- Dry-Run Repair Plan Preview ---'));
+    if (preview.plans.length === 0) {
+        logger.info('No repair plans generated.');
+        return;
+    }
+
+    logger.log(`Generated ${preview.plans.length} repair plan(s):`);
+    for (const plan of preview.plans) {
+        logger.log(`  ${chalk.cyan('•')} [${plan.ruleId}] ${plan.description}`);
+        for (const action of plan.actions) {
+            if (action.type === 'write-file') {
+                logger.log(`    ${chalk.green('+')} Write: ${action.filePath}`);
+            } else if (action.type === 'ensure-dir') {
+                logger.log(`    ${chalk.blue('~')} Ensure dir: ${action.dirPath}`);
+            } else if (action.type === 'remove-path') {
+                logger.log(`    ${chalk.red('-')} Remove: ${action.targetPath}`);
+            } else if (action.type === 'patch-config') {
+                logger.log(`    ${chalk.yellow('⚙')} Patch config: ${JSON.stringify(action.patch)}`);
+            }
+        }
+    }
+
+    if (preview.fileDiffs.length > 0) {
+        logger.log(chalk.bold('\n--- File Diffs ---'));
+        for (const fileDiff of preview.fileDiffs) {
+            logger.log(`\n${chalk.bold.underline(fileDiff.filePath)} (${fileDiff.changeType}):`);
+            if (fileDiff.unifiedDiff) {
+                const lines = fileDiff.unifiedDiff.split('\n');
+                for (const line of lines) {
+                    if (line.startsWith('+') && !line.startsWith('+++')) {
+                        logger.log(chalk.green(line));
+                    } else if (line.startsWith('-') && !line.startsWith('---')) {
+                        logger.log(chalk.red(line));
+                    } else if (line.startsWith('@@')) {
+                        logger.log(chalk.cyan(line));
+                    } else {
+                        logger.log(line);
+                    }
+                }
+            }
+        }
+    }
+
+    if (preview.skipped.length > 0) {
+        logger.log(chalk.bold('\n--- Skipped ---'));
+        for (const item of preview.skipped) {
+            logger.info(`Skipped [${item.ruleId}]: ${item.reason}`);
+        }
+    }
+
+    if (preview.failed.length > 0) {
+        logger.log(chalk.bold('\n--- Failed ---'));
+        for (const item of preview.failed) {
+            logger.warn(`Failed [${item.ruleId}]: ${item.reason}`);
+        }
+    }
+    logger.log('');
+}
+
 export async function doctor(options: DoctorOptions): Promise<void> {
     const cwd = options.cwd ?? process.cwd();
 
@@ -117,21 +179,32 @@ export async function doctor(options: DoctorOptions): Promise<void> {
 
         // 2. 自愈修复流程与 CI 安全防御
         if (options.fix || options.fixOnly) {
-            const isInteractive = !options.yes && !options.silent && !!process.stdin.isTTY;
-            const autoApply = options.yes || options.silent;
-
-            if (!isInteractive && !autoApply) {
-                logger.warn('Non-interactive mode: pass --yes to apply fixes without confirmation.');
-            } else {
-                const repairReport = await repair({
+            if (options.dryRun) {
+                const previewReport = await previewRepair({
                     cwd,
                     fixOnly: options.fixOnly,
                     offline,
                     categories,
                     ruleIds,
                 });
-                renderRepairSummary(repairReport);
-                report = repairReport.freshReport;
+                renderDryRunPreview(previewReport);
+            } else {
+                const isInteractive = !options.yes && !options.silent && !!process.stdin.isTTY;
+                const autoApply = options.yes || options.silent;
+
+                if (!isInteractive && !autoApply) {
+                    logger.warn('Non-interactive mode: pass --yes to apply fixes without confirmation.');
+                } else {
+                    const repairReport = await repair({
+                        cwd,
+                        fixOnly: options.fixOnly,
+                        offline,
+                        categories,
+                        ruleIds,
+                    });
+                    renderRepairSummary(repairReport);
+                    report = repairReport.freshReport;
+                }
             }
         }
 
@@ -149,7 +222,7 @@ export async function doctor(options: DoctorOptions): Promise<void> {
         // 4. 细粒度退出码判定
         const exitCode = determineExitCode(report, options.failOn);
         if (exitCode !== 0) {
-            throw new CliError('Doctor check failed with issues', { exitCode });
+            throw new CliError('Doctor check failed with issues', { exitCode, code: 'DOCTOR_FAILED' });
         }
     } finally {
         restoreOffline();
