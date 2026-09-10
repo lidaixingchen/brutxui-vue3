@@ -87,6 +87,17 @@ export const DEFAULT_ALIASES = {
 
 export const DEFAULT_TAILWIND_CONFIG = 'tailwind.config.js';
 
+export const DEFAULT_TOKENS_FILENAME = 'brutx-tokens.css';
+
+export function getDefaultTokensFilePath(cssPath: string): string {
+    const normalized = cssPath.replace(/\\/g, '/').replace(/^\.\//, '');
+    const dir = dirname(normalized);
+    if (dir === '.' || dir === '') {
+        return DEFAULT_TOKENS_FILENAME;
+    }
+    return `${dir}/${DEFAULT_TOKENS_FILENAME}`;
+}
+
 export const REGISTRY_PATH_PREFIXES = {
     components: 'components/',
     composables: 'composables/',

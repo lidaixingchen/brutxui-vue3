@@ -68,37 +68,29 @@ export interface ProjectInitializationOptions {
 async function createConfigFile(
     cwd: string,
     settings: ProjectInitializationSettings,
+    isSplitMode: boolean,
     transaction: FileTransaction
 ): Promise<BrutalistConfig> {
+    const tailwind: TailwindConfig = {
+        config: settings.tailwind.config,
+        css: settings.tailwind.css,
+    };
+    const trimmedTokens = settings.tailwind.tokensFile?.trim();
+    if (isSplitMode && trimmedTokens) {
+        tailwind.tokensFile = trimmedTokens;
+    }
+
     const config: BrutalistConfig = {
         $schema: SCHEMA_URL,
         $version: CURRENT_CONFIG_VERSION,
         style: 'brutalism',
-        tailwind: settings.tailwind,
+        tailwind,
         aliases: settings.aliases,
         ...(settings.sharedBase ? { sharedBase: settings.sharedBase } : {}),
     };
 
     await transaction.writeJson(path.join(cwd, 'components.json'), config, { spaces: 2 });
     return config;
-}
-
-async function addBrutalistStyles(
-    cwd: string,
-    tailwind: TailwindConfig,
-    transaction: FileTransaction,
-    fsAdapter?: FileSystemAdapter,
-    context?: ProjectContext
-): Promise<boolean> {
-    const fs = fsAdapter ?? defaultDiskFs;
-    const plan = await planCssTokenInjection({
-        cwd,
-        tailwind,
-        fs,
-        resolveAlias: context ? (s) => context.resolveAliasPath(s) : undefined,
-    });
-    await applyCssTokenPlan(plan, transaction);
-    return true;
 }
 
 async function findNuxtConfig(cwd: string, fsAdapter?: FileSystemAdapter): Promise<string | null> {
@@ -211,7 +203,15 @@ export async function initializeProjectFiles(options: ProjectInitializationOptio
     const transaction = options.transaction ?? context.createTransaction();
 
     try {
-        const config = await createConfigFile(cwd, settings, transaction);
+        const plan = await planCssTokenInjection({
+            cwd,
+            tailwind: settings.tailwind,
+            fs: context.fs,
+            resolveAlias: (s) => context.resolveAliasPath(s),
+        });
+
+        const isSplitMode = plan.tokensPath !== null;
+        const config = await createConfigFile(cwd, settings, isSplitMode, transaction);
         context.bindConfig(config);
 
         const utilsPath = await context.resolveUtilsFilePath();
@@ -230,8 +230,12 @@ export async function initializeProjectFiles(options: ProjectInitializationOptio
         await transaction.ensureDir(path.join(componentsDir, 'ui'));
         callbacks?.onComponentsDirectory?.({ path: componentsDir });
 
-        const stylesAdded = await addBrutalistStyles(cwd, settings.tailwind, transaction, context.fs, context);
-        callbacks?.onStyles?.({ cssPath: settings.tailwind.css, added: stylesAdded });
+        await applyCssTokenPlan(plan, transaction);
+        callbacks?.onStyles?.({
+            cssPath: settings.tailwind.css,
+            added: true,
+            ...(plan.tokensPath ? { tokensPath: plan.tokensPath } : {}),
+        });
 
         const nuxt = projectType === 'nuxt'
             ? await configureNuxtConfig(cwd, settings.tailwind.css, componentsDir, transaction, context.fs)
@@ -255,7 +259,7 @@ export async function initializeProjectFiles(options: ProjectInitializationOptio
             utilsPath,
             utilsCreated,
             componentsDir,
-            stylesAdded,
+            stylesAdded: true,
             nuxt,
         };
     } catch (error) {

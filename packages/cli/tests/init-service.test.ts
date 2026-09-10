@@ -173,6 +173,9 @@ describe('init service', () => {
         });
 
         expect(result.stylesAdded).toBe(true);
+        expect(result.config.tailwind.tokensFile).toBe('src/styles/brutx-tokens.css');
+        const writtenConfig = await fs.readJson(path.join(tmpDir, 'components.json'));
+        expect(writtenConfig.tailwind.tokensFile).toBe('src/styles/brutx-tokens.css');
 
         const tokensFilePath = path.join(tmpDir, 'src', 'styles', 'brutx-tokens.css');
         expect(await fs.pathExists(tokensFilePath)).toBe(true);
@@ -232,6 +235,9 @@ describe('init service', () => {
         });
 
         expect(result.stylesAdded).toBe(true);
+        expect(result.config.tailwind.tokensFile).toBeUndefined();
+        const writtenConfig = await fs.readJson(path.join(tmpDir, 'components.json'));
+        expect(writtenConfig.tailwind.tokensFile).toBeUndefined();
 
         const mainCss = await fs.readFile(path.join(tmpDir, 'src', 'index.css'), 'utf-8');
         expect(mainCss).toContain(BRUTX_CSS_START_MARKER);
@@ -257,6 +263,9 @@ describe('init service', () => {
         });
 
         expect(result.stylesAdded).toBe(true);
+        expect(result.config.tailwind.tokensFile).toBeUndefined();
+        const writtenConfig = await fs.readJson(path.join(tmpDir, 'components.json'));
+        expect(writtenConfig.tailwind.tokensFile).toBeUndefined();
 
         const mainCss = await fs.readFile(path.join(tmpDir, 'src', 'index.css'), 'utf-8');
         expect(mainCss).toContain(BRUTX_CSS_START_MARKER);

@@ -6,6 +6,9 @@ import path from 'path';
 
 import {
     type InitOptions,
+    type ProjectType,
+    type BrutalistConfig,
+    type AliasConfig,
     SHARED_DEPENDENCIES,
     COMPONENT_DEPENDENCIES,
     BASE_DEPENDENCIES,
@@ -17,6 +20,7 @@ import {
     findCssFile,
     findTailwindConfig,
     getDefaultAliases,
+    getDefaultTokensFilePath,
     installPackages,
     getInstallCommand,
     logger,
@@ -29,27 +33,158 @@ import {
 
 type DetectedSettings = ProjectInitializationSettings;
 
-async function detectSettings(cwd: string): Promise<DetectedSettings> {
-    const projectType = await detectProjectType(cwd);
-    const cssFile = await findCssFile(cwd, projectType);
+interface LoadSettingsResult {
+    settings: ProjectInitializationSettings;
+    isExistingProject: boolean;
+    existingHasTokensFile: boolean;
+}
+
+async function detectSettings(cwd: string, projectType?: ProjectType): Promise<DetectedSettings> {
+    const type = projectType ?? await detectProjectType(cwd);
+    const cssFile = await findCssFile(cwd, type);
     const aliases = await getDefaultAliases(cwd);
     const tailwindConfigFile = await findTailwindConfig(cwd);
 
-    const fallbackCss = projectType === 'nuxt'
+    const fallbackCss = type === 'nuxt'
         ? 'assets/css/main.css'
-        : (projectType.includes('src') ? 'src/index.css' : 'index.css');
+        : (type.includes('src') ? 'src/index.css' : 'index.css');
+
+    const css = cssFile ?? fallbackCss;
 
     return {
         tailwind: {
             config: tailwindConfigFile ?? '',
-            css: cssFile ?? fallbackCss,
+            css,
+            tokensFile: getDefaultTokensFilePath(css),
         },
         aliases,
         sharedBase: `${aliases.components}/brutx/shared`,
     };
 }
 
-async function promptForConfig(defaults: DetectedSettings): Promise<DetectedSettings> {
+async function loadOrDetectSettings(configTarget: string, projectType: ProjectType): Promise<LoadSettingsResult> {
+    const configPath = path.join(configTarget, 'components.json');
+    const configExists = await defaultDiskFs.pathExists(configPath);
+
+    let existingConfig: BrutalistConfig | null = null;
+    let existingHasTokensFile = false;
+
+    if (configExists) {
+        try {
+            existingConfig = await defaultDiskFs.readJson<BrutalistConfig>(configPath);
+        } catch (error) {
+            throw new CliError(
+                `Failed to parse existing components.json in "${configTarget}": ${error instanceof Error ? error.message : String(error)}`,
+                {
+                    code: 'CONFIG_INVALID',
+                    exitCode: 1,
+                    cause: error,
+                }
+            );
+        }
+
+        if (!existingConfig || typeof existingConfig !== 'object' || Array.isArray(existingConfig)) {
+            throw new CliError(
+                `Invalid components.json in "${configTarget}": configuration root must be an object.`,
+                {
+                    code: 'CONFIG_INVALID',
+                    exitCode: 1,
+                }
+            );
+        }
+
+        if (existingConfig.tailwind !== undefined) {
+            if (typeof existingConfig.tailwind !== 'object' || existingConfig.tailwind === null || Array.isArray(existingConfig.tailwind)) {
+                throw new CliError(
+                    `Invalid components.json in "${configTarget}": "tailwind" must be an object.`,
+                    {
+                        code: 'CONFIG_INVALID',
+                        exitCode: 1,
+                    }
+                );
+            }
+            if (existingConfig.tailwind.css !== undefined) {
+                if (typeof existingConfig.tailwind.css !== 'string' || !existingConfig.tailwind.css.trim()) {
+                    throw new CliError(
+                        `Invalid components.json in "${configTarget}": "tailwind.css" must be a non-empty string.`,
+                        {
+                            code: 'CONFIG_INVALID',
+                            exitCode: 1,
+                        }
+                    );
+                }
+            }
+            if (existingConfig.tailwind.tokensFile !== undefined && typeof existingConfig.tailwind.tokensFile !== 'string') {
+                throw new CliError(
+                    `Invalid components.json in "${configTarget}": "tailwind.tokensFile" must be a string if defined.`,
+                    {
+                        code: 'CONFIG_INVALID',
+                        exitCode: 1,
+                    }
+                );
+            }
+        }
+
+        if (existingConfig.aliases !== undefined) {
+            if (typeof existingConfig.aliases !== 'object' || existingConfig.aliases === null || Array.isArray(existingConfig.aliases)) {
+                throw new CliError(
+                    `Invalid components.json in "${configTarget}": "aliases" must be an object.`,
+                    {
+                        code: 'CONFIG_INVALID',
+                        exitCode: 1,
+                    }
+                );
+            }
+        }
+
+        existingHasTokensFile = Boolean(existingConfig.tailwind?.tokensFile?.trim());
+    }
+
+    const detected = await detectSettings(configTarget, projectType);
+
+    if (!existingConfig) {
+        return {
+            settings: detected,
+            isExistingProject: false,
+            existingHasTokensFile: false,
+        };
+    }
+
+    const css = existingConfig.tailwind?.css?.trim() || detected.tailwind.css;
+    const config = existingConfig.tailwind?.config ?? detected.tailwind.config;
+    const aliases: AliasConfig = {
+        components: existingConfig.aliases?.components || detected.aliases.components,
+        utils: existingConfig.aliases?.utils || detected.aliases.utils,
+        composables: existingConfig.aliases?.composables || detected.aliases.composables,
+    };
+    const sharedBase = existingConfig.sharedBase || detected.sharedBase;
+
+    let tokensFile: string | undefined;
+    if (existingHasTokensFile) {
+        tokensFile = existingConfig.tailwind!.tokensFile!.trim();
+    } else {
+        tokensFile = undefined;
+    }
+
+    return {
+        settings: {
+            tailwind: {
+                config,
+                css,
+                ...(tokensFile ? { tokensFile } : {}),
+            },
+            aliases,
+            sharedBase,
+        },
+        isExistingProject: true,
+        existingHasTokensFile,
+    };
+}
+
+async function promptForConfig(
+    defaults: DetectedSettings,
+    context?: { isExistingProject: boolean; existingHasTokensFile: boolean }
+): Promise<DetectedSettings> {
     // tailwind.config 已由 detectSettings 真实检测（查找 tailwind.config.* 文件）；
     // 未检测到（如 Tailwind v4 无独立配置文件）时直接透传，不提供交互式输入
     const tailwindConfig = defaults.tailwind.config;
@@ -58,6 +193,28 @@ async function promptForConfig(defaults: DetectedSettings): Promise<DetectedSett
         message: 'Where is your global CSS file?',
         default: defaults.tailwind.css,
     });
+
+    const defaultSplit = context?.isExistingProject
+        ? context.existingHasTokensFile
+        : true;
+
+    const splitTokens = await confirm({
+        message: 'Split design tokens into a separate CSS file? (recommended for theme maintenance and version upgrades)',
+        default: defaultSplit,
+    });
+
+    let tokensFile: string | undefined;
+    if (splitTokens) {
+        if (context?.isExistingProject && context.existingHasTokensFile && defaults.tailwind.tokensFile) {
+            tokensFile = (globalCss === defaults.tailwind.css)
+                ? defaults.tailwind.tokensFile
+                : getDefaultTokensFilePath(globalCss);
+        } else {
+            tokensFile = getDefaultTokensFilePath(globalCss);
+        }
+    } else {
+        tokensFile = undefined;
+    }
 
     const componentsAlias = await input({
         message: 'Configure the import alias for components:',
@@ -78,6 +235,7 @@ async function promptForConfig(defaults: DetectedSettings): Promise<DetectedSett
         tailwind: {
             config: tailwindConfig,
             css: globalCss,
+            ...(tokensFile ? { tokensFile } : {}),
         },
         aliases: {
             components: componentsAlias,
@@ -99,7 +257,7 @@ async function shouldProceed(cwd: string, options: InitOptions): Promise<boolean
         return true;
     }
 
-    if (options.yes) {
+    if (options.yes || options.defaults) {
         logger.warn('Brutx-Vue is already initialized. Use --force to overwrite.');
         return false;
     }
@@ -225,10 +383,16 @@ export async function init(options: InitOptions): Promise<void> {
         return;
     }
 
-    let settings = await detectSettings(configTarget);
+    const { settings: initialSettings, isExistingProject, existingHasTokensFile } =
+        await loadOrDetectSettings(configTarget, projectType);
+
+    let settings = initialSettings;
 
     if (!options.yes && !options.defaults) {
-        settings = await promptForConfig(settings);
+        settings = await promptForConfig(settings, {
+            isExistingProject,
+            existingHasTokensFile,
+        });
     }
 
     const spinner = options.silent ? null : ora('Initializing Brutx-Vue...').start();
