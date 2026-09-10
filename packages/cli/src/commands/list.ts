@@ -1,17 +1,16 @@
 import chalk from 'chalk';
-import type { BrutalistConfig, ListOptions, InstalledComponentInfo } from '../lib/types.js';
-import { readConfigSafe, CliError, getInstalledComponentInfos, withOfflineScope, resolveRegistrySources } from '../lib/index.js';
-import { RegistryClient } from '../lib/registry-client.js';
+import type { ListOptions, InstalledComponentInfo } from '../lib/types.js';
+import { readConfigSafe, CliError, withOfflineScope, resolveRegistrySources, ProjectContext } from '../lib/index.js';
 import { logger } from '../lib/logger.js';
 
 async function attachUpdateInfo(
     infos: InstalledComponentInfo[],
-    config: BrutalistConfig,
+    ctx: ProjectContext,
     registryOverride: string | undefined,
     useCache: boolean,
 ): Promise<InstalledComponentInfo[]> {
-    const sources = resolveRegistrySources(config, registryOverride);
-    const client = new RegistryClient({ sources, useCache });
+    const sources = resolveRegistrySources(ctx.requireConfig(), registryOverride);
+    const client = ctx.getRegistryClient({ sources, useCache });
 
     return Promise.all(infos.map(async (info) => {
         // 显式请求 --check-updates 但缺少本地 integrity（旧版本/手工编辑的 manifest）：
@@ -146,7 +145,8 @@ async function listInner(options: ListOptions, cwd: string): Promise<void> {
         });
     }
 
-    let infos = await getInstalledComponentInfos(cwd, config);
+    const ctx = await ProjectContext.loadUninitialized(cwd, { configOverride: config });
+    let infos = await ctx.getInstalledComponentInfos();
 
     if (infos.length === 0) {
         logger.info('No installed components found.');
@@ -154,7 +154,7 @@ async function listInner(options: ListOptions, cwd: string): Promise<void> {
     }
 
     if (options.checkUpdates) {
-        infos = await attachUpdateInfo(infos, config, options.registry, options.cache !== false);
+        infos = await attachUpdateInfo(infos, ctx, options.registry, options.cache !== false);
     }
 
     if (options.json) {

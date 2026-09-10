@@ -9,7 +9,6 @@ import type {
     RegistryItem,
 } from '../types.js';
 import { resolveRegistrySources } from '../registry-source.js';
-import { getInstalledComponentNames } from '../installed-components.js';
 import { REGISTRY_PATH_PREFIXES } from '../constants.js';
 import { ProjectContext } from '../project-context.js';
 
@@ -70,7 +69,7 @@ function generateUnifiedDiff(
 export async function getInstalledComponents(
     context: ProjectContext
 ): Promise<string[]> {
-    return getInstalledComponentNames(context.cwd, context.requireConfig(), context.fs);
+    return context.getInstalledComponentNames();
 }
 
 async function getLocalComponentFiles(

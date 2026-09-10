@@ -2,7 +2,6 @@ import path from 'path';
 import type { BrutxManifest, RegistryItem } from '../types.js';
 import { resolveRegistrySources } from '../registry-source.js';
 import { removeInstalledComponents } from '../manifest.js';
-import { getInstalledComponentNames } from '../installed-components.js';
 import { logger } from '../logger.js';
 import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
 import type { ProjectContext } from '../project-context.js';
@@ -444,7 +443,7 @@ async function getDependents(
 ): Promise<{ dependents: Map<string, string[]>; failures: string[] }> {
     const dependents = new Map<string, string[]>();
     const failures = new Set<string>();
-    const installed = await getInstalledComponentNames(context.cwd, context.requireConfig(), context.fs);
+    const installed = await context.getInstalledComponentNames();
     const remaining = installed.filter(c => !componentsToRemove.includes(c));
 
     for (const name of componentsToRemove) {
@@ -526,8 +525,7 @@ export async function prepareRemoveComponents(
     manifest: BrutxManifest | null = null,
     useCache: boolean = true
 ): Promise<RemovePreparation> {
-    const config = context.requireConfig();
-    const installed = await getInstalledComponentNames(context.cwd, config, context.fs);
+    const installed = await context.getInstalledComponentNames();
     const toRemove = components.filter(c => installed.includes(c));
     const notFound = components.filter(c => !installed.includes(c));
     const remaining = installed.filter(c => !toRemove.includes(c));
