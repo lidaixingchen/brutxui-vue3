@@ -145,6 +145,7 @@ export {
     generateSnippetsForComponents,
     writeSnippetsFile,
     mergeSnippetsFile,
+    mergeSnippetsContent,
     hasVscodeDir,
 } from './vscode-snippets.js';
 

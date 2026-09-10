@@ -1,8 +1,11 @@
 import path from 'path';
 import { DiskFileSystemAdapter, type FileSystemAdapter } from 'brutx-shared-vue/fs';
+import { applyEdits, modify, parse as parseJsonc, type ParseError } from 'jsonc-parser';
 
 import { AVAILABLE_COMPONENTS } from './constants.js';
 import { CliError } from './error.js';
+import { assertSafePath } from './security.js';
+import type { FileTransaction } from './file-transaction.js';
 
 const defaultDiskFs = new DiskFileSystemAdapter();
 
@@ -354,28 +357,55 @@ export function generateSnippetsForComponents(components: string[]): string {
     return generateSnippets(components);
 }
 
-async function writeSnippetFile(snippetPath: string, content: string, fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<void> {
-    try {
-        await fsAdapter.ensureDir(path.dirname(snippetPath));
-        await fsAdapter.writeFile(snippetPath, content, 'utf-8');
-    } catch (error) {
-        throw new CliError(
-            `Failed to write VS Code snippets file "${snippetPath}": ${error instanceof Error ? error.message : String(error)}`,
-            { code: 'WRITE_FAILED', cause: error },
-        );
+export function mergeSnippetsContent(
+    existingContent: string | null,
+    newSnippets: Record<string, unknown>
+): string {
+    let content = existingContent && existingContent.trim().length > 0
+        ? existingContent
+        : '{\n}\n';
+
+    const errors: ParseError[] = [];
+    const parsed = parseJsonc(content, errors, { allowTrailingComma: true });
+    if (errors.length > 0 || parsed === undefined || typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+        throw new CliError('Existing snippets file is not a valid JSON object.', {
+            code: 'CONFIG_INVALID',
+        });
     }
+
+    for (const [key, snippet] of Object.entries(newSnippets)) {
+        const edits = modify(content, [key], snippet, {
+            formattingOptions: {
+                insertSpaces: true,
+                tabSize: 4,
+                eol: '\n',
+            },
+        });
+        content = applyEdits(content, edits);
+    }
+
+    return content;
 }
 
 export async function writeSnippetsFile(
     cwd: string,
     components?: string[],
-    fsAdapter: FileSystemAdapter = defaultDiskFs
+    fsAdapter: FileSystemAdapter = defaultDiskFs,
+    transaction?: FileTransaction
 ): Promise<string> {
     const vscodeDir = path.join(cwd, '.vscode');
     const snippetPath = path.join(vscodeDir, 'brutx.code-snippets');
 
+    await assertSafePath(snippetPath, cwd, fsAdapter);
     const snippetContent = generateSnippets(components);
-    await writeSnippetFile(snippetPath, snippetContent, fsAdapter);
+
+    if (transaction) {
+        await transaction.ensureDir(vscodeDir);
+        await transaction.writeFile(snippetPath, snippetContent);
+    } else {
+        await fsAdapter.ensureDir(vscodeDir);
+        await fsAdapter.writeFile(snippetPath, snippetContent, 'utf-8');
+    }
 
     return snippetPath;
 }
@@ -383,36 +413,35 @@ export async function writeSnippetsFile(
 export async function mergeSnippetsFile(
     cwd: string,
     newComponents: string[],
-    fsAdapter: FileSystemAdapter = defaultDiskFs
+    fsAdapter: FileSystemAdapter = defaultDiskFs,
+    transaction?: FileTransaction
 ): Promise<string> {
     const vscodeDir = path.join(cwd, '.vscode');
     const snippetPath = path.join(vscodeDir, 'brutx.code-snippets');
 
-    let existingSnippets: VscodeSnippetFile = {};
+    await assertSafePath(snippetPath, cwd, fsAdapter);
+
+    let existingContent: string | null = null;
     const exists = await fsAdapter.pathExists(snippetPath);
     if (exists) {
-        let parsed: unknown;
-        try {
-            parsed = await fsAdapter.readJson(snippetPath);
-        } catch (error) {
-            const backupPath = `${snippetPath}.bak`;
-            await fsAdapter.copy(snippetPath, backupPath).catch(() => {});
-            throw new Error(`Failed to read existing snippets file "${snippetPath}": ${error instanceof Error ? error.message : String(error)}. The original file was backed up to .bak.`, { cause: error });
-        }
-        if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
-            const backupPath = `${snippetPath}.bak`;
-            await fsAdapter.copy(snippetPath, backupPath).catch(() => {});
-            throw new Error(`"${snippetPath}" is not a valid snippets file (expected a JSON object). The original file was backed up to .bak.`);
-        }
-        existingSnippets = parsed as VscodeSnippetFile;
+        existingContent = await fsAdapter.readFile(snippetPath, 'utf-8');
     }
 
+    const newSnippets: Record<string, unknown> = {};
     for (const componentName of newComponents) {
         const snippetKey = `BrutxUI ${toPascalCase(componentName)}`;
-        existingSnippets[snippetKey] = buildSnippetForComponent(componentName);
+        newSnippets[snippetKey] = buildSnippetForComponent(componentName);
     }
 
-    await writeSnippetFile(snippetPath, JSON.stringify(existingSnippets, null, 4), fsAdapter);
+    const mergedContent = mergeSnippetsContent(existingContent, newSnippets);
+
+    if (transaction) {
+        await transaction.ensureDir(vscodeDir);
+        await transaction.writeFile(snippetPath, mergedContent);
+    } else {
+        await fsAdapter.ensureDir(vscodeDir);
+        await fsAdapter.writeFile(snippetPath, mergedContent, 'utf-8');
+    }
 
     return snippetPath;
 }
