@@ -11,7 +11,7 @@ export {
 } from './lib/index.js';
 export type {
     RegistryClientOptions,
-    ResolvedDependenciesResult,
+    ResolvedComponentPlan,
     FetchItemOptions,
     ListComponentsOptions,
     RegistryErrorCode,

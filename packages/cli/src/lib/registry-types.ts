@@ -27,15 +27,12 @@ export interface RegistryClientOptions {
     readonly tracker?: RegistrySourceTracker;
 }
 
-export interface ResolvedDependenciesResult {
-    /** 拓扑排序完成的组件条目列表（已通过完整性校验与签名背书，安装顺序安全） */
+export interface ResolvedComponentPlan {
     readonly items: readonly RegistryItem[];
-    /** 各组件实际命中的注册表源 URL / 路径（支持多源回退与 CDN 溯源） */
     readonly hitSources: ReadonlyMap<string, string>;
-    /** 所有组件递归收集并去重后的生产 npm 依赖列表 */
-    readonly dependencies: readonly string[];
-    /** 所有组件递归收集并去重后的开发 npm 依赖列表 */
-    readonly devDependencies: readonly string[];
+    readonly npmDependencies: readonly string[];
+    readonly npmDevDependencies: readonly string[];
+    readonly registryDependencies: readonly string[];
 }
 
 export interface FetchItemOptions {

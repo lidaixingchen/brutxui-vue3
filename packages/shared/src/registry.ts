@@ -34,6 +34,7 @@ export interface RegistryItem {
     status?: 'stable' | 'legacy' | 'deprecated';
     replacement?: string;
     dependencies: string[];
+    devDependencies?: string[];
     registryDependencies: string[];
     files: RegistryFile[];
     tailwind: Record<string, unknown>;

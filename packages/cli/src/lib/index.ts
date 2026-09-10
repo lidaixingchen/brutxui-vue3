@@ -40,13 +40,13 @@ export {
     migrateConfig,
     readConfigSafe,
     readConfig,
-} from './registry.js';
+} from './config.js';
 
 export {
     REGISTRY_ERROR_CODES,
     type HttpFetcher,
     type RegistryClientOptions,
-    type ResolvedDependenciesResult,
+    type ResolvedComponentPlan,
     type FetchItemOptions,
     type ListComponentsOptions,
     type RegistryErrorCode,
@@ -57,8 +57,6 @@ export {
     isComponentNotFoundError,
     isRegistrySecurityError,
 } from './registry-client.js';
-
-export { getItem, getItemFromSources, resolveDeps, listLocalRegistryComponents } from './registry.js';
 
 export {
     CacheStorage,

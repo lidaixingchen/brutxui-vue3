@@ -18,7 +18,7 @@ import { buildAuthHeaders } from './registry-source.js';
 import { verifyManifestIntegrityAndSignature, loadTrustedPublicKeys } from './signature.js';
 import type {
     RegistryClientOptions,
-    ResolvedDependenciesResult,
+    ResolvedComponentPlan,
     FetchItemOptions,
     ListComponentsOptions,
     HttpFetcher,
@@ -65,7 +65,12 @@ export class RegistryClient {
     public readonly tracker: RegistrySourceTracker;
 
     private readonly manifestCache = new Map<string, ManifestSummaryInternal | null>();
-    private readonly inflightItems = new Map<string, Promise<unknown>>();
+    private readonly inflightItems = new Map<string, Promise<{ item: RegistryItem; source: string }>>();
+    private readonly lastHitSources = new Map<string, string>();
+
+    public getLastHitSource(name: string): string | undefined {
+        return this.lastHitSources.get(name);
+    }
 
     public constructor(options?: RegistryClientOptions) {
         this.sources = options?.sources && options.sources.length > 0
@@ -82,9 +87,12 @@ export class RegistryClient {
     }
 
     /**
-     * 获取单个组件完整元数据。
+     * 获取单个组件完整元数据及命中源信息。
      */
-    public async fetchItem(specifier: string, options?: FetchItemOptions): Promise<RegistryItem> {
+    public async fetchItemWithMeta(
+        specifier: string,
+        options?: FetchItemOptions,
+    ): Promise<{ item: RegistryItem; source: string }> {
         const { name, version } = this.parseSpecifier(specifier);
         this.assertSafeComponentName(name);
 
@@ -94,15 +102,19 @@ export class RegistryClient {
 
         // 如果包含版本，根据说明符转换源 URL
         const effectiveSources = targetSources.map(source => this.resolveVersionedSource(source, version));
+        const sourceKey = effectiveSources.join(',');
 
-        return this.dedupeInflight(name, effectiveSources.join(','), async () => {
-            const { item } = await this.fetchWithSourcesPipeline(
-                name,
-                effectiveSources,
-                options,
-            );
-            return item;
+        return this.dedupeInflight(name, sourceKey, () => {
+            return this.fetchWithSourcesPipeline(name, effectiveSources, options);
         });
+    }
+
+    /**
+     * 获取单个组件完整元数据。
+     */
+    public async fetchItem(specifier: string, options?: FetchItemOptions): Promise<RegistryItem> {
+        const { item } = await this.fetchItemWithMeta(specifier, options);
+        return item;
     }
 
     /**
@@ -197,6 +209,7 @@ export class RegistryClient {
             for (const source of sources) {
                 try {
                     const item = await this.fetchSingleSource(name, source, options);
+                    this.lastHitSources.set(name, source);
                     return { item, source };
                 } catch (error) {
                     if (firstError === null && error instanceof CliError) {
@@ -212,20 +225,32 @@ export class RegistryClient {
 
         if (sources.length === 1) {
             const source = sources[0];
-            const item = await this.fetchSingleSource(name, source, options);
-            return { item, source };
+            try {
+                const item = await this.fetchSingleSource(name, source, options);
+                this.lastHitSources.set(name, source);
+                return { item, source };
+            } catch (err) {
+                this.tracker.recordFailure(source);
+                throw err;
+            }
         }
 
         const rankedSources = this.tracker.rankSources([...sources]);
         const raceResult = await hedgedRace<RegistryItem>(
             rankedSources,
             async (source, sourceSignal) => {
-                return await this.fetchSingleSource(name, source, { ...options, signal: sourceSignal ?? signal });
+                try {
+                    return await this.fetchSingleSource(name, source, { ...options, signal: sourceSignal ?? signal });
+                } catch (err) {
+                    this.tracker.recordFailure(source);
+                    throw err;
+                }
             },
             { parentSignal: signal },
         );
 
         this.tracker.recordSuccess(raceResult.winningSource, raceResult.durationMs);
+        this.lastHitSources.set(name, raceResult.winningSource);
 
         return {
             item: raceResult.result,
@@ -332,6 +357,7 @@ export class RegistryClient {
                         logger.info(`[OFFLINE CACHE HIT] ${name} (source: ${source})`);
                     }
                     this.verifyManifestItemCrossCheck(cachedEntry.data, name, manifestSummary);
+                    this.validateItemIntegrity(cachedEntry.data, name);
                     return cachedEntry.data;
                 }
             }
@@ -358,6 +384,7 @@ export class RegistryClient {
         if (res.status === 304 && cachedEntry) {
             await this.cache.touch(name, source);
             this.verifyManifestItemCrossCheck(cachedEntry.data, name, manifestSummary);
+            this.validateItemIntegrity(cachedEntry.data, name);
             return cachedEntry.data;
         }
 
@@ -405,6 +432,12 @@ export class RegistryClient {
                 signal,
             });
             if (!res.ok) {
+                if (this.requireSignature) {
+                    throw new CliError(
+                        `Strict signature verification requires valid manifest, but failed to fetch: HTTP ${res.status} ${res.statusText}`,
+                        { code: 'REGISTRY_SIGNATURE_INVALID' }
+                    );
+                }
                 this.manifestCache.set(source, null);
                 return null;
             }
@@ -417,10 +450,20 @@ export class RegistryClient {
             };
 
             if (typeof manifest.registryVersion !== 'string' || manifest.registryVersion.length === 0) {
+                if (this.requireSignature) {
+                    throw new CliError('Strict signature verification failed: manifest missing registryVersion.', {
+                        code: 'REGISTRY_SIGNATURE_INVALID',
+                    });
+                }
                 this.manifestCache.set(source, null);
                 return null;
             }
             if (typeof manifest.integrity !== 'string' || manifest.integrity.length === 0) {
+                if (this.requireSignature) {
+                    throw new CliError('Strict signature verification failed: manifest missing integrity.', {
+                        code: 'REGISTRY_SIGNATURE_INVALID',
+                    });
+                }
                 this.manifestCache.set(source, null);
                 return null;
             }
@@ -457,6 +500,12 @@ export class RegistryClient {
             if (signal?.aborted) throw error;
             if (error instanceof CliError && error.code === 'REGISTRY_SIGNATURE_INVALID') {
                 throw error;
+            }
+            if (this.requireSignature) {
+                throw new CliError(
+                    `Strict signature verification requires valid manifest: ${error instanceof Error ? error.message : String(error)}`,
+                    { code: 'REGISTRY_SIGNATURE_INVALID', cause: error }
+                );
             }
             this.manifestCache.set(source, null);
             return null;
@@ -506,11 +555,15 @@ export class RegistryClient {
     /**
      * 请求去重。
      */
-    private dedupeInflight<T>(name: string, sourceKey: string, fn: () => Promise<T>): Promise<T> {
+    private dedupeInflight(
+        name: string,
+        sourceKey: string,
+        fn: () => Promise<{ item: RegistryItem; source: string }>,
+    ): Promise<{ item: RegistryItem; source: string }> {
         const key = `${name}::${sourceKey}`;
         const existing = this.inflightItems.get(key);
         if (existing) {
-            return existing as Promise<T>;
+            return existing;
         }
 
         const promise = fn().finally(() => {
@@ -520,28 +573,36 @@ export class RegistryClient {
         this.inflightItems.set(key, promise);
         return promise;
     }
+
     /**
      * 拓扑解析与依赖展开。
      * 对组件及其 registryDependencies 执行深度优先搜索（DFS），
-     * 通过 active 栈防御循环依赖，通过 visited 集合同源同名去重，
+     * 通过 ancestors 调用链集合严格防御循环依赖（避免菱形依赖假阳性），
+     * 并发分支通过 resolving Promise 记忆表实现汇聚单飞等待，
+     * 内部通过 Promise.all 树级并发与 dedupeInflight 请求单飞去重，
      * 保证返回的 items 数组满足拓扑排序（被依赖组件在前）。
      */
-    public async resolveDependencies(
+    public async resolve(
         specifiers: readonly string[],
         options?: FetchItemOptions,
-    ): Promise<ResolvedDependenciesResult> {
+    ): Promise<ResolvedComponentPlan> {
         const resolved: RegistryItem[] = [];
         const hitSources = new Map<string, string>();
         const visited = new Set<string>();
-        const active = new Set<string>();
+        const resolving = new Map<string, Promise<void>>();
         const dependencies = new Set<string>();
         const devDependencies = new Set<string>();
+        const registryDependencies = new Set<string>();
 
         const targetSources = options?.sourceOverride
             ? [options.sourceOverride]
             : this.sources;
 
-        const dfs = async (specifier: string, parentSource?: string): Promise<void> => {
+        const dfs = async (
+            specifier: string,
+            parentSource?: string,
+            ancestors: ReadonlySet<string> = new Set(),
+        ): Promise<void> => {
             const { name: cleanName, version } = this.parseSpecifier(specifier);
             this.assertSafeComponentName(cleanName);
 
@@ -552,8 +613,8 @@ export class RegistryClient {
             const sourceKey = effectiveSources.join(',');
             const dedupeKey = `${cleanName}::${sourceKey}`;
 
-            if (active.has(dedupeKey)) {
-                const cycle = Array.from(active).map(k => k.split('::')[0]).concat(cleanName).join(' -> ');
+            if (ancestors.has(dedupeKey)) {
+                const cycle = Array.from(ancestors).map(k => k.split('::')[0]).concat(cleanName).join(' -> ');
                 throw new CliError(
                     `Circular dependency detected: ${cycle}`,
                     { code: 'INVALID_REGISTRY' }
@@ -564,36 +625,49 @@ export class RegistryClient {
                 return;
             }
 
-            active.add(dedupeKey);
+            const ongoing = resolving.get(dedupeKey);
+            if (ongoing) {
+                await ongoing;
+                return;
+            }
 
-            try {
-                const { item, source: hitSource } = await this.dedupeInflight<{ item: RegistryItem; source: string }>(cleanName, sourceKey, async () => {
-                    return await this.fetchWithSourcesPipeline(cleanName, effectiveSources, options);
-                });
+            const nextAncestors = new Set(ancestors);
+            nextAncestors.add(dedupeKey);
+
+            const task = (async () => {
+                const { item, source: hitSource } = await this.dedupeInflight(
+                    cleanName,
+                    sourceKey,
+                    () => this.fetchWithSourcesPipeline(cleanName, effectiveSources, options),
+                );
 
                 hitSources.set(cleanName, hitSource);
 
                 if (item.registryDependencies && item.registryDependencies.length > 0) {
-                    for (const dep of item.registryDependencies) {
-                        await dfs(dep, hitSource);
-                    }
+                    item.registryDependencies.forEach(dep => registryDependencies.add(dep));
+                    await Promise.all(
+                        item.registryDependencies.map(dep => dfs(dep, hitSource, nextAncestors))
+                    );
                 }
 
-                active.delete(dedupeKey);
                 visited.add(dedupeKey);
-                resolved.push(item);
+
+                if (!resolved.some(r => r.name === item.name)) {
+                    resolved.push(item);
+                }
 
                 // 收集依赖
                 item.dependencies?.forEach((dep: string) => dependencies.add(dep));
-                const itemDevDeps = (item as unknown as Record<string, unknown>).devDependencies;
-                if (Array.isArray(itemDevDeps)) {
-                    itemDevDeps.forEach((dep: unknown) => {
-                        if (typeof dep === 'string') devDependencies.add(dep);
-                    });
+                if (item.devDependencies && Array.isArray(item.devDependencies)) {
+                    item.devDependencies.forEach((dep: string) => devDependencies.add(dep));
                 }
-            } catch (error) {
-                active.delete(dedupeKey);
-                throw error;
+            })();
+
+            resolving.set(dedupeKey, task);
+            try {
+                await task;
+            } finally {
+                resolving.delete(dedupeKey);
             }
         };
 
@@ -604,8 +678,9 @@ export class RegistryClient {
         return {
             items: resolved,
             hitSources,
-            dependencies: Array.from(dependencies).sort(),
-            devDependencies: Array.from(devDependencies).sort(),
+            npmDependencies: Array.from(dependencies).sort(),
+            npmDevDependencies: Array.from(devDependencies).sort(),
+            registryDependencies: Array.from(registryDependencies).sort(),
         };
     }
 
@@ -617,6 +692,16 @@ export class RegistryClient {
     public async listComponents(options?: ListComponentsOptions): Promise<readonly string[]> {
         const targetSource = options?.source ?? this.sources[0];
         if (isHttpUrl(targetSource)) {
+            if (this.offline) {
+                const cachedManifest = await this.cache.get<{ items?: Record<string, unknown> }>('registry-manifest', targetSource);
+                if (cachedManifest && cachedManifest.data?.items && typeof cachedManifest.data.items === 'object') {
+                    return Object.keys(cachedManifest.data.items).sort();
+                }
+                throw new CliError(`Offline mode enabled: registry manifest not available in cache for "${targetSource}".`, {
+                    code: 'REGISTRY_OFFLINE_UNAVAILABLE',
+                });
+            }
+
             const summary = await this.fetchManifestSummary(targetSource, options?.signal);
             if (summary && summary.itemIntegrities) {
                 return Object.keys(summary.itemIntegrities).sort();

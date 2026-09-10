@@ -21,6 +21,7 @@ import { isSafePath } from './security.js';
 import { FileTransaction } from './file-transaction.js';
 
 import { RegistryClient } from './registry-client.js';
+import type { RegistryClientOptions } from './registry-types.js';
 
 export interface ProjectEnvironmentInfo {
     projectType: ProjectType;
@@ -72,13 +73,22 @@ export class ProjectContext {
     }
 
     get registry(): RegistryClient {
-        if (!this._registryClient) {
-            this._registryClient = new RegistryClient({
+        return this.getRegistryClient();
+    }
+
+    public getRegistryClient(overrides?: Partial<RegistryClientOptions>): RegistryClient {
+        if (!this._registryClient || overrides) {
+            const client = new RegistryClient({
                 sources: this._config?.registries,
                 requireSignature: this._config?.requireSignature,
                 trustedPublicKeys: this._config?.trustedPublicKeys,
                 fsAdapter: this.fs,
+                ...overrides,
             });
+            if (!overrides) {
+                this._registryClient = client;
+            }
+            return client;
         }
         return this._registryClient;
     }

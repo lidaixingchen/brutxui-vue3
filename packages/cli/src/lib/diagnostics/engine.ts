@@ -17,7 +17,7 @@ import type {
 import { BUILTIN_RULES } from './rules/index.js';
 import { ProjectContext } from '../project-context.js';
 import { readManifest } from '../manifest.js';
-import { readConfigSafe } from '../registry.js';
+import { readConfigSafe } from '../config.js';
 import { CliError } from '../error.js';
 
 import { CustomRuleLoader } from './custom-rule-loader.js';
