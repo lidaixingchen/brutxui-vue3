@@ -4,6 +4,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import DashboardShell from './DashboardShell.vue'
+import {
+    dashboardSidebarVariants,
+    dashboardShellVariants,
+    dashboardHeaderVariants,
+    dashboardMainVariants,
+} from './dashboard-shell-variants'
 
 const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
@@ -161,4 +167,56 @@ describe('DashboardShell', () => {
             expect(wrapper.find('.bg-brutal-overlay').exists()).toBe(false)
         })
     })
+
+    describe('dashboard variants unit tests', () => {
+        it('returns default open classes for sidebar variants without arguments', () => {
+            const classes = dashboardSidebarVariants()
+            expect(classes).toContain('w-64')
+            expect(classes).toContain('p-4')
+            expect(classes).toContain('border-r-3')
+            expect(classes).toContain('border-brutal')
+            expect(classes).toContain('bg-brutal-bg')
+        })
+
+        it('returns open classes for sidebar variants with open: true', () => {
+            const classes = dashboardSidebarVariants({ open: true })
+            expect(classes).toContain('w-64')
+            expect(classes).toContain('p-4')
+            expect(classes).toContain('border-r-3')
+        })
+
+        it('returns closed classes for sidebar variants with open: false', () => {
+            const classes = dashboardSidebarVariants({ open: false })
+            expect(classes).toContain('w-0')
+            expect(classes).toContain('p-0')
+            expect(classes).toContain('overflow-hidden')
+            expect(classes).toContain('border-r-0')
+            expect(classes).toContain('md:w-64')
+        })
+
+        it('returns shell root layout classes', () => {
+            const classes = dashboardShellVariants()
+            expect(classes).toContain('flex')
+            expect(classes).toContain('h-screen')
+            expect(classes).toContain('bg-brutal-bg')
+            expect(classes).toContain('text-brutal-fg')
+        })
+
+        it('returns header layout classes', () => {
+            const classes = dashboardHeaderVariants()
+            expect(classes).toContain('border-b-3')
+            expect(classes).toContain('border-brutal')
+            expect(classes).toContain('bg-brutal-bg')
+            expect(classes).toContain('px-6')
+            expect(classes).toContain('py-3')
+        })
+
+        it('returns main layout classes', () => {
+            const classes = dashboardMainVariants()
+            expect(classes).toContain('flex-1')
+            expect(classes).toContain('overflow-y-auto')
+            expect(classes).toContain('p-6')
+        })
+    })
 })
+

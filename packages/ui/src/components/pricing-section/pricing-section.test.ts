@@ -307,5 +307,17 @@ describe('PricingSection', () => {
             await proButton!.trigger('click')
             expect(wrapper.emitted('plan-select')).toEqual([['Pro']])
         })
+
+        it('applies root layout classes and merges custom class', () => {
+            const wrapper = mount(PricingSection, {
+                props: { class: 'custom-pricing-section' },
+                ...localeProvide,
+            })
+            expect(wrapper.classes()).toContain('w-full')
+            expect(wrapper.classes()).toContain('max-w-5xl')
+            expect(wrapper.classes()).toContain('mx-auto')
+            expect(wrapper.classes()).toContain('custom-pricing-section')
+        })
     })
 })
+

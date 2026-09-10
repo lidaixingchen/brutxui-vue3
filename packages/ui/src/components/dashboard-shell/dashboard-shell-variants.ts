@@ -1,4 +1,4 @@
-import { cva } from 'class-variance-authority'
+import { cva, type VariantProps } from 'class-variance-authority'
 
 export const dashboardShellVariants = cva(
     'flex h-screen bg-brutal-bg text-brutal-fg'
@@ -29,3 +29,8 @@ export const dashboardHeaderVariants = cva(
 export const dashboardMainVariants = cva(
     'flex-1 overflow-y-auto p-6'
 )
+
+export type DashboardSidebarVariants = VariantProps<typeof dashboardSidebarVariants>
+export type DashboardSidebarVariantProps = DashboardSidebarVariants
+export type DashboardShellVariants = DashboardSidebarVariants
+

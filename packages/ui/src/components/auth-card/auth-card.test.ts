@@ -256,4 +256,16 @@ describe('AuthCard', () => {
         expect(describedBy).toBeTruthy()
         expect(wrapper.find(`[id="${describedBy}"]`).exists()).toBe(true)
     })
+
+    it('applies root layout classes and merges custom class', () => {
+        const wrapper = mount(AuthCard, {
+            props: { class: 'custom-auth-card' },
+            ...localeProvide,
+        })
+        expect(wrapper.classes()).toContain('w-full')
+        expect(wrapper.classes()).toContain('max-w-md')
+        expect(wrapper.classes()).toContain('mx-auto')
+        expect(wrapper.classes()).toContain('custom-auth-card')
+    })
 })
+

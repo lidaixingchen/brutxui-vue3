@@ -166,4 +166,18 @@ describe('FooterSection', () => {
         expect(payload).toMatchObject({ groupIndex: 0, linkIndex: 0 })
         expect(payload.event).toBeInstanceOf(MouseEvent)
     })
+
+    it('applies root layout classes and merges custom class', () => {
+        const wrapper = mount(FooterSection, {
+            props: { class: 'custom-footer' },
+            ...localeProvide,
+        })
+        const footer = wrapper.find('footer')
+        expect(footer.classes()).toContain('w-full')
+        expect(footer.classes()).toContain('bg-brutal-bg')
+        expect(footer.classes()).toContain('border-t-3')
+        expect(footer.classes()).toContain('border-brutal')
+        expect(footer.classes()).toContain('custom-footer')
+    })
 })
+

@@ -405,6 +405,19 @@
       "icon-size-variants.ts"
     ]
   },
+  "countdown": {
+    "files": [
+      "Countdown.vue",
+      "countdown-format.ts",
+      "countdown-variants.ts",
+      "types.ts"
+    ],
+    "composables": [
+      "useLocale.ts"
+    ],
+    "directives": [],
+    "lib": []
+  },
   "counter": {
     "files": [
       "Counter.vue",
@@ -1032,6 +1045,21 @@
     ],
     "directives": [],
     "lib": []
+  },
+  "statistic": {
+    "files": [
+      "Statistic.vue",
+      "statistic-format.ts",
+      "statistic-variants.ts",
+      "types.ts"
+    ],
+    "composables": [
+      "useLocale.ts"
+    ],
+    "directives": [],
+    "lib": [
+      "icon-size-variants.ts"
+    ]
   },
   "stepper": {
     "files": [
