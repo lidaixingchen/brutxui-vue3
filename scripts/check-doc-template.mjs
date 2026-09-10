@@ -86,7 +86,17 @@ function extractSection(content, heading) {
 function checkFile(filePath, requiredList, previewAlts) {
   const content = readFileSync(filePath, 'utf-8')
   const hs = headings(content)
-  const missing = requiredList.filter((h) => !hs.has(cleanHeading(h)))
+  const isZh = !toPosixPath(filePath).includes('/en/')
+  const missing = requiredList.filter((h) => {
+    const cleaned = cleanHeading(h)
+    if (cleaned === '## Props') {
+      const apiAlts = isZh
+        ? ['## Props', '## API 参考', '## API']
+        : ['## Props', '## API Reference', '## API']
+      return !apiAlts.some((alt) => hs.has(cleanHeading(alt)))
+    }
+    return !hs.has(cleaned)
+  })
   const hasPreview = previewAlts ? previewAlts.some((h) => hs.has(cleanHeading(h))) : true
   const previewName = previewAlts ? previewAlts.find((h) => hs.has(cleanHeading(h))) : null
   const problems = []

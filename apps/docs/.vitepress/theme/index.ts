@@ -2,6 +2,7 @@ import DefaultTheme from 'vitepress/theme';
 import type { Theme } from 'vitepress';
 import type { Component } from 'vue';
 import Layout from './Layout.vue';
+import ComponentApi from './components/ComponentApi.vue';
 import ComponentPreview from './components/ComponentPreview.vue';
 import ComponentCatalog from './components/ComponentCatalog.vue';
 import CopyButton from './components/CopyButton.vue';
@@ -23,6 +24,7 @@ const demoModules = import.meta.glob<{ default: Component }>(
 );
 
 const GLOBAL_COMPONENTS: Record<string, Component> = {
+    ComponentApi,
     ComponentPreview,
     ComponentCatalog,
     CopyButton,

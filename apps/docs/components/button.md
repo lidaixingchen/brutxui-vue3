@@ -184,38 +184,9 @@ import { RouterLink } from 'vue-router'
 | `xl` | `h-16` | `px-10 py-4` | `text-xl` |
 | `icon` | `h-11 w-11` | `p-0` | — |
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-| ---- | ---- | ------ | ---- |
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success' \| 'outline' \| 'ghost' \| 'link'` | `'default'` | 按钮变体样式 |
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'icon'` | `'default'` | 按钮尺寸，`icon` 为正方形图标按钮 |
-| `asChild` | `boolean` | `false` | 将按钮样式渲染到子元素上，用于组合路由链接等 |
-| `type` | `'button' \| 'submit' \| 'reset'` | `undefined` | 原生 button 类型；为 `submit` 时启用 `pendingText` 行为 |
-| `loading` | `boolean` | `false` | 显示加载动画并禁用按钮 |
-| `disabled` | `boolean` | `false` | 禁用按钮 |
-| `pendingText` | `string` | `undefined`（回退到 i18n `submitButton.submitting`） | 加载中显示的等待文本，仅在 `type="submit"` 且 `loading` 时生效 |
-| `effect` | `'none' \| 'glitch'` | `'none'` | 可选视觉效果 |
-| `flair` | `'none' \| 'stacked' \| 'hazard' \| 'ticket'` | `'none'` | 装饰形态维度，与色系变体正交可组合 |
-| `glitchTrigger` | `'hover' \| 'click' \| 'autoplay' \| 'none'` | `'hover'` | 故障动画触发方式，仅在 `effect="glitch"` 时生效 |
-| `glitchInterval` | `number` | `3000` | 自动播放间隔（毫秒），仅在 `glitchTrigger="autoplay"` 时生效 |
-| `glitchSpeed` | `'slow' \| 'medium' \| 'fast'` | `'medium'` | 故障动画速度 |
-| `glitchDirection` | `'horizontal' \| 'vertical' \| 'both'` | `'horizontal'` | 故障撕裂方向 |
-| `class` | `string` | `undefined` | 自定义 CSS 类名 |
-
-## 事件
-
-按钮组件会传播所有原生 DOM 事件（如 `click`、`mouseenter` 等），无需额外配置。
-
-| 事件 | 参数 | 说明 |
-| ---- | ---- | ---- |
-| `click` | `MouseEvent` | 点击按钮时触发，加载或禁用状态时不触发 |
-
-## 插槽
-
-| 插槽 | 作用域 | 说明 |
-| ---- | ---- | ---- |
-| `default` | — | 按钮内容 |
+<ComponentApi name="button" />
 
 ## 可访问性
 

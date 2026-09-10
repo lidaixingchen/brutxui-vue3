@@ -121,58 +121,9 @@ import { Alert, AlertTitle, AlertDescription, Button } from 'brutx-ui-vue'
 </template>
 ```
 
-## Props
+## API Reference
 
-### Alert
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'success' \| 'warning' \| 'danger' \| 'info'` | `'default'` | Alert variant type |
-| `closable` | `boolean` | `false` | Whether to show the close button |
-| `class` | `string` | — | Custom CSS class |
-
-### AlertTitle
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `as` | `string \| Component` | `'h5'` | The rendered HTML element or component |
-| `asChild` | `boolean` | — | Whether to pass props to the child element |
-| `class` | `string` | — | Custom CSS class |
-
-### AlertDescription
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `class` | `string` | — | Custom CSS class |
-
-## Events
-
-### Alert
-
-| Event | Payload | Description |
-|------|------|------|
-| `close` | `[]` | Emitted when the close button is clicked |
-
-## Slots
-
-### Alert
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | Main content of the alert |
-| `actions` | — | Action button area, rendered below the content |
-
-### AlertTitle
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | Title content |
-
-### AlertDescription
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | Description content |
+<ComponentApi name="alert" />
 
 ## Accessibility
 

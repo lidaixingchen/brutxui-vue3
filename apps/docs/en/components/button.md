@@ -185,38 +185,9 @@ The `flair` dimension composes orthogonally with color variants, offering three 
 | `xl` | `h-16` | `px-10 py-4` | `text-xl` |
 | `icon` | `h-11 w-11` | `p-0` | — |
 
-## Props
-
-| Prop | Type | Default | Description |
-| ---- | ---- | ------ | ---- |
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success' \| 'outline' \| 'ghost' \| 'link'` | `'default'` | Button variant style |
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'icon'` | `'default'` | Button size; `icon` is a square icon button |
-| `asChild` | `boolean` | `false` | Renders button styles onto the child element, useful for composing router links, etc. |
-| `type` | `'button' \| 'submit' \| 'reset'` | `undefined` | Native button type; enables `pendingText` behavior when set to `submit` |
-| `loading` | `boolean` | `false` | Shows loading animation and disables the button |
-| `disabled` | `boolean` | `false` | Disables the button |
-| `pendingText` | `string` | `undefined` (falls back to i18n `submitButton.submitting`) | Pending text displayed during loading; only effective when `type="submit"` and `loading` |
-| `effect` | `'none' \| 'glitch'` | `'none'` | Optional visual effect |
-| `flair` | `'none' \| 'stacked' \| 'hazard' \| 'ticket'` | `'none'` | Decorative flair dimension, composes orthogonally with color variants |
-| `glitchTrigger` | `'hover' \| 'click' \| 'autoplay' \| 'none'` | `'hover'` | Glitch animation trigger, only active with `effect="glitch"` |
-| `glitchInterval` | `number` | `3000` | Autoplay interval in milliseconds, only active with `glitchTrigger="autoplay"` |
-| `glitchSpeed` | `'slow' \| 'medium' \| 'fast'` | `'medium'` | Glitch animation speed |
-| `glitchDirection` | `'horizontal' \| 'vertical' \| 'both'` | `'horizontal'` | Glitch tear direction |
-| `class` | `string` | `undefined` | Custom CSS class name |
-
-## Events
-
-The Button component propagates all native DOM events (e.g., `click`, `mouseenter`, etc.) without additional configuration.
-
-| Event | Payload | Description |
-| ---- | ---- | ---- |
-| `click` | `MouseEvent` | Fired when the button is clicked; not triggered in loading or disabled state |
-
-## Slots
-
-| Slot | Scope | Description |
-| ---- | ---- | ---- |
-| `default` | — | Button content |
+## API Reference
+ 
+<ComponentApi name="button" />
 
 ## Accessibility
 

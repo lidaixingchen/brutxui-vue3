@@ -20,7 +20,7 @@ const BUILTINS = new Set([
 ])
 
 const SKIP_DIR_NAMES = new Set([
-  'node_modules', 'dist', 'cache', '.temp', 'coverage', '.nuxt', '.output',
+  'node_modules', 'dist', 'cache', '.temp', 'coverage', '.nuxt', '.output', 'test-d',
 ])
 
 function extractPkgName(spec) {

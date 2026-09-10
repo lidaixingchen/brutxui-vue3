@@ -120,58 +120,9 @@ import { Alert, AlertTitle, AlertDescription, Button } from 'brutx-ui-vue'
 </template>
 ```
 
-## Props
+## API 参考
 
-### Alert
-
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'success' \| 'warning' \| 'danger' \| 'info'` | `'default'` | 警告框变体类型 |
-| `closable` | `boolean` | `false` | 是否显示关闭按钮 |
-| `class` | `string` | — | 自定义 CSS 类 |
-
-### AlertTitle
-
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `as` | `string \| Component` | `'h5'` | 渲染的 HTML 元素或组件 |
-| `asChild` | `boolean` | — | 是否将 props 传递给子元素 |
-| `class` | `string` | — | 自定义 CSS 类 |
-
-### AlertDescription
-
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `class` | `string` | — | 自定义 CSS 类 |
-
-## 事件
-
-### Alert
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `close` | `[]` | 点击关闭按钮时触发 |
-
-## 插槽
-
-### Alert
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 提示框主体内容 |
-| `actions` | — | 操作按钮区域，渲染在内容下方 |
-
-### AlertTitle
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 标题内容 |
-
-### AlertDescription
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 描述内容 |
+<ComponentApi name="alert" />
 
 ## 可访问性
 
