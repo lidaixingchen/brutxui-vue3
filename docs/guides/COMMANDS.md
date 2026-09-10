@@ -13,6 +13,7 @@
   - 修复：`npx eslint <file> --fix`
   - 类型：`pnpm --filter <pkg> typecheck`
   - 门禁：`pnpm check:contracts`（静态契约并发 6 合 1）、`pnpm check:docs`（文档健康度并发 5 合 1）
+  - 归档：`pnpm doc:archive`（方案完工一键物理迁移、状态固化与知识地图全景自愈）
   - 脚手架：`pnpm generate:*`
 - **第二层：低频与专项运维指令（收纳于本文档）**
   - 版本发布与 Changeset 治理

@@ -71,7 +71,7 @@ pnpm --filter brutx-registry-vue validate       # 校验完整性 + 依赖图；
 | 业务逻辑 / 组件 / 函数 | `pnpm --filter <pkg> test <相对路径>`<br>`npx eslint <file> --fix` | 跑针对性单测与代码格式修复 |
 | 类型接口 / 跨包导出 | `pnpm --filter <pkg> typecheck` | 验证 TS 类型严苛性与接口兼容 |
 | 样式 / 令牌 / 导出 / 依赖 | `pnpm check:contracts` | 静态契约并发 6 合 1 门禁（~2s，全绿放行） |
-| 文档 / 规范 / 技能 / 链接 | `pnpm check:docs` | 文档健康度并发 5 合 1 门禁（~0.4s，可加 `--fix` 自愈） |
+| 文档 / 规范 / 技能 / 链接 | `pnpm check:docs`<br>`pnpm doc:archive` | 文档健康度并发 5 合 1 门禁（~0.4s，可加 `--fix` 自愈）；方案完工一键归档自愈 |
 
 ## 技术栈
 
@@ -131,14 +131,12 @@ Vue 3（`<script setup>`）· TypeScript（strict）· Tailwind CSS v4 · reka-u
 - [Tailwind v4 机制说明](docs/guides/TAILWIND_V4_MECHANISMS.md)
 - [AI 技能描述](skills/brutxui/SKILL.md)
 
-## docs/ 文档落位约定
+## 文档落位与方案归档守则
 
-`docs/` 采用“生命周期分流 + 领域镜像分仓”，索引见 [docs/index.md](docs/index.md)，治理总则详见 [docs/guides/DOC_GOVERNANCE.md](docs/guides/DOC_GOVERNANCE.md)：
+`docs/` 采用“生命周期分流 + 领域镜像分仓”，治理总则见 [DOC_GOVERNANCE.md](docs/guides/DOC_GOVERNANCE.md)，提交前要求见 [COMMIT_CONVENTION.md](docs/guides/COMMIT_CONVENTION.md)：
 
-- **规范 / 操作手册** → `docs/guides/`，英文全大写命名（如 `VISUAL_SYSTEM.md`、`DOC_GOVERNANCE.md`），常青维护。
-- **活跃方案计划** → `docs/plans/<domain>/`（`cli`、`ui`、`styles`、`core`），中文命名 `<中文主题>方案.md`（功能设计类用 `<主题>设计.md`），仅收纳 `draft` 与 `active`；顶部必须包含标准 YAML Frontmatter（单一事实源）。
-- **审计 / 调研报告** → `docs/reports/` 三分类：周期扫描快照 `scans/<YYYY-MM-DD>-*`、体系审计 `audits/*`、技术调研 `research/*`。
-- **链接一律相对路径**，禁止 `file:///` 绝对链接；修改/新增文档后统一运行 `pnpm check:docs`（全量门禁校验；可加 `--fix` 自动修复链接）。
+- **落位分流**：规范在 `guides/`（常青大写）、活跃方案在 `plans/<domain>/`（带 Frontmatter）、历史封存在 `archive/YYYY/<domain>/`、报告在 `reports/`。链接一律相对路径。
+- **方案完工必须归档自愈**：凡落地完结 `docs/plans/` 方案（读者读完不用做），**提交前必须运行 `pnpm doc:archive <方案路径>`**，一键完成物理迁移、状态固化（`archived` + 完工日期）、双向链接重算、知识地图自愈与原子暂存；严禁带着未归档方案直接提交代码。详见 [DOC_GOVERNANCE.md](docs/guides/DOC_GOVERNANCE.md) §六 与 [COMMIT_CONVENTION.md](docs/guides/COMMIT_CONVENTION.md)。
 
 ## 处理 AI 代码审查报告（open-code-review）
 

@@ -9,6 +9,25 @@
 > - **Git Bash / POSIX sh**：`@'...'@` 不是 here-string 语法，会被当作普通字符串。多行 commit message 应直接用普通引号包裹换行。
 > - **PowerShell**：`@'...'@` 单引号 here-string 语法要求结束标记 `'@` 必须独占一行且**严格位于行首（列 0）**，前面不能有任何空格。
 
+## 提交前收尾闭环（方案落地必检）
+
+在执行 `git commit` 前，若本次提交涉及方案落地结项或文档修改，必须严格完成收尾闭环，**严禁带着未归档方案直接提交**：
+
+1. **方案完工一键归档自愈**：
+   若本次提交涉及落地完结 `docs/plans/<domain>/` 下的方案（黄金判据：读者读完不用做），**必须在提交前运行一键归档**：
+   ```bash
+   pnpm doc:archive docs/plans/<domain>/<方案文件名>.md
+   ```
+   > 引擎将全自动完成：按完工年份移入 `docs/archive/YYYY/`、状态固化为 `archived`、注入当天完工日期、双向相对链接绝对重算、知识地图 `docs/index.md` 声明式派生及精准原子暂存。详见 [DOC_GOVERNANCE.md](DOC_GOVERNANCE.md) §六。
+2. **全仓门禁前置放行**：
+   ```bash
+   pnpm check:docs        # 校验全仓 0 死链、0 绝对路径、方案状态合规（滞留的 done 方案将被拦截）
+   pnpm check:contracts   # 校验静态样式、令牌、导出等 6 合 1 契约全绿通过
+   ```
+3. **提交类型推荐**：
+   - 纯方案归档：`docs: 归档xxx方案并同步知识地图`
+   - 功能实现并收口方案：`feat(ui): 实现xxx组件并归档方案`
+
 ## 格式模板
 
 ```
