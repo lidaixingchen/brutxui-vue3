@@ -1,19 +1,10 @@
 import path from 'node:path';
-import type { CheckResult, DiagnosticContext, DiagnosticRule, PlanFixResult, RepairAction } from '../types.js';
+import type { CheckResult, DiagnosticContext, DiagnosticRule, PlanFixResult } from '../types.js';
 import { FixId } from '../types.js';
 import {
-    BRUTX_CSS_END_MARKER,
-    BRUTX_CSS_START_MARKER,
-    getBrutalistCssStyles,
-    hasBrutxCssBlock,
-    replaceBrutxCssBlock,
-} from '../../constants.js';
-import {
-    computeRelativeImportSpecifier,
-    injectImportStatement,
+    planCssTokenInjection,
     scanCssGraph,
 } from '../../css/index.js';
-import { isSafePath } from '../../project.js';
 
 export const tailwindCssExistsRule: DiagnosticRule = {
     id: 'tailwind.css-exists',
@@ -30,7 +21,9 @@ export const tailwindCssExistsRule: DiagnosticRule = {
                 category: 'tailwind',
                 name: 'tailwind.css points to real file',
                 status: 'error',
-                message: `CSS file not found: ${cssAlias}`,
+                message: `CSS file not found: ${cssAlias} (resolved to: ${cssPath})`,
+                fixId: FixId.InjectCssTokens,
+                fixDescription: 'Create CSS file and inject BrutxUI tokens',
             };
         }
 
@@ -171,138 +164,37 @@ export const tailwindTokensRule: DiagnosticRule = {
         };
     },
     async planFix(ctx: DiagnosticContext): Promise<PlanFixResult> {
-        const cssAlias = ctx.config!.tailwind.css;
-        const tokensAlias = ctx.config!.tailwind.tokensFile?.trim();
-        const cssPath = await ctx.projectContext.resolveAliasPath(cssAlias);
+        try {
+            const plan = await planCssTokenInjection({
+                cwd: ctx.projectContext.cwd,
+                tailwind: ctx.config!.tailwind,
+                fs: ctx.fs,
+                resolveAlias: (alias) => ctx.projectContext.resolveAliasPath(alias),
+            });
 
-        if (!(await isSafePath(cssPath, ctx.projectContext.cwd, ctx.fs))) {
+            if (!plan.hasChanges) {
+                return { status: 'skipped', reason: 'CSS already contains BrutxUI tokens.' };
+            }
+
+            const description = plan.tokensPath
+                ? 'Injected BrutxUI CSS tokens into decoupled tokens file.'
+                : 'Injected BrutxUI CSS tokens.';
+
+            return {
+                status: 'planned',
+                plan: {
+                    fixId: FixId.InjectCssTokens,
+                    ruleId: 'tailwind.tokens',
+                    description,
+                    actions: plan.actions,
+                },
+            };
+        } catch (error) {
             return {
                 status: 'failed',
-                reason: `Security Error: CSS path traversal detected. Access denied to path "${cssPath}".`,
+                reason: error instanceof Error ? error.message : String(error),
             };
         }
-
-        const brutalistCss = await getBrutalistCssStyles();
-        const brutxBlock = `${BRUTX_CSS_START_MARKER}\n${brutalistCss}\n${BRUTX_CSS_END_MARKER}`;
-        const actions: RepairAction[] = [];
-
-        if (tokensAlias) {
-            const tokensPath = await ctx.projectContext.resolveAliasPath(tokensAlias);
-            if (tokensPath !== cssPath) {
-                if (!(await isSafePath(tokensPath, ctx.projectContext.cwd, ctx.fs))) {
-                    return {
-                        status: 'failed',
-                        reason: `Security Error: CSS path traversal detected. Access denied to path "${tokensPath}".`,
-                    };
-                }
-
-                actions.push({
-                    type: 'ensure-dir',
-                    dirPath: path.dirname(tokensPath),
-                    description: 'Ensure tokens directory exists',
-                });
-
-                let tokenContent: string;
-                if (await ctx.fs.pathExists(tokensPath)) {
-                    const existingTokens = await ctx.fs.readFile(tokensPath, 'utf-8');
-                    if (hasBrutxCssBlock(existingTokens)) {
-                        tokenContent = replaceBrutxCssBlock(existingTokens, brutxBlock);
-                    } else {
-                        const cleaned = existingTokens.trimEnd();
-                        tokenContent = cleaned.length > 0 ? `${cleaned}\n${brutxBlock}` : brutxBlock;
-                    }
-                } else {
-                    tokenContent = brutxBlock;
-                }
-
-                actions.push({
-                    type: 'write-file',
-                    filePath: tokensPath,
-                    content: tokenContent,
-                    description: 'Write BrutxUI tokens to tokens file',
-                });
-
-                actions.push({
-                    type: 'ensure-dir',
-                    dirPath: path.dirname(cssPath),
-                    description: 'Ensure css directory exists',
-                });
-
-                const importSpecifier = computeRelativeImportSpecifier(cssPath, tokensPath);
-                let mainContent = '';
-                if (await ctx.fs.pathExists(cssPath)) {
-                    mainContent = await ctx.fs.readFile(cssPath, 'utf-8');
-                }
-
-                if (hasBrutxCssBlock(mainContent)) {
-                    mainContent = replaceBrutxCssBlock(mainContent, '').trimEnd();
-                }
-
-                if (mainContent.length > 0) {
-                    mainContent = injectImportStatement(mainContent, importSpecifier);
-                } else {
-                    mainContent = `@import "tailwindcss";\n@import "${importSpecifier}";\n`;
-                }
-
-                actions.push({
-                    type: 'write-file',
-                    filePath: cssPath,
-                    content: mainContent,
-                    description: 'Import tokens file in main css',
-                });
-
-                return {
-                    status: 'planned',
-                    plan: {
-                        fixId: FixId.InjectCssTokens,
-                        ruleId: 'tailwind.tokens',
-                        description: 'Injected BrutxUI CSS tokens into decoupled tokens file.',
-                        actions,
-                    },
-                };
-            }
-        }
-
-        let existing = '';
-        if (await ctx.fs.pathExists(cssPath)) {
-            existing = await ctx.fs.readFile(cssPath, 'utf-8');
-        }
-
-        let newContent: string;
-        if (hasBrutxCssBlock(existing)) {
-            newContent = replaceBrutxCssBlock(existing, brutxBlock);
-        } else {
-            const cleaned = existing
-                .replaceAll(BRUTX_CSS_START_MARKER, '')
-                .replaceAll(BRUTX_CSS_END_MARKER, '')
-                .trimEnd();
-
-            newContent = cleaned.length > 0
-                ? `${cleaned}\n${brutxBlock}`
-                : `@import "tailwindcss";\n${brutxBlock}`;
-        }
-
-        actions.push({
-            type: 'ensure-dir',
-            dirPath: path.dirname(cssPath),
-            description: 'Ensure css directory exists',
-        });
-        actions.push({
-            type: 'write-file',
-            filePath: cssPath,
-            content: newContent,
-            description: 'Inject BrutxUI CSS tokens into tailwind.css',
-        });
-
-        return {
-            status: 'planned',
-            plan: {
-                fixId: FixId.InjectCssTokens,
-                ruleId: 'tailwind.tokens',
-                description: 'Injected BrutxUI CSS tokens.',
-                actions,
-            },
-        };
     },
 };
 

@@ -1,5 +1,5 @@
 import path from 'path';
-import type { CheckResult, DiagnosticContext, DiagnosticRule, PlanFixResult, RepairAction } from '../types.js';
+import type { CheckResult, DiagnosticContext, DiagnosticRule, PlanFixResult } from '../types.js';
 import { FixId } from '../types.js';
 import { BASE_DEPENDENCIES, CN_FUNCTION_BODY_TEMPLATE, UTILS_TEMPLATE } from '../../constants.js';
 
