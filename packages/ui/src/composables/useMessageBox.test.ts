@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { nextTick } from 'vue'
+import { nextTick, defineComponent, createApp } from 'vue'
 import { useMessageBox } from './useMessageBox'
 import * as envModule from '@/lib/env'
 
@@ -74,6 +74,27 @@ describe('useMessageBox Composable', () => {
 
         const result = await promptPromise
         expect(result).toEqual({ action: 'confirm', value: 'Default Name' })
+    })
+
+    it('captures caller appContext when called inside component setup', async () => {
+        let instance: any
+        const ProviderParent = defineComponent({
+            setup() {
+                const mb = useMessageBox()
+                instance = mb.show({ message: 'Context MessageBox' })
+                return () => null
+            },
+        })
+
+        const app = createApp(ProviderParent)
+        const root = document.createElement('div')
+        app.mount(root)
+
+        await nextTick()
+        expect(document.body.textContent).toContain('Context MessageBox')
+        instance.close()
+        vi.advanceTimersByTime(300)
+        app.unmount()
     })
 
     it('gracefully handles non-client SSR environments', async () => {

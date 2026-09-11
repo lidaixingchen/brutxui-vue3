@@ -1,3 +1,4 @@
+import { getCurrentInstance } from 'vue'
 import {
     showMessageBox,
     showConfirm,
@@ -21,20 +22,41 @@ export interface UseMessageBoxReturn {
  * 组合式 MessageBox 接口
  */
 export function useMessageBox(): UseMessageBoxReturn {
+    const instanceContext = getCurrentInstance()?.appContext
+
+    const mergeOptions = (opts?: MessageBoxOptions): MessageBoxOptions => {
+        return {
+            ...opts,
+            appContext: opts?.appContext ?? instanceContext,
+        }
+    }
+
     const show = (options?: MessageBoxOptions): MessageBoxInstance => {
-        return showMessageBox(options)
+        return showMessageBox(mergeOptions(options))
     }
 
     const confirm = (optionsOrMessage: string | MessageBoxOptions, options?: MessageBoxOptions): Promise<boolean> => {
-        return showConfirm(optionsOrMessage, options)
+        const resolvedOptions = mergeOptions(options)
+        if (typeof optionsOrMessage === 'string') {
+            return showConfirm(optionsOrMessage, resolvedOptions)
+        }
+        return showConfirm(mergeOptions(optionsOrMessage), resolvedOptions)
     }
 
     const alert = (optionsOrMessage: string | MessageBoxOptions, options?: MessageBoxOptions): Promise<void> => {
-        return showAlert(optionsOrMessage, options)
+        const resolvedOptions = mergeOptions(options)
+        if (typeof optionsOrMessage === 'string') {
+            return showAlert(optionsOrMessage, resolvedOptions)
+        }
+        return showAlert(mergeOptions(optionsOrMessage), resolvedOptions)
     }
 
     const prompt = (optionsOrMessage: string | MessageBoxOptions, options?: MessageBoxOptions): Promise<MessageBoxResult> => {
-        return showPrompt(optionsOrMessage, options)
+        const resolvedOptions = mergeOptions(options)
+        if (typeof optionsOrMessage === 'string') {
+            return showPrompt(optionsOrMessage, resolvedOptions)
+        }
+        return showPrompt(mergeOptions(optionsOrMessage), resolvedOptions)
     }
 
     return {

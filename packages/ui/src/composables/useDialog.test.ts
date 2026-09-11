@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { nextTick } from 'vue'
+import { nextTick, defineComponent, createApp } from 'vue'
 import { useDialog } from './useDialog'
 
 describe('useDialog Composable', () => {
@@ -50,5 +50,38 @@ describe('useDialog Composable', () => {
         await nextTick()
         expect(document.body.textContent).toContain('Second Dialog')
         expect(isOpen.value).toBe(true)
+    })
+
+    it('resolves structured DialogResult promise upon close', async () => {
+        const { show } = useDialog()
+        const instance = show<{ ok: boolean }>({ title: 'Result Dialog' })
+
+        await nextTick()
+        instance.close({ action: 'confirm', data: { ok: true } })
+        vi.advanceTimersByTime(300)
+
+        const outcome = await instance.promise
+        expect(outcome).toEqual({ action: 'confirm', data: { ok: true } })
+    })
+
+    it('captures caller appContext when called inside component setup', async () => {
+        let instance: any
+        const ProviderParent = defineComponent({
+            setup() {
+                const dialog = useDialog()
+                instance = dialog.show({ title: 'Context Dialog' })
+                return () => null
+            },
+        })
+
+        const app = createApp(ProviderParent)
+        const root = document.createElement('div')
+        app.mount(root)
+
+        await nextTick()
+        expect(document.body.textContent).toContain('Context Dialog')
+        instance.close()
+        vi.advanceTimersByTime(300)
+        app.unmount()
     })
 })

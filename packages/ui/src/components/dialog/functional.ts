@@ -1,4 +1,4 @@
-import { h, defineComponent, isVNode, type Component, type VNode } from 'vue'
+import { h, defineComponent, isVNode, type Component, type VNode, type AppContext } from 'vue'
 import { DialogRoot } from 'reka-ui'
 import DialogEnhanced from './DialogEnhanced.vue'
 import DialogHeader from './DialogHeader.vue'
@@ -19,11 +19,18 @@ const DIALOG_SIZE_CLASSES: Record<DialogSize, string> = {
     full: '',
 }
 
-export interface ShowDialogOptions {
+export type DialogAction = 'confirm' | 'cancel' | 'close' | 'destroy'
+
+export interface DialogResult<T = unknown> {
+    action: DialogAction
+    data?: T
+}
+
+export interface ShowDialogOptions<T = unknown> {
     title?: string
     description?: string
     content?: RenderableContent
-    footer?: RenderableContent
+    footer?: RenderableContent | ((context: { close: (result?: DialogResult<T>) => void }) => RenderableContent)
     draggable?: boolean
     dragHandle?: string | HTMLElement
     bounds?: 'parent' | 'viewport' | { top: number; left: number; right: number; bottom: number }
@@ -42,11 +49,12 @@ export interface ShowDialogOptions {
     zIndex?: number
     class?: string
     size?: DialogSize
-    onConfirm?: () => void
+    appContext?: AppContext
+    transitionDuration?: number
     onCancel?: () => void
 }
 
-export type DialogInstance = OverlayInstanceHandle<void>
+export type DialogInstance<T = unknown> = OverlayInstanceHandle<DialogResult<T>>
 
 function renderSlot(slotVal: RenderableContent | undefined): VNode | null {
     if (!slotVal) return null
@@ -62,8 +70,8 @@ function renderSlot(slotVal: RenderableContent | undefined): VNode | null {
     return h(slotVal as Component)
 }
 
-function getDialogEnhancedProps(options: ShowDialogOptions): Record<string, unknown> {
-    const keys: Array<keyof ShowDialogOptions> = [
+function getDialogEnhancedProps<T>(options: ShowDialogOptions<T>): Record<string, unknown> {
+    const keys: Array<keyof ShowDialogOptions<T>> = [
         'draggable',
         'dragHandle',
         'bounds',
@@ -104,7 +112,12 @@ function getDialogEnhancedProps(options: ShowDialogOptions): Record<string, unkn
 /**
  * 命令式展示通用 Dialog 容器
  */
-export function showDialog(options: ShowDialogOptions = {}): DialogInstance {
+export function showDialog<T = unknown>(options: ShowDialogOptions<T> = {}): DialogInstance<T> {
+    let overlayContext: {
+        close: (result?: DialogResult<T>) => void
+        destroy: (result?: DialogResult<T>) => void
+    } | null = null
+
     const DialogImperativeWrapper = defineComponent({
         name: 'DialogImperativeWrapper',
         props: {
@@ -113,6 +126,18 @@ export function showDialog(options: ShowDialogOptions = {}): DialogInstance {
         },
         emits: ['update:open'],
         setup(props, { emit }) {
+            const handleFooterSlot = () => {
+                if (!options.footer) return null
+                if (typeof options.footer === 'function') {
+                    const renderFn = options.footer as (ctx: { close: (result?: DialogResult<T>) => void }) => RenderableContent
+                    const res = renderFn({
+                        close: (result = { action: 'close' }) => overlayContext?.close(result),
+                    })
+                    return renderSlot(res)
+                }
+                return renderSlot(options.footer as RenderableContent)
+            }
+
             return () => {
                 return h(
                     DialogRoot,
@@ -155,7 +180,7 @@ export function showDialog(options: ShowDialogOptions = {}): DialogInstance {
                                             : null,
                                         options.footer
                                             ? h(DialogFooter, null, {
-                                                  default: () => renderSlot(options.footer),
+                                                  default: handleFooterSlot,
                                               })
                                             : null,
                                     ],
@@ -167,20 +192,41 @@ export function showDialog(options: ShowDialogOptions = {}): DialogInstance {
         },
     })
 
-    return mountOverlay<Record<string, unknown>, void>(
+    const handle = mountOverlay<Record<string, unknown>, DialogResult<T>>(
         DialogImperativeWrapper,
-        (context) => ({
-            open: context.isOpen.value,
-            zIndex: options.zIndex ?? context.zIndex,
-            'onUpdate:open': (val: boolean) => {
-                if (!val) {
-                    context.close()
-                }
-            },
-        }),
+        (context) => {
+            overlayContext = context
+            return {
+                open: context.isOpen.value,
+                zIndex: options.zIndex ?? context.zIndex,
+                'onUpdate:open': (val: boolean) => {
+                    if (!val) {
+                        options.onCancel?.()
+                        context.close({ action: 'cancel' })
+                    }
+                },
+            }
+        },
         {
+            appContext: options.appContext,
+            transitionDuration: options.transitionDuration,
             zIndex: options.zIndex,
-            onClose: options.onCancel,
         }
     )
+
+    return {
+        ...handle,
+        close: (result = { action: 'close' }) => {
+            if (result.action === 'cancel') {
+                options.onCancel?.()
+            }
+            handle.close(result)
+        },
+        destroy: (result = { action: 'destroy' }) => {
+            if (result.action === 'cancel') {
+                options.onCancel?.()
+            }
+            handle.destroy(result)
+        },
+    }
 }

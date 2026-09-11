@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { nextTick, h } from 'vue'
-import { showDialog } from './functional'
+import { showDialog, type DialogResult } from './functional'
 
 describe('Functional Dialog APIs (showDialog)', () => {
     beforeEach(() => {
@@ -13,7 +13,7 @@ describe('Functional Dialog APIs (showDialog)', () => {
         vi.useRealTimers()
     })
 
-    it('renders and mounts dialog elements in body', async () => {
+    it('renders and mounts dialog elements in body with structured outcome', async () => {
         const { close, promise } = showDialog({
             title: 'Functional Title',
             description: 'Functional Description',
@@ -31,30 +31,58 @@ describe('Functional Dialog APIs (showDialog)', () => {
         close()
         await nextTick()
         vi.advanceTimersByTime(300)
-        await promise
+        const outcome = await promise
 
+        expect(outcome).toEqual({ action: 'close' })
         // Verify element is destroyed and removed from body
         expect(document.body.querySelector('.brutx-dialog')).toBeNull()
     })
 
-    it('supports rendering functions/components as content and footer', async () => {
-        const { close } = showDialog({
+    it('resolves structured outcome with custom data when confirmed', async () => {
+        const { close, promise } = showDialog<{ id: number }>({
+            title: 'Confirm Dialog',
+            content: 'Testing confirm data payload',
+        })
+
+        await nextTick()
+        close({ action: 'confirm', data: { id: 42 } })
+        await nextTick()
+        vi.advanceTimersByTime(300)
+
+        const outcome = await promise
+        expect(outcome).toEqual({ action: 'confirm', data: { id: 42 } })
+    })
+
+    it('supports rendering functions/components as content and footer with close context', async () => {
+        const { promise } = showDialog({
             title: 'Title',
             content: () => h('div', { class: 'custom-content' }, 'Rendered Content'),
-            footer: () => h('div', { class: 'custom-footer' }, 'Rendered Footer'),
+            footer: ({ close }: { close: (result?: DialogResult) => void }) =>
+                h(
+                    'button',
+                    {
+                        class: 'confirm-test-btn',
+                        onClick: () => close({ action: 'confirm' }),
+                    },
+                    'Custom Confirm'
+                ),
         })
 
         await nextTick()
 
         expect(document.body.innerHTML).toContain('Rendered Content')
-        expect(document.body.innerHTML).toContain('Rendered Footer')
+        const btn = document.body.querySelector('.confirm-test-btn') as HTMLButtonElement
+        expect(btn).not.toBeNull()
 
-        close()
+        btn.click()
         await nextTick()
         vi.advanceTimersByTime(300)
+
+        const outcome = await promise
+        expect(outcome).toEqual({ action: 'confirm' })
     })
 
-    it('handles onCancel callback when closed', async () => {
+    it('handles onCancel callback only when action is cancel', async () => {
         const onCancel = vi.fn()
         const { close } = showDialog({
             title: 'Cancel Callback Test',
@@ -63,9 +91,52 @@ describe('Functional Dialog APIs (showDialog)', () => {
         })
 
         await nextTick()
-        close()
+        close({ action: 'cancel' })
         await nextTick()
 
         expect(onCancel).toHaveBeenCalledTimes(1)
+    })
+
+    it('does not trigger onCancel callback when confirmed or closed with default action', async () => {
+        const onCancel = vi.fn()
+        const { close, promise } = showDialog({
+            title: 'Confirm No Cancel Test',
+            content: 'Testing cancel hook on confirm',
+            onCancel,
+        })
+
+        await nextTick()
+        close({ action: 'confirm' })
+        await nextTick()
+        vi.advanceTimersByTime(300)
+
+        const outcome = await promise
+        expect(outcome).toEqual({ action: 'confirm' })
+        expect(onCancel).not.toHaveBeenCalled()
+    })
+
+    it('resolves to action: close when footer close is called with no arguments', async () => {
+        const { promise } = showDialog({
+            title: 'Footer No-Arg Close',
+            footer: ({ close }: { close: (result?: DialogResult) => void }) =>
+                h(
+                    'button',
+                    {
+                        class: 'default-close-btn',
+                        onClick: () => close(),
+                    },
+                    'Default Close'
+                ),
+        })
+
+        await nextTick()
+        const btn = document.body.querySelector('.default-close-btn') as HTMLButtonElement
+        expect(btn).not.toBeNull()
+        btn.click()
+        await nextTick()
+        vi.advanceTimersByTime(300)
+
+        const outcome = await promise
+        expect(outcome).toEqual({ action: 'close' })
     })
 })

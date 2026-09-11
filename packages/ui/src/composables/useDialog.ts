@@ -1,12 +1,18 @@
 import { ref, readonly, onUnmounted, getCurrentInstance, type Ref } from 'vue'
-import { showDialog, type ShowDialogOptions, type DialogInstance } from '@/components/dialog/functional'
+import {
+    showDialog,
+    type ShowDialogOptions,
+    type DialogInstance,
+    type DialogAction,
+    type DialogResult,
+} from '@/components/dialog/functional'
 
-export type { ShowDialogOptions, DialogInstance }
+export type { ShowDialogOptions, DialogInstance, DialogAction, DialogResult }
 
 export interface UseDialogReturn {
-    show: (options?: ShowDialogOptions) => DialogInstance
-    open: (options?: ShowDialogOptions) => DialogInstance
-    close: () => void
+    show: <T = unknown>(options?: ShowDialogOptions<T>) => DialogInstance<T>
+    open: <T = unknown>(options?: ShowDialogOptions<T>) => DialogInstance<T>
+    close: (result?: DialogResult) => void
     isOpen: Readonly<Ref<boolean>>
 }
 
@@ -14,23 +20,27 @@ export interface UseDialogReturn {
  * 组合式 Dialog 管理接口
  */
 export function useDialog(): UseDialogReturn {
+    const instanceContext = getCurrentInstance()?.appContext
     const isOpen = ref(false)
-    let currentInstance: DialogInstance | null = null
+    let currentInstance: DialogInstance<unknown> | null = null
 
-    const show = (options?: ShowDialogOptions): DialogInstance => {
+    const show = <T = unknown>(options?: ShowDialogOptions<T>): DialogInstance<T> => {
         if (currentInstance) {
             currentInstance.close()
         }
-        let instance: DialogInstance
+        let instance: DialogInstance<T>
         try {
-            instance = showDialog(options)
+            instance = showDialog<T>({
+                appContext: options?.appContext ?? instanceContext,
+                ...options,
+            })
         } catch (error) {
             // showDialog 同步抛错时恢复状态
             currentInstance = null
             isOpen.value = false
             throw error
         }
-        currentInstance = instance
+        currentInstance = instance as DialogInstance<unknown>
         isOpen.value = true
         const cleanup = () => {
             if (currentInstance === instance) {
@@ -42,10 +52,10 @@ export function useDialog(): UseDialogReturn {
         return instance
     }
 
-    const close = (): void => {
+    const close = (result?: DialogResult): void => {
         if (currentInstance) {
             isOpen.value = false
-            currentInstance.close()
+            currentInstance.close(result)
         }
     }
 
