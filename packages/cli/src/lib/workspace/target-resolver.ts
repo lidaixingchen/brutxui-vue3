@@ -20,7 +20,8 @@ export class TargetResolver {
         callerCwd: string,
         filterArg: string | undefined,
         topology: WorkspaceTopology,
-        rootConfig?: BrutalistConfig
+        rootConfig?: BrutalistConfig,
+        sharedOnly?: boolean
     ): ResolvedInstallationPlan {
         const resolvedCaller = path.resolve(callerCwd);
 
@@ -37,6 +38,14 @@ export class TargetResolver {
                 effectiveConfig: config,
                 depInstallTarget: { packageRoot: resolvedCaller, packageName: '' },
             };
+        }
+
+        // 0. P0: 命令行显式指定 --shared
+        if (sharedOnly) {
+            if (topology.sharedUiPackage) {
+                return TargetResolver.buildPlanForPackage(topology.sharedUiPackage, rootConfig);
+            }
+            throw new Error('No shared UI package detected in monorepo for --shared flag.');
         }
 
         // 1. P1: 命令行显式指定 --filter

@@ -71,24 +71,12 @@ export async function resolveComponents(
     };
 }
 
-export async function resolveComponentFilePath(
-    registryPath: string,
-    configOrContext: BrutalistConfig | ProjectContext,
-    cwd?: string
-): Promise<string> {
-    if (configOrContext instanceof ProjectContext) {
-        return configOrContext.resolveTargetPath(registryPath);
-    }
-    const context = await ProjectContext.loadUninitialized(cwd ?? process.cwd(), {
-        configOverride: configOrContext,
-    });
-    return context.resolveTargetPath(registryPath);
-}
 
 export async function ensureUtilsFile(
     cwdOrContext: string | ProjectContext,
     config?: BrutalistConfig,
-    fsAdapter?: FileSystemAdapter
+    fsAdapter?: FileSystemAdapter,
+    transaction?: FileTransaction
 ): Promise<EnsureUtilsFileResult> {
     let context: ProjectContext;
     if (cwdOrContext instanceof ProjectContext) {
@@ -109,8 +97,14 @@ export async function ensureUtilsFile(
         };
     }
 
-    await context.fs.ensureDir(path.dirname(utilsPath));
-    await context.fs.writeFile(utilsPath, UTILS_TEMPLATE);
+    const dir = path.dirname(utilsPath);
+    if (transaction) {
+        await transaction.ensureDir(dir);
+        await transaction.writeFile(utilsPath, UTILS_TEMPLATE);
+    } else {
+        await context.fs.ensureDir(dir);
+        await context.fs.writeFile(utilsPath, UTILS_TEMPLATE);
+    }
 
     return {
         path: utilsPath,

@@ -152,9 +152,22 @@ export {
 export * as services from './services/index.js';
 
 export {
+    ComponentMutationEngine,
+} from './services/component-mutation-engine.js';
+export type {
+    PlanFileAction,
+    MutationPlanFile,
+    ComponentMutationPlan,
+    ComponentPlanOptions,
+    MutationCallbacks,
+    ComponentExecuteOptions,
+    DependencyInstallResult,
+    ComponentMutationResult,
+} from './services/component-mutation-engine.js';
+
+export {
     ensureUtilsFile,
     resolveComponents,
-    resolveComponentFilePath,
     writeComponentFiles,
 } from './services/add-service.js';
 export type {

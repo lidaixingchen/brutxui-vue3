@@ -29,20 +29,29 @@ export class MergeExecutor {
         this.planner = new DirectoryMergePlanner(options);
     }
 
+    async plan(
+        context: ProjectContext,
+        componentName: string,
+        remoteItem: RegistryItem,
+        options: ExecuteComponentMergeOptions = {}
+    ): Promise<ComponentMergePlan> {
+        const baseline = await this.baselineProvider.getComponentBaseline(context, componentName, {
+            useCache: options.useCache,
+            registrySource: options.registrySource,
+        });
+
+        return this.planner.planComponentMerge(context, componentName, remoteItem, baseline, {
+            conflictStrategy: options.conflictStrategy,
+        });
+    }
+
     async planAndExecute(
         context: ProjectContext,
         componentName: string,
         remoteItem: RegistryItem,
         options: ExecuteComponentMergeOptions = {}
     ): Promise<ComponentMergeExecutionResult> {
-        const baseline = await this.baselineProvider.getComponentBaseline(context, componentName, {
-            useCache: options.useCache,
-            registrySource: options.registrySource,
-        });
-
-        const plan = await this.planner.planComponentMerge(context, componentName, remoteItem, baseline, {
-            conflictStrategy: options.conflictStrategy,
-        });
+        const plan = await this.plan(context, componentName, remoteItem, options);
 
         const isCi = options.isCi ?? (process.env.CI === 'true' || !process.stdout.isTTY);
         if (isCi && plan.hasConflicts && options.conflictStrategy !== 'ours' && options.conflictStrategy !== 'theirs') {

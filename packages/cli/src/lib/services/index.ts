@@ -1,7 +1,20 @@
 export {
+    ComponentMutationEngine,
+} from './component-mutation-engine.js';
+export type {
+    PlanFileAction,
+    MutationPlanFile,
+    ComponentMutationPlan,
+    ComponentPlanOptions,
+    MutationCallbacks,
+    ComponentExecuteOptions,
+    DependencyInstallResult,
+    ComponentMutationResult,
+} from './component-mutation-engine.js';
+
+export {
     ensureUtilsFile,
     resolveComponents,
-    resolveComponentFilePath,
     writeComponentFiles,
 } from './add-service.js';
 export type {

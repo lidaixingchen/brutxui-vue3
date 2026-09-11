@@ -18,9 +18,9 @@ export type {
 } from './lib/index.js';
 
 export {
+    ComponentMutationEngine,
     ensureUtilsFile,
     resolveComponents,
-    resolveComponentFilePath,
     writeComponentFiles,
     diffComponent,
     diffComponents,
@@ -40,6 +40,14 @@ export {
     generateProjectSbom,
 } from './lib/services/index.js';
 export type {
+    PlanFileAction,
+    MutationPlanFile,
+    ComponentMutationPlan,
+    ComponentPlanOptions,
+    MutationCallbacks,
+    ComponentExecuteOptions,
+    DependencyInstallResult,
+    ComponentMutationResult,
     ComponentFileWriteCallbacks,
     ComponentFileWriteFailure,
     ComponentFileWriteOptions,
