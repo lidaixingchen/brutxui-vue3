@@ -6,10 +6,10 @@ import { computeRegistryIntegrity } from 'brutx-shared-vue';
 import type { BrutalistConfig, RegistryItem } from '../src/lib/types.js';
 import { RegistryClient } from '../src/lib/registry-client.js';
 import { FileTransaction } from '../src/lib/file-transaction.js';
+import { ProjectContext } from '../src/lib/project-context.js';
 import {
     ensureUtilsFile,
     resolveComponents,
-    resolveComponentFilePath,
     writeComponentFiles,
 } from '../src/lib/services/add-service.js';
 
@@ -118,13 +118,15 @@ describe('add service', () => {
     });
 
     it('resolves registry component paths through configured aliases', async () => {
-        const resolved = await resolveComponentFilePath('components/ui/badge/Badge.vue', config, tmpDir);
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: config });
+        const resolved = await context.resolveTargetPath('components/ui/badge/Badge.vue');
 
         expect(resolved).toBe(path.join(tmpDir, 'src', 'widgets', 'ui', 'badge', 'Badge.vue'));
     });
 
     it('classifies unsafe resolved component paths', async () => {
-        await expect(resolveComponentFilePath('../outside.ts', config, tmpDir))
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: config });
+        await expect(context.resolveTargetPath('../outside.ts'))
             .rejects
             .toMatchObject({
                 code: 'PATH_UNSAFE',
@@ -259,17 +261,20 @@ describe('add service', () => {
         };
 
         it('resolves composables to sharedBase/hooks/', async () => {
-            const resolved = await resolveComponentFilePath('composables/useLocale.ts', sharedBaseConfig, tmpDir);
+            const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: sharedBaseConfig });
+            const resolved = await context.resolveTargetPath('composables/useLocale.ts');
             expect(resolved).toBe(path.join(tmpDir, 'src', 'widgets', 'brutx', 'shared', 'hooks', 'useLocale.ts'));
         });
 
         it('resolves lib/utils/* to sharedBase/utils.ts', async () => {
-            const resolved = await resolveComponentFilePath('lib/utils/utils.ts', sharedBaseConfig, tmpDir);
+            const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: sharedBaseConfig });
+            const resolved = await context.resolveTargetPath('lib/utils/utils.ts');
             expect(resolved).toBe(path.join(tmpDir, 'src', 'widgets', 'brutx', 'shared', 'utils.ts'));
         });
 
         it('resolves lib/{name} to sharedBase/lib/{name}', async () => {
-            const resolved = await resolveComponentFilePath('lib/env.ts', sharedBaseConfig, tmpDir);
+            const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: sharedBaseConfig });
+            const resolved = await context.resolveTargetPath('lib/env.ts');
             expect(resolved).toBe(path.join(tmpDir, 'src', 'widgets', 'brutx', 'shared', 'lib', 'env.ts'));
         });
 
@@ -281,12 +286,14 @@ describe('add service', () => {
         });
 
         it('keeps locales at original path even with sharedBase', async () => {
-            const resolved = await resolveComponentFilePath('locales/zh-CN.ts', sharedBaseConfig, tmpDir);
+            const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: sharedBaseConfig });
+            const resolved = await context.resolveTargetPath('locales/zh-CN.ts');
             expect(resolved).toBe(path.join(tmpDir, 'src', 'locales', 'zh-CN.ts'));
         });
 
         it('keeps directives at original path even with sharedBase', async () => {
-            const resolved = await resolveComponentFilePath('directives/ripple.ts', sharedBaseConfig, tmpDir);
+            const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: sharedBaseConfig });
+            const resolved = await context.resolveTargetPath('directives/ripple.ts');
             expect(resolved).toBe(path.join(tmpDir, 'src', 'directives', 'ripple.ts'));
         });
     });

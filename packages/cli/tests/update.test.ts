@@ -20,9 +20,17 @@ vi.mock('../src/lib/services/diff-service.js', async (importOriginal) => {
     return { ...original, getInstalledComponents: vi.fn(), diffComponent: vi.fn() };
 });
 
-vi.mock('../src/commands/add.js', () => ({
-    add: vi.fn().mockResolvedValue(undefined),
-}));
+const mockPlanUpdate = vi.fn();
+const mockExecute = vi.fn();
+
+vi.mock('../src/lib/services/component-mutation-engine.js', () => {
+    return {
+        ComponentMutationEngine: class {
+            planUpdate = mockPlanUpdate;
+            execute = mockExecute;
+        },
+    };
+});
 
 vi.mock('@inquirer/prompts', () => ({
     checkbox: vi.fn().mockResolvedValue([]),
@@ -36,7 +44,6 @@ import path from 'path';
 import { readConfigSafe } from '../src/lib/config.js';
 import { RegistryClient } from '../src/lib/registry-client.js';
 import * as diffService from '../src/lib/services/diff-service.js';
-import * as addModule from '../src/commands/add.js';
 import * as prompts from '@inquirer/prompts';
 import { update } from '../src/commands/update.js';
 import type { DiffResult } from '../src/lib/types.js';
@@ -46,7 +53,6 @@ import { MergeExecutor } from '../src/lib/merge/merge-executor.js';
 const mockedReadConfigSafe = vi.mocked(readConfigSafe);
 const mockedGetInstalledComponents = vi.mocked(diffService.getInstalledComponents);
 const mockedDiffComponent = vi.mocked(diffService.diffComponent);
-const mockedAdd = vi.mocked(addModule.add);
 const mockedCheckbox = vi.mocked(prompts.checkbox);
 const mockedConfirm = vi.mocked(prompts.confirm);
 
@@ -99,6 +105,30 @@ describe('update command', () => {
         savedEnv = process.env.BRUTX_NO_CACHE;
         process.env.BRUTX_NO_CACHE = '1';
         mockedReadConfigSafe.mockResolvedValue(defaultConfig);
+
+        mockPlanUpdate.mockImplementation(async (opts) => {
+            return {
+                items: opts.components.map((name: string) => ({ name, files: [], dependencies: [], registryDependencies: [] })),
+                files: [],
+                npmDependencies: [],
+                ensureUtils: false,
+                updateSnippets: false,
+                registrySources: {},
+                versionByName: new Map(),
+                warnings: [],
+            };
+        });
+
+        mockExecute.mockResolvedValue({
+            succeeded: ['button'],
+            skipped: [],
+            filesWritten: [],
+            filesDeleted: [],
+            conflicts: [],
+            dependencies: { status: 'skipped', packages: [] },
+            manifestUpdated: true,
+            stats: { createdFiles: 0, mergedFiles: 1, deletedFiles: 0, skippedFiles: 0 },
+        });
         vi.spyOn(RegistryClient.prototype, 'fetchItem').mockResolvedValue({
             name: 'button',
             type: 'registry:ui',
@@ -169,7 +199,7 @@ describe('update command', () => {
             await update([], { cwd: dummyCwd, silent: true });
 
             expect(mockedDiffComponent).not.toHaveBeenCalled();
-            expect(mockedAdd).not.toHaveBeenCalled();
+            expect(mockPlanUpdate).not.toHaveBeenCalled();
         });
 
         it('should use provided component names instead of auto-discovery', async () => {
@@ -189,7 +219,7 @@ describe('update command', () => {
 
             await update([], { cwd: dummyCwd, silent: true });
 
-            expect(mockedAdd).not.toHaveBeenCalled();
+            expect(mockPlanUpdate).not.toHaveBeenCalled();
         });
     });
 
@@ -203,7 +233,7 @@ describe('update command', () => {
 
             await update([], { cwd: dummyCwd, silent: true, dryRun: true });
 
-            expect(mockedAdd).not.toHaveBeenCalled();
+            expect(mockPlanUpdate).not.toHaveBeenCalled();
         });
 
         it('should not prompt user in dry-run mode', async () => {
@@ -227,11 +257,14 @@ describe('update command', () => {
 
             await update([], { cwd: dummyCwd, silent: true, yes: true, all: true, force: true });
 
-            expect(mockedAdd).toHaveBeenCalledOnce();
-            expect(mockedAdd).toHaveBeenCalledWith(
-                ['button'],
-                expect.objectContaining({ overwrite: true, yes: true })
+            expect(mockPlanUpdate).toHaveBeenCalledOnce();
+            expect(mockPlanUpdate).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    components: ['button'],
+                    overwrite: true,
+                })
             );
+            expect(mockExecute).toHaveBeenCalledOnce();
         });
 
         it('should update components with outdated manifest integrity even when files match latest', async () => {
@@ -240,13 +273,16 @@ describe('update command', () => {
 
             await update([], { cwd: dummyCwd, silent: true, yes: true, all: true, force: true });
 
-            expect(mockedAdd).toHaveBeenCalledWith(
-                ['badge'],
-                expect.objectContaining({ overwrite: true, yes: true })
+            expect(mockPlanUpdate).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    components: ['badge'],
+                    overwrite: true,
+                })
             );
+            expect(mockExecute).toHaveBeenCalledOnce();
         });
 
-        it('should pass cwd and registry options to add', async () => {
+        it('should pass cwd and registry options to engine', async () => {
             const testCwd = path.join(os.tmpdir(), 'my-project');
             mockedGetInstalledComponents.mockResolvedValue(['button']);
             mockedDiffComponent.mockResolvedValue(modifiedResult);
@@ -259,13 +295,14 @@ describe('update command', () => {
                 registry: 'https://custom.registry.com',
             });
 
-            expect(mockedAdd).toHaveBeenCalledWith(
-                ['button'],
+            expect(mockPlanUpdate).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    cwd: testCwd,
-                    registry: 'https://custom.registry.com',
+                    components: ['button'],
+                    overwrite: true,
+                    registryOverride: 'https://custom.registry.com',
                 })
             );
+            expect(mockExecute).toHaveBeenCalledOnce();
         });
 
         it('should use manifest registry source when --registry is not provided', async () => {
@@ -284,16 +321,16 @@ describe('update command', () => {
                 expect.objectContaining({ name: 'button' }),
                 true,
             );
-            expect(mockedAdd).toHaveBeenCalledWith(
-                ['button'],
+            expect(mockPlanUpdate).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    cwd: tmpDir,
-                    registry: 'https://example.test/registry-a',
+                    components: ['button'],
+                    overwrite: true,
                 })
             );
+            expect(mockExecute).toHaveBeenCalledOnce();
         });
 
-        it('should group selected updates by manifest registry source', async () => {
+        it('should handle selected updates from multiple manifest registry sources', async () => {
             const tmpDir = await createProjectWithManifest({
                 button: { registrySource: 'https://example.test/registry-a' },
                 card: { registrySource: 'https://example.test/registry-b' },
@@ -306,15 +343,13 @@ describe('update command', () => {
 
             await update([], { cwd: tmpDir, silent: true, yes: true, all: true, force: true });
 
-            expect(mockedAdd).toHaveBeenCalledTimes(2);
-            expect(mockedAdd).toHaveBeenCalledWith(
-                ['button'],
-                expect.objectContaining({ registry: 'https://example.test/registry-a' })
+            expect(mockPlanUpdate).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    components: expect.arrayContaining(['button', 'card']),
+                    overwrite: true,
+                })
             );
-            expect(mockedAdd).toHaveBeenCalledWith(
-                ['card'],
-                expect.objectContaining({ registry: 'https://example.test/registry-b' })
-            );
+            expect(mockExecute).toHaveBeenCalledOnce();
         });
 
         it('should let --registry override manifest registry sources', async () => {
@@ -339,9 +374,11 @@ describe('update command', () => {
                 expect.objectContaining({ name: 'button' }),
                 true,
             );
-            expect(mockedAdd).toHaveBeenCalledWith(
-                ['button'],
-                expect.objectContaining({ registry: 'https://override.test/registry' })
+            expect(mockPlanUpdate).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    components: ['button'],
+                    registryOverride: 'https://override.test/registry',
+                })
             );
         });
     });
@@ -357,9 +394,10 @@ describe('update command', () => {
 
             await update([], { cwd: dummyCwd, silent: true, yes: true, all: true, force: true });
 
-            expect(mockedAdd).toHaveBeenCalledWith(
-                ['button', 'card'],
-                expect.anything()
+            expect(mockPlanUpdate).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    components: ['button', 'card'],
+                })
             );
         });
     });
@@ -372,7 +410,7 @@ describe('update command', () => {
             await update([], { cwd: dummyCwd, silent: true, yes: true, force: true });
 
             expect(mockedConfirm).not.toHaveBeenCalled();
-            expect(mockedAdd).toHaveBeenCalledOnce();
+            expect(mockPlanUpdate).toHaveBeenCalledOnce();
         });
 
         it('should ask for confirmation when not --yes and files are modified', async () => {
@@ -389,7 +427,7 @@ describe('update command', () => {
                     default: false,
                 })
             );
-            expect(mockedAdd).toHaveBeenCalledOnce();
+            expect(mockPlanUpdate).toHaveBeenCalledOnce();
         });
 
         it('should cancel update when user declines overwrite confirmation', async () => {
@@ -400,7 +438,7 @@ describe('update command', () => {
 
             await update([], { cwd: dummyCwd, silent: true, force: true });
 
-            expect(mockedAdd).not.toHaveBeenCalled();
+            expect(mockPlanUpdate).not.toHaveBeenCalled();
         });
     });
 
@@ -426,7 +464,11 @@ describe('update command', () => {
                     ]),
                 })
             );
-            expect(mockedAdd).toHaveBeenCalledWith(['button'], expect.anything());
+            expect(mockPlanUpdate).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    components: ['button'],
+                })
+            );
         });
 
         it('should return early when no components selected', async () => {
@@ -436,7 +478,7 @@ describe('update command', () => {
 
             await update([], { cwd: dummyCwd, silent: true });
 
-            expect(mockedAdd).not.toHaveBeenCalled();
+            expect(mockPlanUpdate).not.toHaveBeenCalled();
         });
     });
 
@@ -462,7 +504,7 @@ describe('update command', () => {
             await update([], { cwd: tmpDir, silent: true, yes: true, all: true });
 
             expect(mockedDiffComponent).not.toHaveBeenCalled();
-            expect(mockedAdd).not.toHaveBeenCalled();
+            expect(mockPlanUpdate).not.toHaveBeenCalled();
         });
 
         it('should update version-pinned components when --across-versions is passed', async () => {
@@ -475,9 +517,11 @@ describe('update command', () => {
             await update([], { cwd: tmpDir, silent: true, yes: true, all: true, acrossVersions: true, force: true });
 
             expect(mockedDiffComponent).toHaveBeenCalledOnce();
-            expect(mockedAdd).toHaveBeenCalledWith(
-                ['button'],
-                expect.objectContaining({ overwrite: true, yes: true })
+            expect(mockPlanUpdate).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    components: ['button'],
+                    overwrite: true,
+                })
             );
         });
 
@@ -491,9 +535,11 @@ describe('update command', () => {
             await update([], { cwd: tmpDir, silent: true, yes: true, all: true, force: true });
 
             expect(mockedDiffComponent).toHaveBeenCalledOnce();
-            expect(mockedAdd).toHaveBeenCalledWith(
-                ['button'],
-                expect.objectContaining({ overwrite: true, yes: true })
+            expect(mockPlanUpdate).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    components: ['button'],
+                    overwrite: true,
+                })
             );
         });
 
@@ -507,9 +553,11 @@ describe('update command', () => {
             await update([], { cwd: tmpDir, silent: true, yes: true, all: true, force: true });
 
             expect(mockedDiffComponent).toHaveBeenCalledOnce();
-            expect(mockedAdd).toHaveBeenCalledWith(
-                ['button'],
-                expect.objectContaining({ overwrite: true, yes: true })
+            expect(mockPlanUpdate).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    components: ['button'],
+                    overwrite: true,
+                })
             );
         });
 
@@ -536,9 +584,11 @@ describe('update command', () => {
                 expect.objectContaining({ name: 'badge' }),
                 true,
             );
-            expect(mockedAdd).toHaveBeenCalledWith(
-                ['badge'],
-                expect.objectContaining({ overwrite: true, yes: true })
+            expect(mockPlanUpdate).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    components: ['badge'],
+                    overwrite: true,
+                })
             );
         });
 
@@ -553,7 +603,7 @@ describe('update command', () => {
             await update([], { cwd: tmpDir, silent: true, yes: true, all: true });
 
             expect(mockedDiffComponent).not.toHaveBeenCalled();
-            expect(mockedAdd).not.toHaveBeenCalled();
+            expect(mockPlanUpdate).not.toHaveBeenCalled();
         });
 
         it('should respect --across-versions for mixed install and update all components', async () => {
@@ -569,9 +619,11 @@ describe('update command', () => {
             await update([], { cwd: tmpDir, silent: true, yes: true, all: true, acrossVersions: true, force: true });
 
             expect(mockedDiffComponent).toHaveBeenCalledTimes(2);
-            expect(mockedAdd).toHaveBeenCalledWith(
-                ['button', 'badge'],
-                expect.objectContaining({ overwrite: true, yes: true })
+            expect(mockPlanUpdate).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    components: ['button', 'badge'],
+                    overwrite: true,
+                })
             );
         });
 
@@ -584,9 +636,11 @@ describe('update command', () => {
             await update([], { cwd: dummyCwd, silent: true, yes: true, all: true, force: true });
 
             expect(mockedDiffComponent).toHaveBeenCalledOnce();
-            expect(mockedAdd).toHaveBeenCalledWith(
-                ['button'],
-                expect.objectContaining({ overwrite: true, yes: true })
+            expect(mockPlanUpdate).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    components: ['button'],
+                    overwrite: true,
+                })
             );
         });
     });
@@ -630,33 +684,18 @@ describe('update command', () => {
             mockedGetInstalledComponents.mockResolvedValue(['button']);
             mockedDiffComponent.mockResolvedValue(modifiedResult);
 
-            const planAndExecuteSpy = vi.spyOn(MergeExecutor.prototype, 'planAndExecute').mockResolvedValue({
-                plan: {
-                    componentName: 'button',
-                    hasConflicts: false,
-                    mergedFiles: 1,
-                    addedFiles: 0,
-                    deletedFiles: 0,
-                    files: [{ filePath: 'src/components/ui/button/Button.vue', status: 'clean', action: 'write', content: '<template><button>3way</button></template>' }],
-                },
-                filesWritten: [buttonFile],
-                filesDeleted: [],
-            });
-
             await update([], { cwd: tmpDir, silent: true, yes: true, all: true });
 
-            expect(mockedAdd).not.toHaveBeenCalled();
-            expect(planAndExecuteSpy).toHaveBeenCalledTimes(1);
-            expect(planAndExecuteSpy).toHaveBeenCalledWith(
-                expect.any(ProjectContext),
-                'button',
-                expect.objectContaining({ name: 'button' }),
+            expect(mockPlanUpdate).toHaveBeenCalledTimes(1);
+            expect(mockPlanUpdate).toHaveBeenCalledWith(
                 expect.objectContaining({
+                    components: ['button'],
                     conflictStrategy: 'markers',
-                    registrySource: 'https://example.test/registry',
+                    overwrite: false,
                     useCache: true,
-                }),
+                })
             );
+            expect(mockExecute).toHaveBeenCalledTimes(1);
         });
 
         it('should pass conflictStrategy when --ours or --theirs is specified', async () => {
@@ -666,26 +705,14 @@ describe('update command', () => {
             mockedGetInstalledComponents.mockResolvedValue(['button']);
             mockedDiffComponent.mockResolvedValue(modifiedResult);
 
-            const planAndExecuteSpy = vi.spyOn(MergeExecutor.prototype, 'planAndExecute').mockResolvedValue({
-                plan: {
-                    componentName: 'button',
-                    hasConflicts: false,
-                    mergedFiles: 1,
-                    addedFiles: 0,
-                    deletedFiles: 0,
-                    files: [],
-                },
-                filesWritten: [],
-                filesDeleted: [],
-            });
-
             await update([], { cwd: tmpDir, silent: true, yes: true, all: true, ours: true });
 
-            expect(planAndExecuteSpy).toHaveBeenCalledWith(
-                expect.any(ProjectContext),
-                'button',
-                expect.anything(),
-                expect.objectContaining({ conflictStrategy: 'ours' }),
+            expect(mockPlanUpdate).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    components: ['button'],
+                    conflictStrategy: 'ours',
+                    overwrite: false,
+                })
             );
         });
 
@@ -696,10 +723,41 @@ describe('update command', () => {
             mockedGetInstalledComponents.mockResolvedValue(['button']);
             mockedDiffComponent.mockResolvedValue(modifiedResult);
 
-            vi.spyOn(MergeExecutor.prototype, 'planAndExecute').mockRejectedValue(new Error('Merge disk I/O error'));
+            mockExecute.mockRejectedValueOnce(new Error('Merge disk I/O error'));
 
             await expect(update([], { cwd: tmpDir, silent: true, yes: true, all: true }))
-                .rejects.toThrow('Update transaction failed and was rolled back cleanly: Merge disk I/O error');
+                .rejects.toThrow('Merge disk I/O error');
+        });
+    });
+
+    describe('conflict options validation', () => {
+        it('should throw ACTION_CONFLICT when both --ours and --theirs are specified', async () => {
+            await expect(update([], { cwd: dummyCwd, silent: true, ours: true, theirs: true }))
+                .rejects.toThrow('Cannot specify both --ours and --theirs');
+        });
+    });
+
+    describe('CI mode conflict handling', () => {
+        it('should throw MERGE_CONFLICT_CI_BLOCKED when --ci is specified and conflicts exist', async () => {
+            const tmpDir = await createProjectWithManifest({
+                button: { registrySource: 'https://example.test/registry' },
+            });
+            mockedGetInstalledComponents.mockResolvedValue(['button']);
+            mockedDiffComponent.mockResolvedValue(modifiedResult);
+
+            mockExecute.mockResolvedValueOnce({
+                succeeded: ['button'],
+                skipped: [],
+                filesWritten: [],
+                filesDeleted: [],
+                conflicts: [{ component: 'button', conflictFiles: ['src/components/ui/button/Button.vue'] }],
+                dependencies: { status: 'skipped', packages: [] },
+                manifestUpdated: true,
+                stats: { createdFiles: 0, mergedFiles: 1, deletedFiles: 0, skippedFiles: 0 },
+            });
+
+            await expect(update([], { cwd: tmpDir, silent: true, yes: true, all: true, ci: true }))
+                .rejects.toThrow('[CI Blocked] Unresolved merge conflicts detected during update');
         });
     });
 });

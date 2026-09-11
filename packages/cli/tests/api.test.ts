@@ -3,9 +3,9 @@ import * as api from '../src/api.js';
 
 describe('programmatic API entry point', () => {
     const expectedFunctions = [
+        'ComponentMutationEngine',
         'ensureUtilsFile',
         'resolveComponents',
-        'resolveComponentFilePath',
         'writeComponentFiles',
         'diffComponent',
         'diffComponents',
