@@ -9,6 +9,7 @@
         ".": "./src/index.ts",
         "./scan": "./src/scan.ts",
         "./design-tokens": "./src/design-tokens.ts",
+        "./tokens": "./src/tokens/index.ts",
         "./fs": "./src/fs/index.ts",
         "./ast": "./src/ast/index.ts"
     },
