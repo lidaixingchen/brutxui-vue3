@@ -1,6 +1,7 @@
 import { checkbox, confirm } from '@inquirer/prompts';
 import chalk from 'chalk';
-import type { UpdateOptions, DiffResult, RegistryItem } from '../lib/types.js';
+import ora from 'ora';
+import type { UpdateOptions, DiffResult } from '../lib/types.js';
 import {
     readConfigSafe,
     CliError,
@@ -10,13 +11,9 @@ import {
     mergeDryRun,
     withAuditLog,
     ProjectContext,
-    computeInstalledContentHash,
-    updateInstalledComponents,
-    DEFAULT_REGISTRY_URL,
+    ComponentMutationEngine,
 } from '../lib/index.js';
-import { MergeExecutor } from '../lib/merge/index.js';
 import { getInstalledComponents, diffComponent } from '../lib/services/diff-service.js';
-import { add } from './add.js';
 
 export async function update(components: string[], options: UpdateOptions): Promise<void> {
     const cwd = options.cwd ?? process.cwd();
@@ -45,6 +42,13 @@ export async function update(components: string[], options: UpdateOptions): Prom
 }
 
 async function updateInner(components: string[], options: UpdateOptions, cwd: string, useCache: boolean): Promise<void> {
+    if (options.ours && options.theirs) {
+        throw new CliError('Cannot specify both --ours and --theirs.', {
+            code: 'ACTION_CONFLICT',
+            exitCode: 1,
+        });
+    }
+
     const config = await readConfigSafe(cwd);
 
     if (!config) {
@@ -192,7 +196,6 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
     }
 
     if (options.force) {
-        // --force 显式指定时，回退到暴力全量覆盖
         const filesToOverwrite: Array<{ component: string; modifiedFiles: number }> = [];
         for (const result of outdated) {
             if (!selected.includes(result.component)) continue;
@@ -214,154 +217,88 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
                 return;
             }
         }
-
-        const selectedByRegistry = new Map<string | undefined, string[]>();
-        for (const component of selected) {
-            const registrySource = options.registry ?? manifest?.components[component]?.registrySource;
-            selectedByRegistry.set(registrySource, [
-                ...(selectedByRegistry.get(registrySource) ?? []),
-                component,
-            ]);
-        }
-
-        const failedGroups: Array<{ components: string[]; message: string }> = [];
-        for (const [registrySource, groupedComponents] of selectedByRegistry) {
-            try {
-                await add(groupedComponents, {
-                    overwrite: true,
-                    yes: true,
-                    cwd,
-                    silent: options.silent,
-                    dryRun: options.dryRun,
-                    registry: registrySource,
-                    offline: options.offline,
-                });
-            } catch (error) {
-                const message = error instanceof Error ? error.message : String(error);
-                failedGroups.push({ components: groupedComponents, message });
-                logger.warn(`⚠ Update failed for: ${groupedComponents.join(', ')} — ${message}`);
-            }
-        }
-
-        const failedComponents = new Set(failedGroups.flatMap(g => g.components));
-        const succeededComponents = selected.filter(c => !failedComponents.has(c));
-
-        if (succeededComponents.length > 0) {
-            logger.newLine();
-            logger.success(`Updated ${succeededComponents.length} component(s): ${succeededComponents.join(', ')}`);
-        }
-
-        if (failedGroups.length > 0) {
-            throw new CliError(
-                `Update failed for ${failedComponents.size} component(s): ${Array.from(failedComponents).join(', ')}. First error: ${failedGroups[0].message}`,
-                { code: 'WRITE_FAILED' }
-            );
-        }
-        return;
     }
 
-    // 默认启用 3-Way Merge 智能合并引擎与三合一原子事务
     const conflictStrategy = options.ours ? 'ours' : options.theirs ? 'theirs' : 'markers';
-    const mergeExecutor = new MergeExecutor({ fs: context.fs });
-    const transaction = context.createTransaction();
+    const engine = new ComponentMutationEngine(context);
 
     logger.newLine();
-    logger.info('Applying 3-Way Merge for selected components...');
+    logger.info(options.force ? 'Overwriting selected components...' : 'Applying 3-Way Merge for selected components...');
     logger.newLine();
 
-    const succeededComponents: string[] = [];
-    const conflictedComponents: Array<{ name: string; conflictFiles: string[] }> = [];
-    const manifestEntries: Array<{
-        item: RegistryItem;
-        registrySource: string;
-        files: string[];
-        installedContentHash?: string;
-        version?: string;
-    }> = [];
-    let totalMergedFiles = 0;
-    let totalAddedFiles = 0;
-    let totalDeletedFiles = 0;
+    const plan = await engine.planUpdate({
+        components: selected,
+        overwrite: options.force === true,
+        conflictStrategy,
+        registryOverride: options.registry,
+        useCache,
+    });
 
-    try {
-        for (const componentName of selected) {
-            const registrySource = options.registry ?? manifest?.components[componentName]?.registrySource;
-            const client = context.getRegistryClient({
-                sources: registrySource ? [registrySource] : undefined,
-                useCache,
-            });
-            const remoteItem = await client.fetchItem(componentName);
-
-            const { plan, filesWritten } = await mergeExecutor.planAndExecute(
-                context,
-                componentName,
-                remoteItem,
-                {
-                    conflictStrategy,
-                    dryRun: options.dryRun,
-                    isCi: options.ci,
-                    transaction,
-                    registrySource,
-                    useCache,
-                }
-            );
-
-            totalMergedFiles += plan.mergedFiles;
-            totalAddedFiles += plan.addedFiles;
-            totalDeletedFiles += plan.deletedFiles;
-
-            if (plan.hasConflicts && conflictStrategy === 'markers') {
-                const conflicts = plan.files
-                    .filter(f => f.status === 'conflict' || f.status === 'restore-prompt')
-                    .map(f => f.filePath);
-                conflictedComponents.push({ name: componentName, conflictFiles: conflicts });
-                logger.warn(`  ${chalk.yellow('⚠')} ${chalk.bold(componentName)}: ${conflicts.length} conflict(s) marked with <<<<<<< LOCAL ... >>>>>>> REMOTE`);
-                for (const cf of conflicts) {
-                    logger.log(`    ${chalk.dim('→')} ${cf}`);
-                }
-            } else {
-                logger.success(`  ${chalk.green('✔')} ${chalk.bold(componentName)}: merged cleanly (${plan.mergedFiles} merged, ${plan.addedFiles} added, ${plan.deletedFiles} deleted)`);
-            }
-
-            // 记录待更新的 manifest 条目
-            if (!options.dryRun) {
-                const contentHash = await computeInstalledContentHash(filesWritten, context.fs);
-                manifestEntries.push({
-                    item: remoteItem,
-                    registrySource: registrySource ?? DEFAULT_REGISTRY_URL,
-                    files: filesWritten,
-                    installedContentHash: contentHash,
-                    version: remoteItem.$schema ?? 'latest',
-                });
-            }
-
-            succeededComponents.push(componentName);
-        }
-
-        if (!options.dryRun && manifestEntries.length > 0) {
-            await updateInstalledComponents(cwd, manifestEntries, { transaction }, context.fs);
-            await transaction.commit();
-        }
-    } catch (error) {
-        await transaction.rollback();
-        const message = error instanceof Error ? error.message : String(error);
-        if (error instanceof CliError) {
-            throw error;
-        }
-        throw new CliError(`Update transaction failed and was rolled back cleanly: ${message}`, {
-            code: 'MERGE_TRANSACTION_FAILED',
-            cause: error,
-        });
+    const spinner = options.silent ? null : ora({ isSilent: false });
+    if (spinner) {
+        spinner.start(`Updating ${selected.length} component(s)...`);
     }
 
+    let result;
+    try {
+        result = await engine.execute(plan, {
+            dryRun: false,
+            callbacks: {
+                onProgress: info => {
+                    if (spinner) {
+                        spinner.text = `[${info.current}/${info.total}] Updating ${info.component}...`;
+                    }
+                },
+                onFileWritten: info => {
+                    if (info.action === 'delete') {
+                        spinner?.info(`Removed deprecated file: ${info.filePath}`);
+                    }
+                },
+            },
+        });
+        spinner?.succeed(`Updated ${result.succeeded.length} component(s)`);
+    } catch (err) {
+        spinner?.fail('Failed to update components');
+        throw err;
+    }
+
+    const deletedStats = result.stats.deletedFiles > 0 ? `, ${result.stats.deletedFiles} deleted` : '';
     logger.newLine();
     logger.success(
-        `3-Way Merge completed for ${succeededComponents.length} component(s) (${totalMergedFiles} files merged, ${totalAddedFiles} added, ${totalDeletedFiles} deleted).`
+        `Update completed for ${result.succeeded.length} component(s) (${result.stats.mergedFiles} files merged, ${result.stats.createdFiles} added${deletedStats}).`
     );
 
-    if (conflictedComponents.length > 0) {
+    if (result.conflicts.length > 0) {
         logger.newLine();
         logger.warn(
-            `Notice: ${conflictedComponents.length} component(s) have unresolved conflict markers. Please inspect and resolve them in your editor.`
+            `Notice: ${result.conflicts.length} component(s) have unresolved conflict markers. Please inspect and resolve them in your editor:`
         );
+        for (const c of result.conflicts) {
+            logger.warn(`  ${chalk.yellow('⚠')} ${chalk.bold(c.component)}:`);
+            for (const cf of c.conflictFiles) {
+                logger.log(`    ${chalk.dim('→')} ${cf}`);
+            }
+        }
+
+        if (options.ci) {
+            const conflictList = result.conflicts
+                .flatMap(c => c.conflictFiles.map(f => `  - ${c.component}: ${f}`))
+                .join('\n');
+            throw new CliError(
+                `[CI Blocked] Unresolved merge conflicts detected during update in ${result.conflicts.length} component(s):\n${conflictList}\nResolve conflicts locally or run with --ours / --theirs.`,
+                { code: 'MERGE_CONFLICT_CI_BLOCKED', exitCode: 1 }
+            );
+        }
+    }
+
+    if (result.dependencies.status === 'installed') {
+        logger.newLine();
+        logger.success(`✓ Installed newly required npm dependencies: ${result.dependencies.packages.join(', ')}`);
+    } else if (result.dependencies.status === 'failed') {
+        logger.newLine();
+        logger.warn('⚠ Failed to install newly required npm dependencies automatically.');
+        if (result.dependencies.manualCommand) {
+            logger.info(`  Run manually: ${result.dependencies.manualCommand}`);
+        }
     }
 }

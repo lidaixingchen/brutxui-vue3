@@ -1,4 +1,5 @@
 import ora from 'ora';
+import chalk from 'chalk';
 import { checkbox } from '@inquirer/prompts';
 import path from 'path';
 
@@ -7,20 +8,10 @@ import {
     type RegistryItem,
     AVAILABLE_COMPONENTS,
     DEFAULT_REGISTRY_URL,
-    resolveRegistrySources,
     CliError,
-    readManifest,
     isSafePath,
     logger,
-    mergeSnippetsFile,
-    hasVscodeDir,
-    updateInstalledComponents,
-    computeInstalledContentHash,
-    ensureUtilsFile,
-    resolveComponents,
-    writeComponentFiles,
     withOfflineScope,
-    type ComponentFileWriteFailure,
     mergeDryRun,
     withAuditLog,
     ProjectContext,
@@ -28,6 +19,7 @@ import {
     TargetResolver,
     PackageManagerAdapter,
     RegistryClient,
+    ComponentMutationEngine,
 } from '../lib/index.js';
 
 async function validateComponents(components: string[], registryOverride?: string): Promise<void> {
@@ -35,7 +27,10 @@ async function validateComponents(components: string[], registryOverride?: strin
 
     for (const component of components) {
         if (component.length > MAX_COMPONENT_NAME_LENGTH) {
-            throw new CliError(`Component name too long: "${component.slice(0, 50)}..." (max ${MAX_COMPONENT_NAME_LENGTH} characters)`);
+            throw new CliError(`Component name too long: "${component.slice(0, 50)}..." (max ${MAX_COMPONENT_NAME_LENGTH} characters)`, {
+                code: 'INVALID_COMPONENT_NAME',
+                exitCode: 1,
+            });
         }
     }
 
@@ -47,7 +42,10 @@ async function validateComponents(components: string[], registryOverride?: strin
     const invalid = cleanComponents.filter((c) => !AVAILABLE_COMPONENTS.includes(c));
 
     if (invalid.length > 0) {
-        throw new CliError(`Unknown components: ${invalid.join(', ')}. Available: ${AVAILABLE_COMPONENTS.join(', ')}`);
+        throw new CliError(`Unknown components: ${invalid.join(', ')}. Available: ${AVAILABLE_COMPONENTS.join(', ')}`, {
+            code: 'COMPONENT_NOT_FOUND',
+            exitCode: 1,
+        });
     }
 }
 
@@ -62,9 +60,15 @@ async function selectComponents(inputComponents: string[], options: AddOptions, 
                     return [...list];
                 }
             } catch {
-                throw new CliError('--all is not supported with a remote --registry (component listing unavailable). Specify component names explicitly.');
+                throw new CliError('--all is not supported with a remote --registry (component listing unavailable). Specify component names explicitly.', {
+                    code: 'REGISTRY_LIST_UNSUPPORTED',
+                    exitCode: 1,
+                });
             }
-            throw new CliError('--all is not supported with a remote --registry (component listing unavailable). Specify component names explicitly.');
+            throw new CliError('--all is not supported with a remote --registry (component listing unavailable). Specify component names explicitly.', {
+                code: 'REGISTRY_LIST_UNSUPPORTED',
+                exitCode: 1,
+            });
         }
         return [...AVAILABLE_COMPONENTS];
     }
@@ -103,21 +107,6 @@ function getStatusHint(item: RegistryItem): string {
     return item.replacement ? ` [${item.status}, use ${item.replacement} for new work]` : ` [${item.status}]`;
 }
 
-function getComponentFileWriteFailure(error: unknown): ComponentFileWriteFailure | null {
-    if (!error || typeof error !== 'object') {
-        return null;
-    }
-
-    const failure = error as Partial<ComponentFileWriteFailure>;
-    if (typeof failure.rollbackFailures === 'number' && typeof failure.rollbackCount === 'number') {
-        return {
-            rollbackFailures: failure.rollbackFailures,
-            rollbackCount: failure.rollbackCount,
-        };
-    }
-
-    return null;
-}
 
 export async function add(components: string[], options: AddOptions): Promise<void> {
     const cwd = options.cwd ?? process.cwd();
@@ -173,7 +162,7 @@ async function addInner(
         });
     }
 
-    const plan = TargetResolver.resolvePlan(cwd, options.filter, topology, rootConfig);
+    const plan = TargetResolver.resolvePlan(cwd, options.filter, topology, rootConfig, options.shared);
 
     let context = callerContext;
     const effectiveTargetCwd = targetCwd !== cwd ? targetCwd : plan.targetPackageRoot;
@@ -193,19 +182,24 @@ async function addInner(
         return;
     }
 
-    const sources = resolveRegistrySources(plan.effectiveConfig, options.registry);
-
     const spinner = options.silent ? null : ora('Resolving components and checking dependencies...').start();
+    const engine = new ComponentMutationEngine(context);
 
     try {
-        const { items: registryItems, dependencies: allDeps, registrySources: hitRegistrySources } =
-            await resolveComponents(selectedComponents, options.registry, useCache, sources, context.registry);
+        const mutationPlan = await engine.planInstall({
+            components: selectedComponents,
+            overwrite: options.overwrite,
+            merge: options.merge,
+            registryOverride: options.registry,
+            useCache,
+            vscode: options.vscode,
+        });
 
         if (spinner) {
             spinner.stop();
         }
 
-        if (registryItems.length === 0) {
+        if (mutationPlan.items.length === 0) {
             spinner?.warn('No components resolved from registry.');
             return;
         }
@@ -215,16 +209,16 @@ async function addInner(
         logger.info(`   Registry source: ${options.registry || 'Default Brutx-Vue hosted registry'}`);
         logger.newLine();
 
-        const planParts = registryItems.map(
+        const planParts = mutationPlan.items.map(
             (item) => `${item.name} (${item.files.length} file${item.files.length !== 1 ? 's' : ''})`
         );
         logger.bold(
-            `Installing ${registryItems.length} component${registryItems.length !== 1 ? 's' : ''}: ${planParts.join(', ')}`
+            `Installing ${mutationPlan.items.length} component${mutationPlan.items.length !== 1 ? 's' : ''}: ${planParts.join(', ')}`
         );
         logger.newLine();
 
         logger.bold('🧩 Components to install/update:');
-        for (const item of registryItems) {
+        for (const item of mutationPlan.items) {
             const depsStr = item.registryDependencies && item.registryDependencies.length > 0
                 ? ` (depends on: ${item.registryDependencies.join(', ')})`
                 : '';
@@ -237,52 +231,45 @@ async function addInner(
         }
         logger.newLine();
 
-        if (allDeps.length > 0) {
+        if (mutationPlan.warnings.length > 0) {
+            for (const warning of mutationPlan.warnings) {
+                logger.warn(`⚠ ${warning}`);
+            }
+            logger.newLine();
+        }
+
+        if (mutationPlan.npmDependencies.length > 0) {
             logger.bold('📚 Required npm packages:');
-            logger.info(`   ${allDeps.join(', ')}`);
+            logger.info(`   ${mutationPlan.npmDependencies.join(', ')}`);
             logger.newLine();
         }
 
         if (spinner) {
-            spinner.start(`[1/${registryItems.length}] Adding ${registryItems[0].name}...`);
+            spinner.start(`[1/${mutationPlan.items.length}] Adding ${mutationPlan.items[0].name}...`);
         }
 
-        if (!options.dryRun) {
-            const utils = await ensureUtilsFile(context);
-            if (utils.created) {
-                spinner?.info(`Created utility file at ${utils.path}`);
-            }
-        }
-
-        // ==========================================
-        // 阶段一：文件事务与组件源码写入（原子提交）
-        // ==========================================
-        const { added, skipped, filesWritten, filesByComponent, transaction } = await writeComponentFiles(
-            context,
-            registryItems,
-            {
-                overwrite: options.overwrite,
-                merge: options.merge,
-                dryRun: options.dryRun,
-                callbacks: {
-                    onProgress: result => {
-                        if (spinner) {
-                            spinner.text = `[${result.index + 1}/${result.total}] Adding ${result.item.name}...`;
-                        }
-                    },
-                    onSkipFile: result => {
-                        spinner?.info(`Skipping file "${result.filePath}" for "${result.item.name}" (already exists). Use --overwrite to overwrite.`);
-                    },
-                    onDryRunFile: result => {
-                        spinner?.info(`[Dry Run] Would create file: ${result.targetPath}`);
-                    },
+        const mutationResult = await engine.execute(mutationPlan, {
+            dryRun: options.dryRun,
+            targetPackageName: plan.depInstallTarget.packageName,
+            callbacks: {
+                onProgress: info => {
+                    if (spinner) {
+                        spinner.text = `[${info.current}/${info.total}] Adding ${info.component}...`;
+                    }
                 },
-            }
-        );
+                onFileWritten: info => {
+                    if (info.action === 'skip') {
+                        spinner?.info(`Skipping file "${info.filePath}" for "${info.component}" (already exists). Use --overwrite to overwrite.`);
+                    } else if (options.dryRun) {
+                        spinner?.info(`[Dry Run] Would create file: ${info.filePath}`);
+                    }
+                },
+            },
+        });
 
-        const summary = skipped.length > 0
-            ? `Added ${added.length} component(s), skipped ${skipped.length}`
-            : `Added ${added.length} component(s)`;
+        const summary = mutationResult.skipped.length > 0
+            ? `Added ${mutationResult.succeeded.length} component(s), skipped ${mutationResult.skipped.length}`
+            : `Added ${mutationResult.succeeded.length} component(s)`;
 
         if (options.dryRun) {
             spinner?.succeed(`[Dry Run] Simulated: ${summary}`);
@@ -290,122 +277,66 @@ async function addInner(
             spinner?.succeed(summary);
         }
 
-        if (added.length > 0 && filesWritten.length > 0) {
+        if (mutationResult.succeeded.length > 0 && mutationResult.filesWritten.length > 0) {
             logger.newLine();
             logger.bold('💾 Files written to disk:');
-            for (const filePath of filesWritten) {
+            for (const filePath of mutationResult.filesWritten) {
                 const relativePath = path.relative(effectiveTargetCwd, filePath);
                 logger.success(`   ✓ ${relativePath}`);
             }
         }
 
-        if (!options.dryRun && added.length > 0) {
-            const versionByName = new Map<string, string>();
-            for (const inputName of components) {
-                const match = inputName.match(/^(@[a-z0-9-]+\/[a-z0-9-]+|[a-z0-9-]+)@([a-zA-Z0-9._-]+)$/);
-                if (match) {
-                    versionByName.set(match[1], match[2]);
-                }
-            }
-
-            if (versionByName.size > 0) {
-                const existingManifest = await readManifest(effectiveTargetCwd);
-                if (existingManifest) {
-                    for (const [name, newVersion] of versionByName) {
-                        const existing = existingManifest.components[name];
-                        if (existing?.version && existing.version !== newVersion) {
-                            logger.warn(`⚠ Version mismatch: "${name}" is already installed at version ${existing.version}, but you requested ${newVersion}. Mixing versions may cause compatibility issues.`);
-                        }
-                    }
-                }
-            }
-
-            const manifestEntries = await Promise.all(
-                registryItems
-                    .filter(item => added.includes(item.name))
-                    .map(async item => {
-                        const files = filesByComponent[item.name] ?? [];
-                        const installedContentHash = files.length > 0
-                            ? await computeInstalledContentHash(files)
-                            : undefined;
-                        return {
-                            item,
-                            registrySource: hitRegistrySources[item.name] ?? options.registry ?? DEFAULT_REGISTRY_URL,
-                            files,
-                            installedContentHash,
-                            version: versionByName.get(item.name) ?? 'latest',
-                        };
-                    })
+        if (mutationResult.conflicts.length > 0) {
+            logger.newLine();
+            logger.warn(
+                `Notice: ${mutationResult.conflicts.length} component(s) have unresolved conflict markers. Please inspect and resolve them in your editor:`
             );
-            await updateInstalledComponents(effectiveTargetCwd, manifestEntries);
-            await transaction?.commit();
-
-            const shouldUpdateSnippets = options.vscode === true
-                || (options.vscode !== false && await hasVscodeDir(effectiveTargetCwd));
-
-            if (shouldUpdateSnippets) {
-                const snippetPath = await mergeSnippetsFile(effectiveTargetCwd, added);
-                logger.success(`✓ VS Code snippets updated at ${path.relative(effectiveTargetCwd, snippetPath)}`);
+            for (const c of mutationResult.conflicts) {
+                logger.warn(`  ${chalk.yellow('⚠')} ${chalk.bold(c.component)}:`);
+                for (const cf of c.conflictFiles) {
+                    logger.log(`    ${chalk.dim('→')} ${cf}`);
+                }
             }
         }
 
-        // ==========================================
-        // 阶段二：跨包依赖安装调度与自愈输出
-        // ==========================================
-        if (allDeps.length > 0) {
+        if (mutationPlan.updateSnippets && mutationResult.succeeded.length > 0 && !options.dryRun) {
+            const snippetRelPath = path.relative(effectiveTargetCwd, path.join(effectiveTargetCwd, '.vscode', 'brutx.code-snippets'));
+            logger.success(`✓ VS Code snippets updated at ${snippetRelPath}`);
+        }
+
+        if (mutationPlan.npmDependencies.length > 0) {
             logger.newLine();
             if (options.dryRun) {
                 const manualCmd = PackageManagerAdapter.getManualInstallCommand(
                     topology.packageManager,
-                    allDeps,
+                    mutationPlan.npmDependencies,
                     plan.depInstallTarget.packageName,
                     topology.isMonorepo
                 );
                 logger.bold(`[Dry Run] Would install dependencies using ${topology.packageManager}:`);
                 logger.info(`  ${manualCmd}`);
-            } else {
-                logger.bold(`Installing dependencies with ${topology.packageManager}...`);
-                try {
-                    await PackageManagerAdapter.executeInstall(
-                        topology.packageManager,
-                        allDeps,
-                        topology.workspaceRoot,
-                        plan.depInstallTarget.packageName,
-                        topology.isMonorepo
-                    );
-                    logger.success('✓ Dependencies installed');
-                } catch {
-                    const manualCmd = PackageManagerAdapter.getManualInstallCommand(
-                        topology.packageManager,
-                        allDeps,
-                        plan.depInstallTarget.packageName,
-                        topology.isMonorepo
-                    );
-                    logger.warn('⚠ Failed to install dependencies automatically.');
-                    logger.info(`  Run manually: ${manualCmd}`);
+            } else if (mutationResult.dependencies.status === 'installed') {
+                logger.success('✓ Dependencies installed');
+            } else if (mutationResult.dependencies.status === 'failed') {
+                logger.warn('⚠ Failed to install dependencies automatically.');
+                if (mutationResult.dependencies.manualCommand) {
+                    logger.info(`  Run manually: ${mutationResult.dependencies.manualCommand}`);
                 }
             }
         }
 
-        if (added.length > 0) {
+        if (mutationResult.succeeded.length > 0) {
             logger.newLine();
             logger.bold('Usage:');
-            printUsageExample(added[0], plan.effectiveConfig.aliases.components);
+            printUsageExample(mutationResult.succeeded[0], plan.effectiveConfig.aliases.components);
         }
 
     } catch (error: unknown) {
         spinner?.fail('Failed to add components');
-        const writeFailure = getComponentFileWriteFailure(error);
-        if (writeFailure) {
-            if (writeFailure.rollbackFailures > 0) {
-                logger.error(`Rollback partially failed for ${writeFailure.rollbackFailures} file(s). Run "brutx-vue doctor --fix" to repair.`);
-            }
-            logger.error(`Installation failed. Rolled back ${writeFailure.rollbackCount} file(s) to previous state.`);
-        }
         if (error instanceof CliError) {
             throw error;
         }
         const message = error instanceof Error ? error.message : String(error);
-        throw new CliError(message);
+        throw new CliError(message, { cause: error });
     }
 }
