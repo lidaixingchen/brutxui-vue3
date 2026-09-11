@@ -33,14 +33,24 @@ export const structureAliasesRule: DiagnosticRule = {
         const componentsDir = await ctx.projectContext.resolveComponentsDir();
         const exists = await ctx.fs.pathExists(componentsDir);
 
+        if (!exists) {
+            return {
+                ruleId: 'structure.aliases',
+                category: 'structure',
+                name: `aliases.components → ${ctx.config!.aliases.components}`,
+                status: 'warn',
+                message: 'Directory does not exist.',
+                fixId: FixId.CreateComponentsDir,
+                fixDescription: 'Create directory',
+            };
+        }
+
         return {
             ruleId: 'structure.aliases',
             category: 'structure',
             name: `aliases.components → ${ctx.config!.aliases.components}`,
-            status: exists ? 'pass' : 'warn',
-            message: exists ? 'Directory exists.' : 'Directory does not exist.',
-            fixId: FixId.CreateComponentsDir,
-            fixDescription: 'Create directory',
+            status: 'pass',
+            message: 'Directory exists.',
         };
     },
     async planFix(ctx: DiagnosticContext): Promise<PlanFixResult> {

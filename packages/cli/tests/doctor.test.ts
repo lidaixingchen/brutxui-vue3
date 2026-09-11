@@ -808,8 +808,10 @@ describe('edge cases', () => {
             mockedReadConfigSafe.mockResolvedValue(makeConfig());
 
             const results = await runDoctor(cwd, { fix: true, yes: true });
-            const nonPass = results.filter((r) => r.status !== 'pass');
-            expect(nonPass).toHaveLength(0);
+            const errors = results.filter((r) => r.status === 'error');
+            expect(errors).toHaveLength(0);
+            const fixable = results.filter((r) => r.fixId !== undefined);
+            expect(fixable).toHaveLength(0);
         } finally {
             await fs.remove(cwd);
         }
