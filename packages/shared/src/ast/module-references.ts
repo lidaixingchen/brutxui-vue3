@@ -19,7 +19,7 @@ function isEntirelyTypeOnlyBindings(
 }
 
 export function analyzeModuleReferences(session: ParseSession): ModuleAnalysisResult {
-    const { input, descriptor, scriptBlocks } = session;
+    const { input, scriptBlocks } = session;
     const rawSource = input.source;
     const filename = input.filename;
 

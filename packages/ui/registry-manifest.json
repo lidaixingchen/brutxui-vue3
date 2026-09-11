@@ -416,7 +416,9 @@
       "useLocale.ts"
     ],
     "directives": [],
-    "lib": []
+    "lib": [
+      "env.ts"
+    ]
   },
   "counter": {
     "files": [

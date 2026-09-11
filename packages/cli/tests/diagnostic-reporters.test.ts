@@ -66,6 +66,21 @@ describe('Multi-Reporter Matrix & GitHub CI Native Support', () => {
     });
 
     describe('GithubReporter', () => {
+        let originalSummaryEnv: string | undefined;
+
+        beforeEach(() => {
+            originalSummaryEnv = process.env.GITHUB_STEP_SUMMARY;
+            delete process.env.GITHUB_STEP_SUMMARY;
+        });
+
+        afterEach(() => {
+            if (originalSummaryEnv !== undefined) {
+                process.env.GITHUB_STEP_SUMMARY = originalSummaryEnv;
+            } else {
+                delete process.env.GITHUB_STEP_SUMMARY;
+            }
+        });
+
         it('outputs ::error and ::warning workflow commands with location and escaping', async () => {
             const checks: CheckResult[] = [
                 {
@@ -100,6 +115,7 @@ describe('Multi-Reporter Matrix & GitHub CI Native Support', () => {
             await reporter.render(report, {
                 cwd: '/project',
                 write: (msg: string) => commands.push(msg),
+                stepSummaryPath: false,
             });
 
             const commandStr = commands.join('\n');

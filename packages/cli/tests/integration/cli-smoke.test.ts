@@ -48,17 +48,23 @@ describe('brutx-vue CLI integration', { timeout: 10000 }, () => {
 
         const cssPath = path.join(project.root, 'src', 'index.css');
         const firstCss = await fs.readFile(cssPath, 'utf-8');
-        expect(firstCss).toContain('--color-brutal-bg');
-        expect(firstCss).toContain('.bg-brutal-primary');
-        expect(firstCss).toContain('.animate-in');
+        expect(firstCss).toContain('@import "./brutx-tokens.css";');
+
+        const tokensPath = path.join(project.root, 'src', 'brutx-tokens.css');
+        const firstTokensCss = await fs.readFile(tokensPath, 'utf-8');
+        expect(firstTokensCss).toContain('--color-brutal-bg');
+        expect(firstTokensCss).toContain('.bg-brutal-primary');
+        expect(firstTokensCss).toContain('.animate-in');
 
         const secondRun = await runCli(project, ['init', '--yes', '--force', '--cwd', project.root]);
         expect(secondRun.code, secondRun.stderr || secondRun.stdout).toBe(0);
 
         const secondCss = await fs.readFile(cssPath, 'utf-8');
-        // 第二次 init 不应重复注入：匹配次数与第一次一致（模板内含 --color-brutal-bg
-        // 定义与多处 var() 引用，断言绝对次数会随模板引用数漂移，故对比相对次数）
-        expect(secondCss.match(/--color-brutal-bg/g)!.length).toBe(firstCss.match(/--color-brutal-bg/g)!.length);
+        // 第二次 init 不应重复注入 @import
+        expect(secondCss.match(/@import "\.\/brutx-tokens\.css";/g)!.length).toBe(1);
+
+        const secondTokensCss = await fs.readFile(tokensPath, 'utf-8');
+        expect(secondTokensCss.match(/--color-brutal-bg/g)!.length).toBe(firstTokensCss.match(/--color-brutal-bg/g)!.length);
 
         const installLog = await readInstallLog(project);
         if (installLog.length > 0) {

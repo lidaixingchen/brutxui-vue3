@@ -38,8 +38,10 @@ export class GithubReporter implements DiagnosticReporter {
             }
         }
 
-        // 2. 追加 Step Summary 看板（若环境提供）
-        const summaryPath = process.env.GITHUB_STEP_SUMMARY;
+        // 2. 追加 Step Summary 看板（若环境提供且未被显式禁用）
+        const summaryPath = options.stepSummaryPath === false
+            ? undefined
+            : (options.stepSummaryPath ?? process.env.GITHUB_STEP_SUMMARY);
         if (summaryPath) {
             await this.writeStepSummary(summaryPath, report);
         }

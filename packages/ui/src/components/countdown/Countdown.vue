@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { cn } from '@/lib/utils'
+import { getDocument, getWindow } from '@/lib/env'
 import { useLocale } from '@/composables/useLocale'
 import Statistic from '../statistic/Statistic.vue'
 import type { CountdownProps, CountdownEmits } from './types'
@@ -110,7 +111,8 @@ function restartCountdown(): void {
 }
 
 function handleVisibilityChange(): void {
-    if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+    const doc = getDocument()
+    if (doc && doc.visibilityState === 'visible') {
         if (!isFinished.value && targetTimestamp.value !== null) {
             clearTimer()
             tick()
@@ -153,22 +155,14 @@ onMounted(() => {
             timerId = setTimeout(tick, delay)
         }
     }
-    if (typeof document !== 'undefined') {
-        document.addEventListener('visibilitychange', handleVisibilityChange)
-    }
-    if (typeof window !== 'undefined') {
-        window.addEventListener('focus', handleWindowFocus)
-    }
+    getDocument()?.addEventListener('visibilitychange', handleVisibilityChange)
+    getWindow()?.addEventListener('focus', handleWindowFocus)
 })
 
 onBeforeUnmount(() => {
     clearTimer()
-    if (typeof document !== 'undefined') {
-        document.removeEventListener('visibilitychange', handleVisibilityChange)
-    }
-    if (typeof window !== 'undefined') {
-        window.removeEventListener('focus', handleWindowFocus)
-    }
+    getDocument()?.removeEventListener('visibilitychange', handleVisibilityChange)
+    getWindow()?.removeEventListener('focus', handleWindowFocus)
 })
 
 const formattedDisplay = computed(() => {

@@ -112,9 +112,10 @@ export function formatStatisticValue(
         return placeholder
     }
 
-    let { isNegative, intPart, fracPart } = parsed
+    const { fracPart } = parsed
+    let { isNegative, intPart } = parsed
 
-    let fractionResult = ''
+    let fractionResult: string
     if (precision !== undefined) {
         const safePrecision = Math.min(MAX_SUPPORTED_PRECISION, Math.max(0, Math.floor(precision)))
         const { carry, fraction } = roundFraction(fracPart, safePrecision)

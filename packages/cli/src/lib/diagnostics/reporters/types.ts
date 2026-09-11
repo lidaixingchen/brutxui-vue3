@@ -6,6 +6,7 @@ export interface ReporterOptions {
     silent?: boolean;
     outputFile?: string;
     write?: (message: string) => void;
+    stepSummaryPath?: string | false;
 }
 
 export interface DiagnosticReporter {

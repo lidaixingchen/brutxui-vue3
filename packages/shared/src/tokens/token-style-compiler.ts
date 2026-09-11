@@ -14,7 +14,7 @@ import {
     Z_INDEX_CLASS_ENTRIES,
     type ThemeTokens,
 } from '../design-tokens.js';
-import { PATTERN_UTILITIES, type PatternUtilityDefinition, type PatternNestedRule } from './pattern-tokens.js';
+import { PATTERN_UTILITIES } from './pattern-tokens.js';
 
 interface ThemeEntry {
     themeVar: string;
