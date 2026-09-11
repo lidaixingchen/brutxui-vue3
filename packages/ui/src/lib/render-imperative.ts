@@ -24,7 +24,9 @@ export interface MountOverlayOptions {
     transitionDuration?: number
     /** 自定义基准或指定 z-index（若不指定则按栈层级自动步进） */
     zIndex?: number
-    /** 是否响应全局 ESC 按键关闭（默认 true） */
+    /** 是否作为独占模态浮层参与全局层级栈调度（默认 true；通知架等常驻宿主可设为 false） */
+    modal?: boolean
+    /** @deprecated 无头原语自带 ESC 路由，保留仅供兼容 */
     enableEsc?: boolean
     /** 关闭时的回调（触发关闭动效时调用） */
     onClose?: () => void
@@ -49,58 +51,34 @@ export type OverlayPropsFactory<P extends object = Record<string, unknown>, R = 
     resolve: (result: R) => void
 }) => P
 
-interface StackEntry {
-    id: number
-    handleClose: () => void
-    enableEsc: boolean
-}
-
 let overlayIdCounter = 0
-const activeOverlayStack: StackEntry[] = []
-let isKeydownListening = false
+const activeModalStack: number[] = []
+const activeOverlays = new Set<() => void>()
 
-function handleGlobalKeydown(e: KeyboardEvent): void {
-    if (e.key === 'Escape' || e.key === 'Esc') {
-        if (activeOverlayStack.length === 0) return
-        const topEntry = activeOverlayStack[activeOverlayStack.length - 1]
-        if (topEntry && topEntry.enableEsc) {
-            e.stopPropagation()
-            e.preventDefault()
-            topEntry.handleClose()
-        }
-    }
+function pushModalStack(id: number): void {
+    activeModalStack.push(id)
 }
 
-function ensureKeydownListener(): void {
-    if (isKeydownListening || !canUseDocumentBody()) return
-    const doc = getDocument()
-    if (doc?.defaultView) {
-        doc.defaultView.addEventListener('keydown', handleGlobalKeydown, true)
-        isKeydownListening = true
-    }
-}
-
-function removeKeydownListener(): void {
-    if (!isKeydownListening || !canUseDocumentBody()) return
-    const doc = getDocument()
-    if (doc?.defaultView) {
-        doc.defaultView.removeEventListener('keydown', handleGlobalKeydown, true)
-        isKeydownListening = false
-    }
-}
-
-function pushStack(entry: StackEntry): void {
-    activeOverlayStack.push(entry)
-    ensureKeydownListener()
-}
-
-function popStack(id: number): void {
-    const idx = activeOverlayStack.findIndex(e => e.id === id)
+function popModalStack(id: number): void {
+    const idx = activeModalStack.indexOf(id)
     if (idx !== -1) {
-        activeOverlayStack.splice(idx, 1)
+        activeModalStack.splice(idx, 1)
     }
-    if (activeOverlayStack.length === 0) {
-        removeKeydownListener()
+}
+
+/**
+ * 销毁当前所有活跃的命令式弹层容器（供测试沙箱 afterEach 或全局清理使用）
+ */
+export function destroyAllOverlays(): void {
+    const toDestroy = Array.from(activeOverlays)
+    activeOverlays.clear()
+    activeModalStack.length = 0
+    for (const destroyFn of toDestroy) {
+        try {
+            destroyFn()
+        } catch {
+            // 防御销毁步骤抛错
+        }
     }
 }
 
@@ -110,7 +88,7 @@ function popStack(id: number): void {
  * 核心特性：
  * 1. 两阶段受控关闭（Two-Phase Controlled Closing）：Phase A 置 open 为 false 驱动 Leave 动画，
  *    Phase B 在动画窗口结束后执行 render(null) 与 DOM 节点 GC 清理，杜绝离场动效被提前切断。
- * 2. 全局 LIFO 活动弹层栈：按后进先出规则自动递增 z-index，ESC 按键事件精准路由分发至栈顶活跃弹层。
+ * 2. 模态栈与 Z-Index 调度：独占模态弹层按入栈顺序递增 z-index，非模态（通知架等）可声明 modal: false 隔离。
  * 3. 自动 AppContext 继承：优先级为 options.appContext ?? getCurrentInstance()?.appContext ?? getGlobalAppContext()。
  * 4. 确定性非拒绝 Promise 契约与 SSR 安全守卫。
  */
@@ -136,9 +114,9 @@ export function mountOverlay<P extends object = Record<string, unknown>, R = unk
     const currentInst = getCurrentInstance()
     const resolvedAppContext = options.appContext || currentInst?.appContext || getGlobalAppContext()
 
-    const stackDepth = activeOverlayStack.length
+    const isModal = options.modal ?? true
+    const stackDepth = activeModalStack.length
     const calculatedZIndex = options.zIndex ?? (DEFAULT_OVERLAY_Z_INDEX + stackDepth * OVERLAY_Z_INDEX_STEP)
-    const enableEsc = options.enableEsc ?? true
 
     let isResolved = false
     let isClosed = false
@@ -168,10 +146,14 @@ export function mountOverlay<P extends object = Record<string, unknown>, R = unk
         isClosed = true
         isOpen.value = false
 
-        popStack(stackId)
+        if (isModal) {
+            popModalStack(stackId)
+        }
 
         if (result !== undefined) {
             resolvePromise(result)
+        } else if (!isResolved) {
+            resolvePromise(undefined as unknown as R)
         }
 
         try {
@@ -200,7 +182,10 @@ export function mountOverlay<P extends object = Record<string, unknown>, R = unk
             destroyTimer = undefined
         }
 
-        popStack(stackId)
+        if (isModal) {
+            popModalStack(stackId)
+        }
+        activeOverlays.delete(handleDestroy)
 
         if (fallbackResult !== undefined) {
             resolvePromise(fallbackResult)
@@ -214,15 +199,17 @@ export function mountOverlay<P extends object = Record<string, unknown>, R = unk
             // 防御外部 onDestroy 抛错
         }
 
-        render(null, container)
-        container.remove()
+        try {
+            render(null, container)
+        } finally {
+            container.remove()
+        }
     }
 
-    pushStack({
-        id: stackId,
-        handleClose: () => handleClose(),
-        enableEsc,
-    })
+    if (isModal) {
+        pushModalStack(stackId)
+    }
+    activeOverlays.add(handleDestroy)
 
     // 构建包装组件，为 propsFactory 或普通 props 提供响应式与生命周期绑定
     const WrapperComponent = defineComponent({
@@ -264,8 +251,8 @@ export function mountOverlay<P extends object = Record<string, unknown>, R = unk
         doc.body!.appendChild(container)
         render(vnode, container)
     } catch (err) {
-        handleDestroy()
         rejectPromise(err)
+        handleDestroy()
         throw err
     }
 
@@ -283,15 +270,20 @@ export interface RenderImperativeReturn {
 }
 
 /**
- * 命令式渲染挂载组件的包装工具（提供宿主深模块能力）
+ * @deprecated 请使用 {@link mountOverlay}。
+ * 命令式渲染挂载组件的兼容包装工具。
  */
 export function renderImperative(
     component: Component,
     props: Record<string, unknown> = {},
     options: RenderImperativeOptions = {}
 ): RenderImperativeReturn {
-    const handle = mountOverlay(component, props, options)
+    const handle = mountOverlay(component, props, {
+        modal: false,
+        ...options,
+    })
     return {
         destroy: handle.destroy,
     }
 }
+

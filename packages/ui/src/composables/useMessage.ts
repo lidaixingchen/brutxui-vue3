@@ -6,12 +6,11 @@ import {
     type DeepReadonly,
     type Ref,
 } from 'vue'
-import { renderImperative, type RenderImperativeReturn } from '../lib/render-imperative'
+import { mountOverlay, type OverlayInstanceHandle } from '../lib/render-imperative'
 import { getWindow, isClient } from '../lib/env'
 import {
     DEFAULT_MESSAGE_DURATION_MS,
     MESSAGE_GRACE_PERIOD_MS,
-    DEFAULT_DIALOG_TRANSITION_MS,
 } from '../lib/defaults'
 import MessageContainer from '../components/message/MessageContainer.vue'
 
@@ -47,7 +46,7 @@ const messageStoreRef = shallowRef<MessageItem[]>([])
 // 外部直写会绕过 duration 定时器与 GC，故导出 readonly 代理
 export const messageStore: DeepReadonly<Ref<MessageItem[]>> = readonly(messageStoreRef)
 
-let instance: RenderImperativeReturn | null = null
+let instance: OverlayInstanceHandle<void> | null = null
 let refCount = 0
 let generation = 0
 let graceTimer: ReturnType<typeof setTimeout> | null = null
@@ -115,8 +114,8 @@ function cancelGraceTimer(): void {
 function ensureMounted(): void {
     if (!isClient) return
     if (instance) return
-    instance = renderImperative(MessageContainer, {}, {
-        transitionDuration: DEFAULT_DIALOG_TRANSITION_MS,
+    instance = mountOverlay(MessageContainer, {}, {
+        modal: false,
     })
     registerBeforeUnload()
 }

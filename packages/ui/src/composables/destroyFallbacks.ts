@@ -1,13 +1,14 @@
 import { destroyFallback as destroyToastFallback } from './useToast'
 import { destroyFallback as destroyThemeFallback } from './useTheme'
 import { destroyFallback as destroyMessageFallback } from './useMessage'
+import { destroyAllOverlays } from '../lib/render-imperative'
 
 /**
- * 清理全部共享 fallback 状态（toast / theme / message）。
+ * 清理全部共享 fallback 状态与命令式弹层（toast / theme / message / overlay）。
  * 推荐在测试隔离、多应用同页或热更新边界调用一次。
  */
 export function destroyBrutxUI(): void {
-    const cleaners = [destroyToastFallback, destroyThemeFallback, destroyMessageFallback]
+    const cleaners = [destroyToastFallback, destroyThemeFallback, destroyMessageFallback, destroyAllOverlays]
     for (const clean of cleaners) {
         try {
             clean()

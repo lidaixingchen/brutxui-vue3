@@ -3,6 +3,7 @@ import { defineComponent, h, nextTick } from 'vue'
 import {
     mountOverlay,
     renderImperative,
+    destroyAllOverlays,
 } from './render-imperative'
 import {
     DEFAULT_OVERLAY_Z_INDEX,
@@ -35,10 +36,12 @@ const SimpleModal = defineComponent({
 describe('Imperative Overlay Host Controller (mountOverlay)', () => {
     beforeEach(() => {
         vi.useFakeTimers()
+        destroyAllOverlays()
         document.body.innerHTML = ''
     })
 
     afterEach(() => {
+        destroyAllOverlays()
         vi.restoreAllMocks()
         vi.useRealTimers()
         document.body.innerHTML = ''
@@ -143,49 +146,36 @@ describe('Imperative Overlay Host Controller (mountOverlay)', () => {
         handle1.destroy()
     })
 
-    it('should route ESC keydown exclusively to the top active overlay in LIFO stack', async () => {
-        const handle1 = mountOverlay(SimpleModal, { title: 'Modal 1' })
-        const handle2 = mountOverlay(SimpleModal, { title: 'Modal 2' })
+    it('should destroy all active overlays and clean up DOM when destroyAllOverlays() is called', async () => {
+        mountOverlay(SimpleModal, { title: 'Modal A' })
+        mountOverlay(SimpleModal, { title: 'Modal B' })
+        expect(document.body.querySelectorAll('.simple-modal').length).toBe(2)
 
-        const escEvent = new KeyboardEvent('keydown', {
-            key: 'Escape',
-            bubbles: true,
-            cancelable: true,
-        })
-        const stopPropagationSpy = vi.spyOn(escEvent, 'stopPropagation')
-
-        window.dispatchEvent(escEvent)
-        await nextTick()
-
-        // 仅栈顶 Modal 2 被触发关闭（open=false）
-        const modals = document.body.querySelectorAll('.simple-modal')
-        expect(modals[0].getAttribute('data-open')).toBe('true')
-        expect(modals[1].getAttribute('data-open')).toBe('false')
-        expect(stopPropagationSpy).toHaveBeenCalled()
-
-        handle1.destroy()
-        handle2.destroy()
+        destroyAllOverlays()
+        expect(document.body.querySelectorAll('.simple-modal').length).toBe(0)
     })
 
-    it('should respect enableEsc=false option and ignore ESC key', async () => {
-        const handle = mountOverlay(
-            SimpleModal,
-            { title: 'Non-closable Modal' },
-            { enableEsc: false }
-        )
+    it('should not increment modal stack depth when modal=false is specified', async () => {
+        const handle1 = mountOverlay(SimpleModal, { title: 'Modal 1' })
+        // 非模态挂载（如常驻通知架）
+        const handleNonModal = mountOverlay(SimpleModal, { title: 'Non Modal' }, { modal: false, zIndex: 5000 })
+        const handle2 = mountOverlay(SimpleModal, { title: 'Modal 2' })
 
-        const escEvent = new KeyboardEvent('keydown', {
-            key: 'Escape',
-            bubbles: true,
-            cancelable: true,
-        })
-        window.dispatchEvent(escEvent)
-        await nextTick()
+        const modals = document.body.querySelectorAll('.simple-modal')
+        expect(modals.length).toBe(3)
 
-        const modal = document.body.querySelector('.simple-modal')
-        expect(modal?.getAttribute('data-open')).toBe('true')
+        const z1 = Number((modals[0] as HTMLElement).style.zIndex)
+        const zNonModal = Number((modals[1] as HTMLElement).style.zIndex)
+        const z2 = Number((modals[2] as HTMLElement).style.zIndex)
 
-        handle.destroy()
+        expect(z1).toBe(DEFAULT_OVERLAY_Z_INDEX)
+        expect(zNonModal).toBe(5000)
+        // handle2 仅为模态栈深第 2 层
+        expect(z2).toBe(DEFAULT_OVERLAY_Z_INDEX + OVERLAY_Z_INDEX_STEP)
+
+        handle1.destroy()
+        handleNonModal.destroy()
+        handle2.destroy()
     })
 
     it('should support propsFactory function for dynamic and reactive binding', async () => {
