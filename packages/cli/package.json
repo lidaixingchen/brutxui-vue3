@@ -19,7 +19,8 @@
         "dist"
     ],
     "scripts": {
-        "prebuild": "pnpm --filter brutx-ui-vue prebuild:tokens",
+        "prebuild": "tsx scripts/generate-tokens.ts",
+        "prebuild:tokens": "tsx scripts/generate-tokens.ts",
         "build": "tsup",
         "prepack": "tsup",
         "dev": "tsup --watch",
