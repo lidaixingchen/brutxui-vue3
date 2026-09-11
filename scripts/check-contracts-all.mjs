@@ -89,7 +89,7 @@ const CONTRACTS = [
     ...getRunner('packages/cli/scripts/check-brutalist-tokens.ts'),
     action: {
       type: 'auto_fix',
-      command: 'pnpm --filter brutx-ui-vue prebuild:tokens',
+      command: 'pnpm --filter brutx-vue prebuild:tokens',
       description: '重新从 shared 单一信源编译并同步 CLI brutalist.css 令牌。',
     },
   },

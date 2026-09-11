@@ -4,18 +4,18 @@
 
 ## 自动生成文件（勿手动编辑）
 
-> **执行上下文**：生成脚本位于 `packages/ui`，在根目录调用时须携带包限定符：`pnpm --filter brutx-ui-vue <cmd>`。
+> **执行上下文**：生成脚本依据包自治原则落位于各子包。修改设计令牌后可于根目录运行 `pnpm generate:tokens` 一键同步所有子包。
 
 | 文件 | 触发更新的命令 |
 | --- | --- |
 | `packages/ui/registry-manifest.json` | `pnpm build` / `pnpm --filter brutx-ui-vue prebuild:scan`（lint、typecheck 也会前置执行，幂等） |
 | `packages/ui/exports-manifest.json` | `pnpm --filter brutx-ui-vue prebuild:scan`（build、typecheck、lint 也会前置执行，幂等） |
 | `packages/ui/package.json` 的 `exports` 字段 | `pnpm --filter brutx-ui-vue prebuild:exports`（build、typecheck、lint 也会前置执行，幂等） |
-| `packages/ui/src/styles.css` 的 `@theme`、`:root/.dark` 与预设 tokens | `pnpm --filter brutx-ui-vue prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
-| `packages/ui/src/preflight.css` 的 body 字体栈 | `pnpm --filter brutx-ui-vue prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
-| `packages/ui/src/lib/utils.ts` 的 `BRUTAL_COLOR_NAMES` 列表 | `pnpm --filter brutx-ui-vue prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
-| `packages/cli/src/styles/brutalist.css` 的令牌与预设标记块 | `pnpm --filter brutx-ui-vue prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
-| `packages/cli/src/lib/constants.ts` 的 `UTILS_TEMPLATE` 模板块 | `pnpm --filter brutx-ui-vue prebuild:tokens`（唯一数据源 `packages/shared/src/design-tokens.ts`） |
+| `packages/ui/src/styles.css` 的 `@theme`、`:root/.dark` 与预设 tokens | `pnpm --filter brutx-ui-vue prebuild:tokens`（唯一数据源 `packages/shared/src/tokens`） |
+| `packages/ui/src/preflight.css` 的 body 字体栈 | `pnpm --filter brutx-ui-vue prebuild:tokens`（唯一数据源 `packages/shared/src/tokens`） |
+| `packages/ui/src/lib/utils.ts` 的 `BRUTAL_COLOR_NAMES` 列表 | `pnpm --filter brutx-ui-vue prebuild:tokens`（唯一数据源 `packages/shared/src/tokens`） |
+| `packages/cli/src/styles/brutalist.css` 的令牌与预设标记块 | `pnpm --filter brutx-vue prebuild:tokens`（唯一数据源 `packages/shared/src/tokens`） |
+| `packages/cli/src/lib/constants.ts` 的 `UTILS_TEMPLATE` 模板块 | `pnpm --filter brutx-vue prebuild:tokens`（唯一数据源 `packages/shared/src/tokens`） |
 | `packages/ui/src/components/*/index.ts` 组件级导出文件 | `pnpm --filter brutx-ui-vue prebuild:component-index`（唯一数据源组件目录结构与变体） |
 
 

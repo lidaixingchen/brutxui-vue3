@@ -30,6 +30,7 @@
         "check:i18n": "node scripts/check-i18n.mjs --report",
         "check:i18n:strict": "node scripts/check-i18n.mjs",
         "commit:check": "node scripts/check-last-commit.mjs",
+        "generate:tokens": "pnpm --filter brutx-ui-vue prebuild:tokens && pnpm --filter brutx-vue prebuild:tokens",
         "generate:component": "tsx scripts/generate.ts component",
         "generate:composable": "tsx scripts/generate.ts composable",
         "generate:page": "tsx scripts/generate.ts page",
