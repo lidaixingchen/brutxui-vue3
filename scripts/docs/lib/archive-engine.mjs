@@ -327,6 +327,7 @@ export class ArchiveEngine {
     const activePlansByDomain = { cli: [], ui: [], styles: [], core: [] }
     for (const rel of allPlanFiles) {
       if (currentMigratingPlan && rel === currentMigratingPlan.oldRel) continue
+      if (this.git && !this.isGitTracked(rel)) continue
       const content = await this.fs.readFile(path.resolve(this.rootDir, rel))
       const fm = parseFrontmatter(content)
       if (!fm) continue
@@ -515,7 +516,7 @@ export class ArchiveEngine {
       changedFiles: [
         pre.targetRelPath,
         'docs/index.md',
-        ...Array.from(reverseChanges.keys()),
+        ...Array.from(reverseChanges.keys()).filter((f) => !this.git || this.isGitTracked(f)),
       ],
       dryRun: this.dryRun,
     }
