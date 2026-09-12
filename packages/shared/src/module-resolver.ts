@@ -152,23 +152,23 @@ function inspectExactPath(
         }
     }
 
-    try {
-        if (!fs.statSync(absolutePath).isFile()) return { status: 'missing' };
-    } catch {
-        return { status: 'missing' };
-    }
-
     const anchor = rootDir && isPathInside(rootDir, absolutePath)
         ? path.resolve(rootDir)
         : null;
 
     if (!anchor) {
-        return { status: 'file', actualPath: absolutePath };
+        try {
+            return fs.statSync(absolutePath).isFile() ? { status: 'file', actualPath: absolutePath } : { status: 'missing' };
+        } catch {
+            return { status: 'missing' };
+        }
     }
 
     let current = anchor;
     const relativePath = path.relative(anchor, absolutePath);
     const segments = relativePath.split(path.sep).filter(Boolean);
+    let hasCaseMismatch = false;
+
     for (const segment of segments) {
         const matches = readDirectoryEntries(current).filter((entry) => entry.toLowerCase() === segment.toLowerCase());
         if (matches.length === 0) return { status: 'missing' };
@@ -179,15 +179,25 @@ function inspectExactPath(
             };
         }
         if (matches[0] !== segment) {
-            return {
-                status: 'case-mismatch',
-                candidates: [path.join(current, matches[0])],
-            };
+            hasCaseMismatch = true;
         }
         current = path.join(current, matches[0]);
     }
 
-    return { status: 'file', actualPath: absolutePath };
+    try {
+        if (!fs.statSync(current).isFile()) return { status: 'missing' };
+    } catch {
+        return { status: 'missing' };
+    }
+
+    if (hasCaseMismatch) {
+        return {
+            status: 'case-mismatch',
+            candidates: [current],
+        };
+    }
+
+    return { status: 'file', actualPath: current };
 }
 
 function collectCandidates(
