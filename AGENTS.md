@@ -130,6 +130,7 @@ Vue 3（`<script setup>`）· TypeScript（strict）· Tailwind CSS v4 · reka-u
 - [组件文档模板](docs/guides/COMPONENT_DOC_TEMPLATE.md)
 - [Tailwind v4 机制说明](docs/guides/TAILWIND_V4_MECHANISMS.md)
 - [AI 技能描述](skills/brutxui/SKILL.md)
+- [AI 技能维护指南](skills/README.md)
 
 ## 文档落位与方案归档守则
 
@@ -153,11 +154,3 @@ Vue 3（`<script setup>`）· TypeScript（strict）· Tailwind CSS v4 · reka-u
 - 只记录已确认的事实和约定；从历史提交、tag 或现有文件推断的内容，先确认再写入。
 - 不要把一次性操作经验写成本项目长期规则，除非用户明确确认。
 
-## AI 技能文档维护规范
-
-编写或修改项目内 AI 技能文档（如 `skills/brutxui/SKILL.md`）时：
-
-- **最新状态原则**：只保留最新 API 与编码规范，严禁包含历史版本变迁描述（废弃/不再支持/从某版本起改为什么）。
-- **定位对齐原则**：按受众（库开发者 vs. 库使用者）裁剪内容，分发给使用者的技能包只保留使用与集成规范，不混入内部开发规范（如多语言 key 翻译、原生原语隔离）。
-- **路径可移植原则**：仓库内文档关联链接统一用相对路径，禁止硬编码本机绝对路径（如 `file:///e:/...`）。
-- **非 Claude Code 可调用**：`skills/brutxui/` 面向库使用者/其他 AI，Claude Code harness 不加载它，无需尝试触发；Claude Code 需要组件规范时直接读 `skills/brutxui/SKILL.md` 或对应 references。
