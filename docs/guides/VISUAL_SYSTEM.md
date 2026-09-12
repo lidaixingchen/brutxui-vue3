@@ -20,7 +20,7 @@
 | `--brutal-accent` | `#FFE66D` | `#FFE66D` | 强调色（黄色） |
 | `--brutal-accent-foreground` | `#000000` | `#000000` | 强调色前景 |
 | `--brutal-destructive` | `#EF476F` | `#EF476F` | 危险色 |
-| `--brutal-destructive-foreground` | `#ffffff` | `#ffffff` | 危险色前景（白字） |
+| `--brutal-destructive-foreground` | `#000000` | `#000000` | 危险色前景（白字） |
 | `--brutal-success` | `#7FB069` | `#7FB069` | 成功色 |
 | `--brutal-success-foreground` | `#000000` | `#000000` | 成功色前景 |
 | `--brutal-info` | `#4A90D9` | `#3B82F6` | 信息提示色 |
@@ -32,20 +32,20 @@
 | `--brutal-status-info` | `#3b82f6` | `#3b82f6` | 状态信息色 |
 | `--brutal-status-info-foreground` | `#000000` | `#000000` | 状态信息前景（黑字对比 5.8:1） |
 | `--brutal-status-error` | `#EF476F` | `#EF476F` | 状态错误色 |
-| `--brutal-status-error-foreground` | `#ffffff` | `#ffffff` | 状态错误前景 |
+| `--brutal-status-error-foreground` | `#000000` | `#000000` | 状态错误前景 |
 | `--brutal-muted` | `#f3f4f6` | `#1e1e1e` | 柔和背景 |
 | `--brutal-muted-foreground` | `#4B5563` | `#9CA3AF` | 柔和文本前景 |
 | `--brutal-ring` | `#000000` | `#ffffff` | 焦点环 |
 | `--brutal-overlay` | `rgba(0, 0, 0, 0.5)` | `rgba(0, 0, 0, 0.7)` | 遮罩层背景 |
 | `--brutal-overlay-subtle` | `rgba(0, 0, 0, 0.05)` | `rgba(255, 255, 255, 0.05)` | 微妙叠色（浅层覆盖/拖拽指示） |
-| `--brutal-placeholder` | `#9CA3AF` | `#6B7280` | 输入框占位文本颜色 |
+| `--brutal-placeholder` | `#6e7788` | `#767e8c` | 输入框占位文本颜色（与背景对比度满足 WCAG AA） |
 | `--brutal-black` | `#000000` | `#000000` | 基础黑色 |
 | `--brutal-yellow` | `#FFE66D` | `#FFE66D` | 基础黄色 |
-| `--z-index-dropdown` | `1000` | `1000` | 下拉菜单、选择器浮层 |
-| `--z-index-sticky` | `1100` | `1100` | 吸顶导航、吸底栏 |
-| `--z-index-dialog` | `2000` | `2000` | 对话框、抽屉、MessageBox 遮罩与内容 |
-| `--z-index-popover` | `5000` | `5000` | 浮动卡片、气泡弹窗 |
-| `--z-index-tooltip` | `6000` | `6000` | 工具提示（浮于常规 Popover 之上） |
+| `--z-index-dropdown` | `100` | `100` | 下拉菜单、选择器浮层 |
+| `--z-index-sticky` | `10` | `10` | 吸顶导航、吸底栏 |
+| `--z-index-dialog` | `1000` | `1000` | 对话框、抽屉、MessageBox 遮罩与内容 |
+| `--z-index-popover` | `100` | `100` | 浮动卡片、气泡弹窗 |
+| `--z-index-tooltip` | `200` | `200` | 工具提示（浮于常规 Popover 之上） |
 | `--z-index-toast` | `10010` | `10010` | 全局通知容器与消息提示 |
 | `--z-index-loading` | `9200` | `9200` | 全屏与局部遮罩加载指示器 |
 
@@ -123,11 +123,11 @@
 ### R9 层级与浮层体系 (Z-Index)
 - **核心规则**：全库浮层、弹窗、提示及遮罩必须严格使用语义 `z-*` 类名（`z-dropdown`, `z-sticky`, `z-dialog`, `z-popover`, `z-tooltip`, `z-toast`, `z-loading`, `z-tour-canvas`, `z-tour-popover`, `z-preview-overlay`, `z-preview-control` 等），杜绝硬编码 `z-50` 或任意值 `z-[9999]`。
 - **阶梯标度契约**：
-  - **Level 1 (下拉/吸顶)**：`z-dropdown` (1000) / `z-sticky` (1100) — Select、Dropdown、Cascader 下拉菜单及 Sticky 容器；
-  - **Level 2 (模态对话框)**：`z-dialog` (2000) — Modal、Dialog、AlertDialog、Drawer/Sheet、MessageBox 遮罩与内容；
-  - **Level 3 (气泡弹层)**：`z-popover` (5000) — Popover、ColorPicker、DatePicker 浮动卡片；
-  - **Level 4 (工具提示)**：`z-tooltip` (6000) — Tooltip 浮层（确保悬停时可浮在 Dialog/Popover 选项之上）；
-  - **Level 5 (顶层通知/引导/加载)**：`z-tour-canvas` (9000), `z-tour-popover` (9001), `z-preview-overlay` (9100), `z-preview-control` (9101), `z-loading` (9200), `z-toast` (10010) — 漫游引导、全屏图片预览、Loading 指示器与全局 Toast 容器。
+  - **Level 1（行内与导航）**：`z-sticky` (10) / `z-header` (40) — 吸顶区域与导航栏。
+  - **Level 2（浮动内容）**：`z-dropdown` (100) / `z-popover` (100) / `z-tooltip` (200) — 下拉菜单、气泡与工具提示。
+  - **Level 3（模态内容）**：`z-dialog` (1000) — Dialog、AlertDialog、Drawer/Sheet、MessageBox 遮罩与内容。
+  - **Level 4（系统覆盖层）**：`z-tour-canvas` (9000)、`z-tour-popover` (9001)、`z-preview-overlay` (9100)、`z-preview-control` (9101)、`z-loading` (9200)。
+  - **Level 5（通知）**：`z-toast` (10010) / `z-message` (10010) — 全局通知与消息。
 - **tailwind-merge 去重保障**：全库 `cn()` 已通过 `classGroups.z` 注册全部语义类名，外部传入 `z-50` 或其他层级类名时可实现确定性覆盖去重（机制见 [TAILWIND_V4_MECHANISMS.md](TAILWIND_V4_MECHANISMS.md) §6）。
 
 ## CVA 变体文件

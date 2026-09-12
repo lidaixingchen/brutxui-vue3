@@ -35,7 +35,10 @@ const innerClass = computed(() =>
 </script>
 
 <template>
-    <div :class="containerClass">
+    <div
+        :class="containerClass"
+        data-brutx-preview
+    >
         <!-- PREVIEW badge -->
         <span
             class="absolute top-0 left-0 z-20 px-2 py-0.5 text-[0.6rem] font-black uppercase tracking-[0.12em] bg-brutal-accent text-black border-b-2 border-r-2 border-brutal select-none"

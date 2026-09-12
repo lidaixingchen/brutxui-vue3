@@ -696,7 +696,7 @@
    TABLES — Brutalist data grids
    ============================================ */
 
-.vp-doc table {
+.vp-doc table:not(:where(.vp-raw *, [data-brutx-preview] *)) {
     border: 3px solid var(--brutal-border-color);
     border-collapse: separate;
     border-spacing: 0;
@@ -705,23 +705,23 @@
     box-shadow: 4px 4px 0 0 var(--brutal-border-color);
 }
 
-.vp-doc table th,
-.vp-doc table td {
+.vp-doc table:not(:where(.vp-raw *, [data-brutx-preview] *)) th,
+.vp-doc table:not(:where(.vp-raw *, [data-brutx-preview] *)) td {
     border-right: 2px solid var(--brutal-border-color);
     border-bottom: 2px solid var(--brutal-border-color);
     padding: 0.5rem 1rem;
 }
 
-.vp-doc table th:last-child,
-.vp-doc table td:last-child {
+.vp-doc table:not(:where(.vp-raw *, [data-brutx-preview] *)) th:last-child,
+.vp-doc table:not(:where(.vp-raw *, [data-brutx-preview] *)) td:last-child {
     border-right: none;
 }
 
-.vp-doc table tr:last-child td {
+.vp-doc table:not(:where(.vp-raw *, [data-brutx-preview] *)) tr:last-child td {
     border-bottom: none;
 }
 
-.vp-doc table th {
+.vp-doc table:not(:where(.vp-raw *, [data-brutx-preview] *)) th {
     background-color: var(--brutal-accent);
     font-weight: 900;
     color: #000000;
@@ -730,11 +730,11 @@
     font-size: 0.8rem;
 }
 
-.vp-doc table tr:nth-child(even) td {
+.vp-doc table:not(:where(.vp-raw *, [data-brutx-preview] *)) tr:nth-child(even) td {
     background-color: var(--brutal-muted);
 }
 
-.dark .vp-doc table th {
+.dark .vp-doc table:not(:where(.vp-raw *, [data-brutx-preview] *)) th {
     background-color: var(--brutal-accent);
     color: #000000;
 }
@@ -1039,23 +1039,30 @@
     }
 }
 
-/* Specifity overrides for component previews (.vp-raw) and
-   teleported BrutxUI components (Dialog, Popover, DropdownMenu, etc.)
-   reka-ui teleports overlay/content to <body>, outside .vp-raw.
-   Both contexts suffer from VitePress unlayered resets.
-   revert-layer falls back to the utilities layer where BrutxUI's classes are defined. */
+/* Specificity overrides for component previews and teleported BrutxUI content.
+   Keep the scope explicit so VitePress controls retain their own reset while
+   preview controls restore the layered utilities from BrutxUI. */
 .vp-raw,
 body > [id^="reka-"],
-body > [data-reka-popper-content-wrapper] {
+body > [data-reka-popper-content-wrapper],
+[data-brutx-preview],
+[data-brutx-portal] {
     & button {
         border-width: revert-layer;
         border-style: revert-layer;
         border-color: revert-layer;
+        border-radius: revert-layer;
         padding: revert-layer;
         background-color: revert-layer;
         background-image: revert-layer;
         color: revert-layer;
         line-height: revert-layer;
+        outline: revert-layer;
+    }
+
+    & button:focus,
+    & button:focus-visible {
+        outline: revert-layer;
     }
 
     & a {
@@ -1070,20 +1077,29 @@ body > [data-reka-popper-content-wrapper] {
         border-width: revert-layer;
         border-style: revert-layer;
         border-color: revert-layer;
+        border-radius: revert-layer;
         padding: revert-layer;
         background-color: revert-layer;
         color: revert-layer;
         line-height: revert-layer;
+        outline: revert-layer;
+    }
+
+    & input::placeholder,
+    & textarea::placeholder {
+        color: revert-layer;
     }
 
     & textarea {
         border-width: revert-layer;
         border-style: revert-layer;
         border-color: revert-layer;
+        border-radius: revert-layer;
         padding: revert-layer;
         background-color: revert-layer;
         color: revert-layer;
         line-height: revert-layer;
+        outline: revert-layer;
         resize: revert-layer;
     }
 
@@ -1091,15 +1107,39 @@ body > [data-reka-popper-content-wrapper] {
         border-width: revert-layer;
         border-style: revert-layer;
         border-color: revert-layer;
+        border-radius: revert-layer;
         padding: revert-layer;
         background-color: revert-layer;
         color: revert-layer;
         line-height: revert-layer;
+        outline: revert-layer;
         appearance: revert-layer;
     }
 
-    & table {
+    & table,
+    & thead,
+    & tbody,
+    & tfoot,
+    & tr,
+    & tr:nth-child(2n),
+    & th,
+    & td,
+    & caption {
+        display: revert-layer;
+        border: revert-layer;
         border-collapse: revert-layer;
+        border-spacing: revert-layer;
+        margin: revert-layer;
+        padding: revert-layer;
+        width: revert-layer;
+        overflow: revert-layer;
+        background-color: revert-layer;
+        color: revert-layer;
+        font-size: revert-layer;
+        font-weight: revert-layer;
+        text-align: revert-layer;
+        line-height: revert-layer;
+        transition: revert-layer;
     }
 }
 
