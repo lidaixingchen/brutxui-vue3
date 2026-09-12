@@ -34,6 +34,7 @@
         "test": "vitest run --exclude \"tests/integration/**\"",
         "test:integration": "vitest run tests/integration",
         "test:package": "node scripts/smoke-package.mjs",
+        "test:consumers": "node scripts/test-consumers.mjs",
         "check:tokens": "tsx scripts/check-brutalist-tokens.ts"
     },
     "dependencies": {

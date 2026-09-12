@@ -4,7 +4,7 @@ import type { RegistryItem } from '../types.js';
 import { DEFAULT_REGISTRY_URL } from '../constants.js';
 import { ensureUtilsFile } from './add-service.js';
 import { mergeSnippetsFile, hasVscodeDir } from '../vscode-snippets.js';
-import { computeInstalledContentHash, updateInstalledComponents, readManifest } from '../manifest.js';
+import { computeInstalledContentHash, updateInstalledComponents, readManifest, ensureGitattributes } from '../manifest.js';
 import { MergeExecutor } from '../merge/merge-executor.js';
 import { PackageManagerAdapter } from '../workspace/package-manager-adapter.js';
 import { WorkspaceTopologyEngine } from '../workspace/topology-engine.js';
@@ -385,6 +385,7 @@ export class ComponentMutationEngine {
         const filesWritten: string[] = [];
         const filesDeleted: string[] = [];
         const filesByComponent = new Map<string, string[]>();
+        const baselinesByComponent = new Map<string, Record<string, string>>();
         const conflictsMap = new Map<string, string[]>();
 
         try {
@@ -418,6 +419,10 @@ export class ComponentMutationEngine {
                         await transaction.remove(file.filePath);
                         filesDeleted.push(file.filePath);
 
+                        const baselineRelPath = `.brutx/baselines/${item.name}/${path.basename(file.filePath)}`;
+                        const baselineAbsPath = path.resolve(this.context.cwd, baselineRelPath);
+                        await transaction.remove(baselineAbsPath);
+
                         options.callbacks?.onFileWritten?.({
                             component: item.name,
                             filePath: file.filePath,
@@ -428,6 +433,15 @@ export class ComponentMutationEngine {
 
                     const contentToWrite = file.mergedContent ?? file.sourceContent;
                     await transaction.writeFile(file.filePath, contentToWrite);
+
+                    // 写入 .brutx/baselines/<component>/<basename> 基线文件
+                    const baselineRelPath = `.brutx/baselines/${item.name}/${path.basename(file.filePath)}`;
+                    const baselineAbsPath = path.resolve(this.context.cwd, baselineRelPath);
+                    await transaction.writeFile(baselineAbsPath, file.sourceContent);
+
+                    const compBaselines = baselinesByComponent.get(item.name) ?? {};
+                    compBaselines[path.basename(file.filePath)] = baselineRelPath;
+                    baselinesByComponent.set(item.name, compBaselines);
 
                     filesWritten.push(file.filePath);
                     writtenForThisItem.push(file.filePath);
@@ -457,6 +471,8 @@ export class ComponentMutationEngine {
 
             let manifestUpdated = false;
             if (succeeded.length > 0) {
+                await ensureGitattributes(this.context.cwd, this.context.fs, transaction);
+
                 const manifestEntries = await Promise.all(
                     plan.items
                         .filter(item => succeeded.includes(item.name))
@@ -472,6 +488,7 @@ export class ComponentMutationEngine {
                                 files: compFiles,
                                 installedContentHash,
                                 version: plan.versionByName.get(item.name) ?? 'latest',
+                                baselines: baselinesByComponent.get(item.name),
                             };
                         })
                 );

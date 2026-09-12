@@ -67,7 +67,7 @@ export function resetTrustedPublicKeys(): void {
     trustedPublicKeysOverride = undefined;
 }
 
-/** 从 BRUTX_REGISTRY_PUBLIC_KEYS 环境变量解析受信任公钥（原有逻辑）。 */
+/** 从 BRUTX_REGISTRY_PUBLIC_KEYS 环境变量解析受信任公钥。 */
 function parseEnvTrustedPublicKeys(): TrustedPublicKey[] {
     const env = process.env[PUBLIC_KEYS_ENV];
     if (!env) return [];
@@ -237,6 +237,9 @@ export interface SignedManifestVerifyInput {
     name?: unknown;
     schemaVersion?: unknown;
     registryVersion?: unknown;
+    releaseTag?: unknown;
+    gitCommit?: unknown;
+    digest?: unknown;
     items?: unknown;
     integrity?: string;
     signature?: string;
@@ -264,6 +267,8 @@ function recomputeManifestIntegrity(manifest: SignedManifestVerifyInput): string
             name: manifest.name,
             schemaVersion: manifest.schemaVersion,
             registryVersion: manifest.registryVersion,
+            releaseTag: typeof manifest.releaseTag === 'string' ? manifest.releaseTag : undefined,
+            gitCommit: typeof manifest.gitCommit === 'string' || manifest.gitCommit === null ? manifest.gitCommit : undefined,
             items: items as Record<string, unknown>,
         });
     } catch {

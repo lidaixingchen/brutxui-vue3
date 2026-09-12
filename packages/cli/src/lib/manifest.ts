@@ -8,6 +8,9 @@ import type { FileTransaction } from './file-transaction.js';
 const defaultDiskFs = new DiskFileSystemAdapter();
 
 export const MANIFEST_RELATIVE_PATH = '.brutx/manifest.json';
+export const BASELINES_DIR_RELATIVE_PATH = '.brutx/baselines';
+export const GITATTRIBUTES_RELATIVE_PATH = '.brutx/.gitattributes';
+
 const COMPONENT_CATEGORIES: Array<NonNullable<RegistryItem['category']>> = [
     'action',
     'data-display',
@@ -19,6 +22,7 @@ const COMPONENT_CATEGORIES: Array<NonNullable<RegistryItem['category']>> = [
     'overlay',
     'utility',
     'visual-effect',
+    'marketing',
 ];
 
 export interface InstalledManifestEntryInput {
@@ -27,6 +31,7 @@ export interface InstalledManifestEntryInput {
     files: string[];
     installedContentHash?: string;
     version?: string;
+    baselines?: Record<string, string>;
 }
 
 interface ManifestWriteOptions {
@@ -100,6 +105,11 @@ function validateManifestEntry(value: unknown, componentName: string): Installed
         throw new Error(`Invalid manifest entry for "${componentName}": "version" must be a non-empty string when provided.`);
     }
 
+    const baselines = value.baselines;
+    if (baselines !== undefined && (!isRecord(baselines) || Object.values(baselines).some(v => typeof v !== 'string'))) {
+        throw new Error(`Invalid manifest entry for "${componentName}": "baselines" must be an object with string values.`);
+    }
+
     return {
         name: value.name,
         registrySource,
@@ -114,6 +124,7 @@ function validateManifestEntry(value: unknown, componentName: string): Installed
         examples,
         status,
         replacement,
+        baselines: baselines as Record<string, string> | undefined,
     };
 }
 
@@ -171,10 +182,7 @@ export function getManifestPath(cwd: string): string {
  * 相互独立的契约——漂移检测只需按内容哈希即可发现文件被修改，path/type 由 manifest
  * 的 files 列表锁定。独立实现也保证 registry item 哈希算法演进时不会破坏既有安装项目。
  *
- * BREAKING（v0.1 前）：2026-08 起由 NUL 分隔改为长度前缀自描述拼接（`${len}:${content}`），
- * 消除内容含 NUL 字节时的边界歧义（如 ["ab\0c","d"] 与 ["ab","c\0d"] 拼接相同导致哈希碰撞）。
- * 既有 manifest 的 installedContentHash 由旧算法生成，doctor 会报一次漂移警告，
- * 执行 update 后以新算法重写。
+ * 采用长度前缀自描述拼接（`${len}:${content}`），消除内容含特殊字节时的边界歧义。
  */
 export async function computeInstalledContentHash(files: string[], fsAdapter: FileSystemAdapter = defaultDiskFs): Promise<string> {
     const contents = await Promise.all(files.map(async (filePath: string) => {
@@ -256,10 +264,52 @@ export async function updateInstalledComponents(
             examples: [...(entry.item.examples ?? [])].sort(),
             status: entry.item.status,
             replacement: entry.item.replacement,
+            baselines: entry.baselines,
         };
     }
 
     await writeManifest(cwd, manifest, options, fsAdapter);
+}
+
+export function getBaselinesDir(cwd: string): string {
+    return path.join(cwd, BASELINES_DIR_RELATIVE_PATH);
+}
+
+export function getGitattributesPath(cwd: string): string {
+    return path.join(cwd, GITATTRIBUTES_RELATIVE_PATH);
+}
+
+export async function ensureGitattributes(
+    cwd: string,
+    fsAdapter: FileSystemAdapter = defaultDiskFs,
+    transaction?: FileTransaction,
+): Promise<void> {
+    const gitattributesPath = getGitattributesPath(cwd);
+    const rule = 'baselines/** -text\n';
+
+    if (transaction) {
+        const exists = await fsAdapter.pathExists(gitattributesPath);
+        if (!exists) {
+            await transaction.writeFile(gitattributesPath, rule);
+        } else {
+            const current = await fsAdapter.readFile(gitattributesPath, 'utf-8');
+            if (!current.includes('baselines/** -text')) {
+                await transaction.writeFile(gitattributesPath, current.endsWith('\n') ? current + rule : current + '\n' + rule);
+            }
+        }
+        return;
+    }
+
+    const exists = await fsAdapter.pathExists(gitattributesPath);
+    if (!exists) {
+        await fsAdapter.ensureDir(path.dirname(gitattributesPath));
+        await fsAdapter.writeFile(gitattributesPath, rule);
+    } else {
+        const current = await fsAdapter.readFile(gitattributesPath, 'utf-8');
+        if (!current.includes('baselines/** -text')) {
+            await fsAdapter.writeFile(gitattributesPath, current.endsWith('\n') ? current + rule : current + '\n' + rule);
+        }
+    }
 }
 
 export async function removeInstalledComponents(

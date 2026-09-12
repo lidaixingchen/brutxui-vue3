@@ -323,6 +323,20 @@ export interface BrutxManifest {
     components: Record<string, InstalledComponentManifest>;
 }
 
+export interface RegistrySnapshot {
+    readonly source: string;
+    readonly resolvedUrl: string;
+    readonly name: string;
+    readonly schemaVersion: number;
+    readonly registryVersion: string;
+    readonly releaseTag: string;
+    readonly gitCommit: string | null;
+    readonly digest: string;
+    readonly itemCount: number;
+    readonly itemIntegrities: ReadonlyMap<string, string>;
+    readonly trusted: boolean;
+}
+
 export interface InstalledComponentManifest {
     name: string;
     registrySource: string;
@@ -337,6 +351,7 @@ export interface InstalledComponentManifest {
     examples: string[];
     status?: RegistryItem['status'];
     replacement?: string;
+    baselines?: Record<string, string>;
 }
 
 export type CheckStatus = 'pass' | 'warn' | 'error';

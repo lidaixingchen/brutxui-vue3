@@ -1,10 +1,11 @@
 import path from 'path';
+import { fileURLToPath } from 'node:url';
 import { DiskFileSystemAdapter, type FileSystemAdapter } from './fs/index.js';
 import {
     RegistryIntegrityMismatchError,
     validateRegistryItem,
 } from 'brutx-shared-vue';
-import type { RegistryItem, RegistryManifestSummary, TrustedPublicKey } from './types.js';
+import type { RegistryItem, RegistryManifestSummary, RegistrySnapshot, TrustedPublicKey } from './types.js';
 import {
     DEFAULT_REGISTRY_SOURCES,
 } from './constants.js';
@@ -28,7 +29,14 @@ const GITHUB_RAW_URL_PATTERN = /^https:\/\/raw\.githubusercontent\.com\/([^/]+)\
 const SPECIFIER_PATTERN = /^(@[a-z0-9-]+\/[a-z0-9-]+|[a-z0-9-]+)(?:@([a-zA-Z0-9._-]+))?$/;
 
 interface ManifestSummaryInternal extends RegistryManifestSummary {
+    name?: string;
+    schemaVersion?: number;
+    releaseTag?: string;
+    gitCommit?: string | null;
+    digest?: string;
+    itemCount?: number;
     itemIntegrities?: Record<string, string>;
+    trusted?: boolean;
 }
 
 function isHttpUrl(str: string): boolean {
@@ -65,6 +73,7 @@ export class RegistryClient {
     public readonly tracker: RegistrySourceTracker;
 
     private readonly manifestCache = new Map<string, ManifestSummaryInternal | null>();
+    private readonly inflightManifests = new Map<string, Promise<ManifestSummaryInternal | null>>();
     private readonly inflightItems = new Map<string, Promise<{ item: RegistryItem; source: string }>>();
     private readonly lastHitSources = new Map<string, string>();
 
@@ -172,23 +181,30 @@ export class RegistryClient {
     private resolveVersionedSource(baseSource: string, version?: string): string {
         if (!version) return baseSource;
 
-        const match = baseSource.match(GITHUB_RAW_URL_PATTERN);
-        if (!match) {
-            if (DEFAULT_REGISTRY_SOURCES.some(s => s === baseSource)) {
-                logger.warn(
-                    `@version "${version}" is ignored: default Release registry has no versioned assets, fetching latest instead.`
-                );
-                return baseSource;
-            }
-            throw new CliError(
-                `@version syntax requires a GitHub raw URL registry, but got: ${baseSource}. ` +
-                `Use --registry to specify a GitHub raw URL, or remove @version from the component name.`,
-                { code: 'REGISTRY_VERSION_UNSUPPORTED' }
-            );
+        const normalizedTag = version.startsWith('v') ? version : `v${version}`;
+
+        // 1. GitHub Releases 资产路径: releases/latest/download -> releases/download/<tag>
+        if (baseSource.includes('/releases/latest/download')) {
+            return baseSource.replace('/releases/latest/download', `/releases/download/${normalizedTag}`);
         }
 
-        const [, owner, repo, , rest] = match;
-        return `https://raw.githubusercontent.com/${owner}/${repo}/${version}/${rest}`;
+        // 2. GitHub Raw URL: https://raw.githubusercontent.com/<owner>/<repo>/<ref>/<path>
+        const match = baseSource.match(GITHUB_RAW_URL_PATTERN);
+        if (match) {
+            const [, owner, repo, , rest] = match;
+            return `https://raw.githubusercontent.com/${owner}/${repo}/${normalizedTag}/${rest}`;
+        }
+
+        // 3. 通用 HTTP 注册表源带版本路径 (如 https://registry.brutxui.com 或 https://registry.brutxui.com/v0.11.0)
+        if (isHttpUrl(baseSource)) {
+            const trimmed = baseSource.replace(/\/+$/, '');
+            if (/\/v?\d+\.\d+(\.\d+)?(-[a-zA-Z0-9._-]+)?$/.test(trimmed)) {
+                return trimmed.replace(/\/v?\d+\.\d+(\.\d+)?(-[a-zA-Z0-9._-]+)?$/, `/${normalizedTag}`);
+            }
+            return `${trimmed}/${normalizedTag}`;
+        }
+
+        return baseSource;
     }
 
     /**
@@ -276,8 +292,16 @@ export class RegistryClient {
      * 本地文件源读取。
      */
     private async fetchLocalDisk(name: string, source: string): Promise<RegistryItem> {
-        const sourceResolved = path.resolve(source);
-        const filePath = path.resolve(source, `${name}.json`);
+        let localDir = source;
+        if (localDir.startsWith('file://')) {
+            try {
+                localDir = fileURLToPath(localDir);
+            } catch {
+                localDir = localDir.replace(/^file:\/\//, '');
+            }
+        }
+        const sourceResolved = path.resolve(localDir);
+        const filePath = path.resolve(localDir, `${name}.json`);
 
         if (!filePath.startsWith(sourceResolved + path.sep)) {
             throw new CliError(
@@ -419,12 +443,58 @@ export class RegistryClient {
     }
 
     /**
-     * 拉取与校验 Manifest 摘要。
+     * 获取指定源的不可变快照（操作级会话冻结）。
+     */
+    public async getSnapshot(source?: string, signal?: AbortSignal): Promise<RegistrySnapshot | null> {
+        const targetSource = source ?? this.sources[0];
+        if (!targetSource) return null;
+        const summary = await this.fetchManifestSummary(targetSource, signal);
+        if (!summary) return null;
+        return {
+            source: targetSource,
+            resolvedUrl: targetSource,
+            name: summary.name ?? 'brutx-ui-vue',
+            schemaVersion: summary.schemaVersion ?? 1,
+            registryVersion: summary.registryVersion,
+            releaseTag: summary.releaseTag ?? `v${summary.registryVersion}`,
+            gitCommit: summary.gitCommit ?? null,
+            digest: summary.digest ?? summary.integrity,
+            itemCount: summary.itemCount ?? (summary.itemIntegrities ? Object.keys(summary.itemIntegrities).length : 0),
+            itemIntegrities: new Map(Object.entries(summary.itemIntegrities ?? {})),
+            trusted: summary.trusted ?? false,
+        };
+    }
+
+    /**
+     * 拉取与校验 Manifest 摘要（操作级会话单次拉取并冻结）。
      */
     private async fetchManifestSummary(source: string, signal?: AbortSignal): Promise<ManifestSummaryInternal | null> {
-        const cached = this.manifestCache.get(source);
-        if (cached !== undefined) return cached;
+        if (this.manifestCache.has(source)) {
+            return this.manifestCache.get(source)!;
+        }
 
+        if (this.inflightManifests.has(source)) {
+            return await this.inflightManifests.get(source)!;
+        }
+
+        const fetchPromise = (async () => {
+            try {
+                const result = await this.doFetchManifestSummary(source, signal);
+                this.manifestCache.set(source, result);
+                return result;
+            } catch (error) {
+                this.manifestCache.delete(source);
+                throw error;
+            } finally {
+                this.inflightManifests.delete(source);
+            }
+        })();
+
+        this.inflightManifests.set(source, fetchPromise);
+        return await fetchPromise;
+    }
+
+    private async doFetchManifestSummary(source: string, signal?: AbortSignal): Promise<ManifestSummaryInternal | null> {
         const manifestUrl = `${source}/registry-manifest.json`;
         try {
             const res = await this.fetcher(manifestUrl, {
@@ -438,14 +508,19 @@ export class RegistryClient {
                         { code: 'REGISTRY_SIGNATURE_INVALID' }
                     );
                 }
-                this.manifestCache.set(source, null);
                 return null;
             }
             const manifest = await res.json() as {
+                name?: string;
+                schemaVersion?: number;
                 registryVersion?: string;
+                releaseTag?: string;
+                gitCommit?: string | null;
+                digest?: string;
                 integrity?: string;
                 signature?: string;
                 keyId?: string;
+                itemCount?: number;
                 items?: Record<string, { integrity?: string }>;
             };
 
@@ -455,7 +530,6 @@ export class RegistryClient {
                         code: 'REGISTRY_SIGNATURE_INVALID',
                     });
                 }
-                this.manifestCache.set(source, null);
                 return null;
             }
             if (typeof manifest.integrity !== 'string' || manifest.integrity.length === 0) {
@@ -464,7 +538,6 @@ export class RegistryClient {
                         code: 'REGISTRY_SIGNATURE_INVALID',
                     });
                 }
-                this.manifestCache.set(source, null);
                 return null;
             }
 
@@ -490,11 +563,17 @@ export class RegistryClient {
             }
 
             const summary: ManifestSummaryInternal = {
+                name: manifest.name,
+                schemaVersion: manifest.schemaVersion,
                 registryVersion: manifest.registryVersion,
+                releaseTag: manifest.releaseTag ?? (manifest.registryVersion ? `v${manifest.registryVersion}` : undefined),
+                gitCommit: manifest.gitCommit ?? null,
+                digest: manifest.digest ?? manifest.integrity,
                 integrity: manifest.integrity,
+                itemCount: manifest.itemCount,
                 itemIntegrities: Object.keys(itemIntegrities).length > 0 ? itemIntegrities : undefined,
+                trusted: signatureValid,
             };
-            this.manifestCache.set(source, summary);
             return summary;
         } catch (error) {
             if (signal?.aborted) throw error;
@@ -507,7 +586,6 @@ export class RegistryClient {
                     { code: 'REGISTRY_SIGNATURE_INVALID', cause: error }
                 );
             }
-            this.manifestCache.set(source, null);
             return null;
         }
     }

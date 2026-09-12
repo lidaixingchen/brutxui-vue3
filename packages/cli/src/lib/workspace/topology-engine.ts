@@ -103,7 +103,17 @@ export class WorkspaceTopologyEngine {
         const root = path.parse(current).root;
 
         while (current !== root) {
-            if (await fsAdapter.pathExists(path.join(current, 'pnpm-workspace.yaml'))) return current;
+            const pnpmWorkspacePath = path.join(current, 'pnpm-workspace.yaml');
+            if (await fsAdapter.pathExists(pnpmWorkspacePath)) {
+                try {
+                    const content = await fsAdapter.readFile(pnpmWorkspacePath, 'utf-8');
+                    if (/^\s*packages:\s*$/m.test(content)) {
+                        return current;
+                    }
+                } catch {
+                    return current;
+                }
+            }
             if (await fsAdapter.pathExists(path.join(current, 'lerna.json'))) return current;
             if (await fsAdapter.pathExists(path.join(current, 'turbo.json'))) return current;
 
@@ -133,7 +143,9 @@ export class WorkspaceTopologyEngine {
 
     static async getWorkspaceGlobs(workspaceRoot: string, _pm: PackageManager, fsAdapter: FileSystemAdapter): Promise<string[]> {
         const pnpmYamlPath = path.join(workspaceRoot, 'pnpm-workspace.yaml');
+        let hasPnpmWorkspace = false;
         if (await fsAdapter.pathExists(pnpmYamlPath)) {
+            hasPnpmWorkspace = true;
             const content = await fsAdapter.readFile(pnpmYamlPath, 'utf-8');
             const lines = content.split(/\r?\n/);
             const globs: string[] = [];
@@ -163,6 +175,10 @@ export class WorkspaceTopologyEngine {
                 if (Array.isArray(rootPkg.workspaces)) return rootPkg.workspaces;
                 if (Array.isArray(rootPkg.workspaces?.packages)) return rootPkg.workspaces.packages;
             } catch { /* 忽略解析错误 */ }
+        }
+
+        if (hasPnpmWorkspace) {
+            return [];
         }
 
         return ['packages/*', 'apps/*'];
