@@ -75,18 +75,19 @@
 调整前置校验顺序，将耗时最短的静态门禁前置；剪除内层已被覆盖的重复命令：
 
 ```yaml
-# 1. 前置轻量静态门禁（秒级 Fail-Fast：若契约损坏或生成未同步立即阻断，不浪费后续算力）
-- name: Verify code and spec contracts (parallel)
-  run: pnpm check:contracts
-
-- name: Verify generated artifacts consistency (read-only)
+# 1. 内存中只读校验生成一致性（秒级 Fail-Fast：若生成单一信源未对齐立即熔断）
+- name: Verify all generated and mixed files (read-only)
   run: pnpm check:generated
 
-# 2. 执行核心构建、类型检查与代码检查（受 Turbo 缓存加速）
+# 2. 执行核心构建、类型检查与代码检查（受 Turbo 缓存加速并物化未跟踪的生成文件）
 - name: Build + typecheck + lint (turbo source graph)
   run: pnpm exec turbo run build:artifact typecheck:source lint:source
 
-# 3. 运行注册表校验与深度消费/隔离测试
+# 3. 运行规范契约门禁（基于物化完成的完整源码拓扑聚合运行 7 项规则）
+- name: Verify code and spec contracts (parallel)
+  run: pnpm check:contracts
+
+# 4. 运行注册表校验与深度消费/隔离测试
 - name: Validate registry
   run: pnpm exec turbo run validate --filter=brutx-registry-vue
 

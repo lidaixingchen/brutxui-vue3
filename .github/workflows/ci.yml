@@ -68,15 +68,14 @@ jobs:
                       ${{ runner.os }}-turbo-quality-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
                       ${{ runner.os }}-turbo-quality-
 
-            # 前置轻量静态门禁（秒级 Fail-Fast：若契约损坏或生成未同步立即阻断，不浪费后续算力）
-            - name: Verify code and spec contracts (parallel)
-              run: pnpm check:contracts
-
             - name: Verify all generated and mixed files (read-only)
               run: pnpm check:generated
 
             - name: Build + typecheck + lint (turbo source graph)
               run: pnpm exec turbo run build:artifact typecheck:source lint:source
+
+            - name: Verify code and spec contracts (parallel)
+              run: pnpm check:contracts
 
             - name: Validate registry
               run: pnpm exec turbo run validate --filter=brutx-registry-vue
