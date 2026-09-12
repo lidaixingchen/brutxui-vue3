@@ -19,7 +19,7 @@ function getStatusText(status: string | undefined, replacement: string | undefin
 </script>
 
 <template>
-    <div class="component-catalog vp-raw">
+    <div class="component-catalog">
         <section
             v-for="section in sections"
             :key="section.key"
