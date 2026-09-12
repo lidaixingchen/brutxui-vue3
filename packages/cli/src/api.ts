@@ -15,6 +15,15 @@ export type {
     FetchItemOptions,
     ListComponentsOptions,
     RegistryErrorCode,
+    FileSystemAdapter,
+    FileEntry,
+    FileStat,
+    FsRemoveOptions,
+    RegistryItem,
+    RegistryFile,
+    RegistryFileType,
+    ComponentCategory,
+    BufferEncoding,
 } from './lib/index.js';
 
 export {

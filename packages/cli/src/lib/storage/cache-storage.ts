@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import path from 'node:path';
 import os from 'node:os';
-import { DiskFileSystemAdapter, type FileSystemAdapter } from 'brutx-shared-vue/fs';
+import { DiskFileSystemAdapter, type FileSystemAdapter } from '../fs/index.js';
 
 const DEFAULT_CACHE_DIR = path.join(os.homedir(), '.brutx-vue', 'cache');
 const DEFAULT_TTL = 3600000;

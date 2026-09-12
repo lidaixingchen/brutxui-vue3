@@ -1,5 +1,5 @@
 import path from 'path';
-import { DiskFileSystemAdapter } from 'brutx-shared-vue/fs';
+import { DiskFileSystemAdapter } from '../lib/fs/index.js';
 const defaultDiskFs = new DiskFileSystemAdapter();
 
 import {

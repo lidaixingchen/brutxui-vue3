@@ -1,4 +1,4 @@
-import { DiskFileSystemAdapter, type FileSystemAdapter } from 'brutx-shared-vue/fs';
+import { DiskFileSystemAdapter, type FileSystemAdapter } from './fs/index.js';
 import type { BrutalistConfig, InstalledComponentInfo } from './types.js';
 import { ProjectContext } from './project-context.js';
 import { ComponentScanner, scanComponentFiles, extractDependencies, mapWithConcurrency } from './component-scanner.js';

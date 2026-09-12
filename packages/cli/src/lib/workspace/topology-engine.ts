@@ -1,5 +1,5 @@
 import path from 'node:path';
-import type { FileSystemAdapter } from 'brutx-shared-vue/fs';
+import type { FileSystemAdapter } from '../fs/index.js';
 import type { WorkspaceTopology, WorkspacePackageInfo, PackageManager } from '../types.js';
 
 interface TopologyCacheEntry {

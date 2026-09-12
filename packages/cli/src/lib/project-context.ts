@@ -1,5 +1,5 @@
 import path from 'path';
-import { DiskFileSystemAdapter, type FileSystemAdapter } from 'brutx-shared-vue/fs';
+import { DiskFileSystemAdapter, type FileSystemAdapter } from './fs/index.js';
 import { SfcAstEngine } from 'brutx-shared-vue/ast';
 import type {
     AliasConfig,

@@ -1,4 +1,4 @@
-import type { FileSystemAdapter } from 'brutx-shared-vue/fs';
+import type { FileSystemAdapter } from '../fs/index.js';
 import type { ProjectContext } from '../project-context.js';
 import type { RegistryItem, InstalledComponentManifest } from '../types.js';
 import { readManifest } from '../manifest.js';

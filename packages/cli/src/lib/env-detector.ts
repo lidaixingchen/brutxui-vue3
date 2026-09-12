@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { parse as parseJsonc } from 'jsonc-parser';
-import { DiskFileSystemAdapter, type FileSystemAdapter } from 'brutx-shared-vue/fs';
+import { DiskFileSystemAdapter, type FileSystemAdapter } from './fs/index.js';
 import type { ProjectType, TsConfig, AliasConfig, PackageManager } from './types.js';
 import { CONFIG_FILES, CSS_LOCATIONS, DEFAULT_ALIASES } from './constants.js';
 import { logger } from './logger.js';

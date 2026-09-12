@@ -1,4 +1,4 @@
-import { DiskFileSystemAdapter, type FileSystemAdapter } from 'brutx-shared-vue/fs';
+import { DiskFileSystemAdapter, type FileSystemAdapter } from '../fs/index.js';
 const defaultDiskFs = new DiskFileSystemAdapter();
 import path from 'path';
 import type { AliasConfig, BrutalistConfig, ProjectType, TailwindConfig } from '../types.js';

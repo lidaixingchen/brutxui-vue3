@@ -1,5 +1,5 @@
 import path from 'node:path';
-import type { FileSystemAdapter } from 'brutx-shared-vue/fs';
+import type { FileSystemAdapter } from '../fs/index.js';
 import { isGlobalDryRun } from '../global-dry-run.js';
 
 export const AUDIT_LOG_RELATIVE_PATH = '.brutx/audit.log';

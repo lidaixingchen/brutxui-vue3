@@ -1,5 +1,5 @@
-import type { FileSystemAdapter } from 'brutx-shared-vue/fs';
-import type { RegistryItem } from 'brutx-shared-vue';
+import type { FileSystemAdapter } from './fs/file-system-adapter.js';
+import type { RegistryItem } from './types.js';
 import type { CacheStorage } from './storage/cache-storage.js';
 import type { RegistrySourceTracker } from './resilience/source-tracker.js';
 import type { TrustedPublicKey } from './types.js';

@@ -1,5 +1,5 @@
 import path from 'node:path';
-import type { FileSystemAdapter } from 'brutx-shared-vue/fs';
+import type { FileSystemAdapter } from '../fs/index.js';
 import type { TailwindConfig } from '../types.js';
 import type { RepairAction } from '../diagnostics/types.js';
 import type { FileTransaction } from '../file-transaction.js';

@@ -1,4 +1,47 @@
-import type { RegistryItem } from 'brutx-shared-vue';
+
+export type RegistryFileType =
+    | 'registry:ui'
+    | 'registry:hook'
+    | 'registry:lib'
+    | 'registry:directive';
+
+export interface RegistryFile {
+    path: string;
+    content: string;
+    type: RegistryFileType;
+}
+
+export type ComponentCategory =
+    | 'action'
+    | 'data-display'
+    | 'feedback'
+    | 'form'
+    | 'layout'
+    | 'navigation'
+    | 'overlay'
+    | 'utility'
+    | 'visual-effect'
+    | 'marketing';
+
+export interface RegistryItem {
+    $schema?: string;
+    name: string;
+    type: RegistryFileType;
+    title: string;
+    description: string;
+    category?: ComponentCategory;
+    examples?: string[];
+    status?: 'stable' | 'legacy' | 'deprecated';
+    replacement?: string;
+    dependencies: string[];
+    devDependencies?: string[];
+    registryDependencies: string[];
+    files: RegistryFile[];
+    tailwind: Record<string, unknown>;
+    cssVars: Record<string, unknown>;
+    integrity: string;
+}
+
 
 export type ProjectType =
     | 'vite-vue'
@@ -189,8 +232,6 @@ export interface AddOptions extends BaseCommandOptions {
     filter?: string;
     shared?: boolean;
 }
-
-export type { RegistryItem };
 
 export type ReporterType = 'pretty' | 'github' | 'json' | 'sarif' | 'junit';
 export type FailOnLevel = 'error' | 'warn' | 'drift';

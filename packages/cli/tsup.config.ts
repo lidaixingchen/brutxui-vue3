@@ -2,6 +2,8 @@ import { cpSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { defineConfig } from 'tsup';
 
+const sharedPackagePattern = /^brutx-shared-vue(?:\/.*)?$/;
+
 export default defineConfig([
     {
         entry: ['src/index.ts'],
@@ -12,7 +14,7 @@ export default defineConfig([
         target: 'node22',
         platform: 'node',
         shims: true,
-        noExternal: ['brutx-shared-vue'],
+        noExternal: [sharedPackagePattern],
         banner: {
             js: '#!/usr/bin/env node',
         },
@@ -33,6 +35,6 @@ export default defineConfig([
         target: 'node22',
         platform: 'node',
         shims: true,
-        noExternal: ['brutx-shared-vue'],
+        noExternal: [sharedPackagePattern],
     },
 ]);

@@ -1,5 +1,5 @@
 import path from 'path';
-import type { FileSystemAdapter } from 'brutx-shared-vue/fs';
+import type { FileSystemAdapter } from '../fs/index.js';
 import { CliError } from '../error.js';
 import type { ProjectContext } from '../project-context.js';
 import type { FileTransaction } from '../file-transaction.js';

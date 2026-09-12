@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 import path from 'path';
-import { DiskFileSystemAdapter, type FileSystemAdapter } from 'brutx-shared-vue/fs';
+import { DiskFileSystemAdapter, type FileSystemAdapter } from './fs/index.js';
 import { MANIFEST_VERSION } from './types.js';
 import type { BrutxManifest, InstalledComponentManifest, RegistryItem } from './types.js';
 import type { FileTransaction } from './file-transaction.js';

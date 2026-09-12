@@ -1,5 +1,5 @@
 import path from 'path';
-import type { FileSystemAdapter } from 'brutx-shared-vue/fs';
+import type { FileSystemAdapter } from '../fs/index.js';
 import type { ProjectContext } from '../project-context.js';
 import type { RegistryItem } from '../types.js';
 import { resolveImportAlias } from '../project.js';

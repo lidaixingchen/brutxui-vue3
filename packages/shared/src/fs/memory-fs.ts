@@ -1,5 +1,5 @@
 import path from 'node:path';
-import type {
+import {
     FileEntry,
     FileStat,
     FileSystemAdapter,

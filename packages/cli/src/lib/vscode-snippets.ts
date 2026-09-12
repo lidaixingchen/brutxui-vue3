@@ -1,5 +1,5 @@
 import path from 'path';
-import { DiskFileSystemAdapter, type FileSystemAdapter } from 'brutx-shared-vue/fs';
+import { DiskFileSystemAdapter, type FileSystemAdapter } from './fs/index.js';
 import { applyEdits, modify, parse as parseJsonc, type ParseError } from 'jsonc-parser';
 
 import { AVAILABLE_COMPONENTS } from './constants.js';

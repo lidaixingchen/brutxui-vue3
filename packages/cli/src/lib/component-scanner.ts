@@ -1,5 +1,5 @@
 import path from 'node:path';
-import type { FileSystemAdapter } from 'brutx-shared-vue/fs';
+import type { FileSystemAdapter } from './fs/index.js';
 import { SfcAstEngine } from 'brutx-shared-vue/ast';
 import type { BrutxManifest, InstalledComponentInfo, InstalledComponentManifest } from './types.js';
 import { readManifest } from './manifest.js';

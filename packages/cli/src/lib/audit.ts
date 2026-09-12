@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { DiskFileSystemAdapter, type FileSystemAdapter } from 'brutx-shared-vue/fs';
+import { DiskFileSystemAdapter, type FileSystemAdapter } from './fs/index.js';
 import {
     AuditLogStorage,
     AUDIT_LOG_RELATIVE_PATH,

@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { CATEGORIES, type ComponentCategory } from './types.js';
+import { CATEGORIES, ComponentCategory } from './types.js';
 
 export const REGISTRY_ITEM_SCHEMA_URL = 'https://ui.shadcn.com/schema/registry-item.json';
 
