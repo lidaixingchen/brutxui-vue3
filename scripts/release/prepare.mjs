@@ -153,7 +153,7 @@ function prepare(dryRun) {
         step(`已提交：${commitMsg}`);
     }
 
-    logNext(`门禁 + 发布`, `pnpm release`);
+    logNext(`发布前门禁检查`, `pnpm release:check`);
     logNext(`打 tag（自动读版本）`, `pnpm release:tag`);
     logNext(`推送并触发 CI 发布`, `git pushp origin main --tags`);
 }
@@ -169,9 +169,29 @@ function tag(force, dryRun) {
         fail('工作区有未提交改动，请先提交（含发布后补修）再打 tag。');
     }
 
+    const headCommit = git(['rev-parse', 'HEAD']).stdout.trim();
     const exists = gitOk(['rev-parse', '-q', '--verify', `refs/tags/${tagName}`]);
     if (exists && !force) {
-        fail(`tag ${tagName} 已存在。若需重打（如发布后补修、门禁修复后再提交），用 --force 覆盖。`);
+        const tagCommit = git(['rev-list', '-n', '1', `refs/tags/${tagName}`]).stdout.trim();
+        if (tagCommit === headCommit) {
+            step(`tag ${tagName} 已存在且指向当前提交 (${headCommit.slice(0, 7)})，视为已完成。`);
+            const pushHint = 'git pushp origin main --tags';
+            logNext('推送并触发 CI 发布', pushHint);
+            return;
+        }
+        fail(`tag ${tagName} 已存在且指向不同提交 (${tagCommit.slice(0, 7)} vs ${headCommit.slice(0, 7)})。若需重打（如发布后补修、门禁修复后再提交），用 --force 覆盖。`);
+    }
+
+    const checkPath = path.join(repoRoot, 'tmp', 'release-check.json');
+    if (existsSync(checkPath)) {
+        try {
+            const checkData = JSON.parse(readFileSync(checkPath, 'utf-8'));
+            if (checkData.commit === headCommit && checkData.status === 'passed') {
+                step(`验证本地发布门禁: 已在提交 ${headCommit.slice(0, 7)} 通过 release:check (${checkData.timestamp})`);
+            }
+        } catch {
+            // ignore
+        }
     }
 
     // 重打 tag 后远程已有同名 tag，普通 push 会因 non-fast-forward 被拒（publish.yml 由 push v* 触发，

@@ -77,127 +77,22 @@ jobs:
                     exit 1
                   }
 
-            # Release 资产必须先于 npm publish 就绪：CLI 默认源指向 releases/latest/download，
-            # 若 CLI 先发布而资产未上传，用户零配置拉取即 404，且 upload 失败会留下不可回滚状态。
-            # 幂等写法：tag 重推/重跑时 release 已存在，直接 create 会失败阻断后续发布。
-            #
-            # 边界防御：tag 被删除再重推时（发布中途修复后重打 tag），GitHub 会把旧 release
-            # 自动转成 Draft 孤儿；其 tag_name 与新 tag 相同但 create 仍会成功，导致同名双 release。
-            # 因此先清理同名 Draft 再 create/edit（无同名 draft 时跳过，幂等）。
-            - name: Clean up orphan draft release for tag
-              env:
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  TAG: ${{ github.ref_name }}
-              run: |
-                  draft_id=$(gh api --paginate "repos/{owner}/{repo}/releases" \
-                      -q ".[] | select(.tag_name == \"$TAG\" and .draft == true) | .id" | head -1)
-                  if [ -n "$draft_id" ]; then
-                    gh api -X DELETE "repos/{owner}/{repo}/releases/$draft_id"
-                    echo "已删除同名 Draft release: $draft_id"
-                  else
-                    echo "无同名 Draft release，跳过"
-                  fi
+            - name: Release verification tests
+              run: pnpm test:release
 
             - name: Extract Release Notes from CHANGELOG
               env:
                   TAG: ${{ github.ref_name }}
               run: node scripts/release/extract-release-notes.mjs --tag "$TAG" --out "${{ runner.temp }}/release-notes.md"
 
-            - name: Create GitHub Release
+            # 运行发布状态机协调器（实现密封产物打包、Release Draft/公开、npm 校验发布与 latest 推进）
+            - name: Execute Unified Release Coordinator
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
                   TAG: ${{ github.ref_name }}
               run: |
-                  gh release create "$TAG" \
-                      --title "Release $TAG" \
-                      --notes-file "${{ runner.temp }}/release-notes.md" \
-                  || gh release edit "$TAG" \
-                      --title "Release $TAG" \
-                      --notes-file "${{ runner.temp }}/release-notes.md"
-
-            # 上传前校验：产物齐全（index.json / registry-manifest.json / registry-sbom.json）、
-            # 数量与 index.json 的 items 派生一致（排除本地可能遗留的 deps.json）、
-            # manifest 含 signature 且 keyId = official-v1
-            - name: Verify registry artifacts ready for upload
-              run: |
-                  for f in index.json registry-manifest.json registry-sbom.json; do
-                    if [ ! -f "packages/registry/registry/$f" ]; then
-                      echo "::error::registry 产物缺失：packages/registry/registry/$f 不存在（请确认 Release gate 已构建）"
-                      exit 1
-                    fi
-                  done
-                  # 期望数量 = index.json 的 items 数（组件 + locale-zh-cn）+ 3 个固定文件（index/manifest/sbom），
-                  # 从构建产物派生而非硬编码，避免与组件清单脱节
-                  expected=$(node -e "const i = require('./packages/registry/registry/index.json'); console.log(i.items.length + 3)")
-                  count=$(ls packages/registry/registry/*.json | grep -v 'deps\.json$' | wc -l)
-                  if [ "$count" -ne "$expected" ]; then
-                    echo "::error::registry 产物数量异常：期望 $expected 个 json（index items + 3 固定文件，不含 deps.json），实际 $count"
-                    exit 1
-                  fi
-                  node -e "
-                  const m = require('./packages/registry/registry/registry-manifest.json');
-                  if (!m.signature || m.keyId !== 'official-v1') {
-                    console.error('::error::registry-manifest.json 缺少官方签名或 keyId 非 official-v1');
-                    process.exit(1);
-                  }
-                  console.log('Registry manifest verified (keyId: ' + m.keyId + ')');
-                  "
-
-            # 上传 registry 产物为 Release 资产（扁平命名，可寻址 releases/latest/download/{name}.json）
-            # --clobber：重推/重跑时覆盖同名资产，配合幂等 create 保证可重复执行。
-            # 文件列表与校验步骤同源过滤（排除本地可能遗留的 deps.json），保证上传集合与校验集合一致。
-            - name: Upload registry artifacts to Release
-              env:
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  TAG: ${{ github.ref_name }}
-              run: |
-                  files=$(ls packages/registry/registry/*.json | grep -v 'deps\.json$')
-                  gh release upload "$TAG" $files --clobber
-                  # 清理 Release 中已不存在的旧资产（组件删除/重命名后 --clobber 无法删除，
-                  # 旧 JSON 会继续可寻址并与 index/manifest 版本漂移）
-                  current=$(echo "$files" | xargs -n1 basename)
-                  existing=$(gh release view "$TAG" --json assets -q '.assets[].name' 2>/dev/null || true)
-                  for name in $existing; do
-                    if ! echo "$current" | grep -qx "$name"; then
-                      echo "::warning::删除 Release 中已移除的旧资产: $name"
-                      gh release delete-asset "$TAG" "$name" -y
-                    fi
-                  done
-
-            - name: Publish brutx-ui-vue
-              working-directory: packages/ui
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-              run: |
-                  set +e
-                  pnpm publish --no-git-checks --access public --provenance > /tmp/publish-ui.log 2>&1
-                  status=$?
-                  if [ $status -eq 0 ]; then
-                    cat /tmp/publish-ui.log
-                    exit 0
-                  fi
-                  if grep -qiE "EPUBLISHCONFLICT|already published|version already exists|cannot publish over the previously published" /tmp/publish-ui.log; then
-                    echo "::warning::brutx-ui-vue version already exists, skipped"
-                    exit 0
-                  fi
-                  cat /tmp/publish-ui.log >&2
-                  exit $status
-
-            - name: Publish brutx-vue
-              working-directory: packages/cli
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-              run: |
-                  set +e
-                  pnpm publish --no-git-checks --access public --provenance > /tmp/publish-cli.log 2>&1
-                  status=$?
-                  if [ $status -eq 0 ]; then
-                    cat /tmp/publish-cli.log
-                    exit 0
-                  fi
-                  if grep -qiE "EPUBLISHCONFLICT|already published|version already exists|cannot publish over the previously published" /tmp/publish-cli.log; then
-                    echo "::warning::brutx-vue version already exists, skipped"
-                    exit 0
-                  fi
-                  cat /tmp/publish-cli.log >&2
-                  exit $status
+                  node scripts/release/release-coordinator.mjs \
+                      --tag "$TAG" \
+                      --release-notes-file "${{ runner.temp }}/release-notes.md" \
+                      --provenance
