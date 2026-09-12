@@ -9,10 +9,10 @@ export default defineConfig({
         alias: {
             '@': resolve(__dirname, 'src'),
         },
-        dedupe: ['vue'],
+        dedupe: ['vue', '@vue/runtime-core', '@vue/runtime-dom', '@vue/reactivity'],
     },
     optimizeDeps: {
-        include: ['@vue/server-renderer'],
+        include: ['vue', '@vue/server-renderer', 'reka-ui', '@lucide/vue', '@tanstack/vue-virtual'],
     },
     test: {
         browser: {

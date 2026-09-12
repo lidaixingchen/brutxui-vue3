@@ -95,6 +95,9 @@ jobs:
             - name: Package smoke test (exports subpaths + consumer resolution)
               run: pnpm --filter brutx-ui-vue test:package
 
+            - name: Release verification and coordinator tests
+              run: pnpm test:release
+
             - name: Check bundle size limits
               run: pnpm --filter brutx-ui-vue size
 
@@ -245,3 +248,27 @@ jobs:
 
             - name: CLI Integration tests
               run: pnpm --filter brutx-vue test:integration
+
+    consumers:
+        name: Real Consumer tests (U1 / C1 / C3)
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 1
+
+            - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+
+            - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+              with:
+                  node-version: 22
+                  cache: pnpm
+
+            - run: pnpm install --frozen-lockfile
+
+            - name: Build packages
+              run: pnpm build
+
+            - name: Run consumer matrix tests
+              run: pnpm test:consumers --all
+

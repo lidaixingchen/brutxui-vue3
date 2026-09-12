@@ -1,5 +1,5 @@
-import { execFileSync } from 'node:child_process'
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, symlinkSync, writeFileSync } from 'node:fs'
+import { execFileSync, execSync } from 'node:child_process'
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
@@ -205,12 +205,59 @@ function writeConsumerProjectScripts(consumerRoot, specifiers) {
 function smokeConsumerResolution() {
     const consumerRoot = mkdtempSync(path.join(tmpdir(), 'brutx-ui-package-smoke-'))
     const nodeModulesDir = path.join(consumerRoot, 'node_modules')
-    const packageLink = path.join(nodeModulesDir, packageJson.name)
+    const packageDest = path.join(nodeModulesDir, packageJson.name)
 
     try {
         mkdirSync(nodeModulesDir, { recursive: true })
         writeFileSync(path.join(consumerRoot, 'package.json'), JSON.stringify({ type: 'module' }, null, 4))
-        symlinkSync(packageRoot, packageLink, process.platform === 'win32' ? 'junction' : 'dir')
+
+        // 1. Pack tarball into isolated consumerRoot
+        execSync('pnpm --config.ignore-scripts=true pack --pack-destination "' + consumerRoot + '"', {
+            cwd: packageRoot,
+            stdio: 'pipe',
+            env: {
+                ...process.env,
+                npm_config_ignore_scripts: 'true',
+            },
+        })
+
+        const tarballFiles = readdirSync(consumerRoot).filter(f => f.endsWith('.tgz'))
+        if (tarballFiles.length === 0) {
+            throw new Error('pnpm pack failed to generate UI tarball')
+        }
+        const tarballPath = path.join(consumerRoot, tarballFiles[0])
+
+        // 2. Extract tarball
+        const extractedDir = path.join(consumerRoot, 'extracted')
+        mkdirSync(extractedDir, { recursive: true })
+        execSync(`tar -xzf "${tarballPath}" -C "${extractedDir}"`, { stdio: 'pipe' })
+
+        const unpackedPackage = path.join(extractedDir, 'package')
+        if (!existsSync(unpackedPackage)) {
+            throw new Error('Expected extracted package folder not found')
+        }
+
+        // 3. Verify private package is not in unpacked dependencies
+        const unpackedPkgJson = JSON.parse(readFileSync(path.join(unpackedPackage, 'package.json'), 'utf-8'))
+        const allDeps = {
+            ...unpackedPkgJson.dependencies,
+            ...unpackedPkgJson.peerDependencies,
+            ...unpackedPkgJson.optionalDependencies,
+        }
+        if ('brutx-shared-vue' in allDeps) {
+            throw new Error('Tarball leak: brutx-shared-vue found in unpacked package dependencies')
+        }
+
+        // 4. Install packed tarball and declared peer dependencies into consumer
+        execSync(`pnpm --config.ignore-scripts=true add "${tarballPath}" vue reka-ui @lucide/vue @tanstack/vue-virtual embla-carousel-vue prismjs v-calendar vee-validate`, {
+            cwd: consumerRoot,
+            stdio: 'pipe',
+            env: {
+                ...process.env,
+                NODE_PATH: '',
+                npm_config_ignore_scripts: 'true',
+            },
+        })
 
         const specifiers = collectConsumerSmokeSpecifiers()
         const { importScriptPath, requireScriptPath } = writeConsumerProjectScripts(consumerRoot, specifiers)
@@ -219,8 +266,6 @@ function smokeConsumerResolution() {
         if (specifiers.cjsSupported) {
             runConsumerScript(requireScriptPath, 'consumer CJS package resolution')
         } else {
-            // ESM-only package — CJS smoke skipped (no main, no require conditions).
-            // require-smoke.cjs is still written for debugging but not executed.
             console.log('• CJS smoke skipped (ESM-only package: no main field, no require conditions)')
         }
 
@@ -228,10 +273,16 @@ function smokeConsumerResolution() {
             resolvedConsumerEntries.add(specifier)
         }
     } catch (error) {
-        const reason = error instanceof Error ? error.message : String(error)
+        const stderr = error?.stderr ? error.stderr.toString() : ''
+        const stdout = error?.stdout ? error.stdout.toString() : ''
+        const reason = (stderr || stdout || (error instanceof Error ? error.message : String(error))).trim()
         addFailure(`consumer package setup failed: ${reason}`)
     } finally {
-        rmSync(consumerRoot, { recursive: true, force: true })
+        try {
+            rmSync(consumerRoot, { recursive: true, force: true, maxRetries: 3, retryDelay: 50 })
+        } catch {
+            // ignore cleanup failure in finally
+        }
     }
 }
 

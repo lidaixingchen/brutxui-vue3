@@ -518,7 +518,9 @@
       "DialogFooter.vue",
       "DialogHeader.vue",
       "DialogOverlay.vue",
+      "DialogTestFixture.vue",
       "DialogTitle.vue",
+      "NestedDialogTestFixture.vue",
       "dialog-variants.ts",
       "functional.ts"
     ],
@@ -950,6 +952,7 @@
       "SelectScrollDownButton.vue",
       "SelectScrollUpButton.vue",
       "SelectSeparator.vue",
+      "SelectTestFixture.vue",
       "SelectTrigger.vue",
       "select-variants.ts"
     ],
@@ -1315,6 +1318,7 @@
   "virtual-scroll": {
     "files": [
       "VirtualScroll.vue",
+      "VirtualScrollTestFixture.vue",
       "types.ts",
       "virtual-scroll-variants.ts"
     ],
