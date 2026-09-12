@@ -93,11 +93,11 @@ node scripts/bench-diff.mjs <main-bench.json> <pr-bench.json>
 ## 五、 门禁工具协议与底层逃生通道
 
 ### 0. 统一门禁的双模态协议（Agent Result Envelope）
-门禁命令 `pnpm check:contracts` 与 `pnpm check:docs` 默认采用 **Unix 沉默原则**（全绿仅极简单行输出）。针对 Agent 自动化自愈与机器调用，支持 `--json` 标志输出标准 **Result Envelope** 结构：
+门禁命令 `pnpm check:contracts` 与 `pnpm check:docs` 基于底层调度引擎（[`scripts/lib/guard-runner.mjs`](../../scripts/lib/guard-runner.mjs)）并发执行，默认采用 **Unix 沉默原则**（全绿仅极简单行输出）。针对 Agent 自动化自愈与机器调用，支持 `--json` 标志输出标准 **Result Envelope** 结构：
 - **状态机**：严格限定为 `success`、`partial_success`、`error`；
 - **控制与自愈（`control.suggested_actions`）**：在违规时精准返回修复命令（如 `fix_command`）与操作引导，无需解析自然语言；
 - **副作用声明（`effect`）**：明确标识当前操作是否产生了文件修改（如 `--fix` 自愈链接）；
-- **用法**：`pnpm check:contracts --json` 或 `pnpm check:docs --json`。
+- **用法**：`pnpm check:contracts --json` 或 `pnpm check:docs --json`（详细日志加 `-v`，引擎单测运行 `node --test scripts/lib/guard-runner.test.mjs`）。
 
 ---
 

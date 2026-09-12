@@ -116,7 +116,7 @@ Vue 3（`<script setup>`）· TypeScript（strict）· Tailwind CSS v4 · reka-u
 - `packages/ui/`：组件 `src/components/`、组合式函数 `src/composables/`、语言包 `src/locales/`、工具 `src/lib/utils.ts`
 - `packages/cli/`：`src/commands/` + `src/lib/`
 - `packages/registry/` + `packages/shared/`：构建脚本与组件元数据（自动生成文件见上方表格）
-- `scripts/`：组件生成器、i18n 校验（`pnpm check:i18n`）、根 CHANGELOG 生成
+- `scripts/`：门禁调度引擎（`scripts/lib/guard-runner.mjs`）、组件生成器、i18n 校验（`pnpm check:i18n`）、根 CHANGELOG 生成
 - `.github/`：GitHub Actions 工作流 `workflows/`（SHA pin 格式 `owner/repo@<40-char-sha> # vN`）+ Dependabot 配置 `dependabot.yml`（自动升级 Actions SHA，每周一开 PR）
 
 ## 详细文档
