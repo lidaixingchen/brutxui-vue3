@@ -408,8 +408,7 @@ test('生成漂移门禁使用完整采集入口，CI 不硬编码四个文件',
     assert.equal(generatedGate?.outputOwnership, 'collectExpectedOutputs')
     assert.match(generatorSource, /collectExpectedOutputs/)
     assert.match(cliGeneratorSource, /collectExpectedOutputs/)
-    assert.match(workflowSource, /pnpm --filter brutx-ui-vue generate -- --check/)
-    assert.match(workflowSource, /pnpm --filter brutx-vue generate -- --check/)
+    assert.match(workflowSource, /(?:pnpm check:generated|pnpm --filter brutx-ui-vue generate -- --check)/)
     assert.doesNotMatch(workflowSource, /git diff --exit-code --\s+packages\/ui\/registry-manifest\.json/)
 })
 
@@ -418,8 +417,7 @@ test('CI 将旧 wrapper 替换为同一低层 Turbo 任务图并接入 R3b 门�
     for (const marker of [
         'turbo run build:artifact typecheck:source lint:source',
         'turbo run build:artifact test test:ssr',
-        'pnpm check:api-dependencies',
-        'pnpm check:exports',
+        'pnpm check:contracts',
         'pnpm --filter brutx-ui-vue test:types',
         'pnpm --filter brutx-ui-vue check:isolation',
         'pnpm test:tooling',

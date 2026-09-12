@@ -1,6 +1,8 @@
 name: Bench
 
 on:
+    push:
+        branches: [main]
     pull_request:
         branches: [main, vue]
 
@@ -13,7 +15,9 @@ permissions:
     pull-requests: write
 
 jobs:
-    baseline:
+    baseline-archive:
+        name: Benchmark Baseline Archive (main)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -27,7 +31,7 @@ jobs:
                   node-version: 22
                   cache: pnpm
 
-            - run: pnpm install --frozen-lockfile
+            - run: pnpm install --frozen-lockfile --prefer-offline
 
             - run: pnpm --filter brutx-ui-vue build
 
@@ -35,16 +39,25 @@ jobs:
               run: pnpm --filter brutx-ui-vue exec vitest bench --reporter=json > bench-main.json
               continue-on-error: true
 
+            - name: Save main bench baseline cache
+              uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+              with:
+                  path: bench-main.json
+                  key: bench-baseline-main-${{ github.sha }}
+
             - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
               with:
                   name: bench-main
                   path: bench-main.json
 
     pr-compare:
+        name: Benchmark PR Compare
+        if: github.event_name == 'pull_request'
         runs-on: ubuntu-latest
-        needs: baseline
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 0
 
             - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
 
@@ -53,7 +66,32 @@ jobs:
                   node-version: 22
                   cache: pnpm
 
-            - run: pnpm install --frozen-lockfile
+            - run: pnpm install --frozen-lockfile --prefer-offline
+
+            - name: Restore main baseline from cache
+              id: baseline-cache
+              uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+              with:
+                  path: bench-main.json
+                  key: bench-baseline-main-${{ github.event.pull_request.base.sha }}
+                  restore-keys: |
+                      bench-baseline-main-
+
+            - name: Fallback generate baseline if cache missed
+              if: steps.baseline-cache.outputs.cache-matched-key == ''
+              run: |
+                  [ -f bench-main.json ] && exit 0
+                  echo "Baseline cache miss, generating baseline from main..."
+                  git fetch origin main --depth=1
+                  workdir="$RUNNER_TEMP/brutx-bench-baseline"
+                  trap 'git worktree remove "$workdir" --force 2>/dev/null || true' EXIT
+                  git worktree add --detach "$workdir" origin/main
+                  (
+                    cd "$workdir"
+                    pnpm install --frozen-lockfile --prefer-offline
+                    pnpm --filter brutx-ui-vue build
+                    pnpm --filter brutx-ui-vue exec vitest bench --reporter=json > "$GITHUB_WORKSPACE/bench-main.json" || true
+                  )
 
             - run: pnpm --filter brutx-ui-vue build
 
@@ -61,15 +99,11 @@ jobs:
               run: pnpm --filter brutx-ui-vue exec vitest bench --reporter=json > bench-pr.json
               continue-on-error: true
 
-            - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-              with:
-                  name: bench-main
-                  path: bench-artifacts
-
             - name: Generate diff report
-              run: node scripts/bench-diff.mjs bench-artifacts/bench-main.json bench-pr.json > bench-report.md
+              run: node scripts/bench-diff.mjs bench-main.json bench-pr.json > bench-report.md
 
             - name: Find comment
+              if: github.event.pull_request.head.repo.full_name == github.repository
               uses: peter-evans/find-comment@b30e6a3c0ed37e7c023ccd3f1db5c6c0b0c23aad # v4.0.0
               id: fc
               with:
@@ -78,6 +112,7 @@ jobs:
                   body-includes: Performance Bench Report
 
             - name: Create or update comment
+              if: github.event.pull_request.head.repo.full_name == github.repository
               uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
               with:
                   issue-number: ${{ github.event.pull_request.number }}
