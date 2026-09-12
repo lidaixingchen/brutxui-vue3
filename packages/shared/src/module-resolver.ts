@@ -130,11 +130,31 @@ function isKnownExtension(value: string, extensions: readonly string[]): boolean
     return extensions.includes(value.toLowerCase());
 }
 
-function readDirectoryEntries(directoryPath: string): string[] {
+interface ResolverCache {
+    readonly directoryEntries: Map<string, readonly string[]>;
+    readonly exactPaths: Map<string, ExactPathResult>;
+    readonly resolutions: Map<string, ModuleResolution>;
+}
+
+function createResolverCache(): ResolverCache {
+    return {
+        directoryEntries: new Map<string, readonly string[]>(),
+        exactPaths: new Map<string, ExactPathResult>(),
+        resolutions: new Map<string, ModuleResolution>(),
+    };
+}
+
+function readDirectoryEntries(directoryPath: string, cache?: ResolverCache): readonly string[] {
+    const cached = cache?.directoryEntries.get(directoryPath);
+    if (cached) return cached;
     try {
-        return fs.readdirSync(directoryPath);
+        const entries = fs.readdirSync(directoryPath);
+        cache?.directoryEntries.set(directoryPath, entries);
+        return entries;
     } catch {
-        return [];
+        const empty: readonly string[] = [];
+        cache?.directoryEntries.set(directoryPath, empty);
+        return empty;
     }
 }
 
@@ -142,11 +162,35 @@ function inspectExactPath(
     targetPath: string,
     enforceCaseSensitive: boolean,
     rootDir?: string,
+    cache?: ResolverCache,
 ): ExactPathResult {
     const absolutePath = path.resolve(targetPath);
+    const cacheKey = `${absolutePath}:${enforceCaseSensitive ? '1' : '0'}:${rootDir ?? ''}`;
+    const cached = cache?.exactPaths.get(cacheKey);
+    if (cached) return cached;
+
+    const result = inspectExactPathUncached(absolutePath, enforceCaseSensitive, rootDir, cache);
+    cache?.exactPaths.set(cacheKey, result);
+    return result;
+}
+
+function inspectExactPathUncached(
+    absolutePath: string,
+    enforceCaseSensitive: boolean,
+    rootDir?: string,
+    cache?: ResolverCache,
+): ExactPathResult {
     if (!enforceCaseSensitive) {
         try {
             return fs.statSync(absolutePath).isFile() ? { status: 'file', actualPath: absolutePath } : { status: 'missing' };
+        } catch {
+            return { status: 'missing' };
+        }
+    }
+
+    if (process.platform === 'win32' || process.platform === 'darwin') {
+        try {
+            if (!fs.existsSync(absolutePath)) return { status: 'missing' };
         } catch {
             return { status: 'missing' };
         }
@@ -170,7 +214,7 @@ function inspectExactPath(
     let hasCaseMismatch = false;
 
     for (const segment of segments) {
-        const matches = readDirectoryEntries(current).filter((entry) => entry.toLowerCase() === segment.toLowerCase());
+        const matches = readDirectoryEntries(current, cache).filter((entry) => entry.toLowerCase() === segment.toLowerCase());
         if (matches.length === 0) return { status: 'missing' };
         if (matches.length > 1) {
             return {
@@ -337,6 +381,7 @@ function resolveInternal(
     specifier: string,
     candidates: readonly string[],
     enforceCaseSensitive: boolean,
+    cache?: ResolverCache,
 ): ModuleResolution {
     const diagnostics: ModuleResolutionDiagnostic[] = [];
     const caseMismatchCandidates: string[] = [];
@@ -344,7 +389,7 @@ function resolveInternal(
     const resolvedCandidates: string[] = [];
 
     for (const candidate of candidates) {
-        const exact = inspectExactPath(candidate, enforceCaseSensitive, rootDir);
+        const exact = inspectExactPath(candidate, enforceCaseSensitive, rootDir, cache);
         if (exact.status === 'file' && exact.actualPath) {
             if (!isPathInside(rootDir, exact.actualPath)) {
                 diagnostics.push(createDiagnostic(
@@ -427,6 +472,7 @@ export function createModuleResolver(options: ModuleResolverOptions): ModuleReso
     const extensions = Object.freeze([...(options.extensions ?? DEFAULT_MODULE_EXTENSIONS)]);
     const enforceCaseSensitive = options.enforceCaseSensitive ?? true;
     const aliases = Object.freeze(mergeAliases({ ...options, rootDir }));
+    const cache = createResolverCache();
 
     const resolver: ModuleResolver = {
         rootDir,
@@ -434,8 +480,14 @@ export function createModuleResolver(options: ModuleResolverOptions): ModuleReso
         aliases,
         resolve(importer, specifier): ModuleResolution {
             const normalizedImporter = normalizeAbsolute(importer);
+            const cacheKey = `${normalizedImporter}\0${specifier}`;
+            const cached = cache.resolutions.get(cacheKey);
+            if (cached) return cached;
+
             const isRelative = /^(?:\.{1,2})(?:[\\/]|$)/u.test(specifier);
             const isAbsolute = path.isAbsolute(specifier) || path.posix.isAbsolute(specifier) || path.win32.isAbsolute(specifier);
+
+            let result: ModuleResolution;
 
             if (!isRelative && !isAbsolute) {
                 const matches = aliases
@@ -454,33 +506,37 @@ export function createModuleResolver(options: ModuleResolverOptions): ModuleReso
                             `模块别名存在多个同优先级解析结果：${specifier}`,
                             uniqueAliasCandidates,
                         )];
-                        return {
+                        result = {
                             importer: normalizedImporter,
                             specifier,
                             kind: 'ambiguous',
                             candidates: uniqueAliasCandidates.map(normalizeAbsolute),
                             diagnostics,
                         };
+                    } else {
+                        result = resolveInternal(rootDir, normalizedImporter, specifier, collectCandidates(uniqueAliasCandidates[0], extensions).map((item) => item.absolutePath), enforceCaseSensitive, cache);
                     }
-                    return resolveInternal(rootDir, normalizedImporter, specifier, collectCandidates(uniqueAliasCandidates[0], extensions).map((item) => item.absolutePath), enforceCaseSensitive);
+                } else {
+                    const identity = packageIdentity(specifier);
+                    result = {
+                        importer: normalizedImporter,
+                        specifier,
+                        kind: 'external',
+                        packageName: identity.packageName,
+                        packageSubpath: identity.packageSubpath,
+                        isNodeBuiltin: isNodeBuiltinSpecifier(specifier, identity.packageName),
+                        candidates: [],
+                        diagnostics: [],
+                    };
                 }
-
-                const identity = packageIdentity(specifier);
-                return {
-                    importer: normalizedImporter,
-                    specifier,
-                    kind: 'external',
-                    packageName: identity.packageName,
-                    packageSubpath: identity.packageSubpath,
-                    isNodeBuiltin: isNodeBuiltinSpecifier(specifier, identity.packageName),
-                    candidates: [],
-                    diagnostics: [],
-                };
+            } else {
+                const basePath = isAbsolute ? path.resolve(specifier) : path.resolve(path.dirname(normalizedImporter), specifier);
+                const candidatePaths = collectCandidates(basePath, extensions).map((item) => item.absolutePath);
+                result = resolveInternal(rootDir, normalizedImporter, specifier, candidatePaths, enforceCaseSensitive, cache);
             }
 
-            const basePath = isAbsolute ? path.resolve(specifier) : path.resolve(path.dirname(normalizedImporter), specifier);
-            const candidatePaths = collectCandidates(basePath, extensions).map((item) => item.absolutePath);
-            return resolveInternal(rootDir, normalizedImporter, specifier, candidatePaths, enforceCaseSensitive);
+            cache.resolutions.set(cacheKey, result);
+            return result;
         },
         analyze(source, importer, language): ModuleSourceAnalysis {
             const normalizedImporter = normalizeAbsolute(importer);

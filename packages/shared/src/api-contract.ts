@@ -520,14 +520,17 @@ export function validateApiContractSourceExports(
     const resolving = new Set<string>()
     const moduleFailures = new Map<string, string[]>()
 
+    const toLookupKey = (value: string): string => path.resolve(value).split(path.sep).join('/')
+
     const recordFailure = (modulePath: string, message: string): void => {
-        const failures = moduleFailures.get(modulePath) ?? []
+        const key = toLookupKey(modulePath)
+        const failures = moduleFailures.get(key) ?? []
         if (!failures.includes(message)) failures.push(message)
-        moduleFailures.set(modulePath, failures)
+        moduleFailures.set(key, failures)
     }
 
     const readModuleExports = (modulePath: string): readonly ExportSymbol[] => {
-        const normalized = path.resolve(modulePath)
+        const normalized = toLookupKey(modulePath)
         const cached = moduleCache.get(normalized)
         if (cached) return cached
         if (resolving.has(normalized)) return []
@@ -694,7 +697,7 @@ export function validateApiContractSourceExports(
             const symbols = readModuleExports(resolution.resolvedPath)
             const matching = symbols.filter((symbol) => symbol.publicName === item.sourceName)
             if (matching.length === 0) {
-                const failures = moduleFailures.get(resolution.resolvedPath)
+                const failures = moduleFailures.get(toLookupKey(resolution.resolvedPath))
                 addIssue({
                     code: failures && failures.length > 0 ? 'PUBLIC_EXPORT_REEXPORT_UNRESOLVED' : 'PUBLIC_EXPORT_NOT_FOUND',
                     entryId: entry.id,

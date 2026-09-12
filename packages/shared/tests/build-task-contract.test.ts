@@ -28,7 +28,10 @@ interface TurboDryRun {
 
 const rootDir = resolve(__dirname, '../../..')
 const turboJsonPath = resolve(rootDir, 'turbo.json')
-const turboBinaryPath = resolve(rootDir, 'node_modules/.bin/turbo')
+const turboBinaryPath = resolve(
+    rootDir,
+    process.platform === 'win32' ? 'node_modules/.bin/turbo.cmd' : 'node_modules/.bin/turbo',
+)
 const TURBO_DRY_RUN_TEST_TIMEOUT_MS = 20_000
 
 function readJson<T>(relativePath: string): T {
@@ -43,7 +46,7 @@ function runTurboDryRun(args: string[]): TurboDryRun {
     const output = execFileSync(
         turboBinaryPath,
         ['run', ...args, '--dry=json', '--output-logs=none'],
-        { cwd: rootDir, encoding: 'utf-8' },
+        { cwd: rootDir, encoding: 'utf-8', shell: process.platform === 'win32' },
     )
     const jsonStart = output.indexOf('{')
     if (jsonStart < 0) {
