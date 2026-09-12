@@ -1,13 +1,14 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 
 export const dashboardShellVariants = cva(
-    'flex h-screen bg-brutal-bg text-brutal-fg'
+    'relative isolate flex h-screen bg-brutal-bg text-brutal-fg'
 )
 
 export const dashboardSidebarVariants = cva(
     [
         'border-brutal bg-brutal-bg flex flex-col',
         'transition-all duration-200 ease-brutal-snap',
+        'absolute inset-y-0 left-0 z-dialog md:relative md:inset-auto md:z-auto md:shrink-0',
     ],
     {
         variants: {
@@ -33,4 +34,3 @@ export const dashboardMainVariants = cva(
 export type DashboardSidebarVariants = VariantProps<typeof dashboardSidebarVariants>
 export type DashboardSidebarVariantProps = DashboardSidebarVariants
 export type DashboardShellVariants = DashboardSidebarVariants
-

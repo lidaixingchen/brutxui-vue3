@@ -37,6 +37,21 @@ function mountDataTable(props: Partial<DataTableProps<TestRow>> & { data: TestRo
 }
 
 describe('DataTable', () => {
+    it('displays a custom page size before opening the selector', async () => {
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
+            paginated: true,
+            pageSize: 5,
+        })
+        const trigger = wrapper.find('nav [role="combobox"]')
+        expect(trigger.text()).toContain('5')
+        await wrapper.setProps({ pageSize: 7 })
+        expect(trigger.text()).toContain('7')
+        wrapper.unmount()
+    })
+
     it('renders with data', () => {
         const wrapper = mountDataTable({
             data: testData,
@@ -293,6 +308,36 @@ describe('DataTable visual compliance', () => {
         expect(rows[2].classes()).toContain('even:bg-brutal-muted/50')
     })
 
+    it('keeps fixed cells opaque and mirrors row selection and striping states', async () => {
+        const fixedColumns: DataTableColumn<TestRow>[] = testColumns.map((column, index) =>
+            index === 0 ? { ...column, fixed: 'left' } : column,
+        )
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: fixedColumns,
+            rowKey: 'id',
+            selectable: true,
+            sortable: true,
+        })
+
+        const rows = wrapper.findAll('tbody tr')
+        expect(rows[0].findAll('td')[1].classes()).toContain('bg-brutal-bg')
+        expect(rows[1].findAll('td')[1].classes().join(' ')).toContain('bg-[color-mix(in_srgb,var(--brutal-muted)_50%,var(--brutal-bg))]')
+        expect(rows[1].findAll('td')[1].classes()).not.toContain('bg-brutal-muted/50')
+
+        await wrapper.findAll('th')[1].trigger('click')
+        const activeCellClasses = rows[0].findAll('td')[1].classes()
+        expect(activeCellClasses).toContain('bg-brutal-accent-subtle')
+        expect(activeCellClasses).not.toContain('bg-brutal-accent/20')
+
+        await wrapper.findAll('[role="checkbox"]')[1].trigger('click')
+        const selectedCellClasses = rows[0].findAll('td')[1].classes()
+        expect(selectedCellClasses).toContain('bg-brutal-primary')
+        expect(selectedCellClasses).toContain('text-brutal-primary-foreground')
+        expect(selectedCellClasses).not.toContain('hover:bg-brutal-primary/80')
+        expect(selectedCellClasses).not.toContain('bg-brutal-accent-subtle')
+    })
+
     it('highlights active sort column header with bg-brutal-accent', async () => {
         const wrapper = mountDataTable({ data: testData, columns: testColumns, rowKey: 'id', sortable: true })
         await wrapper.findAll('th')[0].trigger('click')
@@ -300,14 +345,14 @@ describe('DataTable visual compliance', () => {
         expect(nameHeader.classes()).toContain('bg-brutal-accent')
     })
 
-    it('highlights active sort column cells with bg-brutal-accent/20', async () => {
+    it('highlights active sort column cells with the subtle accent surface', async () => {
         const wrapper = mountDataTable({ data: testData, columns: testColumns, rowKey: 'id', sortable: true })
         await wrapper.findAll('th')[0].trigger('click')
         const rows = wrapper.findAll('tbody tr')
         rows.forEach(row => {
             const cells = row.findAll('td')
-            expect(cells[0].classes()).toContain('bg-brutal-accent/20')
-            expect(cells[1].classes()).not.toContain('bg-brutal-accent/20')
+            expect(cells[0].classes()).toContain('bg-brutal-accent-subtle')
+            expect(cells[1].classes()).not.toContain('bg-brutal-accent-subtle')
         })
     })
 

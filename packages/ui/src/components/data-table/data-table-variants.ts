@@ -3,7 +3,7 @@ import { brutalHoverLift } from '@/lib/brutal-interaction-variants'
 
 export const dataTableRootVariants = cva(
     [
-        'w-full border-3 border-brutal rounded-brutal',
+        'w-full min-w-0 max-w-full border-3 border-brutal rounded-brutal',
         'bg-brutal-bg text-brutal-fg',
         'shadow-brutal-lg relative',
     ],
@@ -36,7 +36,7 @@ export const dataTableHeadVariants = cva(
     {
         variants: {
             sortable: {
-                true: 'cursor-pointer select-none hover:bg-brutal-accent/40 active:translate-y-[2px] active:bg-brutal-accent', /* 组件私有：可排序表头交互，不抽取 */
+                true: 'cursor-pointer select-none hover:bg-brutal-accent-subtle active:translate-y-[2px] active:bg-brutal-accent active:text-brutal-accent-foreground', /* 组件私有：可排序表头交互，不抽取 */
                 false: '',
             },
             align: {
@@ -44,14 +44,19 @@ export const dataTableHeadVariants = cva(
                 center: 'text-center',
                 right: 'text-right',
             },
+            fixed: {
+                true: 'bg-brutal-muted',
+                false: '',
+            },
             active: {
-                true: 'bg-brutal-accent',
+                true: 'bg-brutal-accent text-brutal-accent-foreground',
                 false: '',
             },
         },
         defaultVariants: {
             sortable: false,
             align: 'left',
+            fixed: false,
             active: false,
         },
     },
@@ -59,7 +64,7 @@ export const dataTableHeadVariants = cva(
 
 export const dataTableRowVariants = cva(
     [
-        'transition-all duration-150',
+        'group/row transition-all duration-150',
         brutalHoverLift,
     ],
     {
@@ -69,7 +74,7 @@ export const dataTableRowVariants = cva(
                 false: 'hover:bg-brutal-muted',
             },
             striped: {
-                true: 'even:bg-brutal-muted/50',
+                true: 'even:bg-brutal-muted/50 even:hover:bg-brutal-muted',
                 false: '',
             },
         },
@@ -101,7 +106,7 @@ export const dataTableCellVariants = cva(
                 false: '',
             },
             active: {
-                true: 'bg-brutal-accent/20',
+                true: 'bg-brutal-accent-subtle',
                 false: '',
             },
         },
@@ -119,9 +124,36 @@ export const dataTableCellVariants = cva(
     },
 )
 
+export const dataTableFixedCellVariants = cva(
+    [
+        'bg-brutal-bg group-hover/row:bg-brutal-muted',
+    ],
+    {
+        variants: {
+            active: {
+                true: 'bg-brutal-accent-subtle group-hover/row:bg-brutal-accent-subtle',
+                false: '',
+            },
+            selected: {
+                true: 'bg-brutal-primary text-brutal-primary-foreground group-hover/row:bg-[color-mix(in_srgb,var(--brutal-primary)_80%,var(--brutal-bg))]',
+                false: '',
+            },
+            striped: {
+                true: 'bg-[color-mix(in_srgb,var(--brutal-muted)_50%,var(--brutal-bg))]',
+                false: '',
+            },
+        },
+        defaultVariants: {
+            active: false,
+            selected: false,
+            striped: false,
+        },
+    },
+)
+
 export const dataTableToolbarVariants = cva(
     [
-        'flex items-center justify-between gap-4 p-4',
+        'flex flex-col items-stretch gap-3 p-4 sm:flex-row sm:items-center sm:justify-between',
         'border-b-3 border-brutal',
         'bg-brutal-bg',
     ],
@@ -129,7 +161,7 @@ export const dataTableToolbarVariants = cva(
 
 export const dataTablePaginationVariants = cva(
     [
-        'flex items-center justify-between gap-4 p-4',
+        'flex flex-col items-stretch gap-3 p-4 sm:flex-row sm:items-center sm:justify-between',
         'border-t-3 border-brutal',
         'bg-brutal-muted',
     ],

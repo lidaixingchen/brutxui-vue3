@@ -14,6 +14,7 @@ import {
     dataTableHeadVariants,
     dataTableRowVariants,
     dataTableCellVariants,
+    dataTableFixedCellVariants,
     dataTableToolbarVariants,
     dataTablePaginationVariants,
     dataTableEmptyVariants,
@@ -424,11 +425,13 @@ defineExpose({
 })
 
 function getHeadClasses(column: DataTableColumn<T>): string {
+    const active = activeColumnId.value === column.id
     return cn(
         dataTableHeadVariants({
             sortable: props.sortable && column.sortable !== false,
             align: column.align,
-            active: activeColumnId.value === column.id,
+            fixed: Boolean(column.fixed),
+            active,
         }),
     )
 }
@@ -453,14 +456,25 @@ const CellRenderer = markRaw({
     },
 })
 
-function getCellClasses(column: DataTableColumn<T>): string {
+function getFixedCellClasses(row: T, rowIndex: number, active: boolean): string {
+    const selected = selection.selectedRows.value.has(selection.getRowKey(row))
+    return cn(dataTableFixedCellVariants({
+        active: active && !selected,
+        selected,
+        striped: props.striped && !selected && !active && rowIndex % 2 === 1,
+    }))
+}
+
+function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number): string {
+    const active = activeColumnId.value === column.id
     return cn(
         dataTableCellVariants({
             align: column.align,
             size: props.size,
             dense: props.dense,
-            active: activeColumnId.value === column.id,
+            active: active && !column.fixed && (row === undefined || !selection.selectedRows.value.has(selection.getRowKey(row))),
         }),
+        column.fixed && row !== undefined && rowIndex !== undefined && getFixedCellClasses(row, rowIndex, active),
     )
 }
 </script>
@@ -480,16 +494,17 @@ function getCellClasses(column: DataTableColumn<T>): string {
 
         <!-- Toolbar -->
         <div v-if="filterable || slots.toolbar" :class="toolbarClasses">
-            <div v-if="filterable" class="flex items-center gap-2">
+            <div v-if="filterable" class="flex min-w-0 items-center gap-2">
                 <Input
                     :model-value="filter.filterState.value.global"
                     size="sm"
                     :placeholder="filterPlaceholder ?? t('dataTable.filterPlaceholder')"
                     :aria-label="filterPlaceholder ?? t('dataTable.filterPlaceholder')"
+                    class="w-full sm:w-auto"
                     @update:model-value="filter.setGlobalFilter"
                 />
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
                 <slot name="toolbar" />
                 <Button
                     v-if="selectable && selection.selectedRows.value.size > 0"
@@ -503,7 +518,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
         </div>
 
         <!-- Table / Virtual Scroll -->
-        <div class="overflow-x-auto">
+        <div class="min-w-0 overflow-x-auto">
             <!-- 虚拟滚动启用时的布局 -->
             <template v-if="props.virtualScroll?.enabled">
                 <div class="w-full min-w-max border-collapse" role="presentation">
@@ -514,10 +529,10 @@ function getCellClasses(column: DataTableColumn<T>): string {
                             :style="{ gridTemplateColumns }"
                             role="row"
                         >
-                            <div v-if="expandable" class="w-10 px-2 py-3 text-center flex items-center justify-center font-bold" role="columnheader" :style="{ position: 'sticky', left: '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
+                            <div v-if="expandable" class="w-10 bg-brutal-muted px-2 py-3 text-center flex items-center justify-center font-bold" role="columnheader" :style="{ position: 'sticky', left: '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                                 <span class="sr-only">Expand</span>
                             </div>
-                            <div v-if="selectable" class="w-12 px-4 py-3 text-center flex items-center justify-center" role="columnheader" :style="{ position: 'sticky', left: expandable ? '40px' : '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
+                            <div v-if="selectable" class="w-12 bg-brutal-muted px-4 py-3 text-center flex items-center justify-center" role="columnheader" :style="{ position: 'sticky', left: expandable ? '40px' : '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                                 <Checkbox
                                     :checked="selection.isIndeterminate.value ? 'indeterminate' : selection.isAllSelected.value"
                                     size="sm"
@@ -554,7 +569,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                         @update:filter-state="applyColumnFilterPatch"
                                     />
                                     
-                                    <span v-if="sortable && column.sortable !== false" class="inline-flex text-brutal-fg">
+                                    <span v-if="sortable && column.sortable !== false" class="inline-flex text-inherit">
                                         <ArrowUp v-if="sort.sortState.value.column === column.id && sort.sortState.value.direction === 'asc'" class="w-4 h-4" />
                                         <ArrowDown v-else-if="sort.sortState.value.column === column.id && sort.sortState.value.direction === 'desc'" class="w-4 h-4" />
                                         <ArrowUpDown v-else class="w-4 h-4" />
@@ -588,7 +603,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                     @click="handleRowClick(displayData[rowIndex], $event)"
                                     @keydown.enter="handleRowClick(displayData[rowIndex], $event)"
                                 >
-                                    <div v-if="expandable" class="w-10 px-2 py-3 text-center flex items-center justify-center" role="gridcell" :style="{ position: 'sticky', left: '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
+                                    <div v-if="expandable" :class="['w-10 px-2 py-3 text-center flex items-center justify-center', getFixedCellClasses(displayData[rowIndex], rowIndex, false)]" role="gridcell" :style="{ position: 'sticky', left: '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                                         <Button
                                             variant="ghost"
                                             size="sm"
@@ -606,7 +621,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                             />
                                         </Button>
                                     </div>
-                                    <div v-if="selectable" class="w-12 px-4 py-3 text-center flex items-center justify-center" role="gridcell" :style="{ position: 'sticky', left: expandable ? '40px' : '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
+                                    <div v-if="selectable" :class="['w-12 px-4 py-3 text-center flex items-center justify-center', getFixedCellClasses(displayData[rowIndex], rowIndex, false)]" role="gridcell" :style="{ position: 'sticky', left: expandable ? '40px' : '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                                         <Checkbox
                                             :checked="selection.selectedRows.value.has(selection.getRowKey(displayData[rowIndex]))"
                                             size="sm"
@@ -617,7 +632,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                     <div
                                         v-for="column in visibleColumns"
                                         :key="column.id"
-                                        :class="[getCellClasses(column), 'flex items-center']"
+                                        :class="[getCellClasses(column, displayData[rowIndex], rowIndex), 'flex items-center']"
                                         :style="{
                                             position: column.fixed ? 'sticky' : undefined,
                                             left: column.fixed === 'left' ? `${getFixedColumnOffset(column, 'left')}px` : undefined,
@@ -690,10 +705,10 @@ function getCellClasses(column: DataTableColumn<T>): string {
                 <!-- Header -->
                 <thead :class="headerClasses">
                     <tr>
-                        <th v-if="expandable" class="w-10 px-2 py-3 text-center" :style="{ position: 'sticky', left: '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
+                        <th v-if="expandable" class="w-10 bg-brutal-muted px-2 py-3 text-center" :style="{ position: 'sticky', left: '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                             <span class="sr-only">Expand</span>
                         </th>
-                        <th v-if="selectable" class="w-12 px-4 py-3 text-center" :style="{ position: 'sticky', left: expandable ? '40px' : '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
+                        <th v-if="selectable" class="w-12 bg-brutal-muted px-4 py-3 text-center" :style="{ position: 'sticky', left: expandable ? '40px' : '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                             <Checkbox
                                 :checked="selection.isIndeterminate.value ? 'indeterminate' : selection.isAllSelected.value"
                                 size="sm"
@@ -733,7 +748,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                     @update:filter-state="applyColumnFilterPatch"
                                 />
 
-                                <span v-if="sortable && column.sortable !== false" class="inline-flex text-brutal-fg">
+                                <span v-if="sortable && column.sortable !== false" class="inline-flex text-inherit">
                                     <ArrowUp v-if="sort.sortState.value.column === column.id && sort.sortState.value.direction === 'asc'" class="w-4 h-4" />
                                     <ArrowDown v-else-if="sort.sortState.value.column === column.id && sort.sortState.value.direction === 'desc'" class="w-4 h-4" />
                                     <ArrowUpDown v-else class="w-4 h-4" />
@@ -760,7 +775,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                 @click="handleRowClick(row, $event)"
                                 @keydown.enter="handleRowClick(row, $event)"
                             >
-                                <td v-if="expandable" class="w-10 px-2 py-3 text-center" role="gridcell" :style="{ position: 'sticky', left: '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
+                                <td v-if="expandable" :class="['w-10 px-2 py-3 text-center', getFixedCellClasses(row, rowIndex, false)]" role="gridcell" :style="{ position: 'sticky', left: '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                                     <Button
                                         variant="ghost"
                                         size="sm"
@@ -778,7 +793,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                         />
                                     </Button>
                                 </td>
-                                <td v-if="selectable" class="w-12 px-4 py-3 text-center" role="gridcell" :style="{ position: 'sticky', left: expandable ? '40px' : '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
+                                <td v-if="selectable" :class="['w-12 px-4 py-3 text-center', getFixedCellClasses(row, rowIndex, false)]" role="gridcell" :style="{ position: 'sticky', left: expandable ? '40px' : '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                                     <Checkbox
                                         :checked="selection.selectedRows.value.has(selection.getRowKey(row))"
                                         size="sm"
@@ -790,7 +805,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                     v-for="(column, columnIndex) in visibleColumns"
                                     v-show="isCellVisible(rowIndex, columnIndex)"
                                     :key="column.id"
-                                    :class="getCellClasses(column)"
+                                    :class="getCellClasses(column, row, rowIndex)"
                                     :style="{
                                         position: column.fixed ? 'sticky' : undefined,
                                         left: column.fixed === 'left' ? `${getFixedColumnOffset(column, 'left')}px` : undefined,
@@ -868,8 +883,8 @@ function getCellClasses(column: DataTableColumn<T>): string {
 
         <!-- Pagination -->
         <nav v-if="paginated" :class="paginationClasses" :aria-label="t('dataTable.pagination')">
-            <div class="flex items-center gap-4">
-                <span class="text-sm font-medium">
+            <div class="flex min-w-0 flex-wrap items-center gap-4">
+                <span class="shrink-0 whitespace-nowrap text-sm font-medium">
                     {{ t('dataTable.pageInfo', { current: pagination.currentPage.value, total: pagination.totalPages.value }) }}
                 </span>
                 <SelectRoot
@@ -881,7 +896,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                         class="w-auto"
                         :aria-label="t('dataTable.perPage')"
                     >
-                        <SelectValue />
+                        <SelectValue>{{ pagination.currentPageSize.value }} {{ t('dataTable.perPage') }}</SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem
@@ -894,7 +909,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                     </SelectContent>
                 </SelectRoot>
             </div>
-            <div class="flex items-center gap-1">
+            <div class="flex flex-wrap items-center gap-1">
                 <Button
                     variant="default"
                     size="icon"

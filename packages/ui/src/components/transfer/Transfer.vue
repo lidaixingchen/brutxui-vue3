@@ -11,6 +11,7 @@ import { useTransferPanelSelection } from '@/composables/useTransferPanelSelecti
 import type { TransferDataItem } from './types'
 
 interface TransferProps {
+    class?: string
     modelValue?: (string | number)[]
     data?: TransferDataItem[]
     filterable?: boolean
@@ -24,6 +25,7 @@ interface TransferProps {
 }
 
 const props = withDefaults(defineProps<TransferProps>(), {
+    class: undefined,
     modelValue: () => [],
     data: () => [],
     filterable: false,
@@ -40,6 +42,11 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useLocale()
+
+const rootClasses = computed(() => cn(
+    'flex w-full min-w-0 max-w-full flex-col items-stretch justify-center gap-4 text-brutal-fg md:flex-row',
+    props.class,
+))
 
 // 语言环境回退机制
 const resolvedTitles = computed(() => {
@@ -171,12 +178,12 @@ function getItemClass(disabled: boolean | undefined, isChecked: boolean) {
 </script>
 
 <template>
-    <div :class="cn('flex items-stretch justify-center gap-4 text-brutal-fg', $attrs.class as string)">
+    <div :class="rootClasses">
         <!-- 左侧源列表面板 -->
         <Card
             variant="flat"
             padding="none"
-            class="flex flex-col border-3 border-brutal bg-brutal-bg shadow-brutal overflow-hidden rounded-brutal"
+            class="flex flex-col max-w-full border-3 border-brutal bg-brutal-bg shadow-brutal overflow-hidden rounded-brutal"
             :style="panelStyle"
         >
             <!-- 头部 -->
@@ -187,7 +194,7 @@ function getItemClass(disabled: boolean | undefined, isChecked: boolean) {
                         size="sm"
                         @update:checked="handleLeftAllCheckChange"
                     />
-                    <span class="font-bold text-sm select-none">{{ resolvedTitles[0] }}</span>
+                    <span class="min-w-0 break-words font-bold text-sm select-none">{{ resolvedTitles[0] }}</span>
                 </div>
                 <span class="text-xs font-semibold text-brutal-muted-foreground">
                     {{ leftChecked.length }}/{{ filteredSourceData.length }}
@@ -221,7 +228,7 @@ function getItemClass(disabled: boolean | undefined, isChecked: boolean) {
                         @click.stop
                         @update:checked="() => toggleLeftChecked(item)"
                     />
-                    <span class="text-sm font-medium">{{ item.label }}</span>
+                    <span class="min-w-0 break-words text-sm font-medium">{{ item.label }}</span>
                 </div>
                 <div
                     v-if="filteredSourceData.length === 0"
@@ -233,7 +240,7 @@ function getItemClass(disabled: boolean | undefined, isChecked: boolean) {
         </Card>
 
         <!-- 中间操作按钮 -->
-        <div class="flex flex-col justify-center items-center gap-3 px-2">
+        <div class="flex flex-row md:flex-col justify-center items-center gap-3 px-2 py-1 md:py-0">
             <Button
                 variant="default"
                 size="sm"
@@ -262,7 +269,7 @@ function getItemClass(disabled: boolean | undefined, isChecked: boolean) {
         <Card
             variant="flat"
             padding="none"
-            class="flex flex-col border-3 border-brutal bg-brutal-bg shadow-brutal overflow-hidden rounded-brutal"
+            class="flex flex-col max-w-full border-3 border-brutal bg-brutal-bg shadow-brutal overflow-hidden rounded-brutal"
             :style="panelStyle"
         >
             <!-- 头部 -->
@@ -273,7 +280,7 @@ function getItemClass(disabled: boolean | undefined, isChecked: boolean) {
                         size="sm"
                         @update:checked="handleRightAllCheckChange"
                     />
-                    <span class="font-bold text-sm select-none">{{ resolvedTitles[1] }}</span>
+                    <span class="min-w-0 break-words font-bold text-sm select-none">{{ resolvedTitles[1] }}</span>
                 </div>
                 <span class="text-xs font-semibold text-brutal-muted-foreground">
                     {{ rightChecked.length }}/{{ filteredTargetData.length }}
@@ -307,7 +314,7 @@ function getItemClass(disabled: boolean | undefined, isChecked: boolean) {
                         @click.stop
                         @update:checked="() => toggleRightChecked(item)"
                     />
-                    <span class="text-sm font-medium">{{ item.label }}</span>
+                    <span class="min-w-0 break-words text-sm font-medium">{{ item.label }}</span>
                 </div>
                 <div
                     v-if="filteredTargetData.length === 0"

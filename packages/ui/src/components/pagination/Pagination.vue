@@ -374,7 +374,7 @@ function onJumpToPage() {
             v-if="layoutComponents.includes('jumper')"
             class="flex items-center gap-2"
         >
-            <span class="text-sm text-brutal-fg">{{ t('pagination.goto') }}</span>
+            <span class="whitespace-nowrap text-sm text-brutal-fg">{{ t('pagination.goto') }}</span>
             <Input
                 v-model="jumpValue"
                 size="sm"
@@ -385,7 +385,7 @@ function onJumpToPage() {
             />
             <span
                 v-if="t('pagination.pageClassifier')"
-                class="text-sm text-brutal-fg"
+                class="whitespace-nowrap text-sm text-brutal-fg"
             >
                 {{ t('pagination.pageClassifier') }}
             </span>

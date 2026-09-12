@@ -2,7 +2,7 @@ import { cva } from 'class-variance-authority'
 import { brutalHoverLiftSmNoX, brutalPress } from '@/lib/brutal-interaction-variants'
 import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
-export const paginationVariants = cva('flex items-center justify-center', {
+export const paginationVariants = cva('flex max-w-full flex-wrap items-center justify-center', {
     variants: {
         variant: {
             default: '',

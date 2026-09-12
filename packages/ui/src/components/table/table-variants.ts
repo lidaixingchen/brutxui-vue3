@@ -6,6 +6,18 @@ const headerColorVariants = {
     secondary: 'bg-brutal-secondary text-brutal-secondary-foreground',
 } as const
 
+const tableHeaderColorVariants = {
+    default: 'bg-brutal-accent text-brutal-accent-foreground [&_tr]:text-inherit [&_tr:hover]:bg-inherit [&_tr:hover]:text-inherit [&_tr[data-state=selected]]:bg-brutal-accent [&_tr[data-state=selected]]:text-brutal-accent-foreground [&_tr[data-state=selected]:hover]:bg-brutal-accent [&_tr[data-state=selected]:hover]:text-brutal-accent-foreground',
+    primary: 'bg-brutal-primary text-brutal-primary-foreground [&_tr]:text-inherit [&_tr:hover]:bg-inherit [&_tr:hover]:text-inherit [&_tr[data-state=selected]]:bg-brutal-accent [&_tr[data-state=selected]]:text-brutal-accent-foreground [&_tr[data-state=selected]:hover]:bg-brutal-accent [&_tr[data-state=selected]:hover]:text-brutal-accent-foreground',
+    secondary: 'bg-brutal-secondary text-brutal-secondary-foreground [&_tr]:text-inherit [&_tr:hover]:bg-inherit [&_tr:hover]:text-inherit [&_tr[data-state=selected]]:bg-brutal-accent [&_tr[data-state=selected]]:text-brutal-accent-foreground [&_tr[data-state=selected]:hover]:bg-brutal-accent [&_tr[data-state=selected]:hover]:text-brutal-accent-foreground',
+} as const
+
+const footerColorVariants = {
+    default: 'bg-brutal-secondary text-brutal-secondary-foreground [&_tr]:text-inherit [&_tr:hover]:bg-inherit [&_tr:hover]:text-inherit [&_tr[data-state=selected]]:bg-brutal-accent [&_tr[data-state=selected]]:text-brutal-accent-foreground [&_tr[data-state=selected]:hover]:bg-brutal-accent [&_tr[data-state=selected]:hover]:text-brutal-accent-foreground',
+    primary: 'bg-brutal-primary text-brutal-primary-foreground [&_tr]:text-inherit [&_tr:hover]:bg-inherit [&_tr:hover]:text-inherit [&_tr[data-state=selected]]:bg-brutal-accent [&_tr[data-state=selected]]:text-brutal-accent-foreground [&_tr[data-state=selected]:hover]:bg-brutal-accent [&_tr[data-state=selected]:hover]:text-brutal-accent-foreground',
+    accent: 'bg-brutal-accent text-brutal-accent-foreground [&_tr]:text-inherit [&_tr:hover]:bg-inherit [&_tr:hover]:text-inherit [&_tr[data-state=selected]]:bg-brutal-accent [&_tr[data-state=selected]]:text-brutal-accent-foreground [&_tr[data-state=selected]:hover]:bg-brutal-accent [&_tr[data-state=selected]:hover]:text-brutal-accent-foreground',
+} as const
+
 export const tableVariants = cva(
     [
         'w-full caption-bottom text-sm',
@@ -19,7 +31,7 @@ export const tableHeaderVariants = cva(
     ],
     {
         variants: {
-            variant: headerColorVariants,
+            variant: tableHeaderColorVariants,
             /* 表头底纹：工程制图剖面线 / 报刊点阵（叠加在配色之上） */
             texture: {
                 none: '',
@@ -44,9 +56,6 @@ export const tableHeadVariants = cva(
         variants: {
             variant: headerColorVariants,
         },
-        defaultVariants: {
-            variant: 'default',
-        },
     }
 )
 
@@ -64,9 +73,9 @@ export const tableFooterVariants = cva(
     {
         variants: {
             variant: {
-                default: 'bg-brutal-secondary text-brutal-secondary-foreground',
-                primary: 'bg-brutal-primary text-brutal-primary-foreground',
-                accent: 'bg-brutal-accent text-brutal-accent-foreground',
+                default: footerColorVariants.default,
+                primary: footerColorVariants.primary,
+                accent: footerColorVariants.accent,
             },
         },
         defaultVariants: {
@@ -80,7 +89,7 @@ export const tableRowVariants = cva(
         'border-b-3 border-brutal transition-colors text-brutal-fg',
         'hover:bg-brutal-muted',
         /* 选中行：荧光色块 + 粗黑框选（ring-inset 黑环），accent 黄底黑字对比度满足 AA */
-        'data-[state=selected]:bg-brutal-accent data-[state=selected]:text-brutal-fg',
+        'data-[state=selected]:bg-brutal-accent data-[state=selected]:text-brutal-accent-foreground',
         'data-[state=selected]:ring-2 data-[state=selected]:ring-brutal-ring data-[state=selected]:ring-inset',
     ]
 )

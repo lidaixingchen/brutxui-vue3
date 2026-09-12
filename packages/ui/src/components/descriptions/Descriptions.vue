@@ -58,7 +58,7 @@ const gridStyle = computed(() => {
     const safeColumn = Number.isFinite(n) && n >= 1 ? Math.floor(n) : 1
     const cols = props.border && props.direction === 'horizontal' ? safeColumn * 2 : safeColumn
     return {
-        gridTemplateColumns: `repeat(${cols}, 1fr)`,
+        gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
     }
 })
 </script>
@@ -90,7 +90,7 @@ const gridStyle = computed(() => {
                 <slot name="stamp" />
             </div>
             <div
-                class="grid"
+                class="grid min-w-0"
                 :style="gridStyle"
             >
                 <slot />
@@ -101,7 +101,7 @@ const gridStyle = computed(() => {
         <div
             v-else
             :class="cn(
-                'grid gap-2',
+                'grid min-w-0 gap-2',
                 sizeClasses,
             )"
             :style="gridStyle"

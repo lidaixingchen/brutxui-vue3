@@ -56,7 +56,7 @@ const labelStyle = computed(() => {
             >
                 <div
                     :class="cn(
-                        'flex items-center px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-r-3 border-brutal w-1/2 min-w-0 truncate',
+                        'flex min-w-0 items-center break-words px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-r-3 border-brutal w-1/2',
                         'bg-pattern-dots',
                     )"
                     :style="labelStyle"
@@ -65,7 +65,7 @@ const labelStyle = computed(() => {
                         {{ label }}
                     </slot>
                 </div>
-                <div :class="cn('flex-1 min-w-0 flex items-center px-3 py-2 text-brutal-fg')">
+                <div :class="cn('flex-1 min-w-0 break-words flex items-center px-3 py-2 text-brutal-fg')">
                     <slot />
                 </div>
             </div>
@@ -77,7 +77,7 @@ const labelStyle = computed(() => {
             >
                 <div
                     :class="cn(
-                        'flex items-center px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-b-3 border-brutal w-1/2 min-w-0 truncate',
+                        'flex min-w-0 items-center break-words px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-b-3 border-brutal w-1/2',
                         'bg-pattern-dots',
                     )"
                     :style="labelStyle"
@@ -88,7 +88,7 @@ const labelStyle = computed(() => {
                 </div>
                 <div
                     :class="cn(
-                        'flex-1 min-w-0 flex items-center px-3 py-2 text-brutal-fg border-b-3 border-brutal',
+                        'flex-1 min-w-0 break-words flex items-center px-3 py-2 text-brutal-fg border-b-3 border-brutal',
                     )"
                 >
                     <slot />
@@ -106,14 +106,14 @@ const labelStyle = computed(() => {
                 :style="spanStyle"
             >
                 <div
-                    class="px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-b-3 border-brutal bg-pattern-dots"
+                    class="min-w-0 break-words px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-b-3 border-brutal bg-pattern-dots"
                 >
                     <slot name="label">
                         {{ label }}
                     </slot>
                 </div>
                 <div
-                    class="px-3 py-2 text-brutal-fg flex-1"
+                    class="min-w-0 break-words px-3 py-2 text-brutal-fg flex-1"
                 >
                     <slot />
                 </div>
@@ -127,12 +127,12 @@ const labelStyle = computed(() => {
         :class="cn('flex flex-col gap-1', props.class)"
         :style="spanStyle"
     >
-        <div class="font-medium text-brutal-placeholder text-sm">
+        <div class="min-w-0 break-words font-medium text-brutal-placeholder text-sm">
             <slot name="label">
                 {{ label }}
             </slot>
         </div>
-        <div class="text-brutal-fg">
+        <div class="min-w-0 break-words text-brutal-fg">
             <slot />
         </div>
     </div>

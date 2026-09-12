@@ -108,7 +108,7 @@ const sidebarClasses = computed(() =>
 )
 
 const headerClasses = computed(() =>
-    cn(dashboardHeaderVariants(), 'relative z-20')
+    cn(dashboardHeaderVariants(), 'relative z-header')
 )
 
 const mainClasses = computed(() => dashboardMainVariants())
@@ -127,19 +127,21 @@ const iconClasses = computed(() =>
             :inert="isInert"
             :aria-label="t('dashboardShell.sidebarNavigation')"
         >
-            <div class="font-black text-lg tracking-tight mb-8">
-                {{ t('dashboardShell.brand') }}
-            </div>
-            <nav class="flex-1 space-y-1">
-                <slot name="sidebar" />
-            </nav>
-            <div class="border-t-3 border-brutal pt-4 mt-4">
-                <div v-if="props.userEmail" class="text-sm font-bold truncate">
-                    {{ props.userEmail }}
+            <div class="min-h-0 flex-1 overflow-y-auto">
+                <div class="font-black text-lg tracking-tight mb-8">
+                    {{ t('dashboardShell.brand') }}
                 </div>
-                <Button variant="link" class="text-sm font-bold text-brutal-destructive mt-1 hover:no-underline" @click="emit('sign-out')">
-                    {{ t('dashboardShell.signOut') }}
-                </Button>
+                <nav class="space-y-1">
+                    <slot name="sidebar" />
+                </nav>
+                <div class="border-t-3 border-brutal pt-4 mt-4">
+                    <div v-if="props.userEmail" class="text-sm font-bold truncate">
+                        {{ props.userEmail }}
+                    </div>
+                    <Button variant="link" class="text-sm font-bold text-brutal-destructive mt-1 hover:no-underline" @click="emit('sign-out')">
+                        {{ t('dashboardShell.signOut') }}
+                    </Button>
+                </div>
             </div>
         </aside>
 
@@ -165,7 +167,7 @@ const iconClasses = computed(() =>
 
             <div
                 v-if="overlayVisible"
-                class="absolute inset-0 z-10 bg-brutal-overlay"
+                class="absolute inset-0 z-popover bg-brutal-overlay"
                 aria-hidden="true"
                 @click="closeSidebar"
             />

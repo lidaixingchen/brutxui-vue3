@@ -12,7 +12,7 @@ interface TableHeadProps {
 }
 
 const props = withDefaults(defineProps<TableHeadProps>(), {
-    variant: 'default',
+    variant: undefined,
     class: undefined,
 })
 

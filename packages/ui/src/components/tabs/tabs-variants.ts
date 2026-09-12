@@ -15,8 +15,8 @@ export const tabsListVariants = cva(
                 lg: '',
             },
             orientation: {
-                horizontal: 'items-center',
-                vertical: 'flex-col items-stretch w-fit',
+                horizontal: 'items-center max-w-full overflow-x-auto',
+                vertical: 'flex-col items-stretch w-fit max-w-full overflow-x-auto',
             },
         },
         compoundVariants: [

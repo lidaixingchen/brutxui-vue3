@@ -81,13 +81,13 @@ const wrapperClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class
             class="w-full"
             @update:model-value="handleUpdateModelValue"
         >
-            <TabsList class="w-full flex">
+            <TabsList :class="orientation === 'vertical' ? 'w-fit' : 'w-full'">
                 <TabsTrigger
                     v-for="tab in tabs"
                     :key="tab.value"
                     :value="tab.value"
                     :disabled="tab.disabled"
-                    class="flex-1"
+                    :class="orientation === 'horizontal' ? 'flex-1 shrink-0' : 'w-full'"
                 >
                     {{ tab.label }}
                 </TabsTrigger>

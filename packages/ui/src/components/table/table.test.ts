@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { h } from 'vue'
 import { tableHeaderVariants, tableRowVariants } from './table-variants'
 import { dataTableEmptyVariants } from '../data-table/data-table-variants'
 import Table from './Table.vue'
@@ -92,6 +93,18 @@ describe('TableHeader', () => {
         expect(wrapper.classes()).toContain('my-thead')
         expect(wrapper.classes()).toContain('bg-red-500')
         expect(wrapper.classes()).not.toContain('bg-brutal-accent')
+    })
+
+    it('keeps the header background on thead while allowing explicit cell variants', () => {
+        const wrapper = mount(TableHeader, {
+            props: { variant: 'primary' },
+            slots: {
+                default: () => h('tr', {}, [h(TableHead, { variant: 'secondary' }, () => 'Col')]),
+            },
+        })
+
+        expect(wrapper.find('thead').classes()).toContain('bg-brutal-primary')
+        expect(wrapper.find('th').classes()).toContain('bg-brutal-secondary')
     })
 })
 
@@ -224,8 +237,8 @@ describe('TableHead', () => {
         expect(wrapper.classes()).toContain('border-r-3')
         expect(wrapper.classes()).toContain('border-brutal')
         expect(wrapper.classes()).toContain('last:border-r-0')
-        expect(wrapper.classes()).toContain('bg-brutal-accent')
-        expect(wrapper.classes()).toContain('text-brutal-accent-foreground')
+        expect(wrapper.classes()).not.toContain('bg-brutal-accent')
+        expect(wrapper.classes()).not.toContain('text-brutal-accent-foreground')
     })
 
     it('applies primary variant classes', () => {

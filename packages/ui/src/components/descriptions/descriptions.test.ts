@@ -37,9 +37,9 @@ describe('Descriptions', () => {
             },
         })
 
-        // Grid template columns should be repeat(6, 1fr)
+        // Grid template columns should be repeat(6, minmax(0, 1fr))
         const grid = wrapper.find('.grid')
-        expect(grid.attributes('style')).toContain('grid-template-columns: repeat(6, 1fr)')
+        expect(grid.attributes('style')).toContain('grid-template-columns: repeat(6, minmax(0, 1fr))')
 
         // span<=1 条目是单个容器（占两轨），内部 label+value 垂直对齐
         const container = wrapper.find('.grid > div')
@@ -63,9 +63,9 @@ describe('Descriptions', () => {
                 default: h(DescriptionsItem, { label: 'Name' }, () => 'John'),
             },
         })
-        expect(wrapper.find('.grid').attributes('style')).toContain('grid-template-columns: repeat(2, 1fr)')
+        expect(wrapper.find('.grid').attributes('style')).toContain('grid-template-columns: repeat(2, minmax(0, 1fr))')
         await wrapper.setProps({ column: 2.5 })
-        expect(wrapper.find('.grid').attributes('style')).toContain('grid-template-columns: repeat(4, 1fr)')
+        expect(wrapper.find('.grid').attributes('style')).toContain('grid-template-columns: repeat(4, minmax(0, 1fr))')
     })
 
     it('does not render title container when title slot is empty', () => {
@@ -181,8 +181,8 @@ describe('Descriptions', () => {
         })
 
         const grid = wrapper.find('.grid')
-        // Under vertical border mode, grid template columns should be repeat(4, 1fr)
-        expect(grid.attributes('style')).toContain('grid-template-columns: repeat(4, 1fr)')
+        // Under vertical border mode, grid template columns should be repeat(4, minmax(0, 1fr))
+        expect(grid.attributes('style')).toContain('grid-template-columns: repeat(4, minmax(0, 1fr))')
         expect(grid.classes()).not.toContain('grid-cols-1')
     })
 
@@ -200,7 +200,7 @@ describe('Descriptions', () => {
         })
 
         const grid = wrapper.find('.grid')
-        expect(grid.attributes('style')).toContain('grid-template-columns: repeat(3, 1fr)')
+        expect(grid.attributes('style')).toContain('grid-template-columns: repeat(3, minmax(0, 1fr))')
     })
 })
 
