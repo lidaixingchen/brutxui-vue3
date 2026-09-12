@@ -1,12 +1,11 @@
 ---
-title: Contributing
-description: How to participate in BrutxUI development and contribute.
-translated: true
+title: Contributing Guide
+description: How to contribute code and improvements to BrutxUI
 ---
 
-# Contributing
+# Contributing Guide
 
-Thank you for your interest in BrutxUI! Here's how you can contribute.
+Thank you for your interest in BrutxUI! Here are the guidelines and workflows for contributing to the repository.
 
 ---
 
@@ -15,13 +14,13 @@ Thank you for your interest in BrutxUI! Here's how you can contribute.
 ### Prerequisites
 
 - Node.js 22.5+
-- pnpm 11+
+- pnpm 10+ (The repository strictly requires pnpm; npm or yarn is forbidden)
 - Git
 
 ### Clone & Install
 
 ```bash
-git clone https://github.com/brutxui/brutxui-vue3.git
+git clone https://github.com/lidaixingchen/brutxui-vue3.git
 cd brutxui-vue3
 pnpm install
 ```
@@ -29,132 +28,95 @@ pnpm install
 ### Common Commands
 
 ```bash
-pnpm build          # Build UI package
-pnpm lint           # Lint code
-pnpm typecheck      # Type check
-pnpm test           # Run tests
-pnpm test:watch     # Run tests in watch mode
-pnpm changeset  # Declare changes
+pnpm build          # Turbo builds all workspace packages
+pnpm lint           # Global linting and formatting fixes
+pnpm typecheck      # Global strict TypeScript type checking
+pnpm test           # Runs unit tests across all packages
+pnpm test:ssr       # Server-Side Rendering (SSR) compatibility tests
 ```
 
 ---
 
-## Commit Conventions
+## Scaffolding (Components & Pages)
 
-### Branch Naming
+Always run generators from the **workspace root**. Never assemble component boilerplates manually from scratch:
 
-- `feat/xxx` — New features
-- `fix/xxx` — Bug fixes
-- `docs/xxx` — Documentation updates
-- `refactor/xxx` — Refactoring
+```bash
+pnpm generate:component    # Interactively generates component, variants, and test skeleton
+pnpm generate:composable   # Generates Composition API composable skeleton
+pnpm generate:page         # Generates documentation showcase page
+```
 
-### Commit Message Format
+---
+
+## Architecture Redlines & Conventions
+
+Ensure your changes adhere to these core rules before committing:
+
+1. **Variant Isolation**: All component variant logic must reside in a companion `*-variants.ts` file and imported into the component. Defining variants inline in `.vue` is forbidden.
+2. **Class Merging**: Compute class names with `computed(() => cn(...))`. Direct inline invocation of `cn(...)` in `<template>` is forbidden.
+3. **Primitive Reuse**: Base components on `reka-ui` unstyled primitives and reuse existing library components (e.g. `Button` instead of native `<button>`).
+4. **Readonly Composable States**: Internal composable state may be mutable, but returned state exposed to consumers must be sealed with `readonly()` or `DeepReadonly()`.
+5. **Single Source of Design Tokens**: Modify design tokens only in `packages/shared/src/design-tokens.ts`. Editing `@theme` in `styles.css` directly or adding `tailwind.config.js` is forbidden. Run `pnpm generate:tokens` to sync all packages.
+
+---
+
+## Commit Message Conventions
+
+Commit messages must adhere to Conventional Commits:
 
 ```text
 <type>(<scope>): <short description>
 
-<detailed description (optional)>
+<optional body>
 ```
 
 **Types**:
 
-| Type       | Description                          | Example Scenarios                       |
-| ---------- | ------------------------------------ | --------------------------------------- |
-| `feat`     | New feature                          | New components, new props               |
-| `fix`      | Bug fix                              | Fix test failures, fix style issues     |
-| `refactor` | Refactoring (no behavior change)     | Code restructuring, renaming            |
-| `docs`     | Documentation changes                | Update README, component docs           |
-| `style`    | Formatting (no logic change)         | Code formatting, whitespace adjustments |
-| `test`     | Testing                              | Add tests, fix tests                    |
-| `chore`    | Build/tools/dependencies             | Upgrade dependencies, config changes    |
-| `perf`     | Performance optimization             | Reduce render overhead, optimize calculations |
-| `ci`       | CI/CD configuration                  | GitHub Actions changes                  |
-| `build`    | Build system changes                 | Vite config, bundle optimization        |
-| `revert`   | Revert commit                        | Revert a feature                        |
+| Type | Description | Example |
+| :--- | :--- | :--- |
+| `feat` | New feature | New component or major capability |
+| `fix` | Bug fix | Interaction fix or CSS calculation bug |
+| `refactor` | Refactoring | Code restructure with unchanged behavior |
+| `docs` | Documentation | Updating guides, examples, or typos |
+| `style` | Formatting | Whitespace or indentation (enforced by ESLint) |
+| `test` | Testing | Adding or fixing unit or a11y tests |
+| `chore` | Tooling & Build | Updating dependencies or guard scripts |
+| `perf` | Performance | Eliminating unnecessary re-renders |
+| `ci` | CI/CD | GitHub Actions workflow changes |
 
-**Scope**: `ui` | `cli` | `docs` | `registry` | `shared` | `deps` (optional)
-
-**Examples**:
-
-```text
-fix(ui): fix Button component hover state style
-docs: update README installation instructions
-chore(deps): upgrade Vue to 3.5.13
-```
-
-::: tip Note
-Keep descriptions concise and under 50 characters.
-:::
+**Scopes**: `ui` | `cli` | `docs` | `registry` | `shared` | `deps`
 
 ---
 
-## Adding a New Component
+## Pull Request Verification
 
-### 1. Create Component Files
-
-```text
-packages/ui/src/components/
-├── my-component/
-│   ├── MyComponent.vue
-│   ├── my-component-variants.ts
-│   └── index.ts
-```
-
-### 2. Register in the Registry
-
-Add the component metadata in `packages/shared/src/components.ts` (`COMPONENTS`), then run `pnpm --filter brutx-ui-vue prebuild:scan` to generate the manifest (file mappings are discovered by AST automatically).
-
-### 3. Write Documentation
-
-Create documentation in `apps/docs/components/`, following the [Component Documentation Template](https://github.com/lidaixingchen/brutxui-vue3/blob/main/docs/COMPONENT_DOC_TEMPLATE.md).
-
-### 4. Write Tests
-
-Add `*.test.ts` files in the component directory.
-
-### 5. Submit a PR
-
-Ensure all checks pass:
+Run targeted local quality gates before opening a PR to ensure green status across all checks:
 
 ```bash
-pnpm release
+# 1. Static contract verification (styles, tokens, exports, dependency parity)
+pnpm check:contracts
+
+# 2. Documentation health gate (dead links, format, guidelines)
+pnpm check:docs
+
+# 3. Strict type checking
+pnpm typecheck
+
+# 4. Unit tests
+pnpm test
 ```
-
----
-
-## Pull Request Process
-
-1. Fork this repository
-2. Create your feature branch (`git checkout -b feat/amazing-feature`)
-3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-4. Push to the branch (`git push origin feat/amazing-feature`)
-5. Create a Pull Request
 
 ### PR Checklist
 
-- [ ] Code passes `pnpm lint`
-- [ ] Code passes `pnpm typecheck`
-- [ ] New features include tests
-- [ ] Documentation is updated (if applicable)
-- [ ] Commit messages follow conventions
+- [ ] Passes `pnpm check:contracts`
+- [ ] Passes `pnpm check:docs`
+- [ ] Passes `pnpm typecheck`
+- [ ] Relevant tests pass `pnpm test`
+- [ ] Commit messages follow Conventional Commits
 
 ---
 
 ## Reporting Issues
 
-Submit issues on [GitHub Issues](https://github.com/brutxui/brutxui-vue3/issues). Please include:
-
-- Clear title and description
-- Steps to reproduce
-- Expected behavior vs actual behavior
-- Environment information
-- Minimal reproduction link (recommended)
-
----
-
-## Code of Conduct
-
-- Respect every participant
-- Accept constructive criticism
-- Focus on what is best for the community
-- Show empathy towards others
+If you find a bug or have a feature proposal, feel free to open a [GitHub Issue](https://github.com/lidaixingchen/brutxui-vue3/issues). Please provide clear reproduction steps or a minimal reproduction link (StackBlitz / CodeSandbox).

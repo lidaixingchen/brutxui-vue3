@@ -1,11 +1,11 @@
 ---
 title: 贡献指南
-description: 如何参与 BrutxUI 开发与贡献。
+description: 如何参与 BrutxUI 开发与贡献代码
 ---
 
 # 贡献指南
 
-感谢你对 BrutxUI 的关注！以下是参与贡献的方式。
+感谢你对 BrutxUI 的关注！以下是参与开发与提交贡献的指引。
 
 ---
 
@@ -14,38 +14,54 @@ description: 如何参与 BrutxUI 开发与贡献。
 ### 前置要求
 
 - Node.js 22.5+
-- pnpm 11+
+- pnpm 10+（仓库包管理器限定为 pnpm，严禁使用 npm 或 yarn）
 - Git
 
 ### 克隆与安装
 
 ```bash
-git clone https://github.com/brutxui/brutxui-vue3.git
+git clone https://github.com/lidaixingchen/brutxui-vue3.git
 cd brutxui-vue3
 pnpm install
 ```
 
-### 常用命令
+### 常用高频指令
 
 ```bash
-pnpm build          # 构建 UI 包
-pnpm lint           # 代码检查
-pnpm typecheck      # 类型检查
-pnpm test           # 运行测试
-pnpm test:watch     # 监视模式运行测试
-pnpm changeset  # 声明变更
+pnpm build          # Turbo 并行构建所有包
+pnpm lint           # 全局代码检查与格式修复
+pnpm typecheck      # 全局严格类型检查
+pnpm test           # 运行所有子包单元测试
+pnpm test:ssr       # 服务端渲染（SSR）兼容性测试
 ```
 
 ---
 
-## 提交规范
+## 脚手架（生成组件与页面）
 
-### 分支命名
+在**根目录**下运行脚手架指令，严禁手动从零拼装基础骨架文件：
 
-- `feat/xxx` — 新功能
-- `fix/xxx` — 修复问题
-- `docs/xxx` — 文档更新
-- `refactor/xxx` — 重构
+```bash
+pnpm generate:component    # 交互式生成新组件骨架（包含组件、variants 变体与测试文件）
+pnpm generate:composable   # 生成 Composition API 组合式函数骨架
+pnpm generate:page         # 生成文档演示页面
+```
+
+---
+
+## 代码红线与架构约定
+
+提交代码前请确保严格遵守以下约定：
+
+1. **变体隔离**：组件的变体逻辑必须提取到同目录下的 `*-variants.ts`，组件通过 `import` 引入，严禁在 `.vue` 内联定义。
+2. **类名合并**：必须使用 `computed()` 包裹 `cn(...)` 计算类名，严禁在 `<template>` 内联直接调用 `cn()`。
+3. **原语复用**：以 `reka-ui` 无头原语为基础，优先复用库内已有组件（如 `Button` 代替 `<button>`，`Input` 代替 `<input>`），严禁用原生 HTML 元素替代。
+4. **状态只读**：Composable 内部状态可变，但向外导出的返回值边界必须用 `readonly()` 或 `DeepReadonly()` 保护。
+5. **设计令牌单一信源**：主题设计令牌只能在 `packages/shared/src/design-tokens.ts` 中修改，禁止手动编辑 `styles.css` 中的 `@theme` 生成块，亦严禁创建 `tailwind.config.js`。修改后运行 `pnpm generate:tokens` 即可同步。
+
+---
+
+## 提交规范（Conventional Commits）
 
 ### 提交信息格式
 
@@ -57,103 +73,50 @@ pnpm changeset  # 声明变更
 
 **类型（type）**：
 
-| 类型       | 说明                   | 示例场景                       |
-| ---------- | ---------------------- | ------------------------------ |
-| `feat`     | 新功能                 | 新增组件、新增 props           |
-| `fix`      | 修复 bug               | 修复测试失败、修复样式问题     |
-| `refactor` | 重构（不改变功能）     | 代码结构调整、重命名           |
-| `docs`     | 文档变更               | 更新 README、组件文档          |
-| `style`    | 格式调整（不影响逻辑） | 代码格式化、空格调整           |
-| `test`     | 测试相关               | 新增测试、修复测试             |
-| `chore`    | 构建/工具/依赖         | 升级依赖、配置变更             |
-| `perf`     | 性能优化               | 减少渲染开销、优化计算         |
-| `ci`       | CI/CD 配置             | GitHub Actions 变更            |
-| `build`    | 构建系统变更           | Vite 配置、打包优化            |
-| `revert`   | 回滚提交               | 回滚某个功能                   |
+| 类型 | 说明 | 示例场景 |
+| :--- | :--- | :--- |
+| `feat` | 新功能 | 新增组件、新增核心属性 |
+| `fix` | 缺陷修复 | 修复交互 bug、修复样式计算错误 |
+| `refactor` | 重构 | 内部结构调整，不改变外部功能 |
+| `docs` | 文档变更 | 文档补充、示例更新、修正拼写 |
+| `style` | 格式调整 | 代码格式化、缩进调整（由 ESLint 保证） |
+| `test` | 测试补充 | 新增或补全单元测试、a11y 测试 |
+| `chore` | 构建/工具 | 升级依赖、门禁脚本调整 |
+| `perf` | 性能优化 | 减少无谓渲染、优化响应式计算 |
+| `ci` | CI/CD | GitHub Actions 工作流调整 |
 
-**范围（scope）**：`ui` | `cli` | `docs` | `registry` | `shared` | `deps`（可选）
-
-**示例**：
-
-```text
-fix(ui): 修复 Button 组件 hover 状态样式
-docs: 更新 README 安装说明
-chore(deps): 升级 Vue 到 3.5.13
-```
-
-::: tip 注意
-描述请使用中文，简洁明了，不超过 50 字符。
-:::
+**范围（scope）**：`ui` | `cli` | `docs` | `registry` | `shared` | `deps`
 
 ---
 
-## 添加新组件
+## Pull Request 自检流程
 
-### 1. 创建组件文件
-
-```text
-packages/ui/src/components/
-├── my-component/
-│   ├── MyComponent.vue
-│   ├── my-component-variants.ts
-│   └── index.ts
-```
-
-### 2. 注册到注册表
-
-在 `packages/shared/src/components.ts` 的 `COMPONENTS` 中添加组件元数据，然后运行 `pnpm --filter brutx-ui-vue prebuild:scan` 生成组件清单（文件映射由 AST 自动发现）。
-
-### 3. 编写文档
-
-在 `apps/docs/components/` 中创建文档，遵循 [组件文档模板](https://github.com/lidaixingchen/brutxui-vue3/blob/main/docs/COMPONENT_DOC_TEMPLATE.md)。
-
-### 4. 编写测试
-
-在组件目录中添加 `*.test.ts` 文件。
-
-### 5. 提交 PR
-
-确保通过所有检查：
+提交 PR 前，请在本地运行针对性的质量门禁，确保所有检查绿灯通过：
 
 ```bash
-pnpm release
+# 1. 静态契约并发 6 合 1 门禁（样式/令牌/导出/依赖一致性校验）
+pnpm check:contracts
+
+# 2. 文档健康度门禁（死链/格式/规范检查）
+pnpm check:docs
+
+# 3. 严格类型检查
+pnpm typecheck
+
+# 4. 单元测试
+pnpm test
 ```
-
----
-
-## Pull Request 流程
-
-1. Fork 本仓库
-2. 创建你的特性分支（`git checkout -b feat/amazing-feature`）
-3. 提交更改（`git commit -m 'feat: add amazing feature'`）
-4. 推送到分支（`git push origin feat/amazing-feature`）
-5. 创建 Pull Request
 
 ### PR 检查清单
 
-- [ ] 代码通过 `pnpm lint`
-- [ ] 代码通过 `pnpm typecheck`
-- [ ] 新功能包含测试
-- [ ] 文档已更新（如适用）
-- [ ] 提交信息符合规范
+- [ ] 代码通过 `pnpm check:contracts`
+- [ ] 文档通过 `pnpm check:docs`
+- [ ] 全局类型检查通过 `pnpm typecheck`
+- [ ] 相关测试通过 `pnpm test`
+- [ ] 提交信息遵循 Conventional Commits 规范
 
 ---
 
 ## 报告问题
 
-在 [GitHub Issues](https://github.com/brutxui/brutxui-vue3/issues) 提交问题，请包含：
-
-- 清晰的标题和描述
-- 复现步骤
-- 期望行为与实际行为
-- 环境信息
-- 最小复现链接（推荐）
-
----
-
-## 行为准则
-
-- 尊重每一位参与者
-- 接受建设性批评
-- 专注于对社区最有利的事情
-- 对他人表示同理心
+若发现 Bug 或有新特性建议，欢迎在 [GitHub Issues](https://github.com/lidaixingchen/brutxui-vue3/issues) 提交反馈，请附带清晰的复现步骤或最小可重现环境（StackBlitz / CodeSandbox）。
