@@ -24,6 +24,10 @@ interface WatermarkProps {
     seal?: boolean
 }
 
+const DEFAULT_WATERMARK_COLOR = '#000000'
+const DEFAULT_WATERMARK_OPACITY = 0.15
+const THEME_FOREGROUND_TOKEN = '--brutal-fg'
+
 const props = withDefaults(defineProps<WatermarkProps>(), {
     width: 120,
     height: 64,
@@ -33,7 +37,6 @@ const props = withDefaults(defineProps<WatermarkProps>(), {
     content: '',
     seal: false,
     font: () => ({
-        color: 'rgba(0, 0, 0, 0.15)',
         fontSize: 14,
         fontWeight: 'normal',
         fontStyle: 'normal',
@@ -49,6 +52,7 @@ const watermarkUrl = ref<string>('')
 const watermarkKey = ref<number>(0)
 
 let observer: MutationObserver | null = null
+let themeObserver: MutationObserver | null = null
 let isRecreating = false
 let renderVersion = 0
 let isUnmounted = false
@@ -138,13 +142,46 @@ function getSealGeometry(baseSize: number): { outerRing: number; innerRing: numb
     }
 }
 
+function readTokenValue(element: Element | undefined, token: string): string {
+    if (!element) return ''
+    const style = getComputedStyle(element)
+    return style?.getPropertyValue?.(token)?.trim() ?? ''
+}
+
+function getDocumentTokenValue(token: string): string {
+    const root = getDocument()?.documentElement
+    const scopedValue = readTokenValue(containerRef.value ?? undefined, token)
+    if (scopedValue) return scopedValue
+    return readTokenValue(root, token)
+}
+
+function resolveColorValue(color: string): string {
+    const trimmedColor = color.trim()
+    const variableMatch = /^var\(\s*(--[\w-]+)(?:\s*,\s*([^)]*))?\s*\)$/.exec(trimmedColor)
+    if (!variableMatch) return trimmedColor
+    return getDocumentTokenValue(variableMatch[1]) || variableMatch[2]?.trim() || DEFAULT_WATERMARK_COLOR
+}
+
+function getWatermarkPaint(): { color: string; opacity?: number } {
+    const explicitColor = props.font.color?.trim()
+    if (explicitColor) {
+        return { color: resolveColorValue(explicitColor) }
+    }
+    return {
+        color: getDocumentTokenValue(THEME_FOREGROUND_TOKEN) || DEFAULT_WATERMARK_COLOR,
+        opacity: DEFAULT_WATERMARK_OPACITY,
+    }
+}
+
 function drawSvgFallback() {
     const [markWidth, markHeight] = getMarkSize()
     const [gapX, gapY] = normalizedGap.value
     const canvasWidth = markWidth + gapX
     const canvasHeight = markHeight + gapY
     const { font } = props
-    const color = font.color || 'rgba(0, 0, 0, 0.15)'
+    const { color, opacity } = getWatermarkPaint()
+    const fillOpacity = opacity === undefined ? '' : ` fill-opacity="${opacity}"`
+    const strokeOpacity = opacity === undefined ? '' : ` stroke-opacity="${opacity}"`
     const fontSize = font.fontSize || 14
     const fontSizePx = getFontSizePx(fontSize)
     const fontWeight = font.fontWeight || 'normal'
@@ -164,12 +201,12 @@ function drawSvgFallback() {
         const starPointsAttr = starPolygonPoints(cx, cy, starOuter, starInner)
             .map(([x, y]) => `${x.toFixed(2)},${y.toFixed(2)}`)
             .join(' ')
-        sealSvg = `<circle cx="${cx}" cy="${cy}" r="${outerRing.toFixed(2)}" fill="none" stroke="${escapeXml(color)}" stroke-width="2"/><circle cx="${cx}" cy="${cy}" r="${innerRing.toFixed(2)}" fill="none" stroke="${escapeXml(color)}" stroke-width="1"/><polygon points="${starPointsAttr}" fill="${escapeXml(color)}"/>`
+        sealSvg = `<circle cx="${cx}" cy="${cy}" r="${outerRing.toFixed(2)}" fill="none" stroke="${escapeXml(color)}" stroke-width="2"${strokeOpacity}/><circle cx="${cx}" cy="${cy}" r="${innerRing.toFixed(2)}" fill="none" stroke="${escapeXml(color)}" stroke-width="1"${strokeOpacity}/><polygon points="${starPointsAttr}" fill="${escapeXml(color)}"${fillOpacity}/>`
     }
 
     const textNodes = contents.map((text, index) => {
         const yOffset = (index - (contents.length - 1) / 2) * lineHeight
-        return `<text x="50%" y="50%" dy="${escapeXml(String(yOffset))}" font-size="${escapeXml(String(fontSizePx))}" font-weight="${escapeXml(String(fontWeight))}" font-style="${escapeXml(String(fontStyle))}" font-family="${escapeXml(String(fontFamily))}" fill="${escapeXml(color)}" text-anchor="middle" dominant-baseline="middle">${escapeXml(text || '')}</text>`
+        return `<text x="50%" y="50%" dy="${escapeXml(String(yOffset))}" font-size="${escapeXml(String(fontSizePx))}" font-weight="${escapeXml(String(fontWeight))}" font-style="${escapeXml(String(fontStyle))}" font-family="${escapeXml(String(fontFamily))}" fill="${escapeXml(color)}"${fillOpacity} text-anchor="middle" dominant-baseline="middle">${escapeXml(text || '')}</text>`
     }).join('')
 
     const svg = `
@@ -261,13 +298,15 @@ function drawTextWatermark(
     canvas: HTMLCanvasElement
 ) {
     const { font } = props
-    const color = font.color || 'rgba(0, 0, 0, 0.15)'
+    const { color, opacity } = getWatermarkPaint()
     const fontSize = font.fontSize || 14
     const fontSizePx = getFontSizePx(fontSize)
     const fontWeight = font.fontWeight || 'normal'
     const fontStyle = font.fontStyle || 'normal'
     const fontFamily = font.fontFamily || 'sans-serif'
 
+    const previousGlobalAlpha = ctx.globalAlpha
+    if (opacity !== undefined) ctx.globalAlpha = opacity
     ctx.fillStyle = color
     ctx.font = `${fontStyle} normal ${fontWeight} ${fontSizePx}px ${fontFamily}`
     ctx.textBaseline = 'middle'
@@ -305,6 +344,8 @@ function drawTextWatermark(
         ctx.fillText(text || '', 0, yOffset)
     })
 
+    ctx.globalAlpha = previousGlobalAlpha
+
     let dataUrl: string
     try {
         dataUrl = canvas.toDataURL()
@@ -317,7 +358,7 @@ function drawTextWatermark(
 }
 
 function recreateWatermark() {
-    if (isRecreating) return
+    if (isRecreating || isUnmounted) return
     isRecreating = true
 
     if (observer) {
@@ -392,13 +433,45 @@ function destroyObserver() {
     }
 }
 
+function initThemeObserver() {
+    if (!isClient || themeObserver) return
+    const root = getDocument()?.documentElement
+    const container = containerRef.value
+    const MutationObserverCtor = getMutationObserverCtor()
+    if (!root || !container || !MutationObserverCtor) return
+
+    themeObserver = new MutationObserverCtor((mutations) => {
+        if (mutations.some((mutation) => mutation.type === 'attributes')) {
+            recreateWatermark()
+        }
+    })
+    let target: Element | null = container
+    while (target) {
+        themeObserver.observe(target, {
+            attributes: true,
+            attributeFilter: ['class', 'style'],
+        })
+        if (target === root) break
+        target = target.parentElement
+    }
+}
+
+function destroyThemeObserver() {
+    if (themeObserver) {
+        themeObserver.disconnect()
+        themeObserver = null
+    }
+}
+
 onMounted(() => {
+    initThemeObserver()
     renderWatermark()
 })
 
 onBeforeUnmount(() => {
     isUnmounted = true
     destroyObserver()
+    destroyThemeObserver()
 })
 
 watch(

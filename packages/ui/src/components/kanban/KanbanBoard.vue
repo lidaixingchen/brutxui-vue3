@@ -347,13 +347,13 @@ defineExpose({
                 @dragover="onColumnDragOver($event, col.id)"
                 @drop="onColumnDrop($event, col.id)"
             >
-                <div class="flex items-center gap-2">
+                <div class="flex min-w-0 items-center gap-2">
                     <span
                         v-if="col.color"
                         class="inline-block w-3 h-3 rounded-brutal border-3 border-brutal"
                         :style="{ background: col.color }"
                     />
-                    <h3 class="font-black text-sm tracking-wide uppercase text-brutal-fg cursor-grab active:cursor-grabbing">
+                    <h3 class="min-w-0 break-words font-black text-sm tracking-wide uppercase text-brutal-fg cursor-grab active:cursor-grabbing">
                         {{ col.title }}
                     </h3>
                 </div>
@@ -379,17 +379,17 @@ defineExpose({
                     @click="onCardClick(card, col.id)"
                     @keydown="onCardKeydown($event, card, col.id)"
                 >
-                    <p class="font-bold text-sm text-brutal-fg">
+                    <p class="min-w-0 break-words font-bold text-sm text-brutal-fg">
 {{ card.title }}
 </p>
-                    <p v-if="card.description" class="text-xs text-brutal-fg opacity-70 mt-1">
+                    <p v-if="card.description" class="min-w-0 break-words text-xs text-brutal-fg opacity-70 mt-1">
                         {{ card.description }}
                     </p>
                     <div v-if="card.tags && card.tags.length" class="flex flex-wrap gap-1 mt-2">
                         <span
                             v-for="tag in card.tags"
                             :key="tag"
-                            class="text-xs font-bold px-1.5 py-0.5 border-3 border-brutal rounded-brutal bg-brutal-accent"
+                            class="min-w-0 break-words text-xs font-bold px-1.5 py-0.5 border-3 border-brutal rounded-brutal bg-brutal-accent"
                         >
                             {{ tag }}
                         </span>

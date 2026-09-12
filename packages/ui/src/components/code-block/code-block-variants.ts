@@ -1,5 +1,7 @@
 import { cva } from 'class-variance-authority'
 
+export const CODE_BLOCK_LINE_HEIGHT_REM = 1.4875
+
 // 根容器不设背景：头部（bg-brutal-muted）与正文（bg-brutal-bg）完整铺满容器内部，
 // 根上的背景永不可见且易与正文变体漏改导致配色不一致，交由子层各自声明。
 export const codeBlockRootVariants = cva(
@@ -11,7 +13,7 @@ export const codeBlockHeaderVariants = cva(
 )
 
 export const codeBlockLanguageVariants = cva(
-    'bg-brutal-accent text-brutal-fg border-3 border-brutal rounded-brutal px-1.5 py-0.5 text-[10px] uppercase font-black tracking-wider'
+    'bg-brutal-accent text-brutal-accent-foreground border-3 border-brutal rounded-brutal px-1.5 py-0.5 text-[10px] uppercase font-black tracking-wider'
 )
 
 export const codeBlockBodyVariants = cva(

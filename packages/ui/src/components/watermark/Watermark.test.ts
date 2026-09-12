@@ -3,6 +3,12 @@ import { nextTick } from 'vue'
 import { afterEach, describe, it, expect, vi } from 'vitest'
 import Watermark from './Watermark.vue'
 
+function readWatermarkSvg(wrapper: ReturnType<typeof mount>) {
+    const style = wrapper.find('[style*="data:image/svg+xml"]').attributes('style') ?? ''
+    const match = /data:image\/svg\+xml;base64,([A-Za-z0-9+/=]+)/.exec(style)
+    return match ? Buffer.from(match[1], 'base64').toString('utf-8') : ''
+}
+
 describe('Watermark.vue', () => {
     afterEach(() => {
         vi.unstubAllGlobals()
@@ -385,11 +391,12 @@ describe('Watermark.vue', () => {
 
     it('dynamically converts rem font size based on document root fontSize', async () => {
         const getContextSpy = vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null)
+        const originalGetComputedStyle = window.getComputedStyle
         const computedStyleSpy = vi.spyOn(window, 'getComputedStyle').mockImplementation((elt: Element) => {
             if (elt === document.documentElement) {
                 return { fontSize: '10px' } as CSSStyleDeclaration
             }
-            return window.getComputedStyle(elt)
+            return originalGetComputedStyle.call(window, elt)
         })
 
         const wrapper = mount(Watermark, {
@@ -410,6 +417,98 @@ describe('Watermark.vue', () => {
 
         wrapper.unmount()
         computedStyleSpy.mockRestore()
+        getContextSpy.mockRestore()
+    })
+
+    it('uses the current theme foreground for the default watermark color', async () => {
+        vi.stubGlobal('btoa', (s: string) => Buffer.from(s, 'binary').toString('base64'))
+        const getContextSpy = vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null)
+        const originalGetComputedStyle = window.getComputedStyle
+        const computedStyleSpy = vi.spyOn(window, 'getComputedStyle').mockImplementation((elt: Element) => {
+            if (elt === document.documentElement) {
+                return {
+                    fontSize: '16px',
+                    getPropertyValue: (property: string) => property === '--brutal-fg' ? '#ffffff' : '',
+                } as unknown as CSSStyleDeclaration
+            }
+            return originalGetComputedStyle.call(window, elt)
+        })
+
+        const wrapper = mount(Watermark, {
+            props: { content: 'THEME_MARK' },
+            attachTo: document.body,
+        })
+        await nextTick()
+        await nextTick()
+
+        const svg = readWatermarkSvg(wrapper)
+        expect(svg).toContain('fill="#ffffff"')
+        expect(svg).toContain('fill-opacity="0.15"')
+
+        wrapper.unmount()
+        computedStyleSpy.mockRestore()
+        getContextSpy.mockRestore()
+    })
+
+    it('repaints the default watermark when the document theme changes', async () => {
+        vi.stubGlobal('btoa', (s: string) => Buffer.from(s, 'binary').toString('base64'))
+        const getContextSpy = vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null)
+        const originalGetComputedStyle = window.getComputedStyle
+        const computedStyleSpy = vi.spyOn(window, 'getComputedStyle').mockImplementation((elt: Element) => {
+            if (elt === document.documentElement) {
+                return {
+                    fontSize: '16px',
+                    getPropertyValue: (property: string) => {
+                        if (property !== '--brutal-fg') return ''
+                        return document.documentElement.classList.contains('dark') ? '#ffffff' : '#000000'
+                    },
+                } as unknown as CSSStyleDeclaration
+            }
+            return originalGetComputedStyle.call(window, elt)
+        })
+
+        const wrapper = mount(Watermark, {
+            props: { content: 'THEME_REPAINT' },
+            attachTo: document.body,
+        })
+        await nextTick()
+        await nextTick()
+        const lightSvg = readWatermarkSvg(wrapper)
+
+        document.documentElement.classList.add('dark')
+        await new Promise((resolve) => setTimeout(resolve, 50))
+        await nextTick()
+
+        const darkSvg = readWatermarkSvg(wrapper)
+        expect(lightSvg).toContain('fill="#000000"')
+        expect(darkSvg).toContain('fill="#ffffff"')
+        expect(darkSvg).not.toBe(lightSvg)
+
+        document.documentElement.classList.remove('dark')
+        wrapper.unmount()
+        computedStyleSpy.mockRestore()
+        getContextSpy.mockRestore()
+    })
+
+    it('keeps an explicit font color when the theme changes', async () => {
+        vi.stubGlobal('btoa', (s: string) => Buffer.from(s, 'binary').toString('base64'))
+        const getContextSpy = vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null)
+
+        const wrapper = mount(Watermark, {
+            props: {
+                content: 'EXPLICIT_COLOR',
+                font: { color: '#ff00aa' },
+            },
+            attachTo: document.body,
+        })
+        await nextTick()
+        await nextTick()
+
+        const svg = readWatermarkSvg(wrapper)
+        expect(svg).toContain('fill="#ff00aa"')
+        expect(svg).not.toContain('fill-opacity="0.15"')
+
+        wrapper.unmount()
         getContextSpy.mockRestore()
     })
 })
@@ -441,6 +540,4 @@ describe('Watermark seal 钢印构图', () => {
         wrapper.unmount()
     })
 })
-
-
 

@@ -10,7 +10,7 @@ code[class*="language-"],
 pre[class*="language-"] {
     color: var(--brutal-code-foreground, var(--brutal-fg));
     font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
-    line-height: 1.7;
+    line-height: var(--brutal-code-line-height, inherit);
     white-space: pre;
     word-spacing: normal;
     word-break: normal;

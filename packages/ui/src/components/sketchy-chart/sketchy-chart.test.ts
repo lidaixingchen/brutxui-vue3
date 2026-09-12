@@ -123,6 +123,29 @@ describe('SketchyChart', () => {
         expect(paths[0].attributes('d')).toContain('M')
     })
 
+    it('renders a pie legend with data labels, values, percentages, and semantic colors', () => {
+        const wrapper = mount(SketchyChart, {
+            props: {
+                type: 'pie',
+                data: [{ label: 'Alpha', value: 2 }, { label: 'Beta', value: 1 }],
+            },
+        })
+
+        const legend = wrapper.find('[data-slot="pie-legend"]')
+        expect(legend.exists()).toBe(true)
+        expect(legend.text()).toContain('Alpha')
+        expect(legend.text()).toContain('2')
+        expect(legend.text()).toContain('66.7%')
+        expect(legend.text()).toContain('Beta')
+        expect(legend.text()).toContain('33.3%')
+
+        const swatches = legend.findAll('[data-slot="pie-legend-swatch"]')
+        expect(swatches).toHaveLength(2)
+        const slices = wrapper.findAll('.chart-data path')
+        expect(slices[0].attributes('fill')).toContain('var(--brutal-primary')
+        expect(slices[1].attributes('fill')).toContain('var(--brutal-secondary')
+    })
+
     it('renders empty state for line chart when all data values are 0', () => {
         const wrapper = mount(SketchyChart, {
             props: { type: 'line', data: [{ label: 'A', value: 0 }, { label: 'B', value: 0 }] }

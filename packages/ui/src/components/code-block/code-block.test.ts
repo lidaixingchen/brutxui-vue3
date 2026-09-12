@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import { h, defineComponent, nextTick } from 'vue'
 import { vi } from 'vitest'
 import CodeBlock from './CodeBlock.vue'
+import { CODE_BLOCK_LINE_HEIGHT_REM } from './code-block-variants'
 import { loadLanguage, isLanguageLoaded } from './prism-languages'
 
 // 渲染函数包装器：仅在 showSlot 时向 CodeBlock 传递 default 插槽。
@@ -259,6 +260,22 @@ describe('CodeBlock maxLines', () => {
         const style = pre.attributes('style') || ''
         expect(style).toContain('max-height')
         expect(style).toContain('overflow: hidden')
+    })
+
+    it('uses one line height for code, line numbers, and the requested visible line count', () => {
+        const wrapper = mount(CodeBlock, {
+            props: { code: 'line1\nline2\nline3\nline4', maxLines: 3, showLineNumbers: true },
+        })
+        const pre = wrapper.find('pre')
+        const lineNumbers = wrapper.find('[class*="border-r-3"]')
+        const expectedLineHeight = `${CODE_BLOCK_LINE_HEIGHT_REM}rem`
+        const expectedMaxHeight = `${3 * CODE_BLOCK_LINE_HEIGHT_REM}rem`
+
+        expect(pre.find('code').attributes('style')).toContain(`line-height: ${expectedLineHeight}`)
+        expect(pre.attributes('style')).toContain(`line-height: ${expectedLineHeight}`)
+        expect(pre.attributes('style')).toContain(`max-height: ${expectedMaxHeight}`)
+        expect(lineNumbers.attributes('style')).toContain(`line-height: ${expectedLineHeight}`)
+        expect(lineNumbers.attributes('style')).toContain(`max-height: ${expectedMaxHeight}`)
     })
 
     it('removes clip style when expanded', async () => {

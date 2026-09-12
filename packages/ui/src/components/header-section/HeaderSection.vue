@@ -74,11 +74,13 @@ const menuIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }
     <header :class="rootClasses">
         <DialogRoot v-model:open="mobileMenuOpen">
             <div class="flex h-16 items-center justify-between px-4 md:px-6 max-w-7xl mx-auto">
-                <slot name="header">
-                    <span class="text-xl font-black tracking-tight text-brutal-fg">
-                        {{ resolvedLogoText }}
-                    </span>
-                </slot>
+                <div class="min-w-0 flex-1">
+                    <slot name="header">
+                        <span class="block truncate text-xl font-black tracking-tight text-brutal-fg">
+                            {{ resolvedLogoText }}
+                        </span>
+                    </slot>
+                </div>
 
                 <slot>
                     <nav class="hidden md:flex items-center gap-1">
@@ -88,6 +90,7 @@ const menuIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }
                             type="button"
                             variant="ghost"
                             size="sm"
+                            class="max-w-full whitespace-normal break-words text-left"
                             @click="emit('nav-click', index)"
                         >
                             {{ item.label }}
@@ -101,7 +104,7 @@ const menuIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }
                             type="button"
                             variant="primary"
                             size="sm"
-                            class="hidden md:inline-flex"
+                            class="hidden max-w-full whitespace-normal break-words md:inline-flex"
                             @click="emit('cta-click')"
                         >
                             {{ resolvedCtaText }}
@@ -125,7 +128,7 @@ const menuIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }
 
             <SheetContent side="right">
                 <SheetHeader>
-                    <SheetTitle>{{ resolvedLogoText }}</SheetTitle>
+                <SheetTitle class="break-words">{{ resolvedLogoText }}</SheetTitle>
                     <SheetDescription>{{ menuLabel }}</SheetDescription>
                 </SheetHeader>
                 <nav class="flex flex-col gap-2 py-4">
@@ -134,7 +137,7 @@ const menuIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }
                         :key="index"
                         type="button"
                         variant="ghost"
-                        class="justify-start"
+                        class="min-w-0 justify-start whitespace-normal break-words text-left"
                         @click="handleNavClick(index)"
                     >
                         {{ item.label }}
@@ -145,7 +148,7 @@ const menuIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }
                     <Button
                         type="button"
                         variant="primary"
-                        class="w-full"
+                        class="w-full whitespace-normal break-words"
                         @click="handleCtaClick"
                     >
                         {{ resolvedCtaText }}

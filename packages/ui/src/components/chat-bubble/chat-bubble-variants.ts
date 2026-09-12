@@ -5,7 +5,7 @@ import { cva } from 'class-variance-authority';
 // 交给 tailwind-merge 的类顺序决定（顺序变化即渲染变化）。
 export const chatBubbleVariants = cva(
     [
-        'relative max-w-[75%]',
+        'relative min-w-0 max-w-[75%] break-words whitespace-normal',
         'border-3 border-brutal rounded-brutal',
         'font-medium leading-relaxed',
     ],

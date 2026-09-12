@@ -138,6 +138,8 @@ const PIE_COLORS = [
     'var(--brutal-success, #7FB069)',
     'var(--brutal-destructive, #EF476F)',
 ]
+const PERCENTAGE_MULTIPLIER = 100
+const PIE_PERCENTAGE_DECIMAL_PLACES = 1
 
 const pieSlices = computed(() => {
     if (processedData.value.length === 0) return []
@@ -182,6 +184,8 @@ const pieSlices = computed(() => {
             path,
             color: PIE_COLORS[i % PIE_COLORS.length],
             label: d.label,
+            value: positiveVal,
+            percentage: ((positiveVal / total) * PERCENTAGE_MULTIPLIER).toFixed(PIE_PERCENTAGE_DECIMAL_PLACES),
             midAngle: (startAngle + endAngle) / 2,
             cx,
             cy,
@@ -416,5 +420,25 @@ const containerClasses = computed(() =>
                 </text>
             </g>
         </svg>
+        <ul
+            v-if="type === 'pie' && pieSlices.length > 0"
+            data-slot="pie-legend"
+            class="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2"
+        >
+            <li
+                v-for="(slice, i) in pieSlices"
+                :key="`pie-legend-${i}`"
+                class="flex min-w-0 items-center gap-2 text-sm font-bold"
+            >
+                <span
+                    data-slot="pie-legend-swatch"
+                    aria-hidden="true"
+                    class="h-3 w-3 flex-none rounded-brutal border-2 border-brutal"
+                    :style="{ backgroundColor: slice.color }"
+                />
+                <span class="min-w-0 flex-1 break-words">{{ slice.label }}</span>
+                <span class="shrink-0 font-mono">{{ slice.value }} ({{ slice.percentage }}%)</span>
+            </li>
+        </ul>
     </div>
 </template>

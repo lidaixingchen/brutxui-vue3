@@ -4,7 +4,7 @@ import CopyToClipboard from '../copy-to-clipboard/CopyToClipboard.vue'
 import Button from '../button/Button.vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
-import { codeBlockRootVariants, codeBlockHeaderVariants, codeBlockLanguageVariants, codeBlockBodyVariants, codeBlockLineNumbersVariants, codeBlockCopyButtonVariants } from './code-block-variants'
+import { CODE_BLOCK_LINE_HEIGHT_REM, codeBlockRootVariants, codeBlockHeaderVariants, codeBlockLanguageVariants, codeBlockBodyVariants, codeBlockLineNumbersVariants, codeBlockCopyButtonVariants } from './code-block-variants'
 import { Prism, resolveLanguage, loadLanguage, isLanguageLoaded, getGrammar } from './prism-languages'
 
 const slots = useSlots()
@@ -49,8 +49,6 @@ const lines = computed(() => {
     return arr
 })
 
-const LINE_HEIGHT_REM = 1.25
-
 const expanded = ref(false)
 
 const showToggleButton = computed(() =>
@@ -62,10 +60,22 @@ const needsClipping = computed(() =>
     showToggleButton.value && !expanded.value
 )
 
-const clipStyle = computed<Record<string, string> | undefined>(() => {
-    if (!needsClipping.value || props.maxLines === undefined) return undefined
+const codeLineHeight = computed(() => `${CODE_BLOCK_LINE_HEIGHT_REM}rem`)
+
+const bodyStyle = computed<Record<string, string>>(() => ({
+    '--brutal-code-line-height': codeLineHeight.value,
+}))
+
+const lineHeightStyle = computed<Record<string, string>>(() => ({
+    lineHeight: codeLineHeight.value,
+}))
+
+const clipStyle = computed<Record<string, string>>(() => {
+    const style = { ...lineHeightStyle.value }
+    if (!needsClipping.value || props.maxLines === undefined) return style
     return {
-        maxHeight: `${props.maxLines * LINE_HEIGHT_REM}rem`,
+        ...style,
+        maxHeight: `${props.maxLines * CODE_BLOCK_LINE_HEIGHT_REM}rem`,
         overflow: 'hidden',
     }
 })
@@ -152,7 +162,7 @@ function escapeHtml(str: string): string {
             </CopyToClipboard>
         </div>
 
-        <div :class="codeBlockBodyVariants()">
+        <div :class="codeBlockBodyVariants()" :style="bodyStyle">
             <div
                 v-if="showLineNumbers"
                 :class="codeBlockLineNumbersVariants()"
@@ -163,10 +173,10 @@ function escapeHtml(str: string): string {
 
             <!-- 使用默认插槽时，复制按钮文本与行号仍基于 code prop（契约见 docs/components/code-block.md）：
                  若插槽内容与 code 不一致，行号与复制内容会与展示不符 -->
-            <pre v-if="slots.default" class="flex-1 min-w-0 m-0" :style="clipStyle"><code class="block whitespace-pre font-bold"><slot /></code></pre>
+            <pre v-if="slots.default" class="flex-1 min-w-0 m-0" :style="clipStyle"><code class="block whitespace-pre font-bold" :style="lineHeightStyle"><slot /></code></pre>
             <!-- 安全假设依赖已修复 XSS 漏洞的 Prism >= 1.27（lockfile 锁定 1.30.0，CVE-2021-32786/23647 均已修复），升级或替换库前需复核 -->
             <!-- eslint-disable-next-line vue/no-v-html -- prismjs highlight() 已对用户输入进行 HTML 转义 -->
-            <pre v-else class="flex-1 min-w-0 m-0" :style="clipStyle"><code class="block whitespace-pre font-bold" :class="`language-${resolvedPrismLang}`" v-html="highlightedHtml" /></pre>
+            <pre v-else class="flex-1 min-w-0 m-0" :style="clipStyle"><code class="block whitespace-pre font-bold" :class="`language-${resolvedPrismLang}`" :style="lineHeightStyle" v-html="highlightedHtml" /></pre>
         </div>
 
         <div v-if="showToggleButton" class="flex justify-center border-t-3 border-brutal bg-brutal-muted py-2">

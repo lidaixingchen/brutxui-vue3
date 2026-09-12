@@ -144,6 +144,12 @@ const resolvedBillingMode = computed<BillingMode>(() => {
 
 const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
 
+const planGridClasses = computed(() => cn(
+    'grid grid-cols-1 gap-6',
+    resolvedPlans.value.length === 2 && 'md:grid-cols-2',
+    resolvedPlans.value.length >= 3 && 'md:grid-cols-3',
+))
+
 const hasBillingPlans = computed(() =>
     resolvedPlans.value.some(plan => plan.priceMonthly !== undefined || plan.priceAnnually !== undefined)
 )
@@ -176,7 +182,7 @@ function getPlanCardClasses(plan: BrutalistPricingPlan) {
     return cn(
         plan.popular && 'relative',
         showBillingToggle.value
-            ? plan.popular && 'scale-105 shadow-brutal-stacked'
+            ? plan.popular && 'md:scale-105 shadow-brutal-stacked'
             : plan.popular && 'bg-brutal-accent/20',
     )
 }
@@ -212,7 +218,10 @@ function isFeatureIncluded(feature: string | PricingFeature) {
 }
 
 function getFeatureClasses(feature: string | PricingFeature) {
-    return cn('text-sm font-medium', !isFeatureIncluded(feature) && 'line-through text-brutal-muted-foreground')
+    return cn(
+        'min-w-0 break-words text-sm font-medium',
+        !isFeatureIncluded(feature) && 'line-through text-brutal-muted-foreground',
+    )
 }
 
 function getButtonText(plan: BrutalistPricingPlan) {
@@ -268,7 +277,7 @@ function getButtonVariant(plan: BrutalistPricingPlan): ButtonVariant {
         </div>
 
         <template v-if="resolvedPlans.length > 0">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div :class="planGridClasses">
                 <div v-for="(plan, index) in resolvedPlans" :key="plan.name ?? index" class="relative">
                     <div v-if="plan.popular" :class="popularBadgeWrapClasses">
                         <Badge variant="primary" class="animate-pulse">
@@ -293,7 +302,7 @@ function getButtonVariant(plan: BrutalistPricingPlan): ButtonVariant {
                                 <span class="text-sm font-bold text-brutal-muted-foreground">{{ getPriceLabel(plan) }}</span>
                             </div>
                             <ul class="space-y-3">
-                                <li v-for="(feature, fIndex) in plan.features" :key="fIndex" class="flex items-center gap-2">
+                                <li v-for="(feature, fIndex) in plan.features" :key="fIndex" class="flex min-w-0 items-start gap-2">
                                     <!-- 等宽 ASCII 复选框语言：[✓] 含 / [ ] 未含 -->
                                     <span
                                         aria-hidden="true"

@@ -56,7 +56,7 @@ const bubbleClass = computed(() =>
 const avatarClass = computed(() => cn(chatAvatarVariants({ size: props.size })));
 
 const contentWrapperClass = computed(() =>
-    cn('flex flex-col gap-1', isSent.value ? 'items-end' : 'items-start')
+    cn('flex min-w-0 max-w-full flex-col gap-1', isSent.value ? 'items-end' : 'items-start')
 );
 
 // 按 Unicode 码点截取（Array.from），避免 emoji 等非 BMP 字符被 UTF-16 代理对从中间切断产生乱码

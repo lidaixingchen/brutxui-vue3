@@ -192,7 +192,7 @@ function handleSuccessConfirm() {
                                     :aria-errormessage="errors.name ? fieldId('name-error') : undefined"
                                     :aria-required="true"
                                 />
-                                <p v-if="errors.name" :id="fieldId('name-error')" class="text-sm text-red-500 font-medium" role="alert">
+                                <p v-if="errors.name" :id="fieldId('name-error')" class="text-sm text-brutal-destructive font-medium" role="alert">
                                     {{ errors.name }}
                                 </p>
                             </div>
@@ -211,7 +211,7 @@ function handleSuccessConfirm() {
                                     :aria-errormessage="errors.email ? fieldId('email-error') : undefined"
                                     :aria-required="true"
                                 />
-                                <p v-if="errors.email" :id="fieldId('email-error')" class="text-sm text-red-500 font-medium" role="alert">
+                                <p v-if="errors.email" :id="fieldId('email-error')" class="text-sm text-brutal-destructive font-medium" role="alert">
                                     {{ errors.email }}
                                 </p>
                             </div>
@@ -235,7 +235,7 @@ function handleSuccessConfirm() {
                                     :aria-errormessage="errors.message ? fieldId('message-error') : undefined"
                                     :aria-required="true"
                                 />
-                                <p v-if="errors.message" :id="fieldId('message-error')" class="text-sm text-red-500 font-medium" role="alert">
+                                <p v-if="errors.message" :id="fieldId('message-error')" class="text-sm text-brutal-destructive font-medium" role="alert">
                                     {{ errors.message }}
                                 </p>
                             </div>
