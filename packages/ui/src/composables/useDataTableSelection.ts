@@ -1,4 +1,4 @@
-import { readonly, shallowRef, computed, toValue, type ComputedRef, type MaybeRefOrGetter, type ShallowRef } from 'vue'
+import { readonly, shallowRef, computed, isRef, toValue, type ComputedRef, type MaybeRefOrGetter, type ShallowRef } from 'vue'
 
 export interface UseDataTableSelectionOptions<T extends object> {
     selectable: MaybeRefOrGetter<boolean | undefined>
@@ -29,8 +29,20 @@ export function useDataTableSelection<T extends object>(
     const nonScalarKeyCache = new WeakMap<object, string>()
     let warnedNonScalarKey = false
 
+    function resolveRowKey(): keyof T | ((row: T) => string | number) {
+        const raw = options.rowKey
+        if (isRef(raw)) return raw.value
+        if (typeof raw === 'function') {
+            if (raw.length === 0) {
+                return (raw as () => keyof T | ((row: T) => string | number))()
+            }
+            return raw as (row: T) => string | number
+        }
+        return raw
+    }
+
     function getRowKey(row: T): string | number {
-        const key = toValue(options.rowKey)
+        const key = resolveRowKey()
         if (typeof key === 'function') return key(row)
         const value = row[key]
         if (typeof value !== 'string' && typeof value !== 'number') {

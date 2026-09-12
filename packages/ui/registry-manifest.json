@@ -453,7 +453,8 @@
       "DataTable.vue",
       "DataTableColumnFilter.vue",
       "data-table-variants.ts",
-      "types.ts"
+      "types.ts",
+      "useDataTablePipeline.ts"
     ],
     "composables": [
       "useDataTableFilter.ts",

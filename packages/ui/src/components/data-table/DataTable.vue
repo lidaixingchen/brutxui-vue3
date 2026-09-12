@@ -4,10 +4,7 @@ import { cn } from '@/lib/utils'
 import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_SIZE_OPTIONS, DATA_TABLE_COLUMN_WIDTH_FALLBACK_PX, DATA_TABLE_EXPAND_COLUMN_WIDTH_PX, DATA_TABLE_SELECT_COLUMN_WIDTH_PX, DATA_TABLE_ROW_HEIGHT_FALLBACK_PX, DATA_TABLE_FIXED_COLUMN_Z_INDEX } from '@/lib/defaults'
 import { useLocale } from '@/composables/useLocale'
 import { getCellValue } from '@/lib/data-table-utils'
-import { useDataTableSort } from '@/composables/useDataTableSort'
-import { useDataTableFilter } from '@/composables/useDataTableFilter'
-import { useDataTableSelection } from '@/composables/useDataTableSelection'
-import { useDataTablePagination } from '@/composables/useDataTablePagination'
+import { useDataTablePipeline } from './useDataTablePipeline'
 import {
     dataTableRootVariants,
     dataTableHeaderVariants,
@@ -20,7 +17,7 @@ import {
     dataTableEmptyVariants,
     dataTableLoadingVariants,
 } from './data-table-variants'
-import type { DataTableColumn, DataTableProps, DataTableFilterState, DataTableFilterValue } from '@/types/data-table'
+import type { DataTableColumn, DataTableProps, DataTableFilterState } from '@/types/data-table'
 import Input from '../input/Input.vue'
 import Button from '../button/Button.vue'
 import Checkbox from '../checkbox/Checkbox.vue'
@@ -182,61 +179,23 @@ const visibleColumns = computed(() =>
     props.columns.filter((col) => !col.hidden),
 )
 
-const filter = useDataTableFilter<T>({
+const {
+    displayData,
+    filter,
+    sort,
+    pagination,
+    selection,
+    activeColumnId,
+    applyColumnFilterPatch,
+} = useDataTablePipeline<T>({
+    data: () => props.data,
     columns: () => props.columns,
-    filterable: () => props.filterable,
-})
-
-/**
- * DataTableColumnFilter 增量 patch 处理器。
- * 子组件 emit 的 update:filterState 只携带发生变化的列（不含 global），
- * 此处基于当前内部状态按列函数式合并，而非整体替换：
- * 子组件 props 回流存在调度延迟，若以滞后快照整体替换，同一 tick 内连续
- * 触发（如 date-range 的 start/end 同步写入）会互相覆盖丢失。
- */
-function applyColumnFilterPatch(patch: DataTableFilterState) {
-    if (patch.global !== undefined) {
-        filter.setGlobalFilter(patch.global)
-    }
-    for (const [columnId, value] of Object.entries(patch.columns)) {
-        if (value === null || value === undefined || value === '') {
-            // 空过滤条件：保持原 delete 语义，从状态中移除该列；
-            // filterState 为只读视图，spread 后断言回可变类型再修改
-            const columns = { ...filter.filterState.value.columns } as Record<string, DataTableFilterValue>
-            delete columns[columnId]
-            filter.setFilterState({ ...filter.filterState.value, columns })
-        } else {
-            filter.setColumnFilter(columnId, value)
-        }
-    }
-}
-
-const sort = useDataTableSort<T>({
-    columns: () => props.columns,
+    rowKey: () => props.rowKey,
     sortable: () => props.sortable,
-})
-
-const filtered = computed(() => filter.filteredData(props.data))
-const sorted = computed(() => sort.sortedData(filtered.value))
-
-const pagination = useDataTablePagination({
+    filterable: () => props.filterable,
+    selectable: () => props.selectable,
     paginated: () => props.paginated,
     pageSize: () => props.pageSize,
-    totalItems: () => filtered.value.length,
-})
-
-const displayData = computed(() => pagination.paginatedData(sorted.value))
-
-const selection = useDataTableSelection<T>({
-    selectable: () => props.selectable,
-    rowKey: () => props.rowKey,
-    displayData: () => displayData.value,
-    data: () => props.data,
-})
-
-const activeColumnId = computed(() => {
-    const { column, direction } = sort.sortState.value
-    return column && direction ? column : null
 })
 
 function getHeaderLabel(column: DataTableColumn<T>): string {
@@ -299,25 +258,7 @@ function handleRowClick(row: T, event: Event) {
     emit('row-click', row)
 }
 
-// 数据引用变化但行 key 集合未变（内容重组）时保留选择与分页状态；
-// 仅真正增删行（key 集合变化）才重置。
-// 性能权衡：data 引用变化时需遍历新旧数据构建 key 集合（O(n)）；
-// 已先比较集合大小短路，非标量 rowKey 的 JSON.stringify 有 WeakMap 缓存，
-// 仅整体替换对象引用时缓存失效触发重新序列化——大数据集下可接受，不做进一步优化
-watch(() => props.data, (newData, oldData) => {
-    if (newData === oldData) return
-    const keySetOf = (rows: T[]): Set<string | number> =>
-        new Set(rows.map((row) => selection.getRowKey(row)))
-    const newKeys = keySetOf(newData)
-    const oldKeys = keySetOf(oldData)
-    if (
-        newKeys.size !== oldKeys.size
-        || [...newKeys].some((key) => !oldKeys.has(key))
-    ) {
-        selection.clearSelection()
-        pagination.goToPage(1)
-    }
-})
+
 
 watch(filter.filterState, (newState) => {
     // filterState 对外为只读视图，emit 的是监听快照，下游只读消费
