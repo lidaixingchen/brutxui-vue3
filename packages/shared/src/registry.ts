@@ -102,6 +102,23 @@ export function computeRegistryIntegrity(files: Array<Pick<RegistryFile, 'path' 
 }
 
 /**
+ * 客户端与分发管道使用的版本化 Registry 快照接口（安全与幂等契约）。
+ */
+export interface RegistrySnapshot {
+    readonly source: string;
+    readonly resolvedUrl: string;
+    readonly name: string;
+    readonly schemaVersion: number;
+    readonly registryVersion: string;
+    readonly releaseTag: string;
+    readonly gitCommit: string | null;
+    readonly digest: string;
+    readonly itemCount: number;
+    readonly itemIntegrities: ReadonlyMap<string, string>;
+    readonly trusted: boolean;
+}
+
+/**
  * registry-manifest.json 自身完整性哈希的规范化输入（与 build 侧、CLI 验签侧共享）。
  * 见 computeRegistryManifestIntegrity 的说明。
  */
@@ -109,6 +126,8 @@ export interface RegistryManifestIntegrityInput {
     name: string;
     schemaVersion: number;
     registryVersion: string;
+    releaseTag?: string;
+    gitCommit?: string | null;
     items: Record<string, unknown>;
 }
 
@@ -117,8 +136,8 @@ export interface RegistryManifestIntegrityInput {
  *
  * 规范化契约（CLI 验签侧与 build 侧共用同一实现，严禁单独修改其一）：
  *   1. items 按 name 字典序排序（Object.entries 再 sort，与字段写入顺序无关）
- *   2. 规范化 JSON 仅含 name / schemaVersion / registryVersion / items 四个字段，顺序固定
- *   3. 排除 buildTimestamp / gitCommit / integrity / signature / keyId 自身（两次 build 间会变）
+ *   2. 规范化 JSON 包含 name / schemaVersion / registryVersion / releaseTag / gitCommit / items 六个字段，顺序固定
+ *   3. 排除 buildTimestamp / integrity / digest / signature / keyId 自身（签名与构建时间不破坏内容摘要）
  *
  * 返回 sha256 hex（不含 "sha256-" 前缀）。
  */
@@ -129,6 +148,8 @@ export function computeRegistryManifestIntegrity(manifest: RegistryManifestInteg
         name: manifest.name,
         schemaVersion: manifest.schemaVersion,
         registryVersion: manifest.registryVersion,
+        releaseTag: manifest.releaseTag ?? null,
+        gitCommit: manifest.gitCommit ?? null,
         items: sortedItems,
     });
     return crypto.createHash('sha256').update(canonical).digest('hex');

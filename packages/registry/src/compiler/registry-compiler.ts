@@ -1,3 +1,4 @@
+import { execSync } from 'node:child_process';
 import crypto from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -60,6 +61,9 @@ export class RegistryCompiler {
     private metadata: Record<string, ComponentMetadataEntry>;
     private dependencyResolver: DependencyResolver;
     private cacheManager: CacheManager;
+    private registryVersion?: string;
+    private releaseTag?: string;
+    private gitCommit?: string | null;
 
     constructor(options: CompilerOptions = {}) {
         this.fs = options.fs ?? new DiskFileSystemAdapter();
@@ -68,6 +72,9 @@ export class RegistryCompiler {
         this.cssVars = options.cssVars ?? (CSS_VARS as unknown as Record<string, string>);
         this.libExclude = options.libExclude ?? DEFAULT_LIB_EXCLUDE;
         this.metadata = options.metadata ?? COMPONENT_METADATA;
+        this.registryVersion = options.registryVersion;
+        this.releaseTag = options.releaseTag;
+        this.gitCommit = options.gitCommit;
 
         this.dependencyResolver = new DependencyResolver(this.fs, this.paths, this.libExclude);
         const cacheFilePath = path.join(path.dirname(this.paths.outputDir), '.registry-cache.json');
@@ -309,22 +316,27 @@ export class RegistryCompiler {
             integrity: localeRes.item.integrity,
         });
 
+        const resolvedVersion = await this.resolveVersion();
+        const resolvedReleaseTag = this.resolveReleaseTag(resolvedVersion);
+        const resolvedGitCommit = this.resolveGitCommit();
+
         // 3. 构建 RegistryIndex
         const index: RegistryIndex = {
             $schema: 'https://ui.shadcn.com/schema/registry.json',
             name: 'brutx-ui-vue',
             schemaVersion: REGISTRY_SCHEMA_VERSION,
-            registryVersion: '0.1.0',
+            registryVersion: resolvedVersion,
             homepage: 'https://github.com/lidaixingchen/brutxui-vue3',
             items: indexItems,
         };
 
         // 4. 构建 RegistryBuildManifest
         const manifest = this.buildManifest(index, {
-            registryVersion: index.registryVersion,
+            registryVersion: resolvedVersion,
             schemaVersion: index.schemaVersion,
+            releaseTag: resolvedReleaseTag,
             buildTimestamp: null,
-            gitCommit: null,
+            gitCommit: resolvedGitCommit,
         });
 
         // 5. 构建 SBOM
@@ -341,6 +353,36 @@ export class RegistryCompiler {
             cacheRecord,
             totalDurationMs,
         };
+    }
+
+    private async resolveVersion(): Promise<string> {
+        if (this.registryVersion) return this.registryVersion;
+        if (process.env.BRUTX_UI_VERSION) return process.env.BRUTX_UI_VERSION.trim();
+        try {
+            const uiPkgPath = path.resolve(path.dirname(this.paths.manifestPath), 'package.json');
+            const pkgRaw = await this.fs.readFile(uiPkgPath, 'utf-8');
+            const pkg = JSON.parse(pkgRaw) as { version?: string };
+            if (pkg.version) return pkg.version;
+        } catch {
+            // fallback
+        }
+        return '0.1.0';
+    }
+
+    private resolveReleaseTag(version: string): string {
+        if (this.releaseTag) return this.releaseTag;
+        if (process.env.BRUTX_RELEASE_TAG) return process.env.BRUTX_RELEASE_TAG.trim();
+        return `v${version}`;
+    }
+
+    private resolveGitCommit(): string | null {
+        if (this.gitCommit !== undefined) return this.gitCommit;
+        if (process.env.GIT_COMMIT) return process.env.GIT_COMMIT.trim();
+        try {
+            return execSync('git rev-parse HEAD', { stdio: ['ignore', 'pipe', 'ignore'], encoding: 'utf-8' }).trim() || null;
+        } catch {
+            return null;
+        }
     }
 
     private buildManifest(
@@ -363,11 +405,13 @@ export class RegistryCompiler {
             };
         }
 
+        const releaseTag = options.releaseTag ?? (options.registryVersion ? `v${options.registryVersion}` : 'v0.1.0');
         const baseManifest = {
             $schema: REGISTRY_MANIFEST_SCHEMA_URL,
             name: index.name,
             schemaVersion: options.schemaVersion ?? index.schemaVersion,
             registryVersion: options.registryVersion,
+            releaseTag,
             buildTimestamp: options.buildTimestamp ?? null,
             gitCommit: options.gitCommit ?? null,
             itemCount: sortedItems.length,
@@ -379,6 +423,7 @@ export class RegistryCompiler {
         return {
             ...baseManifest,
             integrity,
+            digest: integrity,
         };
     }
 

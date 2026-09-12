@@ -36,9 +36,11 @@ export interface RegistryBuildManifest {
     name: string;
     schemaVersion: number;
     registryVersion: string;
+    releaseTag?: string;
     buildTimestamp: string | null;
     gitCommit: string | null;
     integrity: string;
+    digest?: string;
     itemCount: number;
     items: Record<string, RegistryBuildManifestItem>;
     signature?: string;
@@ -48,6 +50,7 @@ export interface RegistryBuildManifest {
 export interface RegistryBuildManifestOptions {
     registryVersion: string;
     schemaVersion?: number;
+    releaseTag?: string;
     buildTimestamp?: string | null;
     gitCommit?: string | null;
 }
@@ -87,6 +90,9 @@ export interface CompilerOptions {
     manifestOverrides?: Record<string, Partial<Pick<MergedRegistryEntry, 'directives' | 'composables' | 'lib'>>>;
     metadata?: Record<string, ComponentMetadataEntry>;
     manifest?: RegistryManifest;
+    registryVersion?: string;
+    releaseTag?: string;
+    gitCommit?: string | null;
 }
 
 export interface CompiledItemResult {

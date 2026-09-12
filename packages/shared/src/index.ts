@@ -40,6 +40,7 @@ export {
 } from './registry.js';
 export type {
     RegistryManifestIntegrityInput,
+    RegistrySnapshot,
 } from './registry.js';
 export type { SidebarLocale, SidebarItem } from './sidebar-generator.js';
 export {

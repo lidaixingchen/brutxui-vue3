@@ -495,11 +495,13 @@ export function buildRegistryManifest(
         };
     }
 
+    const releaseTag = options.releaseTag ?? (options.registryVersion ? `v${options.registryVersion}` : 'v0.1.0');
     const baseManifest = {
         $schema: REGISTRY_MANIFEST_SCHEMA_URL,
         name: index.name,
         schemaVersion: options.schemaVersion ?? index.schemaVersion,
         registryVersion: options.registryVersion,
+        releaseTag,
         buildTimestamp: options.buildTimestamp ?? null,
         gitCommit: options.gitCommit ?? null,
         itemCount: sortedItems.length,
@@ -511,6 +513,7 @@ export function buildRegistryManifest(
     return {
         ...baseManifest,
         integrity,
+        digest: integrity,
     };
 }
 
