@@ -13,6 +13,8 @@
 - `disabled`: `boolean`
 - `pendingText`: `string` — 加载时显示的文字，仅在 `type="submit"` 且 `loading` 时生效，未传入时回退到 i18n 默认值
 - `asChild`: `boolean`
+- `effect`: `'none' | 'glitch'`，默认 `none`。仅启用 `glitch` 后，`glitchTrigger` 和实例 `play()` 才启动特效；关闭时不创建特效监听、定时器或文本同步。
+- 特效在 disabled、loading、减少动态效果及 KeepAlive 停用时停止；重新激活按当前系统偏好恢复，卸载释放资源。
 
 ## Input
 

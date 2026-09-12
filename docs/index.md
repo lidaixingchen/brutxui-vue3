@@ -18,6 +18,7 @@
 | [CVA.md](guides/CVA.md) | **变体体系** | Class Variance Authority 严苛规范、CompoundVariants、类型推导与防重叠 |
 | [COMPONENT_GUIDE.md](guides/COMPONENT_GUIDE.md) | **组件规范** | 组件生命周期、Reka UI 无头原语封装、变体隔离与无障碍 A11y 合规 |
 | [COMPONENT_DOC_TEMPLATE.md](guides/COMPONENT_DOC_TEMPLATE.md) | **组件文档** | 组件中英文使用文档章节结构与必填门禁标准 |
+| [API_MIGRATION.md](guides/API_MIGRATION.md) | **公开 API** | npm 入口、选择器辅助函数、源码安装和按钮特效迁移 |
 | [COMMANDS.md](guides/COMMANDS.md) | **指令手册** | 全工程高低频指令分层、版本发布流水线、性能压测与底层契约检查逃生通道 |
 | [RELEASE.md](guides/RELEASE.md) | **发布流程** | Changeset 发版流程、npm 发布门禁与 CHANGELOG 自动化生成规范 |
 | [RELEASE_ARCHITECTURE.md](guides/RELEASE_ARCHITECTURE.md) | **发布架构** | Monorepo 跨包版本锁定、拓扑排序构建、Registry 预编译与发布时一致性 |
@@ -34,13 +35,17 @@
 *（暂无进行中的活跃方案）*
 
 ### UI 组件体系（UI）
-*（暂无进行中的活跃方案）*
+- [组件状态与音频资源深化方案](plans/ui/组件状态与音频资源深化方案.md)（状态：`draft`）
+
+  *集中 Kanban 移动规则、表格数据编排和音频资源生命周期，以统一的状态所有权减少组件协作成本，并共享选择值的基础判定。*
 
 ### 样式与设计系统（Styles）
 *（暂无进行中的活跃方案）*
 
 ### 全局核心架构（Core）
-*（暂无进行中的活跃方案）*
+- [架构交付契约第三批修复方案](plans/core/架构交付契约第三批修复方案.md)（状态：`active`）
+
+  *明确公开 API 的所有权，以消费者度量控制基础组件成本，并通过覆盖等价验证收敛工程门禁职责。*
 <!-- AUTO_ACTIVE_PLANS_END -->
 
 ---
@@ -66,6 +71,7 @@
 
 - **[周期性扫描快照（scans/）](reports/scans/)**：以日期为前缀的定期自动化扫描与缺陷排查快照（如 `2026-07-*-ui界面bug扫描报告.md`、`根仓库扫描报告.md`、`辅助包bug扫描报告.md`）。
 - **[体系化审计与审查（audits/）](reports/audits/)**：技术债审查、性能审计、样式与架构优化机会审查、约定与代码裁决审查、未纳入债清单等深度审计结论。
+- [第三批架构交付契约验收报告](reports/audits/第三批架构交付契约验收报告.md)：公开 API、消费者、资源与门禁的实际验证证据。
 - **[技术调研与选型（research/）](reports/research/)**：AST 选型工程资料与实践调研报告。
 
 ---

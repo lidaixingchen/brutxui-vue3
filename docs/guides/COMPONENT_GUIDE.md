@@ -6,7 +6,7 @@
 
 - **Props 声明**：统一采用 `<script setup lang="ts">` 配合 `defineProps<T>()` + `withDefaults()`。
 - **无障碍原语**：始终使用 `reka-ui` 实现无障碍无头原语。
-- **统一导出与生成**：始终从 `src/index.ts` 导出新组件及公开的 TypeScript 类型；组件目录下的 `index.ts` 由 `prebuild:component-index` 自动生成，测试文件遵循 `${kebabName}.test.ts` 命名规范。
+- **统一导出与生成**：在 `packages/ui/api-contract.ts` 登记公开符号、子路径、模块归属与安装关联，通过 `pnpm --filter brutx-ui-vue generate` 生成根入口、组件入口及 exports。源码扫描负责依赖闭包，公开选择由契约负责。测试文件遵循 `${kebabName}.test.ts` 命名规范，迁移与消费方式见 [公开 API 迁移指南](API_MIGRATION.md)。
 - **树结构统一模型**：涉及树形数据结构的组件（如 TreeView、TreeSelect）必须统一使用 `@/types/tree` 的 `TreeNode<T>` 与 `SelectionMode`，严禁在组件内部发明私有树节点接口或重复定义 `TreeSelectTreeNode` 等历史别名。
 - **优先复用库内组件**：创建或修改组件时，优先复用现有 BrutxUI 组件，禁止用 native HTML 元素替代已有组件（如用 `Button` 而非 `<button>`、`Select` 系列而非 `<select>`/`<option>`、`Badge` 而非手写 badge `<div>`、`Input` 而非 `<input>`），防止重复造轮子；仅在特殊 ARIA 角色、内联图标切换等无对应组件的场景下方可使用 native 元素。
 - **定价区单一主实现**：`PricingSection` 是定价区唯一主实现，支持一次性价格与订阅切换；定价能力一律扩展 `PricingSection`，禁止新增或维护第二套定价逻辑。
@@ -63,7 +63,7 @@
 
 注册表是**生成式**的：`packages/ui/scripts/prebuild-scan.ts` 通过 AST 扫描 `packages/ui/src/components/` 自动生成 `packages/ui/registry-manifest.json`（组件文件清单）；`packages/registry/scripts/build-registry.ts` 读取该清单与 `packages/shared/src/component-metadata.ts` 中的人工元数据，合并后从源码读取、重写导入路径、提取依赖，自动生成 `packages/registry/registry/*.json` 和 `index.json`（**这些产物不入库**，git 不跟踪，发布时由 CI 基于最新源码构建并上传为 GitHub Release 资产）。**不要手动编写 registry JSON**——未在 `COMPONENTS` 中登记的组件不会进入 `index.json`，CLI 也无法安装。
 
-- 新增组件时，只需在 `packages/shared/src/components.ts` 的 `COMPONENTS` 中添加元数据条目，然后运行 `pnpm --filter brutx-ui-vue prebuild:scan`（或直接 `pnpm build`）生成清单，再运行 `pnpm --filter brutx-registry-vue build` 生成 JSON。文件映射由 AST 扫描器自动发现，无需手动登记。
+- 新增组件时运行根目录脚手架，同时登记元数据与 `packages/ui/api-contract.ts`，再由统一 `generate` 生成投影。Registry 使用同一公开契约构造 index，内部 helper、共享类型与运行时依赖随源码闭包交付；构建后运行 `pnpm --filter brutx-registry-vue validate`。
 - `pnpm --filter brutx-registry-vue validate` 会执行三道一致性校验：① 源码目录 ↔ `registry-manifest.json`（防止清单与源码不同步）；② `{name}.json` ↔ `index.json`（防止手写孤儿 JSON）；③ 字段完整性。
 
 > [!IMPORTANT]
@@ -76,13 +76,13 @@
 
 | 顺序 | 阶段 | 操作 / 运行命令 | 说明 / 验证方式 |
 | --- | --- | --- | --- |
-| 1 | **脚手架生成与元数据登记** | 根目录下运行 `pnpm generate:component`（或在 `packages/shared/src/components.ts` 的 `COMPONENTS` 中登记） | 脚手架已自动按字母序在 `components.ts` 注入元数据并建立骨架；必填 `titleZh`、`category`、`description`、`dependencies`（单一信源） |
-| 2 | **生成清单** | 在根目录下运行 `pnpm --filter brutx-ui-vue prebuild:scan` | 自动发现新组件文件，更新 `registry-manifest.json` |
+| 1 | **脚手架生成与元数据登记** | 根目录下运行 `pnpm generate:component` | 建立骨架、登记元数据与 API 意图；失败时回滚本次写入 |
+| 2 | **生成投影** | 在根目录下运行 `pnpm --filter brutx-ui-vue generate` | 生成依赖清单、公共入口、exports 和令牌，使用 `-- --check` 只读比较 |
 | 3 | **编译注册表** | 在根目录下运行 `pnpm --filter brutx-registry-vue build` | 编译组件 JSON，可用 `pnpm --filter brutx-registry-vue validate` 验证 |
 | 4 | **国际化检查** | 运行 `pnpm check:i18n:strict` | 严格校验中英文国际化 key 的镜像对称性 |
-| 5 | **本地局部自检** | ① 对修改文件运行 `npx eslint <changed-files> --fix`<br>② 对修改的子包运行类型检查（如 `pnpm --filter brutx-ui-vue typecheck`） | **核心**：仅自检被修改的文件或子包，严禁全局重型自检以节省资源 |
+| 5 | **本地局部自检** | ① 对修改文件运行 `pnpm exec eslint <changed-files> --fix`<br>② 对修改的子包运行类型检查（如 `pnpm --filter brutx-ui-vue typecheck`） | **核心**：仅自检被修改的文件或子包，严禁全局重型自检以节省资源 |
 | 6 | **编写演示组件** | 在 `apps/docs/.vitepress/theme/components/demos/` 目录下创建 `{ComponentName}Demo.vue` | 遵循 `PascalCaseDemo.vue` 命名规范，由 `import.meta.glob` 自动发现注册，无需手写 `index.ts` 注册 |
 | 7 | **编写文档** | 在 `apps/docs/components/` 和 `apps/docs/en/components/` 创建或更新 `{name}.md` 文档，并通过 `<{ComponentName}Demo />` 引入演示 | 必须符合 [COMPONENT_DOC_TEMPLATE.md](COMPONENT_DOC_TEMPLATE.md) 模板 |
 | 8 | **文档侧边栏** | 侧边栏由 `sidebar-generator.ts` 基于 `COMPONENTS` 自动派生 | 无需手动维护中文名字典，可通过 `pnpm --filter docs build` 验证文档构建 |
 | 9 | **更新 AI 技能** | 在 `skills/brutxui/SKILL.md` 中同步新组件和函数 | 便于后续 AI Agent 能够识别并合理复用 |
-| 10 | **约定引用校验** | 运行 `pnpm check:guide-refs` | 校验 guide/skills 无已删除符号引用，登记组件均有中英文文档 |
+| 10 | **约定引用校验** | 运行 `pnpm check:docs` | 校验 guide/skills 无已删除符号引用，登记组件均有中英文文档 |
