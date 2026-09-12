@@ -1,9 +1,9 @@
-import { computed } from 'vue'
+import { computed, toValue, type MaybeRefOrGetter } from 'vue'
 import { useAudioEngine } from './useAudioEngine'
 
 export interface UseBrutalHapticsOptions {
     /** 显式开启音效；缺省或非 true 时保持完全静音（不实例化 AudioContext） */
-    sound?: boolean
+    sound?: MaybeRefOrGetter<boolean | undefined>
 }
 
 export interface UseBrutalHapticsReturn {
@@ -21,7 +21,7 @@ export interface UseBrutalHapticsReturn {
  * 且各方法在门面层短路，未开启时不会触达引擎（不实例化 AudioContext）。
  */
 export function useBrutalHaptics(options: UseBrutalHapticsOptions = {}): UseBrutalHapticsReturn {
-    const enabled = computed(() => options.sound === true)
+    const enabled = computed(() => toValue(options.sound) === true)
     const { playSound } = useAudioEngine(enabled)
 
     return {

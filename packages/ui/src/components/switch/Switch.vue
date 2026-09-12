@@ -55,7 +55,7 @@ const emit = defineEmits<{
 
 const { t } = useLocale()
 
-const haptics = useBrutalHaptics({ sound: props.sound })
+const haptics = useBrutalHaptics({ sound: () => props.sound })
 
 const resolvedAriaLabel = computed(() => props.ariaLabel?.trim() || t('switch.toggle'))
 

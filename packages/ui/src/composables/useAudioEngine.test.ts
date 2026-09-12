@@ -65,8 +65,11 @@ vi.mock('../lib/env', () => ({
     getAudioContextCtor: () => globalThis.AudioContext ?? null,
 }))
 
+import { resetSharedAudioRuntime } from '../lib/shared-audio-runtime'
+
 describe('useAudioEngine', () => {
     beforeEach(() => {
+        resetSharedAudioRuntime()
         vi.useFakeTimers()
         vi.setSystemTime(1000)
         mockAudioContext.state = 'running'
@@ -82,10 +85,13 @@ describe('useAudioEngine', () => {
             get state() { return mockAudioContext.state }
             resume = mockAudioContext.resume
             close = mockAudioContext.close
+            addEventListener = vi.fn()
+            removeEventListener = vi.fn()
         })
     })
 
     afterEach(() => {
+        resetSharedAudioRuntime()
         vi.useRealTimers()
         vi.clearAllMocks()
         vi.unstubAllGlobals()

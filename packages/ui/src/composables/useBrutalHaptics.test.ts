@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { ref } from 'vue'
 import { useBrutalHaptics } from './useBrutalHaptics'
 
 const mocks = vi.hoisted(() => ({
@@ -44,5 +45,22 @@ describe('useBrutalHaptics', () => {
     it('向引擎传递由 sound 派生的启用状态且引擎仅初始化一次', () => {
         useBrutalHaptics({ sound: true })
         expect(mocks.useAudioEngine).toHaveBeenCalledTimes(1)
+    })
+
+    it('支持响应式 getter 动态切换 sound 状态', () => {
+        const soundEnabled = ref(false)
+        const haptics = useBrutalHaptics({ sound: () => soundEnabled.value })
+
+        haptics.click()
+        expect(mocks.playSound).not.toHaveBeenCalled()
+
+        soundEnabled.value = true
+        haptics.click()
+        expect(mocks.playSound).toHaveBeenCalledWith('click')
+
+        soundEnabled.value = false
+        mocks.playSound.mockClear()
+        haptics.snap()
+        expect(mocks.playSound).not.toHaveBeenCalled()
     })
 })

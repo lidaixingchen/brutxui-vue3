@@ -6,7 +6,7 @@ const hapticsMocks = vi.hoisted(() => {
     const snap = vi.fn()
     const click = vi.fn()
     const beep = vi.fn()
-    const useBrutalHaptics = vi.fn(() => ({ snap, click, beep }))
+    const useBrutalHaptics = vi.fn((_options?: { sound?: any }) => ({ snap, click, beep }))
     return { snap, click, beep, useBrutalHaptics }
 })
 
@@ -192,7 +192,8 @@ describe('NumberInput 步进按钮交互与 Drum Ticker', () => {
 
     it('sound=true 时点击步进触发 click 音效，sound 选项随 prop 传递', async () => {
         const wrapper = mount(NumberInput, { props: { sound: true } })
-        expect(hapticsMocks.useBrutalHaptics).toHaveBeenCalledWith({ sound: true })
+        const callArg = hapticsMocks.useBrutalHaptics.mock.calls.at(-1)?.[0]
+        expect(typeof callArg?.sound === 'function' ? callArg.sound() : callArg?.sound).toBe(true)
         await wrapper.findAll('button')[0]!.trigger('click')
         expect(hapticsMocks.click).toHaveBeenCalledTimes(1)
         wrapper.unmount()
@@ -200,7 +201,18 @@ describe('NumberInput 步进按钮交互与 Drum Ticker', () => {
 
     it('默认静音：sound 缺省时以 false 传递给门面', () => {
         mount(NumberInput)
-        expect(hapticsMocks.useBrutalHaptics).toHaveBeenCalledWith({ sound: false })
+        const callArg = hapticsMocks.useBrutalHaptics.mock.calls.at(-1)?.[0]
+        expect(typeof callArg?.sound === 'function' ? callArg.sound() : callArg?.sound).toBe(false)
+    })
+
+    it('响应式切换 sound prop 时动态更新门面', async () => {
+        const wrapper = mount(NumberInput, { props: { sound: false } })
+        const callArg = hapticsMocks.useBrutalHaptics.mock.calls.at(-1)?.[0]
+        expect(callArg?.sound()).toBe(false)
+
+        await wrapper.setProps({ sound: true })
+        expect(callArg?.sound()).toBe(true)
+        wrapper.unmount()
     })
 
     it('modelValue 变化触发 Drum Ticker 翻页动效类并在动画结束后清除', async () => {

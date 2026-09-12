@@ -7,7 +7,7 @@ const hapticsMocks = vi.hoisted(() => {
     const snap = vi.fn()
     const click = vi.fn()
     const beep = vi.fn()
-    const useBrutalHaptics = vi.fn(() => ({ snap, click, beep }))
+    const useBrutalHaptics = vi.fn((_options?: { sound?: any }) => ({ snap, click, beep }))
     return { snap, click, beep, useBrutalHaptics }
 })
 
@@ -236,7 +236,8 @@ describe('Switch 翘板凹槽轨道与机械动效', () => {
             props: { sound: true },
             attachTo: document.body,
         })
-        expect(hapticsMocks.useBrutalHaptics).toHaveBeenCalledWith({ sound: true })
+        const callArg = hapticsMocks.useBrutalHaptics.mock.calls.at(-1)?.[0]
+        expect(typeof callArg?.sound === 'function' ? callArg.sound() : callArg?.sound).toBe(true)
         await wrapper.find('[role="switch"]').trigger('click')
         expect(hapticsMocks.snap).toHaveBeenCalledTimes(1)
         wrapper.unmount()
@@ -245,10 +246,24 @@ describe('Switch 翘板凹槽轨道与机械动效', () => {
     it('默认静音：sound 缺省时以 false 传递给门面（发声短路由门面契约承担）', async () => {
         hapticsMocks.snap.mockClear()
         const wrapper = mount(Switch, { attachTo: document.body })
-        expect(hapticsMocks.useBrutalHaptics).toHaveBeenCalledWith({ sound: false })
+        const callArg = hapticsMocks.useBrutalHaptics.mock.calls.at(-1)?.[0]
+        expect(typeof callArg?.sound === 'function' ? callArg.sound() : callArg?.sound).toBe(false)
         await wrapper.find('[role="switch"]').trigger('click')
         // 组件层始终上报切换事件；是否真正发声由 useBrutalHaptics 门面的 opt-in 短路决定
         expect(hapticsMocks.snap).toHaveBeenCalledTimes(1)
+        wrapper.unmount()
+    })
+
+    it('响应式切换 sound prop 时动态更新门面', async () => {
+        const wrapper = mount(Switch, {
+            props: { sound: false },
+            attachTo: document.body,
+        })
+        const callArg = hapticsMocks.useBrutalHaptics.mock.calls.at(-1)?.[0]
+        expect(callArg?.sound()).toBe(false)
+
+        await wrapper.setProps({ sound: true })
+        expect(callArg?.sound()).toBe(true)
         wrapper.unmount()
     })
 })

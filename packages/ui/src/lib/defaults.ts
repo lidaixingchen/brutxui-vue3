@@ -139,6 +139,9 @@ export const CANVAS_ALPHA_CLEARED_THRESHOLD = 128
 /** Throttle (ms) between consecutive type sounds */
 export const AUDIO_TYPE_THROTTLE_MS = 50
 
+/** Maximum TTL (ms) for pending audio requests waiting for AudioContext acquisition/resume */
+export const AUDIO_PENDING_REQUEST_TTL_MS = 300
+
 /** Base frequency (Hz) for the type sound */
 export const AUDIO_TYPE_BASE_FREQ = 220
 

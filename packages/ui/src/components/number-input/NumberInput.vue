@@ -42,7 +42,7 @@ const emit = defineEmits<NumberFieldRootEmits>()
 
 const { t } = useLocale()
 
-const haptics = useBrutalHaptics({ sound: props.sound })
+const haptics = useBrutalHaptics({ sound: () => props.sound })
 const prefersReducedMotion = useReducedMotion()
 
 /** Drum Ticker：数值变化时输入框做滚轮翻页微动效（reduced-motion 环境瞬时切换）。
