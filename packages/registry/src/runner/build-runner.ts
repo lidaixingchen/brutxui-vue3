@@ -1,12 +1,24 @@
+import nodeFs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { DiskFileSystemAdapter } from '../fs/disk-fs.js';
 import { RegistryCompiler } from '../compiler/registry-compiler.js';
+import { computeInputDigest } from '../compiler/cache-manager.js';
 import { DiskEmitter } from '../emitters/disk-emitter.js';
 import { signManifestFromEnv } from '../emitters/manifest-signer.js';
 import { BenchmarkTracker } from './benchmark-tracker.js';
 import { RegistryWatcher } from './watcher.js';
-import type { CompilerOptions, CompilerPaths } from '../compiler/types.js';
+import type { ApiContract, ComponentExportProjection } from 'brutx-shared-vue/api-contract';
+import {
+    createModuleResolver,
+    type ModuleResolver,
+} from 'brutx-shared-vue/module-resolver';
+import type {
+    CompiledRegistryResult,
+    CompilerOptions,
+    CompilerPaths,
+    PublicComponentProjectionSet,
+} from '../compiler/types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,14 +36,109 @@ export function getDefaultPaths(): CompilerPaths {
         localesDir: path.resolve(__dirname, '../../../../packages/ui/src/locales'),
         libDir: path.resolve(__dirname, '../../../../packages/ui/src/lib'),
         directivesDir: path.resolve(__dirname, '../../../../packages/ui/src/directives'),
+        typesDir: path.resolve(__dirname, '../../../../packages/ui/src/types'),
         manifestPath: path.resolve(__dirname, '../../../../packages/ui/registry-manifest.json'),
         outputDir: path.resolve(__dirname, '../../registry'),
+        apiContractPath: path.resolve(__dirname, '../../../../packages/ui/api-contract.ts'),
     };
 }
 
-export async function runBuild(options: RunnerOptions = {}): Promise<void> {
+interface UiApiContractModule {
+    API_CONTRACT?: ApiContract;
+    projectComponentExports?: (componentId: string) => ComponentExportProjection;
+}
+
+function createDefaultModuleResolver(
+    fs: CompilerOptions['fs'],
+    paths: CompilerPaths,
+): ModuleResolver | undefined {
+    if (fs && !(fs instanceof DiskFileSystemAdapter)) return undefined;
+    const sourceRoot = path.resolve(paths.componentsDir, '..');
+    const tsconfigPath = path.resolve(sourceRoot, '../tsconfig.json');
+    if (!nodeFs.existsSync(tsconfigPath)) return undefined;
+    return createModuleResolver({
+        rootDir: sourceRoot,
+        tsconfigPath,
+        viteAliases: [{ find: '@', replacement: sourceRoot }],
+    });
+}
+
+export async function loadPublicProjection(
+    fs: CompilerOptions['fs'],
+    paths: CompilerPaths,
+): Promise<PublicComponentProjectionSet> {
+    const apiContractPath = paths.apiContractPath;
+    const adapter = fs ?? new DiskFileSystemAdapter();
+    if (!apiContractPath) {
+        throw new Error('API contract path is required to build the Registry component index');
+    }
+    if (!(await adapter.pathExists(apiContractPath))) {
+        throw new Error(`API contract not found at ${apiContractPath}`);
+    }
+
+    const source = await adapter.readFile(apiContractPath, 'utf-8');
+    const cacheKey = computeInputDigest(source);
+    const moduleUrl = `${pathToFileURL(apiContractPath).href}?digest=${cacheKey}`;
+    let loaded: UiApiContractModule;
+    try {
+        loaded = await import(moduleUrl) as UiApiContractModule;
+    } catch (error) {
+        const cause = error instanceof Error ? error.message : String(error);
+        throw new Error(`Failed to load API contract at ${apiContractPath}: ${cause}`, { cause: error });
+    }
+
+    if (!loaded.API_CONTRACT || !loaded.projectComponentExports) {
+        throw new Error(`API contract at ${apiContractPath} must export API_CONTRACT and projectComponentExports`);
+    }
+
+    const projectComponentExports = loaded.projectComponentExports;
+    const componentNames = loaded.API_CONTRACT.entries
+        .filter(entry => entry.kind === 'component')
+        .map(entry => entry.id.replace(/^component:/, ''))
+        .sort();
+    const projection: Record<string, ComponentExportProjection> = {};
+    for (const name of componentNames) {
+        projection[name] = projectComponentExports(name);
+    }
+    return projection;
+}
+
+export interface CreatedRegistryCompiler {
+    fs: NonNullable<CompilerOptions['fs']>;
+    paths: CompilerPaths;
+    compiler: RegistryCompiler;
+}
+
+export async function createRegistryCompiler(
+    options: RunnerOptions = {},
+): Promise<CreatedRegistryCompiler> {
     const fs = options.fs ?? new DiskFileSystemAdapter();
     const paths = { ...getDefaultPaths(), ...(options.paths ?? {}) };
+    const publicProjection = options.publicProjection
+        ?? await loadPublicProjection(fs, paths);
+    const publicProjectionDigest = options.publicProjectionDigest
+        ?? (options.publicProjection === undefined && paths.apiContractPath
+            ? computeInputDigest(await fs.readFile(paths.apiContractPath, 'utf-8'))
+            : undefined);
+    const moduleResolver = options.moduleResolver
+        ?? createDefaultModuleResolver(options.fs, paths);
+    const compiler = new RegistryCompiler({
+        ...options,
+        fs,
+        paths,
+        publicProjection,
+        publicProjectionDigest,
+        moduleResolver,
+    });
+    return { fs, paths, compiler };
+}
+
+export async function compileRegistry(options: RunnerOptions = {}): Promise<CompiledRegistryResult> {
+    const { compiler } = await createRegistryCompiler(options);
+    return compiler.compileAll({ forceRebuild: options.forceRebuild });
+}
+
+export async function runBuild(options: RunnerOptions = {}): Promise<void> {
     const verbose = options.verbose ?? process.argv.includes('--verbose') ?? false;
     const isBench = options.bench ?? process.argv.includes('--bench') ?? false;
 
@@ -40,12 +147,7 @@ export async function runBuild(options: RunnerOptions = {}): Promise<void> {
     }
 
     try {
-        const compiler = new RegistryCompiler({
-            fs,
-            paths,
-            ...options,
-        });
-
+        const { fs, paths, compiler } = await createRegistryCompiler(options);
         const result = await compiler.compileAll({ forceRebuild: options.forceRebuild });
 
         // 签名 Manifest（若配置私钥）

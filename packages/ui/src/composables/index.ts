@@ -1,123 +1,117 @@
 /**
- * @module composables
- * @description BrutxUI Vue 3 Composables 集合
- *
- * 提供可复用的 Vue 3 组合式函数，涵盖：
- * - UI 交互（Toast、Theme、Dialog、Locale）
- * - 表单输入（FormFieldValidation、ColorPicker、DatePicker）
- * - 数据表格（Sort、Filter、Selection、Pagination）
- * - 动画（Animation、ReducedMotion、CanvasInteraction）
- * - 工具函数（Debounce、Throttle、Clipboard）
+ * AUTO-GENERATED from packages/ui/api-contract.ts — DO NOT EDIT.
  */
-
-// UI 交互类
-export { useToast, provideToast, createToast, destroyFallback as destroyToastFallback, TOAST_KEY } from './useToast'
-export type { ToastItem, ToastPosition, ToastStackOptions, PromiseToastOptions, UseToastReturn } from './useToast'
-
-export { useMessage, destroyFallback as destroyMessageFallback, destroyMessageSystem } from './useMessage'
-export type { MessageItem, MessageOptions, MessageType, UseMessageReturn } from './useMessage'
-
-export { useTheme, provideTheme, createTheme, destroyFallback as destroyThemeFallback, THEME_KEY } from './useTheme'
-export type { ThemeName, ColorMode, ResolvedColorMode, ThemeSnapshot, ThemeOptions, UseThemeReturn } from './useTheme'
-
-export { destroyBrutxUI, destroyBrutxFallbacks } from './destroyFallbacks'
-
-export { useLocale, provideLocale } from './useLocale'
+export { useToast } from './useToast'
+export { provideToast } from './useToast'
+export { createToast } from './useToast'
+export { destroyFallback as destroyToastFallback } from './useToast'
+export { TOAST_KEY } from './useToast'
+export type { ToastItem } from './useToast'
+export type { ToastPosition } from './useToast'
+export type { ToastStackOptions } from './useToast'
+export type { PromiseToastOptions } from './useToast'
+export type { UseToastReturn } from './useToast'
+export { useMessage } from './useMessage'
+export { destroyFallback as destroyMessageFallback } from './useMessage'
+export { destroyMessageSystem } from './useMessage'
+export type { MessageItem } from './useMessage'
+export type { MessageOptions } from './useMessage'
+export type { MessageType } from './useMessage'
+export type { UseMessageReturn } from './useMessage'
+export { useTheme } from './useTheme'
+export { provideTheme } from './useTheme'
+export { createTheme } from './useTheme'
+export { destroyFallback as destroyThemeFallback } from './useTheme'
+export { THEME_KEY } from './useTheme'
+export type { ThemeName } from './useTheme'
+export type { ColorMode } from './useTheme'
+export type { ResolvedColorMode } from './useTheme'
+export type { ThemeSnapshot } from './useTheme'
+export type { ThemeOptions } from './useTheme'
+export type { UseThemeReturn } from './useTheme'
+export { destroyBrutxUI } from './destroyFallbacks'
+export { destroyBrutxFallbacks } from './destroyFallbacks'
+export { useLocale } from './useLocale'
+export { provideLocale } from './useLocale'
 export type { TranslateFunction } from './useLocale'
-
 export { useClearable } from './useClearable'
 export type { UseClearableOptions } from './useClearable'
-
-export { useClearableSelection } from './useClearableSelection'
-export type { UseClearableSelectionOptions, UseClearableSelectionReturn } from './useClearableSelection'
-
-export { useSelectionDisplayText } from './useSelectionDisplayText'
-export type { UseSelectionDisplayTextOptions } from './useSelectionDisplayText'
-
-export { useSelectableTrigger } from './useSelectableTrigger'
-export type { SelectableTriggerClass, SelectableTriggerState, UseSelectableTriggerOptions, UseSelectableTriggerReturn } from './useSelectableTrigger'
-
-export { useTransferPanelSelection } from './useTransferPanelSelection'
-export type { TransferPanelItem, TransferPanelKey, UseTransferPanelSelectionOptions, UseTransferPanelSelectionReturn } from './useTransferPanelSelection'
-
 export { useDialog } from './useDialog'
-export type { UseDialogReturn, ShowDialogOptions } from './useDialog'
-
+export type { UseDialogReturn } from './useDialog'
+export type { ShowDialogOptions } from './useDialog'
 export { useDialogGeometry } from './useDialogGeometry'
-export type {
-    UseDialogGeometryOptions,
-    UseDialogGeometryReturn,
-    DraggableDialogOptions,
-    ResizableDialogOptions,
-    ResizeCorner,
-} from './useDialogGeometry'
-
+export type { UseDialogGeometryOptions } from './useDialogGeometry'
+export type { UseDialogGeometryReturn } from './useDialogGeometry'
+export type { DraggableDialogOptions } from './useDialogGeometry'
+export type { ResizableDialogOptions } from './useDialogGeometry'
+export type { ResizeCorner } from './useDialogGeometry'
 export { useDialogEnhanced } from './useDialogEnhanced'
-export type { UseDialogEnhancedOptions, UseDialogEnhancedReturn } from './useDialogEnhanced'
-
+export type { UseDialogEnhancedOptions } from './useDialogEnhanced'
+export type { UseDialogEnhancedReturn } from './useDialogEnhanced'
 export { useMessageBox } from './useMessageBox'
-export type { UseMessageBoxReturn, MessageBoxOptions } from './useMessageBox'
-
+export type { UseMessageBoxReturn } from './useMessageBox'
+export type { MessageBoxOptions } from './useMessageBox'
 export { useStepper } from './useStepper'
-export type { Step, UseStepperOptions, UseStepperReturn } from './useStepper'
-
-// 表单/输入类
+export type { Step } from './useStepper'
+export type { UseStepperOptions } from './useStepper'
+export type { UseStepperReturn } from './useStepper'
 export { useFormFieldValidation } from './useFormFieldValidation'
-export type { UseFormFieldValidationOptions, UseFormFieldValidationReturn, ValidationState, ValidationRule, ValidateOn } from './useFormFieldValidation'
-
+export type { UseFormFieldValidationOptions } from './useFormFieldValidation'
+export type { UseFormFieldValidationReturn } from './useFormFieldValidation'
+export type { ValidationState } from './useFormFieldValidation'
+export type { ValidationRule } from './useFormFieldValidation'
+export type { ValidateOn } from './useFormFieldValidation'
 export { useColorPicker } from './useColorPicker'
-export type { UseColorPickerOptions, UseColorPickerReturn } from './useColorPicker'
-
+export type { UseColorPickerOptions } from './useColorPicker'
+export type { UseColorPickerReturn } from './useColorPicker'
 export { useColorHistory } from './useColorHistory'
-export type { UseColorHistoryOptions, UseColorHistoryReturn } from './useColorHistory'
-
+export type { UseColorHistoryOptions } from './useColorHistory'
+export type { UseColorHistoryReturn } from './useColorHistory'
 export { useDatePicker } from './useDatePicker'
-export type { UseDatePickerOptions, UseDatePickerReturn } from './useDatePicker'
-
+export type { UseDatePickerOptions } from './useDatePicker'
+export type { UseDatePickerReturn } from './useDatePicker'
 export { useUpload } from './useUpload'
-export type { UseUploadOptions, UseUploadReturn } from './useUpload'
-
-// DataTable 类
+export type { UseUploadOptions } from './useUpload'
+export type { UseUploadReturn } from './useUpload'
 export { useDataTableSort } from './useDataTableSort'
-export type { UseDataTableSortOptions, UseDataTableSortReturn } from './useDataTableSort'
-
+export type { UseDataTableSortOptions } from './useDataTableSort'
+export type { UseDataTableSortReturn } from './useDataTableSort'
 export { useDataTableFilter } from './useDataTableFilter'
-export type { UseDataTableFilterOptions, UseDataTableFilterReturn } from './useDataTableFilter'
-
+export type { UseDataTableFilterOptions } from './useDataTableFilter'
+export type { UseDataTableFilterReturn } from './useDataTableFilter'
 export { useDataTableSelection } from './useDataTableSelection'
-export type { UseDataTableSelectionOptions, UseDataTableSelectionReturn } from './useDataTableSelection'
-
+export type { UseDataTableSelectionOptions } from './useDataTableSelection'
+export type { UseDataTableSelectionReturn } from './useDataTableSelection'
 export { useDataTablePagination } from './useDataTablePagination'
-export type { UseDataTablePaginationOptions, UseDataTablePaginationReturn } from './useDataTablePagination'
-
-// 动画/Canvas 类
+export type { UseDataTablePaginationOptions } from './useDataTablePagination'
+export type { UseDataTablePaginationReturn } from './useDataTablePagination'
 export { useReducedMotion } from './useReducedMotion'
 export { useGlitchEffect } from './useGlitchEffect'
-export type { GlitchTrigger, UseGlitchEffectOptions } from './useGlitchEffect'
+export type { GlitchTrigger } from './useGlitchEffect'
+export type { UseGlitchEffectOptions } from './useGlitchEffect'
 export { useCanvasInteraction } from './useCanvasInteraction'
 export type { UseCanvasInteractionReturn } from './useCanvasInteraction'
-
-// 轮播/画板类
 export { useCarousel } from './useCarousel'
-export type { UseCarouselOptions, UseCarouselReturn } from './useCarousel'
-
+export type { UseCarouselOptions } from './useCarousel'
+export type { UseCarouselReturn } from './useCarousel'
 export { useCarouselEnhanced } from './useCarouselEnhanced'
 export type { UseCarouselEnhancedOptions } from './useCarouselEnhanced'
 export { useKanban } from './useKanban'
-export type { KanbanCard, KanbanColumn, UseKanbanOptions, UseKanbanReturn } from './useKanban'
-
-// 音频类
+export type { KanbanCard } from './useKanban'
+export type { KanbanColumn } from './useKanban'
+export type { UseKanbanOptions } from './useKanban'
+export type { UseKanbanReturn } from './useKanban'
 export { useAudioEngine } from './useAudioEngine'
-export type { UseAudioEngineReturn, SoundType } from './useAudioEngine'
+export type { UseAudioEngineReturn } from './useAudioEngine'
+export type { SoundType } from './useAudioEngine'
 export { useBrutalHaptics } from './useBrutalHaptics'
-export type { UseBrutalHapticsOptions, UseBrutalHapticsReturn } from './useBrutalHaptics'
-
-// 工具类
+export type { UseBrutalHapticsOptions } from './useBrutalHaptics'
+export type { UseBrutalHapticsReturn } from './useBrutalHaptics'
 export { useDebounce } from './useDebounce'
-export type { UseDebounceOptions, UseDebounceReturn } from './useDebounce'
-
+export type { UseDebounceOptions } from './useDebounce'
+export type { UseDebounceReturn } from './useDebounce'
 export { useThrottle } from './useThrottle'
-export type { UseThrottleOptions, UseThrottleReturn } from './useThrottle'
-
+export type { UseThrottleOptions } from './useThrottle'
+export type { UseThrottleReturn } from './useThrottle'
 export { useClipboard } from './useClipboard'
 export type { UseClipboardReturn } from './useClipboard'

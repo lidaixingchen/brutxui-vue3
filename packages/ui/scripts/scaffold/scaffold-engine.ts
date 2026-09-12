@@ -1,6 +1,6 @@
 import path from 'node:path';
 import type { FileSystemAdapter } from 'brutx-shared-vue/fs';
-import { BarrelManager } from './barrel-manager.js';
+import type { ApiLayer, PublicExport, PublicExportKind } from 'brutx-shared-vue/api-contract';
 import { MetadataManager } from './metadata-manager.js';
 
 export type GenerateType = 'component' | 'composable' | 'page';
@@ -33,6 +33,8 @@ export interface GenerateOptions {
     name: string;
     dryRun?: boolean;
     overwrite?: boolean;
+    public?: boolean;
+    layer?: ApiLayer;
 }
 
 export interface PlannedFile {
@@ -48,6 +50,59 @@ export interface GenerateResult {
     files: PlannedFile[];
     injectedExports: string[];
     error?: string;
+}
+
+const API_CONTRACT_PATH = ['packages', 'ui', 'api-contract.ts'] as const;
+
+function quoteContractValue(value: string): string {
+    return `'${value.replaceAll('\\', '\\\\').replaceAll("'", "\\'")}'`;
+}
+
+function parseExportIntent(statement: string): PublicExport[] {
+    const match = statement.match(/^export\s+(type\s+)?\{\s*([^}]+)\s*\}\s+from\s+['"]([^'"]+)['"]$/u);
+    if (!match) return [];
+    const kind: PublicExportKind = match[1] ? 'type' : 'value';
+    return match[2].split(',').map((part) => {
+        const text = part.trim().replace(/^type\s+/u, '');
+        const [sourceName, publicName = sourceName] = text.split(/\s+as\s+/u).map((item) => item.trim());
+        return {
+            source: match[3],
+            sourceName,
+            publicName,
+            kind,
+        };
+    });
+}
+
+function renderContractExport(item: PublicExport): string {
+    return `                { source: ${quoteContractValue(item.source)}, sourceName: ${quoteContractValue(item.sourceName)}, publicName: ${quoteContractValue(item.publicName)}, kind: '${item.kind}' },`;
+}
+
+function insertIntoArray(source: string, boundary: string, lines: readonly string[]): string {
+    const index = source.indexOf(boundary);
+    if (index < 0) throw new Error(`API 契约结构缺少登记位置: ${boundary}`);
+    return `${source.slice(0, index)}${lines.join('\n')}\n${source.slice(index)}`;
+}
+
+function appendEntryExports(source: string, entryId: string, exports: readonly PublicExport[]): string {
+    if (exports.length === 0) return source;
+    const entryIndex = source.indexOf(`{ id: '${entryId}',`);
+    if (entryIndex < 0) throw new Error(`API 契约缺少入口: ${entryId}`);
+    const exportsIndex = source.indexOf('exports: [', entryIndex);
+    const boundary = source.indexOf('\n            ],', exportsIndex);
+    if (exportsIndex < 0 || boundary < 0) throw new Error(`API 契约入口缺少 exports 数组: ${entryId}`);
+    const existing = source.slice(exportsIndex, boundary);
+    for (const item of exports) {
+        const duplicatePattern = new RegExp(
+            `publicName: ${quoteContractValue(item.publicName)}, kind: '${item.kind}'`,
+            'u',
+        );
+        if (duplicatePattern.test(existing)) {
+            throw new Error(`API 契约入口已存在公开符号: ${entryId}#${item.publicName}`);
+        }
+    }
+    const lines = exports.map(renderContractExport);
+    return `${source.slice(0, boundary)}\n${lines.join('\n')}${source.slice(boundary)}`;
 }
 
 function toPascalCase(name: string): string {
@@ -362,9 +417,8 @@ export class ScaffoldEngine {
     private readonly uiSrcDir: string;
     private readonly componentsDir: string;
     private readonly composablesDir: string;
-    private readonly indexFile: string;
     private readonly sharedComponentsFile: string;
-    private readonly barrelManager: BarrelManager;
+    private readonly apiContractFile: string;
     private readonly metadataManager: MetadataManager;
 
     constructor(options: ScaffoldEngineOptions) {
@@ -373,9 +427,8 @@ export class ScaffoldEngine {
         this.uiSrcDir = path.join(this.projectRoot, 'packages', 'ui', 'src');
         this.componentsDir = path.join(this.uiSrcDir, 'components');
         this.composablesDir = path.join(this.uiSrcDir, 'composables');
-        this.indexFile = path.join(this.uiSrcDir, 'index.ts');
         this.sharedComponentsFile = path.join(this.projectRoot, 'packages', 'shared', 'src', 'components.ts');
-        this.barrelManager = new BarrelManager();
+        this.apiContractFile = path.join(this.projectRoot, ...API_CONTRACT_PATH);
         this.metadataManager = new MetadataManager();
     }
 
@@ -466,6 +519,91 @@ export class ScaffoldEngine {
         };
     }
 
+    private async planApiContractRegistration(
+        options: GenerateOptions,
+        vars: TemplateVars,
+        config: GeneratorConfig,
+    ): Promise<PlannedFile | null> {
+        if (options.type === 'page' || !(await this.fs.pathExists(this.apiContractFile))) return null;
+
+        const contractSource = await this.fs.readFile(this.apiContractFile, 'utf-8');
+        const isPublic = options.public ?? true;
+        const moduleId = options.type === 'component'
+            ? `component:${vars.kebabName}`
+            : `composable:${vars.camelName}`;
+        const moduleSource = options.type === 'component'
+            ? `src/components/${vars.kebabName}`
+            : `src/composables/${vars.camelName}.ts`;
+        const owner = moduleId;
+        const layer = options.layer ?? (options.type === 'component' ? 'foundation' : 'runtime/helper');
+
+        if (contractSource.includes(`id: '${moduleId}'`)) {
+            throw new Error(`API 契约已登记模块: ${moduleId}`);
+        }
+
+        const rootExports = config.exports.flatMap(parseExportIntent);
+        if (!isPublic) {
+            const moduleLine = `        { id: '${moduleId}', source: ${quoteContractValue(moduleSource)}, owner: ${quoteContractValue(owner)}, layer: '${layer}', public: false },`;
+            return {
+                filePath: this.apiContractFile,
+                content: insertIntoArray(contractSource, '\n    ],\n    entries: [', [moduleLine]),
+                isNew: false,
+            };
+        }
+
+        const projectionExports = rootExports.map((item) => {
+            const prefix = options.type === 'component'
+                ? `./components/${vars.kebabName}/`
+                : './composables/';
+            return {
+                ...item,
+                source: item.source.startsWith(prefix)
+                    ? `./${item.source.slice(prefix.length)}`
+                    : item.source,
+            };
+        });
+        let next = insertIntoArray(contractSource, '\n    ],\n    entries: [', [
+            `        { id: '${moduleId}', source: ${quoteContractValue(moduleSource)}, owner: ${quoteContractValue(owner)}, layer: '${layer}', public: true },`,
+        ]);
+
+        if (options.type === 'component') {
+            const entryId = moduleId;
+            const entryLines = [
+                `        { id: '${entryId}', subpath: './${vars.kebabName}', kind: 'component',`,
+                `            moduleIds: ['${moduleId}'],`,
+                '            exports: [',
+                ...projectionExports.map(renderContractExport),
+                '            ],',
+                '        },',
+            ];
+            next = insertIntoArray(next, '\n    ],\n    registry: [', entryLines);
+            next = appendEntryExports(next, 'root', rootExports);
+            next = insertIntoArray(next, '\n    ],\n}', [
+                `        { componentId: '${vars.kebabName}', moduleId: '${moduleId}', entryId: '${entryId}' },`,
+            ]);
+        } else {
+            const entryId = moduleId;
+            const aggregateExports = projectionExports;
+            const entryLines = [
+                `        { id: '${entryId}', subpath: './${vars.camelName}', kind: 'composable',`,
+                `            moduleIds: ['${moduleId}'],`,
+                '            exports: [',
+                ...projectionExports.map(renderContractExport),
+                '            ],',
+                '        },',
+            ];
+            next = insertIntoArray(next, '\n    ],\n    registry: [', entryLines);
+            next = appendEntryExports(next, 'root', rootExports);
+            next = appendEntryExports(next, 'composables', aggregateExports);
+        }
+
+        return {
+            filePath: this.apiContractFile,
+            content: next,
+            isNew: false,
+        };
+    }
+
     public async generate(options: GenerateOptions): Promise<GenerateResult> {
         const { type, name, dryRun = false, overwrite = false } = options;
         const vars = this.buildTemplateVars(name, type);
@@ -513,6 +651,9 @@ export class ScaffoldEngine {
             }
         }
 
+        const apiContractPlan = await this.planApiContractRegistration(options, vars, config);
+        if (apiContractPlan) plannedFiles.push(apiContractPlan);
+
         if (dryRun) {
             return {
                 success: true,
@@ -525,7 +666,6 @@ export class ScaffoldEngine {
 
         const writtenNewFiles: string[] = [];
         const overwrittenBackups = new Map<string, string>();
-        let originalIndexContent: string | null = null;
 
         try {
             for (const file of plannedFiles) {
@@ -539,14 +679,6 @@ export class ScaffoldEngine {
                     const existing = await this.fs.readFile(file.filePath, 'utf-8');
                     overwrittenBackups.set(file.filePath, existing);
                     await this.fs.writeFile(file.filePath, file.content, 'utf-8');
-                }
-            }
-
-            if (await this.fs.pathExists(this.indexFile)) {
-                originalIndexContent = await this.fs.readFile(this.indexFile, 'utf-8');
-                const nextIndexContent = this.barrelManager.injectExports(originalIndexContent, config.exports);
-                if (nextIndexContent !== originalIndexContent) {
-                    await this.fs.writeFile(this.indexFile, nextIndexContent, 'utf-8');
                 }
             }
 
@@ -567,9 +699,6 @@ export class ScaffoldEngine {
             }
             for (const [filePath, backupContent] of overwrittenBackups.entries()) {
                 await this.fs.writeFile(filePath, backupContent, 'utf-8').catch(() => {});
-            }
-            if (originalIndexContent !== null) {
-                await this.fs.writeFile(this.indexFile, originalIndexContent, 'utf-8').catch(() => {});
             }
             if (originalMetaContent !== null) {
                 await this.fs.writeFile(this.sharedComponentsFile, originalMetaContent, 'utf-8').catch(() => {});

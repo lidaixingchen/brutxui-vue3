@@ -8,11 +8,13 @@ export interface UseGlitchEffectOptions {
     trigger?: MaybeRefOrGetter<GlitchTrigger | undefined>
     interval?: MaybeRefOrGetter<number | undefined>
     disabled?: MaybeRefOrGetter<boolean | undefined>
+    enabled?: MaybeRefOrGetter<boolean | undefined>
 }
 
 export function useGlitchEffect(options: UseGlitchEffectOptions = {}) {
     const isActive = shallowRef(false)
-    const prefersReducedMotion = useReducedMotion()
+    const isEnabled = computed(() => toValue(options.enabled) !== false)
+    const prefersReducedMotion = useReducedMotion({ enabled: isEnabled })
     // KeepAlive 停用标记：停用期间禁止启动 autoplay 定时器，避免隐藏故障效果继续空转
     const isDeactivated = ref(false)
     const autoplayTimer = shallowRef<ReturnType<typeof setInterval> | null>(null)
@@ -20,11 +22,20 @@ export function useGlitchEffect(options: UseGlitchEffectOptions = {}) {
 
     const trigger = computed(() => toValue(options.trigger) ?? 'hover')
     const isDisabled = computed(() => !!toValue(options.disabled))
-    const isGlitching = computed(() => isActive.value && !prefersReducedMotion.value)
+    const isGlitching = computed(() => isActive.value && isEnabled.value && !prefersReducedMotion.value)
 
     // 禁用时停止 autoplay 并复位激活态；解除禁用后按 trigger 恢复 autoplay
     watch(isDisabled, (disabled) => {
         if (disabled) {
+            stopAutoplay()
+            isActive.value = false
+        } else if (trigger.value === 'autoplay') {
+            startAutoplay()
+        }
+    })
+
+    watch(isEnabled, (enabled) => {
+        if (!enabled) {
             stopAutoplay()
             isActive.value = false
         } else if (trigger.value === 'autoplay') {
@@ -44,6 +55,7 @@ export function useGlitchEffect(options: UseGlitchEffectOptions = {}) {
     }
 
     function startAutoplay() {
+        if (!isEnabled.value) return
         // 禁用时不启动 autoplay，避免定时器持续 tick 占用资源
         if (isDisabled.value) return
         // 用户开启「减少动态效果」时不启动：回调只会因 prefersReducedMotion 提前 return，
@@ -72,6 +84,7 @@ export function useGlitchEffect(options: UseGlitchEffectOptions = {}) {
     }
 
     function onMouseEnter() {
+        if (!isEnabled.value) return
         if (isDisabled.value) return
         if (trigger.value === 'hover') {
             isActive.value = true
@@ -82,6 +95,7 @@ export function useGlitchEffect(options: UseGlitchEffectOptions = {}) {
     }
 
     function onMouseLeave() {
+        if (!isEnabled.value) return
         if (isDisabled.value) return
         if (trigger.value === 'hover') {
             isActive.value = false
@@ -91,6 +105,7 @@ export function useGlitchEffect(options: UseGlitchEffectOptions = {}) {
     }
 
     function onClick() {
+        if (!isEnabled.value) return
         if (isDisabled.value) return
         if (trigger.value === 'click') {
             isActive.value = !isActive.value
@@ -98,16 +113,14 @@ export function useGlitchEffect(options: UseGlitchEffectOptions = {}) {
     }
 
     /**
-     * 无条件开启故障效果：编程强制接口，不受 disabled / trigger 限制
-     * （与 onClick/onMouseEnter 等事件处理器的拦截逻辑不同，供外部程序化控制使用）。
+     * 编程接口绕过 disabled / trigger。
      */
     function play() {
         isActive.value = true
     }
 
     /**
-     * 无条件关闭故障效果：编程强制接口，不受 disabled / trigger 限制
-     * （与 onClick/onMouseEnter 等事件处理器的拦截逻辑不同，供外部程序化控制使用）。
+     * 编程接口始终关闭故障效果。
      */
     function stop() {
         isActive.value = false

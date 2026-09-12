@@ -10,8 +10,10 @@
             "types": "./dist/index.d.ts",
             "import": "./dist/index.js"
         },
-        "./style.css": "./dist/styles.css",
-        "./preflight.css": "./dist/preflight.css",
+        "./composables": {
+            "types": "./dist/composables.d.ts",
+            "import": "./dist/composables.js"
+        },
         "./locales": {
             "types": "./dist/locales.d.ts",
             "import": "./dist/locales.js"
@@ -209,8 +211,8 @@
             "import": "./dist/components/label/index.js"
         },
         "./loading": {
-            "types": "./dist/directives/loading.d.ts",
-            "import": "./dist/directives/loading.js"
+            "types": "./dist/components/loading/index.d.ts",
+            "import": "./dist/components/loading/index.js"
         },
         "./marquee": {
             "types": "./dist/components/marquee/index.d.ts",
@@ -385,145 +387,131 @@
             "import": "./dist/components/watermark/index.js"
         },
         "./destroyFallbacks": {
-            "types": "./dist/composables/destroyFallbacks.d.ts",
+            "types": "./dist/entries/destroyFallbacks.d.ts",
             "import": "./dist/composables/destroyFallbacks.js"
         },
         "./useAudioEngine": {
-            "types": "./dist/composables/useAudioEngine.d.ts",
+            "types": "./dist/entries/useAudioEngine.d.ts",
             "import": "./dist/composables/useAudioEngine.js"
         },
         "./useBrutalHaptics": {
-            "types": "./dist/composables/useBrutalHaptics.d.ts",
+            "types": "./dist/entries/useBrutalHaptics.d.ts",
             "import": "./dist/composables/useBrutalHaptics.js"
         },
         "./useCanvasInteraction": {
-            "types": "./dist/composables/useCanvasInteraction.d.ts",
+            "types": "./dist/entries/useCanvasInteraction.d.ts",
             "import": "./dist/composables/useCanvasInteraction.js"
         },
         "./useCarousel": {
-            "types": "./dist/composables/useCarousel.d.ts",
+            "types": "./dist/entries/useCarousel.d.ts",
             "import": "./dist/composables/useCarousel.js"
         },
         "./useCarouselEnhanced": {
-            "types": "./dist/composables/useCarouselEnhanced.d.ts",
+            "types": "./dist/entries/useCarouselEnhanced.d.ts",
             "import": "./dist/composables/useCarouselEnhanced.js"
         },
         "./useClearable": {
-            "types": "./dist/composables/useClearable.d.ts",
+            "types": "./dist/entries/useClearable.d.ts",
             "import": "./dist/composables/useClearable.js"
         },
-        "./useClearableSelection": {
-            "types": "./dist/composables/useClearableSelection.d.ts",
-            "import": "./dist/composables/useClearableSelection.js"
-        },
         "./useClipboard": {
-            "types": "./dist/composables/useClipboard.d.ts",
+            "types": "./dist/entries/useClipboard.d.ts",
             "import": "./dist/composables/useClipboard.js"
         },
         "./useColorHistory": {
-            "types": "./dist/composables/useColorHistory.d.ts",
+            "types": "./dist/entries/useColorHistory.d.ts",
             "import": "./dist/composables/useColorHistory.js"
         },
         "./useColorPicker": {
-            "types": "./dist/composables/useColorPicker.d.ts",
+            "types": "./dist/entries/useColorPicker.d.ts",
             "import": "./dist/composables/useColorPicker.js"
         },
         "./useDataTableFilter": {
-            "types": "./dist/composables/useDataTableFilter.d.ts",
+            "types": "./dist/entries/useDataTableFilter.d.ts",
             "import": "./dist/composables/useDataTableFilter.js"
         },
         "./useDataTablePagination": {
-            "types": "./dist/composables/useDataTablePagination.d.ts",
+            "types": "./dist/entries/useDataTablePagination.d.ts",
             "import": "./dist/composables/useDataTablePagination.js"
         },
         "./useDataTableSelection": {
-            "types": "./dist/composables/useDataTableSelection.d.ts",
+            "types": "./dist/entries/useDataTableSelection.d.ts",
             "import": "./dist/composables/useDataTableSelection.js"
         },
         "./useDataTableSort": {
-            "types": "./dist/composables/useDataTableSort.d.ts",
+            "types": "./dist/entries/useDataTableSort.d.ts",
             "import": "./dist/composables/useDataTableSort.js"
         },
         "./useDatePicker": {
-            "types": "./dist/composables/useDatePicker.d.ts",
+            "types": "./dist/entries/useDatePicker.d.ts",
             "import": "./dist/composables/useDatePicker.js"
         },
         "./useDebounce": {
-            "types": "./dist/composables/useDebounce.d.ts",
+            "types": "./dist/entries/useDebounce.d.ts",
             "import": "./dist/composables/useDebounce.js"
         },
         "./useDialog": {
-            "types": "./dist/composables/useDialog.d.ts",
+            "types": "./dist/entries/useDialog.d.ts",
             "import": "./dist/composables/useDialog.js"
         },
         "./useDialogEnhanced": {
-            "types": "./dist/composables/useDialogEnhanced.d.ts",
+            "types": "./dist/entries/useDialogEnhanced.d.ts",
             "import": "./dist/composables/useDialogEnhanced.js"
         },
         "./useDialogGeometry": {
-            "types": "./dist/composables/useDialogGeometry.d.ts",
+            "types": "./dist/entries/useDialogGeometry.d.ts",
             "import": "./dist/composables/useDialogGeometry.js"
         },
         "./useFormFieldValidation": {
-            "types": "./dist/composables/useFormFieldValidation.d.ts",
+            "types": "./dist/entries/useFormFieldValidation.d.ts",
             "import": "./dist/composables/useFormFieldValidation.js"
         },
         "./useGlitchEffect": {
-            "types": "./dist/composables/useGlitchEffect.d.ts",
+            "types": "./dist/entries/useGlitchEffect.d.ts",
             "import": "./dist/composables/useGlitchEffect.js"
         },
         "./useKanban": {
-            "types": "./dist/composables/useKanban.d.ts",
+            "types": "./dist/entries/useKanban.d.ts",
             "import": "./dist/composables/useKanban.js"
         },
         "./useLocale": {
-            "types": "./dist/composables/useLocale.d.ts",
+            "types": "./dist/entries/useLocale.d.ts",
             "import": "./dist/composables/useLocale.js"
         },
         "./useMessage": {
-            "types": "./dist/composables/useMessage.d.ts",
+            "types": "./dist/entries/useMessage.d.ts",
             "import": "./dist/composables/useMessage.js"
         },
         "./useMessageBox": {
-            "types": "./dist/composables/useMessageBox.d.ts",
+            "types": "./dist/entries/useMessageBox.d.ts",
             "import": "./dist/composables/useMessageBox.js"
         },
         "./useReducedMotion": {
-            "types": "./dist/composables/useReducedMotion.d.ts",
+            "types": "./dist/entries/useReducedMotion.d.ts",
             "import": "./dist/composables/useReducedMotion.js"
         },
-        "./useSelectableTrigger": {
-            "types": "./dist/composables/useSelectableTrigger.d.ts",
-            "import": "./dist/composables/useSelectableTrigger.js"
-        },
-        "./useSelectionDisplayText": {
-            "types": "./dist/composables/useSelectionDisplayText.d.ts",
-            "import": "./dist/composables/useSelectionDisplayText.js"
-        },
         "./useStepper": {
-            "types": "./dist/composables/useStepper.d.ts",
+            "types": "./dist/entries/useStepper.d.ts",
             "import": "./dist/composables/useStepper.js"
         },
         "./useTheme": {
-            "types": "./dist/composables/useTheme.d.ts",
+            "types": "./dist/entries/useTheme.d.ts",
             "import": "./dist/composables/useTheme.js"
         },
         "./useThrottle": {
-            "types": "./dist/composables/useThrottle.d.ts",
+            "types": "./dist/entries/useThrottle.d.ts",
             "import": "./dist/composables/useThrottle.js"
         },
         "./useToast": {
-            "types": "./dist/composables/useToast.d.ts",
+            "types": "./dist/entries/useToast.d.ts",
             "import": "./dist/composables/useToast.js"
         },
-        "./useTransferPanelSelection": {
-            "types": "./dist/composables/useTransferPanelSelection.d.ts",
-            "import": "./dist/composables/useTransferPanelSelection.js"
-        },
         "./useUpload": {
-            "types": "./dist/composables/useUpload.d.ts",
+            "types": "./dist/entries/useUpload.d.ts",
             "import": "./dist/composables/useUpload.js"
-        }
+        },
+        "./style.css": "./dist/styles.css",
+        "./preflight.css": "./dist/preflight.css"
     },
     "files": [
         "dist"
@@ -533,18 +521,20 @@
         "*.css"
     ],
     "scripts": {
-        "generate": "pnpm prebuild:tokens && pnpm prebuild:scan && pnpm prebuild:component-index && pnpm prebuild:exports",
-        "build": "pnpm prebuild:tokens && pnpm prebuild:scan && pnpm prebuild:component-index && pnpm prebuild:exports && vite build && pnpm postbuild:exports && npm run build:preflight",
-        "prebuild:scan": "tsx scripts/prebuild-scan.ts",
-        "prebuild:tokens": "tsx scripts/generate-styles-tokens.ts",
-        "prebuild:component-index": "tsx scripts/generate-component-index.ts",
-        "prebuild:exports": "tsx scripts/generate-exports.ts",
+        "generate": "node --import tsx scripts/generate.ts",
+        "build": "pnpm exec turbo run build:artifact --filter=brutx-ui-vue",
+        "build:artifact": "vite build && pnpm postbuild:exports && pnpm build:preflight",
+        "prebuild:scan": "pnpm generate",
+        "prebuild:tokens": "pnpm generate",
+        "prebuild:component-index": "pnpm generate",
+        "prebuild:exports": "pnpm generate",
         "postbuild:exports": "tsx scripts/generate-exports.ts --verify",
         "build:preflight": "tailwindcss -i src/preflight.css -o dist/preflight.css",
         "generate:echarts-theme": "tsx scripts/generate-echarts-theme.ts",
-        "prepack": "npm run build",
+        "prepack": "pnpm build",
         "dev": "vite build --watch",
         "clean": "rm -rf dist",
+        "check:api-dependencies": "tsx scripts/check-api-dependencies.ts",
         "check:exports": "tsx scripts/check-exports.ts",
         "audit:fallback": "tsx scripts/audit-brutal-fallback.ts",
         "audit:fallback:check": "tsx scripts/audit-brutal-fallback.ts --check-baseline",
@@ -554,9 +544,11 @@
         "check:deprecated": "tsx scripts/check-deprecated-utilities.ts",
         "check:deprecated:check": "tsx scripts/check-deprecated-utilities.ts --check-baseline",
         "check:deprecated:update": "tsx scripts/check-deprecated-utilities.ts --update-baseline",
-        "typecheck": "pnpm prebuild:scan && pnpm prebuild:component-index && pnpm prebuild:exports && tsx scripts/check-twmerge-colors.ts && vue-tsc --noEmit",
+        "typecheck": "pnpm exec turbo run typecheck:source --filter=brutx-ui-vue",
+        "typecheck:source": "tsx scripts/check-twmerge-colors.ts && vue-tsc --noEmit",
         "test:types": "vue-tsc --project test-d/consumer/tsconfig.json --noEmit",
-        "lint": "pnpm prebuild:scan && pnpm prebuild:component-index && pnpm prebuild:exports && eslint src",
+        "lint": "pnpm exec turbo run lint:source --filter=brutx-ui-vue",
+        "lint:source": "eslint src",
         "test": "vitest run",
         "test:browser": "vitest run --config vitest.browser.config.ts",
         "test:ssr": "vitest run --config vitest.ssr.config.ts",

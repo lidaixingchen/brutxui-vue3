@@ -20,7 +20,7 @@ import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
 import { DiskFileSystemAdapter } from '../fs/disk-fs.js';
 import { rewriteImports } from './ast-rewriter.js';
 import { DependencyResolver } from './dependency-resolver.js';
-import { CACHE_VERSION, CacheManager } from './cache-manager.js';
+import { CACHE_VERSION, CacheManager, computeInputDigest } from './cache-manager.js';
 import type {
     CompiledItemResult,
     CompiledRegistryResult,
@@ -30,7 +30,22 @@ import type {
     RegistryBuildManifestOptions,
     RegistrySbom,
     SbomComponent,
+    ComponentIndexBuilder,
+    PublicComponentProjection,
+    PublicComponentProjectionSet,
 } from './types.js';
+import type { ModuleResolver } from 'brutx-shared-vue/module-resolver';
+
+function isComponentProjection(
+    value: PublicComponentProjectionSet,
+): value is PublicComponentProjection {
+    return typeof value === 'object'
+        && value !== null
+        && !Array.isArray(value)
+        && 'componentId' in value
+        && typeof value.componentId === 'string'
+        && Array.isArray(value.exports);
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -43,8 +58,10 @@ const DEFAULT_PATHS: CompilerPaths = {
     localesDir: path.resolve(__dirname, '../../../ui/src/locales'),
     libDir: path.resolve(__dirname, '../../../ui/src/lib'),
     directivesDir: path.resolve(__dirname, '../../../ui/src/directives'),
+    typesDir: path.resolve(__dirname, '../../../ui/src/types'),
     manifestPath: path.resolve(__dirname, '../../../ui/registry-manifest.json'),
     outputDir: path.resolve(__dirname, '../../registry'),
+    apiContractPath: path.resolve(__dirname, '../../../ui/api-contract.ts'),
 };
 
 const REGISTRY_MANIFEST_SCHEMA_URL = 'https://lidaixingchen.github.io/brutxui-vue3/registry-manifest.schema.json';
@@ -64,6 +81,14 @@ export class RegistryCompiler {
     private registryVersion?: string;
     private releaseTag?: string;
     private gitCommit?: string | null;
+    private publicProjection?: PublicComponentProjectionSet;
+    private publicProjectionDigest: string;
+    private componentIndexBuilder?: ComponentIndexBuilder;
+    private moduleResolver?: ModuleResolver;
+    private manifestDigest: string | null = null;
+    private manifestOverride?: CompilerOptions['manifestOverrides'];
+    private validateManifestFreshness: boolean;
+    private configuredManifest?: RegistryManifest;
 
     constructor(options: CompilerOptions = {}) {
         this.fs = options.fs ?? new DiskFileSystemAdapter();
@@ -75,8 +100,22 @@ export class RegistryCompiler {
         this.registryVersion = options.registryVersion;
         this.releaseTag = options.releaseTag;
         this.gitCommit = options.gitCommit;
+        this.publicProjection = options.publicProjection;
+        this.publicProjectionDigest = options.publicProjectionDigest
+            ?? computeInputDigest(options.publicProjection ?? null);
+        this.componentIndexBuilder = options.componentIndexBuilder;
+        this.moduleResolver = options.moduleResolver;
+        this.manifestOverride = options.manifestOverrides;
+        this.validateManifestFreshness = options.validateManifestFreshness ?? true;
+        this.configuredManifest = options.manifest;
 
-        this.dependencyResolver = new DependencyResolver(this.fs, this.paths, this.libExclude);
+        this.dependencyResolver = new DependencyResolver(
+            this.fs,
+            this.paths,
+            this.libExclude,
+            this.componentIndexBuilder,
+            this.moduleResolver,
+        );
         const cacheFilePath = path.join(path.dirname(this.paths.outputDir), '.registry-cache.json');
         this.cacheManager = new CacheManager(this.fs, cacheFilePath);
     }
@@ -85,29 +124,182 @@ export class RegistryCompiler {
         return this.metadata;
     }
 
-    public async loadMergedRegistry(): Promise<Record<string, MergedRegistryEntry>> {
-        let manifestRaw: string;
-        try {
-            manifestRaw = await this.fs.readFile(this.paths.manifestPath, 'utf-8');
-        } catch (error) {
-            const cause = error instanceof Error ? error.message : String(error);
-            throw new Error(
-                `Failed to read registry-manifest.json (${cause}). ` +
-                `Run pnpm --filter brutx-ui-vue prebuild:scan first to generate the UI registry manifest.`,
-                { cause: error }
-            );
+    private async listComponentSourceFiles(componentDir: string, relativeDir = ''): Promise<string[]> {
+        if (!(await this.fs.pathExists(componentDir))) return [];
+
+        const entries = await this.fs.readdir(componentDir, { withFileTypes: true });
+        const files: string[] = [];
+        for (const entry of entries) {
+            const relativePath = relativeDir ? `${relativeDir}/${entry.name}` : entry.name;
+            const absolutePath = path.join(componentDir, entry.name);
+            if (entry.isDirectory()) {
+                if (entry.name.startsWith('.') || entry.name === 'node_modules') continue;
+                files.push(...await this.listComponentSourceFiles(absolutePath, relativePath));
+                continue;
+            }
+
+            if (!entry.isFile()) continue;
+            if (entry.name === 'index.ts' || /\.(test|spec)\.(ts|js|tsx|jsx)$/.test(entry.name)) continue;
+            if (/\.(vue|ts|css)$/.test(entry.name)) files.push(relativePath.replace(/\\/g, '/'));
+        }
+        return files.sort();
+    }
+
+    private async assertManifestFresh(manifest: RegistryManifest): Promise<void> {
+        const componentsDir = this.paths.componentsDir;
+        if (!(await this.fs.pathExists(componentsDir))) {
+            throw new Error(`Components directory not found: ${componentsDir}`);
         }
 
-        let manifest: RegistryManifest;
-        try {
-            manifest = JSON.parse(manifestRaw) as RegistryManifest;
-        } catch (error) {
-            const cause = error instanceof Error ? error.message : String(error);
+        const entries = await this.fs.readdir(componentsDir, { withFileTypes: true });
+        const sourceComponents = entries
+            .filter(entry => entry.isDirectory() && !entry.name.startsWith('.') && entry.name !== 'node_modules')
+            .map(entry => entry.name)
+            .sort();
+        const problems: string[] = [];
+
+        for (const name of sourceComponents) {
+            const manifestEntry = manifest[name];
+            if (!manifestEntry) {
+                problems.push(`component ${name} is missing from registry-manifest.json`);
+                continue;
+            }
+
+            const sourceFiles = await this.listComponentSourceFiles(path.join(componentsDir, name));
+            const manifestFiles = [...manifestEntry.files].map(file => file.replace(/\\/g, '/')).sort();
+            const sourceSet = new Set(sourceFiles);
+            const manifestSet = new Set(manifestFiles);
+            for (const file of sourceFiles) {
+                if (!manifestSet.has(file)) problems.push(`component ${name} is missing file ${file}`);
+            }
+            for (const file of manifestFiles) {
+                if (!sourceSet.has(file)) problems.push(`component ${name} lists missing file ${file}`);
+            }
+
+            const referencedFiles: ReadonlyArray<readonly [string, string, string]> = [
+                ...manifestEntry.composables.map(file => [this.paths.composablesDir, file, 'composable'] as const),
+                ...manifestEntry.directives.map(file => [this.paths.directivesDir, file, 'directive'] as const),
+                ...manifestEntry.lib.map(file => [this.paths.libDir, file, 'lib'] as const),
+            ];
+            for (const [baseDir, file, kind] of referencedFiles) {
+                const candidate = path.extname(file) ? file : `${file}.ts`;
+                if (!(await this.fs.pathExists(path.join(baseDir, candidate)))) {
+                    problems.push(`component ${name} references missing ${kind} ${file}`);
+                }
+            }
+
+        }
+        for (const name of Object.keys(manifest)) {
+            if (!sourceComponents.includes(name)) {
+                problems.push(`registry-manifest.json contains missing component ${name}`);
+            }
+        }
+
+        if (problems.length > 0) {
             throw new Error(
-                `Failed to parse registry-manifest.json (${cause}). ` +
-                `Run pnpm --filter brutx-ui-vue prebuild:scan first to regenerate the file.`,
-                { cause: error }
+                `registry-manifest.json is stale; run pnpm --filter brutx-ui-vue generate:\n${problems
+                    .map(problem => `  - ${problem}`)
+                    .join('\n')}`
             );
+        }
+    }
+
+    private getComponentProjection(name: string): PublicComponentProjection | undefined {
+        const projection = this.publicProjection;
+        if (!projection) return undefined;
+        if (isComponentProjection(projection)) {
+            return projection.componentId === name ? projection : undefined;
+        }
+        return projection[name];
+    }
+
+    private async computeItemSourceHash(
+        name: string,
+        fileMapping: { files: string[]; composables?: string[]; directives?: string[] },
+        componentInfo: MergedRegistryEntry,
+        closure: Awaited<ReturnType<DependencyResolver['resolveComponentClosure']>>,
+    ): Promise<string> {
+        return this.cacheManager.computeSourceHash(
+            name,
+            fileMapping,
+            componentInfo,
+            this.tailwindConfig,
+            this.cssVars,
+            this.paths,
+            this.libExclude,
+            {
+                closure,
+                knownComponents: new Set(Object.keys(this.metadata)),
+                publicProjection: this.getComponentProjection(name),
+                publicProjectionDigest: this.publicProjectionDigest,
+                manifestDigest: this.manifestDigest ?? undefined,
+                componentIndexBuilder: this.componentIndexBuilder,
+                moduleResolver: this.moduleResolver,
+            },
+        );
+    }
+
+    public async computeSourceHash(
+        name: string,
+        fileMapping: { files: string[]; composables?: string[]; directives?: string[] },
+        mergedRegistry?: Record<string, MergedRegistryEntry>,
+    ): Promise<string> {
+        const registry = mergedRegistry ?? await this.loadMergedRegistry();
+        if (this.manifestDigest === null) await this.loadMergedRegistry();
+        const componentInfo = registry[name];
+        if (!componentInfo) throw new Error(`No file mapping found for component "${name}"`);
+        const normalizedFileMapping = {
+            files: [...fileMapping.files],
+            composables: fileMapping.composables ? [...fileMapping.composables] : undefined,
+            directives: fileMapping.directives ? [...fileMapping.directives] : undefined,
+        };
+        const closure = await this.dependencyResolver.resolveComponentClosure(
+            name,
+            {
+                ...componentInfo,
+                files: normalizedFileMapping.files,
+                composables: normalizedFileMapping.composables ?? componentInfo.composables,
+                directives: normalizedFileMapping.directives ?? componentInfo.directives,
+            },
+            new Set(Object.keys(registry)),
+            this.getComponentProjection(name),
+        );
+        return this.computeItemSourceHash(name, normalizedFileMapping, componentInfo, closure);
+    }
+
+    public async loadMergedRegistry(): Promise<Record<string, MergedRegistryEntry>> {
+        let manifest: RegistryManifest;
+        if (this.configuredManifest) {
+            manifest = this.configuredManifest;
+            this.manifestDigest = computeInputDigest(manifest);
+        } else {
+            let manifestRaw: string;
+            try {
+                manifestRaw = await this.fs.readFile(this.paths.manifestPath, 'utf-8');
+            } catch (error) {
+                const cause = error instanceof Error ? error.message : String(error);
+                throw new Error(
+                    `Failed to read registry-manifest.json (${cause}). ` +
+                    `Run pnpm --filter brutx-ui-vue generate first to generate the UI registry manifest.`,
+                    { cause: error }
+                );
+            }
+
+            try {
+                manifest = JSON.parse(manifestRaw) as RegistryManifest;
+                this.manifestDigest = computeInputDigest(manifest);
+            } catch (error) {
+                const cause = error instanceof Error ? error.message : String(error);
+                throw new Error(
+                    `Failed to parse registry-manifest.json (${cause}). ` +
+                    `Run pnpm --filter brutx-ui-vue generate first to regenerate the file.`,
+                    { cause: error }
+                );
+            }
+        }
+
+        if (this.validateManifestFreshness) {
+            await this.assertManifestFresh(manifest);
         }
         const merged: Record<string, MergedRegistryEntry> = {};
 
@@ -116,12 +308,14 @@ export class RegistryCompiler {
             if (!fileManifest) {
                 throw new Error(`Component "${name}" has metadata but is missing from registry-manifest.json. Run pnpm --filter brutx-ui-vue prebuild:scan.`);
             }
+            const override = this.manifestOverride?.[name];
             merged[name] = {
                 ...meta,
                 files: [...fileManifest.files],
                 composables: [...fileManifest.composables],
                 directives: [...fileManifest.directives],
                 lib: [...fileManifest.lib],
+                ...override,
             };
         }
 
@@ -146,11 +340,14 @@ export class RegistryCompiler {
         }
 
         const knownComponents = new Set(Object.keys(registry));
-        const { files, registryDependencies } = await this.dependencyResolver.resolveComponentClosure(
+        const publicProjection = this.getComponentProjection(name);
+        const closure = await this.dependencyResolver.resolveComponentClosure(
             name,
             componentInfo,
-            knownComponents
+            knownComponents,
+            publicProjection,
         );
+        const { files, registryDependencies } = closure;
 
         const integrity = computeRegistryIntegrity(files);
 
@@ -172,7 +369,7 @@ export class RegistryCompiler {
             integrity,
         };
 
-        const sourceHash = await this.cacheManager.computeSourceHash(
+        const sourceHash = await this.computeItemSourceHash(
             name,
             {
                 files: componentInfo.files,
@@ -180,10 +377,7 @@ export class RegistryCompiler {
                 directives: componentInfo.directives,
             },
             componentInfo,
-            this.tailwindConfig,
-            this.cssVars,
-            this.paths,
-            this.libExclude
+            closure,
         );
 
         const durationMs = Date.now() - startTime;
@@ -226,14 +420,13 @@ export class RegistryCompiler {
             });
         }
 
-        const localeHash = crypto.createHash('sha256').update([
-            JSON.stringify({
+        const localeHash = crypto.createHash('sha256').update(computeInputDigest({
                 cacheVersion: CACHE_VERSION,
                 tailwind: this.tailwindConfig,
                 cssVars: this.cssVars,
-            }),
-            ...localeHashParts,
-        ].join('\0')).digest('hex');
+                manifestDigest: this.manifestDigest,
+                files: localeHashParts,
+            })).digest('hex');
 
         const localeIntegrity = computeRegistryIntegrity(localeFiles);
 
@@ -261,10 +454,11 @@ export class RegistryCompiler {
         };
     }
 
-    public async compileAll(_options: { forceRebuild?: boolean } = {}): Promise<CompiledRegistryResult> {
+    public async compileAll(options: { forceRebuild?: boolean } = {}): Promise<CompiledRegistryResult> {
         const totalStartTime = Date.now();
         const mergedRegistry = await this.loadMergedRegistry();
         const componentNames = Object.keys(mergedRegistry).sort();
+        const previousCache = options.forceRebuild ? {} : await this.cacheManager.loadCache();
 
         const itemsMap = new Map<string, RegistryItem>();
         const itemResults: CompiledItemResult[] = [];
@@ -274,7 +468,11 @@ export class RegistryCompiler {
 
         // 1. 编译各组件
         for (const name of componentNames) {
-            const res = await this.compileItem(name, mergedRegistry);
+            const compiled = await this.compileItem(name, mergedRegistry);
+            const res: CompiledItemResult = {
+                ...compiled,
+                cached: previousCache[name] === compiled.sourceHash,
+            };
             itemsMap.set(name, res.item);
             itemResults.push(res);
             cacheRecord[name] = res.sourceHash;
@@ -298,7 +496,11 @@ export class RegistryCompiler {
         }
 
         // 2. 编译 locale-zh-cn
-        const localeRes = await this.compileLocaleZhCn();
+        const compiledLocale = await this.compileLocaleZhCn();
+        const localeRes: CompiledItemResult = {
+            ...compiledLocale,
+            cached: previousCache[compiledLocale.name] === compiledLocale.sourceHash,
+        };
         itemsMap.set(localeRes.name, localeRes.item);
         itemResults.push(localeRes);
         cacheRecord[localeRes.name] = localeRes.sourceHash;

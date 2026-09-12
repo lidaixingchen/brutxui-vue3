@@ -64,6 +64,10 @@ export function resolveImportAlias(content: string, config: BrutalistConfig, fil
                 ? spec.replace('@/lib', `${sharedBase}/lib`)
                 : spec.replace('@/lib', libAlias);
         }
+        if (spec.startsWith('@/types/')) {
+            const typesAlias = sharedBase ? `${sharedBase}/types` : `${composablesAlias.replace(/\/[^/]+$/, '')}/types`;
+            return spec.replace('@/types', typesAlias);
+        }
         if (spec.startsWith('@/locales/')) {
             return spec.replace('@/locales', localesAlias);
         }

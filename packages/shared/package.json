@@ -11,15 +11,20 @@
         "./design-tokens": "./src/design-tokens.ts",
         "./tokens": "./src/tokens/index.ts",
         "./fs": "./src/fs/index.ts",
-        "./ast": "./src/ast/index.ts"
+        "./ast": "./src/ast/index.ts",
+        "./generation": "./src/generation.ts",
+        "./api-contract": "./src/api-contract.ts",
+        "./module-resolver": "./src/module-resolver.ts"
     },
     "engines": {
         "node": ">=22.5"
     },
     "scripts": {
-        "test": "vitest run",
-        "typecheck": "tsc --noEmit",
-        "lint": "eslint src tests"
+        "typecheck": "pnpm exec turbo run typecheck:source --filter=brutx-shared-vue",
+        "typecheck:source": "tsc --noEmit",
+        "lint:source": "eslint src tests",
+        "lint": "pnpm exec turbo run lint:source --filter=brutx-shared-vue",
+        "test": "vitest run"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",

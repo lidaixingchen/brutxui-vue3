@@ -403,8 +403,8 @@ function validate() {
 
             totalFiles += data.files.length;
             for (const fileObj of data.files) {
-                if (!fileObj.path.startsWith(`components/ui/${data.name}/`) && !fileObj.path.startsWith('composables/') && !fileObj.path.startsWith('locales/') && !fileObj.path.startsWith('lib/') && !fileObj.path.startsWith('directives/')) {
-                    console.error(`✗ [${file}] File path "${fileObj.path}" does not match expected pattern "components/ui/${data.name}/", "composables/", "locales/", "lib/", or "directives/".`);
+                if (!fileObj.path.startsWith(`components/ui/${data.name}/`) && !fileObj.path.startsWith('composables/') && !fileObj.path.startsWith('locales/') && !fileObj.path.startsWith('lib/') && !fileObj.path.startsWith('directives/') && !fileObj.path.startsWith('types/')) {
+                    console.error(`✗ [${file}] File path "${fileObj.path}" does not match expected pattern "components/ui/${data.name}/", "composables/", "locales/", "lib/", "directives/", or "types/".`);
                     errorCount++;
                 }
             }

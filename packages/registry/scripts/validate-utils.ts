@@ -518,14 +518,6 @@ export function validateRegistryItemInternalImports(
 
     for (const file of item.files) {
         for (const classified of extractClassifiedModuleSpecifiers(file.content)) {
-            // Type-only imports don't add runtime file or component deps, but
-            // their specifiers must still resolve to known paths (we don't
-            // validate type-only resolution here — file-presence check below
-            // applies to runtime imports only).
-            if (classified.isTypeOnly) {
-                continue
-            }
-
             const expectedPath = resolveRegistryAliasImport(item.name, classified.specifier)
 
             if (!expectedPath || REGISTRY_ITEM_IGNORED_IMPORTS.has(expectedPath)) {
@@ -596,6 +588,7 @@ export function classifyRegistryImport(
         specifier.startsWith('@/composables/') ||
         specifier.startsWith('@/lib/') ||
         specifier.startsWith('@/directives/') ||
+        specifier.startsWith('@/types/') ||
         specifier.startsWith('@/locales/')
     ) {
         return { specifier, kind: 'registry-shared', isTypeOnly, isDynamic }
@@ -611,6 +604,7 @@ export function classifyRegistryImport(
         specifier.startsWith('../composables/') ||
         specifier.startsWith('../lib/') ||
         specifier.startsWith('../directives/') ||
+        specifier.startsWith('../types/') ||
         specifier.startsWith('../locales/')
     ) {
         return { specifier, kind: 'registry-shared', isTypeOnly, isDynamic }
@@ -662,6 +656,10 @@ function extractCrossComponentImports(itemName: string, code: string): string[] 
 
 function resolveRegistryAliasImport(itemName: string, specifier: string): string | null {
     const cleanSpecifier = specifier.split(/[?#]/)[0]
+
+    if (cleanSpecifier.startsWith('@/types/')) {
+        return normalizeRegistryImportPath('types/', cleanSpecifier.slice('@/types/'.length))
+    }
 
     if (cleanSpecifier.startsWith('@/lib/')) {
         return normalizeRegistryImportPath('lib/', cleanSpecifier.slice('@/lib/'.length))

@@ -6,7 +6,7 @@ import { treeItemVariants } from './tree-view-variants';
 import { getCheckState } from './tree-view-utils';
 import { INDENT_PER_DEPTH, BASE_INDENT_TREE_VIEW, treeChevronBaseClass, treeChevronExpandedClass, treeLabelBaseClass } from '@/lib/tree-variants';
 import Checkbox from '../checkbox/Checkbox.vue';
-import type { TreeNode, SelectionMode, CheckState, TreeViewContext } from './TreeView.vue';
+import type { CheckState, SelectionMode, TreeNode, TreeViewContext } from './types';
 
 const context = inject<TreeViewContext | null>('TreeViewContext', null);
 

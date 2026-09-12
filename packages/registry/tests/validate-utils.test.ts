@@ -361,6 +361,16 @@ describe('validate-registry helpers', () => {
         ])
     })
 
+    it('requires copied shared types for source typechecking', () => {
+        const item = createRegistryItem('tree-select', { files: ['components/ui/tree-select/index.ts'] })
+        item.files[0].content = "export type { TreeNode } from '@/types/tree'\n"
+        expect(validateRegistryItemInternalImports(item)).toEqual([
+            'file "components/ui/tree-select/index.ts" imports "@/types/tree", but generated registry item is missing "types/tree.ts"',
+        ])
+        item.files.push({ path: 'types/tree.ts', content: 'export interface TreeNode { key: string }', type: 'registry:lib' })
+        expect(validateRegistryItemInternalImports(item)).toEqual([])
+    })
+
     it('requires same-component alias imports but ignores shared locale registry imports', () => {
         const item = createRegistryItem('dialog', {
             description: 'Dialog component',
@@ -749,4 +759,3 @@ describe('validateDocsDemoCoverage', () => {
         expect(errors).toEqual([])
     })
 })
-

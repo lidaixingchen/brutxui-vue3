@@ -1,6 +1,12 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import fs from 'node:fs/promises';
+import fs from 'node:fs';
+import {
+    compareGeneratedOutputs,
+    type GeneratedOutput,
+    withGenerateLock,
+    writeGeneratedOutputs,
+} from 'brutx-shared-vue/generation';
 import {
     TokenStyleCompiler,
     PATTERN_UTILITIES,
@@ -23,28 +29,10 @@ import {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const BRUTALIST_CSS_PATH = path.resolve(__dirname, '..', 'src', 'styles', 'brutalist.css');
-const CONSTANTS_PATH = path.resolve(__dirname, '..', 'src', 'lib', 'constants.ts');
+const PACKAGE_ROOT = path.resolve(__dirname, '..');
 
 const INDENT_SPACES_ROOT = 0;
 const INDENT_SPACES_PRESETS = 0;
-
-function printBlockDiff(
-    content: string,
-    startMarker: string,
-    endMarker: string,
-    generated: string,
-    label: string,
-): void {
-    const startIdx = content.indexOf(startMarker);
-    const endIdx = content.indexOf(endMarker);
-    if (startIdx === -1 || endIdx === -1) return;
-    const oldBlock = content.slice(startIdx + startMarker.length, endIdx);
-    console.error(`--- 现有（磁盘）${label}`);
-    console.error(oldBlock);
-    console.error(`+++ 期望（生成）${label}`);
-    console.error(`\n${generated}`);
-}
 
 export function compileCliUtilsTemplate(): string {
     const colorLines = BRUTAL_COLOR_NAMES.map(name => `    '${name}',`).join('\n');
@@ -152,23 +140,33 @@ export function patchConstantsTs(content: string): string {
     );
 }
 
-async function main(): Promise<void> {
+export function collectTokenOutputs(packageRoot: string = PACKAGE_ROOT): GeneratedOutput[] {
     const compiler = new TokenStyleCompiler();
+    const brutalistPath = path.resolve(packageRoot, 'src', 'styles', 'brutalist.css');
+    const constantsPath = path.resolve(packageRoot, 'src', 'lib', 'constants.ts');
+    const brutalistOriginal = fs.readFileSync(brutalistPath, 'utf-8');
+    const brutalistNext = patchBrutalistCss(brutalistOriginal, compiler);
+    const constantsOriginal = fs.readFileSync(constantsPath, 'utf-8');
+    const constantsNext = patchConstantsTs(constantsOriginal);
+    return [
+        {
+            relativePath: 'src/styles/brutalist.css',
+            content: brutalistNext,
+        },
+        {
+            relativePath: 'src/lib/constants.ts',
+            content: constantsNext,
+        },
+    ];
+}
 
+function runStandalone(): void {
     const isCheckMode = process.argv.slice(2).includes('--check');
     const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v') || process.env.BRUTX_VERBOSE === '1';
+    const outputs = collectTokenOutputs();
+    const differences = compareGeneratedOutputs(PACKAGE_ROOT, outputs);
 
-    const brutalistOriginal = await fs.readFile(BRUTALIST_CSS_PATH, 'utf-8');
-    const brutalistNext = patchBrutalistCss(brutalistOriginal, compiler);
-    const brutalistChanged = brutalistNext !== brutalistOriginal;
-
-    const constantsOriginal = await fs.readFile(CONSTANTS_PATH, 'utf-8');
-    const constantsNext = patchConstantsTs(constantsOriginal);
-    const constantsChanged = constantsNext !== constantsOriginal;
-
-    const hasAnyChange = brutalistChanged || constantsChanged;
-
-    if (!hasAnyChange) {
+    if (differences.length === 0) {
         if (isVerbose || isCheckMode) {
             console.log('✓ CLI brutalist.css 与 constants.ts 令牌与模板块已是最新');
         }
@@ -177,28 +175,23 @@ async function main(): Promise<void> {
 
     if (isCheckMode) {
         console.error('✗ CLI 生成内容与磁盘不一致，需运行 `pnpm --filter brutx-vue prebuild:tokens` 重新生成。');
-        if (brutalistChanged) {
-            printBlockDiff(brutalistOriginal, THEME_START, THEME_END, compiler.compileThemeBlock(), 'CLI brutalist.css @theme 令牌块');
-            printBlockDiff(brutalistOriginal, ROOT_START, ROOT_END, compiler.compileRootBlock(INDENT_SPACES_ROOT), 'CLI brutalist.css :root/.dark 区块');
-            printBlockDiff(brutalistOriginal, PRESETS_START, PRESETS_END, compiler.compileThemePresetsBlock(INDENT_SPACES_PRESETS), 'CLI brutalist.css 主题预设区块');
-            printBlockDiff(brutalistOriginal, CLI_UTIL_RULES_START, CLI_UTIL_RULES_END, compiler.compileCliUtilityRules(), 'CLI brutalist.css 工具类直挂区块');
-        }
-        if (constantsChanged) {
-            printBlockDiff(constantsOriginal, CLI_UTILS_START, CLI_UTILS_END, compileCliUtilsTemplate(), 'CLI constants.ts utils 模板块');
-        }
-        process.exit(1);
+        for (const difference of differences) console.error(`  - ${difference.relativePath} (${difference.kind})`);
+        throw new Error('CLI tokens 生成检查失败');
     }
 
-    if (brutalistChanged) {
-        await fs.writeFile(BRUTALIST_CSS_PATH, brutalistNext, 'utf-8');
-    }
-    if (constantsChanged) {
-        await fs.writeFile(CONSTANTS_PATH, constantsNext, 'utf-8');
-    }
+    writeGeneratedOutputs(PACKAGE_ROOT, outputs);
     console.log('✓ CLI brutalist.css 与 constants.ts 已从 shared 单一信源重新生成');
 }
 
-main().catch((err) => {
-    console.error(err);
-    process.exit(1);
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
+    const runPromise = process.argv.includes('--check')
+        ? Promise.resolve().then(runStandalone)
+        : withGenerateLock(
+            { packageName: 'brutx-vue', cacheDir: path.resolve(PACKAGE_ROOT, 'node_modules', '.cache') },
+            runStandalone,
+        )
+    runPromise.catch((err) => {
+        console.error(err);
+        process.exit(1);
+    });
+}

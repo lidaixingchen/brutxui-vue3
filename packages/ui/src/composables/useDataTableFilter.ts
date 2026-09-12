@@ -1,5 +1,5 @@
 import { ref, readonly, computed, toValue, type DeepReadonly, type MaybeRefOrGetter, type Ref } from 'vue'
-import type { DataTableColumn, DataTableFilterState, DataTableFilterValue } from '@/components/data-table/types'
+import type { DataTableColumn, DataTableFilterState, DataTableFilterValue } from '@/types/data-table'
 import { getCellValue } from '@/lib/data-table-utils'
 import { parseFormattedDate } from '@/lib/date'
 

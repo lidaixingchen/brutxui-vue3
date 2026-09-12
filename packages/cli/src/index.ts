@@ -91,7 +91,7 @@ program
     .option('-s, --silent', 'Mute output', false)
     .option('--no-cache', 'Skip registry cache')
     .option('--offline', 'Use only cached data, never hit the network', false)
-    .action(diff);
+    .action((components: string[], options: Parameters<typeof diff>[0]) => diff({ ...options, components }));
 
 program
     .command('update')

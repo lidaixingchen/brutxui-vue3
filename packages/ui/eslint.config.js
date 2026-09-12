@@ -71,6 +71,12 @@ export default tseslint.config(
             '@typescript-eslint/no-unsafe-function-type': 'off',
         },
     },
+    {
+        files: ['src/components/*/index.ts'],
+        rules: {
+            'no-restricted-imports': 'off',
+        },
+    },
     // SSR-safe lint: production code must route DOM/BOM access through @/lib/env.
     {
         files: ['src/**/*.ts', 'src/**/*.vue', 'src/**/*.tsx'],

@@ -48,6 +48,7 @@ const CONTEXT_ALIAS_PREFIX: Record<RewriteContext, string> = {
     lib: '@/lib/',
     directive: '@/directives/',
     locale: '@/locales/',
+    types: '@/types/',
 };
 
 const KNOWN_DIR_PREFIXES: Record<string, string> = {
@@ -55,6 +56,7 @@ const KNOWN_DIR_PREFIXES: Record<string, string> = {
     lib: '@/lib/',
     locales: '@/locales/',
     directives: '@/directives/',
+    types: '@/types/',
 };
 
 /**

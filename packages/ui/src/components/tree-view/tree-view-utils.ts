@@ -1,6 +1,6 @@
-import type { TreeNode } from './types'
+import type { CheckState, TreeNode } from './types'
 
-export type CheckState = 'checked' | 'unchecked' | 'indeterminate'
+export type { CheckState } from './types'
 
 export function getAllDescendantIds(node: TreeNode): string[] {
     const result: string[] = []

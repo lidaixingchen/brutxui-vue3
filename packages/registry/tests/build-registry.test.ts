@@ -336,8 +336,8 @@ describe('build-registry helpers', () => {
 
 // 结构断言：校验构建产物的关键字段与依赖关系，integrity 校验格式
 describe('registry build items', () => {
-    it('builds button with expected structure', () => {
-        const item = buildRegistryItem('button');
+    it('builds button with expected structure', async () => {
+        const item = await buildRegistryItem('button');
         expect(item.name).toBe('button');
         expect(item.type).toBe('registry:ui');
         expect(item.title).toBe('Button');
@@ -348,8 +348,8 @@ describe('registry build items', () => {
         expect(item.integrity).toMatch(/^sha256-[a-f0-9]{64}$/);
     });
 
-    it('builds data-table with expected structure', () => {
-        const item = buildRegistryItem('data-table');
+    it('builds data-table with expected structure', async () => {
+        const item = await buildRegistryItem('data-table');
         expect(item.name).toBe('data-table');
         expect(item.type).toBe('registry:ui');
         expect(item.title).toBe('Data Table');
@@ -359,26 +359,55 @@ describe('registry build items', () => {
         expect(item.registryDependencies).toEqual(expect.arrayContaining(['input', 'button', 'checkbox']));
         expect(item.integrity).toMatch(/^sha256-[a-f0-9]{64}$/);
     });
+
+    it('keeps selection helpers in the source closure while hiding them from the public index', async () => {
+        const expectedHelpers: Record<string, string[]> = {
+            cascader: [
+                'composables/useClearableSelection.ts',
+                'composables/useSelectableTrigger.ts',
+                'composables/useSelectionDisplayText.ts',
+            ],
+            combobox: [
+                'composables/useSelectableTrigger.ts',
+                'composables/useSelectionDisplayText.ts',
+            ],
+            transfer: ['composables/useTransferPanelSelection.ts'],
+            'tree-select': [
+                'composables/useClearableSelection.ts',
+                'composables/useSelectableTrigger.ts',
+                'composables/useSelectionDisplayText.ts',
+            ],
+        };
+
+        for (const [name, helperPaths] of Object.entries(expectedHelpers)) {
+            const item = await buildRegistryItem(name);
+            const filePaths = new Set(item.files.map(file => file.path));
+            const index = item.files.find(file => file.path.endsWith('/index.ts'));
+            for (const helperPath of helperPaths) expect(filePaths.has(helperPath)).toBe(true);
+            for (const helperPath of helperPaths) expect(index?.content).not.toContain(helperPath.split('/').pop()?.replace('.ts', ''));
+            expect(index?.content).not.toContain('export *');
+        }
+    });
 });
 
 describe('computeSourceHash cache key', () => {
     const registry = loadMergedRegistry();
 
-    it('returns a stable hash for the same component and file mapping', () => {
+    it('returns a stable hash for the same component and file mapping', async () => {
         const button = registry.button;
-        const hash1 = computeSourceHash('button', button);
-        const hash2 = computeSourceHash('button', button);
+        const hash1 = await computeSourceHash('button', button);
+        const hash2 = await computeSourceHash('button', button);
         expect(hash1).toBe(hash2);
         expect(hash1).toMatch(/^[0-9a-f]{64}$/);
     });
 
-    it('returns different hashes for different components', () => {
-        const buttonHash = computeSourceHash('button', registry.button);
-        const dialogHash = computeSourceHash('dialog', registry.dialog);
+    it('returns different hashes for different components', async () => {
+        const buttonHash = await computeSourceHash('button', registry.button);
+        const dialogHash = await computeSourceHash('dialog', registry.dialog);
         expect(buttonHash).not.toBe(dialogHash);
     });
 
-    it('changes when file mapping differs (files list extended)', () => {
+    it('changes when file mapping differs (files list extended)', async () => {
         const button = registry.button;
         const modifiedMapping = {
             ...button,
@@ -387,30 +416,30 @@ describe('computeSourceHash cache key', () => {
         // 即使 NonExistentExtra.vue 不存在（会在真实 build 中报错），
         // sourceHash 仍然会因为 fileMapping 变化而不同——证明 file mapping
         // 是缓存键的一部分，新增/删除文件会触发缓存失效
-        expect(() => computeSourceHash('button', modifiedMapping)).toThrow();
+        await expect(computeSourceHash('button', modifiedMapping)).rejects.toThrow();
     });
 
-    it('changes when file mapping order differs (order-sensitive)', () => {
+    it('changes when file mapping order differs (order-sensitive)', async () => {
         const button = registry.button;
-        const originalHash = computeSourceHash('button', button);
+        const originalHash = await computeSourceHash('button', button);
         // files 顺序变化应触发 hash 变化——这是有意的，因为 integrity 对顺序敏感
         const reorderedMapping = {
             ...button,
             files: [...button.files].reverse(),
         };
-        const reorderedHash = computeSourceHash('button', reorderedMapping);
+        const reorderedHash = await computeSourceHash('button', reorderedMapping);
         expect(reorderedHash).not.toBe(originalHash);
     });
 
-    it('includes transitive closure source content (changing a dependency file changes the hash)', () => {
+    it('includes transitive closure source content (changing a dependency file changes the hash)', async () => {
         // dialog 依赖 button（通过 registryDependencies），
         // 但 computeSourceHash 只扫描 fileMapping.files 里的文件 + 它们的 import 闭包。
         // 如果 dialog 的 files 列表包含的文件 import 了 button 的 Button.vue，
         // 则改 button 的源码会让 dialog 的 sourceHash 也变化。
         // 这里只验证 dialog 的 hash 稳定（不实际改源码），真正的失效由 build:verify 覆盖
         const dialog = registry.dialog;
-        const hash1 = computeSourceHash('dialog', dialog);
-        const hash2 = computeSourceHash('dialog', dialog);
+        const hash1 = await computeSourceHash('dialog', dialog);
+        const hash2 = await computeSourceHash('dialog', dialog);
         expect(hash1).toBe(hash2);
     });
 });

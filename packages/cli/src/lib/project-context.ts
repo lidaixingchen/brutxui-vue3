@@ -204,6 +204,12 @@ export class ProjectContext {
             const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.directives.length);
             const composablesPath = await this.resolveAliasPath(config.aliases.composables);
             resolved = path.join(path.dirname(composablesPath), 'directives', relative);
+        } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.types)) {
+            const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.types.length);
+            const aliasPath = sharedBase
+                ? await this.resolveAliasPath(sharedBase)
+                : path.dirname(await this.resolveAliasPath(config.aliases.composables));
+            resolved = path.join(aliasPath, 'types', relative);
         } else if (registryPath.startsWith('lib/utils') || registryPath.startsWith(REGISTRY_PATH_PREFIXES.libUtils)) {
             resolved = await this.resolveUtilsFilePath();
         } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.lib)) {
@@ -361,6 +367,10 @@ export class ProjectContext {
                 return sharedBase
                     ? spec.replace('@/lib', `${sharedBase}/lib`)
                     : spec.replace('@/lib', libAlias);
+            }
+            if (spec.startsWith('@/types/')) {
+                const typesAlias = sharedBase ? `${sharedBase}/types` : `${path.posix.dirname(composablesAlias)}/types`;
+                return spec.replace('@/types', typesAlias);
             }
             if (spec.startsWith('@/locales/')) {
                 return spec.replace('@/locales', localesAlias);

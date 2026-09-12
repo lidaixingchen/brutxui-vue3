@@ -1,6 +1,12 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { DiskFileSystemAdapter } from 'brutx-shared-vue/fs';
+import fs from 'node:fs';
+import {
+    compareGeneratedOutputs,
+    type GeneratedOutput,
+    withGenerateLock,
+    writeGeneratedOutputs,
+} from 'brutx-shared-vue/generation';
 import {
     TokenStyleCompiler,
     replaceBetweenMarkers,
@@ -22,32 +28,13 @@ import {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const STYLES_PATH = path.resolve(__dirname, '..', 'src', 'styles.css');
-const PREFLIGHT_PATH = path.resolve(__dirname, '..', 'src', 'preflight.css');
-const UTILS_PATH = path.resolve(__dirname, '..', 'src', 'lib', 'utils.ts');
+const PACKAGE_ROOT = path.resolve(__dirname, '..');
 
 const INDENT_SPACES_ROOT = 4;
 const INDENT_SPACES_PRESETS = 4;
 const INDENT_SPACES_PATTERNS = 0;
 
-function printBlockDiff(
-    content: string,
-    startMarker: string,
-    endMarker: string,
-    generated: string,
-    label: string,
-): void {
-    const startIdx = content.indexOf(startMarker);
-    const endIdx = content.indexOf(endMarker);
-    if (startIdx === -1 || endIdx === -1) return;
-    const oldBlock = content.slice(startIdx + startMarker.length, endIdx);
-    console.error(`--- 现有（磁盘）${label}`);
-    console.error(oldBlock);
-    console.error(`+++ 期望（生成）${label}`);
-    console.error(`\n${generated}`);
-}
-
-function patchStylesCss(content: string, compiler: TokenStyleCompiler): string {
+export function patchStylesCss(content: string, compiler: TokenStyleCompiler): string {
     let current = content;
     current = replaceBetweenMarkers(current, THEME_START, THEME_END, compiler.compileThemeBlock(), 'styles.css');
     current = replaceBetweenMarkers(current, ROOT_START, ROOT_END, compiler.compileRootBlock(INDENT_SPACES_ROOT), 'styles.css');
@@ -62,11 +49,11 @@ function patchStylesCss(content: string, compiler: TokenStyleCompiler): string {
     return current;
 }
 
-function patchPreflightCss(content: string, compiler: TokenStyleCompiler): string {
+export function patchPreflightCss(content: string, compiler: TokenStyleCompiler): string {
     return replaceBetweenMarkers(content, FONT_STACK_START, FONT_STACK_END, compiler.compileFontStackBlock(), 'preflight.css');
 }
 
-function patchUtilsTs(content: string, compiler: TokenStyleCompiler): string {
+export function patchUtilsTs(content: string, compiler: TokenStyleCompiler): string {
     let current = content;
     current = replaceBetweenMarkers(
         current,
@@ -85,31 +72,39 @@ function patchUtilsTs(content: string, compiler: TokenStyleCompiler): string {
     return current;
 }
 
-async function main(): Promise<void> {
-    const fs = new DiskFileSystemAdapter();
+export function collectTokenOutputs(packageRoot: string = PACKAGE_ROOT): GeneratedOutput[] {
     const compiler = new TokenStyleCompiler();
+    const stylesPath = path.resolve(packageRoot, 'src', 'styles.css');
+    const preflightPath = path.resolve(packageRoot, 'src', 'preflight.css');
+    const utilsPath = path.resolve(packageRoot, 'src', 'lib', 'utils.ts');
 
+    const stylesOriginal = fs.readFileSync(stylesPath, 'utf-8');
+    const preflightOriginal = fs.readFileSync(preflightPath, 'utf-8');
+    const utilsOriginal = fs.readFileSync(utilsPath, 'utf-8');
+
+    return [
+        {
+            relativePath: 'src/styles.css',
+            content: patchStylesCss(stylesOriginal, compiler),
+        },
+        {
+            relativePath: 'src/preflight.css',
+            content: patchPreflightCss(preflightOriginal, compiler),
+        },
+        {
+            relativePath: 'src/lib/utils.ts',
+            content: patchUtilsTs(utilsOriginal, compiler),
+        },
+    ];
+}
+
+function runStandalone(): void {
     const isCheckMode = process.argv.slice(2).includes('--check');
     const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v') || process.env.BRUTX_VERBOSE === '1';
+    const outputs = collectTokenOutputs();
+    const differences = compareGeneratedOutputs(PACKAGE_ROOT, outputs);
 
-    // 1. styles.css
-    const stylesOriginal = await fs.readFile(STYLES_PATH, 'utf-8');
-    const stylesNext = patchStylesCss(stylesOriginal, compiler);
-    const stylesChanged = stylesNext !== stylesOriginal;
-
-    // 2. preflight.css
-    const preflightOriginal = await fs.readFile(PREFLIGHT_PATH, 'utf-8');
-    const preflightNext = patchPreflightCss(preflightOriginal, compiler);
-    const preflightChanged = preflightNext !== preflightOriginal;
-
-    // 3. UI lib/utils.ts
-    const utilsOriginal = await fs.readFile(UTILS_PATH, 'utf-8');
-    const utilsNext = patchUtilsTs(utilsOriginal, compiler);
-    const utilsChanged = utilsNext !== utilsOriginal;
-
-    const hasAnyChange = stylesChanged || preflightChanged || utilsChanged;
-
-    if (!hasAnyChange) {
+    if (differences.length === 0) {
         if (isVerbose || isCheckMode) {
             console.log('✓ styles.css、preflight.css 与 utils.ts 令牌块已是最新');
         }
@@ -118,35 +113,23 @@ async function main(): Promise<void> {
 
     if (isCheckMode) {
         console.error('✗ 生成内容与磁盘不一致，需运行 `pnpm --filter brutx-ui-vue prebuild:tokens` 重新生成。');
-        if (stylesChanged) {
-            printBlockDiff(stylesOriginal, THEME_START, THEME_END, compiler.compileThemeBlock(), 'styles.css @theme 令牌块');
-            printBlockDiff(stylesOriginal, ROOT_START, ROOT_END, compiler.compileRootBlock(INDENT_SPACES_ROOT), 'styles.css :root/.dark 区块');
-            printBlockDiff(stylesOriginal, PRESETS_START, PRESETS_END, compiler.compileThemePresetsBlock(INDENT_SPACES_PRESETS), 'styles.css 主题预设区块');
-            printBlockDiff(stylesOriginal, PATTERN_UTILS_START, PATTERN_UTILS_END, compiler.compilePatternUtilityBlock(INDENT_SPACES_PATTERNS), 'styles.css 纹理工具类区块');
-        }
-        if (preflightChanged) {
-            printBlockDiff(preflightOriginal, FONT_STACK_START, FONT_STACK_END, compiler.compileFontStackBlock(), 'preflight.css 字体栈');
-        }
-        if (utilsChanged) {
-            printBlockDiff(utilsOriginal, COLOR_NAMES_START, COLOR_NAMES_END, compiler.compileColorNamesBlock(), 'utils.ts 颜色名称块');
-            printBlockDiff(utilsOriginal, Z_INDEX_NAMES_START, Z_INDEX_NAMES_END, compiler.compileZIndexNamesBlock(), 'utils.ts z-index 名称块');
-        }
-        process.exit(1);
+        for (const difference of differences) console.error(`  - ${difference.relativePath} (${difference.kind})`);
+        throw new Error('UI tokens 生成检查失败');
     }
 
-    if (stylesChanged) {
-        await fs.writeFile(STYLES_PATH, stylesNext, 'utf-8');
-    }
-    if (preflightChanged) {
-        await fs.writeFile(PREFLIGHT_PATH, preflightNext, 'utf-8');
-    }
-    if (utilsChanged) {
-        await fs.writeFile(UTILS_PATH, utilsNext, 'utf-8');
-    }
+    writeGeneratedOutputs(PACKAGE_ROOT, outputs);
     console.log('✓ styles.css、preflight.css 与 utils.ts 令牌块已从 shared 单一信源重新生成');
 }
 
-main().catch((err) => {
-    console.error(err);
-    process.exit(1);
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
+    const runPromise = process.argv.includes('--check')
+        ? Promise.resolve().then(runStandalone)
+        : withGenerateLock(
+            { packageName: 'brutx-ui-vue', cacheDir: path.resolve(PACKAGE_ROOT, 'node_modules', '.cache') },
+            runStandalone,
+        )
+    runPromise.catch((err) => {
+        console.error(err);
+        process.exit(1);
+    });
+}

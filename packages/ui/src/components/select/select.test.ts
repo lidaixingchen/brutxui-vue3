@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import Select, { type SelectOption } from './Select.vue'
+import Select from './Select.vue'
+import type { SelectOption } from './types'
 import SelectTrigger from './SelectTrigger.vue'
 import SelectContent from './SelectContent.vue'
 import SelectItem from './SelectItem.vue'

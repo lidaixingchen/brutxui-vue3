@@ -111,6 +111,23 @@ describe('Button', () => {
     })
 
     describe('glitch effect', () => {
+        it('does not initialize effect resources when effect is none', () => {
+            const matchMedia = vi.spyOn(window, 'matchMedia')
+            const textContent = vi.spyOn(Node.prototype, 'textContent', 'get')
+            const wrapper = mount(Button, {
+                attrs: { id: 'resource-button' },
+                slots: { default: 'Resource free' },
+            })
+
+            expect(matchMedia).not.toHaveBeenCalled()
+            expect(textContent).not.toHaveBeenCalled()
+            expect(wrapper.attributes('data-text')).toBeUndefined()
+
+            wrapper.unmount()
+            matchMedia.mockRestore()
+            textContent.mockRestore()
+        })
+
         it('does not emit glitch classes on plain buttons', () => {
             const wrapper = mount(Button)
             const classes = wrapper.classes().join(' ')

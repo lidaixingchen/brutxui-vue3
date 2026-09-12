@@ -1,11 +1,4 @@
-import {
-    getCurrentInstance,
-    onUnmounted,
-    readonly,
-    shallowRef,
-    type DeepReadonly,
-    type Ref,
-} from 'vue'
+import { getCurrentInstance, onUnmounted } from 'vue'
 import { mountOverlay, type OverlayInstanceHandle } from '../lib/render-imperative'
 import { getWindow, isClient } from '../lib/env'
 import {
@@ -13,45 +6,23 @@ import {
     MESSAGE_GRACE_PERIOD_MS,
 } from '../lib/defaults'
 import MessageContainer from '../components/message/MessageContainer.vue'
+import {
+    appendMessage,
+    clearMessageStore,
+    messageStore,
+    removeMessage,
+    setMessageStoreChangeListener,
+} from '../lib/message-state'
+import type { MessageItem, MessageOptions, UseMessageReturn } from '@/types/message'
 
-export type MessageType = 'info' | 'success' | 'warning' | 'error'
-
-export interface MessageItem {
-    id: string
-    type: MessageType
-    title: string
-    description?: string
-    duration: number
-    closable: boolean
-}
-
-export interface MessageOptions {
-    type?: MessageType
-    title?: string
-    description?: string
-    duration?: number
-    closable?: boolean
-}
-
-export interface UseMessageReturn {
-    info: (title: string, description?: string) => () => void
-    success: (title: string, description?: string) => () => void
-    warning: (title: string, description?: string) => () => void
-    error: (title: string, description?: string) => () => void
-    show: (options: MessageOptions) => () => void
-}
-
-const messageStoreRef = shallowRef<MessageItem[]>([])
-// 只读视图：消息列表仅能经 useMessage()/removeMessage/destroyFallback 修改，
-// 外部直写会绕过 duration 定时器与 GC，故导出 readonly 代理
-export const messageStore: DeepReadonly<Ref<MessageItem[]>> = readonly(messageStoreRef)
+export type { MessageItem, MessageOptions, MessageType, UseMessageReturn } from '@/types/message'
+export { messageStore, removeMessage } from '../lib/message-state'
 
 let instance: OverlayInstanceHandle<void> | null = null
 let refCount = 0
 let generation = 0
 let graceTimer: ReturnType<typeof setTimeout> | null = null
 let messageIdCounter = 0
-const timerMap = new Map<string, ReturnType<typeof setTimeout>>()
 let beforeUnloadHandler: (() => void) | null = null
 
 function registerBeforeUnload(): void {
@@ -67,20 +38,6 @@ function unregisterBeforeUnload(): void {
     }
 }
 
-function clearTimer(id: string): void {
-    const timer = timerMap.get(id)
-    if (timer !== undefined) {
-        clearTimeout(timer)
-        timerMap.delete(id)
-    }
-}
-
-export function removeMessage(id: string): void {
-    clearTimer(id)
-    messageStoreRef.value = messageStoreRef.value.filter(m => m.id !== id)
-    scheduleGC()
-}
-
 function scheduleGC(): void {
     if (graceTimer) {
         clearTimeout(graceTimer)
@@ -89,14 +46,14 @@ function scheduleGC(): void {
 
     // 活跃消息守卫：只要当前仍有未过期的活跃消息，容器必须维持存续，
     // 避免页面跳转或弹窗关闭卸载组件时提前杀死正在展示的提示
-    if (messageStoreRef.value.length > 0) return
+    if (messageStore.value.length > 0) return
 
     // 宿主守卫：若仍有组件处于 setup 存活周期中，保持容器常驻
     if (refCount > 0) return
 
     graceTimer = setTimeout(() => {
         graceTimer = null
-        if (messageStoreRef.value.length === 0 && refCount <= 0 && instance) {
+        if (messageStore.value.length === 0 && refCount <= 0 && instance) {
             instance.destroy()
             instance = null
             unregisterBeforeUnload()
@@ -136,19 +93,10 @@ function addMessage(options: MessageOptions): () => void {
         closable: options.closable ?? true,
     }
 
-    messageStoreRef.value = [...messageStoreRef.value, item]
+    appendMessage(item)
     ensureMounted()
 
-    if (item.duration > 0) {
-        const timer = setTimeout(() => {
-            timerMap.delete(id)
-            removeMessage(id)
-        }, item.duration)
-        timerMap.set(id, timer)
-    }
-
     return () => {
-        clearTimer(id)
         removeMessage(id)
     }
 }
@@ -205,10 +153,8 @@ export function useMessage(): UseMessageReturn {
 export function destroyFallback(): void {
     generation++
     unregisterBeforeUnload()
-    timerMap.forEach((timer) => clearTimeout(timer))
-    timerMap.clear()
     cancelGraceTimer()
-    messageStoreRef.value = []
+    clearMessageStore()
     refCount = 0
     if (instance) {
         instance.destroy()
@@ -218,3 +164,5 @@ export function destroyFallback(): void {
 
 /** @deprecated 请使用 {@link destroyFallback} */
 export const destroyMessageSystem = destroyFallback
+
+setMessageStoreChangeListener(scheduleGC)

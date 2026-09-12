@@ -1,5 +1,5 @@
 import { isDev } from '@/lib/env'
-import type { DataTableColumn } from '@/components/data-table/types'
+import type { DataTableColumn } from '@/types/data-table'
 
 /** DEV 下已告警过的列，避免每单元格重复刷屏 */
 const warnedColumns = new WeakSet<object>()

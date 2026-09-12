@@ -1,6 +1,6 @@
 import { type Ref, ref, readonly, onUnmounted, type DeepReadonly } from 'vue'
 import { requestAnimationFrame, cancelAnimationFrame } from '../lib/env'
-import type { MoveDirection } from '@/types'
+import type { MoveDirection } from '@/types/common'
 
 export interface KanbanCard {
     id: string

@@ -69,6 +69,9 @@ packages/registry/.registry-cache.json
 # Auto-generated component index.ts (derived from registry-manifest.json by prebuild:component-index)
 packages/ui/src/components/*/index.ts
 
+# Auto-generated explicit API projection bridge entries
+packages/ui/src/entries/
+
 # VitePress
 **/.vitepress/cache
 
@@ -86,3 +89,5 @@ DEV_*.md
 .ocr-reports
 .ocr-reviews
 
+# Local contract verification evidence
+/tmp/third-contracts/

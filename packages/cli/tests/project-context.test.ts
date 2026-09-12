@@ -101,6 +101,11 @@ describe('ProjectContext', () => {
 
         const libFilePath = await ctx.resolveTargetPath('lib/format-date.ts');
         expect(ctx.toRelativePosixPath(libFilePath)).toBe('src/lib/format-date.ts');
+
+        const typesPath = await ctx.resolveTargetPath('types/tree.ts');
+        expect(ctx.toRelativePosixPath(typesPath)).toBe('src/types/tree.ts');
+        expect(ctx.transformImports("import type { TreeNode } from '@/types/tree'", 'file.ts'))
+            .toContain("from '@/types/tree'");
     });
 
     it('should resolve target paths with sharedBase configuration', async () => {
@@ -120,6 +125,11 @@ describe('ProjectContext', () => {
 
         const libPath = await ctx.resolveTargetPath('lib/math.ts');
         expect(ctx.toRelativePosixPath(libPath)).toBe('src/shared/lib/math.ts');
+
+        const typesPath = await ctx.resolveTargetPath('types/tree.ts');
+        expect(ctx.toRelativePosixPath(typesPath)).toBe('src/shared/types/tree.ts');
+        expect(ctx.transformImports("import type { TreeNode } from '@/types/tree'", 'file.ts'))
+            .toContain("from '@/shared/types/tree'");
     });
 
     it('should resolve import aliases in source code', async () => {

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { ComponentMetadataEntry, RegistryManifest } from 'brutx-shared-vue';
+import type { ComponentExportProjection } from 'brutx-shared-vue/api-contract';
 import { MemoryFileSystemAdapter } from '../../src/fs/memory-fs.js';
 import { RegistryCompiler } from '../../src/compiler/registry-compiler.js';
 import type { CompilerPaths } from '../../src/compiler/types.js';
@@ -51,6 +52,21 @@ describe('RegistryCompiler (Zero-IO Tests)', () => {
         },
     };
 
+    const mockPublicProjection: Readonly<Record<string, ComponentExportProjection>> = {
+        button: {
+            componentId: 'button',
+            exports: [
+                { source: './Button.vue', sourceName: 'default', publicName: 'Button', kind: 'value' },
+            ],
+        },
+        dialog: {
+            componentId: 'dialog',
+            exports: [
+                { source: './Dialog.vue', sourceName: 'default', publicName: 'Dialog', kind: 'value' },
+            ],
+        },
+    };
+
     function createMockVfs(): MemoryFileSystemAdapter {
         return new MemoryFileSystemAdapter({
             '/ui/registry-manifest.json': JSON.stringify(mockManifest),
@@ -79,6 +95,7 @@ describe('RegistryCompiler (Zero-IO Tests)', () => {
             fs,
             paths,
             metadata: mockMetadata,
+            publicProjection: mockPublicProjection,
         });
 
         const merged = await compiler.loadMergedRegistry();
@@ -93,6 +110,7 @@ describe('RegistryCompiler (Zero-IO Tests)', () => {
             fs,
             paths,
             metadata: mockMetadata,
+            publicProjection: mockPublicProjection,
         });
 
         const buttonResult = await compiler.compileItem('button');
@@ -106,12 +124,93 @@ describe('RegistryCompiler (Zero-IO Tests)', () => {
         expect(dialogResult.item.registryDependencies).toContain('button');
     });
 
+    it('builds a public index from the explicit projection', async () => {
+        const fs = createMockVfs();
+        const projection: ComponentExportProjection = {
+            componentId: 'button',
+            exports: [
+                { source: './Button.vue', sourceName: 'default', publicName: 'Button', kind: 'value' },
+            ],
+        };
+        const compiler = new RegistryCompiler({
+            fs,
+            paths,
+            metadata: mockMetadata,
+            publicProjection: projection,
+        });
+
+        const result = await compiler.compileItem('button');
+        const index = result.item.files.find(file => file.path.endsWith('/index.ts'));
+        expect(index?.content).toContain("export { default as Button } from '@/components/ui/button/Button.vue'");
+        expect(index?.content).not.toContain('export *');
+    });
+
+    it('invalidates the source hash when the public projection changes', async () => {
+        const projection: ComponentExportProjection = {
+            componentId: 'button',
+            exports: [
+                { source: './Button.vue', sourceName: 'default', publicName: 'Button', kind: 'value' },
+            ],
+        };
+        const changedProjection: ComponentExportProjection = {
+            ...projection,
+            exports: [
+                ...projection.exports,
+                { source: './Button.vue', sourceName: 'default', publicName: 'ButtonAlias', kind: 'value' },
+            ],
+        };
+        const first = new RegistryCompiler({
+            fs: createMockVfs(),
+            paths,
+            metadata: mockMetadata,
+            publicProjection: projection,
+        });
+        const second = new RegistryCompiler({
+            fs: createMockVfs(),
+            paths,
+            metadata: mockMetadata,
+            publicProjection: changedProjection,
+        });
+
+        const firstResult = await first.compileItem('button');
+        const secondResult = await second.compileItem('button');
+        expect(secondResult.sourceHash).not.toBe(firstResult.sourceHash);
+    });
+
+    it('invalidates the source hash when the public contract digest changes', async () => {
+        const projection: ComponentExportProjection = {
+            componentId: 'button',
+            exports: [
+                { source: './Button.vue', sourceName: 'default', publicName: 'Button', kind: 'value' },
+            ],
+        };
+        const first = new RegistryCompiler({
+            fs: createMockVfs(),
+            paths,
+            metadata: mockMetadata,
+            publicProjection: projection,
+            publicProjectionDigest: 'contract-before',
+        });
+        const second = new RegistryCompiler({
+            fs: createMockVfs(),
+            paths,
+            metadata: mockMetadata,
+            publicProjection: projection,
+            publicProjectionDigest: 'contract-after',
+        });
+
+        const firstResult = await first.compileItem('button');
+        const secondResult = await second.compileItem('button');
+        expect(secondResult.sourceHash).not.toBe(firstResult.sourceHash);
+    });
+
     it('compiles locale-zh-cn bundle', async () => {
         const fs = createMockVfs();
         const compiler = new RegistryCompiler({
             fs,
             paths,
             metadata: mockMetadata,
+            publicProjection: mockPublicProjection,
         });
 
         const localeResult = await compiler.compileLocaleZhCn();
@@ -125,6 +224,7 @@ describe('RegistryCompiler (Zero-IO Tests)', () => {
             fs,
             paths,
             metadata: mockMetadata,
+            publicProjection: mockPublicProjection,
         });
 
         const result = await compiler.compileAll();
@@ -141,5 +241,37 @@ describe('RegistryCompiler (Zero-IO Tests)', () => {
         expect(result.sbom.bomFormat).toBe('CycloneDX');
         expect(result.sbom.serialNumber.startsWith('urn:uuid:')).toBe(true);
         expect(result.sbom.manifestIntegrity).toBe(result.manifest.integrity);
+    });
+
+    it('replays cache records and invalidates modified source', async () => {
+        const fs = createMockVfs();
+        const compiler = new RegistryCompiler({
+            fs,
+            paths,
+            metadata: mockMetadata,
+            publicProjection: mockPublicProjection,
+        });
+
+        const first = await compiler.compileAll({ forceRebuild: true });
+        await fs.writeJson('/.registry-cache.json', first.cacheRecord);
+        const replay = await compiler.compileAll();
+        expect(replay.itemResults.every(item => item.cached)).toBe(true);
+
+        await fs.writeFile('/ui/src/components/button/Button.vue', '<template><button class="changed" /></template>');
+        const changed = await compiler.compileAll();
+        expect(changed.itemResults.find(item => item.name === 'button')?.cached).toBe(false);
+    });
+
+    it('rejects a manifest that omits a new component source file', async () => {
+        const fs = createMockVfs();
+        await fs.writeFile('/ui/src/components/button/Added.vue', '<template><span /></template>');
+        const compiler = new RegistryCompiler({
+            fs,
+            paths,
+            metadata: mockMetadata,
+            publicProjection: mockPublicProjection,
+        });
+
+        await expect(compiler.loadMergedRegistry()).rejects.toThrow('registry-manifest.json is stale');
     });
 });

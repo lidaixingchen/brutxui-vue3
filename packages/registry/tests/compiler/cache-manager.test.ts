@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { MergedRegistryEntry } from 'brutx-shared-vue';
+import type { ComponentExportProjection } from 'brutx-shared-vue/api-contract';
 import { MemoryFileSystemAdapter } from '../../src/fs/memory-fs.js';
 import { CacheManager } from '../../src/compiler/cache-manager.js';
 import type { CompilerPaths } from '../../src/compiler/types.js';
@@ -30,6 +31,13 @@ describe('CacheManager', () => {
         examples: [],
     };
 
+    const publicProjection: ComponentExportProjection = {
+        componentId: 'button',
+        exports: [
+            { source: './Button.vue', sourceName: 'default', publicName: 'Button', kind: 'value' },
+        ],
+    };
+
     it('computes deterministic source hash and detects source changes', async () => {
         const fs = new MemoryFileSystemAdapter({
             '/src/components/button/Button.vue': '<template><button /></template>',
@@ -44,7 +52,9 @@ describe('CacheManager', () => {
             mockMeta,
             { theme: 'brutalist' },
             { '--radius': '0px' },
-            paths
+            paths,
+            undefined,
+            { publicProjection },
         );
 
         // 相同输入产生相同 hash
@@ -54,7 +64,9 @@ describe('CacheManager', () => {
             mockMeta,
             { theme: 'brutalist' },
             { '--radius': '0px' },
-            paths
+            paths,
+            undefined,
+            { publicProjection },
         );
         expect(hash1).toBe(hash2);
 
@@ -66,7 +78,9 @@ describe('CacheManager', () => {
             mockMeta,
             { theme: 'brutalist' },
             { '--radius': '0px' },
-            paths
+            paths,
+            undefined,
+            { publicProjection },
         );
         expect(hash3).not.toBe(hash1);
     });

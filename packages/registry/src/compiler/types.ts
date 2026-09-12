@@ -6,9 +6,11 @@ import type {
     RegistryItem,
     RegistryManifest,
 } from 'brutx-shared-vue';
+import type { ComponentExportProjection } from 'brutx-shared-vue/api-contract';
+import type { ModuleResolver } from 'brutx-shared-vue/module-resolver';
 import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
 
-export type RewriteContext = 'component' | 'composable' | 'lib' | 'directive' | 'locale';
+export type RewriteContext = 'component' | 'composable' | 'lib' | 'directive' | 'locale' | 'types';
 
 export interface CompilerPaths {
     componentsDir: string;
@@ -16,9 +18,21 @@ export interface CompilerPaths {
     localesDir: string;
     libDir: string;
     directivesDir: string;
+    typesDir?: string;
     manifestPath: string;
     outputDir: string;
+    apiContractPath?: string;
 }
+
+export type PublicComponentProjection = ComponentExportProjection;
+
+export type PublicComponentProjectionSet =
+    | PublicComponentProjection
+    | Readonly<Record<string, PublicComponentProjection>>;
+
+export type ComponentIndexBuilder = (
+    projection: PublicComponentProjection,
+) => string;
 
 export interface RegistryBuildManifestItem {
     integrity: string;
@@ -93,6 +107,11 @@ export interface CompilerOptions {
     registryVersion?: string;
     releaseTag?: string;
     gitCommit?: string | null;
+    publicProjection?: PublicComponentProjectionSet;
+    publicProjectionDigest?: string;
+    componentIndexBuilder?: ComponentIndexBuilder;
+    moduleResolver?: ModuleResolver;
+    validateManifestFreshness?: boolean;
 }
 
 export interface CompiledItemResult {

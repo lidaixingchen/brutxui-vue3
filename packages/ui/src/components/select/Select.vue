@@ -6,34 +6,7 @@ import SelectContent from './SelectContent.vue'
 import SelectItem from './SelectItem.vue'
 import SelectLabel from './SelectLabel.vue'
 import { cn } from '@/lib/utils'
-
-export interface SelectOption {
-    label: string
-    value: string
-    disabled?: boolean
-    [key: string]: unknown
-}
-
-export interface SelectProps {
-    options?: SelectOption[]
-    groupField?: string
-    /** 分组选项中承载分组显示名称的字段名（如 'categoryName'） */
-    groupLabel?: string
-    placeholder?: string
-    disabled?: boolean
-    required?: boolean
-    name?: string
-    id?: string
-    size?: 'sm' | 'default' | 'lg'
-    variant?: 'default' | 'error' | 'success'
-    errorMessage?: string
-    clearable?: boolean
-    position?: 'popper' | 'item-aligned'
-    class?: string
-    triggerClass?: string
-    contentClass?: string
-    itemVariant?: 'default' | 'primary' | 'secondary'
-}
+import type { SelectProps, SelectOption } from './types'
 
 const {
     options = [],

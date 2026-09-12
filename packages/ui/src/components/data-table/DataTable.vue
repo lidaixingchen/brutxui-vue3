@@ -20,7 +20,7 @@ import {
     dataTableEmptyVariants,
     dataTableLoadingVariants,
 } from './data-table-variants'
-import type { DataTableColumn, DataTableProps, DataTableFilterState, DataTableFilterValue } from './types'
+import type { DataTableColumn, DataTableProps, DataTableFilterState, DataTableFilterValue } from '@/types/data-table'
 import Input from '../input/Input.vue'
 import Button from '../button/Button.vue'
 import Checkbox from '../checkbox/Checkbox.vue'

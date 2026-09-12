@@ -15,7 +15,7 @@ import {
     DEFAULT_OVERLAY_Z_INDEX,
     OVERLAY_Z_INDEX_STEP,
 } from './defaults'
-import { getGlobalAppContext } from '../plugin'
+import { getGlobalAppContext } from './app-context'
 
 export interface MountOverlayOptions {
     /** 注入的 AppContext，默认自动继承当前组件实例或全局 AppContext */

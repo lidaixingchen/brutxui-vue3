@@ -21,7 +21,7 @@ import {
     getResizeObserverCtor,
 } from '@/lib/env'
 import { DIALOG_MIN_WIDTH_PX, DIALOG_MIN_HEIGHT_PX } from '@/lib/defaults'
-import type { ResizeCorner } from '@/types'
+import type { ResizeCorner } from '@/types/common'
 export type { ResizeCorner }
 
 export interface DraggableDialogOptions {

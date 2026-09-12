@@ -26,25 +26,30 @@ export class RegistryWatcher {
     }
 
     public start(): void {
-        const dirsToWatch = [
+        const pathsToWatch = [
             this.paths.componentsDir,
             this.paths.composablesDir,
             this.paths.localesDir,
             this.paths.libDir,
             this.paths.directivesDir,
+            this.paths.manifestPath,
         ];
+        if (this.paths.typesDir) pathsToWatch.push(this.paths.typesDir);
+        if (this.paths.apiContractPath) pathsToWatch.push(this.paths.apiContractPath);
 
-        for (const dir of dirsToWatch) {
-            if (!fs.existsSync(dir)) continue;
+        for (const target of pathsToWatch) {
+            if (!fs.existsSync(target)) continue;
             try {
-                const watcher = fs.watch(dir, { recursive: true }, (_eventType, filename) => {
+                const isFile = fs.statSync(target).isFile();
+                const watcher = fs.watch(target, { recursive: !isFile }, (_eventType, filename) => {
                     if (!filename) return;
                     this.handleFileChange(filename.toString());
                 });
                 this.watchers.push(watcher);
-                console.log(`  Watching ${path.relative(process.cwd(), dir)}/`);
+                const suffix = isFile ? '' : '/';
+                console.log(`  Watching ${path.relative(process.cwd(), target)}${suffix}`);
             } catch (error) {
-                console.warn(`  Failed to watch ${dir}: ${error instanceof Error ? error.message : error}`);
+                console.warn(`  Failed to watch ${target}: ${error instanceof Error ? error.message : error}`);
             }
         }
 

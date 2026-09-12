@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { computeRegistryManifestIntegrity } from 'brutx-shared-vue';
+import type { ComponentExportProjection } from 'brutx-shared-vue/api-contract';
 import { RegistryCompiler } from '../../src/compiler/registry-compiler.js';
 import { MemoryFileSystemAdapter } from '../../src/fs/memory-fs.js';
 import type { CompilerPaths } from '../../src/compiler/types.js';
@@ -27,6 +28,13 @@ describe('Registry Snapshot & Digest Verification', () => {
         },
     };
 
+    const publicProjection: ComponentExportProjection = {
+        componentId: 'button',
+        exports: [
+            { source: './Button.vue', sourceName: 'default', publicName: 'Button', kind: 'value' },
+        ],
+    };
+
     function createVfs(): MemoryFileSystemAdapter {
         return new MemoryFileSystemAdapter({
             '/virtual/ui/package.json': JSON.stringify({
@@ -52,6 +60,7 @@ describe('Registry Snapshot & Digest Verification', () => {
             fs,
             paths,
             metadata: mockMetadata,
+            publicProjection,
             releaseTag: 'v0.11.2',
             gitCommit: '3a9b1c7d8e2f4a5b6c7d8e9f0a1b2c3d4e5f6a7b',
         });
@@ -85,6 +94,7 @@ describe('Registry Snapshot & Digest Verification', () => {
             fs,
             paths,
             metadata: mockMetadata,
+            publicProjection,
             releaseTag: 'v0.11.2',
             gitCommit: '3a9b1c7d8e2f4a5b6c7d8e9f0a1b2c3d4e5f6a7b',
         });
@@ -128,6 +138,7 @@ describe('Registry Snapshot & Digest Verification', () => {
                 fs,
                 paths,
                 metadata: mockMetadata,
+                publicProjection,
             });
 
             const result = await compiler.compileAll();

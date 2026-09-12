@@ -172,6 +172,7 @@
     "lib": [
       "brutal-interaction-variants.ts",
       "defaults.ts",
+      "env.ts",
       "icon-size-variants.ts"
     ]
   },
@@ -773,12 +774,12 @@
       "MessageContainer.vue"
     ],
     "composables": [
-      "useLocale.ts",
-      "useMessage.ts"
+      "useLocale.ts"
     ],
     "directives": [],
     "lib": [
       "icon-size-variants.ts",
+      "message-state.ts",
       "z-index.ts"
     ]
   },
@@ -955,7 +956,8 @@
       "SelectSeparator.vue",
       "SelectTestFixture.vue",
       "SelectTrigger.vue",
-      "select-variants.ts"
+      "select-variants.ts",
+      "types.ts"
     ],
     "composables": [
       "useClearable.ts"

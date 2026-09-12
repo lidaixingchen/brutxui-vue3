@@ -36,7 +36,18 @@ export {
 } from './compiler/ast-rewriter.js';
 
 export { DependencyResolver, type ResolvedComponentClosure } from './compiler/dependency-resolver.js';
-export { CacheManager, CACHE_VERSION } from './compiler/cache-manager.js';
+export { buildRegistryComponentIndex } from './compiler/public-index.js';
+export {
+    CacheManager,
+    CACHE_VERSION,
+    computeInputDigest,
+    type SourceHashOptions,
+} from './compiler/cache-manager.js';
+export type {
+    ComponentIndexBuilder,
+    PublicComponentProjection,
+    PublicComponentProjectionSet,
+} from './compiler/types.js';
 export { RegistryCompiler } from './compiler/registry-compiler.js';
 
 export {
@@ -78,6 +89,10 @@ export {
 export {
     runBuild,
     runWatch,
+    compileRegistry,
+    createRegistryCompiler,
+    loadPublicProjection,
     getDefaultPaths,
+    type CreatedRegistryCompiler,
     type RunnerOptions,
 } from './runner/build-runner.js';

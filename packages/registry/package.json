@@ -8,14 +8,17 @@
         ".": "./src/index.ts"
     },
     "scripts": {
-        "build": "tsx scripts/build-registry.ts",
+        "build": "pnpm exec turbo run build:artifact --filter=brutx-registry-vue",
+        "build:artifact": "tsx scripts/build-registry.ts",
         "build:watch": "tsx scripts/build-registry.ts --watch",
         "build:verify": "tsx scripts/verify-build.ts",
         "bench": "tsx scripts/build-registry.ts --bench",
         "validate": "tsx scripts/validate-registry.ts",
-        "lint": "eslint src scripts tests",
+        "lint": "pnpm exec turbo run lint:source --filter=brutx-registry-vue",
+        "lint:source": "eslint src scripts tests",
         "test": "vitest run",
-        "typecheck": "tsc --noEmit"
+        "typecheck": "pnpm exec turbo run typecheck:source --filter=brutx-registry-vue",
+        "typecheck:source": "tsc --noEmit"
     },
     "dependencies": {
         "brutx-shared-vue": "workspace:*"

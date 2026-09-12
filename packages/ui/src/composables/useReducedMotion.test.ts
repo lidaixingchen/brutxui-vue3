@@ -16,7 +16,7 @@
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { defineComponent, nextTick, type Ref } from 'vue'
+import { defineComponent, nextTick, ref, type Ref } from 'vue'
 
 import { useReducedMotion } from './useReducedMotion'
 
@@ -26,8 +26,11 @@ interface MockMediaQueryList extends MediaQueryList {
 
 function createMockMediaQuery(matches: boolean) {
     const listeners: Record<string, (e: MediaQueryListEvent) => void> = {}
+    let currentMatches = matches
     return {
-        matches,
+        get matches() {
+            return currentMatches
+        },
         addEventListener: vi.fn((event: string, listener: (e: MediaQueryListEvent) => void) => {
             listeners[event] = listener
         }),
@@ -35,6 +38,7 @@ function createMockMediaQuery(matches: boolean) {
             delete listeners[event]
         }),
         _trigger(match: boolean) {
+            currentMatches = match
             const event = { matches: match } as MediaQueryListEvent
             listeners['change']?.(event)
         },
@@ -110,6 +114,93 @@ describe('useReducedMotion', () => {
         wrapper.unmount()
 
         expect(mockQuery.removeEventListener).toHaveBeenCalledWith('change', expect.any(Function))
+    })
+
+    it('does not query or attach a listener when disabled', async () => {
+        const wrapper = mount(defineComponent({
+            setup() {
+                const enabled = ref(false)
+                const prefersReduced = useReducedMotion({ enabled })
+                return { enabled, prefersReduced }
+            },
+            template: '<div>{{ prefersReduced }}</div>',
+        }))
+        await nextTick()
+
+        expect(window.matchMedia).not.toHaveBeenCalled()
+        expect(wrapper.vm.prefersReduced).toBe(false)
+    })
+
+    it('connects and releases resources when enabled changes', async () => {
+        const mockQuery = createMockMediaQuery(true)
+        vi.mocked(window.matchMedia).mockReturnValue(mockQuery)
+        const wrapper = mount(defineComponent({
+            setup() {
+                const enabled = ref(false)
+                const prefersReduced = useReducedMotion({ enabled })
+                return { enabled, prefersReduced }
+            },
+            template: '<div>{{ prefersReduced }}</div>',
+        }))
+        await nextTick()
+
+        expect(window.matchMedia).not.toHaveBeenCalled()
+        wrapper.vm.enabled = true
+        await nextTick()
+        expect(window.matchMedia).toHaveBeenCalledTimes(1)
+        expect(mockQuery.addEventListener).toHaveBeenCalledWith('change', expect.any(Function))
+        expect(wrapper.vm.prefersReduced).toBe(true)
+
+        wrapper.vm.enabled = false
+        await nextTick()
+        expect(mockQuery.removeEventListener).toHaveBeenCalledWith('change', expect.any(Function))
+        expect(wrapper.vm.prefersReduced).toBe(false)
+    })
+
+    it('re-reads the preference on KeepAlive activation', async () => {
+        const mockQuery = createMockMediaQuery(false)
+        vi.mocked(window.matchMedia).mockReturnValue(mockQuery)
+        const Child = defineComponent({
+            props: { enabled: { type: Boolean, default: true } },
+            setup(props) {
+                const prefersReduced = useReducedMotion({ enabled: () => props.enabled })
+                return { prefersReduced }
+            },
+            template: '<span>{{ prefersReduced }}</span>',
+        })
+        const Harness = defineComponent({
+            components: { Child },
+            setup() {
+                const visible = ref(true)
+                const enabled = ref(true)
+                return { visible, enabled }
+            },
+            template: '<KeepAlive><Child v-if="visible" :enabled="enabled" /></KeepAlive>',
+        })
+        const wrapper = mount(Harness)
+        await nextTick()
+
+        expect(wrapper.find('span').text()).toBe('false')
+        expect(mockQuery.addEventListener).toHaveBeenCalledTimes(1)
+
+        wrapper.vm.visible = false
+        await nextTick()
+        expect(mockQuery.removeEventListener).toHaveBeenCalledTimes(1)
+
+        wrapper.vm.enabled = false
+        await nextTick()
+        mockQuery._trigger(true)
+        wrapper.vm.enabled = true
+        await nextTick()
+        expect(mockQuery.addEventListener).toHaveBeenCalledTimes(1)
+
+        wrapper.vm.visible = true
+        await nextTick()
+        expect(wrapper.find('span').text()).toBe('true')
+        expect(mockQuery.addEventListener).toHaveBeenCalledTimes(2)
+
+        wrapper.unmount()
+        expect(mockQuery.removeEventListener).toHaveBeenCalledTimes(2)
     })
 
     describe('SSR environment (isClient = false)', () => {

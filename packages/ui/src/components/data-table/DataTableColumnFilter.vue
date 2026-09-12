@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, watch, type DeepReadonly } from 'vue'
 import { useLocale } from '@/composables/useLocale'
-import type { DataTableColumn, DataTableFilterState, DataTableFilterValue } from './types'
+import type { DataTableColumn, DataTableFilterState, DataTableFilterValue } from '@/types/data-table'
 import { createSelectValueMap } from '@/lib/data-table-utils'
 import Input from '../input/Input.vue'
 import Button from '../button/Button.vue'

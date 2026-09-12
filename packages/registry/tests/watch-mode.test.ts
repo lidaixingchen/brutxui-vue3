@@ -40,24 +40,17 @@ describe('build-registry watch mode (P2.3)', () => {
             fs.writeFileSync(manifestPath, originalContent, 'utf-8');
         });
 
-        it('regenerates registry-manifest.json without throwing', () => {
+        it('validates a fresh registry-manifest.json without throwing', () => {
             expect(() => runPrebuildScan()).not.toThrow();
         });
 
-        it('produces valid JSON with component entries', () => {
+        it('leaves the manifest content unchanged while validating', () => {
+            const before = fs.readFileSync(manifestPath, 'utf-8');
             runPrebuildScan();
-            const content = fs.readFileSync(manifestPath, 'utf-8');
-            const manifest = JSON.parse(content);
-            // 应该有多个组件条目
-            expect(Object.keys(manifest).length).toBeGreaterThan(0);
-            // 每个条目应该有 files 数组
-            for (const [, entry] of Object.entries(manifest)) {
-                expect(Array.isArray((entry as any).files)).toBe(true);
-                expect((entry as any).files.length).toBeGreaterThan(0);
-            }
+            expect(fs.readFileSync(manifestPath, 'utf-8')).toBe(before);
         });
 
-        it('produces stable output (idempotent)', () => {
+        it('accepts repeated validation of a stable manifest', () => {
             runPrebuildScan();
             const firstRun = fs.readFileSync(manifestPath, 'utf-8');
             runPrebuildScan();
@@ -94,7 +87,7 @@ describe('build-registry watch mode (P2.3)', () => {
 });
 
 describe('watch mode integration (P2.3)', () => {
-    // 集成测试：验证 runPrebuildScan + reloadRegistry + run 的链路能协同工作
+    // 集成测试：验证 runPrebuildScan + reloadRegistry 的链路能协同工作
     // 不测试 fs.watch 的实际触发（需要真实文件系统事件，不稳定）
 
     it('runPrebuildScan followed by reloadRegistry produces consistent state', () => {

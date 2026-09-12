@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUpdated, ref } from 'vue'
+import { computed, onActivated, onBeforeUnmount, onDeactivated, onMounted, onUpdated, ref, watch } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { Loader2 } from '@lucide/vue'
@@ -10,6 +10,7 @@ import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '@/lib/defaults'
 import { useGlitchEffect, type GlitchTrigger } from '@/composables/useGlitchEffect'
+import { getMutationObserverCtor } from '@/lib/env'
 
 type ButtonVariantProps = VariantProps<typeof buttonVariants>
 type ButtonGlitchSpeed = NonNullable<ButtonVariantProps['glitchSpeed']>
@@ -60,6 +61,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 const { t } = useLocale()
 
 const isDisabled = computed(() => props.disabled || props.loading)
+const effectEnabled = computed(() => props.effect === 'glitch')
 
 const {
     isGlitching,
@@ -72,6 +74,7 @@ const {
     trigger: () => props.glitchTrigger,
     interval: () => props.glitchInterval,
     disabled: isDisabled,
+    enabled: effectEnabled,
 })
 
 const classes = computed(() =>
@@ -131,21 +134,69 @@ function handleClick(event: Event) {
 }
 
 const rootEl = ref<{ $el: HTMLElement | null } | null>(null)
-const buttonText = ref('')
+let textObserver: MutationObserver | null = null
 
 function syncButtonText() {
     const el = rootEl.value?.$el
-    if (el instanceof HTMLElement) {
-        buttonText.value = el.textContent?.trim() ?? ''
+    if (!(el instanceof HTMLElement)) return
+    if (!effectEnabled.value) {
+        el.removeAttribute('data-text')
+        return
     }
+    const text = el.textContent?.trim() ?? ''
+    if (el.getAttribute('data-text') !== text) el.setAttribute('data-text', text)
 }
 
-onMounted(syncButtonText)
-onUpdated(syncButtonText)
+function releaseTextObserver() {
+    textObserver?.disconnect()
+    textObserver = null
+}
+
+function connectTextObserver() {
+    const MutationObserverCtor = getMutationObserverCtor()
+    if (!effectEnabled.value || textObserver || !MutationObserverCtor) return
+    const el = rootEl.value?.$el
+    if (!(el instanceof HTMLElement)) return
+    textObserver = new MutationObserverCtor(syncButtonText)
+    textObserver.observe(el, { characterData: true, childList: true, subtree: true })
+}
+
+onMounted(() => {
+    syncButtonText()
+    connectTextObserver()
+})
+onUpdated(() => {
+    syncButtonText()
+    connectTextObserver()
+})
+onActivated(() => {
+    syncButtonText()
+    connectTextObserver()
+})
+onDeactivated(releaseTextObserver)
+onBeforeUnmount(releaseTextObserver)
+
+watch(effectEnabled, enabled => {
+    if (enabled) {
+        syncButtonText()
+        connectTextObserver()
+    } else {
+        releaseTextObserver()
+        syncButtonText()
+    }
+})
+
+function playButtonEffect() {
+    if (effectEnabled.value) play()
+}
+
+function stopButtonEffect() {
+    stop()
+}
 
 defineExpose({
-    play,
-    stop,
+    play: playButtonEffect,
+    stop: stopButtonEffect,
 })
 </script>
 
@@ -156,7 +207,6 @@ defineExpose({
         :as-child="asChild"
         :class="classes"
         :type="type"
-        :data-text="buttonText"
         :disabled="!asChild && isDisabled"
         :aria-disabled="asChild && isDisabled ? true : undefined"
         :aria-busy="loading || undefined"

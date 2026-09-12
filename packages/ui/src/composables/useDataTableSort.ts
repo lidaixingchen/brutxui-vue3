@@ -1,5 +1,5 @@
 import { readonly, ref, computed, toValue, type DeepReadonly, type MaybeRefOrGetter, type Ref } from 'vue'
-import type { DataTableColumn, DataTableSortState } from '@/components/data-table/types'
+import type { DataTableColumn, DataTableSortState } from '@/types/data-table'
 import { getCellValue } from '@/lib/data-table-utils'
 
 export interface UseDataTableSortOptions<T extends object> {

@@ -118,6 +118,8 @@ import { RouterLink } from 'vue-router'
 
 `Button` 内置 `effect="glitch"`，可直接启用故障撕裂动画。
 
+默认 `effect="none"` 不创建特效媒体监听、定时器或文本同步；`glitch-trigger="autoplay"` 和实例 `play()` 都受 effect 开关约束。设置为 `glitch` 后，禁用、loading 和减少动态效果会停止播放。KeepAlive 停用及卸载会释放资源，重新激活时读取当前系统偏好并按配置恢复。
+
 ```vue
 <template>
     <Button

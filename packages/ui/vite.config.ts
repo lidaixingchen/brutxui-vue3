@@ -3,16 +3,11 @@ import vue from '@vitejs/plugin-vue'
 import dts from 'vite-plugin-dts'
 import tailwindcss from '@tailwindcss/vite'
 import { resolve } from 'path'
-import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs'
-
-interface ExportsManifest {
-    components: string[]
-    composables: string[]
-    directives: string[]
-}
+import { readFileSync, writeFileSync, readdirSync, existsSync, unlinkSync } from 'node:fs'
+import type { ApiExportsManifest } from 'brutx-shared-vue/api-contract'
 
 /**
- * Build multi-entry inputs from exports-manifest.json.
+ * Build multi-entry inputs from the derived API exports manifest.
  *
  * Entry key → output path: `components/button/index` → `dist/components/button/index.js`.
  * This matches the `buildEntry()` paths in generate-exports.ts so package.json
@@ -20,33 +15,29 @@ interface ExportsManifest {
  *
  * `index` and `locales` are top-level entries (not under components/).
  */
-function buildInputs(): Record<string, string> {
+function readApiExportsManifest(): ApiExportsManifest {
     const manifestPath = resolve(__dirname, 'exports-manifest.json')
-    if (!existsSync(manifestPath)) {
-        throw new Error(
-            `exports-manifest.json not found at ${manifestPath}\n` +
-            'Run `pnpm prebuild:scan` first.',
-        )
+    const manifest = JSON.parse(readFileSync(manifestPath, 'utf-8')) as ApiExportsManifest
+    if (manifest.version !== 1 || !Array.isArray(manifest.entries)) {
+        throw new Error(`无效的 exports-manifest.json：${manifestPath}`)
     }
-    const manifest: ExportsManifest = JSON.parse(readFileSync(manifestPath, 'utf-8'))
+    return manifest
+}
 
-    const inputs: Record<string, string> = {
-        index: resolve(__dirname, 'src/index.ts'),
-        locales: resolve(__dirname, 'src/locales/index.ts'),
+function buildInputs(): Record<string, string> {
+    const inputs: Record<string, string> = {}
+    const outputNames = new Set<string>()
+    for (const entry of readApiExportsManifest().entries) {
+        if (entry.kind === 'style' || !entry.output.import) continue
+        const outputName = entry.output.import
+            .replace(/^\.\/dist\//u, '')
+            .replace(/\.js$/u, '')
+        if (!outputName || outputNames.has(outputName)) {
+            throw new Error(`exports-manifest.json 存在重复或无效构建入口：${entry.subpath}`)
+        }
+        outputNames.add(outputName)
+        inputs[outputName] = resolve(__dirname, entry.source)
     }
-
-    for (const component of manifest.components) {
-        inputs[`components/${component}/index`] = resolve(__dirname, `src/components/${component}/index.ts`)
-    }
-    for (const composable of manifest.composables) {
-        const name = composable.replace(/\.ts$/, '')
-        inputs[`composables/${name}`] = resolve(__dirname, `src/composables/${name}.ts`)
-    }
-    for (const directive of manifest.directives) {
-        const name = directive.replace(/\.ts$/, '')
-        inputs[`directives/${name}`] = resolve(__dirname, `src/directives/${name}.ts`)
-    }
-
     return inputs
 }
 
@@ -94,8 +85,7 @@ function copyStylesPlugin(): Plugin {
             // Remove the original if it's not styles.css
             if (best !== 'styles.css') {
                 try {
-                    const fs = require('node:fs')
-                    fs.unlinkSync(resolve(distDir, best))
+                    unlinkSync(resolve(distDir, best))
                 } catch {
                     // Non-fatal if cleanup fails
                 }

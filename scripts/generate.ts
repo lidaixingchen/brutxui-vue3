@@ -162,11 +162,7 @@ async function main(): Promise<void> {
 
     if (result.injectedExports.length > 0) {
         console.log('');
-        if (dryRun) {
-            logInfo(`[预览导出] packages/ui/src/index.ts:`);
-        } else {
-            logSuccess(`更新导出: ${colorize('cyan', 'packages/ui/src/index.ts')}`);
-        }
+        logInfo(`${dryRun ? '[预览导出意图]' : '[待登记导出意图]'} packages/ui/api-contract.ts:`);
         for (const exp of result.injectedExports) {
             logInfo(`  ${exp}`);
         }

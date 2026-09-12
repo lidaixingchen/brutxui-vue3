@@ -1,19 +1,33 @@
 {
     "$schema": "https://turbo.build/schema.json",
     "tasks": {
-        "build": {
-            "dependsOn": ["^build"],
-            "env": ["VERCEL"],
-            "outputs": [
-                "dist/**",
-                ".vitepress/dist/**",
-                "registry-manifest.json",
-                "exports-manifest.json",
-                "src/components/*/index.ts"
-            ],
+        "generate": {
+            "cache": false,
+            "outputs": [],
             "inputs": [
+                "$TURBO_DEFAULT$",
                 "src/**",
                 "scripts/**",
+                "api-contract.ts",
+                "package.json",
+                "../../packages/shared/src/**"
+            ]
+        },
+        "build:artifact": {
+            "dependsOn": [
+                "generate"
+            ],
+            "env": [
+                "VERCEL"
+            ],
+            "outputs": [
+                "dist/**"
+            ],
+            "inputs": [
+                "$TURBO_DEFAULT$",
+                "src/**",
+                "scripts/**",
+                "api-contract.ts",
                 "package.json",
                 "tsconfig.json",
                 "tsconfig.*.json",
@@ -24,20 +38,7 @@
                 "../../packages/shared/src/**"
             ]
         },
-        "generate": {
-            "cache": false,
-            "inputs": [
-                "src/**",
-                "scripts/**",
-                "../../packages/shared/src/**"
-            ],
-            "outputs": [
-                "registry-manifest.json",
-                "exports-manifest.json",
-                "src/components/*/index.ts"
-            ]
-        },
-        "brutx-registry-vue#build": {
+        "brutx-registry-vue#build:artifact": {
             "cache": false,
             "dependsOn": [
                 "brutx-ui-vue#generate"
@@ -46,19 +47,24 @@
                 "BRUTX_REGISTRY_PRIVATE_KEY",
                 "BRUTX_REGISTRY_KEY_ID"
             ],
+            "outputs": [],
             "inputs": [
                 "../../packages/ui/src/**",
                 "../../packages/shared/src/**",
                 "src/**",
-                "scripts/**"
+                "scripts/**",
+                "package.json"
             ]
         },
-        "docs#build": {
-            "dependsOn": ["^build"],
+        "docs#build:artifact": {
+            "dependsOn": [
+                "brutx-ui-vue#build:artifact"
+            ],
             "outputs": [
                 ".vitepress/dist/**"
             ],
             "inputs": [
+                "$TURBO_DEFAULT$",
                 "**/*.md",
                 ".vitepress/config.ts",
                 ".vitepress/theme/**/*",
@@ -68,7 +74,9 @@
             ]
         },
         "test": {
-            "dependsOn": ["build"],
+            "dependsOn": [
+                "build:artifact"
+            ],
             "inputs": [
                 "src/**",
                 "tests/**",
@@ -76,22 +84,132 @@
                 "vitest.browser.config.ts",
                 "vitest.ssr.config.ts",
                 "registry/**",
-                "../../packages/shared/src/**"
+                "../../packages/shared/src/**",
+                "$TURBO_DEFAULT$",
+                "scripts/**",
+                "api-contract.ts",
+                "../../packages/ui/api-contract.ts",
+                "../../packages/ui/src/types/**"
             ]
         },
         "test:ssr": {
-            "dependsOn": ["build"],
-            "inputs": ["src/**", "vitest.ssr.config.ts", "../../packages/shared/src/**"]
+            "dependsOn": [
+                "build:artifact"
+            ],
+            "inputs": [
+                "src/**",
+                "vitest.ssr.config.ts",
+                "../../packages/shared/src/**",
+                "$TURBO_DEFAULT$",
+                "scripts/**",
+                "api-contract.ts",
+                "../../packages/ui/api-contract.ts",
+                "../../packages/ui/src/types/**"
+            ]
         },
-        "typecheck": {
-            "dependsOn": ["^build"],
-            "inputs": ["src/**", "tsconfig.json", "tsconfig.*.json", "../../packages/shared/src/**"]
+        "typecheck:source": {
+            "dependsOn": [
+                "generate",
+                "^typecheck:source"
+            ],
+            "inputs": [
+                "$TURBO_DEFAULT$",
+                "src/**",
+                "scripts/**",
+                "api-contract.ts",
+                "package.json",
+                "tsconfig.json",
+                "tsconfig.*.json",
+                "../../packages/shared/src/**"
+            ]
         },
-        "lint": {
-            "inputs": ["src/**", "scripts/**", "tests/**", "eslint.config.js", ".eslintrc.*", "../../packages/shared/src/**"]
+        "docs#typecheck:source": {
+            "dependsOn": [
+                "brutx-ui-vue#build:artifact"
+            ],
+            "inputs": [
+                "$TURBO_DEFAULT$",
+                "**/*.md",
+                ".vitepress/config.ts",
+                ".vitepress/theme/**/*",
+                "public/**/*",
+                "package.json",
+                "tsconfig.json",
+                "../../packages/ui/src/**",
+                "../../packages/shared/src/**"
+            ]
+        },
+        "brutx-shared-vue#lint:source": {
+            "dependsOn": [],
+            "inputs": [
+                "$TURBO_DEFAULT$",
+                "src/**",
+                "tests/**",
+                "package.json",
+                "eslint.config.js",
+                ".eslintrc.*"
+            ]
+        },
+        "brutx-shared-vue#typecheck:source": {
+            "dependsOn": [],
+            "inputs": [
+                "$TURBO_DEFAULT$",
+                "src/**",
+                "package.json",
+                "tsconfig.json",
+                "tsconfig.*.json"
+            ]
+        },
+        "brutx-registry-vue#lint:source": {
+            "dependsOn": [
+                "^lint:source"
+            ],
+            "inputs": [
+                "$TURBO_DEFAULT$",
+                "src/**",
+                "scripts/**",
+                "tests/**",
+                "package.json",
+                "eslint.config.js",
+                ".eslintrc.*",
+                "../../packages/shared/src/**"
+            ]
+        },
+        "brutx-registry-vue#typecheck:source": {
+            "dependsOn": [
+                "^typecheck:source"
+            ],
+            "inputs": [
+                "$TURBO_DEFAULT$",
+                "src/**",
+                "scripts/**",
+                "package.json",
+                "tsconfig.json",
+                "tsconfig.*.json",
+                "../../packages/shared/src/**"
+            ]
+        },
+        "lint:source": {
+            "dependsOn": [
+                "generate",
+                "^lint:source"
+            ],
+            "inputs": [
+                "$TURBO_DEFAULT$",
+                "src/**",
+                "scripts/**",
+                "tests/**",
+                "api-contract.ts",
+                "package.json",
+                "eslint.config.js",
+                ".eslintrc.*",
+                "../../packages/shared/src/**"
+            ]
         },
         "validate": {
-            "dependsOn": ["build"],
+            "dependsOn": [
+                "build:artifact"
+            ],
             "inputs": [
                 "scripts/**",
                 "registry/**",
@@ -102,12 +220,19 @@
                 "../../packages/ui/src/locales/**",
                 "../../packages/ui/src/lib/**",
                 "../../apps/docs/**/*.md",
-                "../../packages/shared/src/**"
+                "../../packages/shared/src/**",
+                "$TURBO_DEFAULT$",
+                "api-contract.ts",
+                "../../packages/ui/api-contract.ts",
+                "../../packages/ui/src/types/**"
             ]
         },
         "bench": {
             "cache": false,
-            "inputs": ["perf/**", "src/**"]
+            "inputs": [
+                "perf/**",
+                "src/**"
+            ]
         },
         "clean": {
             "cache": false

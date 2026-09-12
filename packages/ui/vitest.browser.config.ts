@@ -3,6 +3,8 @@ import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
 import { playwright } from '@vitest/browser-playwright'
 
+const chromiumExecutablePath = process.env.BRUTX_CHROMIUM_EXECUTABLE
+
 export default defineConfig({
     plugins: [vue()],
     resolve: {
@@ -17,7 +19,11 @@ export default defineConfig({
     test: {
         browser: {
             enabled: true,
-            provider: playwright(),
+            provider: playwright({
+                launchOptions: chromiumExecutablePath
+                    ? { executablePath: chromiumExecutablePath }
+                    : undefined,
+            }),
             instances: [
                 { browser: 'chromium' },
             ],

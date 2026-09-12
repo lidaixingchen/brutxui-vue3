@@ -136,6 +136,8 @@ import { RouterLink } from 'vue-router'
 
 > Note: when building a glitch button directly with the exported `buttonVariants({ effect: 'glitch' })`, pass `glitchSpeed` and `glitchDirection` explicitly — the `medium`/`horizontal` defaults are provided by the `<Button>` component, not by the raw utility function.
 
+With the default `effect="none"`, Button creates no effect media listeners, timers, or text synchronization. Both autoplay and the exposed `play()` method respect this switch. Glitch playback stops while disabled, loading, or reduced motion is enabled. KeepAlive deactivation and unmount release resources; activation reads the current motion preference before resuming.
+
 ## Variants
 
 | Variant | Description |

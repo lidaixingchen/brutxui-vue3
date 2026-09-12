@@ -1,32 +1,13 @@
 <script setup lang="ts">
-import { ref, shallowRef, computed, watch, provide, type Ref, type ComputedRef } from 'vue';
+import { ref, shallowRef, computed, watch, provide } from 'vue';
 import { getDocument } from '@/lib/env';
 import { cn } from '@/lib/utils';
 import TreeViewNode from './TreeViewNode.vue';
 import { getCheckState, getAllDescendantIds, moveNode, cloneTree } from './tree-view-utils';
 import { useLocale } from '@/composables/useLocale';
-import type { SelectionMode, TreeNode } from './types';
-import type { CheckState } from './tree-view-utils';
+import type { CheckState, SelectionMode, TreeNode, TreeViewContext } from './types';
 
-export type { SelectionMode, TreeNode, CheckState };
-
-export interface TreeViewContext {
-    lazy: ComputedRef<boolean>;
-    retryOnError: ComputedRef<boolean>;
-    loadingKeys: Ref<Set<string>>;
-    failedKeys: Ref<Set<string>>;
-    draggable: ComputedRef<boolean>;
-    draggedNode: Ref<TreeNode | null>;
-    dragOverNode: Ref<TreeNode | null>;
-    dropType: Ref<'before' | 'after' | 'inner' | null>;
-    triggerLoad: (node: TreeNode) => Promise<void>;
-    onNodeDragStart: (event: DragEvent, node: TreeNode) => void;
-    onNodeDragOver: (event: DragEvent, node: TreeNode, rect: DOMRect, clientY: number) => void;
-    onNodeDragEnter: (event: DragEvent, node: TreeNode) => void;
-    onNodeDragLeave: (event: DragEvent, node: TreeNode) => void;
-    onNodeDragEnd: (event: DragEvent, node: TreeNode) => void;
-    onNodeDrop: (event: DragEvent, node: TreeNode) => void;
-}
+export type { CheckState, SelectionMode, TreeNode, TreeViewContext };
 
 interface TreeViewProps {
     nodes: TreeNode[];
