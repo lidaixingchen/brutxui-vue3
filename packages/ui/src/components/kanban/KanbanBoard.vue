@@ -1,72 +1,71 @@
 <script setup lang="ts">
-import { ref, computed, onBeforeUnmount } from 'vue';
-import { Plus } from '@lucide/vue';
-import { cn } from '@/lib/utils';
-import { requestAnimationFrame, cancelAnimationFrame } from '@/lib/env';
-import { useLocale } from '@/composables/useLocale';
-import { iconSizeVariants } from '@/lib/icon-size-variants';
-import { kanbanColumnVariants, kanbanCardVariants, kanbanColumnHeaderVariants } from './kanban-variants';
-import Button from '../button/Button.vue';
-import type { KanbanCard, KanbanColumn } from './types';
+import { ref, computed, nextTick } from 'vue'
+import { Plus } from '@lucide/vue'
+import { getDocument } from '@/lib/env'
+import { cn } from '@/lib/utils'
+import { useLocale } from '@/composables/useLocale'
+import { useKanban } from '@/composables/useKanban'
+import { iconSizeVariants } from '@/lib/icon-size-variants'
+import { kanbanColumnVariants, kanbanCardVariants, kanbanColumnHeaderVariants } from './kanban-variants'
+import Button from '../button/Button.vue'
+import type { KanbanCard, KanbanColumn, KanbanMoveResult } from './types'
 
-export type { KanbanCard, KanbanColumn };
+export type { KanbanCard, KanbanColumn }
 
 interface KanbanBoardProps {
-    modelValue: KanbanColumn[];
-    class?: string;
+    modelValue: KanbanColumn[]
+    class?: string
 }
 
-const props = defineProps<KanbanBoardProps>();
+const props = defineProps<KanbanBoardProps>()
 
 const emit = defineEmits<{
-    'update:modelValue': [columns: KanbanColumn[]];
-    'card-move': [cardId: string, fromColumn: string, toColumn: string];
-    'card-click': [card: KanbanCard, columnId: string];
-    'column-move': [columnId: string, fromIndex: number, toIndex: number];
-    'add-card': [columnId: string];
-}>();
+    'update:modelValue': [columns: KanbanColumn[]]
+    'card-move': [cardId: string, fromColumn: string, toColumn: string]
+    'card-click': [card: KanbanCard, columnId: string]
+    'column-move': [columnId: string, fromIndex: number, toIndex: number]
+    'add-card': [columnId: string]
+}>()
 
-const { t } = useLocale();
+const { t } = useLocale()
 
-const draggingCard = ref<{ cardId: string; fromColumn: string } | null>(null);
-const draggingColumn = ref<string | null>(null);
-const dragOverColumn = ref<string | null>(null);
-const isDragging = ref(false);
-let dragEndRafId: number | null = null;
-const dragOverColumnHeader = ref<string | null>(null);
-const grabbedCard = ref<{ cardId: string; columnId: string } | null>(null);
-const ariaLiveMessage = ref('');
+const kanban = useKanban({
+    columns: () => props.modelValue,
+    onColumnsChange(nextColumns, change) {
+        emit('update:modelValue', nextColumns)
+        if (change.kind === 'card-move') {
+            emit('card-move', change.cardId, change.fromColumn, change.toColumn)
+        } else if (change.kind === 'column-move') {
+            emit('column-move', change.columnId, change.fromIndex, change.toIndex)
+        }
+    },
+})
 
-const columns = computed(() => props.modelValue);
+const boardRef = ref<HTMLElement | null>(null)
+const columns = computed(() => props.modelValue)
+const dragOverColumnHeader = ref<string | null>(null)
+const ariaLiveMessage = ref('')
+const toggleAria = ref(false)
+
+const grabbedCard = computed(() => kanban.grabbedCard.value)
 
 function onDragStart(e: DragEvent, cardId: string, fromColumn: string) {
-    if (draggingColumn.value) return;
-    if (dragEndRafId !== null) {
-        cancelAnimationFrame(dragEndRafId);
-        dragEndRafId = null;
-    }
-    draggingCard.value = { cardId, fromColumn };
-    isDragging.value = true;
+    if (kanban.draggingColumn.value) return
+    kanban.startCardDrag(cardId, fromColumn)
     if (e.dataTransfer) {
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', cardId);
+        e.dataTransfer.effectAllowed = 'move'
+        e.dataTransfer.setData('text/plain', cardId)
     }
 }
 
 function onDragEnd() {
-    draggingCard.value = null;
-    dragOverColumn.value = null;
-    dragEndRafId = requestAnimationFrame(() => { isDragging.value = false });
+    kanban.endCardDrag()
 }
 
-onBeforeUnmount(() => {
-    if (dragEndRafId !== null) cancelAnimationFrame(dragEndRafId);
-});
-
 function onDragOver(e: DragEvent, columnId: string) {
-    if (draggingColumn.value) return;
-    e.preventDefault();
-    dragOverColumn.value = columnId;
+    if (kanban.draggingColumn.value) return
+    e.preventDefault()
+    kanban.setDragOverColumn(columnId)
 }
 
 function onDragLeave(e: DragEvent, columnId: string) {
@@ -74,214 +73,169 @@ function onDragLeave(e: DragEvent, columnId: string) {
     if (!(el instanceof HTMLElement)) return
     const related = e.relatedTarget
     if (related instanceof Node && el.contains(related)) return
-    if (dragOverColumn.value === columnId) {
-        dragOverColumn.value = null;
+    if (kanban.dragOverColumn.value === columnId) {
+        kanban.setDragOverColumn(null)
     }
 }
 
 function onCardClick(card: KanbanCard, columnId: string) {
-    if (isDragging.value) return;
-    emit('card-click', card, columnId);
+    if (kanban.isDragging.value) return
+    emit('card-click', card, columnId)
 }
 
-function onCardKeydown(e: KeyboardEvent, card: KanbanCard, columnId: string) {
-    // Space 抓取/放下卡片
-    if (e.key === ' ') {
-        e.preventDefault();
-        if (grabbedCard.value) {
-            grabbedCard.value = null;
-            ariaLiveMessage.value = t('kanban.cardReleased');
+let activeKeyboardCardId: string | null = null
+
+async function handleKeyboardCardMove(
+    cardId: string,
+    columnId: string,
+    mode: 'in-column' | 'adjacent',
+    direction: -1 | 1,
+) {
+    activeKeyboardCardId = cardId
+
+    let result: KanbanMoveResult
+    if (mode === 'in-column') {
+        result = kanban.moveCardInColumn(cardId, columnId, direction)
+    } else {
+        result = kanban.moveCardToAdjacentColumn(cardId, columnId, direction)
+    }
+
+    if (result.status !== 'moved') {
+        return
+    }
+
+    const change = result.change
+    if (change.kind === 'card-move') {
+        const toColId = change.toColumn
+        if (change.fromColumn === toColId) {
+            ariaLiveMessage.value = `${t('kanban.cardMoved')}${toggleAria.value ? '' : '\u200B'}`
+            toggleAria.value = !toggleAria.value
         } else {
-            grabbedCard.value = { cardId: card.id, columnId };
-            ariaLiveMessage.value = t('kanban.cardGrabbed');
+            const targetCol = result.nextColumns.find((c) => c.id === toColId)
+            if (targetCol) {
+                ariaLiveMessage.value = t('kanban.cardMovedToColumn', { column: targetCol.title })
+            }
         }
-        return;
-    }
-    // Enter 触发 click 事件
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        onCardClick(card, columnId);
-        return;
     }
 
-    if (!grabbedCard.value) return;
+    await nextTick()
+    if (activeKeyboardCardId !== cardId) return
 
-    if (e.key === 'Escape') {
-        grabbedCard.value = null;
-        ariaLiveMessage.value = t('kanban.cardReleased');
-        return;
-    }
-    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-        e.preventDefault();
-        moveCardInColumn(grabbedCard.value.cardId, grabbedCard.value.columnId, e.key === 'ArrowUp' ? -1 : 1);
-    }
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-        e.preventDefault();
-        moveCardToAdjacentColumn(grabbedCard.value.cardId, grabbedCard.value.columnId, e.key === 'ArrowLeft' ? -1 : 1);
-    }
-}
-
-function moveCardInColumn(cardId: string, columnId: string, direction: number) {
-    const col = columns.value.find(c => c.id === columnId);
-    if (!col) return;
-    const index = col.cards.findIndex(c => c.id === cardId);
-    if (index === -1) return;
-    const newIndex = index + direction;
-    if (newIndex < 0 || newIndex >= col.cards.length) return;
-
-    const newColumns = columns.value.map(c => {
-        if (c.id !== columnId) return c;
-        const newCards = [...c.cards];
-        const [moved] = newCards.splice(index, 1);
-        newCards.splice(newIndex, 0, moved);
-        return { ...c, cards: newCards };
-    });
-    emit('update:modelValue', newColumns);
-    // 与鼠标拖拽路径（onDrop）一致补发 card-move，供持久化/审计统一消费
-    emit('card-move', cardId, columnId, columnId);
-    ariaLiveMessage.value = t('kanban.cardMoved');
-}
-
-function moveCardToAdjacentColumn(cardId: string, columnId: string, direction: number) {
-    const colIndex = columns.value.findIndex(c => c.id === columnId);
-    if (colIndex === -1) return;
-    const newColIndex = colIndex + direction;
-    if (newColIndex < 0 || newColIndex >= columns.value.length) return;
-
-    const col = columns.value[colIndex];
-    const card = col.cards.find(c => c.id === cardId);
-    if (!card) return;
-
-    const targetColumnId = columns.value[newColIndex].id;
-    const newColumns = columns.value.map((c, i) => {
-        if (i === colIndex) {
-            return { ...c, cards: c.cards.filter(cc => cc.id !== cardId) };
-        }
-        if (i === newColIndex) {
-            return { ...c, cards: [...c.cards, card] };
-        }
-        return c;
-    });
-    emit('update:modelValue', newColumns);
-    // 与鼠标拖拽路径（onDrop）一致补发 card-move
-    emit('card-move', cardId, columnId, targetColumnId);
-    grabbedCard.value = { cardId, columnId: targetColumnId };
-    ariaLiveMessage.value = t('kanban.cardMovedToColumn', { column: columns.value[newColIndex].title });
-}
-
-function onDrop(e: DragEvent, toColumnId: string) {
-    if (draggingColumn.value) return;
-    if (!draggingCard.value) return;
-    const { cardId, fromColumn } = draggingCard.value;
-
-    const sourceColumn = columns.value.find((col) => col.id === fromColumn);
-    const card = sourceColumn?.cards.find((c) => c.id === cardId);
-    if (!card) {
-        draggingCard.value = null;
-        dragOverColumn.value = null;
-        return;
-    }
-
-    const columnEl = e.currentTarget
-    if (!(columnEl instanceof HTMLElement)) {
-        // 无法计算插入位置时同样清理拖拽状态，避免高亮与 isDragging 残留
-        draggingCard.value = null;
-        dragOverColumn.value = null;
-        return;
-    }
-    // 排除被拖卡片自身：同列拖拽时其仍在 DOM 中，且 DOM 顺序可能与数据顺序错位
-    // （过滤/排序/过渡），几何索引只基于剩余卡片，插入位置与数据模型一致，
-    // 因此无需再做 originalIndex 补偿
-    const cardEls = Array.from(columnEl.querySelectorAll('[data-card-id]'))
-        .filter((el) => el.getAttribute('data-card-id') !== cardId)
-    let insertIndex = cardEls.length
-    const mouseY = e.clientY
-    for (let i = 0; i < cardEls.length; i++) {
-        const rect = cardEls[i].getBoundingClientRect()
-        if (mouseY < rect.top + rect.height / 2) {
-            insertIndex = i
+    let currentColumn: KanbanColumn | undefined
+    let currentIndex = -1
+    for (const col of props.modelValue) {
+        const idx = col.cards.findIndex((c) => c.id === cardId)
+        if (idx !== -1) {
+            currentColumn = col
+            currentIndex = idx
             break
         }
     }
 
-    const newColumns = columns.value.map((col) => {
-        if (col.id === toColumnId) {
-            const newCards = col.cards.filter((c) => c.id !== cardId)
-            newCards.splice(insertIndex, 0, card)
-            return { ...col, cards: newCards }
+    const root = boardRef.value ?? getDocument()
+    if (currentColumn && currentIndex !== -1) {
+        const safeCardId = typeof CSS !== 'undefined' && CSS.escape ? CSS.escape(cardId) : cardId
+        const cardEl = root?.querySelector(`[data-card-id="${safeCardId}"]`)
+        if (cardEl instanceof HTMLElement) {
+            cardEl.focus()
         }
-        if (col.id === fromColumn) {
-            return { ...col, cards: col.cards.filter((c) => c.id !== cardId) };
+    } else {
+        const safeColId = typeof CSS !== 'undefined' && CSS.escape ? CSS.escape(columnId) : columnId
+        const colEl = root?.querySelector(`[data-column-id="${safeColId}"]`)
+        if (colEl instanceof HTMLElement) {
+            colEl.focus()
         }
-        return col;
-    });
+    }
+}
 
-    emit('update:modelValue', newColumns);
-    emit('card-move', cardId, fromColumn, toColumnId);
-    draggingCard.value = null;
-    dragOverColumn.value = null;
+function onCardKeydown(e: KeyboardEvent, card: KanbanCard, columnId: string) {
+    if (e.key === ' ') {
+        e.preventDefault()
+        if (kanban.grabbedCard.value) {
+            kanban.releaseCard()
+            ariaLiveMessage.value = t('kanban.cardReleased')
+        } else {
+            kanban.grabCard(card.id, columnId)
+            ariaLiveMessage.value = t('kanban.cardGrabbed')
+        }
+        return
+    }
+    if (e.key === 'Enter') {
+        e.preventDefault()
+        onCardClick(card, columnId)
+        return
+    }
+
+    if (!kanban.grabbedCard.value) return
+
+    if (e.key === 'Escape') {
+        kanban.releaseCard()
+        ariaLiveMessage.value = t('kanban.cardReleased')
+        return
+    }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        e.preventDefault()
+        void handleKeyboardCardMove(kanban.grabbedCard.value.cardId, kanban.grabbedCard.value.columnId, 'in-column', e.key === 'ArrowUp' ? -1 : 1)
+    }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        e.preventDefault()
+        void handleKeyboardCardMove(kanban.grabbedCard.value.cardId, kanban.grabbedCard.value.columnId, 'adjacent', e.key === 'ArrowLeft' ? -1 : 1)
+    }
+}
+
+function onDrop(e: DragEvent, toColumnId: string) {
+    kanban.onDrop(e, toColumnId)
 }
 
 function onColumnDragStart(e: DragEvent, columnId: string) {
-    if (draggingCard.value) {
-        e.preventDefault();
-        return;
+    if (kanban.draggingCard.value) {
+        e.preventDefault()
+        return
     }
-    draggingColumn.value = columnId;
+    kanban.startColumnDrag(columnId)
     if (e.dataTransfer) {
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', columnId);
+        e.dataTransfer.effectAllowed = 'move'
+        e.dataTransfer.setData('text/plain', columnId)
     }
 }
 
 function onColumnDragEnd() {
-    draggingColumn.value = null;
-    dragOverColumnHeader.value = null;
+    kanban.endColumnDrag()
+    dragOverColumnHeader.value = null
 }
 
 function onColumnDragOver(e: DragEvent, columnId: string) {
-    if (!draggingColumn.value) return;
-    e.preventDefault();
-    e.stopPropagation();
+    if (!kanban.draggingColumn.value) return
+    e.preventDefault()
+    e.stopPropagation()
     if (dragOverColumnHeader.value !== columnId) {
-        dragOverColumnHeader.value = columnId;
+        dragOverColumnHeader.value = columnId
     }
 }
 
 function onColumnDrop(e: DragEvent, toColumnId: string) {
-    if (!draggingColumn.value) return;
-    e.preventDefault();
-    e.stopPropagation();
-    const fromId = draggingColumn.value;
-    dragOverColumnHeader.value = null;
-    draggingColumn.value = null;
+    if (!kanban.draggingColumn.value) return
+    e.preventDefault()
+    e.stopPropagation()
+    const fromId = kanban.draggingColumn.value
+    dragOverColumnHeader.value = null
+    kanban.endColumnDrag()
 
-    if (fromId === toColumnId) return;
+    if (fromId === toColumnId) return
 
-    const fromIndex = columns.value.findIndex((col) => col.id === fromId);
-    const toIndex = columns.value.findIndex((col) => col.id === toColumnId);
-    if (fromIndex === -1 || toIndex === -1) return;
-
-    const newColumns = [...columns.value];
-    const [moved] = newColumns.splice(fromIndex, 1);
-    // 统一为「移动到目标下标」的标准数组移动语义：移除后插入到 toIndex，
-    // 保证 emit 的 toIndex 与界面实际落点一致，且与 moveColumn 命令式 API 的语义统一。
-    newColumns.splice(toIndex, 0, moved);
-
-    emit('update:modelValue', newColumns);
-    emit('column-move', fromId, fromIndex, toIndex);
+    kanban.moveColumn(fromId, toColumnId)
 }
 
 function onAddCard(columnId: string) {
-    emit('add-card', columnId);
+    emit('add-card', columnId)
 }
 
-const boardClass = computed(() => cn('flex gap-4 overflow-x-auto pb-4', props.class));
+const boardClass = computed(() => cn('flex gap-4 overflow-x-auto pb-4', props.class))
 
 const columnClassesMap = computed(() => {
     const map = new Map<string, string>()
     columns.value.forEach((col) => {
-        map.set(col.id, cn(kanbanColumnVariants({ dragOver: dragOverColumn.value === col.id })))
+        map.set(col.id, cn(kanbanColumnVariants({ dragOver: kanban.dragOverColumn.value === col.id })))
     })
     return map
 })
@@ -290,7 +244,7 @@ const cardClassesMap = computed(() => {
     const map = new Map<string, string>()
     columns.value.forEach((col) => {
         col.cards.forEach((card) => {
-            map.set(card.id, cn(kanbanCardVariants({ dragging: draggingCard.value?.cardId === card.id })))
+            map.set(card.id, cn(kanbanCardVariants({ dragging: kanban.draggingCard.value?.cardId === card.id })))
         })
     })
     return map
@@ -300,34 +254,30 @@ const columnHeaderClassesMap = computed(() => {
     const map = new Map<string, string>()
     columns.value.forEach((col) => {
         map.set(col.id, cn(kanbanColumnHeaderVariants({
-            dragging: draggingColumn.value === col.id,
-            dragOver: dragOverColumnHeader.value === col.id && draggingColumn.value !== col.id,
+            dragging: kanban.draggingColumn.value === col.id,
+            dragOver: dragOverColumnHeader.value === col.id && kanban.draggingColumn.value !== col.id,
         })))
     })
     return map
 })
 
-const addIconClasses = computed(() => iconSizeVariants({ size: 'sm' }));
+const addIconClasses = computed(() => iconSizeVariants({ size: 'sm' }))
 
 defineExpose({
-    moveCard: moveCardToAdjacentColumn,
+    moveCard: (cardId: string, columnId: string, direction: number, mode: 'in-column' | 'adjacent' = 'adjacent') => {
+        void handleKeyboardCardMove(cardId, columnId, mode, direction === 1 ? 1 : -1)
+    },
     moveColumn: (fromId: string, toId: string) => {
-        const fromIndex = columns.value.findIndex(c => c.id === fromId);
-        const toIndex = columns.value.findIndex(c => c.id === toId);
-        if (fromIndex === -1 || toIndex === -1) return;
-        const newColumns = [...columns.value];
-        const [moved] = newColumns.splice(fromIndex, 1);
-        newColumns.splice(toIndex, 0, moved);
-        emit('update:modelValue', newColumns);
+        kanban.moveColumn(fromId, toId)
     },
     addCard: (columnId: string) => emit('add-card', columnId),
     getColumn: (columnId: string) => columns.value.find(c => c.id === columnId),
     getAllColumns: () => columns.value,
-});
+})
 </script>
 
 <template>
-    <div :class="boardClass">
+    <div ref="boardRef" :class="boardClass">
         <div
             v-for="col in columns"
             :key="col.id"
@@ -340,6 +290,7 @@ defineExpose({
             <div
                 data-slot="kanban-column-header"
                 :data-column-id="col.id"
+                tabindex="-1"
                 :class="columnHeaderClassesMap.get(col.id)"
                 draggable="true"
                 @dragstart="onColumnDragStart($event, col.id)"
@@ -380,8 +331,8 @@ defineExpose({
                     @keydown="onCardKeydown($event, card, col.id)"
                 >
                     <p class="min-w-0 break-words font-bold text-sm text-brutal-fg">
-{{ card.title }}
-</p>
+                        {{ card.title }}
+                    </p>
                     <p v-if="card.description" class="min-w-0 break-words text-xs text-brutal-fg opacity-70 mt-1">
                         {{ card.description }}
                     </p>

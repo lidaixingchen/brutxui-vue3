@@ -25,6 +25,10 @@ function createKanban(options: Partial<Parameters<typeof useKanban>[0]> = {}) {
     })
 }
 
+function createKeyEvent(key: string): KeyboardEvent {
+    return { key, preventDefault: vi.fn() } as unknown as KeyboardEvent
+}
+
 describe('useKanban', () => {
     beforeEach(() => {
         vi.useFakeTimers()
@@ -284,8 +288,10 @@ describe('useKanban', () => {
             ])
             const { moveCardInColumn } = useKanban({ columns })
             const result = moveCardInColumn('b', 'todo', -1)
-            expect(result).toBeDefined()
-            expect(result![0].cards.map((c: KanbanCard) => c.id)).toEqual(['b', 'a', 'c'])
+            expect(result.status).toBe('moved')
+            if (result.status === 'moved') {
+                expect(result.nextColumns[0].cards.map((c: KanbanCard) => c.id)).toEqual(['b', 'a', 'c'])
+            }
         })
 
         it('moves card down', () => {
@@ -294,36 +300,38 @@ describe('useKanban', () => {
             ])
             const { moveCardInColumn } = useKanban({ columns })
             const result = moveCardInColumn('b', 'todo', 1)
-            expect(result).toBeDefined()
-            expect(result![0].cards.map((c: KanbanCard) => c.id)).toEqual(['a', 'c', 'b'])
+            expect(result.status).toBe('moved')
+            if (result.status === 'moved') {
+                expect(result.nextColumns[0].cards.map((c: KanbanCard) => c.id)).toEqual(['a', 'c', 'b'])
+            }
         })
 
-        it('returns undefined when column not found', () => {
+        it('returns invalid when column not found', () => {
             const columns = ref<KanbanColumn[]>(createDefaultColumns())
             const { moveCardInColumn } = useKanban({ columns })
             const result = moveCardInColumn('a', 'nonexistent', -1)
-            expect(result).toBeUndefined()
+            expect(result.status).toBe('invalid')
         })
 
-        it('returns undefined when card not found', () => {
+        it('returns invalid when card not found', () => {
             const columns = ref<KanbanColumn[]>(createDefaultColumns())
             const { moveCardInColumn } = useKanban({ columns })
             const result = moveCardInColumn('nonexistent', 'todo', -1)
-            expect(result).toBeUndefined()
+            expect(result.status).toBe('invalid')
         })
 
-        it('returns undefined when moving past start boundary', () => {
+        it('returns unchanged when moving past start boundary', () => {
             const columns = ref<KanbanColumn[]>(createDefaultColumns())
             const { moveCardInColumn } = useKanban({ columns })
             const result = moveCardInColumn('a', 'todo', -1)
-            expect(result).toBeUndefined()
+            expect(result.status).toBe('unchanged')
         })
 
-        it('returns undefined when moving past end boundary', () => {
+        it('returns unchanged when moving past end boundary', () => {
             const columns = ref<KanbanColumn[]>(createDefaultColumns())
             const { moveCardInColumn } = useKanban({ columns })
             const result = moveCardInColumn('c', 'todo', 1)
-            expect(result).toBeUndefined()
+            expect(result.status).toBe('unchanged')
         })
 
         it('does not mutate original columns', () => {
@@ -358,47 +366,54 @@ describe('useKanban', () => {
             const columns = ref<KanbanColumn[]>(createDefaultColumns())
             const { moveCardToAdjacentColumn } = useKanban({ columns })
             const result = moveCardToAdjacentColumn('a', 'todo', 1)
-            expect(result).toBeDefined()
-            expect(result![0].cards).toHaveLength(2)
-            expect(result![1].cards).toHaveLength(2)
-            expect(result![1].cards[1].id).toBe('a')
+            expect(result.status).toBe('moved')
+            if (result.status === 'moved') {
+                expect(result.nextColumns[0].cards).toHaveLength(2)
+                expect(result.nextColumns[1].cards).toHaveLength(2)
+                expect(result.nextColumns[1].cards[1].id).toBe('a')
+            }
         })
 
         it('moves card to the left column', () => {
             const columns = ref<KanbanColumn[]>(createDefaultColumns())
             const { moveCardToAdjacentColumn } = useKanban({ columns })
             const result = moveCardToAdjacentColumn('d', 'doing', -1)
-            expect(result).toBeDefined()
-            expect(result![0].cards).toHaveLength(4)
-            expect(result![1].cards).toHaveLength(0)
+            expect(result.status).toBe('moved')
+            if (result.status === 'moved') {
+                expect(result.nextColumns[0].cards).toHaveLength(4)
+                expect(result.nextColumns[1].cards).toHaveLength(0)
+            }
         })
 
-        it('returns undefined when column not found', () => {
+        it('returns invalid when column not found', () => {
             const columns = ref<KanbanColumn[]>(createDefaultColumns())
             const { moveCardToAdjacentColumn } = useKanban({ columns })
             const result = moveCardToAdjacentColumn('a', 'nonexistent', 1)
-            expect(result).toBeUndefined()
+            expect(result.status).toBe('invalid')
         })
 
-        it('returns undefined when moving past left boundary', () => {
+        it('returns unchanged when moving past left boundary', () => {
             const columns = ref<KanbanColumn[]>(createDefaultColumns())
             const { moveCardToAdjacentColumn } = useKanban({ columns })
             const result = moveCardToAdjacentColumn('a', 'todo', -1)
-            expect(result).toBeUndefined()
+            expect(result.status).toBe('unchanged')
         })
 
-        it('returns undefined when moving past right boundary', () => {
-            const columns = ref<KanbanColumn[]>(createDefaultColumns())
+        it('returns unchanged when moving past right boundary', () => {
+            const columns = ref<KanbanColumn[]>([
+                createColumn('todo', 'To Do', []),
+                createColumn('done', 'Done', [createCard('d')]),
+            ])
             const { moveCardToAdjacentColumn } = useKanban({ columns })
-            const result = moveCardToAdjacentColumn('d', 'done', 1) // done is last, d is not in done but test boundary
-            expect(result).toBeUndefined()
+            const result = moveCardToAdjacentColumn('d', 'done', 1)
+            expect(result.status).toBe('unchanged')
         })
 
-        it('returns undefined when card not found in column', () => {
+        it('returns invalid when card not found in column', () => {
             const columns = ref<KanbanColumn[]>(createDefaultColumns())
             const { moveCardToAdjacentColumn } = useKanban({ columns })
             const result = moveCardToAdjacentColumn('nonexistent', 'todo', 1)
-            expect(result).toBeUndefined()
+            expect(result.status).toBe('invalid')
         })
 
         it('calls onCardMove callback', () => {
@@ -431,30 +446,34 @@ describe('useKanban', () => {
             const columns = ref<KanbanColumn[]>(createDefaultColumns())
             const { moveColumn } = useKanban({ columns })
             const result = moveColumn('todo', 'done')
-            expect(result).toBeDefined()
-            expect(result!.map(c => c.id)).toEqual(['doing', 'done', 'todo'])
+            expect(result.status).toBe('moved')
+            if (result.status === 'moved') {
+                expect(result.nextColumns.map(c => c.id)).toEqual(['doing', 'done', 'todo'])
+            }
         })
 
         it('moves column from right to left', () => {
             const columns = ref<KanbanColumn[]>(createDefaultColumns())
             const { moveColumn } = useKanban({ columns })
             const result = moveColumn('done', 'todo')
-            expect(result).toBeDefined()
-            expect(result!.map(c => c.id)).toEqual(['done', 'todo', 'doing'])
+            expect(result.status).toBe('moved')
+            if (result.status === 'moved') {
+                expect(result.nextColumns.map(c => c.id)).toEqual(['done', 'todo', 'doing'])
+            }
         })
 
-        it('returns undefined when fromId not found', () => {
+        it('returns invalid when fromId not found', () => {
             const columns = ref<KanbanColumn[]>(createDefaultColumns())
             const { moveColumn } = useKanban({ columns })
             const result = moveColumn('nonexistent', 'todo')
-            expect(result).toBeUndefined()
+            expect(result.status).toBe('invalid')
         })
 
-        it('returns undefined when toId not found', () => {
+        it('returns invalid when toId not found', () => {
             const columns = ref<KanbanColumn[]>(createDefaultColumns())
             const { moveColumn } = useKanban({ columns })
             const result = moveColumn('todo', 'nonexistent')
-            expect(result).toBeUndefined()
+            expect(result.status).toBe('invalid')
         })
 
         it('calls onColumnMove callback', () => {
@@ -483,10 +502,6 @@ describe('useKanban', () => {
     })
 
     describe('onCardKeydown', () => {
-        function createKeyEvent(key: string): KeyboardEvent {
-            return { key, preventDefault: vi.fn() } as unknown as KeyboardEvent
-        }
-
         it('toggles grabbedCard on Space key', () => {
             const { grabbedCard, onCardKeydown } = createKanban()
             const e = createKeyEvent(' ')
@@ -578,6 +593,158 @@ describe('useKanban', () => {
             const columns = ref<KanbanColumn[]>(createDefaultColumns())
             const { moveColumn } = useKanban({ columns })
             expect(() => moveColumn('todo', 'done')).not.toThrow()
+        })
+    })
+
+    describe('continuous operations and working snapshot', () => {
+        it('applies consecutive moves in same tick based on working snapshot', () => {
+            const columns = ref<KanbanColumn[]>(createDefaultColumns())
+            const onColumnsChange = vi.fn()
+            const { moveCardToAdjacentColumn, moveCardInColumn } = useKanban({
+                columns,
+                onColumnsChange,
+            })
+
+            // 1. Move card 'a' from 'todo' to 'doing'
+            const res1 = moveCardToAdjacentColumn('a', 'todo', 1)
+            expect(res1.status).toBe('moved')
+            expect(onColumnsChange).toHaveBeenCalledTimes(1)
+
+            // 2. In same tick, move card 'a' up in 'doing' column
+            // 'doing' originally had 'd'. With 'a' appended, it is ['d', 'a']. Moving 'a' up makes it ['a', 'd']
+            const res2 = moveCardInColumn('a', 'doing', -1)
+            expect(res2.status).toBe('moved')
+            if (res2.status === 'moved') {
+                const doingCol = res2.nextColumns.find(c => c.id === 'doing')!
+                expect(doingCol.cards.map(c => c.id)).toEqual(['a', 'd'])
+            }
+            expect(onColumnsChange).toHaveBeenCalledTimes(2)
+        })
+    })
+
+    describe('authoritative data reconciliation', () => {
+        it('restores grabbedCard when parent rejects move and retains old columns', async () => {
+            const initialCols = createDefaultColumns()
+            const columns = ref<KanbanColumn[]>(initialCols)
+            // Parent rejects: onColumnsChange does NOT update columns.value
+            const onColumnsChange = vi.fn()
+            const { grabbedCard, onCardKeydown, moveCardToAdjacentColumn } = useKanban({
+                columns,
+                onColumnsChange,
+            })
+
+            // Grab card 'a' in 'todo'
+            onCardKeydown(createKeyEvent(' '), 'a', 'todo')
+            expect(grabbedCard.value).toEqual({ cardId: 'a', columnId: 'todo' })
+
+            // Move to 'doing'
+            const res = moveCardToAdjacentColumn('a', 'todo', 1)
+            expect(res.status).toBe('moved')
+            // Temporarily optimistic
+            expect(grabbedCard.value).toEqual({ cardId: 'a', columnId: 'doing' })
+
+            // Vue batch finishes, columns.value was not changed by parent (rejected)
+            await vi.runAllTimersAsync()
+            expect(grabbedCard.value).toEqual({ cardId: 'a', columnId: 'todo' })
+
+            // Next keyboard move should originate from 'todo' again
+            const resNext = moveCardToAdjacentColumn(grabbedCard.value!.cardId, grabbedCard.value!.columnId, 1)
+            expect(resNext.status).toBe('moved')
+            if (resNext.status === 'moved') {
+                expect(resNext.change).toMatchObject({
+                    fromColumn: 'todo',
+                    toColumn: 'doing',
+                })
+            }
+        })
+
+        it('reconciles grabbedCard to normalized target when parent normalizes move', async () => {
+            const columns = ref<KanbanColumn[]>(createDefaultColumns())
+            // Parent normalizes: whenever moved to 'doing', parent redirects card to 'done'
+            const onColumnsChange = vi.fn((_nextCols, change) => {
+                if (change.kind === 'card-move' && change.toColumn === 'doing') {
+                    // Normalize to 'done'
+                    columns.value = [
+                        createColumn('todo', 'To Do', [createCard('b'), createCard('c')]),
+                        createColumn('doing', 'Doing', [createCard('d')]),
+                        createColumn('done', 'Done', [createCard('a')]),
+                    ]
+                }
+            })
+            const { grabbedCard, onCardKeydown, moveCardToAdjacentColumn } = useKanban({
+                columns,
+                onColumnsChange,
+            })
+
+            onCardKeydown(createKeyEvent(' '), 'a', 'todo')
+            moveCardToAdjacentColumn('a', 'todo', 1)
+
+            await vi.runAllTimersAsync()
+            expect(grabbedCard.value).toEqual({ cardId: 'a', columnId: 'done' })
+        })
+
+        it('clears grabbedCard when card is deleted externally', async () => {
+            const columns = ref<KanbanColumn[]>(createDefaultColumns())
+            const { grabbedCard, onCardKeydown } = useKanban({ columns })
+
+            onCardKeydown(createKeyEvent(' '), 'a', 'todo')
+            expect(grabbedCard.value).toEqual({ cardId: 'a', columnId: 'todo' })
+
+            // Delete card 'a'
+            columns.value = [
+                createColumn('todo', 'To Do', [createCard('b'), createCard('c')]),
+                createColumn('doing', 'Doing', [createCard('d')]),
+                createColumn('done', 'Done', []),
+            ]
+
+            await vi.runAllTimersAsync()
+            expect(grabbedCard.value).toBeNull()
+        })
+
+        it('cancels draggingCard when dragged card is deleted externally', async () => {
+            const columns = ref<KanbanColumn[]>(createDefaultColumns())
+            const { draggingCard, isDragging, onDragStart } = useKanban({ columns })
+
+            onDragStart('a', 'todo')
+            expect(draggingCard.value).toEqual({ cardId: 'a', fromColumn: 'todo' })
+            expect(isDragging.value).toBe(true)
+
+            // Remove card 'a'
+            columns.value = [
+                createColumn('todo', 'To Do', [createCard('b')]),
+                createColumn('doing', 'Doing', []),
+                createColumn('done', 'Done', []),
+            ]
+
+            await vi.runAllTimersAsync()
+            expect(draggingCard.value).toBeNull()
+            expect(isDragging.value).toBe(false)
+        })
+    })
+
+    describe('interaction mutual exclusion', () => {
+        it('startColumnDrag cancels card drag and keyboard grab', () => {
+            const columns = ref<KanbanColumn[]>(createDefaultColumns())
+            const { grabbedCard, draggingColumn, onCardKeydown, startColumnDrag } = useKanban({ columns })
+
+            onCardKeydown(createKeyEvent(' '), 'a', 'todo')
+            expect(grabbedCard.value).toEqual({ cardId: 'a', columnId: 'todo' })
+
+            startColumnDrag('todo')
+            expect(grabbedCard.value).toBeNull()
+            expect(draggingColumn.value).toBe('todo')
+        })
+
+        it('grabCard cancels mouse card and column drag', () => {
+            const columns = ref<KanbanColumn[]>(createDefaultColumns())
+            const { draggingColumn, grabbedCard, startColumnDrag, grabCard } = useKanban({ columns })
+
+            startColumnDrag('todo')
+            expect(draggingColumn.value).toBe('todo')
+
+            grabCard('a', 'todo')
+            expect(draggingColumn.value).toBeNull()
+            expect(grabbedCard.value).toEqual({ cardId: 'a', columnId: 'todo' })
         })
     })
 })

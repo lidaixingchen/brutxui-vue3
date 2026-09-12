@@ -214,7 +214,7 @@ describe('KanbanBoard', () => {
         await column.trigger('drop', { dataTransfer, clientY: 50 })
 
         const moveEvents = wrapper.emitted('card-move')
-        expect(moveEvents).toBeTruthy()
+        expect(moveEvents).toBeFalsy()
 
         rectSpy.mockRestore()
         columnEl.querySelectorAll = original

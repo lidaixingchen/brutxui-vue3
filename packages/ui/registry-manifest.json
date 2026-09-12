@@ -706,13 +706,15 @@
       "types.ts"
     ],
     "composables": [
+      "useKanban.ts",
       "useLocale.ts"
     ],
     "directives": [],
     "lib": [
       "brutal-interaction-variants.ts",
       "env.ts",
-      "icon-size-variants.ts"
+      "icon-size-variants.ts",
+      "kanban-types.ts"
     ]
   },
   "kbd": {
