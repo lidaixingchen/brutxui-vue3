@@ -85,3 +85,11 @@ export {
     CONTRAST_RATIO_THRESHOLDS,
     isContrastCompliant,
 } from './color-contrast.js';
+export type {
+    GenerateLockOptions,
+    GenerateLockResult,
+} from './lock.js';
+export {
+    acquireGenerateLock,
+    withGenerateLock,
+} from './lock.js';

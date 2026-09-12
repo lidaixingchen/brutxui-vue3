@@ -18,13 +18,30 @@
                 "tsconfig.json",
                 "tsconfig.*.json",
                 "vite.config.ts",
+                "tsup.config.ts",
                 "tailwind.config.*",
                 "postcss.config.*",
                 "../../packages/shared/src/**"
             ]
         },
+        "generate": {
+            "cache": false,
+            "inputs": [
+                "src/**",
+                "scripts/**",
+                "../../packages/shared/src/**"
+            ],
+            "outputs": [
+                "registry-manifest.json",
+                "exports-manifest.json",
+                "src/components/*/index.ts"
+            ]
+        },
         "brutx-registry-vue#build": {
             "cache": false,
+            "dependsOn": [
+                "brutx-ui-vue#generate"
+            ],
             "env": [
                 "BRUTX_REGISTRY_PRIVATE_KEY",
                 "BRUTX_REGISTRY_KEY_ID"
