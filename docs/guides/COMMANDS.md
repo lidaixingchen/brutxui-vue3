@@ -44,7 +44,10 @@ pnpm changeset  ──>  pnpm version-packages  ──>  pnpm release:prepare �
 | `pnpm changelog` | 生成根 `CHANGELOG.md` 最新版本段 | 根目录 |
 | `pnpm changelog:dry` | 预览即将生成的 changelog 内容，不写入文件 | 根目录 |
 | `pnpm release:prepare` | 发布前版本校验与预备检查 | 根目录 |
-| `pnpm release:tag` | 基于当前版本打本地 Git Tag | 根目录 |
+| `pnpm release:check` | 本地发布门禁全量检查（构建/契约/消费者/发布状态机） | 根目录 |
+| `pnpm release:tag` | 基于当前版本打本地 Git Tag（自动幂等校验） | 根目录 |
+| `pnpm test:release` | 发布状态机协调器与 provenance 演练测试 | 根目录 |
+| `pnpm test:consumers` | 运行真实消费者安装构建矩阵（U1/C1/C3 等） | 根目录 |
 
 详细发布规范参见 [发布流程与 Changelog 指南](RELEASE.md)。
 

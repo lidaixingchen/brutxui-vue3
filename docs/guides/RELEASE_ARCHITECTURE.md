@@ -5,24 +5,37 @@
 
 ## 版本发布链路
 
-`publish.yml` 由 push `v*` tag 触发，云端完成发布：
+`publish.yml` 由 push `v*` tag 触发，云端完成发布。整体流程由**发布门禁检验**与**状态机发布协调器**两阶段构成：
 
-1. **发布门禁**：`turbo run build test typecheck lint`（test 依赖 build 自动等待）
-2. **changeset 消费校验**：`.changeset/` 下不得残留未消费 changeset（否则报错）
-3. **生成物一致性门禁**：`git diff --exit-code` 校验 `packages/ui/registry-manifest.json`、`packages/ui/src/styles.css` 与 commit 一致（registry 产物发布时构建、不入库，不在此列）
-4. **提取与同步 GitHub Release**：运行 `scripts/release/extract-release-notes.mjs` 从 `CHANGELOG.md`（或历史归档）提取当前版本的结构化更新日志，并在末尾保留 Full Changelog 对比链接，通过 `gh release create|edit --notes-file` 幂等写入 Release 描述
-5. **上传 registry 产物**为 Release 资产（扁平命名，可寻址 `releases/latest/download/{name}.json`，重跑 `--clobber` 覆盖并清理已删除的旧资产）
-6. **发布 npm**：`pnpm publish`（provenance），版本已存在时由 `EPUBLISHCONFLICT` 幂等跳过
+### 1. 发布门禁检验（`pnpm release:check`）
 
-本地 `pnpm release` 与 CI 门禁相同（`turbo run build test typecheck lint && changeset publish`）；tag 重推会重跑 CI，npm 已发布版本由幂等逻辑兜底。
+在进入实际分发前，执行全量质量与一致性拦截：
+- **Changeset 消费校验**：`.changeset/` 下不得残留未消费的变更集
+- **代码与类型门禁**：`turbo run build test typecheck lint`（严格依赖并发构建与单测）
+- **静态契约与规范门禁**：执行 `pnpm check:contracts` 校验多包导出与令牌一致性
+- **真实消费者构建矩阵**：执行 `test-consumers` 验证真实打包产物的独立安装与构建
+- **生成物一致性校验**：`git diff --exit-code` 确保工作区与 commit 绝对一致
+
+### 2. 状态机发布协调器（`scripts/release/release-coordinator.mjs`）
+
+门禁通过后，云端统一启动状态机协调器执行密封打包与原子分发，严格遵循六大状态流转：
+
+1. **`PREPARED`**：密封打包各包 tarball 并编译 registry 产物，生成权威快照 `release-manifest.json` 与 `SHA256SUMS` 校验清单；
+2. **`DRAFT_ASSETS_READY`**：创建或复用 GitHub Release Draft，先行上传所有 registry 资产、tarball 密封包与校验清单；
+3. **`RELEASE_PUBLISHED`**：将 GitHub Release 设为 Published，但显式保留 `make_latest: "false"`，对外公开资产寻址能力，但严密隔离 latest 主通道；
+4. **`NPM_PACKAGES_READY`**：以一次性打包的密封原件逐包发布到 npm。若版本已存在，执行双哈希强校验（本地 tarball 与远程 npm 的 shasum / integrity），一致则安全幂等通过，不一致则立即熔断阻断；
+5. **`CHANNELS_ADVANCED`**：npm 验证全部通过后，针对正式版本原子推进分发通道：更新 GitHub Release 为 `make_latest: "true"`，并将 npm latest dist-tag 指向当前版本（预发布版本严格隔离）；
+6. **`COMPLETED`**：持久化发布审计清单，发布成功结束。
+
+本地与 CI 均可通过 `pnpm release`（加 `--dry-run` 预览）执行全流程协调；针对状态机逻辑的自动化演练由 `pnpm test:release` 独立保障。
 
 ## Changelog 自动生成（changeset）
 
 ### 工作原理
 
 1. **声明变更**：PR 时通过 `pnpm changeset` 交互式生成 `.changeset/*.md` 文件，描述变更类型（major/minor/patch）和变更内容
-2. **版本提升**：合并 PR 后运行 `pnpm version-packages`（`changeset version`），读取 `.changeset/*.md`，自动 bump 受影响包版本号并生成各包 CHANGELOG；配置了 `"commit"` 时自动生成 `RELEASING` commit（`skipCI` 已配置为 `false`）
-3. **发布**：`pnpm release` 先跑 turbo 门禁，通过后 `changeset publish` 发布到 npm
+2. **版本提升**：合并 PR 后运行 `pnpm release:prepare`（底层调用 `changeset version`），读取 `.changeset/*.md`，自动 bump 受影响包版本号并生成各包 CHANGELOG；配置了 `"commit"` 时自动生成 `RELEASING` commit（`skipCI` 已配置为 `false`）
+3. **门禁与发布**：本地运行 `pnpm release:check` 验证全部契约，打 tag 推送后由 CI 状态机协调器完成发布
 
 ### `[skip ci]` 陷阱（已规避，供溯源）
 
@@ -186,12 +199,12 @@ After（新 API）：
 
 GitHub Actions 工作流使用 SHA pin 锁定第三方 Action，由 [.github/dependabot.yml](../../.github/dependabot.yml) 自动管理升级（每周一开 PR）。
 
-### Registry manifest 自动签名
+### Registry manifest 自动签名与不可变快照
 
-发布链路会对 `registry-manifest.json` 做 Ed25519 签名，CLI 零配置即可验签官方 Registry：
+发布链路会对 `registry-manifest.json` 做 Ed25519 签名，并生成版本化快照元数据，CLI 零配置即可验签官方 Registry：
 
 - **Secret 配置**：仓库需配置 `BRUTX_REGISTRY_PRIVATE_KEY`（PKCS8 DER base64 单行）与 `BRUTX_REGISTRY_KEY_ID`（`official-v1`）。私钥对应公钥硬编码于 CLI 的 `OFFICIAL_PUBLIC_KEYS`（`packages/cli/src/lib/constants.ts`），**二者必须匹配**，否则 CLI 严格模式验签会失败
-- **发布时**：`publish.yml` 注入私钥环境变量，`brutx-registry-vue build` 自动签名（`signManifestFromEnv`）
-- **签名与分发**：签名在发布流程中由 `publish.yml` 注入私钥自动完成，签名 manifest 随产物一起上传为 GitHub Release 资产（`releases/latest/download`），CLI 默认源即指向该端点。产物不入库，"push 到 main 即回填签名"的 `sign-manifest` job / `registry-sign.yml` 机制已随产物移出 git 一并拆除
-- **未签名回退**：Fork / 本地 build 未注入私钥时保持未签名，CLI 向后兼容跳过
-- **幂等性**：manifest 的 `buildTimestamp`/`gitCommit`/`integrity`/`signature`/`keyId` 均不参与 integrity 计算，签名只覆盖 integrity，跨发布稳定（发布时注入的 `gitCommit` 不影响签名）
+- **快照与动态元数据**：`brutx-registry-vue build` 编译时动态注入 UI 发布版本号与 Git HEAD commit，并根据 Canonical JSON 规范严密计算覆盖 `name`、`version`、`items`、`keyId`、`releaseTag`、`gitCommit` 六大关键字段的 SHA-256 integrity 摘要，防止任何字段漂移或被单方篡改
+- **签名与双通道分发**：发布流程在 CI 注入私钥自动完成签名，签名后的 manifest 与组件 JSON 随同版本 tarball 一并上传为 GitHub Release 资产。资产同时支持最新端点（`releases/latest/download`）与版本化历史端点（`releases/download/v<version>/`），供 CLI 精确回溯与自愈重放
+- **未签名回退**：Fork / 本地 build 未注入私钥时保持未签名，CLI 默认模式向下兼容跳过签名验证，但仍通过 integrity 摘要保障内容完整
+- **双哈希不可变校验**：发布状态机针对 npm 已存在版本与发布清单生成 `SHA256SUMS`，并在发布中比对本地密封 tarball 与远程 npm 注册表的 `shasum` 与 `integrity`，彻底杜绝内容静默覆盖

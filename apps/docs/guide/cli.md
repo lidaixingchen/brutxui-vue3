@@ -303,13 +303,13 @@ npx brutx-vue@latest diff --all --json
 
 ## brutx-vue update
 
-检查已安装组件是否有可用更新，并一键更新：
+检查已安装组件是否有可用更新，并执行智能合并更新：
 
 ```bash
 npx brutx-vue@latest update [components...]
 ```
 
-update 命令内部复用 diff 逻辑检测过期组件，再执行覆盖安装。
+更新时，CLI 会自动对比远程最新版本与本地代码，基于基线执行智能合并（3-way merge），尽可能保留你对组件代码的本地定制修改。
 
 ### 示例
 
@@ -635,6 +635,19 @@ npx brutx-vue@latest doctor
 ```text
 ⚠ audit log health — 1 recent failure(s) in audit log: update(button).
   Latest: update failed at 2026-07-16T02:30:00Z — Network unreachable
+```
+
+## .brutx 目录与版本控制
+
+执行组件命令后，项目根目录会生成 `.brutx/` 目录，用于记录已安装组件清单与升级合并基线。
+
+### 推荐的 `.gitignore` 配置
+
+建议将临时下载缓存加入 `.gitignore`，将其余元数据随 Git 提交，以便团队协作和后续平滑升级组件：
+
+```gitignore
+# BrutxUI 临时缓存
+.brutx/cache/
 ```
 
 ## 供应链安全：签名与 SBOM

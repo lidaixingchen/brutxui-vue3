@@ -312,11 +312,13 @@ Component Diff Report
 
 ## brutx-vue update
 
-Check for and apply component updates from the registry. Components with local modifications will be flagged before overwriting:
+Check for and apply component updates from the registry:
 
 ```bash
 npx brutx-vue@latest update [components...]
 ```
+
+When updating, the CLI compares remote components against your local files and performs a 3-way merge using baseline records, preserving your local modifications whenever possible.
 
 ### Examples
 
@@ -669,6 +671,19 @@ Example output:
 ```text
 ⚠ audit log health — 1 recent failure(s) in audit log: update(button).
   Latest: update failed at 2026-07-16T02:30:00Z — Network unreachable
+```
+
+## .brutx Directory & Version Control
+
+After running component commands, a `.brutx/` directory is created in your project root to track installed components and baseline states for updates.
+
+### Recommended `.gitignore`
+
+Add the temporary cache directory to your `.gitignore`, and keep the remaining metadata tracked in Git to support team collaboration and smooth component updates:
+
+```gitignore
+# BrutxUI local temporary cache
+.brutx/cache/
 ```
 
 ## Supply Chain Security: Signature & SBOM

@@ -9,7 +9,7 @@
 ```bash
 pnpm changeset             # ① 声明变更（PR 时已声明则跳过）
 pnpm release:prepare       # ② 守卫 + bump 版本 + 生成包/根 CHANGELOG + 自动提交（一条命令）
-pnpm release               # ③ 门禁（build/test/typecheck/lint）+ changeset publish
+pnpm release:check         # ③ 本地全量门禁检验（构建/契约/消费者/发布状态机）（或 pnpm release）
 pnpm release:tag           # ④ 自动读 ui 版本打 annotated tag v<version>
 git pushp origin main --tags   # ⑤ 推送后 CI 自动发布
 ```
@@ -25,9 +25,10 @@ git pushp origin main --tags   # ⑤ 推送后 CI 自动发布
 |命令|作用|
 |---|---|
 |`pnpm changeset`|交互式声明变更（PR 时使用）|
-|`pnpm release:prepare`|版本准备：守卫 + `version-packages` + 根 CHANGELOG + 自动提交（合并了原三步）|
-|`pnpm release`|门禁 `turbo run build test typecheck lint` + `changeset publish`|
-|`pnpm release:tag`|读 `packages/ui/package.json` 版本打 annotated tag `v<version>`；`--force` 覆盖重打|
+|`pnpm release:prepare`|版本准备：守卫 + `version-packages` + 根 CHANGELOG + 自动提交|
+|`pnpm release:check`|发布前全量门禁检查：构建 + 单测 + 静态契约 + 消费者构建 + 发布状态机演练（`pnpm release` 同名别名）|
+|`pnpm release:tag`|校验版本与提交一致后，打 annotated tag `v<version>`；`--force` 覆盖重打|
+|`pnpm test:release`|发布协调状态机与工具链 provenance 单独演练测试|
 |`pnpm changelog[:dry]`|单独生成/预览根 CHANGELOG（`release:prepare` 已内置，一般无需手动）|
 
 ### 发布步骤
@@ -44,26 +45,30 @@ git pushp origin main --tags   # ⑤ 推送后 CI 自动发布
    - `pnpm changelog` → 更新根 CHANGELOG + 自动归档旧版本
    - 自动提交根 CHANGELOG（`docs: 更新根 CHANGELOG 至 <version>[并归档 ...]`）
 
-3. **`pnpm release`**：门禁（build/test/typecheck/lint）+ 本地 `changeset publish`。**发布主通道是 CI**（tag 推送后由 `publish.yml` 用 `NPM_TOKEN` 执行），本地 publish 成功与否不影响发布——本地 npm 未登录（`npm whoami` 报 ENEEDAUTH）时此步报 `E401` 属正常，门禁通过即可继续。失败先修复，通过后再打 tag
+3. **`pnpm release:check`（或 `pnpm release`）**：本地全量发布门禁检验
+   - 执行 `turbo run build test typecheck lint`
+   - 运行静态契约检查（`check:contracts`）
+   - 运行真实消费者安装构建矩阵（`test-consumers`）
+   - 运行发布状态机与 provenance 演练（`test:release`）
+   - 检验通过后生成本地凭据 `tmp/release-check.json` 供打 tag 时校验
 
-4. **`pnpm release:tag`**：自动读取 UI 包版本打 `v<version>` tag。tag 命名以 UI 包版本为主（如 `v0.10.0`），CLI 版本不单独打 tag
+4. **`pnpm release:tag`**：自动读取 UI 包版本打 `v<version>` tag。tag 命名以 UI 包版本为主（如 `v0.10.0`），CLI 版本不单独打 tag。若 tag 已存在且指向当前提交，自动视为已完成。
 
-5. **推送**：`git pushp origin main --tags`（直连为 `git push origin main --tags`）。推送后由云端自动发布（`publish.yml`）
+5. **推送**：`git pushp origin main --tags`（直连为 `git push origin main --tags`）。推送后由云端发布状态机协调器自动发布（`publish.yml`）
 
 6. **发布后核对**：确认 GitHub Actions 的 Publish run 成功，npm 上 `brutx-ui-vue` / `brutx-vue` 出新版本
 
 ### 发布后修复
 
 - tag 已打但发布失败 / 需补修：提交修复 commit → `pnpm release:tag --force` 重打 tag（指向最新 commit）→ 重新推送
-- tag 重推会重跑 CI；npm 已发布版本由 `EPUBLISHCONFLICT` 幂等跳过，不会重复发布
+- 同一 tag 重跑或重推时，CI 发布状态机协调器自动执行幂等恢复：核验既有资产与已发布 npm 版本的 shasum，仅补齐未完成阶段，不篡改不可变资产。
 
 ## 防坑 Checklist
 
 - [ ] 工作区干净（有未提交改动时 `release:prepare` 会中止）
 - [ ] 四处一致：ui / shared / registry / cli 的源码、元数据、构建脚本、CLI 复制逻辑
 - [ ] lockfile 已同步（依赖变更时）
-- [ ] 本地手动发版（备用通道）：账号启用安全密钥 2FA 时 `pnpm publish --otp` 无效，须 `cd packages/ui && npm publish --registry https://registry.npmjs.org` 走浏览器交互验证（不传 `--otp`）
-- [ ] 本地 npm 未登录时 `pnpm release` 的 `changeset publish` 报 `E401` 属正常（发布主通道是 CI），门禁通过即可继续
+- [ ] 严禁本地直接向 npm 发布：统一由 CI 发布状态机协调器完成，确保产物密封封存、SHA256SUMS 与 provenance 证据一致。
 - [ ] Windows 下 `changeset version` 的 RELEASING commit 会因反斜杠 pathspec 报错（`fatal: pathspec '.changeset\xxx.md' did not match any files`）——属已知无害现象：版本 bump / 包 CHANGELOG / changeset 删除均已生效，改动随 prepare 后续 docs 提交一并入库，无需处理
 - [ ] 发布后核对 Publish run 与 npm 版本
 
