@@ -50,8 +50,11 @@ jobs:
 
             # 发布门禁：build + test + typecheck + lint（turbo 并行，test 依赖 build 自动等待）
             # test = vitest run（Node 环境），不需要 Playwright/浏览器
+            - name: Verify generated artifacts consistency
+              run: pnpm check:generated
+
             - name: Release gate (turbo)
-              run: pnpm exec turbo run build test typecheck lint
+              run: pnpm exec turbo run build:artifact test typecheck:source lint:source
 
             - name: Verify changesets consumed
               run: |
@@ -60,22 +63,6 @@ jobs:
                     ls -A .changeset
                     exit 1
                   fi
-
-            # 生成物一致性门禁：build 后校验 ui 侧自动生成文件与 commit 一致
-            # 防止漏跑 prebuild-scan / generate-styles-tokens 的 tag 通过发布
-            # （registry 产物为发布时构建、不入库，不在此检查范围，其完整性由上传前校验兜底）
-            - name: Verify generated artifacts consistency
-              run: |
-                  git diff --exit-code -- \
-                    packages/ui/registry-manifest.json \
-                    packages/ui/src/styles.css \
-                  || {
-                    echo "::error::Generated artifacts are stale — run 'pnpm build' and commit the result before tagging"
-                    git diff --stat -- \
-                      packages/ui/registry-manifest.json \
-                      packages/ui/src/styles.css
-                    exit 1
-                  }
 
             - name: Release verification tests
               run: pnpm test:release

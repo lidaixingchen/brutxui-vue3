@@ -8,6 +8,8 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const REPO_ROOT = path.resolve(__dirname, '../..');
+const CANDIDATE_MANIFEST_NAME = 'candidate-manifest.json';
+const REQUIRED_CANDIDATE_PACKAGES = ['brutx-ui-vue', 'brutx-vue'];
 
 /**
  * 计算文件 SHA-256 哈希
@@ -210,10 +212,133 @@ export function packCandidateArtifacts(destinationDir, rootDir = REPO_ROOT) {
         packages: packageRecords,
     };
 
-    const manifestPath = path.join(destinationDir, 'candidate-manifest.json');
+    const manifestPath = path.join(destinationDir, CANDIDATE_MANIFEST_NAME);
     fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf-8');
 
     return manifest;
+}
+
+function resolveCandidateManifestPath(inputPath) {
+    const resolvedInput = path.resolve(inputPath);
+    if (fs.existsSync(resolvedInput) && fs.statSync(resolvedInput).isDirectory()) {
+        return path.join(resolvedInput, CANDIDATE_MANIFEST_NAME);
+    }
+    return resolvedInput;
+}
+
+function resolveCandidateTarballPath(record, manifestDir) {
+    const candidates = [];
+    if (typeof record.tarballFile === 'string' && record.tarballFile.length > 0) {
+        candidates.push(path.resolve(manifestDir, record.tarballFile));
+    }
+    if (typeof record.tarballPath === 'string' && record.tarballPath.length > 0) {
+        candidates.push(path.isAbsolute(record.tarballPath)
+            ? record.tarballPath
+            : path.resolve(manifestDir, record.tarballPath));
+    }
+
+    for (const candidate of candidates) {
+        if (!fs.existsSync(candidate)) continue;
+        const stat = fs.lstatSync(candidate);
+        if (!stat.isSymbolicLink() && stat.isFile()) return candidate;
+    }
+
+    return candidates[0];
+}
+
+/**
+ * 读取并校验可复用的候选 tarball manifest，确保消费者只使用已固定的实际文件。
+ */
+export function loadCandidateArtifacts(inputPath) {
+    if (typeof inputPath !== 'string' || inputPath.trim().length === 0) {
+        throw new Error('--artifacts requires a candidate directory or candidate-manifest.json path.');
+    }
+
+    const manifestPath = resolveCandidateManifestPath(inputPath);
+    if (!fs.existsSync(manifestPath)) {
+        throw new Error(`Candidate artifact manifest not found: ${manifestPath}`);
+    }
+
+    let manifest;
+    try {
+        manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+    } catch (error) {
+        throw new Error(`Failed to parse candidate artifact manifest ${manifestPath}: ${error.message}`, { cause: error });
+    }
+
+    if (manifest?.isTestArtifact !== true) {
+        throw new Error(`Candidate artifact manifest must set isTestArtifact=true: ${manifestPath}`);
+    }
+    if (!manifest.packages || typeof manifest.packages !== 'object') {
+        throw new Error(`Candidate artifact manifest has no packages object: ${manifestPath}`);
+    }
+
+    const manifestDir = path.dirname(manifestPath);
+    const normalizedPackages = {};
+    for (const packageName of REQUIRED_CANDIDATE_PACKAGES) {
+        const record = manifest.packages[packageName];
+        if (!record || typeof record !== 'object') {
+            throw new Error(`Candidate artifact manifest is missing package ${packageName}.`);
+        }
+        if (record.name !== packageName) {
+            throw new Error(`Candidate artifact package name mismatch: expected ${packageName}.`);
+        }
+        if (typeof record.version !== 'string' || record.version.length === 0) {
+            throw new Error(`Candidate artifact package ${packageName} has no version.`);
+        }
+        if (typeof record.sha256 !== 'string' || record.sha256.length === 0) {
+            throw new Error(`Candidate artifact package ${packageName} has no sha256.`);
+        }
+
+        const tarballPath = resolveCandidateTarballPath(record, manifestDir);
+        if (!tarballPath || !fs.existsSync(tarballPath)) {
+            throw new Error(`Candidate artifact tarball missing for ${packageName}.`);
+        }
+        const stat = fs.lstatSync(tarballPath);
+        if (stat.isSymbolicLink() || !stat.isFile() || stat.size === 0) {
+            throw new Error(`Candidate artifact tarball must be a non-empty regular file for ${packageName}.`);
+        }
+        if (record.sizeBytes !== undefined && record.sizeBytes !== stat.size) {
+            throw new Error(`Candidate artifact size mismatch for ${packageName}: expected ${record.sizeBytes}, got ${stat.size}.`);
+        }
+
+        const actualSha256 = computeFileSha256(tarballPath);
+        if (actualSha256 !== record.sha256) {
+            throw new Error(`Candidate artifact sha256 mismatch for ${packageName}: expected ${record.sha256}, got ${actualSha256}.`);
+        }
+
+        normalizedPackages[packageName] = {
+            ...record,
+            tarballPath,
+            tarballFile: path.basename(tarballPath),
+            sizeBytes: stat.size,
+        };
+    }
+
+    return {
+        ...manifest,
+        manifestPath,
+        packages: normalizedPackages,
+    };
+}
+
+/**
+ * 生成所有消费者共享的产物摘要，避免每个矩阵独立解析候选输入。
+ */
+export function summarizeCandidateArtifacts(manifest) {
+    return {
+        gitCommit: manifest.gitCommit ?? 'unknown-commit',
+        packages: Object.fromEntries(
+            REQUIRED_CANDIDATE_PACKAGES.map(packageName => {
+                const record = manifest.packages[packageName];
+                return [packageName, {
+                    version: record.version,
+                    sha256: record.sha256,
+                    sizeBytes: record.sizeBytes,
+                }];
+            })
+        ),
+    };
 }
 
 /**

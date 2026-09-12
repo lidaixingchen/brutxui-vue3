@@ -8,6 +8,8 @@
 
 import { defineGuardSuite } from './lib/guard-runner.mjs'
 
+const HEAVY_CONTRACT_TIMEOUT_MS = 60_000
+
 const suite = defineGuardSuite({
   name: '规范契约门禁',
   suiteId: 'check:contracts',
@@ -68,31 +70,57 @@ const suite = defineGuardSuite({
       },
     },
     {
-      id: 'tokens-alignment',
-      desc: 'CLI brutalist.css 令牌对齐',
-      target: 'packages/cli/scripts/check-brutalist-tokens.ts',
-      fix: {
-        command: 'pnpm --filter brutx-vue prebuild:tokens',
-        description: '重新从 shared 单一信源编译并同步 CLI brutalist.css 令牌。',
-      },
+      id: 'api-dependencies',
+      desc: 'UI API 依赖分层与解析边界',
+      target: 'packages/ui/scripts/check-api-dependencies.ts',
+      timeoutMs: HEAVY_CONTRACT_TIMEOUT_MS,
       action: {
-        type: 'auto_fix',
-        command: 'pnpm --filter brutx-vue prebuild:tokens',
-        description: '重新从 shared 单一信源编译并同步 CLI brutalist.css 令牌。',
+        type: 'manual_fix',
+        command: null,
+        description: '请根据依赖链诊断补充 API contract 归属或修正越层、未解析和编译工具依赖。',
       },
     },
     {
-      id: 'exports-sync',
-      desc: '组件重导出与 Manifest 同步',
+      id: 'api-exports',
+      desc: 'UI API 契约投影与 exports 同步',
       target: 'packages/ui/scripts/check-exports.ts',
+      timeoutMs: HEAVY_CONTRACT_TIMEOUT_MS,
+      action: {
+        type: 'manual_fix',
+        command: null,
+        description: '请从 API contract 生成并校验公共入口、组件 index 与 package exports 投影。',
+      },
+    },
+    {
+      id: 'tokens-alignment',
+      desc: 'CLI 生成输出对齐',
+      target: 'packages/cli/scripts/generate.ts',
+      args: ['--check'],
+      timeoutMs: HEAVY_CONTRACT_TIMEOUT_MS,
       fix: {
-        command: 'pnpm --filter brutx-ui-vue prebuild:exports && pnpm --filter brutx-ui-vue prebuild:scan',
-        description: '重新扫描生成并同步组件导出与 manifest 清单。',
+        command: 'pnpm --filter brutx-vue generate',
+        description: '重新从 shared 单一信源生成 CLI 输出。',
       },
       action: {
         type: 'auto_fix',
-        command: 'pnpm --filter brutx-ui-vue prebuild:exports && pnpm --filter brutx-ui-vue prebuild:scan',
-        description: '重新扫描生成并同步组件导出与 manifest 清单。',
+        command: 'pnpm --filter brutx-vue generate',
+        description: '重新从 shared 单一信源生成 CLI 输出。',
+      },
+    },
+    {
+      id: 'ui-generation-sync',
+      desc: 'UI 生成输出对齐',
+      target: 'packages/ui/scripts/generate.ts',
+      args: ['--check'],
+      timeoutMs: HEAVY_CONTRACT_TIMEOUT_MS,
+      fix: {
+        command: 'pnpm --filter brutx-ui-vue generate',
+        description: '按 tokens、scan、component index、exports 顺序重新生成 UI 输出。',
+      },
+      action: {
+        type: 'auto_fix',
+        command: 'pnpm --filter brutx-ui-vue generate',
+        description: '按 tokens、scan、component index、exports 顺序重新生成 UI 输出。',
       },
     },
   ],

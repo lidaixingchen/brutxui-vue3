@@ -1,4 +1,4 @@
-# Engineering Commands Reference Guide — BrutxUI
+# BrutxUI 完整指令参考手册
 
 > 本指南是 BrutxUI 工程指令体系的常青参考手册。用于收纳低频、专项、发布、性能压测与底层契约检查指令。日常高频开发自检请以 [`AGENTS.md`](../../AGENTS.md) 为准。
 
@@ -10,9 +10,9 @@
 
 - **第一层：日常高频指令（收纳于 [`AGENTS.md`](../../AGENTS.md)）**
   - 单测：`pnpm --filter <pkg> test <path>`
-  - 修复：`npx eslint <file> --fix`
+  - 修复：在所属包运行 `pnpm exec eslint <file> --fix`
   - 类型：`pnpm --filter <pkg> typecheck`
-  - 门禁：`pnpm check:contracts`（静态契约并发 6 合 1）、`pnpm check:docs`（文档健康度并发 5 合 1）
+  - 门禁：`pnpm check:contracts`（静态契约并发检查）、`pnpm check:docs`（文档健康度并发检查）
   - 归档：`pnpm doc:archive`（方案完工一键物理迁移、状态固化与知识地图全景自愈）
   - 脚手架：`pnpm generate:*`
 - **第二层：低频与专项运维指令（收纳于本文档）**
@@ -47,7 +47,7 @@ pnpm changeset  ──>  pnpm version-packages  ──>  pnpm release:prepare �
 | `pnpm release:check` | 本地发布门禁全量检查（构建/契约/消费者/发布状态机） | 根目录 |
 | `pnpm release:tag` | 基于当前版本打本地 Git Tag（自动幂等校验） | 根目录 |
 | `pnpm test:release` | 发布状态机协调器与 provenance 演练测试 | 根目录 |
-| `pnpm test:consumers` | 运行真实消费者安装构建矩阵（U1/C1/C3 等） | 根目录 |
+| `pnpm test:consumers` | 默认运行 U1/C1；`--all` 运行 U1/C1/C3；`--filter U1` 聚焦场景，未知值会失败 | 根目录 |
 
 详细发布规范参见 [发布流程与 Changelog 指南](RELEASE.md)。
 
@@ -65,7 +65,19 @@ pnpm changeset  ──>  pnpm version-packages  ──>  pnpm release:prepare �
 | `pnpm --filter brutx-ui-vue bench:json` | 导出 UI 组件基准测试结果为 JSON（用于基准对齐） | 根目录 |
 | `pnpm --filter brutx-registry-vue bench` | 压测 Registry 生成引擎构建耗时 | 根目录 |
 
-### 2. 基准回归比对（`scripts/bench-diff.mjs`）
+### 2. 生产消费者成本
+
+先完成构建并打包候选 UI，使用固定的消费者依赖锁文件运行：
+
+```bash
+pnpm exec tsx packages/ui/perf/cost-runner.ts --artifact <UI-tarball> --output <结果目录> --assert-resources
+```
+
+结果包含 JS/CSS 的 raw、gzip、Brotli 字节，静态与动态依赖闭包，以及真实 Chromium 的生命周期资源和 p50/p95。`BRUTX_CHROMIUM_EXECUTABLE` 可指定浏览器路径。计时保留全部测量样本并作为报告项；字节预算由 `size` 校验，资源数量由 `--assert-resources` 校验。聚合样式成本单独统计。
+
+U1/C1/C3 可通过 `--artifacts <候选目录或 manifest>` 复用经 SHA-256 校验的产物。消费者锁文件位于 `packages/cli/scripts/fixtures/consumers/`；成本锁文件位于 `packages/ui/perf/fixtures/`。更新消费者依赖时显式设置 `BRUTX_UPDATE_CONSUMER_LOCKS=1` 运行对应矩阵并审查锁文件，正常验收使用 frozen install。
+
+### 3. 基准回归比对（`scripts/bench-diff.mjs`）
 
 在 CI 或本地对比两个版本的性能基准（通常为 main 分支 baseline 与 PR 分支）：
 
@@ -124,9 +136,9 @@ node scripts/bench-diff.mjs <main-bench.json> <pr-bench.json>
 - **单独检查**：`pnpm --filter brutx-ui-vue check:class-literals`
 - **规则说明**：检查所有动态拼接产出的类名是否在源码中以完整字面量存在，防止 Tailwind v4 扫描器丢失样式。
 
-### 5. 组件重导出与 Manifest
+### 5. 公开契约与源码依赖
 - **单独检查**：`pnpm --filter brutx-ui-vue check:exports`
-- **规则说明**：校验 `src/index.ts` 导出与 `registry-manifest.json`、`exports-manifest.json` 的 100% 一致性。
+- **规则说明**：校验 `api-contract.ts`、真实源码符号及全部公共入口投影的一致性。`pnpm check:api-dependencies` 检查模块归属、依赖方向、循环及运行时构建工具隔离。
 
 ### 6. CLI 令牌对齐
 - **单独检查**：`pnpm --filter brutx-vue check:tokens`
@@ -141,3 +153,20 @@ node scripts/bench-diff.mjs <main-bench.json> <pr-bench.json>
 | `pnpm --filter brutx-ui-vue docs:api` | 基于 TypeDoc 提取组件与 Composable 类型定义 | 根目录 |
 | `pnpm --filter brutx-ui-vue docs:api:full` | 全量生成组件 API 规格与 Props/Emits/Slots 文档 | 根目录 |
 | `pnpm --filter brutx-ui-vue docs:api:vue` | 仅提取 Vue SFC 声明文档（跳过 TypeDoc） | 根目录 |
+
+## 七、 生成编排与候选快照
+
+根目录和包级 `build/lint/typecheck` 通过统一 Turbo 图进入包级 `generate`。`build:artifact`、`lint:source`、`typecheck:source` 是底层消费任务；独立调用它们前须准备生成结果。联合验收使用 `pnpm exec turbo run build:artifact typecheck:source lint:source`，同一图中的 UI/CLI 生成各执行一次。
+
+源码生成任务 `cache: false`，每次比较完整输出并保留混合文件手写区域。构建缓存只恢复 `dist`；Registry 构建同样保持 `cache: false`。
+
+| 命令 | 职责 |
+| --- | --- |
+| `pnpm generate:tokens` | 统一运行 UI/CLI 生成入口 |
+| `pnpm --filter brutx-ui-vue generate` | 生成 UI 清单、公开入口、exports 及令牌 |
+| `pnpm --filter brutx-vue generate` | 生成 CLI 令牌与模板区域 |
+| `pnpm check:generated` | 只读比较 UI/CLI 全部生成结果 |
+| `pnpm check:staged-snapshot` | 从 Git index 物化候选快照并检查生成一致性 |
+| `pnpm test:tooling` | 生成事务、锁、缓存输入、部分暂存与门禁等价回归 |
+
+`pre-commit` 只校验已暂存快照，不运行工作区生成或自动暂存。失败时显式运行生成命令，审查差异并自行暂存需要提交的内容。候选源码依赖的手写文件也须进入暂存区。

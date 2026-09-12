@@ -22,7 +22,7 @@ function run(cmd, args) {
 console.log('[release:check] Starting local release verification...');
 
 // 1. 构建与门禁检查
-run('pnpm', ['exec', 'turbo', 'run', 'build', 'test', 'typecheck', 'lint']);
+run('pnpm', ['exec', 'turbo', 'run', 'build:artifact', 'test', 'typecheck:source', 'lint:source']);
 
 // 2. 静态契约门禁
 run('node', ['scripts/check-contracts-all.mjs']);

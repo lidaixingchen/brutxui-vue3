@@ -34,8 +34,8 @@ jobs:
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
-                  # PR 需要 0 用于 changeset 三点 diff；push 用 1 节省时间
-                  fetch-depth: ${{ github.event_name == 'pull_request' && 0 || 1 }}
+                  # Changeset 与门禁等价 fixture 读取提交历史。
+                  fetch-depth: 0
 
             - name: Check changeset presence (PR only)
               if: github.event_name == 'pull_request' && !contains(github.event.pull_request.title, '[no-changeset]')
@@ -68,26 +68,37 @@ jobs:
                       ${{ runner.os }}-turbo-quality-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
                       ${{ runner.os }}-turbo-quality-
 
-            # turbo 并行执行：typecheck/lint 不依赖 build，与 build 同时跑；validate 依赖 build 会自动等待
-            - name: Build + typecheck + lint (turbo parallel)
-              run: pnpm exec turbo run build typecheck lint
-
-            - name: Verify generated files are up-to-date
+            - name: Verify all generated and mixed files (read-only)
               run: |
-                  if ! git diff --exit-code -- \
-                    packages/ui/registry-manifest.json \
-                    packages/ui/exports-manifest.json \
-                    packages/ui/src/styles.css \
-                    packages/ui/src/preflight.css; then
-                    echo "::error::自动生成文件与提交态不一致（drift）。请运行 pnpm build 后提交更新。"
-                    exit 1
-                  fi
+                  pnpm --filter brutx-ui-vue generate -- --check
+                  pnpm --filter brutx-vue generate -- --check
+
+            - name: Build + typecheck + lint (turbo source graph)
+              run: pnpm exec turbo run build:artifact typecheck:source lint:source
+
+            - name: Check API dependency boundaries
+              run: pnpm check:api-dependencies
+
+            - name: Check API contract projections and exports
+              run: pnpm check:exports
 
             - name: Validate registry
               run: pnpm exec turbo run validate --filter=brutx-registry-vue
 
             - name: Verify code and spec contracts (parallel)
               run: pnpm check:contracts
+
+            - name: Run R3b tooling fault and equivalence checks
+              run: pnpm test:tooling
+
+            - name: Public type consumer check
+              run: pnpm --filter brutx-ui-vue test:types
+
+            - name: Verify bundle isolation
+              run: pnpm --filter brutx-ui-vue check:isolation
+
+            - name: Button resource lifecycle checks
+              run: pnpm --filter brutx-ui-vue test src/components/button/button.resources.test.ts
 
             - name: Verify documentation integrity (parallel)
               run: pnpm check:docs
@@ -100,6 +111,10 @@ jobs:
 
             - name: Check bundle size limits
               run: pnpm --filter brutx-ui-vue size
+
+            - name: UI coverage (main and candidate)
+              if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/vue')
+              run: pnpm --filter brutx-ui-vue test:coverage
 
             - name: Commitlint on PR commits
               if: github.event_name == 'pull_request'
@@ -154,9 +169,9 @@ jobs:
                       ${{ runner.os }}-turbo-test-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
                       ${{ runner.os }}-turbo-test-
 
-            # test 与 test:ssr 都依赖 build，turbo 会先 build 再并行跑两个测试任务
+            # test 与 test:ssr 都依赖 build:artifact，Turbo 会先生成并构建，再并行跑两个测试任务。
             - name: Build + test + SSR (turbo)
-              run: pnpm exec turbo run build test test:ssr
+              run: pnpm exec turbo run build:artifact test test:ssr
 
     browser:
         name: Browser tests (Vitest + Playwright)
@@ -214,6 +229,29 @@ jobs:
             - name: Browser tests
               run: pnpm --filter brutx-ui-vue test:browser
 
+            - name: Pack candidate artifact for cost checks
+              run: |
+                  cost_artifact_dir="$RUNNER_TEMP/brutx-cost-artifact"
+                  mkdir -p "$cost_artifact_dir"
+                  pnpm --config.ignore-scripts=true --filter brutx-ui-vue pack --pack-destination "$cost_artifact_dir"
+                  cost_artifact="$(find "$cost_artifact_dir" -maxdepth 1 -type f -name '*.tgz' -print -quit)"
+                  if [ -z "$cost_artifact" ]; then
+                    echo "::error::未找到候选 UI tarball，无法运行成本门禁。"
+                    exit 1
+                  fi
+                  echo "BRUTX_COST_ARTIFACT=$cost_artifact" >> "$GITHUB_ENV"
+
+            - name: Button browser resource and cost byte gates
+              run: pnpm --filter brutx-ui-vue exec tsx perf/cost-runner.ts --artifact "$BRUTX_COST_ARTIFACT" --output "$RUNNER_TEMP/brutx-cost-result" --assert-resources
+
+            - name: Upload Button cost evidence
+              if: always()
+              uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+              with:
+                  name: button-cost-${{ github.sha }}
+                  path: ${{ runner.temp }}/brutx-cost-result
+                  if-no-files-found: ignore
+
     integration:
         name: CLI Integration tests
         runs-on: ubuntu-latest
@@ -269,6 +307,15 @@ jobs:
             - name: Build packages
               run: pnpm build
 
-            - name: Run consumer matrix tests
-              run: pnpm test:consumers --all
+            - name: Pack shared consumer artifacts
+              run: node --input-type=module -e "import { packCandidateArtifacts } from './scripts/testing/consumer-artifacts.mjs'; packCandidateArtifacts(process.env.RUNNER_TEMP + '/brutx-consumers')"
 
+            - name: Run consumer matrix tests
+              run: pnpm test:consumers --all --artifacts "$RUNNER_TEMP/brutx-consumers"
+
+            - name: Upload consumer evidence
+              if: always()
+              uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+              with:
+                  name: consumers-${{ github.sha }}
+                  path: ${{ runner.temp }}/brutx-consumers

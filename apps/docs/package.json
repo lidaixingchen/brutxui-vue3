@@ -5,9 +5,11 @@
     "type": "module",
     "scripts": {
         "dev": "vitepress dev",
-        "build": "vitepress build",
+        "build": "pnpm exec turbo run build:artifact --filter=docs",
+        "build:artifact": "vitepress build",
         "preview": "vitepress preview",
-        "typecheck": "vue-tsc --noEmit"
+        "typecheck": "pnpm exec turbo run typecheck:source --filter=docs",
+        "typecheck:source": "vue-tsc --noEmit"
     },
     "dependencies": {
         "@lucide/vue": "^1.17.0",
