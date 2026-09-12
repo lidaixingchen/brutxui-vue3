@@ -60,7 +60,18 @@ describe('BaselineProvider', () => {
         expect(result.files.size).toBe(0);
     });
 
-    it('reconstructs Base in memory and applies dynamic Alias re-projection', async () => {
+    it.each([
+        {
+            name: 'reconstructs Base in memory and applies dynamic Alias re-projection',
+            integrity: mockButtonRegistryItem.integrity,
+            expectedStatus: 'ready',
+        },
+        {
+            name: 'returns fallback-diff and preserves local state when integrity differs',
+            integrity: 'sha256-different-content',
+            expectedStatus: 'fallback-diff',
+        },
+    ])('$name', async ({ integrity, expectedStatus }) => {
         const manifestContent = {
             version: 1,
             components: {
@@ -68,7 +79,7 @@ describe('BaselineProvider', () => {
                     name: 'button',
                     version: '0.10.0',
                     registrySource: 'official',
-                    integrity: 'sha256-mock-integrity',
+                    integrity,
                     installedAt: '2026-08-20T00:00:00.000Z',
                     files: ['src/components/ui/button/Button.vue', 'src/components/ui/button/index.ts'],
                     dependencies: [],
@@ -87,8 +98,16 @@ describe('BaselineProvider', () => {
         const provider = new BaselineProvider({ fs, itemFetcher: mockFetcher });
 
         const result = await provider.getComponentBaseline(ctx, 'button');
-        expect(result.status).toBe('ready');
+        expect(result.status).toBe(expectedStatus);
         expect(result.version).toBe('0.10.0');
+
+        if (expectedStatus === 'fallback-diff') {
+            expect(result.files.size).toBe(0);
+            expect(result.message).toContain('integrity mismatch');
+            expect(await fs.pathExists(path.join(projectCwd, '.brutx/baselines/button'))).toBe(false);
+            return;
+        }
+
         expect(result.files.has('Button.vue')).toBe(true);
 
         const projectedButton = result.files.get('Button.vue')!;

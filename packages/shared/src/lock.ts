@@ -53,7 +53,8 @@ export function acquireGenerateLock(options: GenerateLockOptions): GenerateLockR
                 `[BrutxUI] 检测到并发生成任务冲突: 包 ${packageName} 的生成锁已存在。\n` +
                 `锁文件路径: ${lockPath}\n` +
                 (existingInfo ? `锁持有信息: ${existingInfo}\n` : '') +
-                `若前次任务已异常退出，请确认无其他任务运行后，手动删除该锁文件再重试。`
+                `若前次任务已异常退出，请确认无其他任务运行后，手动删除该锁文件再重试。`,
+                { cause: err }
             )
         }
         throw err

@@ -50,7 +50,13 @@ describe('Generation Lock Contract', () => {
                 packageName: 'conflict-pkg',
                 cacheDir: tempDir,
             })
-        }).toThrow(/\[BrutxUI\] 检测到并发生成任务冲突: 包 conflict-pkg 的生成锁已存在/)
+        }).toThrow(expect.objectContaining({
+            message: expect.stringMatching(/\[BrutxUI\] 检测到并发生成任务冲突: 包 conflict-pkg 的生成锁已存在/),
+            cause: expect.objectContaining({
+                code: 'EEXIST',
+                path: lock1.lockPath,
+            }),
+        }))
 
         lock1.release()
         expect(fs.existsSync(lock1.lockPath)).toBe(false)
