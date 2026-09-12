@@ -1,4 +1,4 @@
-import { Z_INDEX_TOKENS } from 'brutx-shared-vue'
+import { Z_INDEX_TOKENS } from './z-index'
 
 /**
  * Shared default values for component configuration.
