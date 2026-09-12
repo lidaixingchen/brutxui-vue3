@@ -11,7 +11,7 @@ BrutxUI 支持 Tree-shaking，构建工具会自动移除未使用的组件：
 ```typescript
 // 推荐：从主入口导入，构建工具自动 Tree-shaking
 import { Button, Input, Card } from 'brutx-ui-vue'
-import 'brutx-ui-vue/styles.css'
+import 'brutx-ui-vue/style.css'
 ```
 
 ### 1.2 子路径导入
@@ -191,17 +191,25 @@ const items = ref(Array.from({ length: 10000 }, (_, i) => ({
 import { ref, computed } from 'vue'
 import { useDataTablePagination } from 'brutx-ui-vue'
 
+interface Item {
+  id: number
+  name: string
+}
+
 const allData = ref<Item[]>([])
 const pageSize = ref(20)
 
 const { currentPage, totalPages, paginatedData } = useDataTablePagination({
-  data: allData,
+  paginated: true,
   pageSize,
+  totalItems: () => allData.value.length,
 })
+
+const tableData = computed(() => paginatedData(allData.value))
 </script>
 
 <template>
-  <DataTable :data="paginatedData" />
+  <DataTable :data="tableData" />
   <Pagination
     v-model:page="currentPage"
     :total="totalPages"
@@ -220,7 +228,7 @@ import { ref } from 'vue'
 import { useDebounce } from 'brutx-ui-vue'
 
 const searchQuery = ref('')
-const [debouncedSearch, isDebouncing] = useDebounce(async (query: string) => {
+const { debounced: debouncedSearch } = useDebounce(async (query: string) => {
   if (!query.trim()) return
   const results = await searchApi(query)
   // 处理结果
@@ -238,7 +246,6 @@ function handleInput(event: Event) {
   <Input
     :model-value="searchQuery"
     placeholder="搜索..."
-    :loading="isDebouncing"
     @input="handleInput"
   />
 </template>
@@ -250,7 +257,7 @@ function handleInput(event: Event) {
 <script setup lang="ts">
 import { useThrottle } from 'brutx-ui-vue'
 
-const [throttledSubmit] = useThrottle(async () => {
+const { throttled: throttledSubmit } = useThrottle(async () => {
   await submitForm()
 }, 1000)
 </script>
@@ -264,15 +271,21 @@ const [throttledSubmit] = useThrottle(async () => {
 
 ```vue
 <script setup lang="ts">
-import { useThrottle, useEventListener } from 'brutx-ui-vue'
+import { onMounted, onUnmounted } from 'vue'
+import { useThrottle } from 'brutx-ui-vue'
 
-const [throttledScrollHandler] = useThrottle((event: Event) => {
+const { throttled: throttledScrollHandler } = useThrottle((event: Event) => {
   const target = event.target as HTMLElement
   const scrollTop = target.scrollTop
   // 处理滚动逻辑
 }, 100)
 
-useEventListener(window, 'scroll', throttledScrollHandler)
+onMounted(() => {
+  window.addEventListener('scroll', throttledScrollHandler)
+})
+onUnmounted(() => {
+  window.removeEventListener('scroll', throttledScrollHandler)
+})
 </script>
 ```
 

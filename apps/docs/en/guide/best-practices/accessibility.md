@@ -169,10 +169,9 @@ async function handleDialogClose() {
 
 ```vue
 <script setup lang="ts">
-import { useEventListener } from 'brutx-ui-vue'
+import { onMounted, onUnmounted } from 'vue'
 
-// Listen for global shortcut binds
-useEventListener(window, 'keydown', (event: KeyboardEvent) => {
+function handleKeydown(event: KeyboardEvent) {
   // Ctrl+K to open Search panel
   if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
     event.preventDefault()
@@ -183,6 +182,13 @@ useEventListener(window, 'keydown', (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
     closeAllModals()
   }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeydown)
+})
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown)
 })
 </script>
 
@@ -231,7 +237,7 @@ useEventListener(window, 'keydown', (event: KeyboardEvent) => {
   <!-- Switch components state description -->
   <div class="flex items-center gap-2">
     <Switch
-      v-model:checked="notifications"
+      v-model="notifications"
       aria-label="Toggle email notifications"
     />
     <span>{{ notifications ? 'Enabled' : 'Disabled' }}</span>
@@ -287,11 +293,11 @@ useEventListener(window, 'keydown', (event: KeyboardEvent) => {
 
 ---
 
-## 4. User Preferences & System Toggles
+## 4. High Contrast Modes
 
-### 4.1 High Contrast Adaptations
+### 4.1 Using the Mono Theme or System High Contrast
 
-BrutxUI features built-in support for high contrast theme variables:
+BrutxUI features an ultra-high-contrast black-and-white `mono` theme, and supports contrast enhancements via media queries:
 
 ```vue
 <script setup lang="ts">
@@ -301,14 +307,16 @@ const { theme, setTheme } = useTheme()
 </script>
 
 <template>
+  <!-- Theme Presets: classic / pastel / mono / warm -->
   <Select v-model="theme" @update:model-value="setTheme">
     <SelectTrigger>
-      <SelectValue placeholder="Select Theme" />
+      <SelectValue placeholder="Select theme" />
     </SelectTrigger>
     <SelectContent>
-      <SelectItem value="default">Default</SelectItem>
-      <SelectItem value="dark">Dark Theme</SelectItem>
-      <SelectItem value="high-contrast">High Contrast</SelectItem>
+      <SelectItem value="classic">Classic</SelectItem>
+      <SelectItem value="mono">High Contrast Monochrome (Mono)</SelectItem>
+      <SelectItem value="pastel">Pastel</SelectItem>
+      <SelectItem value="warm">Warm</SelectItem>
     </SelectContent>
   </Select>
 </template>

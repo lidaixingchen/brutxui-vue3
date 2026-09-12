@@ -24,9 +24,7 @@
 <template>
   <Input v-model="url" placeholder="请输入 URL">
     <template #prepend>
-      <span class="px-3 border-r-3 border-brutal bg-brutal-muted flex items-center">
-        https://
-      </span>
+      <span>https://</span>
     </template>
     <template #append>
       <Button variant="primary" size="sm" @click="verify">验证</Button>
@@ -140,7 +138,10 @@ const selected = ref('')
 
 <template>
   <Input v-model="text" placeholder="输入文本" />
-  <Checkbox v-model:checked="checked" label="同意协议" />
+  <div class="flex items-center gap-2">
+    <Checkbox id="terms" v-model:checked="checked" />
+    <Label for="terms">同意协议</Label>
+  </div>
   <Select v-model="selected" :options="options" />
 </template>
 ```
@@ -177,16 +178,16 @@ const selected = ref('')
 import { ref } from 'vue'
 import { useToast } from 'brutx-ui-vue'
 
-const { toast } = useToast()
+const { success, error } = useToast()
 const isSubmitting = ref(false)
 
 async function handleSubmit() {
   isSubmitting.value = true
   try {
     await submitForm()
-    toast({ title: '提交成功', variant: 'success' })
-  } catch (error) {
-    toast({ title: '提交失败', variant: 'destructive' })
+    success('提交成功')
+  } catch (err) {
+    error('提交失败')
   } finally {
     isSubmitting.value = false
   }
@@ -303,20 +304,20 @@ BrutxUI 的复合组件（如 Accordion、Tabs、Dialog）使用 `Root-Trigger-C
 import { useToast, useClipboard, useDebounce } from 'brutx-ui-vue'
 
 // 复用 Toast 逻辑
-const { toast } = useToast()
+const { success } = useToast()
 
 // 复用剪贴板逻辑
 const { copy, isSupported } = useClipboard()
 
-// 复用防抖逻辑
-const [debouncedSearch, isDebouncing] = useDebounce(async (query: string) => {
+// 复用防抖逻辑（返回对象，解构获取 debounced 包装函数）
+const { debounced: debouncedSearch } = useDebounce(async (query: string) => {
   const results = await searchApi(query)
   // 处理结果
 }, 300)
 
 async function handleCopy(text: string) {
   await copy(text)
-  toast({ title: '已复制到剪贴板' })
+  success('已复制到剪贴板')
 }
 </script>
 ```

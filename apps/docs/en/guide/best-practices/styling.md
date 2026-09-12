@@ -219,43 +219,34 @@ BrutxUI extends Tailwind CSS with dedicated utility values:
 </template>
 ```
 
-### 3.2 Custom Tailwind Configuration
+### 3.2 Custom Tailwind v4 Theme Extensions
 
-```typescript
-// tailwind.config.ts
-import type { Config } from 'tailwindcss'
+In Tailwind CSS 4, extend your brand palette and custom tokens directly in your main CSS file using `@theme`:
 
-export default {
-  content: [
-    './src/**/*.{vue,js,ts,jsx,tsx}',
-    './node_modules/brutx-ui-vue/**/*.{js,ts}',
-  ],
-  theme: {
-    extend: {
-      colors: {
-        brand: {
-          50: '#f0f9ff',
-          500: '#3b82f6',
-          900: '#1e3a5f',
-        },
-      },
-      borderWidth: {
-        '4': '4px',
-        '5': '5px',
-      },
-      boxShadow: {
-        'brutal-lg': '8px 8px 0px 0px var(--brutal-shadow-color)',
-        'brutal-xl': '12px 12px 0px 0px var(--brutal-shadow-color)',
-      },
-    },
-  },
-} satisfies Config
+```css
+/* src/style.css */
+@import 'tailwindcss';
+
+@theme {
+  --color-brand-50: #f0f9ff;
+  --color-brand-500: #3b82f6;
+  --color-brand-900: #1e3a5f;
+
+  --border-width-4: 4px;
+  --border-width-5: 5px;
+
+  --shadow-brutal-lg: 8px 8px 0px 0px var(--brutal-shadow-color);
+  --shadow-brutal-xl: 12px 12px 0px 0px var(--brutal-shadow-color);
+}
 ```
 
-### 3.3 Conditional Merges with cn()
+### 3.3 Conditional Merges with computed() and cn()
+
+Always wrap `cn()` calls in `computed()` to ensure classes update reactively when `props.variant` or `props.class` change:
 
 ```vue
 <script setup lang="ts">
+import { computed } from 'vue'
 import { cn } from 'brutx-ui-vue'
 
 interface Props {
@@ -267,10 +258,12 @@ const props = withDefaults(defineProps<Props>(), {
   variant: 'default',
 })
 
-const classes = cn(
-  'px-4 py-2 border-3 border-brutal',
-  props.variant === 'highlighted' && 'bg-brutal-primary text-brutal-primary-foreground shadow-brutal',
-  props.class
+const classes = computed(() =>
+  cn(
+    'px-4 py-2 border-3 border-brutal',
+    props.variant === 'highlighted' && 'bg-brutal-primary text-brutal-primary-foreground shadow-brutal',
+    props.class
+  )
 )
 </script>
 
@@ -373,7 +366,7 @@ const classes = computed(() => cn(
 }
 
 .card-minimal {
-  @apply border border-brutal-border;
+  @apply border border-brutal;
   box-shadow: none;
 }
 
@@ -389,7 +382,7 @@ const classes = computed(() => cn(
 
 /* Dash inputs */
 .input-dashed {
-  @apply border-2 border-dashed border-brutal-border;
+  @apply border-2 border-dashed border-brutal;
   border-radius: var(--brutal-radius);
 }
 

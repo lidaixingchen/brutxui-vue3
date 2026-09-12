@@ -24,9 +24,7 @@ This guide introduces the best ways to use BrutxUI components to help you write 
 <template>
   <Input v-model="url" placeholder="Enter URL">
     <template #prepend>
-      <span class="px-3 border-r-3 border-brutal bg-brutal-muted flex items-center">
-        https://
-      </span>
+      <span>https://</span>
     </template>
     <template #append>
       <Button variant="primary" size="sm" @click="verify">Verify</Button>
@@ -144,7 +142,10 @@ const selected = ref('')
 
 <template>
   <Input v-model="text" placeholder="Enter text" />
-  <Checkbox v-model:checked="checked" label="Accept terms" />
+  <div class="flex items-center gap-2">
+    <Checkbox id="terms" v-model:checked="checked" />
+    <Label for="terms">Accept terms</Label>
+  </div>
   <Select v-model="selected" :options="options" />
 </template>
 ```
@@ -181,16 +182,16 @@ const selected = ref('')
 import { ref } from 'vue'
 import { useToast } from 'brutx-ui-vue'
 
-const { toast } = useToast()
+const { success, error } = useToast()
 const isSubmitting = ref(false)
 
 async function handleSubmit() {
   isSubmitting.value = true
   try {
     await submitForm()
-    toast({ title: 'Submitted successfully', variant: 'success' })
-  } catch (error) {
-    toast({ title: 'Submission failed', variant: 'destructive' })
+    success('Submitted successfully')
+  } catch (err) {
+    error('Submission failed')
   } finally {
     isSubmitting.value = false
   }
@@ -311,20 +312,20 @@ BrutxUI composite components (e.g., Accordion, Tabs, Dialog) leverage the `Root-
 import { useToast, useClipboard, useDebounce } from 'brutx-ui-vue'
 
 // Toast hook
-const { toast } = useToast()
+const { success } = useToast()
 
 // Clipboard hook
 const { copy, isSupported } = useClipboard()
 
-// Debounce hook
-const [debouncedSearch, isDebouncing] = useDebounce(async (query: string) => {
+// Debounce hook (returns object with debounced function)
+const { debounced: debouncedSearch } = useDebounce(async (query: string) => {
   const results = await searchApi(query)
   // Handle results
 }, 300)
 
 async function handleCopy(text: string) {
   await copy(text)
-  toast({ title: 'Copied to clipboard!' })
+  success('Copied to clipboard!')
 }
 </script>
 ```

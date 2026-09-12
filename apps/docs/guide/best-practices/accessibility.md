@@ -167,10 +167,9 @@ async function handleDialogClose() {
 
 ```vue
 <script setup lang="ts">
-import { useEventListener } from 'brutx-ui-vue'
+import { onMounted, onUnmounted } from 'vue'
 
-// 全局快捷键
-useEventListener(window, 'keydown', (event: KeyboardEvent) => {
+function handleKeydown(event: KeyboardEvent) {
   // Ctrl+K 打开命令面板
   if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
     event.preventDefault()
@@ -181,6 +180,13 @@ useEventListener(window, 'keydown', (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
     closeAllModals()
   }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeydown)
+})
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown)
 })
 </script>
 
@@ -227,7 +233,7 @@ useEventListener(window, 'keydown', (event: KeyboardEvent) => {
   <!-- 开关状态 -->
   <div class="flex items-center gap-2">
     <Switch
-      v-model:checked="notifications"
+      v-model="notifications"
       aria-label="接收通知"
     />
     <span>{{ notifications ? '已开启' : '已关闭' }}</span>
@@ -281,11 +287,11 @@ useEventListener(window, 'keydown', (event: KeyboardEvent) => {
 </template>
 ```
 
-## 4. 高对比度模式
+## 4. 高对比度支持
 
-### 4.1 使用高对比度主题
+### 4.1 使用纯黑白 Mono 主题或响应系统高对比度
 
-BrutxUI 内置高对比度主题，自动响应系统设置：
+BrutxUI 原生具备高对比度黑白风格的 `mono` 主题，同时支持通过媒体查询自动强化对比度：
 
 ```vue
 <script setup lang="ts">
@@ -295,15 +301,16 @@ const { theme, setTheme } = useTheme()
 </script>
 
 <template>
-  <!-- 主题切换 -->
+  <!-- 主题切换：classic / pastel / mono / warm -->
   <Select v-model="theme" @update:model-value="setTheme">
     <SelectTrigger>
       <SelectValue placeholder="选择主题" />
     </SelectTrigger>
     <SelectContent>
-      <SelectItem value="default">默认</SelectItem>
-      <SelectItem value="dark">深色</SelectItem>
-      <SelectItem value="high-contrast">高对比度</SelectItem>
+      <SelectItem value="classic">经典 (Classic)</SelectItem>
+      <SelectItem value="mono">极高对比度单色 (Mono)</SelectItem>
+      <SelectItem value="pastel">柔和粉彩 (Pastel)</SelectItem>
+      <SelectItem value="warm">温暖复古 (Warm)</SelectItem>
     </SelectContent>
   </Select>
 </template>

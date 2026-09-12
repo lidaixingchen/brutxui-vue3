@@ -215,43 +215,34 @@ BrutxUI 扩展了 Tailwind，提供了专用工具类：
 </template>
 ```
 
-### 3.2 自定义 Tailwind 配置
+### 3.2 自定义 Tailwind v4 主题扩展
 
-```typescript
-// tailwind.config.ts
-import type { Config } from 'tailwindcss'
+在 Tailwind CSS 4 中，直接在主 CSS 文件中通过 `@theme` 扩展品牌色与自定义令牌：
 
-export default {
-  content: [
-    './src/**/*.{vue,js,ts,jsx,tsx}',
-    './node_modules/brutx-ui-vue/**/*.{js,ts}',
-  ],
-  theme: {
-    extend: {
-      colors: {
-        brand: {
-          50: '#f0f9ff',
-          500: '#3b82f6',
-          900: '#1e3a5f',
-        },
-      },
-      borderWidth: {
-        '4': '4px',
-        '5': '5px',
-      },
-      boxShadow: {
-        'brutal-lg': '8px 8px 0px 0px var(--brutal-shadow-color)',
-        'brutal-xl': '12px 12px 0px 0px var(--brutal-shadow-color)',
-      },
-    },
-  },
-} satisfies Config
+```css
+/* src/style.css */
+@import 'tailwindcss';
+
+@theme {
+  --color-brand-50: #f0f9ff;
+  --color-brand-500: #3b82f6;
+  --color-brand-900: #1e3a5f;
+
+  --border-width-4: 4px;
+  --border-width-5: 5px;
+
+  --shadow-brutal-lg: 8px 8px 0px 0px var(--brutal-shadow-color);
+  --shadow-brutal-xl: 12px 12px 0px 0px var(--brutal-shadow-color);
+}
 ```
 
-### 3.3 使用 cn() 合并类名
+### 3.3 使用 computed() 包裹 cn() 合并类名
+
+必须使用 `computed()` 包裹 `cn()` 计算类名，以确保当 `props.variant` 或 `props.class` 发生动态变化时类名保持响应式更新：
 
 ```vue
 <script setup lang="ts">
+import { computed } from 'vue'
 import { cn } from 'brutx-ui-vue'
 
 interface Props {
@@ -263,10 +254,12 @@ const props = withDefaults(defineProps<Props>(), {
   variant: 'default',
 })
 
-const classes = cn(
-  'px-4 py-2 border-3 border-brutal',
-  props.variant === 'highlighted' && 'bg-brutal-primary text-brutal-primary-foreground shadow-brutal',
-  props.class
+const classes = computed(() =>
+  cn(
+    'px-4 py-2 border-3 border-brutal',
+    props.variant === 'highlighted' && 'bg-brutal-primary text-brutal-primary-foreground shadow-brutal',
+    props.class
+  )
 )
 </script>
 
@@ -367,7 +360,7 @@ const classes = computed(() => cn(
 }
 
 .card-minimal {
-  @apply border border-brutal-border;
+  @apply border border-brutal;
   box-shadow: none;
 }
 
@@ -383,7 +376,7 @@ const classes = computed(() => cn(
 
 /* 自定义输入框 */
 .input-dashed {
-  @apply border-2 border-dashed border-brutal-border;
+  @apply border-2 border-dashed border-brutal;
   border-radius: var(--brutal-radius);
 }
 

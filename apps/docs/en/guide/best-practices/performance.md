@@ -11,7 +11,7 @@ BrutxUI supports tree-shaking natively, allowing bundlers to automatically strip
 ```typescript
 // Recommended: Tree-shaking is handled automatically by bundlers
 import { Button, Input, Card } from 'brutx-ui-vue'
-import 'brutx-ui-vue/styles.css'
+import 'brutx-ui-vue/style.css'
 ```
 
 ### 1.2 Sub-path Imports (Stable Allowlist)
@@ -177,7 +177,7 @@ const items = ref(Array.from({ length: 10000 }, (_, i) => ({
     class="h-[600px] border-3 border-brutal"
   >
     <template #default="{ item }">
-      <div class="px-4 py-2 border-b border-brutal-border">
+      <div class="px-4 py-2 border-b border-brutal">
         {{ item.name }}
       </div>
     </template>
@@ -192,17 +192,25 @@ const items = ref(Array.from({ length: 10000 }, (_, i) => ({
 import { ref, computed } from 'vue'
 import { useDataTablePagination } from 'brutx-ui-vue'
 
+interface Item {
+  id: number
+  name: string
+}
+
 const allData = ref<Item[]>([])
 const pageSize = ref(20)
 
 const { currentPage, totalPages, paginatedData } = useDataTablePagination({
-  data: allData,
+  paginated: true,
   pageSize,
+  totalItems: () => allData.value.length,
 })
+
+const tableData = computed(() => paginatedData(allData.value))
 </script>
 
 <template>
-  <DataTable :data="paginatedData" />
+  <DataTable :data="tableData" />
   <Pagination
     v-model:page="currentPage"
     :total="totalPages"
@@ -223,7 +231,7 @@ import { ref } from 'vue'
 import { useDebounce } from 'brutx-ui-vue'
 
 const searchQuery = ref('')
-const [debouncedSearch, isDebouncing] = useDebounce(async (query: string) => {
+const { debounced: debouncedSearch } = useDebounce(async (query: string) => {
   if (!query.trim()) return
   const results = await searchApi(query)
   // Handle results
@@ -240,7 +248,6 @@ function handleInput(event: Event) {
   <Input
     :model-value="searchQuery"
     placeholder="Search..."
-    :loading="isDebouncing"
     @input="handleInput"
   />
 </template>
@@ -252,7 +259,7 @@ function handleInput(event: Event) {
 <script setup lang="ts">
 import { useThrottle } from 'brutx-ui-vue'
 
-const [throttledSubmit] = useThrottle(async () => {
+const { throttled: throttledSubmit } = useThrottle(async () => {
   await submitForm()
 }, 1000)
 </script>
@@ -266,15 +273,21 @@ const [throttledSubmit] = useThrottle(async () => {
 
 ```vue
 <script setup lang="ts">
-import { useThrottle, useEventListener } from 'brutx-ui-vue'
+import { onMounted, onUnmounted } from 'vue'
+import { useThrottle } from 'brutx-ui-vue'
 
-const [throttledScrollHandler] = useThrottle((event: Event) => {
+const { throttled: throttledScrollHandler } = useThrottle((event: Event) => {
   const target = event.target as HTMLElement
   const scrollTop = target.scrollTop
   // Process scroll values
 }, 100)
 
-useEventListener(window, 'scroll', throttledScrollHandler)
+onMounted(() => {
+  window.addEventListener('scroll', throttledScrollHandler)
+})
+onUnmounted(() => {
+  window.removeEventListener('scroll', throttledScrollHandler)
+})
 </script>
 ```
 
