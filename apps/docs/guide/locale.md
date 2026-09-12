@@ -1,44 +1,52 @@
 ---
 title: 国际化
-description: 了解 BrutxUI 的多语言支持配置
+description: 了解 BrutxUI 的多语言支持与 52+ 组件本地化配置
 ---
 
 # 国际化（i18n）
 
-BrutxUI 内置轻量多语言支持，**默认语言为中文（zh-CN）**，同时提供英文（en）语言包。无需安装 `vue-i18n`，开箱即用。
+BrutxUI 内置轻量多语言系统，**默认语言为中文（zh-CN）**，同时提供英文（en）语言包。无需强制安装 `vue-i18n`，开箱即用。
+
+---
 
 ## 设计原则
 
-- **不强制依赖 vue-i18n** — 自带轻量 locale 系统（provide/inject），可与 vue-i18n 共存
-- **默认中文** — 所有组件的默认文本为中文
-- **完全向后兼容** — props 优先级最高，现有用法不受影响
-- **零配置开箱即用** — 不传任何配置时显示中文
-- **响应式切换** — 运行时切换语言，组件自动更新
+- **无需强制第三方依赖**：自带轻量级基于 Vue `provide/inject` 的 locale 系统，同时可无缝与 `vue-i18n` 联动协同；
+- **默认中文**：所有组件的原生内置文本默认为简体中文（`zh-CN`）；
+- **层级优先级**：`组件 props > 全局/子树 locale 配置 > 默认中文`；
+- **响应式驱动**：支持传入 `Ref` 或 `ComputedRef` 语言包，语言切换实时无感刷新。
+
+---
 
 ## 优先级链
 
 组件文本的解析优先级从高到低：
 
 ```text
-组件 props > 全局 locale 配置 > 默认中文（zh-CN）
+组件显式 Props > 组件 texts 局部 Props > provideLocale 注入值 > 全局插件配置 > 默认中文 (zh-CN)
 ```
 
-## 默认中文（零配置）
+---
 
-不进行任何配置时，组件自动显示中文文本：
+## 快速上手
+
+### 1. 默认中文（零配置）
+
+不进行任何配置时，组件直接展示标准中文文本：
 
 ```vue
 <template>
     <CommandInput />
-    <!-- placeholder 显示 "输入命令或搜索..." -->
+    <!-- 默认 placeholder 显示 "输入命令或搜索..." -->
 </template>
 ```
 
-## 全局切换为英文
+### 2. 全局配置语言包
 
-通过 `BrutxUIPlugin` 的 `locale` 选项切换语言：
+在应用入口通过 `BrutxUIPlugin` 设置默认语言：
 
 ```ts
+// main.ts
 import { createApp } from 'vue'
 import App from './App.vue'
 import { BrutxUIPlugin, en } from 'brutx-ui-vue'
@@ -48,260 +56,201 @@ app.use(BrutxUIPlugin, { locale: en })
 app.mount('#app')
 ```
 
-## 局部覆盖
+---
 
-### 通过 props 覆盖单个组件
+## 响应式动态切换语言
 
-props 优先级最高，可以覆盖任何 locale 文本：
-
-```vue
-<template>
-    <CommandInput placeholder="自定义搜索..." />
-    <Spinner label="处理中..." />
-</template>
-```
-
-### 通过 texts prop 批量覆盖
-
-对于包含大量文本的组件（如 AuthCard），提供 `texts` prop 进行批量覆盖：
+`provideLocale` 接受 `MaybeRef<Locale>`，传入 `computed` 或 `ref` 时，语言切换将响应式更新所有后代组件：
 
 ```vue
-<template>
-    <AuthCard :texts="{
-        google: '使用 Google 登录',
-        github: '使用 GitHub 登录',
-        orEmailLogin: '或使用邮箱登录',
-        signIn: '登 录',
-    }" />
-</template>
-```
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { provideLocale, zhCN, en, Button, CommandInput } from 'brutx-ui-vue'
 
-### 局部子树覆盖语言
+const currentLang = ref<'zh' | 'en'>('zh')
+const activeLocale = computed(() => (currentLang.value === 'en' ? en : zhCN))
 
-使用 `provideLocale` 在某个组件子树内使用不同语言，不影响全局：
+// 向子树注入响应式 locale
+provideLocale(activeLocale)
 
-```vue
-<script setup>
-import { provideLocale, en } from 'brutx-ui-vue'
-
-provideLocale(en)
+function toggleLanguage() {
+    currentLang.value = currentLang.value === 'zh' ? 'en' : 'zh'
+}
 </script>
 
 <template>
-    <div>
-        <!-- 此区域内的组件显示英文 -->
+    <div class="flex flex-col gap-4 p-4">
+        <div class="flex items-center gap-2">
+            <Button variant="default" size="sm" @click="toggleLanguage">
+                切换为 {{ currentLang === 'zh' ? 'English' : '中文' }}
+            </Button>
+        </div>
         <CommandInput />
     </div>
 </template>
 ```
 
-## 响应式切换
+---
 
-`BrutxUIPlugin` 和 `provideLocale` 都接受响应式的 locale 值，切换时组件自动更新：
+## 局部子树与降级覆盖
+
+### 局部子树覆盖
+
+使用 `provideLocale` 可以将某部分区域切换为不同语言，不影响外层其他模块：
 
 ```vue
-<script setup>
-import { ref, computed } from 'vue'
-import { BrutxUIPlugin, zhCN, en } from 'brutx-ui-vue'
+<script setup lang="ts">
+import { provideLocale, en, CommandInput } from 'brutx-ui-vue'
 
-const isEnglish = ref(false)
-const locale = computed(() => isEnglish.value ? en : zhCN)
+// 该组件及其所有后代组件渲染为英文
+provideLocale(en)
 </script>
+
+<template>
+    <div class="border-3 border-brutal p-4">
+        <CommandInput />
+    </div>
+</template>
 ```
 
-## 自定义语言包
+### 自定义回退链（Fallback Locale）
 
-### 部分覆盖
-
-使用 `mergeLocale` 深合并，只覆盖需要修改的字段：
-
-```ts
-import { zhCN, mergeLocale } from 'brutx-ui-vue/locales'
-
-const customLocale = mergeLocale(zhCN, {
-    command: { placeholder: '请输入...' },
-})
-app.use(BrutxUIPlugin, { locale: customLocale })
-```
-
-### 创建全新语言包
-
-导入 `Locale` 类型，创建完整的语言包：
-
-```ts
-import type { Locale } from 'brutx-ui-vue'
-import { zhCN } from 'brutx-ui-vue/locales'
-
-const jaJP: Locale = {
-    command: {
-        placeholder: 'コマンドを入力...',
-        emptyText: '結果が見つかりません。',
-        dialogTitle: 'コマンドパレット',
-        dialogDescription: '実行するコマンドを検索...',
-    },
-    // ... 其他组件的翻译
-}
-
-app.use(BrutxUIPlugin, { locale: jaJP })
-```
-
-## 与 vue-i18n 共存
-
-BrutxUI 的 locale 系统独立于 vue-i18n，两者互不干扰。推荐在 vue-i18n 的 locale watch 中同步更新 BrutxUI 的 locale：
-
-```ts
-import { watch, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { provideLocale, zhCN, en } from 'brutx-ui-vue'
-
-const LOCALE_MAP = { 'zh-CN': zhCN, en }
-
-const { locale } = useI18n()
-provideLocale(computed(() => LOCALE_MAP[locale.value] ?? zhCN))
-```
-
-## t() 翻译函数
-
-`useLocale()` 返回的 `t()` 函数支持点号路径访问和插值参数：
-
-```ts
-import { useLocale } from 'brutx-ui-vue'
-
-const { t } = useLocale()
-
-t('command.placeholder')
-// → '输入命令或搜索...'
-
-t('combobox.selectedCount', { count: 3 })
-// → '已选 3 项'
-
-t('pagination.page', { number: 5 })
-// → '第 5 页'
-```
-
-### 回退链
-
-当 `t(path, params?)` 被调用时，按以下顺序查找：
-
-1. 当前 locale 中查找 `path` 对应的值
-2. 不存在 → 回退到自定义 fallbackLocale（如果配置了）
-3. 仍不存在 → 回退到 zh-CN 语言包中 `path` 对应的值
-4. 仍不存在 → 返回路径字符串 `path` 本身
-
-## 可用语言包
-
-| 语言包 | 导入路径 | 说明 |
-|--------|---------|------|
-| `zhCN` | `brutx-ui-vue` 或 `brutx-ui-vue/locales` | 简体中文（默认） |
-| `en` | `brutx-ui-vue` 或 `brutx-ui-vue/locales` | 英文 |
-
-## API 参考
-
-### BrutxUIPlugin
-
-Vue 插件，用于全局配置 locale。
-
-```ts
-interface BrutxUIPluginOptions {
-    locale?: MaybeRef<Locale>
-}
-
-app.use(BrutxUIPlugin, { locale: en })
-```
-
-### provideLocale
-
-在组件子树内注入 locale 配置。支持两种调用方式：
-
-```ts
-// 方式 1：直接传入 locale（向后兼容）
-function provideLocale(locale: MaybeRef<Locale>): void
-
-// 方式 2：传入配置对象，支持自定义 fallback
-function provideLocale(options: {
-    locale: MaybeRef<Locale>
-    fallbackLocale?: MaybeRef<Partial<Locale>>
-}): void
-```
-
-#### 自定义 Fallback Locale
-
-默认情况下，当 key 在当前 locale 中找不到时，会回退到 `zhCN`。可以通过 `fallbackLocale` 自定义回退链：
+当自定义语言包仅翻译了部分键名时，支持设置 `fallbackLocale`：
 
 ```vue
-<script setup>
+<script setup lang="ts">
 import { provideLocale, en } from 'brutx-ui-vue'
 
-// 自定义 fallback：en → customFallback → zhCN
 provideLocale({
     locale: en,
     fallbackLocale: {
-        button: { confirm: 'OK', cancel: 'Cancel' },
+        popconfirm: { confirm: '确定执行', cancel: '取消' },
     },
 })
 </script>
 ```
 
-回退顺序：用户 locale → fallbackLocale → zhCN → 返回 path 原文
+回退顺序：`当前 locale` → `自定义 fallbackLocale` → `内置 zhCN` → `返回 path 原文`。
 
-### useLocale
+---
 
-获取当前 locale 和翻译函数。
+## 自定义与深度合并
 
-```ts
-function useLocale(): {
-    locale: ComputedRef<Locale>
-    t: TranslateFunction
-}
+### 使用 mergeLocale 部分覆盖
 
-type TranslateFunction = (
-    path: string,
-    params?: Record<string, string | number>
-) => string
-```
-
-### mergeLocale
-
-深合并语言包，用于部分覆盖。
+通过 `mergeLocale` 深合并现有语言包，定制特定组件提示文案：
 
 ```ts
-function mergeLocale(base: Locale, override: DeepPartial<Locale>): Locale
+import { zhCN, mergeLocale } from 'brutx-ui-vue'
+
+const customZh = mergeLocale(zhCN, {
+    command: {
+        placeholder: '键入快捷指令或检索文档...',
+    },
+    dataTable: {
+        emptyText: '暂无符合筛选条件的数据记录',
+    },
+})
 ```
 
-## 支持的组件文本键
+---
 
-| 组件 | locale 键 | 含插值参数 |
-|------|----------|-----------|
-| Command | `command.placeholder`、`command.emptyText`、`command.dialogTitle`、`command.dialogDescription` | — |
-| Combobox | `combobox.placeholder`、`combobox.multiPlaceholder`、`combobox.searchPlaceholder`、`combobox.emptyText`、`combobox.selectedCount` | `selectedCount`: `{count}` |
-| Pagination | `pagination.firstPage`、`pagination.previousPage`、`pagination.nextPage`、`pagination.lastPage`、`pagination.page`、`pagination.label` | `page`: `{number}` |
-| Carousel | `carousel.previousSlide`、`carousel.nextSlide`、`carousel.goToSlide` | `goToSlide`: `{index}` |
-| Spinner | `spinner.loading` | — |
-| Button | `submitButton.submitting` | — |
-| CopyToClipboard | `copyToClipboard.copy`、`copyToClipboard.copied`、`copyToClipboard.copyFailed` | — |
-| BeforeAfter | `beforeAfter.before`、`beforeAfter.after` | — |
-| AuthCard | `authCard.welcomeBack`、`authCard.signInToContinue`、`authCard.google`、`authCard.github`、`authCard.orEmailLogin`、`authCard.email`、`authCard.password`、`authCard.forgotPassword`、`authCard.signIn`、`authCard.noAccount`、`authCard.register`、`authCard.emailPlaceholder`、`authCard.passwordPlaceholder` | — |
-| DashboardShell | `dashboardShell.sidebarNavigation`、`dashboardShell.signOut`、`dashboardShell.defaultEmail` | — |
-| BrutalistHero | `brutalistHero.title`、`brutalistHero.primaryCtaText`、`brutalistHero.secondaryCtaText`、`brutalistHero.neoBrutalismUI`、`brutalistHero.defaultSubtitle` | — |
-| Toast | `toast.close`、`toast.container` | — |
-| Dialog | `dialog.close` | — |
-| Sheet | `sheet.close` | — |
-| Breadcrumb | `breadcrumb.label`、`breadcrumb.more` | — |
-| TreeView | `treeView.fileTree` | — |
-| Stepper | `stepper.progressSteps`、`stepper.step` | `step`: `{index}`、`{title}` |
-| HeaderSection | `headerSection.defaultLogoText`、`headerSection.defaultCtaText`、`headerSection.menuLabel` | — |
-| FooterSection | `footerSection.defaultLogoText`、`footerSection.defaultDescription`、`footerSection.defaultCopyright` | — |
-| FeedbackForm | `feedbackForm.defaultTitle`、`feedbackForm.defaultDescription`、`feedbackForm.defaultSubmitText`、`feedbackForm.successTitle`、`feedbackForm.successDescription`、`feedbackForm.successConfirmText`、`feedbackForm.nameLabel`、`feedbackForm.emailLabel`、`feedbackForm.subjectLabel`、`feedbackForm.messageLabel` | — |
-| CookieConsent | `cookieConsent.defaultTitle`、`cookieConsent.defaultDescription`、`cookieConsent.defaultAcceptText`、`cookieConsent.defaultDeclineText` | — |
-| ScratchCard | `scratchCard.ariaLabel` | — |
-| SketchyChart | `sketchyChart.lineAriaLabel`、`sketchyChart.barAriaLabel`、`sketchyChart.pieAriaLabel` | — |
-| Card3D | `card3d.ariaLabel` | — |
-| HardcoreInput | `hardcoreInput.invalidInput` | — |
-| CodeBlock | `codeBlock.copy`、`codeBlock.copied`、`codeBlock.expand`、`codeBlock.collapse` | — |
-| Calendar | `calendar.previousMonth`、`calendar.nextMonth` | — |
-| Kanban | `kanban.dropCardsHere`、`kanban.addCard`、`kanban.cardGrabbed`、`kanban.cardReleased`、`kanban.cardMoved`、`kanban.cardMovedToColumn` | `cardMovedToColumn`: `{column}` |
-| Timeline | `timeline.label` | — |
-| PricingSection | `pricingSection.defaultTitle`、`pricingSection.mostPopular`、`pricingSection.perLifetime`、`pricingSection.saasTitle`、`pricingSection.saasMostPopular`、`pricingSection.planStarterName`、`pricingSection.planProName`、`pricingSection.planEnterpriseName` | — |
-| Input | `input.placeholder` | — |
-| NumberInput | `numberInput.placeholder` | — |
-| Textarea | `textarea.placeholder` | — |
+## 与 vue-i18n 共存
+
+在集成 `vue-i18n` 的项目中，可在其变更时联动同步 BrutxUI 的语言：
+
+```vue
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { provideLocale, zhCN, en } from 'brutx-ui-vue'
+
+const { locale } = useI18n()
+
+// 映射 vue-i18n 的 locale 到 BrutxUI 语言包
+const brutxLocale = computed(() => (locale.value === 'en' ? en : zhCN))
+provideLocale(brutxLocale)
+</script>
+```
+
+---
+
+## useLocale 组合式函数
+
+在自定义组件中读取当前语言包或调用插值翻译：
+
+```vue
+<script setup lang="ts">
+import { useLocale } from 'brutx-ui-vue'
+
+const { locale, t } = useLocale()
+
+// 普通键翻译
+const placeholder = t('command.placeholder')
+
+// 带占位符插值参数
+const countLabel = t('combobox.selectedCount', { count: 5 }) // "已选 5 项"
+const pageInfo = t('pagination.page', { number: 3 })         // "第 3 页"
+</script>
+```
+
+---
+
+## 支持的组件与文本键索引（52+ 组件）
+
+| 模块 / 组件 | 语言包键前缀 | 核心文本键与插值说明 |
+| :--- | :--- | :--- |
+| **Command** | `command.*` | `placeholder`, `emptyText`, `dialogTitle`, `dialogDescription`, `searchLabel` |
+| **Combobox** | `combobox.*` | `placeholder`, `multiPlaceholder`, `searchPlaceholder`, `emptyText`, `selectedCount` (`{count}`), `create` |
+| **Pagination** | `pagination.*` | `firstPage`, `previousPage`, `nextPage`, `lastPage`, `page` (`{number}`), `perPageOption` (`{size}`), `total` (`{total}`) |
+| **Carousel** | `carousel.*` | `previousSlide`, `nextSlide`, `goToSlide` (`{index}`) |
+| **Spinner** | `spinner.*` | `loading` |
+| **Button / Submit** | `submitButton.*` | `submitting` |
+| **CopyToClipboard** | `copyToClipboard.*` | `copy`, `copied`, `copyFailed` |
+| **BeforeAfter** | `beforeAfter.*` | `before`, `after`, `comparisonSlider` |
+| **AuthCard** | `authCard.*` | `welcomeBack`, `signInToContinue`, `google`, `github`, `orEmailLogin`, `email`, `password`, `signIn`, `register` |
+| **DashboardShell** | `dashboardShell.*` | `sidebarNavigation`, `signOut`, `brand`, `openNavigation`, `closeNavigation` |
+| **BrutalistHero** | `brutalistHero.*` | `title`, `primaryCtaText`, `secondaryCtaText`, `neoBrutalismUI`, `defaultSubtitle` |
+| **CardWindowHeader**| `cardWindowHeader.*`| `close`, `minimize`, `maximize` |
+| **Toast** | `toast.*` | `close`, `container` |
+| **Message** | `message.*` | `close` |
+| **Dialog** | `dialog.*` | `close` |
+| **MessageBox** | `messageBox.*` | `confirm`, `cancel` |
+| **Sheet** | `sheet.*` | `close` |
+| **Breadcrumb** | `breadcrumb.*` | `label`, `more` |
+| **TreeView** | `treeView.*` | `fileTree` |
+| **TreeSelect** | `treeSelect.*` | `placeholder`, `emptyText` |
+| **Cascader** | `cascader.*` | `placeholder`, `emptyText` |
+| **Transfer** | `transfer.*` | `availableTitle`, `selectedTitle`, `searchPlaceholder`, `emptyText`, `clearAll`, `selectAll`, `itemCount` (`{count}`) |
+| **Stepper** | `stepper.*` | `progressSteps`, `step` (`{index}`, `{title}`) |
+| **HeaderSection** | `headerSection.*` | `defaultLogoText`, `defaultCtaText`, `menuLabel` |
+| **FooterSection** | `footerSection.*` | `defaultLogoText`, `defaultDescription`, `defaultCopyright` |
+| **FeedbackForm** | `feedbackForm.*` | `defaultTitle`, `defaultDescription`, `defaultSubmitText`, `successTitle`, `nameLabel`, `emailLabel`, `messageLabel` |
+| **CookieConsent** | `cookieConsent.*` | `defaultTitle`, `defaultDescription`, `defaultAcceptText`, `defaultDeclineText` |
+| **DataTable** | `dataTable.*` | `emptyText`, `searchPlaceholder`, `selectedCount` (`{count}`) |
+| **FormWizard** | `formWizard.*` | `previous`, `next`, `submit` |
+| **ChatBubble** | `chatBubble.*` | `delivered`, `read` |
+| **ScratchCard** | `scratchCard.*` | `ariaLabel` |
+| **SketchyChart** | `sketchyChart.*` | `lineAriaLabel`, `barAriaLabel`, `pieAriaLabel` |
+| **Card3D** | `card3d.*` | `ariaLabel` |
+| **Avatar** | `avatar.*` | `fallback` |
+| **HardcoreInput** | `hardcoreInput.*` | `invalidInput` |
+| **CodeBlock** | `codeBlock.*` | `copy`, `copied`, `expand`, `collapse` |
+| **Calendar** | `calendar.*` | `previousMonth`, `nextMonth` |
+| **DatePicker** | `datePicker.*` | `placeholder`, `clear` |
+| **ColorPicker** | `colorPicker.*` | `placeholder`, `clear` |
+| **Kanban** | `kanban.*` | `dropCardsHere`, `addCard`, `cardGrabbed`, `cardReleased`, `cardMoved`, `cardMovedToColumn` (`{column}`) |
+| **Timeline** | `timeline.*` | `label` |
+| **Tabs** | `tabs.*` | `more` |
+| **PricingSection** | `pricingSection.*` | `defaultTitle`, `mostPopular`, `perLifetime`, `planStarterName`, `planProName`, `planEnterpriseName` |
+| **ColorModeSwitcher**| `colorModeSwitcher.*`| `light`, `dark`, `system`, `toggleTheme` |
+| **Input / NumberInput / Textarea** | `input.*` / `numberInput.*` / `textarea.*` | `placeholder` |
+| **VirtualScroll / InfiniteScroll** | `virtualScroll.*` / `infiniteScroll.*` | `emptyText` / `loading` |
+| **Switch / Checkbox**| `switch.*` / `checkbox.*` | `checked`, `unchecked` |
+| **TagsInput** | `tagsInput.*` | `placeholder`, `remove` |
+| **Badge / Alert** | `badge.*` / `alert.*` | `close` |
+| **Popconfirm** | `popconfirm.*` | `confirm`, `cancel` |
+| **Upload** | `upload.*` | `dragText`, `browseText`, `maxSizeError`, `limitError` (`{limit}`), `retry` |
+| **Tour** | `tour.*` | `prev`, `next`, `finish`, `skip` |
+| **Statistic** | `statistic.*` | `empty`, `up`, `down` |
+| **Countdown** | `countdown.*` | `finished` |

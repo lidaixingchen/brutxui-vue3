@@ -1,45 +1,52 @@
 ---
 title: Internationalization
-description: Learn how to configure multi-language support in BrutxUI
-translated: true
+description: Learn about BrutxUI's multi-language support and localization setup across 52+ components
 ---
 
 # Internationalization (i18n)
 
-BrutxUI has built-in lightweight multi-language support. **The default language is Chinese (zh-CN)**, and an English (en) language pack is also provided. No need to install `vue-i18n` — it works out of the box.
+BrutxUI includes a built-in lightweight multi-language system, **defaulting to Chinese (zh-CN)** with an official English (en) locale pack. No mandatory installation of `vue-i18n` is required.
+
+---
 
 ## Design Principles
 
-- **No dependency on vue-i18n** — built-in lightweight locale system (provide/inject), can coexist with vue-i18n
-- **Chinese by default** — all component default text is in Chinese
-- **Fully backward compatible** — props have the highest priority, existing usage is not affected
-- **Zero-config out of the box** — displays Chinese when no configuration is provided
-- **Reactive switching** — switch languages at runtime, components update automatically
+- **Zero Mandatory Third-Party Dependencies**: Built-in lightweight locale system based on Vue's `provide/inject`, which can also seamlessly integrate with `vue-i18n`;
+- **Default Chinese**: All components default to simplified Chinese (`zh-CN`);
+- **Hierarchical Priority**: `Explicit Component Props > Local texts Prop > provideLocale Injection > Global Plugin Config > Default zh-CN`;
+- **Reactive Updates**: Pass a `Ref` or `ComputedRef` to trigger instant live updates upon language changes.
 
-## Priority Chain
+---
 
-Component text resolution priority from highest to lowest:
+## Resolution Priority
+
+Component texts resolve in descending order of precedence:
 
 ```text
-Component props > Global locale config > Default Chinese (zh-CN)
+Component Explicit Props > Component texts Prop > provideLocale Injected Value > Global Plugin Config > Default Chinese (zh-CN)
 ```
 
-## Default Chinese (Zero Config)
+---
 
-When no configuration is provided, components automatically display Chinese text:
+## Quick Start
+
+### 1. Default Chinese (Zero Configuration)
+
+Without any configuration, components render standard Chinese strings:
 
 ```vue
 <template>
     <CommandInput />
-    <!-- placeholder shows "输入命令或搜索..." -->
+    <!-- Default placeholder displays "输入命令或搜索..." -->
 </template>
 ```
 
-## Globally Switch to English
+### 2. Global English Configuration
 
-Switch the language via the `locale` option of `BrutxUIPlugin`:
+Configure the locale in your application entry point:
 
 ```ts
+// main.ts
 import { createApp } from 'vue'
 import App from './App.vue'
 import { BrutxUIPlugin, en } from 'brutx-ui-vue'
@@ -49,260 +56,201 @@ app.use(BrutxUIPlugin, { locale: en })
 app.mount('#app')
 ```
 
-## Partial Overrides
+---
 
-### Override a Single Component via Props
+## Reactive Dynamic Language Switching
 
-Props have the highest priority and can override any locale text:
-
-```vue
-<template>
-    <CommandInput placeholder="Custom search..." />
-    <Spinner label="Processing..." />
-</template>
-```
-
-### Batch Override via the texts Prop
-
-For components with extensive text (like AuthCard), a `texts` prop is provided for batch overrides:
+`provideLocale` accepts `MaybeRef<Locale>`. Passing a `computed` or `ref` updates all descendant components seamlessly:
 
 ```vue
-<template>
-    <AuthCard :texts="{
-        google: 'Sign in with Google',
-        github: 'Sign in with GitHub',
-        orEmailLogin: 'Or sign in with email',
-        signIn: 'Sign In',
-    }" />
-</template>
-```
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { provideLocale, zhCN, en, Button, CommandInput } from 'brutx-ui-vue'
 
-### Local Subtree Language Override
+const currentLang = ref<'zh' | 'en'>('zh')
+const activeLocale = computed(() => (currentLang.value === 'en' ? en : zhCN))
 
-Use `provideLocale` to use a different language within a component subtree without affecting the global configuration:
+// Inject reactive locale to subtree
+provideLocale(activeLocale)
 
-```vue
-<script setup>
-import { provideLocale, en } from 'brutx-ui-vue'
-
-provideLocale(en)
+function toggleLanguage() {
+    currentLang.value = currentLang.value === 'zh' ? 'en' : 'zh'
+}
 </script>
 
 <template>
-    <div>
-        <!-- Components in this area display in English -->
+    <div class="flex flex-col gap-4 p-4">
+        <div class="flex items-center gap-2">
+            <Button variant="default" size="sm" @click="toggleLanguage">
+                Switch to {{ currentLang === 'zh' ? 'English' : '中文' }}
+            </Button>
+        </div>
         <CommandInput />
     </div>
 </template>
 ```
 
-## Reactive Switching
+---
 
-Both `BrutxUIPlugin` and `provideLocale` accept reactive locale values. Components update automatically when the language changes:
+## Subtree Overrides and Fallback Locales
+
+### Subtree Locale Override
+
+Use `provideLocale` to isolate a subtree to a specific language without affecting outer modules:
 
 ```vue
-<script setup>
-import { ref, computed } from 'vue'
-import { BrutxUIPlugin, zhCN, en } from 'brutx-ui-vue'
+<script setup lang="ts">
+import { provideLocale, en, CommandInput } from 'brutx-ui-vue'
 
-const isEnglish = ref(false)
-const locale = computed(() => isEnglish.value ? en : zhCN)
+// This component and all descendants render in English
+provideLocale(en)
 </script>
+
+<template>
+    <div class="border-3 border-brutal p-4">
+        <CommandInput />
+    </div>
+</template>
 ```
 
-## Custom Language Packs
+### Custom Fallback Locale
 
-### Partial Override
-
-Use `mergeLocale` for deep merging, overriding only the fields you need:
-
-```ts
-import { zhCN, mergeLocale } from 'brutx-ui-vue/locales'
-
-const customLocale = mergeLocale(zhCN, {
-    command: { placeholder: 'Please enter...' },
-})
-app.use(BrutxUIPlugin, { locale: customLocale })
-```
-
-### Create a New Language Pack
-
-Import the `Locale` type and create a complete language pack:
-
-```ts
-import type { Locale } from 'brutx-ui-vue'
-import { zhCN } from 'brutx-ui-vue/locales'
-
-const jaJP: Locale = {
-    command: {
-        placeholder: 'コマンドを入力...',
-        emptyText: '結果が見つかりません。',
-        dialogTitle: 'コマンドパレット',
-        dialogDescription: '実行するコマンドを検索...',
-    },
-    // ... translations for other components
-}
-
-app.use(BrutxUIPlugin, { locale: jaJP })
-```
-
-## Coexisting with vue-i18n
-
-BrutxUI's locale system is independent of vue-i18n and they do not interfere with each other. It is recommended to synchronize BrutxUI's locale within vue-i18n's locale watch:
-
-```ts
-import { watch, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { provideLocale, zhCN, en } from 'brutx-ui-vue'
-
-const LOCALE_MAP = { 'zh-CN': zhCN, en }
-
-const { locale } = useI18n()
-provideLocale(computed(() => LOCALE_MAP[locale.value] ?? zhCN))
-```
-
-## t() Translation Function
-
-The `t()` function returned by `useLocale()` supports dot-path access and interpolation parameters:
-
-```ts
-import { useLocale } from 'brutx-ui-vue'
-
-const { t } = useLocale()
-
-t('command.placeholder')
-// → '输入命令或搜索...'
-
-t('combobox.selectedCount', { count: 3 })
-// → '已选 3 项'
-
-t('pagination.page', { number: 5 })
-// → '第 5 页'
-```
-
-### Fallback Chain
-
-When `t(path, params?)` is called, it looks up in the following order:
-
-1. Look up the value for `path` in the current locale
-2. If not found → fall back to the custom fallbackLocale (if configured)
-3. If still not found → fall back to the value for `path` in the zh-CN language pack
-4. If still not found → return the path string `path` itself
-
-## Available Language Packs
-
-| Language Pack | Import Path | Description |
-|--------|---------|------|
-| `zhCN` | `brutx-ui-vue` or `brutx-ui-vue/locales` | Simplified Chinese (default) |
-| `en` | `brutx-ui-vue` or `brutx-ui-vue/locales` | English |
-
-## API Reference
-
-### BrutxUIPlugin
-
-Vue plugin for globally configuring the locale.
-
-```ts
-interface BrutxUIPluginOptions {
-    locale?: MaybeRef<Locale>
-}
-
-app.use(BrutxUIPlugin, { locale: en })
-```
-
-### provideLocale
-
-Inject locale configuration within a component subtree. Supports two calling methods:
-
-```ts
-// Method 1: Direct locale (backward compatible)
-function provideLocale(locale: MaybeRef<Locale>): void
-
-// Method 2: Options object with custom fallback
-function provideLocale(options: {
-    locale: MaybeRef<Locale>
-    fallbackLocale?: MaybeRef<Partial<Locale>>
-}): void
-```
-
-#### Custom Fallback Locale
-
-By default, when a key is not found in the current locale, it falls back to `zhCN`. You can customize the fallback chain via `fallbackLocale`:
+If a custom locale only translates a subset of keys, provide a fallback locale:
 
 ```vue
-<script setup>
+<script setup lang="ts">
 import { provideLocale, en } from 'brutx-ui-vue'
 
-// Custom fallback: en → customFallback → zhCN
 provideLocale({
     locale: en,
     fallbackLocale: {
-        button: { confirm: 'OK', cancel: 'Cancel' },
+        popconfirm: { confirm: 'Proceed', cancel: 'Dismiss' },
     },
 })
 </script>
 ```
 
-Fallback order: user locale → fallbackLocale → zhCN → return path string
+Resolution chain: `Active locale` → `Custom fallbackLocale` → `Built-in zhCN` → `Raw path string`.
 
-### useLocale
+---
 
-Get the current locale and translation function.
+## Deep Merging and Customization
 
-```ts
-function useLocale(): {
-    locale: ComputedRef<Locale>
-    t: TranslateFunction
-}
+### Partial Override with mergeLocale
 
-type TranslateFunction = (
-    path: string,
-    params?: Record<string, string | number>
-) => string
-```
-
-### mergeLocale
-
-Deep merge language packs for partial overrides.
+Deep merge with existing locale packs to customize specific messages:
 
 ```ts
-function mergeLocale(base: Locale, override: DeepPartial<Locale>): Locale
+import { zhCN, mergeLocale } from 'brutx-ui-vue'
+
+const customZh = mergeLocale(zhCN, {
+    command: {
+        placeholder: 'Type a command or search docs...',
+    },
+    dataTable: {
+        emptyText: 'No matching records found',
+    },
+})
 ```
 
-## Supported Component Text Keys
+---
 
-| Component | Locale Keys | Has Interpolation Params |
-|------|----------|-----------|
-| Command | `command.placeholder`, `command.emptyText`, `command.dialogTitle`, `command.dialogDescription` | — |
-| Combobox | `combobox.placeholder`, `combobox.multiPlaceholder`, `combobox.searchPlaceholder`, `combobox.emptyText`, `combobox.selectedCount` | `selectedCount`: `{count}` |
-| Pagination | `pagination.firstPage`, `pagination.previousPage`, `pagination.nextPage`, `pagination.lastPage`, `pagination.page`, `pagination.label` | `page`: `{number}` |
-| Carousel | `carousel.previousSlide`, `carousel.nextSlide`, `carousel.goToSlide` | `goToSlide`: `{index}` |
-| Spinner | `spinner.loading` | — |
-| Button | `submitButton.submitting` | — |
-| CopyToClipboard | `copyToClipboard.copy`, `copyToClipboard.copied`, `copyToClipboard.copyFailed` | — |
-| BeforeAfter | `beforeAfter.before`, `beforeAfter.after` | — |
-| AuthCard | `authCard.welcomeBack`, `authCard.signInToContinue`, `authCard.google`, `authCard.github`, `authCard.orEmailLogin`, `authCard.email`, `authCard.password`, `authCard.forgotPassword`, `authCard.signIn`, `authCard.noAccount`, `authCard.register`, `authCard.emailPlaceholder`, `authCard.passwordPlaceholder` | — |
-| DashboardShell | `dashboardShell.sidebarNavigation`, `dashboardShell.signOut`, `dashboardShell.defaultEmail` | — |
-| BrutalistHero | `brutalistHero.title`, `brutalistHero.primaryCtaText`, `brutalistHero.secondaryCtaText`, `brutalistHero.neoBrutalismUI`, `brutalistHero.defaultSubtitle` | — |
-| Toast | `toast.close`, `toast.container` | — |
-| Dialog | `dialog.close` | — |
-| Sheet | `sheet.close` | — |
-| Breadcrumb | `breadcrumb.label`, `breadcrumb.more` | — |
-| TreeView | `treeView.fileTree` | — |
-| Stepper | `stepper.progressSteps`, `stepper.step` | `step`: `{index}`, `{title}` |
-| HeaderSection | `headerSection.defaultLogoText`, `headerSection.defaultCtaText`, `headerSection.menuLabel` | — |
-| FooterSection | `footerSection.defaultLogoText`, `footerSection.defaultDescription`, `footerSection.defaultCopyright` | — |
-| FeedbackForm | `feedbackForm.defaultTitle`, `feedbackForm.defaultDescription`, `feedbackForm.defaultSubmitText`, `feedbackForm.successTitle`, `feedbackForm.successDescription`, `feedbackForm.successConfirmText`, `feedbackForm.nameLabel`, `feedbackForm.emailLabel`, `feedbackForm.subjectLabel`, `feedbackForm.messageLabel` | — |
-| CookieConsent | `cookieConsent.defaultTitle`, `cookieConsent.defaultDescription`, `cookieConsent.defaultAcceptText`, `cookieConsent.defaultDeclineText` | — |
-| ScratchCard | `scratchCard.ariaLabel` | — |
-| SketchyChart | `sketchyChart.lineAriaLabel`, `sketchyChart.barAriaLabel`, `sketchyChart.pieAriaLabel` | — |
-| Card3D | `card3d.ariaLabel` | — |
-| HardcoreInput | `hardcoreInput.invalidInput` | — |
-| CodeBlock | `codeBlock.copy`, `codeBlock.copied`, `codeBlock.expand`, `codeBlock.collapse` | — |
-| Calendar | `calendar.previousMonth`, `calendar.nextMonth` | — |
-| Kanban | `kanban.dropCardsHere`, `kanban.addCard`, `kanban.cardGrabbed`, `kanban.cardReleased`, `kanban.cardMoved`, `kanban.cardMovedToColumn` | `cardMovedToColumn`: `{column}` |
-| Timeline | `timeline.label` | — |
-| PricingSection | `pricingSection.defaultTitle`, `pricingSection.mostPopular`, `pricingSection.perLifetime`, `pricingSection.saasTitle`, `pricingSection.saasMostPopular`, `pricingSection.planStarterName`, `pricingSection.planProName`, `pricingSection.planEnterpriseName` | — |
-| Input | `input.placeholder` | — |
-| NumberInput | `numberInput.placeholder` | — |
-| Textarea | `textarea.placeholder` | — |
+## Coexisting with vue-i18n
+
+When integrating with `vue-i18n`, keep BrutxUI synchronized via a computed property:
+
+```vue
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { provideLocale, zhCN, en } from 'brutx-ui-vue'
+
+const { locale } = useI18n()
+
+// Map vue-i18n locale to BrutxUI pack
+const brutxLocale = computed(() => (locale.value === 'en' ? en : zhCN))
+provideLocale(brutxLocale)
+</script>
+```
+
+---
+
+## useLocale Composable
+
+Read current locale settings or perform interpolated translation:
+
+```vue
+<script setup lang="ts">
+import { useLocale } from 'brutx-ui-vue'
+
+const { locale, t } = useLocale()
+
+// Standard key translation
+const placeholder = t('command.placeholder')
+
+// Translation with interpolation parameters
+const countLabel = t('combobox.selectedCount', { count: 5 }) // "5 selected"
+const pageInfo = t('pagination.page', { number: 3 })         // "Page 3"
+</script>
+```
+
+---
+
+## Supported Component & Key Index (52+ Components)
+
+| Module / Component | Key Prefix | Core Keys & Interpolation Parameters |
+| :--- | :--- | :--- |
+| **Command** | `command.*` | `placeholder`, `emptyText`, `dialogTitle`, `dialogDescription`, `searchLabel` |
+| **Combobox** | `combobox.*` | `placeholder`, `multiPlaceholder`, `searchPlaceholder`, `emptyText`, `selectedCount` (`{count}`), `create` |
+| **Pagination** | `pagination.*` | `firstPage`, `previousPage`, `nextPage`, `lastPage`, `page` (`{number}`), `perPageOption` (`{size}`), `total` (`{total}`) |
+| **Carousel** | `carousel.*` | `previousSlide`, `nextSlide`, `goToSlide` (`{index}`) |
+| **Spinner** | `spinner.*` | `loading` |
+| **Button / Submit** | `submitButton.*` | `submitting` |
+| **CopyToClipboard** | `copyToClipboard.*` | `copy`, `copied`, `copyFailed` |
+| **BeforeAfter** | `beforeAfter.*` | `before`, `after`, `comparisonSlider` |
+| **AuthCard** | `authCard.*` | `welcomeBack`, `signInToContinue`, `google`, `github`, `orEmailLogin`, `email`, `password`, `signIn`, `register` |
+| **DashboardShell** | `dashboardShell.*` | `sidebarNavigation`, `signOut`, `brand`, `openNavigation`, `closeNavigation` |
+| **BrutalistHero** | `brutalistHero.*` | `title`, `primaryCtaText`, `secondaryCtaText`, `neoBrutalismUI`, `defaultSubtitle` |
+| **CardWindowHeader**| `cardWindowHeader.*`| `close`, `minimize`, `maximize` |
+| **Toast** | `toast.*` | `close`, `container` |
+| **Message** | `message.*` | `close` |
+| **Dialog** | `dialog.*` | `close` |
+| **MessageBox** | `messageBox.*` | `confirm`, `cancel` |
+| **Sheet** | `sheet.*` | `close` |
+| **Breadcrumb** | `breadcrumb.*` | `label`, `more` |
+| **TreeView** | `treeView.*` | `fileTree` |
+| **TreeSelect** | `treeSelect.*` | `placeholder`, `emptyText` |
+| **Cascader** | `cascader.*` | `placeholder`, `emptyText` |
+| **Transfer** | `transfer.*` | `availableTitle`, `selectedTitle`, `searchPlaceholder`, `emptyText`, `clearAll`, `selectAll`, `itemCount` (`{count}`) |
+| **Stepper** | `stepper.*` | `progressSteps`, `step` (`{index}`, `{title}`) |
+| **HeaderSection** | `headerSection.*` | `defaultLogoText`, `defaultCtaText`, `menuLabel` |
+| **FooterSection** | `footerSection.*` | `defaultLogoText`, `defaultDescription`, `defaultCopyright` |
+| **FeedbackForm** | `feedbackForm.*` | `defaultTitle`, `defaultDescription`, `defaultSubmitText`, `successTitle`, `nameLabel`, `emailLabel`, `messageLabel` |
+| **CookieConsent** | `cookieConsent.*` | `defaultTitle`, `defaultDescription`, `defaultAcceptText`, `defaultDeclineText` |
+| **DataTable** | `dataTable.*` | `emptyText`, `searchPlaceholder`, `selectedCount` (`{count}`) |
+| **FormWizard** | `formWizard.*` | `previous`, `next`, `submit` |
+| **ChatBubble** | `chatBubble.*` | `delivered`, `read` |
+| **ScratchCard** | `scratchCard.*` | `ariaLabel` |
+| **SketchyChart** | `sketchyChart.*` | `lineAriaLabel`, `barAriaLabel`, `pieAriaLabel` |
+| **Card3D** | `card3d.*` | `ariaLabel` |
+| **Avatar** | `avatar.*` | `fallback` |
+| **HardcoreInput** | `hardcoreInput.*` | `invalidInput` |
+| **CodeBlock** | `codeBlock.*` | `copy`, `copied`, `expand`, `collapse` |
+| **Calendar** | `calendar.*` | `previousMonth`, `nextMonth` |
+| **DatePicker** | `datePicker.*` | `placeholder`, `clear` |
+| **ColorPicker** | `colorPicker.*` | `placeholder`, `clear` |
+| **Kanban** | `kanban.*` | `dropCardsHere`, `addCard`, `cardGrabbed`, `cardReleased`, `cardMoved`, `cardMovedToColumn` (`{column}`) |
+| **Timeline** | `timeline.*` | `label` |
+| **Tabs** | `tabs.*` | `more` |
+| **PricingSection** | `pricingSection.*` | `defaultTitle`, `mostPopular`, `perLifetime`, `planStarterName`, `planProName`, `planEnterpriseName` |
+| **ColorModeSwitcher**| `colorModeSwitcher.*`| `light`, `dark`, `system`, `toggleTheme` |
+| **Input / NumberInput / Textarea** | `input.*` / `numberInput.*` / `textarea.*` | `placeholder` |
+| **VirtualScroll / InfiniteScroll** | `virtualScroll.*` / `infiniteScroll.*` | `emptyText` / `loading` |
+| **Switch / Checkbox**| `switch.*` / `checkbox.*` | `checked`, `unchecked` |
+| **TagsInput** | `tagsInput.*` | `placeholder`, `remove` |
+| **Badge / Alert** | `badge.*` / `alert.*` | `close` |
+| **Popconfirm** | `popconfirm.*` | `confirm`, `cancel` |
+| **Upload** | `upload.*` | `dragText`, `browseText`, `maxSizeError`, `limitError` (`{limit}`), `retry` |
+| **Tour** | `tour.*` | `prev`, `next`, `finish`, `skip` |
+| **Statistic** | `statistic.*` | `empty`, `up`, `down` |
+| **Countdown** | `countdown.*` | `finished` |
