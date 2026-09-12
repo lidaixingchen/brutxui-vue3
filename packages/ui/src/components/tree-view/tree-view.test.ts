@@ -1125,6 +1125,22 @@ describe('TreeViewNode checkbox mode', () => {
         expect(wrapper.attributes('aria-disabled')).toBe('true')
     })
 
+    it('keeps disabled roots out of the tab sequence', () => {
+        const wrapper = mount(TreeView, {
+            props: {
+                nodes: [
+                    { id: 'disabled', label: 'Disabled', disabled: true },
+                    { id: 'enabled', label: 'Enabled' },
+                ],
+            },
+            global: { provide: localeProvide },
+        })
+        const items = wrapper.findAll('[role="treeitem"]')
+
+        expect(items[0].attributes('tabindex')).toBe('-1')
+        expect(items[1].attributes('tabindex')).toBe('0')
+    })
+
     it('sets tabindex=0 on selected node', () => {
         const wrapper = mount(TreeViewNode, {
             props: {
@@ -1629,5 +1645,4 @@ describe('TreeView - Echo write-back and external updates', () => {
         expect(wrapper.text()).not.toContain('Lazy Root')
     })
 })
-
 

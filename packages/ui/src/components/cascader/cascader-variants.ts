@@ -16,6 +16,7 @@ export const cascaderTriggerVariants = cva(
         'focus:shadow-brutal-lg focus:-translate-x-0.5 focus:-translate-y-0.5',
         brutalPress,
         'disabled:cursor-not-allowed disabled:opacity-50',
+        'aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:shadow-none aria-disabled:hover:translate-x-0 aria-disabled:hover:translate-y-0 aria-disabled:active:translate-x-0 aria-disabled:active:translate-y-0 aria-disabled:active:shadow-none',
         // 限定到首个文本 span：line-clamp 会设置 display:-webkit-box，若命中图标容器
         // span（flex 布局）会覆盖其 display，导致图标被裁剪/布局异常
         '[&>span:first-child]:line-clamp-1',

@@ -35,7 +35,7 @@ export const datePickerTriggerVariants = cva(
 )
 
 export const datePickerPanelVariants = cva([
-    'flex',
+    'flex max-w-[100vw] overflow-x-auto',
     'border-3 border-brutal rounded-brutal',
     'bg-brutal-bg',
     'shadow-brutal-lg',

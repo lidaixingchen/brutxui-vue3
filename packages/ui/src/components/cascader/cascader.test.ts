@@ -67,6 +67,21 @@ describe('Cascader', () => {
         expect(trigger.text()).toContain('Pick a path...')
     })
 
+    it('does not open when disabled', async () => {
+        wrapper = mount(Cascader, {
+            ...localeProvide,
+            props: { options, disabled: true },
+            attachTo: document.body,
+        })
+        const trigger = wrapper.find('[role="combobox"]')
+
+        await trigger.trigger('click')
+        await nextTick()
+
+        expect(trigger.attributes('aria-expanded')).toBe('false')
+        expect(wrapper.emitted('update:open')).toBeFalsy()
+    })
+
     it('shows selected path labels in single mode', () => {
         wrapper = mount(Cascader, {
             ...localeProvide,

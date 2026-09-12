@@ -16,6 +16,10 @@ export const treeNodeBaseClasses = [
 // 避免 `border-transparent` 与 `border-brutal` 同时出现在元素上、由样式表源码顺序决定胜负的隐性失效
 export const treeNodeUnselectedClass = 'border-transparent'
 
+export const treeNodeDisabledClass = 'opacity-50 cursor-not-allowed border-transparent shadow-none hover:shadow-none hover:border-transparent hover:translate-x-0 hover:translate-y-0 active:translate-x-0 active:translate-y-0 active:shadow-none'
+
+export const treeNodeFocusedClass = 'ring-2 ring-brutal-ring ring-offset-2 ring-offset-brutal-bg'
+
 // 选中态需显式覆盖文字颜色，否则在 theme-mono/dark 下 --brutal-primary 与 --brutal-fg 相同，会出现黑底黑字/白底白字
 export const treeSelectedClass = 'bg-brutal-primary text-brutal-primary-foreground border-brutal shadow-brutal'
 

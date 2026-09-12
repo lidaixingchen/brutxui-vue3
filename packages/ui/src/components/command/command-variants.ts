@@ -13,7 +13,7 @@ export const commandInputWrapperVariants = cva(
 
 export const commandItemVariants = cva(
     [
-        'relative flex cursor-pointer items-center gap-3 px-3 py-2',
+        'relative flex min-w-0 cursor-pointer items-center gap-3 px-3 py-2',
         'text-sm font-semibold',
         // listbox 项不可聚焦（高亮由 reka Listbox 键盘导航管理），不携带 outline-none
         'select-none',

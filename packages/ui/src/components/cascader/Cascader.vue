@@ -73,8 +73,9 @@ const resolvedEmptyText = computed(() => t('cascader.emptyText'))
 
 const internalOpen = ref(false)
 const open = computed<boolean>({
-    get: () => props.open !== undefined ? props.open : internalOpen.value,
+    get: () => props.disabled ? false : (props.open !== undefined ? props.open : internalOpen.value),
     set: (val) => {
+        if (val && props.disabled) return
         if (props.open === undefined) {
             internalOpen.value = val
         }
@@ -327,6 +328,10 @@ const { hasValue, triggerClasses } = useSelectableTrigger<CascaderValue[] | Casc
     class: () => props.class,
 })
 
+const contentClasses = computed(() =>
+    cn(cascaderContentVariants(), 'p-0 !w-auto max-w-[100vw]', props.dropdownClass)
+)
+
 const displayText = useSelectionDisplayText({
     selectedItems: selectedDisplayPaths,
     placeholder: resolvedPlaceholder,
@@ -575,11 +580,11 @@ function getItemClasses(option: CascaderOption, colIdx: number) {
                 </span>
             </div>
         </PopoverTrigger>
-        <PopoverContent :class="cn(cascaderContentVariants(), 'p-0 !w-auto', dropdownClass)" align="start">
+        <PopoverContent :class="contentClasses" align="start">
             <div v-if="options.length === 0" class="px-4 py-6 text-sm text-brutal-muted-foreground text-center">
                 {{ resolvedEmptyText }}
             </div>
-            <div v-else :id="contentId" class="grid grid-flow-col auto-cols-[180px] divide-x-3 divide-brutal h-64 overflow-x-auto overflow-y-hidden w-max bg-brutal-bg text-brutal-fg">
+            <div v-else :id="contentId" class="grid grid-flow-col auto-cols-[180px] divide-x-3 divide-brutal h-64 max-w-full overflow-x-auto overflow-y-hidden w-max bg-brutal-bg text-brutal-fg">
                 <div
                     v-for="(col, colIdx) in columns"
                     :key="colIdx"
@@ -596,7 +601,7 @@ function getItemClasses(option: CascaderOption, colIdx: number) {
                         @mouseenter="handleMouseEnter(option, colIdx)"
                         @click="handleItemClick(option, colIdx)"
                     >
-                        <div class="flex items-center gap-2 truncate">
+                        <div class="min-w-0 flex flex-1 items-center gap-2 truncate">
                             <Checkbox
                                 v-if="multiple"
                                 :checked="getCheckboxChecked(option, colIdx)"
@@ -604,7 +609,7 @@ function getItemClasses(option: CascaderOption, colIdx: number) {
                                 @update:checked="(checked) => toggleCheckbox(option, colIdx, checked)"
                                 @click.stop
                             />
-                            <span class="truncate">{{ option.label }}</span>
+                            <span class="min-w-0 truncate">{{ option.label }}</span>
                         </div>
                         <ChevronRight
                             v-if="option.children && option.children.length > 0"

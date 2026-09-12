@@ -122,6 +122,9 @@ function emitNodesUpdate() {
 const expandedIds = shallowRef<Set<string>>(new Set(props.defaultExpanded));
 
 const checkedSet = computed(() => new Set(props.checkedIds));
+const firstFocusableRootIndex = computed(() =>
+    localNodes.value.findIndex((node) => !node.disabled && !node.hidden)
+)
 
 function toggleExpand(id: string) {
     const node = findNodeById(localNodes.value, id);
@@ -168,6 +171,7 @@ function getVisibleTreeItems(): HTMLElement[] {
     const root = treeRootRef.value
     if (!root) return []
     return Array.from(root.querySelectorAll<HTMLElement>('[role="treeitem"]:not([data-hidden="true"])'))
+        .filter((item) => item.getAttribute('aria-disabled') !== 'true')
 }
 
 function focusAdjacent(direction: -1 | 1) {
@@ -475,7 +479,7 @@ const rootClass = computed(() => cn('flex flex-col gap-0.5', props.class));
             :selected-id="modelValue"
             :expanded-ids="expandedIds"
             :depth="0"
-            :is-first-root="index === 0 && !modelValue"
+            :is-first-root="index === firstFocusableRootIndex && !modelValue"
             :selection-mode="selectionMode"
             :checked-ids="checkedSet"
             :disabled="node.disabled ?? false"

@@ -92,8 +92,9 @@ const emit = defineEmits<{
 
 const internalOpen = ref(false)
 const open = computed<boolean>({
-    get: () => props.open !== undefined ? props.open : internalOpen.value,
+    get: () => props.disabled ? false : (props.open !== undefined ? props.open : internalOpen.value),
     set: (val) => {
+        if (val && props.disabled) return
         if (props.open === undefined) {
             internalOpen.value = val
         }
@@ -337,7 +338,7 @@ watch(open, (isOpen) => {
 
 const { triggerClasses } = useSelectableTrigger<TreeSelectModelValue>({
     modelValue: () => props.modelValue,
-    baseClass: () => treeSelectTriggerVariants({ size: props.size }),
+    baseClass: () => treeSelectTriggerVariants({ size: props.size, disabled: props.disabled }),
     class: () => props.class,
 })
 

@@ -111,6 +111,21 @@ describe('TreeSelect', () => {
         expect(trigger.attributes('tabindex')).toBe('-1')
     })
 
+    it('does not open when disabled', async () => {
+        wrapper = mount(TreeSelect, {
+            ...localeProvide,
+            props: { nodes, disabled: true },
+            attachTo: document.body,
+        })
+        const trigger = wrapper.find('[role="combobox"]')
+
+        await trigger.trigger('click')
+        await nextTick()
+
+        expect(trigger.attributes('aria-expanded')).toBe('false')
+        expect(wrapper.emitted('update:open')).toBeFalsy()
+    })
+
     it('has aria-expanded attribute', () => {
         wrapper = mount(TreeSelect, {
             ...localeProvide,

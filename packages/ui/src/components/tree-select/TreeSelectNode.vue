@@ -45,6 +45,7 @@ const itemClass = computed(() =>
             selected: isSelected.value,
             variant: props.variant,
             disabled: props.node.disabled ?? false,
+            focused: props.focusedId === props.node.id && !props.node.disabled,
         })
     )
 )
@@ -177,6 +178,7 @@ function handleKeydown(e: KeyboardEvent) {
 <template>
     <div
         role="treeitem"
+        class="focus:outline-hidden"
         :tabindex="!node.disabled && focusedId === node.id ? 0 : -1"
         :aria-expanded="!isLeaf ? isExpanded : undefined"
         :aria-controls="!isLeaf && isExpanded ? contentId : undefined"
@@ -200,7 +202,7 @@ function handleKeydown(e: KeyboardEvent) {
             <Folder v-else-if="!isLeaf" :class="folderClasses" />
             <span v-else :class="spacerClasses" />
 
-            <span :class="[treeLabelBaseClass, 'flex-1']">{{ node.label }}</span>
+            <span :class="[treeLabelBaseClass, 'min-w-0 flex-1']">{{ node.label }}</span>
             <Check
                 v-if="isSelected"
                 :class="checkClasses"

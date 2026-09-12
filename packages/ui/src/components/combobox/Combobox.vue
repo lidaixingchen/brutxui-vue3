@@ -208,7 +208,7 @@ defineExpose({
                 :disabled="disabled"
                 :class="triggerClasses"
             >
-                <span :class="multiple ? 'truncate' : undefined">{{ displayText }}</span>
+                <span class="min-w-0 flex-1 truncate">{{ displayText }}</span>
                 <ChevronsUpDown :class="triggerIconClasses" />
             </button>
         </PopoverTrigger>
@@ -225,7 +225,7 @@ defineExpose({
                         :value="searchQuery"
                         @select="handleCreate"
                     >
-                        {{ createItemLabel }}
+                        <span class="min-w-0 flex-1 truncate">{{ createItemLabel }}</span>
                     </CommandItem>
                     <CommandGroup>
                         <CommandItem
@@ -246,7 +246,7 @@ defineExpose({
                                 v-else
                                 :class="isSelected(option.value) ? checkSelectedClasses : checkUnselectedClasses"
                             />
-                            {{ option.label }}
+                            <span class="min-w-0 flex-1 truncate">{{ option.label }}</span>
                         </CommandItem>
                     </CommandGroup>
                     <div v-if="loading" class="flex items-center justify-center py-2">

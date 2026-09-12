@@ -46,6 +46,7 @@ const emit = defineEmits<{
 }>();
 
 const treeItemRef = ref<HTMLDivElement | null>(null);
+const isFocused = ref(false);
 
 const isLeaf = computed(() => {
     if (props.node.isLeaf !== undefined) return props.node.isLeaf;
@@ -148,7 +149,11 @@ const ariaChecked = computed(() => {
 })
 
 const itemClass = computed(() =>
-    cn(treeItemVariants({ selected: isSelected.value }))
+    cn(treeItemVariants({
+        selected: isSelected.value,
+        disabled: props.disabled,
+        focused: isFocused.value,
+    }))
 );
 
 const chevronClass = computed(() =>
@@ -163,7 +168,23 @@ function handleCheckboxUpdate() {
     if (!props.disabled) emit('check', props.node)
 }
 
+function handleFocusIn(event: FocusEvent) {
+    const target = event.target
+    if (!(target instanceof Element)) return
+    if (target.closest('[role="treeitem"]') === treeItemRef.value) {
+        isFocused.value = true
+    }
+}
+
+function handleFocusOut(event: FocusEvent) {
+    const nextTarget = event.relatedTarget
+    if (!(nextTarget instanceof Element) || nextTarget.closest('[role="treeitem"]') !== treeItemRef.value) {
+        isFocused.value = false
+    }
+}
+
 const handleKeydown = (e: KeyboardEvent) => {
+    if (props.disabled) return;
     // 仅拦截子控件（Checkbox / 重试按钮）自身消费的 Space/Enter，避免 check/toggle 被二次处理；
     // 导航键（方向键/Home/End）子控件不消费，应继续冒泡到 treeitem 以维持树级键盘导航
     if (e.target !== e.currentTarget && (e.key === ' ' || e.key === 'Enter')) return;
@@ -250,14 +271,17 @@ defineExpose({ focus, nodeId: props.node.id });
     <div
         v-show="!node.hidden"
         ref="treeItemRef"
+        class="focus:outline-hidden"
         role="treeitem"
         :data-hidden="node.hidden ? 'true' : undefined"
-        :tabindex="isSelected ? 0 : (isFirstRoot ? 0 : -1)"
+        :tabindex="disabled ? -1 : (isSelected ? 0 : (isFirstRoot ? 0 : -1))"
         :aria-expanded="!isLeaf ? isExpanded : undefined"
         :aria-controls="!isLeaf ? contentId : undefined"
         :aria-selected="isSelected"
         :aria-checked="ariaChecked"
         :aria-disabled="disabled || undefined"
+        @focusin="handleFocusIn"
+        @focusout="handleFocusOut"
         @keydown="handleKeydown"
     >
         <div

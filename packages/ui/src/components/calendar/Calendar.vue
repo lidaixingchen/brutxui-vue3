@@ -142,7 +142,7 @@ const dayBaseClasses = computed(() => {
     )
 })
 const dayOutsideClasses = computed(() => 'text-brutal-muted-foreground opacity-40')
-const dayDisabledClasses = computed(() => 'opacity-40 cursor-not-allowed')
+const dayDisabledClasses = computed(() => 'opacity-40 cursor-not-allowed pointer-events-none')
 
 const DAY_CLASSES_CACHE_LIMIT = 128
 const dayClassesCache = new Map<string, string>()
@@ -323,35 +323,62 @@ function getDayEvents(day: { date?: Date; startDate?: Date }) {
 <style>
 /* 提高特异性以替代 !important，允许下游覆盖 */
 .brutx-calendar .brutal-selected {
-    background-color: var(--brutal-primary);
-    border: 3px solid var(--brutal-border-color);
-    border-radius: var(--brutal-radius);
-    box-shadow: var(--brutal-shadow-offset-x) var(--brutal-shadow-offset-y) 0 var(--brutal-shadow-color);
+    background-color: var(--brutal-primary, #FF6B6B);
+    border: 3px solid var(--brutal-border-color, #000000);
+    border-radius: var(--brutal-radius, 0px);
+    box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0 var(--brutal-shadow-color, #000000);
 }
 
 .brutx-calendar .brutal-selected-content {
-    color: var(--brutal-primary-foreground);
+    color: var(--brutal-primary-foreground, #000000);
     font-weight: 900;
 }
 
 .brutx-calendar .brutal-range {
-    background-color: var(--brutal-accent);
-    border-radius: var(--brutal-radius);
+    background-color: var(--brutal-accent, #FFE66D);
+    border-radius: var(--brutal-radius, 0px);
 }
 
 .brutx-calendar .brutal-range-content {
-    color: var(--brutal-accent-foreground);
+    color: var(--brutal-accent-foreground, #000000);
 }
 
 .brutx-calendar {
-    --vc-rounded-full: var(--brutal-radius);
-    --vc-highlight-solid-bg: var(--brutal-primary);
-    --vc-highlight-light-bg: var(--brutal-accent);
-    --vc-highlight-outline-bg: var(--brutal-bg);
-    --vc-highlight-outline-border: var(--brutal-border-color);
-    --vc-highlight-solid-content-color: var(--brutal-primary-foreground);
-    --vc-highlight-light-content-color: var(--brutal-accent-foreground);
-    --vc-highlight-outline-content-color: var(--brutal-fg);
+    --vc-color: var(--brutal-fg, #000000);
+    --vc-bg: var(--brutal-bg, #ffffff);
+    --vc-border: var(--brutal-border-color, #000000);
+    --vc-rounded-lg: var(--brutal-radius, 0px);
+    --vc-rounded-full: var(--brutal-radius, 0px);
+    --vc-highlight-solid-bg: var(--brutal-primary, #FF6B6B);
+    --vc-highlight-light-bg: var(--brutal-accent, #FFE66D);
+    --vc-highlight-outline-bg: var(--brutal-bg, #ffffff);
+    --vc-highlight-outline-border: var(--brutal-border-color, #000000);
+    --vc-highlight-solid-content-color: var(--brutal-primary-foreground, #000000);
+    --vc-highlight-light-content-color: var(--brutal-accent-foreground, #000000);
+    --vc-highlight-outline-content-color: var(--brutal-fg, #000000);
+}
+
+.brutx-calendar.vc-container {
+    background: var(--brutal-bg, #ffffff);
+    color: var(--brutal-fg, #000000);
+    border: var(--brutal-border-width, 3px) solid var(--brutal-border-color, #000000);
+}
+
+.brutx-calendar .vc-container {
+    background: var(--brutal-bg, #ffffff);
+    color: var(--brutal-fg, #000000);
+    border: none;
+}
+
+.brutx-calendar .vc-pane-container,
+.brutx-calendar .vc-pane-layout,
+.brutx-calendar .vc-pane,
+.brutx-calendar .vc-header,
+.brutx-calendar .vc-arrows-container,
+.brutx-calendar .vc-weeks,
+.brutx-calendar .vc-week {
+    background: transparent;
+    color: var(--brutal-fg, #000000);
 }
 
 .brutx-calendar .vc-day-layer.vc-day-box-center-center {
@@ -364,7 +391,7 @@ function getDayEvents(day: { date?: Date; startDate?: Date }) {
 .brutx-calendar .vc-highlight-bg-solid,
 .brutx-calendar .vc-highlight-bg-light,
 .brutx-calendar .vc-highlight-bg-outline {
-    border-radius: var(--brutal-radius);
+    border-radius: var(--brutal-radius, 0px);
 }
 
 .brutx-calendar .vc-arrow {
@@ -373,16 +400,16 @@ function getDayEvents(day: { date?: Date; startDate?: Date }) {
     justify-content: center;
     width: 1.5rem;
     height: 1.5rem;
-    border: 3px solid var(--brutal-border-color);
-    border-radius: var(--brutal-radius);
-    background-color: var(--brutal-bg);
-    box-shadow: var(--brutal-shadow-offset-x) var(--brutal-shadow-offset-y) 0 var(--brutal-shadow-color);
+    border: 3px solid var(--brutal-border-color, #000000);
+    border-radius: var(--brutal-radius, 0px);
+    background-color: var(--brutal-bg, #ffffff);
+    box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0 var(--brutal-shadow-color, #000000);
     transition: all 0.15s ease;
-    color: var(--brutal-fg);
+    color: var(--brutal-fg, #000000);
 }
 
 .brutx-calendar .vc-arrow:hover {
-    box-shadow: calc(var(--brutal-shadow-offset-x) + 2px) calc(var(--brutal-shadow-offset-y) + 2px) 0 var(--brutal-shadow-color);
+    box-shadow: calc(var(--brutal-shadow-offset-x, 4px) + 2px) calc(var(--brutal-shadow-offset-y, 4px) + 2px) 0 var(--brutal-shadow-color, #000000);
     transform: translate(-1px, -1px);
 }
 
@@ -402,23 +429,23 @@ function getDayEvents(day: { date?: Date; startDate?: Date }) {
     font-size: 0.75rem;
     letter-spacing: -0.025em;
     text-transform: uppercase;
-    color: var(--brutal-fg);
+    color: var(--brutal-fg, #000000);
     background: none;
     border: none;
     padding: 0;
 }
 
 .brutx-calendar .vc-title:hover {
-    color: var(--brutal-primary);
+    color: var(--brutal-primary, #FF6B6B);
 }
 
 .brutx-calendar .vc-weekday {
     font-weight: 900;
     font-size: 0.625rem;
     text-transform: uppercase;
-    color: var(--brutal-fg);
+    color: var(--brutal-fg, #000000);
     padding: 0.25rem 0;
-    border-bottom: 3px solid var(--brutal-border-color);
+    border-bottom: 3px solid var(--brutal-border-color, #000000);
 }
 
 .brutx-calendar .vc-weeks {
