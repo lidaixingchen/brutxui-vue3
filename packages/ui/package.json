@@ -533,6 +533,7 @@
         "*.css"
     ],
     "scripts": {
+        "generate": "pnpm prebuild:tokens && pnpm prebuild:scan && pnpm prebuild:component-index && pnpm prebuild:exports",
         "build": "pnpm prebuild:tokens && pnpm prebuild:scan && pnpm prebuild:component-index && pnpm prebuild:exports && vite build && pnpm postbuild:exports && npm run build:preflight",
         "prebuild:scan": "tsx scripts/prebuild-scan.ts",
         "prebuild:tokens": "tsx scripts/generate-styles-tokens.ts",

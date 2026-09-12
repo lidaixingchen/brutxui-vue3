@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { createApp, defineComponent, h } from 'vue'
+import { createApp, defineComponent, h, ref, nextTick } from 'vue'
 import { createToast, provideToast, useToast, destroyFallback, DEFAULT_TOAST_DURATION } from './useToast'
 import { MAX_TOASTS } from '../lib/defaults'
 
@@ -500,36 +500,107 @@ describe('useToast', () => {
             warnSpy.mockRestore()
         })
 
-        it('ref-counts component-level cleanup: clears fallback toasts only when last consumer unmounts', () => {
+        it('ref-counts component-level cleanup: clears fallback toasts only when last consumer unmounts', async () => {
             destroyFallback()
 
             const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
-            const Consumer = defineComponent({
+            const showChild1 = ref(true)
+            const showChild2 = ref(true)
+            let appToast: ReturnType<typeof useToast> | null = null
+
+            const Consumer1 = defineComponent({
                 setup() {
                     const toast = useToast()
-                    toast.addToast({ title: 'Fallback toast' })
+                    appToast = toast
+                    toast.addToast({ title: 'Toast 1' })
                     return () => h('div')
                 },
             })
 
-            const app1 = createApp(Consumer)
-            const app2 = createApp(Consumer)
+            const Consumer2 = defineComponent({
+                setup() {
+                    const toast = useToast()
+                    toast.addToast({ title: 'Toast 2' })
+                    return () => h('div')
+                },
+            })
+
+            const Root = defineComponent({
+                setup() {
+                    return () => h('div', [
+                        showChild1.value ? h(Consumer1) : null,
+                        showChild2.value ? h(Consumer2) : null,
+                    ])
+                },
+            })
+
+            const app = createApp(Root)
+            const el = document.createElement('div')
+            app.mount(el)
+
+            // 同一个 App 下两个消费者共享该 App 的 fallback 实例，各自添加的 toast 都保留
+            expect(appToast!.toasts.value.length).toBe(2)
+
+            // 卸载第一个：同 App 内仍有第二个消费者使用，toast 不应被清空
+            showChild1.value = false
+            await nextTick()
+            expect(appToast!.toasts.value.length).toBe(2)
+
+            // 卸载第二个：同 App 引用计数归零，fallback 实例被销毁，toast 被清空
+            showChild2.value = false
+            await nextTick()
+            expect(appToast!.toasts.value.length).toBe(0)
+
+            app.unmount()
+            warnSpy.mockRestore()
+            destroyFallback()
+        })
+
+        it('isolates fallback toasts between independent apps', () => {
+            destroyFallback()
+            const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+            let toast1: ReturnType<typeof useToast> | null = null
+            let toast2: ReturnType<typeof useToast> | null = null
+
+            const Consumer1 = defineComponent({
+                setup() {
+                    toast1 = useToast()
+                    toast1.addToast({ title: 'App 1 Toast' })
+                    return () => h('div')
+                },
+            })
+
+            const Consumer2 = defineComponent({
+                setup() {
+                    toast2 = useToast()
+                    toast2.addToast({ title: 'App 2 Toast' })
+                    return () => h('div')
+                },
+            })
+
+            const app1 = createApp(Consumer1)
+            const app2 = createApp(Consumer2)
             const el1 = document.createElement('div')
             const el2 = document.createElement('div')
             app1.mount(el1)
             app2.mount(el2)
 
-            // 两个消费者共享 fallback 单例，各自添加的 toast 都保留
-            expect(useToast().toasts.value.length).toBe(2)
+            // 两个独立的 App 拥有各自隔离的 fallback 实例
+            expect(toast1!.toasts.value.length).toBe(1)
+            expect(toast2!.toasts.value.length).toBe(1)
+            expect(toast1!.toasts.value[0].title).toBe('App 1 Toast')
+            expect(toast2!.toasts.value[0].title).toBe('App 2 Toast')
 
-            // 卸载第一个：仍有第二个消费者使用单例，toast 不应被清空
+            // 卸载 app1 只清理 app1 的 fallback，不影响 app2
             app1.unmount()
-            expect(useToast().toasts.value.length).toBe(2)
+            expect(toast1!.toasts.value.length).toBe(0)
+            expect(toast2!.toasts.value.length).toBe(1)
 
-            // 卸载第二个：引用计数归零，fallback 单例被销毁，toast 被清空
+            // 卸载 app2 清理 app2 的 fallback
             app2.unmount()
-            expect(useToast().toasts.value.length).toBe(0)
+            expect(toast2!.toasts.value.length).toBe(0)
 
             warnSpy.mockRestore()
             destroyFallback()

@@ -15,7 +15,7 @@ export default defineConfig({
         environment: 'happy-dom',
         setupFiles: ['./src/vitest.setup.ts'],
         include: ['src/**/*.{test,spec}.{ts,tsx}', 'scripts/**/*.{test,spec}.{ts,tsx}'],
-        exclude: ['src/**/*.browser.test.ts', ...defaultExclude],
+        exclude: ['src/**/*.browser.test.ts', 'src/ssr/**/*.test.ts', ...defaultExclude],
         pool: 'threads',
         maxWorkers: 4,
         deps: {

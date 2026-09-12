@@ -234,11 +234,11 @@ export type { ColorPickerProps, ColorPickerEmits, ColorPickerSize, ColorPickerFo
 export { default as Toast } from './components/toast/Toast.vue'
 export { default as ToastContainer } from './components/toast/ToastContainer.vue'
 export { toastVariants } from './components/toast/toast-variants'
-export { useToast, provideToast, createToast, destroyFallback as destroyToastFallback } from './composables/useToast'
+export { useToast, provideToast, createToast, destroyFallback as destroyToastFallback, TOAST_KEY } from './composables/useToast'
 export type { ToastItem, ToastPosition, ToastStackOptions, PromiseToastOptions } from './composables/useToast'
 
-export { useTheme, provideTheme, createTheme, destroyFallback as destroyThemeFallback } from './composables/useTheme'
-export type { ThemeName, ColorMode, ResolvedColorMode } from './composables/useTheme'
+export { useTheme, provideTheme, createTheme, destroyFallback as destroyThemeFallback, THEME_KEY } from './composables/useTheme'
+export type { ThemeName, ColorMode, ResolvedColorMode, ThemeSnapshot, ThemeOptions } from './composables/useTheme'
 
 export { default as ColorModeSwitcher } from './components/color-mode-switcher/ColorModeSwitcher.vue'
 

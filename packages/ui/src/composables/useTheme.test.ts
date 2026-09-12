@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { effectScope, defineComponent, h } from 'vue'
+import { effectScope, defineComponent, h, ref, nextTick } from 'vue'
 import { createTheme, provideTheme, useTheme, destroyFallback } from './useTheme'
 import type { ThemeName, ColorMode } from './useTheme'
 
@@ -455,58 +455,116 @@ describe('useTheme', () => {
         })
 
         it('ref-counts component-level cleanup: destroy only when last component unmounts', async () => {
-            // 多组件共享 fallback 单例时，仅最后一个组件卸载才销毁单例，
-            // 避免提前 destroy 导致其他仍使用单例的组件丢失 mediaQuery 监听器
             const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+            const showChild1 = ref(true)
+            const showChild2 = ref(true)
+            let capturedTheme: ReturnType<typeof useTheme> | null = null
 
             const Consumer = defineComponent({
                 setup() {
                     const theme = useTheme()
+                    capturedTheme = theme
                     return () => h('div', theme.theme.value)
                 },
             })
 
-            // 挂载两个消费组件
-            const w1 = mount(Consumer)
-            const w2 = mount(Consumer)
-            const fallbackTheme = useTheme() // 取同一个单例
-            const destroySpy = vi.spyOn(fallbackTheme, 'destroy')
+            const Parent = defineComponent({
+                setup() {
+                    return () => h('div', [
+                        showChild1.value ? h(Consumer) : null,
+                        showChild2.value ? h(Consumer) : null,
+                    ])
+                },
+            })
 
-            // 卸载第一个：不应触发 destroy（仍有第二个组件在用）
-            w1.unmount()
+            const wrapper = mount(Parent)
+            expect(capturedTheme).toBeDefined()
+            const destroySpy = vi.spyOn(capturedTheme!, 'destroy')
+
+            // 卸载第一个：同 App 内仍有第二个组件在用，不应触发 destroy
+            showChild1.value = false
+            await nextTick()
             expect(destroySpy).not.toHaveBeenCalled()
 
             // 卸载第二个：引用计数归零，应触发 destroy
-            w2.unmount()
+            showChild2.value = false
+            await nextTick()
             expect(destroySpy).toHaveBeenCalled()
 
+            wrapper.unmount()
             consoleSpy.mockRestore()
         })
 
         it('ref-counts cleanup: destroying first component does not break second component', async () => {
             const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
+            const showChild1 = ref(true)
+            let capturedTheme: ReturnType<typeof useTheme> | null = null
+
             const Consumer = defineComponent({
                 setup() {
                     const theme = useTheme()
+                    capturedTheme = theme
                     return () => h('div', theme.theme.value)
                 },
             })
 
-            const w1 = mount(Consumer)
-            const w2 = mount(Consumer)
+            const Parent = defineComponent({
+                setup() {
+                    return () => h('div', [
+                        showChild1.value ? h(Consumer) : null,
+                        h(Consumer),
+                    ])
+                },
+            })
 
-            // 卸载第一个：单例仍存活，第二个组件应仍可访问
+            const wrapper = mount(Parent)
+            expect(capturedTheme).toBeDefined()
+            expect(capturedTheme!.theme.value).toBe('classic')
+
+            showChild1.value = false
+            await nextTick()
+
+            expect(capturedTheme!.theme.value).toBe('classic')
+            capturedTheme!.setTheme('mono')
+            expect(capturedTheme!.theme.value).toBe('mono')
+
+            wrapper.unmount()
+            consoleSpy.mockRestore()
+        })
+
+        it('isolates fallback state between independent apps', () => {
+            const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+            let theme1: ReturnType<typeof useTheme> | null = null
+            let theme2: ReturnType<typeof useTheme> | null = null
+
+            const Consumer1 = defineComponent({
+                setup() {
+                    theme1 = useTheme()
+                    return () => h('div')
+                },
+            })
+            const Consumer2 = defineComponent({
+                setup() {
+                    theme2 = useTheme()
+                    return () => h('div')
+                },
+            })
+
+            const w1 = mount(Consumer1)
+            const w2 = mount(Consumer2)
+
+            expect(theme1).not.toBe(theme2)
+            theme1!.setTheme('pastel')
+            expect(theme1!.theme.value).toBe('pastel')
+            expect(theme2!.theme.value).toBe('classic')
+
             w1.unmount()
-            const fallbackTheme = useTheme()
-            expect(fallbackTheme).toBeDefined()
-            expect(fallbackTheme.theme.value).toBe('classic')
-
-            // 第二个组件仍可正常工作
-            fallbackTheme.setTheme('mono')
-            expect(fallbackTheme.theme.value).toBe('mono')
-
+            expect(theme2!.theme.value).toBe('classic')
             w2.unmount()
+
             consoleSpy.mockRestore()
         })
     })
@@ -528,7 +586,6 @@ describe('useTheme', () => {
             expect(() => {
                 theme.setTheme('mono')
                 theme.applyColorMode('dark')
-                // colorMode.value IS updated (set before DOM ops in applyColorMode)
                 expect(theme.colorMode.value).toBe('dark')
                 theme.setCustomVariable('--test', 'value')
                 theme.removeCustomVariable('--test')
@@ -536,10 +593,13 @@ describe('useTheme', () => {
                 theme.destroy()
             }).not.toThrow()
 
-            // initTheme 无保存值统一按 system 语义处理（SSR 下 DOM 操作被守卫跳过）
-            expect(theme.colorMode.value).toBe('system')
-            // theme.value is NOT updated because applyTheme returns early before setting it
-            expect(theme.theme.value).toBe('classic')
+            expect(theme.colorMode.value).toBe('dark')
+            expect(theme.theme.value).toBe('mono')
+
+            const freshTheme = scope.run(() => createThemeSSR())!
+            freshTheme.initTheme()
+            expect(freshTheme.colorMode.value).toBe('light')
+            expect(freshTheme.theme.value).toBe('classic')
         })
     })
 

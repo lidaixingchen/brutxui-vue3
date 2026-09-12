@@ -11,6 +11,9 @@ export default defineConfig({
         },
         dedupe: ['vue'],
     },
+    optimizeDeps: {
+        include: ['@vue/server-renderer'],
+    },
     test: {
         browser: {
             enabled: true,

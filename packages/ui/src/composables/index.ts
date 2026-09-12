@@ -11,14 +11,14 @@
  */
 
 // UI 交互类
-export { useToast, provideToast, createToast, destroyFallback as destroyToastFallback } from './useToast'
-export type { ToastItem, ToastPosition, ToastStackOptions, PromiseToastOptions } from './useToast'
+export { useToast, provideToast, createToast, destroyFallback as destroyToastFallback, TOAST_KEY } from './useToast'
+export type { ToastItem, ToastPosition, ToastStackOptions, PromiseToastOptions, UseToastReturn } from './useToast'
 
 export { useMessage, destroyFallback as destroyMessageFallback, destroyMessageSystem } from './useMessage'
 export type { MessageItem, MessageOptions, MessageType, UseMessageReturn } from './useMessage'
 
-export { useTheme, provideTheme, createTheme, destroyFallback as destroyThemeFallback } from './useTheme'
-export type { ThemeName, ColorMode, ResolvedColorMode } from './useTheme'
+export { useTheme, provideTheme, createTheme, destroyFallback as destroyThemeFallback, THEME_KEY } from './useTheme'
+export type { ThemeName, ColorMode, ResolvedColorMode, ThemeSnapshot, ThemeOptions, UseThemeReturn } from './useTheme'
 
 export { destroyBrutxUI, destroyBrutxFallbacks } from './destroyFallbacks'
 

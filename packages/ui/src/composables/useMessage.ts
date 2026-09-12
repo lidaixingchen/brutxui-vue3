@@ -154,6 +154,17 @@ function addMessage(options: MessageOptions): () => void {
 }
 
 export function useMessage(): UseMessageReturn {
+    if (!isClient) {
+        const noop = () => () => {}
+        return {
+            show: noop,
+            info: noop,
+            success: noop,
+            warning: noop,
+            error: noop,
+        }
+    }
+
     if (getCurrentInstance()) {
         const currentGeneration = generation
         refCount++

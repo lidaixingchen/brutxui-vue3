@@ -60,7 +60,7 @@ export interface UseToastReturn {
     promise: <T>(promiseOrFn: Promise<T> | (() => Promise<T>), options: PromiseToastOptions<T>) => Promise<T>
 }
 
-const TOAST_KEY: InjectionKey<UseToastReturn> = Symbol('brutx-toast')
+export const TOAST_KEY: InjectionKey<UseToastReturn> = Symbol('brutx-toast')
 
 export function createToast(isFallback = false, globalOptions?: { grouping?: boolean }): UseToastReturn {
     const toasts = ref<ToastItem[]>([])
@@ -127,11 +127,6 @@ export function createToast(isFallback = false, globalOptions?: { grouping?: boo
         toasts.value = toasts.value.filter((t) => t.id !== id)
     }
 
-    /**
-     * @deprecated 定时器已迁移至 Toast.vue 渲染层（由渲染层的 duration 定时器驱动离场，
-     * 动画完成后 emit('close') 经 @close="removeToast(toast.id)" 回到状态层）。
-     * 调用本方法没有任何效果；如需要清除当前所有 toast，请使用 clearToasts()。
-     */
     function clearAllTimers() {}
 
     function clearToasts() {
@@ -217,8 +212,8 @@ export function createToast(isFallback = false, globalOptions?: { grouping?: boo
 }
 
 // 共享 fallback 单例：懒创建 + 引用计数清理 + beforeunload 注册/移除统一由 lib/fallback-manager 管理
-// （destroy 后重建的单例会重新注册 beforeunload 监听）
 const fallbackManager = createFallbackManager<UseToastReturn>({
+    name: 'useToast',
     isClient,
     createInstance: () => createToast(true),
     destroyInstance: (instance) => instance.clearToasts(),
@@ -235,11 +230,10 @@ export function provideToast(globalOptions?: { grouping?: boolean }): UseToastRe
 }
 
 export function useToast(): UseToastReturn {
-    const toast = inject(TOAST_KEY)
+    const toast = inject(TOAST_KEY, null)
     if (toast) return toast
-    if (typeof console !== 'undefined') {
+    if (isClient && typeof console !== 'undefined') {
         console.warn('[BrutxUI] useToast() called without provideToast(). Falling back to shared singleton. Call provideToast() in your root component.')
     }
-    // 共享单例状态下，一处的 clearToasts 仍会清空全部；如需按作用域隔离请在应用根部调用 provideToast()
     return fallbackManager.acquire()
 }
