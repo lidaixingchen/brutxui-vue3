@@ -1,71 +1,121 @@
 ---
 title: CLI
-description: Learn how to use the brutx-vue command-line tool
+description: Learn how to use the brutx-vue command-line tool, workflows, and configuration specifications
 translated: true
 ---
 
 # CLI
 
-The `brutx-vue` CLI helps you initialize BrutxUI in your project and add components with a single command.
+`brutx-vue` is the official BrutxUI command-line tool, designed to help you quickly scaffold new projects, initialize configurations, manage component lifecycles, and run enterprise-grade diagnostics and self-healing.
 
 ## Overview
+
+You can run the CLI without local installation via package managers:
 
 ```bash
 npx brutx-vue@latest <command>
 ```
 
-The CLI automatically handles dependency installation, file creation, and configuration updates.
+Alternatively, install it locally as a development dependency:
 
-## brutx-vue init
+```bash
+pnpm add -D brutx-vue
+# or
+npm install -D brutx-vue
+```
 
-Initialize BrutxUI in your project. It sets up the base configuration:
+---
+
+## Project Setup
+
+### brutx-vue create
+
+Scaffold a brand-new Vue 3 project pre-configured with BrutxUI from scratch:
+
+```bash
+npx brutx-vue@latest create <project-name>
+```
+
+The create command downloads the template, sets up the directory layout, installs required dependencies, and executes `init` automatically.
+
+#### Examples
+
+Create a default Vite + Vue 3 + TypeScript project:
+
+```bash
+npx brutx-vue@latest create my-app
+```
+
+Use the Nuxt template and specify bun as the package manager:
+
+```bash
+npx brutx-vue@latest create my-nuxt-app --template nuxt --package-manager bun
+```
+
+#### Options
+
+| Flag | Description | Default |
+| :--- | :--- | :--- |
+| `-t, --template <template>` | Project template (`default`, `nuxt`) | `default` |
+| `--package-manager <pm>` | Package manager (`pnpm`, `npm`, `yarn`, `bun`) | `pnpm` |
+| `-c, --cwd <path>` | Target working directory | Current directory |
+| `-y, --yes` | Skip confirmation prompts and use defaults | `false` |
+
+---
+
+### brutx-vue init
+
+Initialize BrutxUI configuration in an existing Vue 3 project:
 
 ```bash
 npx brutx-vue@latest init
 ```
 
-The init command will:
+The init command executes the following setup steps automatically:
 
-1. Detect your project framework (Vite, Nuxt, etc.)
-2. Install required dependencies (`reka-ui`, `class-variance-authority`, `clsx`, `tailwind-merge`, `@lucide/vue`)
-3. Create the `cn()` utility function in `src/lib/utils.ts`
-4. Inject `--brutal-*` CSS custom properties into your stylesheet
-5. Add BrutxUI styles (including Tailwind utility class layers) to your CSS
-6. Set up the component directory structure
+1. Detects project framework (Vite + Vue, Nuxt, etc.) and Tailwind CSS version (v4 / v3)
+2. Discovers global CSS entry files and `tsconfig.json` path aliases
+3. Installs core dependencies (`reka-ui`, `class-variance-authority`, `clsx`, `tailwind-merge`, `@lucide/vue`)
+4. Generates the `cn()` utility function in `src/lib/utils.ts`
+5. Injects Neo-Brutalist design tokens and utility markers into your stylesheet
+6. Creates the `components.json` configuration file and components directory
+7. Detects Monorepo workspaces (pnpm / lerna / turbo) with support for root-level shared dependencies
 
-Init also supports monorepo workspace detection. If a `pnpm-workspace.yaml`, `lerna.json`, or `turbo.json` file is found, the CLI will detect the workspace root and offer to install shared dependencies there while keeping component-specific dependencies in the current package. Use `--workspace-root` to explicitly specify the workspace root.
-
-### Options
+#### Options
 
 | Flag | Description | Default |
-|------|-------------|---------|
-| `--yes` / `-y` | Skip prompts and use defaults | `false` |
-| `--defaults` / `-d` | Use default configuration | `false` |
-| `--cwd <path>` | Set working directory | Current directory |
-| `--force` / `-f` | Force overwrite existing configuration | `false` |
-| `--silent` / `-s` | Silent output | `false` |
-| `--vscode` | Generate VS Code snippets | Auto-detected |
-| `--workspace-root <path>` | Specify monorepo workspace root directory | Auto-detected |
+| :--- | :--- | :--- |
+| `-y, --yes` | Skip confirmation prompts and use detected defaults | `false` |
+| `-d, --defaults` | Use official default configuration | `false` |
+| `-c, --cwd <path>` | Set working directory | Current directory |
+| `-f, --force` | Force overwrite existing `components.json` and styles | `false` |
+| `-s, --silent` | Silent output | `false` |
+| `--vscode` | Generate VS Code intelligent snippets | `false` |
+| `--workspace-root <path>` | Explicitly specify monorepo workspace root directory | Auto-detected |
 
-## brutx-vue add
+---
 
-Add individual components to your project:
+## Component Lifecycle Management
+
+### brutx-vue add
+
+Add components to your project. The command recursively resolves and downloads all dependencies (subcomponents, composables, and locales) in topological order:
 
 ```bash
-npx brutx-vue@latest add <component...>
+npx brutx-vue@latest add [components...]
 ```
 
-### Examples
+If no component names are provided, the CLI launches an interactive checklist.
 
-Add a single component:
+#### Examples
+
+Add single or multiple components:
 
 ```bash
+# Add a single component
 npx brutx-vue@latest add button
-```
 
-Add multiple components:
-
-```bash
+# Add multiple components
 npx brutx-vue@latest add button card dialog input
 ```
 
@@ -75,176 +125,103 @@ Add all available components:
 npx brutx-vue@latest add --all
 ```
 
-### Version Pinning
+#### Options
 
-Use the `@` syntax to pin a component to a specific version. The string after `@` is injected as a git ref (branch, tag, commit) into the registry source URL, so all component files are fetched from that ref:
+| Flag | Description | Default |
+| :--- | :--- | :--- |
+| `-a, --all` | Add all available components from the registry | `false` |
+| `-y, --yes` | Skip confirmation prompts | `false` |
+| `-o, --overwrite` | Overwrite existing component files | `false` |
+| `-m, --merge` | When component already exists, merge with 3-way merge | `false` |
+| `-p, --path <path>` | Custom directory path to install component files into | Alias resolved path |
+| `-c, --cwd <path>` | Set working directory | Current directory |
+| `-s, --silent` | Silent output | `false` |
+| `--dry-run` | Simulate installation plan without writing files to disk | `false` |
+| `-r, --registry <url>` | Override registry path or URL | Official source |
+| `--no-cache` | Skip local registry cache, forcing remote fetch | `false` |
+| `--offline` | Offline mode: read only local cache, disable network requests | `false` |
+| `--vscode` | Update VS Code snippets library | `false` |
+| `--filter <package>` | **Monorepo**: Target workspace package in a monorepo | — |
+| `--shared` | **Monorepo**: Target the shared UI package in a monorepo | `false` |
+
+#### Version Pinning with `@version` Syntax
+
+Pin components to specific releases using the `@` syntax:
 
 ```bash
 npx brutx-vue@latest add button@1.2.0
 ```
 
-#### Interaction with `--registry`
+- **Custom Registries**: `@version` works with GitHub raw URL registries (e.g., `https://raw.githubusercontent.com/{owner}/{repo}/{ref}/...`). The CLI dynamically replaces `{ref}` with the requested version.
+- **Default Source Behavior**: The official default source uses GitHub Release assets, which always fetch the latest stable release.
+- **Version Mismatch Warning**: If an already-installed component's version differs from the requested version, the CLI emits a non-blocking warning.
 
-`@version` only works with GitHub raw URL registries (matching `https://raw.githubusercontent.com/{owner}/{repo}/{ref}/...`). The CLI replaces the `{ref}` segment of the current `--registry` URL with the `@version`, leaving the rest of the path intact. This means it composes cleanly with custom forks:
+---
 
-```bash
-# Pull button from the v1.2.0 tag of your personal fork
-npx brutx-vue@latest add button@1.2.0 \
-  --registry https://raw.githubusercontent.com/<you>/<fork>/main/registry
-```
+### brutx-vue list
 
-**Version is ignored on the default source**: the default source is a GitHub Release asset (`https://github.com/lidaixingchen/brutxui-vue3/releases/latest/download`), which has no git ref concept, so an explicit `@version` is **ignored** and the latest release is always fetched. To pin a historical version, explicitly switch `--registry` to a GitHub raw URL source.
-
-If `--registry` has some other non-raw structure (e.g. a local path or self-hosted HTTP registry), using `@version` throws a `REGISTRY_VERSION_UNSUPPORTED` error. Remove `@version` or switch `--registry` to a GitHub raw URL.
-
-#### Version mismatch warning
-
-When the installed component version differs from the requested version, the CLI prints a warning (non-blocking):
-
-```text
-⚠ Version mismatch: "button" is already installed at version 1.0.0, but you requested 1.2.0.
-```
-
-#### Version constraints in `update`
-
-`update` **skips** version-pinned components by default (it should not silently change a ref the user explicitly locked). To update across versions, pass `--across-versions`:
+List all installed components in your project along with file counts and runtime dependencies:
 
 ```bash
-# Skips button@1.0.0 by default
-npx brutx-vue@latest update
-
-# Explicitly update across the locked version
-npx brutx-vue@latest update --across-versions
+npx brutx-vue@latest list
 ```
 
-### Options
+#### Check for Updates
+
+Pass `--check-updates` to verify component integrity against the remote registry and flag outdated components:
+
+```bash
+npx brutx-vue@latest list --check-updates
+```
+
+#### Options
 
 | Flag | Description | Default |
-|------|-------------|---------|
-| `--all` | Add all available components | `false` |
-| `--yes` / `-y` | Skip confirmation prompts | `false` |
-| `--cwd <path>` | Set working directory | Current directory |
-| `--overwrite` | Overwrite existing component files | `false` |
-| `--path <path>` / `-p` | Specify the path to add components to | — |
-| `--silent` / `-s` | Silent output | `false` |
-| `--dry-run` | Simulate adding without writing files | `false` |
-| `--registry <registry>` / `-r` | Specify registry path or URL | — |
-| `--no-cache` | Skip registry cache | `false` |
-| `--offline` | Use only cached data, never hit the network (same as `BRUTX_OFFLINE=1`) | `false` |
-| `--vscode` | Update VS Code snippets with new components | `false` |
+| :--- | :--- | :--- |
+| `-c, --cwd <path>` | Set working directory | Current directory |
+| `--check-updates` | Check remote registry integrity to display available updates | `false` |
+| `--json` | Output structured JSON format | `false` |
+| `-r, --registry <url>` | Specify registry path or URL for update checks | Configured source |
+| `--no-cache` | Skip cache when checking updates | `false` |
+| `--offline` | Use only cached data for checking updates | `false` |
+| `-s, --silent` | Silent output | `false` |
 
-## brutx-vue doctor
+---
 
-Check project configuration health and diagnose common issues:
+### brutx-vue info
+
+Inspect metadata for a specific component (dependency tree, files, category, examples, and local installation status):
 
 ```bash
-npx brutx-vue@latest doctor
+npx brutx-vue@latest info <component>
 ```
 
-The doctor command will check:
-
-1. Whether `components.json` exists and is valid
-2. Whether the `$schema` field is present
-3. Whether the `$version` config version is up to date
-4. Whether the `style` field is present
-5. Tailwind CSS file contains BrutxUI design tokens
-6. Whether configured alias paths point to real files/directories
-7. Whether required dependencies are installed (`reka-ui`, `class-variance-authority`, `clsx`, `tailwind-merge`)
-8. Whether the `cn()` utility function exists
-9. File integrity of installed components
-10. Reachability of each registry source (skipped with `--offline`)
-11. Registry cache entry count and total size (offline availability)
-
-### Examples
-
-Basic diagnostics:
-
-```bash
-npx brutx-vue@latest doctor
-```
-
-Auto-fix fixable issues:
-
-```bash
-npx brutx-vue@latest doctor --fix --yes
-```
-
-Apply only a specific fix:
-
-```bash
-npx brutx-vue@latest doctor --fix-only add-schema
-```
-
-Output JSON format report:
-
-```bash
-npx brutx-vue@latest doctor --json
-```
-
-### Options
+#### Options
 
 | Flag | Description | Default |
-|------|-------------|---------|
-| `--cwd <path>` | Set working directory | Current directory |
-| `--fix` | Auto-fix fixable issues | `false` |
-| `--fix-only <fixId>` | Apply only the specified fix | — |
-| `--json` | Output JSON format report | `false` |
-| `--yes` / `-y` | Skip confirmation prompts | `false` |
-| `--silent` / `-s` | Silent output | `false` |
-| `--offline` | Skip registry reachability probes and cache stats | `false` |
-| `--sbom` | Generate a CycloneDX 1.5 SBOM and exit (skips doctor checks) | `false` |
-| `--sbom-output <path>` | SBOM output file path | `./brutx-sbom.json` |
+| :--- | :--- | :--- |
+| `-c, --cwd <path>` | Set working directory | Current directory |
+| `--json` | Output component details in JSON format | `false` |
+| `-r, --registry <url>` | Specify registry path or URL | Configured source |
+| `--offline` | Offline mode (reads from cache) | `false` |
+| `-s, --silent` | Silent output | `false` |
 
-### Output Example
+---
 
-```text
-Brutx-Vue Doctor
+### brutx-vue diff
 
-  [PASS] components.json exists — components.json found.
-  [PASS] $schema field present — $schema field is present.
-  [PASS] config version — Configuration version is 1.
-  [PASS] style field present — style is "brutalism".
-  [PASS] tailwind.css contains BrutxUI tokens — CSS file contains BrutxUI tokens.
-  [PASS] aliases.components → @/components — Directory exists.
-  [PASS] aliases.utils → @/lib/utils — File exists.
-  [PASS] tailwindcss installed — ^4.3.0 installed.
-  [PASS] reka-ui installed — ^2.9.9 installed.
-  [PASS] cn() function exists — cn() function found.
-
-  Summary: 10 passed, 0 warnings, 0 errors
-```
-
-### Auto-Fixable Issues
-
-| Issue | Fix Action |
-| --- | --- |
-| Missing `$schema` | Write schema URL |
-| Missing or outdated `$version` | Update to current version |
-| Missing `style` | Set to `brutalism` |
-| CSS missing BrutxUI tokens | Inject CSS styles |
-| Component directory missing | Create directory |
-| Utils file missing | Create utils file |
-| `cn()` function missing | Add cn() function |
-
-## brutx-vue diff
-
-Compare locally installed components against the latest registry versions:
+Compare local component implementations against the latest registry version:
 
 ```bash
 npx brutx-vue@latest diff [components...]
 ```
 
-### Examples
+#### Examples
 
-Compare a single component:
+Compare one or multiple components:
 
 ```bash
 npx brutx-vue@latest diff button
-```
-
-Compare multiple components:
-
-```bash
 npx brutx-vue@latest diff button card dialog
 ```
 
@@ -254,541 +231,382 @@ Compare all installed components:
 npx brutx-vue@latest diff --all
 ```
 
-Output JSON format:
-
-```bash
-npx brutx-vue@latest diff --all --json
-```
-
-### Options
+#### Options
 
 | Flag | Description | Default |
-|------|-------------|---------|
+| :--- | :--- | :--- |
 | `--all` | Compare all installed components | `false` |
-| `--cwd <path>` | Set working directory | Current directory |
-| `--registry <path>` / `-r` | Specify local registry path | — |
-| `--json` | Output JSON format | `false` |
-| `--silent` / `-s` | Silent output | `false` |
-| `--no-cache` | Skip registry cache | `false` |
-| `--offline` | Use only cached data, never hit the network | `false` |
+| `-c, --cwd <path>` | Set working directory | Current directory |
+| `-r, --registry <url>` | Target registry path or URL | Configured source |
+| `--json` | Output JSON report with complete file patches | `false` |
+| `--no-cache` | Skip cache and pull latest remote files | `false` |
+| `--offline` | Compare using cached data only | `false` |
+| `-s, --silent` | Silent output | `false` |
 
-### Output Example
+---
 
-Compare a single component:
+### brutx-vue update
 
-```text
-Component Diff: button
-
-  Status: MODIFIED (1 file changed)
-
-  src/components/ui/button/Button.vue
-    --- registry/src/components/ui/button/Button.vue
-    +++ local/src/components/ui/button/Button.vue
-    -  variant?: 'default' | 'destructive' | 'outline' | 'ghost';
-    +  variant?: 'default' | 'destructive' | 'outline' | 'ghost' | 'link';
-    +  loading?: boolean;
-
-  Summary: 1 file modified, 0 files unchanged
-```
-
-Compare all components:
-
-```text
-Component Diff Report
-
-  MODIFIED (2)
-    — button    (1 file changed)
-    — card      (2 files changed)
-
-  UP-TO-DATE (5)
-    — badge
-    — dialog
-    — input
-    — select
-    — toast
-
-  Summary: 2 modified, 5 up-to-date, 0 local-only
-```
-
-## brutx-vue update
-
-Check for and apply component updates from the registry:
+Update installed components to the latest registry version using 3-way merge to preserve your local custom edits:
 
 ```bash
 npx brutx-vue@latest update [components...]
 ```
 
-When updating, the CLI compares remote components against your local files and performs a 3-way merge using baseline records, preserving your local modifications whenever possible.
+#### Examples
 
-### Examples
-
-Update a specific component:
+Update specific components:
 
 ```bash
-npx brutx-vue@latest update button
+npx brutx-vue@latest update button card
 ```
 
-Update all outdated components without prompts:
+Update all outdated components:
 
 ```bash
-npx brutx-vue@latest update --all --yes
+npx brutx-vue@latest update --all
 ```
 
-Preview which components have updates available:
+Simulate updates without writing to disk:
 
 ```bash
 npx brutx-vue@latest update --dry-run
 ```
 
-### Options
+#### Conflict Strategy Options
+
+When local modifications collide with incoming updates, control merge behavior with conflict strategy flags:
 
 | Flag | Description | Default |
-|------|-------------|---------|
-| `--all` / `-a` | Update all outdated components | `false` |
-| `--yes` / `-y` | Skip confirmation prompts | `false` |
-| `--cwd <path>` | Set working directory | Current directory |
-| `--dry-run` | Show which components would be updated without writing | `false` |
-| `--registry <registry>` / `-r` | Specify registry URL | — |
-| `--no-cache` | Skip registry cache | `false` |
-| `--offline` | Use only cached data, never hit the network | `false` |
-| `--silent` / `-s` | Silent output | `false` |
-| `--across-versions` | Allow updating version-pinned components across their locked version (see [Version Pinning](#version-pinning)) | `false` |
+| :--- | :--- | :--- |
+| `-a, --all` | Update all outdated installed components | `false` |
+| `-y, --yes` | Skip confirmation prompts | `false` |
+| `-c, --cwd <path>` | Set working directory | Current directory |
+| `--dry-run` | Simulate update without writing to disk | `false` |
+| `--across-versions` | Allow updating version-pinned components across their locked version | `false` |
+| `--ours` | **Conflict Strategy**: Accept all local changes in conflicts | `false` |
+| `--theirs` | **Conflict Strategy**: Accept all remote changes in conflicts | `false` |
+| `-f, --force` | **Overwrite Mode**: Force full overwrite, ignoring local changes | `false` |
+| `--ci` | **CI Gate**: Run in CI mode, exit with code 1 on unresolved conflicts | `false` |
+| `-r, --registry <url>` | Specify registry URL | Configured source |
+| `--no-cache` | Skip cache and download latest assets | `false` |
+| `--offline` | Use only cached data | `false` |
+| `-s, --silent` | Silent output | `false` |
 
-## brutx-vue list
+---
 
-List all installed components in your project, including file counts and dependencies:
+### brutx-vue remove
 
-```bash
-npx brutx-vue@latest list
-```
-
-### Examples
-
-List installed components:
-
-```bash
-npx brutx-vue@latest list
-```
-
-Output as JSON:
-
-```bash
-npx brutx-vue@latest list --json
-```
-
-### Options
-
-| Flag | Description | Default |
-|------|-------------|---------|
-| `--cwd <path>` | Set working directory | Current directory |
-| `--json` | Output JSON format | `false` |
-| `--silent` / `-s` | Silent output | `false` |
-| `--registry <path>` / `-r` | Specify registry path or URL (for update checks) | — |
-| `--check-updates` | Check registry integrity to show available updates | `false` |
-| `--no-cache` | Skip registry cache when checking updates | `false` |
-| `--offline` | Use only cached data, never hit the network | `false` |
-
-### Output Example
-
-```text
-Installed Components
-
-  Name        Files   Dependencies
-  ──────────  ──────  ────────────────────────
-  badge       2       reka-ui
-  button      3       reka-ui, @lucide/vue
-  card        2       none
-  dialog      2       reka-ui, @lucide/vue
-
-  4 component(s) installed
-```
-
-## brutx-vue info
-
-Show detailed information about a component, including registry metadata, local files, dependencies, and installation status:
-
-```bash
-npx brutx-vue@latest info <component>
-```
-
-### Examples
-
-Show info for a component:
-
-```bash
-npx brutx-vue@latest info button
-```
-
-Output as JSON:
-
-```bash
-npx brutx-vue@latest info button --json
-```
-
-### Options
-
-| Flag | Description | Default |
-|------|-------------|---------|
-| `--cwd <path>` | Set working directory | Current directory |
-| `--json` | Output JSON format | `false` |
-| `--registry <registry>` / `-r` | Specify registry path or URL | — |
-| `--silent` / `-s` | Silent output | `false` |
-| `--offline` | Use only cached data, never hit the network | `false` |
-
-## brutx-vue remove
-
-Remove installed components from your project. Also detects and cleans up orphaned files (composables, utilities, locales) that are no longer referenced by any remaining component:
+Safely remove components and automatically detect orphan dependencies:
 
 ```bash
 npx brutx-vue@latest remove <components...>
 ```
 
-### Examples
+The remove command deletes component directories, checks reverse dependencies, detects orphan composables or locales that are no longer referenced, and prompts for cleanup.
 
-Remove a single component:
-
-```bash
-npx brutx-vue@latest remove button
-```
-
-Remove multiple components:
-
-```bash
-npx brutx-vue@latest remove button card dialog
-```
-
-Preview removal without deleting files:
-
-```bash
-npx brutx-vue@latest remove button --dry-run
-```
-
-### Options
+#### Options
 
 | Flag | Description | Default |
-|------|-------------|---------|
-| `--yes` / `-y` | Skip confirmation prompts | `false` |
-| `--cwd <path>` | Set working directory | Current directory |
+| :--- | :--- | :--- |
+| `-y, --yes` | Skip confirmation prompts | `false` |
+| `-c, --cwd <path>` | Set working directory | Current directory |
 | `--dry-run` | Show which files would be removed without deleting | `false` |
-| `--silent` / `-s` | Silent output | `false` |
+| `-s, --silent` | Silent output | `false` |
 
-## brutx-vue create
+---
 
-Scaffold a new Vue 3 project with BrutxUI pre-configured. Creates the project, installs dependencies, and runs `init` automatically:
+## Maintenance & Diagnostics
 
-```bash
-npx brutx-vue@latest create <project-name>
-```
+### brutx-vue doctor
 
-### Examples
-
-Create a project with the default Vite + Vue 3 + TypeScript template:
+Comprehensive project health check and automated self-healing engine. Audits configuration integrity, Tailwind tokens, directory structures, dependencies, and code tampering:
 
 ```bash
-npx brutx-vue@latest create my-app
+npx brutx-vue@latest doctor [options]
 ```
 
-Create a Nuxt 3 project:
+#### Diagnostic Categories
+- **env**: Runtime environment and package manager detection
+- **config**: `components.json` schema, version, and alias validity
+- **tailwind**: Tailwind CSS version and `--brutal-*` token injection status
+- **structure**: Component directory layout and `cn()` utility integrity
+- **integrity**: Component content hashes, file integrity, and audit log health
+- **custom**: User-defined or third-party diagnostic rule plugins
 
-```bash
-npx brutx-vue@latest create my-app --template nuxt
-```
-
-Create a project using npm as the package manager:
-
-```bash
-npx brutx-vue@latest create my-app --package-manager npm
-```
-
-### Options
+#### Diagnostic and CI Gate Options
 
 | Flag | Description | Default |
-|------|-------------|---------|
-| `--template <template>` / `-t` | Project template (`default`, `nuxt`) | `default` |
-| `--package-manager <pm>` | Package manager to use (`pnpm`, `npm`, `yarn`, `bun`) | `pnpm` |
-| `--cwd <path>` | The directory to create the project in | Current directory |
-| `--yes` / `-y` | Skip confirmation prompts | `false` |
+| :--- | :--- | :--- |
+| `--fix` | Automatically fix fixable diagnostic issues | `false` |
+| `--fix-only <fixId>` | Apply only the specified fix (see Fix ID table below) | — |
+| `--dry-run` | Combined with `--fix`: Preview repair plan (Plan Preview + Unified Diff) without disk writes | `false` |
+| `--ci` | CI mode: Defaults to `github` reporter when running in CI | `false` |
+| `--reporter <type>` | Reporter format (`pretty`, `github`, `json`, `sarif`, `junit`) | `pretty` |
+| `--fail-on <level>` | Exit with code 1 on specified issue level (`error`, `warn`, `drift`) | `error` |
+| `--output-file <path>` | Write diagnostic report to specified file path (e.g. SARIF / JUnit) | — |
+| `--category <category>` | Filter checks by category (`env`, `config`, `tailwind`, `structure`, `integrity`) | All |
+| `--rule <ruleId>` | Run specific diagnostic rule by ID | All |
+| `--json` | Output JSON report (equivalent to `--reporter json`) | `false` |
+| `--offline` | Skip remote registry network reachability probes | `false` |
+| `--sbom` | Generate CycloneDX 1.5 SBOM for installed components and exit (see [Security Guide](/en/guide/security)) | `false` |
+| `--sbom-output <path>` | Output path for generated SBOM file | `./brutx-sbom.json` |
+| `-c, --cwd <path>` | Set working directory | Current directory |
+| `-y, --yes` | Skip confirmation prompts for fixes | `false` |
+| `-s, --silent` | Silent output | `false` |
 
-## brutx-vue registry
+#### Fix ID Reference Table
 
-Manage the registry sources of your project (`registries` field in `components.json`). Sources are tried in order: when the primary source fails, the CLI automatically falls back to mirror sources for zero-config CDN redundancy.
+Pass these IDs to `--fix-only <fixId>`:
 
-### registry list
+| Fix ID | Scenario | Self-Healing Action |
+| :--- | :--- | :--- |
+| `add-schema` | Missing `$schema` in `components.json` | Writes official Schema validation URL |
+| `add-config-version` | Missing or outdated `$version` in configuration | Updates to current configuration version |
+| `set-style` | Missing `style` field | Sets style to `brutalism` |
+| `inject-css-tokens` | Global CSS missing BrutxUI token marker block | Injects design token block into stylesheet |
+| `create-components-dir` | Components directory does not exist | Creates components target directory |
+| `create-utils-file` | `src/lib/utils.ts` missing | Generates utility file with `cn()` |
+| `add-cn-function` | Missing `cn()` export in utils file | Appends `cn()` export to utils file |
+| `restore-integrity` | Installed component corrupted or modified | Restores baseline code from registry |
+| `remove-orphans` | Orphaned shared files with zero references | Safely removes unused orphan files |
 
-Print all resolved sources and their reachability:
+#### Dry-Run Repair Plan Preview (`--fix --dry-run`)
+Preview planned changes and unified file diffs before applying repairs:
+
+```bash
+npx brutx-vue@latest doctor --fix --dry-run
+```
+
+---
+
+### brutx-vue cache
+
+Manage local component and registry metadata caches:
+
+```bash
+npx brutx-vue@latest cache clear [--max-age <days>]
+```
+
+#### Examples
+
+Clear all local caches:
+
+```bash
+npx brutx-vue@latest cache clear
+```
+
+Keep active cache entries from the last 7 days and clear older entries:
+
+```bash
+npx brutx-vue@latest cache clear --max-age 7
+```
+
+---
+
+### brutx-vue registry
+
+Manage registry sources in `components.json` (`registries` array) with automated fallback redundancy:
+
+#### List resolved sources and reachability
 
 ```bash
 npx brutx-vue@latest registry list
 ```
 
-| Flag | Description | Default |
-|------|-------------|---------|
-| `--cwd <path>` | Set working directory | Current directory |
-| `--json` | Output JSON format | `false` |
-| `--offline` | Skip network probes, only report configured sources | `false` |
-
-### registry add
-
-Append a source to the `registries` list in `components.json` (deduplicated):
+#### Add a registry source
 
 ```bash
-npx brutx-vue@latest registry add https://mirror.example.com
+npx brutx-vue@latest registry add https://mirror.example.com/registry
 ```
 
-| Flag | Description | Default |
-|------|-------------|---------|
-| `--cwd <path>` | Set working directory | Current directory |
-
-### registry remove
-
-Remove a source from `components.json`. Removing the last custom source deletes the `registries` field and restores the official default source:
+#### Remove a registry source (reverts to official default if all custom sources removed)
 
 ```bash
-npx brutx-vue@latest registry remove https://mirror.example.com
+npx brutx-vue@latest registry remove https://mirror.example.com/registry
 ```
 
-| Flag | Description | Default |
-|------|-------------|---------|
-| `--cwd <path>` | Set working directory | Current directory |
+---
 
-## `components.json` Configuration File
+## Configuration File: `components.json`
 
-The `components.json` file is created by `brutx-vue init` and stores your project configuration. All CLI commands read this file to locate components, utilities, and styles.
+Running `init` generates `components.json` in your project root:
 
 ```json
 {
-    "$schema": "https://brutx-vue.dev/schema.json",
-    "$version": 1,
-    "style": "brutalism",
-    "tailwind": {
-        "config": "tailwind.config.js",
-        "css": "src/assets/index.css"
-    },
-    "aliases": {
-        "components": "@/components",
-        "utils": "@/lib/utils",
-        "composables": "@/composables"
-    }
-}
-```
-
-| Field | Description |
-| --- | --- |
-| `$schema` | JSON schema URL for IDE validation and autocompletion. |
-| `$version` | Configuration format version. Used by `doctor` to detect outdated configs that may need migration. |
-| `style` | The design style variant. Currently only `brutalism` is supported. |
-| `tailwind.config` | Path to your Tailwind CSS config file. Empty string for Tailwind v4 (no config file needed). |
-| `tailwind.css` | Path to your main CSS file where BrutxUI design tokens are injected. |
-| `aliases.components` | Import alias for the components directory (e.g. `@/components`). |
-| `aliases.utils` | Import alias for the utility file containing `cn()` (e.g. `@/lib/utils`). |
-| `aliases.composables` | Import alias for the composables directory (e.g. `@/composables`). |
-| `sharedBase` | Optional monorepo shared base directory. |
-| `registries` | Multi-registry source list (primary + mirrors), tried in order; defaults to the official source (GitHub Release assets) when unset. |
-| `requireSignature` | Project-level strict signature mode: when `true`, enforces manifest signature verification (lower priority than the `BRUTX_REQUIRE_SIGNATURE` env var and the `--require-signature` flag, see [Supply Chain Security](#supply-chain-security-signature-sbom)). |
-| `trustedPublicKeys` | Project-level additional trusted public keys (`{ keyId, publicKey }` array), appended on top of the official root keys. |
-
-### Optional fields example
-
-All fields below are optional and silently compatible when absent:
-
-```json
-{
+  "$schema": "https://lidaixingchen.github.io/brutxui-vue3/schema.json",
+  "$version": 1,
+  "style": "brutalism",
+  "tailwind": {
+    "config": "",
+    "css": "src/index.css",
+    "tokensFile": "src/styles/tokens.css"
+  },
+  "aliases": {
+    "components": "@/components",
+    "utils": "@/lib/utils",
+    "composables": "@/composables",
+    "locales": "@/locales",
+    "directives": "@/directives"
+  },
+  "workspace": {
+    "mode": "standalone",
+    "targetPackage": "ui",
+    "sharedUtilsPackage": "shared",
+    "installDependenciesTo": "targetPackage"
+  },
   "registries": [
-    "https://raw.githubusercontent.com/<you>/<fork>/main/packages/registry/registry",
-    "https://mirror.example.com/registry"
+    "https://github.com/lidaixingchen/brutxui-vue3/releases/latest/download"
   ],
-  "requireSignature": true,
-  "trustedPublicKeys": [
-    {
-      "keyId": "my-org-v1",
-      "publicKey": "<base64-SPKI-DER>",
-      "note": "Internal mirror signing key"
-    }
-  ]
+  "requireSignature": false,
+  "rules": {
+    "tailwind.tokens": "error",
+    "integrity.drift": "warn"
+  },
+  "plugins": []
 }
 ```
 
-## Global Options
+### Configuration Field Reference
 
-The following options apply to all commands and must be placed before the subcommand:
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `$schema` | `string` | JSON Schema URL for IDE validation and autocompletion |
+| `$version` | `number` | Configuration version number (migrated automatically by CLI) |
+| `style` | `string` | Theme style, currently locked to `brutalism` |
+| `tailwind.config` | `string` | Tailwind configuration file path (empty string for Tailwind v4) |
+| `tailwind.css` | `string` | Global CSS entry file path |
+| `tailwind.tokensFile` | `string` | *(Optional)* Independent design tokens file path |
+| `aliases.components` | `string` | Component import alias (default: `@/components`) |
+| `aliases.utils` | `string` | Utility functions import alias (default: `@/lib/utils`) |
+| `aliases.composables`| `string` | Composables import alias (default: `@/composables`) |
+| `aliases.locales` | `string` | *(Optional)* Locales dictionary import alias |
+| `aliases.directives` | `string` | *(Optional)* Vue custom directives import alias |
+| `workspace` | `object` | *(Optional)* Monorepo workspace configuration |
+| `workspace.mode` | `string` | Workspace mode: `standalone` / `shared-package` / `app-local` / `hybrid` |
+| `workspace.installDependenciesTo` | `string` | Dependency installation target: `targetPackage` / `caller` / `both` |
+| `registries` | `string[]` | *(Optional)* Multi-registry list with ordered fallback |
+| `requireSignature` | `boolean` | *(Optional)* Enforce strict Ed25519 signature verification |
+| `trustedPublicKeys` | `array` | *(Optional)* Project-level trusted Ed25519 SPKI public keys |
+| `rules` | `object` | *(Optional)* Diagnostic rule severity overrides (`"off"` / `"warn"` / `"error"`) |
+| `plugins` | `string[]` | *(Optional)* Custom diagnostic rule plugins (relative path or npm package) |
+
+---
+
+## Global Options & Environment Variables
+
+### Global Flags
+Global options must be placed before subcommands:
 
 ```bash
 npx brutx-vue@latest [global-options] <command> [command-options]
 ```
 
-| Flag | Description | Default |
-|------|-------------|---------|
-| `--verbose` | Show detailed error output (equivalent to `-v`) | `false` |
-| `--dry-run` | Global dry-run: simulate all write operations without touching disk (stacks with command-level `--dry-run`) | `false` |
-| `--require-signature` | Strict signature mode: fail when manifest signature is invalid (default is warn, see [Supply Chain Security](#supply-chain-security-signature-sbom)) | `false` |
-| `--verbose-level <level>` | Verbose output level (`1`=steps, `2`=cache/network details, `3`=stack traces) | `0` |
-| `-v` | Equivalent to `--verbose-level 1` | — |
-| `-vv` | Equivalent to `--verbose-level 2` | — |
-| `-vvv` | Equivalent to `--verbose-level 3` | — |
+- `--dry-run`: Global dry-run mode simulating write operations without disk mutation
+- `--require-signature`: Strict signature verification mode, failing immediately on invalid signatures
+- `--verbose-level <1|2|3>`: Verbose level (`1`=steps, `2`=details/network, `3`=trace/stacks)
+- `-v` / `-vv` / `-vvv`: Equivalent to `--verbose-level 1 / 2 / 3`
+- `--verbose`: Show full error stacks (equivalent to `-v`)
 
-### Global dry-run
+### Environment Variable Matrix
 
-The `--dry-run` global flag activates dry-run semantics for all commands without needing to add `--dry-run` after each subcommand. Can also be activated via the `BRUTX_DRY_RUN=1` environment variable:
+Configure global CLI behaviors via environment variables in CI, Docker, or scripts:
 
-```bash
-# These two are equivalent
-BRUTX_DRY_RUN=1 npx brutx-vue@latest add button
-npx brutx-vue@latest --dry-run add button
+| Variable | Allowed Values | CLI Flag | Description |
+| :--- | :--- | :--- | :--- |
+| `BRUTX_OFFLINE` | `1` | `--offline` | Enable offline mode, reading only local cache |
+| `BRUTX_NO_CACHE` | `1` | `--no-cache` | Skip local cache, always fetching from registry |
+| `BRUTX_DRY_RUN` | `1` | `--dry-run` | Activate global dry-run simulation |
+| `BRUTX_VERBOSE` | `1` / `2` / `3` | `-v` / `-vv` / `-vvv` | Set logging verbosity level |
+| `BRUTX_REQUIRE_SIGNATURE`| `1` | `--require-signature` | Enforce strict signature verification gate |
+| `BRUTX_REGISTRY_PUBLIC_KEYS` | JSON string | — | Inject additional trusted Ed25519 public keys |
+| `BRUTX_CACHE_DIR` | Directory string | — | Custom directory for local registry cache (default: `.brutx/cache`) |
+| `BRUTX_CACHE_MAX` | Positive integer | — | Maximum number of cached items before LRU eviction (default: `200`) |
+| `BRUTX_CACHE_MAX_BYTES` | Integer bytes | — | Maximum total byte size for the cache directory |
+
+---
+
+## CI/CD Pipeline Integration
+
+Integrate `brutx-vue doctor` into GitHub Actions or GitLab CI as a quality and compliance gate.
+
+### GitHub Actions Workflow Example
+
+Create `.github/workflows/brutx-check.yml`:
+
+```yaml
+name: BrutxUI Integrity & Quality Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Run Brutx Doctor Gate
+        run: |
+          # Fails PR if configuration errors, missing dependencies, or component code drift occur
+          npx brutx-vue@latest doctor --ci --fail-on drift --reporter github
+
+      - name: Generate Security SBOM
+        if: always()
+        run: |
+          npx brutx-vue@latest doctor --sbom --sbom-output ./brutx-sbom.json
+
+      - name: Upload SBOM Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brutx-sbom
+          path: ./brutx-sbom.json
 ```
 
-When activated, `add`/`update`/`remove` only print paths that would be written; no files are modified.
+---
 
-### Verbose levels
+## Supply Chain Security & Compliance Overview
 
-Control output verbosity via `-v`/`-vv`/`-vvv` or the `BRUTX_VERBOSE=<n>` environment variable:
+BrutxUI source distribution includes built-in anti-tampering and compliance verification:
 
-| Level | Label | Meaning |
-| --- | --- | --- |
-| `1` | `[STEP]` | Step-level, e.g. "resolving dependencies" |
-| `2` | `[DETAIL]` | Cache/network details, e.g. "cache hit button@v1" |
-| `3` | `[TRACE]` | Stack/debug details |
+- **Canonical Integrity Recomputation**: Automatically recalculates SHA-256 hashes against manifest contents, guarding against CDN tampering and MITM attacks;
+- **Ed25519 Digital Signatures**: Verifies releases against the official root public key out-of-the-box; supports smooth multi-key rotation for private enterprise registries;
+- **CycloneDX 1.5 SBOM**: Generate comprehensive software bills of materials via `doctor --sbom`, fully compatible with Dependency-Track, Snyk, and Trivy;
+- **Local Audit Logs**: Operations are recorded automatically in `.brutx/audit.log`.
 
-## Audit Log
+> [!TIP]
+> **Explore Comprehensive Supply Chain Security**  
+> For cryptographic signature details, enterprise private key management, CycloneDX 1.5 specifications, and security audits, read our dedicated **[Supply Chain Security & Compliance Guide](/en/guide/security)**.
 
-After `add`/`remove`/`update`/`diff` commands execute, a JSONL record is appended to `.brutx/audit.log` containing:
+---
 
-- `timestamp`: ISO timestamp
-- `command`: command type (`add`/`remove`/`update`/`diff`)
-- `components`: list of components operated on
-- `registrySource`: registry source
-- `success`: whether the operation succeeded
-- `dryRun`: whether it was a dry-run
-- `error`: error message on failure
+## Error Codes & Troubleshooting Reference
 
-`doctor` reads the last 5 failure records from the audit log as diagnostic clues:
+When an operation fails, the CLI provides standardized error codes with actionable guidance:
 
-```bash
-npx brutx-vue@latest doctor
-```
-
-Example output:
-
-```text
-⚠ audit log health — 1 recent failure(s) in audit log: update(button).
-  Latest: update failed at 2026-07-16T02:30:00Z — Network unreachable
-```
-
-## .brutx Directory & Version Control
-
-After running component commands, a `.brutx/` directory is created in your project root to track installed components and baseline states for updates.
-
-### Recommended `.gitignore`
-
-Add the temporary cache directory to your `.gitignore`, and keep the remaining metadata tracked in Git to support team collaboration and smooth component updates:
-
-```gitignore
-# BrutxUI local temporary cache
-.brutx/cache/
-```
-
-## Supply Chain Security: Signature & SBOM
-
-P1-6 introduces manifest Ed25519 signature verification and CycloneDX 1.5 SBOM generation to detect supply chain tampering.
-
-### Manifest Signature
-
-At registry build time, `registry-manifest.json` carries an `integrity` field (canonical sha256 of the content) plus `signature` + `keyId` (an Ed25519 signature over the integrity). When fetching the manifest, the CLI performs two checks:
-
-1. **Integrity recomputation**: recomputes sha256 over `name`/`schemaVersion`/`registryVersion`/`items` and compares it to the `integrity` field — this closes the gap of "tampering with content fields while keeping the original signature" (`buildTimestamp`/`gitCommit`/`integrity`/`signature`/`keyId` are excluded from the hash so builds stay idempotent).
-2. **Signature verification**: looks up the trusted public key by `keyId` and verifies the signature was issued by a trusted maintainer.
-
-#### Trusted Public Keys
-
-Trusted public keys are resolved by priority, with the official root key always merged in as a trust anchor:
-
-1. **Project-level** `trustedPublicKeys` in `components.json` (highest priority; same `keyId` overrides the official key)
-2. **Environment variable** `BRUTX_REGISTRY_PUBLIC_KEYS` (JSON array)
-3. **Built-in official root keys** `OFFICIAL_PUBLIC_KEYS` (zero-config fallback)
-
-```bash
-# Inject custom public keys via env var
-BRUTX_REGISTRY_PUBLIC_KEYS='[{"keyId":"v1","publicKey":"<base64-SPKI-DER>"}]' \
-  npx brutx-vue@latest add button
-```
-
-`publicKey` is a base64-encoded SPKI DER (single-line, easy to embed in JSON). **The official registry works out of the box**: with no keys configured, the CLI verifies the official registry signature using the built-in public key. Unsigned (legacy) manifests stay backward-compatible and are skipped.
-
-#### Default warn vs strict mode
-
-On signature failure, the **default behavior is `warn`** (print a warning and continue) so that projects without configured keys are not blocked during migration:
-
-```text
-[Signature] Manifest signed with unknown keyId "v1". No matching trusted public key found.
-  (use --require-signature to enforce)
-```
-
-To fail hard on signature errors, activate strict mode:
-
-```bash
-# Via flag
-npx brutx-vue@latest --require-signature add button
-
-# Or via environment variable
-BRUTX_REQUIRE_SIGNATURE=1 npx brutx-vue@latest add button
-```
-
-In strict mode, a signature failure throws `REGISTRY_SIGNATURE_INVALID` (exit 1). The `integrity` field still backstops tampering: even when signature verification is skipped, tampered content will fail because integrity no longer matches.
-
-#### Key Rotation
-
-Public keys are indexed by `keyId`. When rotating keys:
-
-1. New key signs the manifest: add the new public key to `BRUTX_REGISTRY_PUBLIC_KEYS`
-2. Transition period: the old key remains in the list, old manifests stay trusted
-3. Revoke the old key: remove it from the env var
-
-### SBOM Generation
-
-#### Registry SBOM (build time)
-
-`pnpm --filter brutx-registry-vue build` automatically generates `packages/registry/registry/registry-sbom.json` containing:
-
-- All registry components (`type: application`, `bom-ref: brutx:<name>`)
-- All npm dependencies (`type: library`, `bom-ref: npm:<dep>`)
-- `dependencies` arrays referencing other bom-refs to form the dependency graph
-- `integrity` field (sha256 over `bomFormat`/`specVersion`/`components`)
-- `manifestIntegrity` field binding the SBOM to the corresponding `registry-manifest.json` integrity
-
-`serialNumber` is a random UUID regenerated each build, excluded from integrity computation, and added to the `build:verify` diff exclusion set.
-
-#### Project SBOM (`doctor --sbom`)
-
-`doctor --sbom` generates an SBOM for installed components, written to `./brutx-sbom.json` (customize with `--sbom-output`):
-
-```bash
-npx brutx-vue@latest doctor --sbom
-npx brutx-vue@latest doctor --sbom --sbom-output ./reports/sbom.json
-```
-
-It reads installed component versions, dependencies, `registryDependencies`, and integrity from the `.brutx/components.json` manifest and emits a CycloneDX 1.5 SBOM. Errors out if no components are installed.
-
-## Default Source & Offline Mode
-
-### Multi-Source Fallback
-
-The default registry is **single-source**: a GitHub Release asset pointing at the latest release built and uploaded at publish time:
-
-`https://github.com/lidaixingchen/brutxui-vue3/releases/latest/download`
-
-Multi-source fallback remains available: configure multiple sources via the `registries` field in `components.json` (see [configuration](#componentsjson-configuration-file)) or the `--registry` flag, and the CLI tries them in order, automatically falling back to the next source when the primary times out or fails, printing a warning. If every source fails signature/integrity verification, the CLI surfaces the original error codes `REGISTRY_SIGNATURE_INVALID` / `REGISTRY_INTEGRITY_FAILED` (instead of a generic network error) and hints at possible inter-source consistency lag.
-
-### Offline Mode
-
-Activate offline mode with the `--offline` flag or the `BRUTX_OFFLINE=1` environment variable: **no network requests are made**, only the local cache is read (TTL-expired entries are still reused; integrity is still verified). On a cache hit the CLI prints:
-
-```text
-[OFFLINE CACHE HIT] button (source: https://github.com/lidaixingchen/brutxui-vue3/releases/latest/download)
-```
-
-A cache miss throws `REGISTRY_OFFLINE_UNAVAILABLE`. Run `brutx add` or `brutx list --check-updates` once online to warm the cache for offline use.
-
-`brutx doctor` reports the cache entry count, total size, and offline availability.
-
-## Available Components
-
-accordion, activity-log-page, alert, alert-dialog, auth-card, avatar, badge, before-after, blog-card, blog-list-page, breadcrumb, brutalist-hero, button, calendar, card, card-3d, carousel, chat-bubble, checkbox, code-block, combobox, command, cookie-consent, copy-to-clipboard, counter, dashboard-shell, dashboard-stats, data-table, dialog, dropdown-menu, empty-state, faq-section, feedback-form, file-card, footer-section, form, gallery-section, glitch-text, hardcore-input, header-section, input, kbd, kanban, loading, marquee, not-found-page, number-input, overview-page, pagination, popover, pricing-section, profile-page, progress, quick-actions, radio-group, result, scratch-card, scroll-area, search-widget, select, separator, settings-page, sheet, skeleton, sketchy-chart, slider, spinner, stepper, switch, table, tabs, tags-input, testimonial-card, textarea, timeline, toast, toggle, toggle-group, tooltip, tree-view, upload, waitlist-page
+| Error Code | Root Cause | Recommended Action |
+| :--- | :--- | :--- |
+| `CONFIG_NOT_FOUND` | Missing `components.json` file | Run `brutx-vue init` in your project root |
+| `CONFIG_INVALID` | Malformed or invalid `components.json` | Run `brutx-vue doctor --fix` to repair configuration |
+| `COMPONENT_NOT_FOUND` | Component name not found in registry | Check spelling or run `brutx-vue list` to see available items |
+| `REGISTRY_FETCH_FAILED` | Cannot reach remote registry | Verify network connectivity or specify mirror with `--registry` |
+| `REGISTRY_OFFLINE_UNAVAILABLE` | Component is missing from cache in offline mode | Run online once to warm up cache or disable `--offline` |
+| `REGISTRY_SIGNATURE_INVALID` | Manifest signature failed trusted key validation | Possible tampering or mismatched key; verify `BRUTX_REGISTRY_PUBLIC_KEYS` |
+| `REGISTRY_INTEGRITY_FAILED` | Manifest canonical hash check mismatch | Refetch with `--no-cache` or rebuild custom registry |
+| `REGISTRY_VERSION_UNSUPPORTED`| `@version` used with non-raw registry URL | Remove `@version` or point `--registry` to a GitHub raw URL |
+| `PATH_UNSAFE` | Target path contains directory traversal | Check path aliases in `components.json` to ensure paths stay inside project |
+| `WRITE_FAILED` | File system write operation failed | Check target directory write permissions and ensure files are unlocked |
+| `DOCTOR_FAILED` | Doctor check failed `--fail-on` criteria | Review terminal diagnostic output and run `doctor --fix` |

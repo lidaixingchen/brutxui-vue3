@@ -1,70 +1,120 @@
 ---
 title: CLI
-description: 了解 brutx-vue 命令行工具的使用方法
+description: 了解 brutx-vue 命令行工具的使用方法、工作流与配置规范
 ---
 
 # CLI
 
-`brutx-vue` CLI 帮助你在项目中初始化 BrutxUI，并通过单条命令添加组件。
+`brutx-vue` 是 BrutxUI 官方命令行工具，帮助你在项目中快速创建项目、初始化配置、管理组件生命周期，并提供企业级健康体检与自愈能力。
 
 ## 概览
+
+CLI 支持通过包管理器直接免安装运行：
 
 ```bash
 npx brutx-vue@latest <command>
 ```
 
-CLI 会自动处理依赖安装、文件创建和配置更新。
+你也可以选择将其作为开发依赖安装到本地项目中：
 
-## brutx-vue init
+```bash
+pnpm add -D brutx-vue
+# 或
+npm install -D brutx-vue
+```
 
-在你的项目中初始化 BrutxUI。它会设置基础配置：
+---
+
+## 项目起步
+
+### brutx-vue create
+
+从零创建一个预配置好 BrutxUI 的全新 Vue 3 项目：
+
+```bash
+npx brutx-vue@latest create <project-name>
+```
+
+create 命令会自动拉取模板、搭建项目目录骨架、安装必要依赖并自动执行 `init` 初始化。
+
+#### 示例
+
+创建默认 Vite + Vue 3 + TypeScript 项目：
+
+```bash
+npx brutx-vue@latest create my-app
+```
+
+使用 Nuxt 模板并指定使用 bun 包管理器：
+
+```bash
+npx brutx-vue@latest create my-nuxt-app --template nuxt --package-manager bun
+```
+
+#### 选项
+
+| 标志 | 描述 | 默认值 |
+| :--- | :--- | :--- |
+| `-t, --template <template>` | 项目模板（`default`、`nuxt`） | `default` |
+| `--package-manager <pm>` | 包管理器（`pnpm`、`npm`、`yarn`、`bun`） | `pnpm` |
+| `-c, --cwd <path>` | 设置目标工作目录 | 当前目录 |
+| `-y, --yes` | 跳过交互提示，使用默认配置 | `false` |
+
+---
+
+### brutx-vue init
+
+在现有的 Vue 3 项目中初始化 BrutxUI 配置：
 
 ```bash
 npx brutx-vue@latest init
 ```
 
-init 命令将：
+init 命令将自动完成以下初始化步骤：
 
-1. 检测你的项目框架（Vite、Nuxt 等）
-2. 安装所需依赖（`reka-ui`、`class-variance-authority`、`clsx`、`tailwind-merge`、`@lucide/vue`）
-3. 在 `src/lib/utils.ts` 创建 `cn()` 工具函数
-4. 将 `--brutal-*` CSS 自定义属性注入到你的样式表中
-5. 将 BrutxUI 样式（包括 Tailwind 工具类层）添加到你的 CSS 中
-6. 设置组件目录结构
+1. 检测项目框架（Vite + Vue、Nuxt 等）与 Tailwind CSS 版本（v4 / v3）
+2. 自动探测全局 CSS 入口文件及 `tsconfig.json` 别名配置
+3. 安装核心基础依赖（`reka-ui`、`class-variance-authority`、`clsx`、`tailwind-merge`、`@lucide/vue`）
+4. 在 `src/lib/utils.ts` 中生成 `cn()` 工具函数
+5. 在全局样式中注入 Neo-Brutalist 设计令牌与工具类标记块
+6. 生成 `components.json` 配置文件并创建组件目录结构
+7. 自动识别 Monorepo 工作区（pnpm / lerna / turbo），支持根目录依赖沉降
 
-### 选项
+#### 选项
 
-| 标志                        | 描述                 | 默认值     |
-| ------------------------- | ------------------ | ------- |
-| `--yes` / `-y`            | 跳过提示并使用默认值         | `false` |
-| `--defaults` / `-d`       | 使用默认配置             | `false` |
-| `--cwd <path>`            | 设置工作目录             | 当前目录    |
-| `--force` / `-f`          | 强制覆盖已有配置           | `false` |
-| `--silent` / `-s`         | 静默输出               | `false` |
-| `--vscode`                | 生成 VS Code 代码片段    | `false` |
-| `--workspace-root <path>` | 指定 monorepo 工作区根目录 | —       |
+| 标志 | 描述 | 默认值 |
+| :--- | :--- | :--- |
+| `-y, --yes` | 跳过交互提示并使用检测到的默认值 | `false` |
+| `-d, --defaults` | 使用官方默认推荐配置 | `false` |
+| `-c, --cwd <path>` | 设置工作目录 | 当前目录 |
+| `-f, --force` | 强制覆盖已有的 `components.json` 与样式注入 | `false` |
+| `-s, --silent` | 静默输出模式 | `false` |
+| `--vscode` | 自动生成 VS Code 智能代码片段（Snippets） | `false` |
+| `--workspace-root <path>` | 显式指定 Monorepo 工作区根目录路径 | 自动检测 |
 
-init 支持 monorepo 工作区检测（pnpm-workspace.yaml / lerna.json / turbo.json）。
+---
 
-## brutx-vue add
+## 组件生命周期管理
 
-向项目中添加单个组件：
+### brutx-vue add
+
+向项目中添加组件。命令会自动分析并按拓扑排序递归下载组件的所有依赖文件（包括子组件、composable 与 locale）：
 
 ```bash
-npx brutx-vue@latest add <component...>
+npx brutx-vue@latest add [components...]
 ```
 
-### 示例
+若未指定组件名称，CLI 将启动交互式多选列表供你勾选。
 
-添加单个组件：
+#### 示例
+
+添加单个或多个组件：
 
 ```bash
+# 添加单个组件
 npx brutx-vue@latest add button
-```
 
-添加多个组件：
-
-```bash
+# 一次性添加多个组件
 npx brutx-vue@latest add button card dialog input
 ```
 
@@ -74,250 +124,135 @@ npx brutx-vue@latest add button card dialog input
 npx brutx-vue@latest add --all
 ```
 
-### 选项
+#### 选项
 
-| 标志                             | 描述              | 默认值     |
-| ------------------------------ | --------------- | ------- |
-| `--all`                        | 添加所有可用组件        | `false` |
-| `--yes` / `-y`                 | 跳过确认提示          | `false` |
-| `--cwd <path>`                 | 设置工作目录          | 当前目录    |
-| `--overwrite`                  | 覆盖已有的组件文件       | `false` |
-| `--path <path>` / `-p`         | 指定组件添加路径        | —       |
-| `--silent` / `-s`              | 静默输出            | `false` |
-| `--dry-run`                    | 模拟添加，不写入文件      | `false` |
-| `--registry <registry>` / `-r` | 指定注册表路径或 URL    | —       |
-| `--no-cache`                   | 跳过注册表缓存         | `false` |
-| `--offline`                    | 只读缓存，不发起网络请求（同 `BRUTX_OFFLINE=1`） | `false` |
-| `--vscode`                     | 更新 VS Code 代码片段 | `false` |
+| 标志 | 描述 | 默认值 |
+| :--- | :--- | :--- |
+| `-a, --all` | 添加注册表中的所有可用组件 | `false` |
+| `-y, --yes` | 跳过确认提示 | `false` |
+| `-o, --overwrite` | 强制覆盖已存在的组件文件 | `false` |
+| `-m, --merge` | 当组件已存在时，使用 3-way merge 智能合并本地修改 | `false` |
+| `-p, --path <path>` | 指定组件自定义添加路径（防路径穿越校验） | 别名解析路径 |
+| `-c, --cwd <path>` | 设置工作目录 | 当前目录 |
+| `-s, --silent` | 静默输出 | `false` |
+| `--dry-run` | 演练模拟添加，仅打印写入计划，不触碰磁盘 | `false` |
+| `-r, --registry <url>` | 指定临时注册表路径或 URL | 官方源 |
+| `--no-cache` | 跳过本地注册表缓存，强制从远端拉取 | `false` |
+| `--offline` | 离线模式：只读缓存，禁止发起网络请求 | `false` |
+| `--vscode` | 更新 VS Code 代码片段库 | `false` |
+| `--filter <package>` | **Monorepo**：指定组件安装的目标工作区子包 | — |
+| `--shared` | **Monorepo**：指定安装到拓扑中的共享 UI 基础包 | `false` |
 
-### 版本锁定
+#### 版本锁定与 `@version` 语法
+
+CLI 支持使用 `@` 语法锁定拉取特定版本的组件：
 
 ```bash
 npx brutx-vue@latest add button@1.2.0
 ```
 
-使用 `@` 语法将组件锁定到指定版本。`@` 后的字符串作为 git ref（分支、tag、commit）注入到注册表源 URL 中，因此会拉取对应版本的全部组件文件。
+- **与自定义 Registry 配合**：`@version` 支持 GitHub raw URL 结构的注册表（形如 `https://raw.githubusercontent.com/{owner}/{repo}/{ref}/...`），CLI 会将 `{ref}` 段动态替换为请求版本，便于从个人 fork 或指定 tag 拉取。
+- **默认源行为**：官方默认源为 Release 资产构建产物，默认始终拉取最新构建（latest）。
+- **版本冲突提示**：当本地已安装组件版本与请求版本不符时，CLI 会输出告警提示（不阻断操作）。
 
-#### 与 `--registry` 的交互
+---
 
-`@version` 仅对 GitHub raw URL 结构的注册表生效（形如 `https://raw.githubusercontent.com/{owner}/{repo}/{ref}/...`）。CLI 会将当前 `--registry` URL 中的 `{ref}` 段替换为 `@version`，其余路径保持不变，因此可与自定义 fork 配合使用：
+### brutx-vue list
 
-```bash
-# 从个人 fork 的 v1.2.0 tag 拉取 button
-npx brutx-vue@latest add button@1.2.0 \
-  --registry https://raw.githubusercontent.com/<you>/<fork>/main/registry
-```
-
-**默认源上忽略版本**：默认源为 GitHub Release 资产（`https://github.com/lidaixingchen/brutxui-vue3/releases/latest/download`），不存在 git ref 概念，因此显式传入的 `@version` 会被**忽略**，始终按 latest 拉取。如需锁定历史版本，请通过 `--registry` 显式切换到 GitHub raw URL 源。
-
-若 `--registry` 是其他非 raw 结构（如本地路径、自建 HTTP registry），使用 `@version` 会抛 `REGISTRY_VERSION_UNSUPPORTED` 错误。此时请移除 `@version` 或将 `--registry` 切换为 GitHub raw URL。
-
-#### 版本混用提示
-
-当已安装组件的版本与本次请求的版本不一致时，CLI 会输出 warn（不阻塞）：
-
-```text
-⚠ Version mismatch: "button" is already installed at version 1.0.0, but you requested 1.2.0.
-```
-
-#### update 命令的版本约束
-
-`update` 默认**跳过**版本锁定的组件（避免擅自改变用户显式锁定的 ref）。如需跨版本更新，需显式传入 `--across-versions`：
+列出当前项目中所有已安装的组件、所含文件数量及其运行时依赖：
 
 ```bash
-# 默认跳过 button@1.0.0
-npx brutx-vue@latest update
-
-# 显式跨版本更新
-npx brutx-vue@latest update --across-versions
+npx brutx-vue@latest list
 ```
 
-## brutx-vue doctor
+#### 检查更新
 
-检查项目配置健康度，诊断常见问题：
+传入 `--check-updates` 时，CLI 会联网核对远端注册表的组件指纹，标记出有可用更新的组件：
 
 ```bash
-npx brutx-vue@latest doctor
+npx brutx-vue@latest list --check-updates
 ```
 
-doctor 命令将检查：
+#### 选项
 
-1. `components.json` 是否存在且格式合法
-2. 配置中的路径是否指向真实文件
-3. Tailwind CSS 版本兼容性
-4. 必要依赖是否已安装（`reka-ui`、`class-variance-authority`、`clsx`、`tailwind-merge`）
-5. `cn()` 工具函数是否存在
-6. CSS 文件中是否包含 BrutxUI 设计 token
-7. 已安装组件的文件完整性
-8. `$version` 配置版本检查
-9. 各 registry 源的可达性（`--offline` 时跳过网络探测）
-10. 注册表缓存的条目数与占用体积（离线可用性）
+| 标志 | 描述 | 默认值 |
+| :--- | :--- | :--- |
+| `-c, --cwd <path>` | 设置工作目录 | 当前目录 |
+| `--check-updates` | 对比远端注册表检查可用更新 | `false` |
+| `--json` | 输出结构化 JSON 格式数据 | `false` |
+| `-r, --registry <url>` | 指定检查更新时所用的注册表路径或 URL | 配置源 |
+| `--no-cache` | 检查更新时跳过缓存，直连注册表 | `false` |
+| `--offline` | 仅使用本地缓存核验更新 | `false` |
+| `-s, --silent` | 静默输出 | `false` |
 
-### 示例
+---
 
-基本诊断：
+### brutx-vue info
+
+查看指定组件的元数据详情（依赖树、注册表文件清单、分类、示例及本地安装状态）：
 
 ```bash
-npx brutx-vue@latest doctor
+npx brutx-vue@latest info <component>
 ```
 
-自动修复可修复的问题：
+#### 选项
 
-```bash
-npx brutx-vue@latest doctor --fix --yes
-```
+| 标志 | 描述 | 默认值 |
+| :--- | :--- | :--- |
+| `-c, --cwd <path>` | 设置工作目录 | 当前目录 |
+| `--json` | 以 JSON 格式输出组件详细信息 | `false` |
+| `-r, --registry <url>` | 指定查询的注册表路径或 URL | 配置源 |
+| `--offline` | 离线模式查询（基于缓存） | `false` |
+| `-s, --silent` | 静默输出 | `false` |
 
-输出 JSON 格式报告：
+---
 
-```bash
-npx brutx-vue@latest doctor --json
-```
+### brutx-vue diff
 
-### 选项
-
-| 标志                   | 描述           | 默认值     |
-| -------------------- | ------------ | ------- |
-| `--cwd <path>`       | 设置工作目录       | 当前目录    |
-| `--fix`              | 自动修复可修复的问题   | `false` |
-| `--fix-only <fixId>` | 仅执行指定的修复项    | —       |
-| `--json`             | 输出 JSON 格式报告 | `false` |
-| `--yes` / `-y`       | 跳过确认提示       | `false` |
-| `--silent` / `-s`    | 静默输出         | `false` |
-| `--offline`          | 跳过 registry 源网络探测与缓存统计 | `false` |
-| `--sbom`             | 生成 CycloneDX 1.5 SBOM 并退出（不运行 doctor 检查） | `false` |
-| `--sbom-output <path>` | SBOM 输出路径 | `./brutx-sbom.json` |
-
-### 输出示例
-
-```text
-🩺 Brutx-Vue Doctor
-
-  ✅ components.json exists — components.json found.
-  ✅ $schema field present — $schema field is present.
-  ✅ style field present — style is "brutalism".
-  ✅ tailwind.css contains BrutxUI tokens — CSS file contains BrutxUI tokens.
-  ✅ aliases.components → @/components — Directory exists.
-  ✅ aliases.utils → @/lib/utils — File exists.
-  ✅ tailwindcss installed — ^4.3.0 installed.
-  ✅ reka-ui installed — ^2.9.9 installed.
-  ✅ cn() function exists — cn() function found.
-
-  Summary: 9 passed, 0 warnings, 0 errors
-```
-
-### 可自动修复的问题
-
-| 问题                   | 修复操作            |
-| -------------------- | --------------- |
-| `$schema` 缺失         | 写入 schema URL   |
-| `$version` 过期        | 更新为当前版本         |
-| `style` 缺失           | 设置为 `brutalism` |
-| CSS 缺少 BrutxUI token | 注入 CSS 样式       |
-| 组件目录不存在              | 创建目录            |
-| utils 文件不存在          | 创建 utils 文件     |
-| `cn()` 函数不存在         | 添加 cn() 函数      |
-
-## brutx-vue diff
-
-对比本地已安装组件与注册表最新版本的差异：
+对比本地已安装组件与远端注册表最新版本之间的代码差异：
 
 ```bash
 npx brutx-vue@latest diff [components...]
 ```
 
-### 示例
+#### 示例
 
-对比单个组件：
+对比单个组件或多个组件：
 
 ```bash
 npx brutx-vue@latest diff button
-```
-
-对比多个组件：
-
-```bash
 npx brutx-vue@latest diff button card dialog
 ```
 
-对比所有已安装组件：
+对比所有已安装组件并输出差异概览：
 
 ```bash
 npx brutx-vue@latest diff --all
 ```
 
-输出 JSON 格式：
+#### 选项
 
-```bash
-npx brutx-vue@latest diff --all --json
-```
+| 标志 | 描述 | 默认值 |
+| :--- | :--- | :--- |
+| `--all` | 对比所有已安装的组件 | `false` |
+| `-c, --cwd <path>` | 设置工作目录 | 当前目录 |
+| `-r, --registry <url>` | 指定对比的目标注册表路径或 URL | 配置源 |
+| `--json` | 输出包含完整补丁（patch）的 JSON 报告 | `false` |
+| `--no-cache` | 跳过缓存拉取最新远端代码 | `false` |
+| `--offline` | 只读缓存进行对比 | `false` |
+| `-s, --silent` | 静默输出 | `false` |
 
-### 选项
+---
 
-| 标志                         | 描述         | 默认值     |
-| -------------------------- | ---------- | ------- |
-| `--all`                    | 对比所有已安装组件  | `false` |
-| `--cwd <path>`             | 设置工作目录     | 当前目录    |
-| `--registry <path>` / `-r` | 指定本地注册表路径  | —       |
-| `--json`                   | 输出 JSON 格式 | `false` |
-| `--silent` / `-s`          | 静默输出       | `false` |
-| `--no-cache`               | 跳过注册表缓存    | `false` |
-| `--offline`                | 只读缓存，不发起网络请求 | `false` |
+### brutx-vue update
 
-### 输出示例
-
-对比单个组件：
-
-```text
-📊 Component Diff: button
-
-  Status: 🔄 MODIFIED (1 file changed)
-
-  src/components/ui/button/Button.vue
-    --- registry/src/components/ui/button/Button.vue
-    +++ local/src/components/ui/button/Button.vue
-    -  variant?: 'default' | 'destructive' | 'outline' | 'ghost';
-    +  variant?: 'default' | 'destructive' | 'outline' | 'ghost' | 'link';
-    +  loading?: boolean;
-
-  Summary: 1 file modified, 0 files unchanged
-```
-
-对比所有组件：
-
-```text
-📊 Component Diff Report
-
-  🔄 MODIFIED (2)
-    — button    (1 file changed)
-    — card      (2 files changed)
-
-  ✅ UP-TO-DATE (5)
-    — badge
-    — dialog
-    — input
-    — select
-    — toast
-
-  Summary: 2 modified, 5 up-to-date, 0 local-only
-```
-
-## brutx-vue update
-
-检查已安装组件是否有可用更新，并执行智能合并更新：
+基于三方合并（3-Way Merge）智能合并远程更新，在升级组件的同时最大程度保留你在本地所做的定制代码：
 
 ```bash
 npx brutx-vue@latest update [components...]
 ```
 
-更新时，CLI 会自动对比远程最新版本与本地代码，基于基线执行智能合并（3-way merge），尽可能保留你对组件代码的本地定制修改。
-
-### 示例
-
-检查并更新所有已安装组件：
-
-```bash
-npx brutx-vue@latest update
-```
+#### 示例与常用场景
 
 更新指定组件：
 
@@ -325,199 +260,176 @@ npx brutx-vue@latest update
 npx brutx-vue@latest update button card
 ```
 
-仅预览，不实际更新：
+更新所有存在版本漂移的过期组件：
+
+```bash
+npx brutx-vue@latest update --all
+```
+
+演练预览更新结果而不写入磁盘：
 
 ```bash
 npx brutx-vue@latest update --dry-run
 ```
 
-### 选项
+#### 冲突处理策略选项
 
-| 标志                             | 描述        | 默认值     |
-| ------------------------------ | --------- | ------- |
-| `--all` / `-a`                 | 更新所有过期组件  | `false` |
-| `--yes` / `-y`                 | 跳过确认提示    | `false` |
-| `--cwd <path>`                 | 设置工作目录    | 当前目录    |
-| `--dry-run`                    | 仅预览，不写入文件 | `false` |
-| `--registry <registry>` / `-r` | 指定注册表 URL | —       |
-| `--no-cache`                   | 跳过注册表缓存   | `false` |
-| `--offline`                    | 只读缓存，不发起网络请求 | `false` |
-| `--silent` / `-s`              | 静默输出      | `false` |
-| `--across-versions`            | 允许跨版本更新已锁定的组件（见[版本锁定](#版本锁定)） | `false` |
+当本地修改与远端更新发生代码冲突时，可通过策略参数控制合并行为：
 
-## brutx-vue list
+| 标志 | 描述 | 默认值 |
+| :--- | :--- | :--- |
+| `-a, --all` | 更新所有过期的已安装组件 | `false` |
+| `-y, --yes` | 跳过更新确认提示 | `false` |
+| `-c, --cwd <path>` | 设置工作目录 | 当前目录 |
+| `--dry-run` | 演练模拟更新，不修改实际文件 | `false` |
+| `--across-versions` | 允许跨越版本锁定（pinned）强制升级组件 | `false` |
+| `--ours` | **冲突策略**：发生冲突时优先保留本地代码修改 | `false` |
+| `--theirs` | **冲突策略**：发生冲突时优先采纳远端更新代码 | `false` |
+| `-f, --force` | **覆盖模式**：跳过三方合并，强制全量覆盖本地文件 | `false` |
+| `--ci` | **CI 门禁**：在持续集成中运行，出现未决冲突时直接 exit 1 阻断 | `false` |
+| `-r, --registry <url>` | 指定更新注册表 URL | 配置源 |
+| `--no-cache` | 跳过缓存强制下载最新内容 | `false` |
+| `--offline` | 离线模式更新 | `false` |
+| `-s, --silent` | 静默输出 | `false` |
 
-列出项目中已安装的组件及其信息：
+---
 
-```bash
-npx brutx-vue@latest list
-```
+### brutx-vue remove
 
-### 选项
-
-| 标志                | 描述         | 默认值     |
-| ----------------- | ---------- | ------- |
-| `--cwd <path>`             | 设置工作目录           | 当前目录    |
-| `--json`                   | 输出 JSON 格式       | `false` |
-| `--silent` / `-s`          | 静默输出             | `false` |
-| `--registry <path>` / `-r` | 指定注册表路径或 URL（用于更新检查） | —       |
-| `--check-updates`          | 检查注册表 integrity 以显示可用更新 | `false` |
-| `--no-cache`               | 检查更新时跳过注册表缓存     | `false` |
-| `--offline`                | 只读缓存，不发起网络请求    | `false` |
-
-### 输出示例
-
-```text
-Installed Components
-
-  Name      Files   Dependencies
-  ─────────────────────────────────
-  badge     2       vue
-  button    3       vue, reka-ui, @lucide/vue
-  card      2       vue
-
-  3 component(s) installed
-```
-
-## brutx-vue info
-
-查看指定组件的详细信息：
-
-```bash
-npx brutx-vue@latest info <component>
-```
-
-### 示例
-
-```bash
-npx brutx-vue@latest info button
-```
-
-### 选项
-
-| 标志                             | 描述           | 默认值     |
-| ------------------------------ | ------------ | ------- |
-| `--cwd <path>`                 | 设置工作目录       | 当前目录    |
-| `--json`                       | 输出 JSON 格式   | `false` |
-| `--registry <registry>` / `-r` | 指定注册表路径或 URL | —       |
-| `--silent` / `-s`              | 静默输出         | `false` |
-| `--offline`                    | 只读缓存，不发起网络请求 | `false` |
-
-## brutx-vue remove
-
-从项目中移除已安装的组件：
+从项目中安全移除组件，自动清理关联目录并检测孤儿依赖：
 
 ```bash
 npx brutx-vue@latest remove <components...>
 ```
 
-remove 命令会删除组件目录，并检测不再被其他组件引用的孤儿文件（composable / locale），提示是否一并清理。
+remove 命令不仅删除组件源码目录，还会递归反查项目的依赖拓扑，检测是否有不再被任何组件引用的共享 composables、locales 或工具函数，并引导确认是否同步清理。
 
-### 示例
+#### 选项
 
-移除单个组件：
+| 标志 | 描述 | 默认值 |
+| :--- | :--- | :--- |
+| `-y, --yes` | 跳过二次确认提示 | `false` |
+| `-c, --cwd <path>` | 设置工作目录 | 当前目录 |
+| `--dry-run` | 演练模拟删除，仅列出将要被清理的文件清单 | `false` |
+| `-s, --silent` | 静默输出 | `false` |
 
-```bash
-npx brutx-vue@latest remove button
-```
+---
 
-移除多个组件：
+## 运维治理与健康体检
 
-```bash
-npx brutx-vue@latest remove button card
-```
+### brutx-vue doctor
 
-仅预览，不实际删除：
-
-```bash
-npx brutx-vue@latest remove button --dry-run
-```
-
-### 选项
-
-| 标志                | 描述        | 默认值     |
-| ----------------- | --------- | ------- |
-| `--yes` / `-y`    | 跳过确认提示    | `false` |
-| `--cwd <path>`    | 设置工作目录    | 当前目录    |
-| `--dry-run`       | 仅预览，不删除文件 | `false` |
-| `--silent` / `-s` | 静默输出      | `false` |
-
-## brutx-vue create
-
-从零创建一个预配置 BrutxUI 的 Vue 3 项目：
+项目全方位健康诊断与自动修复引擎。能够排查配置文件合法性、Tailwind 样式令牌、目录结构、依赖完备性及组件防篡改完整性：
 
 ```bash
-npx brutx-vue@latest create <project-name>
+npx brutx-vue@latest doctor [options]
 ```
 
-create 命令会自动搭建项目脚手架、安装依赖并运行 `init`。
+#### 检查分类涵盖
+- **env**：运行环境与包管理器检测
+- **config**：`components.json` 架构、版本号与路径别名有效性
+- **tailwind**：Tailwind CSS 版本、全局 CSS 入口及 `--brutal-*` 令牌注入状态
+- **structure**：组件目录结构、`cn()` 工具函数存在性
+- **integrity**：已安装组件内容哈希比对、文件完整性与审计日志健康度
+- **custom**：用户自定义或第三方诊断插件规则
 
-### 示例
+#### 高级诊断与 CI 门禁选项
+
+| 标志 | 描述 | 默认值 |
+| :--- | :--- | :--- |
+| `--fix` | 自动执行已知问题的自愈修复 | `false` |
+| `--fix-only <fixId>` | 仅应用指定的修复项（见下文 Fix ID 表） | — |
+| `--dry-run` | 配合 `--fix` 使用：输出修复计划预览（Plan Preview + Unified Diff），不落盘 | `false` |
+| `--ci` | CI 模式：在持续集成环境中默认切换为 `github` 报告器 | `false` |
+| `--reporter <type>` | 报告渲染器格式（`pretty`、`github`、`json`、`sarif`、`junit`） | `pretty` |
+| `--fail-on <level>` | 细粒度阻断等级：在指定级别时以退出码 1 退出（`error`、`warn`、`drift`） | `error` |
+| `--output-file <path>` | 将诊断报告写入指定文件路径（常用于保存 SARIF / JUnit 报告） | — |
+| `--category <category>` | 仅运行指定分类的检查（`env`、`config`、`tailwind`、`structure`、`integrity`） | 全部 |
+| `--rule <ruleId>` | 仅运行指定规则 ID 的诊断项 | 全部 |
+| `--json` | 输出 JSON 格式诊断结果（等价于 `--reporter json`） | `false` |
+| `--offline` | 跳过远程 Registry 源的网络可达性探测 | `false` |
+| `--sbom` | 生成项目 CycloneDX 1.5 SBOM 物料清单后退出（详见[安全指南](/guide/security)） | `false` |
+| `--sbom-output <path>` | 指定生成的 SBOM 文件输出路径 | `./brutx-sbom.json` |
+| `-c, --cwd <path>` | 设置工作目录 | 当前目录 |
+| `-y, --yes` | 自动确认修复操作 | `false` |
+| `-s, --silent` | 静默输出 | `false` |
+
+#### 可自动修复项（Fix ID 对照表）
+
+使用 `--fix-only <fixId>` 时可传入以下标准 Fix ID：
+
+| Fix ID | 问题场景 | 自动修复操作 |
+| :--- | :--- | :--- |
+| `add-schema` | `components.json` 缺少 `$schema` | 写入官方 Schema 校验 URL |
+| `add-config-version` | 配置文件版本过期或缺失 | 升级为当前最新配置版本 `$version` |
+| `set-style` | `style` 字段缺失 | 自动设置为 `brutalism` |
+| `inject-css-tokens` | 全局 CSS 缺失 BrutxUI 令牌标记块 | 自动向目标 CSS 注入设计令牌 |
+| `create-components-dir` | 组件存放目录不存在 | 自动创建目标目录 |
+| `create-utils-file` | `src/lib/utils.ts` 工具文件缺失 | 创建包含 `cn()` 的工具文件 |
+| `add-cn-function` | 工具文件中未定义 `cn()` 函数 | 向 utils 文件追加 `cn()` 导出 |
+| `restore-integrity` | 已安装组件被外部异常修改/损坏 | 从注册表基线重新拉取恢复完整性 |
+| `remove-orphans` | 存在已无任何组件引用的孤儿共享文件 | 自动清理冗余的孤儿文件 |
+
+#### 修复计划演练预览（`--fix --dry-run`）
+在执行修复之前，可以通过演练模式查看将被修改的文件与差异补丁：
 
 ```bash
-npx brutx-vue@latest create my-app
+npx brutx-vue@latest doctor --fix --dry-run
 ```
 
-使用 Nuxt 模板：
+---
+
+### brutx-vue cache
+
+管理 CLI 本地组件与注册表元数据缓存：
 
 ```bash
-npx brutx-vue@latest create my-app --template nuxt
+npx brutx-vue@latest cache clear [--max-age <days>]
 ```
 
-### 选项
+#### 示例
 
-| 标志                             | 描述                              | 默认值       |
-| ------------------------------ | ------------------------------- | --------- |
-| `--template <template>` / `-t` | 项目模板（`default`、`nuxt`）          | `default` |
-| `--package-manager <pm>`       | 包管理器（`pnpm`、`npm`、`yarn`、`bun`） | `pnpm`    |
-| `--cwd <path>`                 | 设置工作目录                          | 当前目录      |
-| `--yes` / `-y`                 | 跳过确认提示                          | `false`   |
+清理本地全部缓存：
 
-## brutx-vue registry
+```bash
+npx brutx-vue@latest cache clear
+```
 
-管理项目配置的 registry 源（`components.json` 的 `registries` 字段）。多源按序 fallback：主源失败时自动切换镜像源，实现零配置 CDN 冗余。
+保留最近 7 天的活跃缓存，仅清理超过 7 天的过期条目：
 
-### registry list
+```bash
+npx brutx-vue@latest cache clear --max-age 7
+```
 
-打印当前生效的所有源及其连通性状态：
+---
+
+### brutx-vue registry
+
+管理 `components.json` 中声明的多注册表源（`registries` 列表）。CLI 具备自动 Fallback 机制：主源超时或不可达时，自动无缝切换到备用镜像源。
+
+#### 列出当前生效的所有源及连通性状态
 
 ```bash
 npx brutx-vue@latest registry list
 ```
 
-| 标志                | 描述              | 默认值  |
-| ----------------- | --------------- | ---- |
-| `--cwd <path>`    | 设置工作目录          | 当前目录 |
-| `--json`          | 输出 JSON 格式      | `false` |
-| `--offline`       | 跳过网络探测，仅报告已配置源 | `false` |
-
-### registry add
-
-向 `components.json` 的 `registries` 列表添加一个源（自动去重）：
+#### 添加新的镜像源或私有源
 
 ```bash
-npx brutx-vue@latest registry add https://mirror.example.com
+npx brutx-vue@latest registry add https://mirror.example.com/registry
 ```
 
-| 标志             | 描述     | 默认值  |
-| -------------- | ------ | ---- |
-| `--cwd <path>` | 设置工作目录 | 当前目录 |
-
-### registry remove
-
-从 `components.json` 移除指定源。移除最后一个自定义源后自动删除 `registries` 字段，恢复官方默认源：
+#### 移除指定源（移除全部自定义源后自动恢复官方源）
 
 ```bash
-npx brutx-vue@latest registry remove https://mirror.example.com
+npx brutx-vue@latest registry remove https://mirror.example.com/registry
 ```
 
-| 标志             | 描述     | 默认值  |
-| -------------- | ------ | ---- |
-| `--cwd <path>` | 设置工作目录 | 当前目录 |
+---
 
-## components.json 配置文件
+## 配置文件：`components.json`
 
-运行 `init` 后，项目根目录会生成 `components.json`：
+运行 `init` 后，项目根目录下将生成 `components.json`。这是 CLI 工作流的核心配置契约：
 
 ```json
 {
@@ -525,230 +437,175 @@ npx brutx-vue@latest registry remove https://mirror.example.com
   "$version": 1,
   "style": "brutalism",
   "tailwind": {
-    "config": "tailwind.config.js",
-    "css": "src/index.css"
+    "config": "",
+    "css": "src/index.css",
+    "tokensFile": "src/styles/tokens.css"
   },
   "aliases": {
     "components": "@/components",
     "utils": "@/lib/utils",
-    "composables": "@/composables"
-  }
-}
-```
-
-| 字段                    | 描述                          |
-| --------------------- | --------------------------- |
-| `$schema`             | JSON Schema URL，提供 IDE 校验   |
-| `$version`            | 配置文件版本号，CLI 读取时自动迁移旧版本      |
-| `style`               | 样式主题，当前仅支持 `brutalism`      |
-| `tailwind.config`     | Tailwind 配置文件路径（v4 项目为空字符串） |
-| `tailwind.css`        | 全局 CSS 文件路径                 |
-| `aliases.components`  | 组件导入别名                      |
-| `aliases.utils`       | 工具函数导入别名                    |
-| `aliases.composables` | 组合式函数导入别名                   |
-| `sharedBase`          | monorepo 共享基础目录（可选）          |
-| `registries`          | 多 registry 源列表（主源 + 镜像），CLI 按序 fallback；未配置时使用官方默认源（GitHub Release 资产） |
-| `requireSignature`    | 项目级严格签名模式：为 `true` 时强制 manifest 签名校验（优先级低于 `BRUTX_REQUIRE_SIGNATURE` 环境变量与 `--require-signature` flag，见[供应链安全](#供应链安全签名与-sbom)） |
-| `trustedPublicKeys`   | 项目级追加信任公钥数组（`{ keyId, publicKey }`），在官方 Root 公钥之外追加信任 |
-
-### 可选字段示例
-
-以下字段均为可选，缺省时静默兼容：
-
-```json
-{
+    "composables": "@/composables",
+    "locales": "@/locales",
+    "directives": "@/directives"
+  },
+  "workspace": {
+    "mode": "standalone",
+    "targetPackage": "ui",
+    "sharedUtilsPackage": "shared",
+    "installDependenciesTo": "targetPackage"
+  },
   "registries": [
-    "https://raw.githubusercontent.com/<you>/<fork>/main/packages/registry/registry",
-    "https://mirror.example.com/registry"
+    "https://github.com/lidaixingchen/brutxui-vue3/releases/latest/download"
   ],
-  "requireSignature": true,
-  "trustedPublicKeys": [
-    {
-      "keyId": "my-org-v1",
-      "publicKey": "<base64-SPKI-DER>",
-      "note": "内部镜像签名密钥"
-    }
-  ]
+  "requireSignature": false,
+  "rules": {
+    "tailwind.tokens": "error",
+    "integrity.drift": "warn"
+  },
+  "plugins": []
 }
 ```
 
-## 全局选项
+### 完整配置项说明
 
-以下选项适用于所有命令，需放在子命令之前：
+| 字段 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| `$schema` | `string` | JSON Schema 规范链接，在 VS Code / WebStorm 中提供强类型补全 |
+| `$version` | `number` | 配置文件结构版本（CLI 读取时自动无损迁移） |
+| `style` | `string` | 预设视觉风格，当前固定为 `brutalism` |
+| `tailwind.config` | `string` | Tailwind 配置文件路径（Tailwind v4 项目中保持为空字符串） |
+| `tailwind.css` | `string` | 全局 CSS 入口文件路径 |
+| `tailwind.tokensFile` | `string` | *(可选)* 独立设计令牌样式文件路径 |
+| `aliases.components` | `string` | UI 组件导入别名（默认 `@/components`） |
+| `aliases.utils` | `string` | 工具函数导入别名（默认 `@/lib/utils`） |
+| `aliases.composables`| `string` | 组合式函数导入别名（默认 `@/composables`） |
+| `aliases.locales` | `string` | *(可选)* 多语言字典导入别名 |
+| `aliases.directives` | `string` | *(可选)* Vue 自定义指令导入别名 |
+| `workspace` | `object` | *(可选)* Monorepo 工作区多包架构策略配置 |
+| `workspace.mode` | `string` | 工作区模式：`standalone` / `shared-package` / `app-local` / `hybrid` |
+| `workspace.installDependenciesTo` | `string` | 依赖写入策略：`targetPackage` / `caller` / `both` |
+| `registries` | `string[]` | *(可选)* 多 Registry 镜像源列表，按序自动降级重试 |
+| `requireSignature` | `boolean` | *(可选)* 严格签名模式：为 `true` 时强制 Manifest 数字验签 |
+| `trustedPublicKeys` | `array` | *(可选)* 项目级追加信任的 Ed25519 SPKI 公钥列表 |
+| `rules` | `object` | *(可选)* 调优或禁用特定的诊断规则级别（`"off"` / `"warn"` / `"error"`） |
+| `plugins` | `string[]` | *(可选)* 自定义诊断规则插件列表（支持本地相对路径或 npm 包名） |
+
+---
+
+## 全局选项与环境变量
+
+### 全局命令行参数
+以下全局选项必须置于子命令之前：
 
 ```bash
 npx brutx-vue@latest [global-options] <command> [command-options]
 ```
 
-| 标志                       | 描述                                                | 默认值     |
-| ------------------------ | ------------------------------------------------- | ------- |
-| `--verbose`              | 显示详细错误输出（等价于 `-v`）                                | `false` |
-| `--dry-run`              | 全局 dry-run：模拟所有写操作但不落盘（与命令级 `--dry-run` 叠加生效）      | `false` |
-| `--require-signature`    | 严格签名模式：manifest 签名校验失败时升级为 error（默认为 warn，见[供应链安全](#供应链安全签名与-sbom)） | `false` |
-| `--verbose-level <level>` | verbose 等级（`1`=步骤、`2`=缓存/网络细节、`3`=堆栈）           | `0`     |
-| `-v`                     | 等价于 `--verbose-level 1`                           | —       |
-| `-vv`                    | 等价于 `--verbose-level 2`                           | —       |
-| `-vvv`                   | 等价于 `--verbose-level 3`                           | —       |
+- `--dry-run`：全局演练模式，模拟执行所有写操作而不修改磁盘
+- `--require-signature`：严格签名模式，Manifest 签名验证不通过直接抛错退出
+- `--verbose-level <1|2|3>`：详细日志等级（`1`=步骤，`2`=网络/缓存细节，`3`=堆栈追踪）
+- `-v` / `-vv` / `-vvv`：等价于 `--verbose-level 1 / 2 / 3`
+- `--verbose`：显示详细错误堆栈（等价于 `-v`）
 
-### 全局 dry-run
+### 环境变量矩阵
 
-`--dry-run` 全局 flag 会激活所有命令的 dry-run 语义，无需在每个子命令后加 `--dry-run`。也可通过环境变量 `BRUTX_DRY_RUN=1` 激活：
+所有全局行为均支持通过环境变量在 CI、Docker 或脚本中无侵入配置：
 
-```bash
-# 以下两条等价
-BRUTX_DRY_RUN=1 npx brutx-vue@latest add button
-npx brutx-vue@latest --dry-run add button
+| 环境变量 | 允许取值 | 对应 CLI 参数 | 说明 |
+| :--- | :--- | :--- | :--- |
+| `BRUTX_OFFLINE` | `1` | `--offline` | 激活离线模式，只读本地缓存，完全断网执行 |
+| `BRUTX_NO_CACHE` | `1` | `--no-cache` | 跳过本地缓存，强制向远端 Registry 发起请求 |
+| `BRUTX_DRY_RUN` | `1` | `--dry-run` | 激活全局演练模式，禁止任何磁盘落盘操作 |
+| `BRUTX_VERBOSE` | `1` / `2` / `3` | `-v` / `-vv` / `-vvv` | 设定日志输出详细等级 |
+| `BRUTX_REQUIRE_SIGNATURE`| `1` | `--require-signature` | 开启严格验签门禁，验签失败直接终止命令 |
+| `BRUTX_REGISTRY_PUBLIC_KEYS` | JSON 字符串 | — | 注入额外的 Ed25519 信任公钥数组 |
+| `BRUTX_CACHE_DIR` | 路径字符串 | — | 自定义本地组件缓存根路径（默认 `.brutx/cache`） |
+| `BRUTX_CACHE_MAX` | 正整数 | — | 本地缓存最大条目数上限（默认 `200`，基于 LRU 淘汰） |
+| `BRUTX_CACHE_MAX_BYTES` | 字节整数 | — | 本地缓存总磁盘空间占用上限 |
+
+---
+
+## CI/CD 持续集成流水线
+
+推荐在 GitHub Actions / GitLab CI 中将 `brutx-vue doctor` 纳入自动化质量门禁。
+
+### GitHub Actions 工作流示例
+
+在仓库中创建 `.github/workflows/brutx-check.yml`：
+
+```yaml
+name: BrutxUI Integrity & Quality Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Run Brutx Doctor Gate
+        run: |
+          # 当检测到配置错误、缺失依赖或组件代码漂移（drift）时阻断 PR
+          npx brutx-vue@latest doctor --ci --fail-on drift --reporter github
+
+      - name: Generate Security SBOM
+        if: always()
+        run: |
+          npx brutx-vue@latest doctor --sbom --sbom-output ./brutx-sbom.json
+
+      - name: Upload SBOM Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brutx-sbom
+          path: ./brutx-sbom.json
 ```
 
-激活后，`add`/`update`/`remove` 只打印将写入的路径，不修改任何文件。
+---
 
-### verbose 等级
+## 供应链安全与合规保障
 
-通过 `-v`/`-vv`/`-vvv` 或环境变量 `BRUTX_VERBOSE=<n>` 控制输出详细程度：
+BrutxUI 源码级分发体系内建了企业级防篡改与合规能力：
 
-| 等级 | 标签       | 含意                      |
-| --- | --------- | ----------------------- |
-| `1` | `[STEP]`  | 步骤级，如"正在解析依赖"           |
-| `2` | `[DETAIL]` | 缓存/网络细节，如"缓存命中 button@v1" |
-| `3` | `[TRACE]` | 堆栈/调试细节                 |
+- **内容规范化哈希复算**：拉取组件时对 Manifest 内容复算 SHA-256，防御 CDN 篡改与中间人劫持；
+- **Ed25519 数字签名校验**：内置官方根公钥，静默完成防伪验签；企业私有源支持多密钥平滑轮换；
+- **CycloneDX 1.5 SBOM 物料清单**：通过 `doctor --sbom` 一键导出符合国际合规标准的软件物料清单，可无缝对接 Snyk、Trivy、Dependency-Track 等安全审计平台；
+- **本地审计日志**：写操作自动记录在 `.brutx/audit.log` 中备查。
 
-## 审计日志
+> [!TIP]
+> **深入探索供应链安全与合规**  
+> 详细的密码学签名验签原理、企业私有 Registry 密钥管理规范、CycloneDX 1.5 格式说明及合规落地指南，请参阅专门的 **[供应链安全与合规指南](/guide/security)**。
 
-`add`/`remove`/`update`/`diff` 命令执行后会在 `.brutx/audit.log` 追加一条 JSONL 记录，包含：
+---
 
-- `timestamp`：ISO 时间戳
-- `command`：命令类型（`add`/`remove`/`update`/`diff`）
-- `components`：操作的组件列表
-- `registrySource`：注册表源
-- `success`：是否成功
-- `dryRun`：是否为 dry-run
-- `error`：失败时的错误信息
+## 常见错误码与排障手册
 
-`doctor` 会读取审计日志中最近 5 条失败记录，作为诊断线索：
+当 CLI 遇到异常退出时，会抛出统一格式的错误码。以下是常见错误码的原因与官方修复建议：
 
-```bash
-npx brutx-vue@latest doctor
-```
-
-输出示例：
-
-```text
-⚠ audit log health — 1 recent failure(s) in audit log: update(button).
-  Latest: update failed at 2026-07-16T02:30:00Z — Network unreachable
-```
-
-## .brutx 目录与版本控制
-
-执行组件命令后，项目根目录会生成 `.brutx/` 目录，用于记录已安装组件清单与升级合并基线。
-
-### 推荐的 `.gitignore` 配置
-
-建议将临时下载缓存加入 `.gitignore`，将其余元数据随 Git 提交，以便团队协作和后续平滑升级组件：
-
-```gitignore
-# BrutxUI 临时缓存
-.brutx/cache/
-```
-
-## 供应链安全：签名与 SBOM
-
-P1-6 引入了 manifest Ed25519 签名校验与 CycloneDX 1.5 SBOM 生成，用于检测供应链篡改。
-
-### Manifest 签名
-
-注册表构建时，`registry-manifest.json` 会附带 `integrity`（内容规范化 sha256）与 `signature` + `keyId`（对 integrity 的 Ed25519 签名）。CLI 拉取 manifest 时自动执行两道校验：
-
-1. **完整性复算**：对 `name`/`schemaVersion`/`registryVersion`/`items` 复算 sha256 并与 `integrity` 字段比对——封堵"篡改内容字段但保留原签名"的攻击（`buildTimestamp`/`gitCommit`/`integrity`/`signature`/`keyId` 不参与计算，保证构建幂等）。
-2. **签名验签**：按 `keyId` 查找受信任公钥，验证签名确由受信任维护者签发。
-
-#### 信任公钥配置
-
-信任公钥按优先级解析，官方 Root 公钥始终作为信任锚并入：
-
-1. **项目级** `components.json` 的 `trustedPublicKeys`（最高优先级，同名 keyId 覆盖官方）
-2. **环境变量** `BRUTX_REGISTRY_PUBLIC_KEYS`（JSON 数组）
-3. **内置官方 Root 公钥** `OFFICIAL_PUBLIC_KEYS`（零配置兜底）
-
-```bash
-# 环境变量注入自定义公钥
-BRUTX_REGISTRY_PUBLIC_KEYS='[{"keyId":"v1","publicKey":"<base64-SPKI-DER>"}]' \
-  npx brutx-vue@latest add button
-```
-
-`publicKey` 为 base64 编码的 SPKI DER 格式（单行，便于嵌入 JSON）。**官方 Registry 开箱即验**：不配置任何公钥时，CLI 用内置官方公钥校验官方 Registry 的签名。未签名（旧版）manifest 保持向后兼容跳过。
-
-#### 默认 warn 与严格模式
-
-签名校验失败时，**默认行为是 warn**（打印警告并继续），避免迁移期未配置公钥的项目卡死：
-
-```text
-[Signature] Manifest signed with unknown keyId "v1". No matching trusted public key found.
-  (use --require-signature to enforce)
-```
-
-如需在签名失败时直接拒绝执行，激活严格模式：
-
-```bash
-# 通过 flag
-npx brutx-vue@latest --require-signature add button
-
-# 或通过环境变量
-BRUTX_REQUIRE_SIGNATURE=1 npx brutx-vue@latest add button
-```
-
-严格模式下签名失败会抛 `REGISTRY_SIGNATURE_INVALID`（exit 1）。`integrity` 字段仍兜底防篡改（即使签名跳过，被篡改的内容也会因 integrity 不匹配而失败）。
-
-#### 密钥轮换
-
-公钥列表按 `keyId` 索引。轮换密钥时：
-
-1. 新 key 签发的 manifest：将新公钥加入 `BRUTX_REGISTRY_PUBLIC_KEYS` 即可
-2. 过渡期：旧 key 仍在列表中，旧 manifest 仍可信
-3. 撤销旧 key：从环境变量中移除即可
-
-### SBOM 生成
-
-#### 注册表 SBOM（构建时）
-
-`pnpm --filter brutx-registry-vue build` 会自动生成 `packages/registry/registry/registry-sbom.json`，包含：
-
-- 所有注册表组件（`type: application`，含 `bom-ref: brutx:<name>`）
-- 所有 npm 依赖（`type: library`，含 `bom-ref: npm:<dep>`）
-- `dependencies` 数组引用其他 bom-ref，构成依赖图
-- `integrity` 字段（对 `bomFormat`/`specVersion`/`components` 的 sha256）
-- `manifestIntegrity` 字段，绑定对应的 `registry-manifest.json` integrity
-
-`serialNumber` 为随机 UUID（每次构建重新生成），不参与 integrity 计算，已加入 `build:verify` 的 diff 排除字段。
-
-#### 项目 SBOM（doctor --sbom）
-
-`doctor --sbom` 生成已安装组件的 SBOM，写入 `./brutx-sbom.json`（可用 `--sbom-output` 自定义路径）：
-
-```bash
-npx brutx-vue@latest doctor --sbom
-npx brutx-vue@latest doctor --sbom --sbom-output ./reports/sbom.json
-```
-
-读取 `.brutx/components.json` manifest 中已安装组件的版本、依赖、`registryDependencies` 与 integrity，生成 CycloneDX 1.5 格式 SBOM。无组件安装时报错退出。
-
-## 默认源与离线模式
-
-### 多源 Fallback
-
-默认注册表源为**单源**：GitHub Release 资产，指向发布时构建上传的最新产物：
-
-`https://github.com/lidaixingchen/brutxui-vue3/releases/latest/download`
-
-多源 fallback 能力保留：可通过 `components.json` 的 `registries` 字段（[见配置](#componentsjson-配置文件)）或 `--registry` 命令配置多个源，CLI 按序 fallback，主源超时/失败时自动切换到后续源并输出警告。若所有源均因签名/完整性校验失败，CLI 透出原始错误码 `REGISTRY_SIGNATURE_INVALID` / `REGISTRY_INTEGRITY_FAILED`（而非泛化网络错误），并提示可能存在源间一致性延迟。
-
-### 离线模式
-
-`--offline` flag 或 `BRUTX_OFFLINE=1` 环境变量激活离线模式：**不发起任何网络请求**，只读本地缓存（TTL 过期也复用，integrity 仍校验）。缓存命中时输出：
-
-```text
-[OFFLINE CACHE HIT] button (source: https://github.com/lidaixingchen/brutxui-vue3/releases/latest/download)
-```
-
-缓存未命中时抛 `REGISTRY_OFFLINE_UNAVAILABLE`。先在线执行一次 `brutx add` 或 `brutx list --check-updates` 可预热缓存供离线使用。
-
-`brutx doctor` 会报告缓存条目数、占用体积与离线可用状态。
+| 错误代码 | 错误原因 | 建议对策 |
+| :--- | :--- | :--- |
+| `CONFIG_NOT_FOUND` | 未找到 `components.json` 配置文件 | 先在项目根目录运行 `brutx-vue init` 进行初始化 |
+| `CONFIG_INVALID` | `components.json` 格式错误或缺失必须字段 | 运行 `brutx-vue doctor --fix` 进行配置自愈修复 |
+| `COMPONENT_NOT_FOUND` | 请求添加的组件不存在于注册表中 | 检查组件名称拼写，或运行 `brutx-vue list` 查看可用列表 |
+| `REGISTRY_FETCH_FAILED` | 无法连接到 Registry 注册表 | 检查本地网络环境，或使用 `--registry` 指定可访问的镜像源 |
+| `REGISTRY_OFFLINE_UNAVAILABLE` | 离线模式下请求的组件未在本地缓存中 | 切换为在线模式运行一次以预热缓存，或关闭 `--offline` |
+| `REGISTRY_SIGNATURE_INVALID` | Manifest 的数字签名未能通过受信任公钥验证 | 存在潜在篡改或公钥不匹配，检查 `BRUTX_REGISTRY_PUBLIC_KEYS` |
+| `REGISTRY_INTEGRITY_FAILED` | 内容规范化 SHA-256 哈希比对失败 | 使用 `--no-cache` 重新拉取，或核对私有源构建产物 |
+| `REGISTRY_VERSION_UNSUPPORTED`| `@version` 语法用于不支持分支映射的非 Raw 源 | 移除 `@version` 或使用 `--registry` 切换为 GitHub raw 源 |
+| `PATH_UNSAFE` | 目标写入路径存在非法路径穿越（Directory Traversal） | 检查 `components.json` 中的别名路径配置，严禁指向工作区之外 |
+| `WRITE_FAILED` | 文件系统写入失败 | 检查目标目录的文件写入权限，或关闭占用文件的编辑器进程 |
+| `DOCTOR_FAILED` | `doctor` 诊断未达到 `--fail-on` 设定的合格标准 | 根据终端中的报告提示，运行 `doctor --fix` 或手动修复问题 |
