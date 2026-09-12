@@ -18,7 +18,7 @@ import {
 } from '@lucide/vue'
 import Button from '../button/Button.vue'
 import Input from '../input/Input.vue'
-import { cn } from '@/lib/utils'
+import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import {
     messageBoxCardVariants,
@@ -110,6 +110,14 @@ const cardClasses = computed(() => cn(messageBoxCardVariants(), props.class))
 const iconWrapperClasses = computed(() => messageBoxIconVariants({ type: props.type }))
 const iconClasses = computed(() => cn(iconSizeVariants({ size: 'md' }), 'stroke-[2.5]'))
 const closeIconClasses = computed(() => cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]'))
+const closeButtonClasses = computed(() => cn(
+    'inline-flex items-center justify-center p-1 text-brutal-fg hover:bg-brutal-muted border-2 border-transparent hover:border-brutal transition-colors',
+    FOCUS_RING_CLASSES,
+))
+const descriptionClasses = computed(() => props.message
+    ? 'text-sm font-medium text-brutal-muted-foreground leading-relaxed break-words'
+    : 'sr-only'
+)
 
 const typeIconComponent = computed(() => {
     switch (props.type) {
@@ -154,78 +162,69 @@ function handleCancel(): void {
     >
         <DialogPortal>
             <DialogOverlay
-                class="fixed inset-0 z-dialog bg-overlay backdrop-blur-xs transition-opacity data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
+                class="fixed inset-0 z-dialog bg-brutal-overlay backdrop-blur-xs transition-opacity data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
                 :style="props.zIndex !== undefined ? { zIndex: props.zIndex } : undefined"
             />
-            <div
-                class="fixed inset-0 z-dialog flex items-center justify-center p-4"
+            <DialogContent
+                data-brutx-portal="message-box"
+                :class="cardClasses"
                 :style="props.zIndex !== undefined ? { zIndex: props.zIndex } : undefined"
+                @escape-key-down="handleCancel"
+                @pointer-down-outside="handleCancel"
             >
-                <DialogContent
-                    :class="cardClasses"
-                    @escape-key-down="handleCancel"
-                    @pointer-down-outside="handleCancel"
-                >
-                    <!-- 顶部标题与关闭按钮 -->
-                    <div class="flex items-start justify-between gap-3">
-                        <div class="flex items-center gap-3">
-                            <div :class="iconWrapperClasses" aria-hidden="true">
-                                <component :is="typeIconComponent" :class="iconClasses" />
-                            </div>
-                            <DialogTitle class="text-lg font-black tracking-tight text-brutal-fg">
-                                {{ displayTitle }}
-                            </DialogTitle>
+                <!-- 顶部标题与关闭按钮 -->
+                <div class="flex items-start justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <div :class="iconWrapperClasses" aria-hidden="true">
+                            <component :is="typeIconComponent" :class="iconClasses" />
                         </div>
-                        <DialogClose
-                            v-if="props.showCloseButton"
-                            class="inline-flex items-center justify-center p-1 text-brutal-fg hover:bg-brutal-muted border-2 border-transparent hover:border-brutal transition-colors focus:outline-none"
-                            @click="handleCancel"
-                        >
-                            <X :class="closeIconClasses" aria-hidden="true" />
-                            <span class="sr-only">{{ t('dialog.close') }}</span>
-                        </DialogClose>
+                        <DialogTitle class="text-lg font-black tracking-tight text-brutal-fg">
+                            {{ displayTitle }}
+                        </DialogTitle>
                     </div>
+                    <DialogClose v-if="props.showCloseButton" :class="closeButtonClasses" @click="handleCancel">
+                        <X :class="closeIconClasses" aria-hidden="true" />
+                        <span class="sr-only">{{ t('dialog.close') }}</span>
+                    </DialogClose>
+                </div>
 
-                    <!-- 消息正文与输入框 -->
-                    <div class="flex flex-col gap-4">
-                        <DialogDescription
-                            :class="props.message ? 'text-sm font-medium text-muted-foreground leading-relaxed break-words' : 'sr-only'"
-                        >
-                            {{ props.message || displayTitle }}
-                        </DialogDescription>
+                <!-- 消息正文与输入框 -->
+                <div class="flex flex-col gap-4">
+                    <DialogDescription :class="descriptionClasses">
+                        {{ props.message || displayTitle }}
+                    </DialogDescription>
 
-                        <div v-if="props.showInput" class="flex flex-col gap-1.5">
-                            <Input
-                                v-model="currentInputValue"
-                                :placeholder="props.inputPlaceholder"
-                                :variant="hasValidationError ? 'error' : 'default'"
-                                :error-message="hasValidationError ? errorMessageText : undefined"
-                                autofocus
-                                @keydown.enter.prevent="handleConfirm"
-                            />
-                        </div>
+                    <div v-if="props.showInput" class="flex flex-col gap-1.5">
+                        <Input
+                            v-model="currentInputValue"
+                            :placeholder="props.inputPlaceholder"
+                            :variant="hasValidationError ? 'error' : 'default'"
+                            :error-message="hasValidationError ? errorMessageText : undefined"
+                            autofocus
+                            @keydown.enter.prevent="handleConfirm"
+                        />
                     </div>
+                </div>
 
-                    <!-- 底部操作按钮组 -->
-                    <div class="flex justify-end gap-3 mt-2">
-                        <Button
-                            v-if="props.showCancelButton"
-                            variant="outline"
-                            :class="props.cancelButtonClass"
-                            @click="handleCancel"
-                        >
-                            {{ cancelText }}
-                        </Button>
-                        <Button
-                            variant="default"
-                            :class="props.confirmButtonClass"
-                            @click="handleConfirm"
-                        >
-                            {{ confirmText }}
-                        </Button>
-                    </div>
-                </DialogContent>
-            </div>
+                <!-- 底部操作按钮组 -->
+                <div class="flex justify-end gap-3 mt-2">
+                    <Button
+                        v-if="props.showCancelButton"
+                        variant="outline"
+                        :class="props.cancelButtonClass"
+                        @click="handleCancel"
+                    >
+                        {{ cancelText }}
+                    </Button>
+                    <Button
+                        variant="default"
+                        :class="props.confirmButtonClass"
+                        @click="handleConfirm"
+                    >
+                        {{ confirmText }}
+                    </Button>
+                </div>
+            </DialogContent>
         </DialogPortal>
     </DialogRoot>
 </template>

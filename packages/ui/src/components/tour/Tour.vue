@@ -234,6 +234,32 @@ const recalculatePosition = (): void => {
 
 let positionRequestId = 0
 let isUnmounted = false
+let previousActiveElement: HTMLElement | null = null
+let focusSessionActive = false
+
+const focusTour = (): void => {
+    if (!isOpen.value) return
+    popoverRef.value?.querySelector<HTMLElement>('button')?.focus()
+}
+
+const enterFocusSession = (): void => {
+    if (focusSessionActive) return
+    const documentRef = getDocument()
+    const activeElement = documentRef?.activeElement
+    previousActiveElement = activeElement instanceof HTMLElement ? activeElement : null
+    focusSessionActive = true
+    void nextTick().then(focusTour)
+}
+
+const restoreFocus = (): void => {
+    if (!focusSessionActive) return
+    const target = previousActiveElement
+    previousActiveElement = null
+    focusSessionActive = false
+    if (target?.isConnected) {
+        target.focus()
+    }
+}
 
 const updatePosition = async (): Promise<void> => {
     const requestId = ++positionRequestId
@@ -367,6 +393,14 @@ const onScrollOrResize = (): void => {
 
 const { throttled: handleScrollOrResize } = useThrottle(onScrollOrResize, SCROLL_THROTTLE_MS)
 
+watch(isOpen, (open, previousOpen) => {
+    if (open && !previousOpen) {
+        enterFocusSession()
+    } else if (!open && previousOpen) {
+        restoreFocus()
+    }
+})
+
 watch(
     [isOpen, currentStep, () => props.steps],
     async ([newOpen]): Promise<void> => {
@@ -384,6 +418,7 @@ watch(
         await updatePosition()
         if (isUnmounted) return
         setupResizeObserver()
+        void focusTour()
     },
     { immediate: true }
 )
@@ -393,6 +428,9 @@ onMounted((): void => {
     win?.addEventListener('resize', handleScrollOrResize, { passive: true })
     win?.addEventListener('scroll', handleScrollOrResize, { passive: true })
     win?.addEventListener('keydown', handleKeyDown)
+    if (isOpen.value) {
+        enterFocusSession()
+    }
 })
 
 onBeforeUnmount((): void => {
@@ -402,6 +440,9 @@ onBeforeUnmount((): void => {
     win?.removeEventListener('scroll', handleScrollOrResize)
     win?.removeEventListener('keydown', handleKeyDown)
     cleanupResizeObserver()
+    if (isOpen.value) {
+        restoreFocus()
+    }
 })
 </script>
 

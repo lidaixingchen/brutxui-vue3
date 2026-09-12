@@ -9,7 +9,7 @@ import { type VariantProps } from 'class-variance-authority'
 import { X } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import DialogOverlay from './DialogOverlay.vue'
-import { dialogContentVariants, dialogCloseVariants } from './dialog-variants'
+import { dialogContentVariants, dialogCloseVariants, dialogViewportClasses } from './dialog-variants'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 
@@ -35,7 +35,7 @@ const props = withDefaults(defineProps<DialogContentProps>(), {
 const { t } = useLocale()
 
 const contentClasses = computed(() =>
-    cn(dialogContentVariants({ size: props.size, entrance: props.entrance }), props.class)
+    cn(dialogContentVariants({ size: props.size, entrance: props.entrance }), dialogViewportClasses, props.class)
 )
 
 // 无响应式依赖：普通常量（与 closeIconClasses 一致）

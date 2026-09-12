@@ -160,6 +160,34 @@ describe('Tour.vue', () => {
         expect(openEmits ? openEmits[0] : []).toEqual([false])
     })
 
+    it('moves focus into the tour and restores the previously focused element', async () => {
+        const trigger = document.createElement('button')
+        document.body.appendChild(trigger)
+        trigger.focus()
+
+        const wrapper = mount(Tour, {
+            props: {
+                steps: [{ target: `#${TARGET_ID_1}`, title: 'Step 1 Title' }],
+                current: 0,
+                open: true,
+            },
+            global: { provide: localeProvide },
+            attachTo: document.body,
+        })
+
+        await nextTick()
+        await nextTick()
+        await nextTick()
+        expect(document.activeElement).toBe(wrapper.find('[role="dialog"] button').element)
+
+        await wrapper.setProps({ open: false })
+        await nextTick()
+        expect(document.activeElement).toBe(trigger)
+
+        wrapper.unmount()
+        trigger.remove()
+    })
+
     it('redraws canvas and updates positioning on window resize and scroll events', async () => {
         const steps: TourStep[] = [
             {

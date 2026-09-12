@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 
 export const messageBoxCardVariants = cva(
-    'relative z-dialog w-full max-w-md bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal p-6 flex flex-col gap-4 focus:outline-none select-none',
+    'fixed left-1/2 top-1/2 z-dialog w-[calc(100vw-2rem)] max-h-[calc(100dvh_-_2rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal p-6 flex flex-col gap-4 focus:outline-none select-none',
     {
         variants: {
             size: {

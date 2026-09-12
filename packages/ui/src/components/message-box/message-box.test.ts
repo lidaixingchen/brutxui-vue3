@@ -23,6 +23,28 @@ describe('MessageBox Component & Functional API', () => {
     })
 
     describe('MessageBox.vue', () => {
+        it('does not leave a portal shell mounted while closed', async () => {
+            const wrapper = mount(MessageBox, {
+                props: { open: false },
+                attachTo: document.body,
+            })
+
+            await nextTick()
+            expect(document.body.querySelector('[data-brutx-portal="message-box"]')).toBeNull()
+
+            await wrapper.setProps({ open: true })
+            await nextTick()
+            expect(document.body.querySelector('[data-brutx-portal="message-box"]')).not.toBeNull()
+
+            await wrapper.setProps({ open: false })
+            await nextTick()
+            vi.runAllTimers()
+            await nextTick()
+            expect(document.body.querySelector('[data-brutx-portal="message-box"]')).toBeNull()
+
+            wrapper.unmount()
+        })
+
         it('renders title, message, and action buttons properly', async () => {
             const wrapper = mount(MessageBox, {
                 props: {

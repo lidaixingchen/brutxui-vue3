@@ -101,7 +101,7 @@ const clampedProgress = computed(() =>
             <div
                 v-if="loading"
                 :class="cn(
-                    'absolute inset-0 flex flex-col items-center justify-center z-loading select-none bg-white/80 dark:bg-brutal-black/80',
+                    'absolute inset-0 flex flex-col items-center justify-center z-loading select-none bg-brutal-bg/80',
                     customClass
                 )"
                 :style="maskStyles"

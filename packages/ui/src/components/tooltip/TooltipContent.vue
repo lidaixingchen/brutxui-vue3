@@ -15,6 +15,7 @@ interface TooltipContentProps extends RekaTooltipContentProps {
 
 const props = withDefaults(defineProps<TooltipContentProps>(), {
     sideOffset: floatingContentSideOffsets.tooltip,
+    collisionPadding: floatingContentSideOffsets.tooltip,
     class: undefined,
     to: undefined,
 })

@@ -18,23 +18,23 @@ const iconMap: Record<MessageType, typeof Info> = {
 }
 
 const typeClasses: Record<MessageType, string> = {
-    info: 'bg-brutal-secondary text-brutal-fg border-brutal',
-    success: 'bg-brutal-success text-brutal-fg border-brutal',
-    warning: 'bg-brutal-accent text-brutal-fg border-brutal',
-    error: 'bg-brutal-destructive text-brutal-fg border-brutal',
+    info: 'bg-brutal-secondary text-brutal-secondary-foreground border-brutal',
+    success: 'bg-brutal-success text-brutal-success-foreground border-brutal',
+    warning: 'bg-brutal-accent text-brutal-accent-foreground border-brutal',
+    error: 'bg-brutal-destructive text-brutal-destructive-foreground border-brutal',
 }
 
 const iconColorClasses: Record<MessageType, string> = {
-    info: 'text-brutal-fg',
-    success: 'text-brutal-fg',
-    warning: 'text-brutal-fg',
-    error: 'text-brutal-fg',
+    info: 'text-brutal-secondary-foreground',
+    success: 'text-brutal-success-foreground',
+    warning: 'text-brutal-accent-foreground',
+    error: 'text-brutal-destructive-foreground',
 }
 
 function messageClasses(msg: MessageItem): string {
     const typeClass = typeClasses[msg.type] ?? typeClasses.info
     return cn(
-        'pointer-events-auto min-w-[320px] max-w-[480px]',
+        'pointer-events-auto w-full max-w-[480px] min-w-0',
         'border-3 shadow-brutal',
         typeClass,
     )
@@ -50,7 +50,7 @@ function handleClose(id: string): void {
 
 <template>
     <div
-        class="fixed top-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none max-h-[calc(100vh_-_3rem)] overflow-y-auto"
+        class="fixed top-6 left-1/2 -translate-x-1/2 flex w-full max-w-full flex-col items-center gap-3 pointer-events-none px-4 max-h-[calc(100dvh_-_3rem)] overflow-y-auto"
         :style="{ zIndex: Z_INDEX.MESSAGE }"
     >
         <TransitionGroup name="brutx-message">

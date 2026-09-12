@@ -43,3 +43,7 @@ export const dialogContentVariants = cva(
 // 直接复用 modalCloseButtonVariants（默认 placement='dialog'），
 // 去掉冗余的 cva 包裹层，保留底层 placement/motion 变体能力
 export const dialogCloseVariants = modalCloseButtonVariants
+
+export const dialogViewportClasses = [
+    'w-[calc(100vw-2rem)] max-h-[calc(100dvh_-_2rem)] overflow-y-auto',
+] as const
