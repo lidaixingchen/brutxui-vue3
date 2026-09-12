@@ -1,5 +1,6 @@
 import { computed, toValue, type ComputedRef, type MaybeRefOrGetter } from 'vue'
 import { cn } from '@/lib/utils'
+import { hasSelectionValue } from '@/lib/selection-value'
 
 // 默认空态样式：brutal 主题专属 token。提取为模块级常量便于其他主题/复用方统一覆盖，
 // 避免通用逻辑与主题设计 token 耦合（调用方仍可经 emptyClass 逐次覆盖）
@@ -50,12 +51,7 @@ export function useSelectableTrigger<TValue = unknown>(
 
         const value = toValue(options.modelValue)
         if (options.getHasValue) return options.getHasValue(value)
-        if (Array.isArray(value)) return value.length > 0
-        if (typeof value === 'string') return value.length > 0
-        // 取舍说明：0 / false / 空对象等 falsy 原始值一律视为「已选择」（它们都是合法的选中值，
-        // 如索引 0、布尔勾选态），只有 null/undefined 才算未选择；如需把 0/false 视为未选择，
-        // 请通过 getHasValue 定制判定规则
-        return value !== null && value !== undefined
+        return hasSelectionValue(value)
     })
 
     const triggerClasses = computed(() => {

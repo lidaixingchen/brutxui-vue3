@@ -1,4 +1,5 @@
 import { computed, readonly, ref, toValue, type ComputedRef, type MaybeRefOrGetter, type Ref } from 'vue'
+import { hasSelectionValue } from '@/lib/selection-value'
 
 export interface UseClearableOptions<TValue = unknown> {
     /** 当前值，用于判断是否显示清除按钮 */
@@ -26,14 +27,7 @@ export function useClearable<TValue = unknown>(options: UseClearableOptions<TVal
     const isHovering = ref(false)
     const isFocused = ref(false)
 
-    const hasValue = computed(() => {
-        const value = toValue(options.modelValue)
-        // 空字符串与 null/undefined 一视同仁（如 Input 清空后 modelValue 为 ''）
-        if (value === null || value === undefined || value === '') return false
-        // 支持数组类型（如 Select multiple 模式）
-        if (Array.isArray(value)) return value.length > 0
-        return true
-    })
+    const hasValue = computed(() => hasSelectionValue(toValue(options.modelValue)))
 
     const showClear = computed(() => {
         if (!toValue(options.clearable)) return false
