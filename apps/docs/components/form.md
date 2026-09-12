@@ -140,9 +140,9 @@ function onComplete(finalValues) {
 | ---- | ---- |
 | `Form` | 根表单组件，集成 vee-validate |
 | `FormField` | 字段包装器，连接表单状态，提供字段上下文 |
-| `FormItem` | 标签、控件和消息的布局容器，生成唯一 ID |
+| `FormItem` | 标签、控件和消息的布局容器，生成唯一 ID，并按表单布局配置排列内容 |
 | `FormLabel` | 支持错误状态的标签，注入字段上下文 |
-| `FormControl` | 输入控件的包装器，通过 slot 提供无障碍属性 |
+| `FormControl` | 输入控件的包装器，按表单布局放入控件列，并通过 slot 提供无障碍属性和尺寸 |
 | `FormDescription` | 输入框下方的辅助文本 |
 | `FormMessage` | 验证错误消息，注入字段上下文 |
 | `FormWizard` | 多步骤向导式表单 |
@@ -231,8 +231,8 @@ const {
 | 属性 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | `inline` | `boolean` | `false` | 行内表单布局 |
-| `labelPosition` | `'left' \| 'right' \| 'top'` | `'right'` | 标签位置 |
-| `labelWidth` | `string \| number` | — | 标签宽度 |
+| `labelPosition` | `'left' \| 'right' \| 'top'` | `'right'` | 横排时标签位于第一列；`left` 左对齐，`right` 右对齐；`top` 位于控件上方 |
+| `labelWidth` | `string \| number` | — | 横排时第一列标签宽度 |
 | `scrollToError` | `boolean` | `false` | 验证失败时滚动到第一个错误字段 |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 统一尺寸 |
 | `class` | `string` | — | 自定义样式类 |
@@ -271,10 +271,11 @@ const {
 | `class` | `string` | 样式类 |
 | `aria-describedby` | `string` | 描述元素的 ID（包含 `FormDescription` 和 `FormMessage`） |
 | `aria-invalid` | `boolean` | 字段是否有验证错误 |
+| `size` | `'sm' \| 'default' \| 'lg'` | `Form` 的统一尺寸，可传给控件的 `size` 属性 |
 
 ```vue
-<FormControl v-slot="{ id, ariaDescribedby, ariaInvalid }">
-    <Input :id="id" :aria-describedby="ariaDescribedby" :aria-invalid="ariaInvalid" />
+<FormControl v-slot="{ id, ariaDescribedby, ariaInvalid, size }">
+    <Input :id="id" :size="size" :aria-describedby="ariaDescribedby" :aria-invalid="ariaInvalid" />
 </FormControl>
 ```
 

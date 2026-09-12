@@ -125,7 +125,7 @@ const previewUrl = computed(() => props.file.url ?? objectUrl.value)
             v-if="file.status === 'success'"
             class="absolute top-1 right-1 bg-brutal-success rounded-full p-0.5"
         >
-            <Check class="h-3 w-3 text-white" />
+            <Check class="h-3 w-3 text-brutal-success-foreground" />
         </div>
 
         <!-- 错误状态 -->
@@ -137,25 +137,25 @@ const previewUrl = computed(() => props.file.url ?? objectUrl.value)
         </div>
 
         <!-- 操作按钮 -->
-        <div class="absolute inset-0 bg-brutal-bg/0 hover:bg-brutal-bg/60 flex items-center justify-center gap-1 opacity-0 hover:opacity-100 transition-opacity">
+        <div class="picture-card-actions absolute inset-0 bg-brutal-bg/60 hover:bg-brutal-bg/70 focus-within:bg-brutal-bg/70 flex items-center justify-center gap-1 opacity-100 focus-within:opacity-100 transition-opacity">
             <Button
                 v-if="file.status === 'error'"
                 size="sm"
                 variant="ghost"
-                class="h-6 w-6 p-0"
+                class="h-9 w-9 p-0"
                 aria-label="重试上传"
                 @click.stop="emit('retry')"
             >
-                <RefreshCw class="h-3 w-3" aria-hidden="true" />
+                <RefreshCw class="h-4 w-4" aria-hidden="true" />
             </Button>
             <Button
                 size="sm"
                 variant="ghost"
-                class="h-6 w-6 p-0"
+                class="h-9 w-9 p-0"
                 aria-label="删除文件"
                 @click.stop="emit('remove')"
             >
-                <X class="h-3 w-3" aria-hidden="true" />
+                <X class="h-4 w-4" aria-hidden="true" />
             </Button>
         </div>
 
@@ -260,3 +260,16 @@ const previewUrl = computed(() => props.file.url ?? objectUrl.value)
         </div>
     </div>
 </template>
+
+<style scoped>
+@media (hover: hover) and (pointer: fine) {
+    .picture-card-actions {
+        opacity: 0;
+    }
+
+    .picture-card-actions:hover,
+    .picture-card-actions:focus-within {
+        opacity: 1;
+    }
+}
+</style>

@@ -16,7 +16,13 @@ interface RadioGroupProps {
 const props = defineProps<RadioGroupProps>()
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 
-const classes = computed(() => cn('grid gap-2', props.class))
+const classes = computed(() => cn(
+    'flex gap-2',
+    props.orientation === 'horizontal'
+        ? 'flex-row flex-wrap items-center'
+        : 'flex-col',
+    props.class,
+))
 </script>
 
 <template>

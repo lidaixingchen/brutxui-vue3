@@ -37,8 +37,8 @@ export const numberInputButtonVariants = cva(
     {
         variants: {
             position: {
-                decrement: 'bg-brutal-accent text-brutal-fg',
-                increment: 'bg-brutal-primary text-brutal-fg',
+                decrement: 'bg-brutal-accent text-brutal-accent-foreground',
+                increment: 'bg-brutal-primary text-brutal-primary-foreground',
             },
             layout: {
                 split: 'px-4 border-brutal',

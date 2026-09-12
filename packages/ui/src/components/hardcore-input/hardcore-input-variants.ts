@@ -14,6 +14,7 @@ export const hardcoreInputVariants = cva(
         'transition-all duration-150',
         `${FOCUS_RING_CLASSES} focus-visible:shadow-brutal-lg`,
         'placeholder:text-brutal-placeholder placeholder:font-normal',
+        'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-brutal-muted',
     ],
     {
         variants: {

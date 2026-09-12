@@ -88,6 +88,7 @@ import { Label } from 'brutx-ui-vue'
 | `variant` | `'default' \| 'error' \| 'success' \| 'muted'` | `'default'` | Label variant style |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Label size |
 | `required` | `boolean` | `false` | Whether to show the required indicator |
+| `disabled` | `boolean` | `false` | Shows the disabled label state and sets `aria-disabled` |
 | `for` | `string` | — | ID of the associated form control |
 | `class` | `string` | — | Custom CSS class name |
 
@@ -103,4 +104,4 @@ The Label component renders as an HTML `<label>` element. When using the `for` a
 
 - When `required` is `true`, the component automatically adds the `aria-required="true"` attribute
 - The required indicator `*` is marked as `aria-hidden="true"` to avoid duplicate announcements by screen readers
-- The component supports `peer-disabled` state, displaying a disabled style when the associated form control is disabled
+- Pass `disabled` to explicitly show the disabled label state and set `aria-disabled="true"`; `peer-disabled` styling remains available

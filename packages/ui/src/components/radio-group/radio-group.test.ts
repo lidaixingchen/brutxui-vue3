@@ -67,6 +67,27 @@ describe('RadioGroup', () => {
         })
         expect(wrapper.find('[role="radiogroup"]').attributes('aria-label')).toBe('选择主题')
     })
+
+    it('lays out horizontal options on a wrapping row', () => {
+        const wrapper = mount(RadioGroup, {
+            props: { orientation: 'horizontal' },
+            attachTo: document.body,
+        })
+        const group = wrapper.find('[role="radiogroup"]')
+        expect(group.classes()).toContain('flex-row')
+        expect(group.classes()).toContain('flex-wrap')
+        expect(group.classes()).not.toContain('flex-col')
+    })
+
+    it('keeps vertical options in a column', () => {
+        const wrapper = mount(RadioGroup, {
+            props: { orientation: 'vertical' },
+            attachTo: document.body,
+        })
+        const group = wrapper.find('[role="radiogroup"]')
+        expect(group.classes()).toContain('flex-col')
+        expect(group.classes()).not.toContain('flex-wrap')
+    })
 })
 
 describe('RadioGroupItem', () => {

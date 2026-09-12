@@ -11,6 +11,7 @@ interface LabelProps {
     variant?: NonNullable<LabelVariantProps['variant']>
     size?: NonNullable<LabelVariantProps['size']>
     required?: boolean
+    disabled?: boolean
     for?: string
     class?: string
 }
@@ -22,17 +23,25 @@ const props = withDefaults(defineProps<LabelProps>(), {
     variant: 'default',
     size: 'default',
     required: false,
+    disabled: false,
     for: undefined,
     class: undefined,
 })
 
 const classes = computed(() =>
-    cn(labelVariants({ variant: props.variant, size: props.size }), props.class)
+    cn(
+        labelVariants({ variant: props.variant, size: props.size, disabled: props.disabled }),
+        props.class,
+    )
 )
 </script>
 
 <template>
-    <LabelRoot :class="classes" :for="props.for">
+    <LabelRoot
+        :class="classes"
+        :for="props.for"
+        :aria-disabled="props.disabled ? 'true' : undefined"
+    >
         <slot />
         <span v-if="required" class="text-brutal-destructive ml-0.5" aria-hidden="true">*</span>
     </LabelRoot>

@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { computed, inject, ref } from 'vue'
 import { cn } from '@/lib/utils'
-import { formFieldKey, formItemKey } from './form-context'
+import { formContextKey, formFieldKey, formItemKey } from './form-context'
+import {
+    formMessageVariants,
+    type FormLayoutPosition,
+    type FormLayoutSize,
+} from './form-variants'
 
 interface FormMessageProps {
     class?: string
@@ -20,6 +25,10 @@ const defaultItemContext = { formItemId: '', formDescriptionId: '', formMessageI
 
 const fieldContext = inject(formFieldKey, defaultFieldContext)
 const itemContext = inject(formItemKey, defaultItemContext)
+const form = inject(formContextKey, null)
+const layout = computed(() => form?.value)
+const labelPosition = computed<FormLayoutPosition>(() => layout.value?.labelPosition ?? 'top')
+const size = computed<FormLayoutSize>(() => layout.value?.size ?? 'default')
 
 if (fieldContext === defaultFieldContext || itemContext === defaultItemContext) {
     console.warn('[BrutxUI FormMessage] Must be used inside FormItem/FormField components.')
@@ -30,7 +39,10 @@ if (fieldContext === defaultFieldContext || itemContext === defaultItemContext) 
 const body = computed(() => fieldContext.error.value?.trim() ? fieldContext.error.value : '')
 
 const classes = computed(() =>
-    cn('text-sm font-black text-brutal-destructive', props.class)
+    cn(
+        formMessageVariants({ labelPosition: labelPosition.value, size: size.value }),
+        props.class,
+    )
 )
 </script>
 

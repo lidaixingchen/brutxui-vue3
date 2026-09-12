@@ -18,10 +18,15 @@ export const labelVariants = cva(
                 default: 'text-sm leading-none',
                 lg: 'text-base leading-none',
             },
+            disabled: {
+                true: 'cursor-not-allowed opacity-70',
+                false: '',
+            },
         },
         defaultVariants: {
             variant: 'default',
             size: 'default',
+            disabled: false,
         },
     }
 )

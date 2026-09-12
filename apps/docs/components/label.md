@@ -87,6 +87,7 @@ import { Label } from 'brutx-ui-vue'
 | `variant` | `'default' \| 'error' \| 'success' \| 'muted'` | `'default'` | 标签变体样式 |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 标签尺寸 |
 | `required` | `boolean` | `false` | 是否显示必填标记 |
+| `disabled` | `boolean` | `false` | 显示禁用标签状态并设置 `aria-disabled` |
 | `for` | `string` | — | 关联的表单控件 ID |
 | `class` | `string` | — | 自定义 CSS 类名 |
 
@@ -102,4 +103,4 @@ Label 组件渲染为 HTML `<label>` 元素。当使用 `for` 属性时，它会
 
 - 当 `required` 为 `true` 时，组件会自动添加 `aria-required="true"` 属性
 - 必填标记 `*` 被标记为 `aria-hidden="true"`，避免屏幕阅读器重复朗读
-- 组件支持 `peer-disabled` 状态，当关联的表单控件禁用时会显示禁用样式
+- 传入 `disabled` 可显式显示禁用标签状态并设置 `aria-disabled="true"`；组件也保留 `peer-disabled` 样式支持

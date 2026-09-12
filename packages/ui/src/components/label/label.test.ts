@@ -69,6 +69,14 @@ describe('Label', () => {
         expect(wrapper.attributes('for')).toBe('input-field')
     })
 
+    it('exposes an explicit disabled state', () => {
+        const wrapper = mount(Label, {
+            props: { disabled: true },
+            attachTo: document.body,
+        })
+        expect(wrapper.attributes('aria-disabled')).toBe('true')
+    })
+
     it('applies default size classes', () => {
         const wrapper = mount(Label, { attachTo: document.body })
         expect(wrapper.classes()).toContain('text-sm')

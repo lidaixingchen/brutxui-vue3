@@ -141,9 +141,9 @@ Dynamically show/hide field groups based on form values:
 |-----------|-------------|
 | `Form` | Root form component, integrates with vee-validate |
 | `FormField` | Field wrapper that connects form state and provides field context |
-| `FormItem` | Layout container for label, control, and message; generates unique IDs |
+| `FormItem` | Layout container for label, control, and message; generates unique IDs and applies form layout settings |
 | `FormLabel` | Label with error state support, injects field context |
-| `FormControl` | Input control wrapper that provides accessibility attributes via slot |
+| `FormControl` | Input control wrapper that places the control in the form grid and provides accessibility attributes and size via slot |
 | `FormDescription` | Helper text below the input |
 | `FormMessage` | Validation error message, injects field context |
 | `FormWizard` | Multi-step wizard-style form |
@@ -232,8 +232,8 @@ const {
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | `inline` | `boolean` | `false` | Inline form layout |
-| `labelPosition` | `'left' \| 'right' \| 'top'` | `'right'` | Label position |
-| `labelWidth` | `string \| number` | — | Label width |
+| `labelPosition` | `'left' \| 'right' \| 'top'` | `'right'` | In horizontal layouts the label is in the first column; `left` aligns it left, `right` aligns it right; `top` places it above the control |
+| `labelWidth` | `string \| number` | — | Width of the first label column in horizontal layouts |
 | `scrollToError` | `boolean` | `false` | Scroll to first error field on validation failure |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Unified size for all form items |
 | `class` | `string` | — | Custom CSS class |
@@ -272,10 +272,11 @@ const {
 | `class` | `string` | CSS class |
 | `aria-describedby` | `string` | IDs of describing elements (includes `FormDescription` and `FormMessage`) |
 | `aria-invalid` | `boolean` | Whether the field has a validation error |
+| `size` | `'sm' \| 'default' \| 'lg'` | Unified `Form` size, ready to pass to the control's `size` prop |
 
 ```vue
-<FormControl v-slot="{ id, ariaDescribedby, ariaInvalid }">
-    <Input :id="id" :aria-describedby="ariaDescribedby" :aria-invalid="ariaInvalid" />
+<FormControl v-slot="{ id, ariaDescribedby, ariaInvalid, size }">
+    <Input :id="id" :size="size" :aria-describedby="ariaDescribedby" :aria-invalid="ariaInvalid" />
 </FormControl>
 ```
 

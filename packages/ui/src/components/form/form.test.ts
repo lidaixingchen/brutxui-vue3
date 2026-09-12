@@ -1,5 +1,5 @@
 import { mount, flushPromises } from '@vue/test-utils'
-import { nextTick, ref, defineComponent, inject } from 'vue'
+import { computed, nextTick, provide, ref, defineComponent, inject } from 'vue'
 import { useField } from 'vee-validate'
 import Form from './Form.vue'
 import FormField from './FormField.vue'
@@ -8,7 +8,7 @@ import FormLabel from './FormLabel.vue'
 import FormControl from './FormControl.vue'
 import FormDescription from './FormDescription.vue'
 import FormMessage from './FormMessage.vue'
-import { formFieldKey, formItemKey } from './form-context'
+import { formContextKey, formFieldKey, formItemKey } from './form-context'
 import type { FormFieldContext, FormItemContext } from './form-context'
 
 // Helper component: registers a field with vee-validate via useField
@@ -21,6 +21,19 @@ const RegisteredField = defineComponent({
         return { value, errorMessage }
     },
     template: `<div><input :name="name" v-model="value" /><span data-testid="error">{{ errorMessage }}</span></div>`,
+})
+
+const LayoutFieldContext = defineComponent({
+    setup(_, { slots }) {
+        provide(formFieldKey, {
+            name: ref('layout-field'),
+            error: ref('Layout error'),
+            value: ref(''),
+            setValue: () => {},
+            setError: () => {},
+        })
+        return () => slots.default?.()
+    },
 })
 
 // Helper: mount FormLabel with providers
@@ -130,6 +143,36 @@ function mountFormWithField(options: {
             default: {
                 components: { RegisteredField },
                 template: '<RegisteredField name="name" />',
+            } as any,
+        },
+    })
+}
+
+function mountFormLayout(formProps: Record<string, unknown> = {}) {
+    return mount(Form, {
+        props: formProps,
+        slots: {
+            default: {
+                components: {
+                    LayoutFieldContext,
+                    FormItem,
+                    FormLabel,
+                    FormControl,
+                    FormDescription,
+                    FormMessage,
+                },
+                template: `
+                    <LayoutFieldContext>
+                        <FormItem data-layout-item>
+                            <FormLabel>Label</FormLabel>
+                            <FormControl>
+                                <input class="layout-control" />
+                            </FormControl>
+                            <FormDescription data-layout-description>Description</FormDescription>
+                            <FormMessage data-layout-message />
+                        </FormItem>
+                    </LayoutFieldContext>
+                `,
             } as any,
         },
     })
@@ -696,6 +739,88 @@ describe('FormItem', () => {
         })
         expect(wrapper.exists()).toBe(true)
     })
+
+    it('projects form label layout and width onto the item grid', () => {
+        const formLayout = computed(() => ({
+            labelPosition: 'left' as const,
+            labelWidth: '120px',
+            size: 'sm' as const,
+        }))
+        const wrapper = mount(FormItem, {
+            global: {
+                provide: {
+                    [formContextKey as symbol]: formLayout,
+                },
+            },
+        })
+
+        expect(wrapper.classes()).toContain('grid')
+        expect(wrapper.classes()).toContain('grid-cols-[max-content_minmax(0,1fr)]')
+        expect(wrapper.element.style.gridTemplateColumns).toBe('120px minmax(0, 1fr)')
+        expect(wrapper.classes()).toContain('gap-y-1')
+    })
+})
+
+describe('Form layout contract', () => {
+    it.each([
+        {
+            labelPosition: 'left' as const,
+            labelClasses: ['col-start-1', 'justify-self-start'],
+            controlClasses: ['col-start-2'],
+        },
+        {
+            labelPosition: 'right' as const,
+            labelClasses: ['col-start-1', 'justify-self-end'],
+            controlClasses: ['col-start-2'],
+        },
+        {
+            labelPosition: 'top' as const,
+            labelClasses: [],
+            controlClasses: [],
+        },
+    ])('places the label and control for $labelPosition layout', ({
+        labelPosition,
+        labelClasses,
+        controlClasses,
+    }) => {
+        const wrapper = mountFormLayout({ labelPosition })
+        const item = wrapper.find('[data-layout-item]')
+        const label = wrapper.find('label')
+        const control = wrapper.find('.layout-control')
+
+        for (const className of labelClasses) expect(label.classes()).toContain(className)
+        for (const className of controlClasses) expect(control.classes()).toContain(className)
+
+        if (labelPosition === 'top') {
+            expect(item.classes()).toContain('space-y-2')
+            expect(item.classes()).not.toContain('grid')
+        } else {
+            expect(item.classes()).toContain('grid')
+        }
+    })
+
+    it.each([
+        'left' as const,
+        'right' as const,
+    ])('uses the first grid column for %s label width', (labelPosition) => {
+        const wrapper = mountFormLayout({ labelPosition, labelWidth: 120 })
+        const item = wrapper.find('[data-layout-item]')
+        expect((item.element as HTMLElement).style.gridTemplateColumns).toBe('120px minmax(0, 1fr)')
+    })
+
+    it.each([
+        'left' as const,
+        'right' as const,
+    ])('aligns helper text with the control for %s layout', (labelPosition) => {
+        const wrapper = mountFormLayout({ labelPosition })
+        const description = wrapper.find('[data-layout-description]')
+        const message = wrapper.find('[data-layout-message]')
+
+        expect(description.classes()).toContain('col-start-2')
+        expect(message.classes()).toContain('col-start-2')
+        expect(description.classes()).not.toContain('col-span-2')
+        expect(message.classes()).not.toContain('col-span-2')
+    })
 })
 
 // ==============================
@@ -793,6 +918,42 @@ describe('FormControl', () => {
             },
         })
         expect(wrapper.find('input').exists()).toBe(true)
+    })
+
+    it('provides the form size through scoped slot props', () => {
+        const formLayout = computed(() => ({
+            labelPosition: 'left' as const,
+            labelWidth: '120px',
+            size: 'sm' as const,
+        }))
+        const wrapper = mount(FormControl, {
+            global: {
+                provide: {
+                    [formContextKey as symbol]: formLayout,
+                    [formFieldKey as symbol]: {
+                        name: 'test-field',
+                        error: ref<string | undefined>(undefined),
+                        value: ref(undefined),
+                        setValue: () => {},
+                        setError: () => {},
+                    } as unknown as FormFieldContext,
+                    [formItemKey as symbol]: {
+                        id: 'test-id',
+                        formItemId: 'test-id-form-item',
+                        formDescriptionId: 'test-id-form-item-description',
+                        formMessageId: 'test-id-form-item-message',
+                    } as FormItemContext,
+                },
+            },
+            slots: {
+                default: '<template #default="{ id, size, ariaDescribedby }"><input :id="id" :data-form-size="size" :data-described-by="ariaDescribedby" /></template>',
+            },
+        })
+
+        const input = wrapper.find('input')
+        expect(input.attributes('id')).toBe('test-id-form-item')
+        expect(input.attributes('data-form-size')).toBe('sm')
+        expect(input.attributes('data-described-by')).toBe('test-id-form-item-description')
     })
 })
 

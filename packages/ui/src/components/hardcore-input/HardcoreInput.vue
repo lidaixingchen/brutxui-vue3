@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, toRef, inject, onBeforeUnmount, useId } from 'vue'
+import { ref, computed, toRef, inject, onBeforeUnmount, useId, useSlots } from 'vue'
 import { cn } from '@/lib/utils'
 import { useAudioEngine } from '@/composables/useAudioEngine'
 import { useFormFieldValidation } from '@/composables/useFormFieldValidation'
@@ -34,6 +34,8 @@ const props = withDefaults(defineProps<HardcoreInputProps>(), {
     class: undefined,
 })
 
+const VALIDATION_FACE_PADDING_CLASS = 'pr-16'
+
 const emit = defineEmits<{
     'update:modelValue': [value: string]
     'validation-change': [state: 'default' | 'success' | 'error', message?: string]
@@ -54,6 +56,7 @@ const audioEngine = useAudioEngine(toRef(props, 'sound'))
 const { t } = useLocale()
 
 const formField = inject<FormFieldContext | null>(formFieldKey, null)
+const slots = useSlots()
 
 const { validationState, errorMessage, validate: validateField } = useFormFieldValidation<string>({
     rules: () => props.rules,
@@ -228,6 +231,7 @@ const containerClasses = computed(() =>
 const inputClasses = computed(() =>
     cn(
         hardcoreInputVariants({ variant: validationState.value }),
+        (validationState.value !== 'default' || slots.default) && VALIDATION_FACE_PADDING_CLASS,
         triggerShake.value ? 'animate-shake' : ''
     )
 )

@@ -2,15 +2,14 @@
 import { inject, ref, computed } from 'vue'
 import { Primitive } from 'reka-ui'
 import { cn } from '@/lib/utils'
-import { formFieldKey, formItemKey } from './form-context'
+import { formContextKey, formFieldKey, formItemKey } from './form-context'
+import { formControlVariants, type FormLayoutPosition, type FormLayoutSize } from './form-variants'
 
 interface FormControlProps {
     class?: string
 }
 
 const props = defineProps<FormControlProps>()
-
-const rootClasses = computed(() => cn(props.class))
 
 const defaultFieldContext = {
     name: ref(''),
@@ -23,6 +22,14 @@ const defaultItemContext = { formItemId: '', formDescriptionId: '', formMessageI
 
 const fieldContext = inject(formFieldKey, defaultFieldContext)
 const itemContext = inject(formItemKey, defaultItemContext)
+const form = inject(formContextKey, null)
+
+const layout = computed(() => form?.value)
+const labelPosition = computed<FormLayoutPosition>(() => layout.value?.labelPosition ?? 'top')
+const formSize = computed<FormLayoutSize | undefined>(() => layout.value?.size)
+const rootClasses = computed(() =>
+    cn(formControlVariants({ labelPosition: labelPosition.value }), props.class)
+)
 
 if (fieldContext === defaultFieldContext || itemContext === defaultItemContext) {
     console.warn('[BrutxUI FormControl] Must be used inside FormItem/FormField components.')
@@ -46,7 +53,16 @@ const describedBy = computed(() => {
         :class="rootClasses"
         :aria-describedby="describedBy"
         :aria-invalid="!!fieldContext.error.value || undefined"
+        :data-form-size="formSize"
     >
-        <slot />
+        <slot
+            :id="itemContext.formItemId || undefined"
+            :class="rootClasses"
+            v-bind="{
+                ariaDescribedby: describedBy,
+                ariaInvalid: !!fieldContext.error.value || undefined,
+                size: formSize,
+            }"
+        />
     </Primitive>
 </template>

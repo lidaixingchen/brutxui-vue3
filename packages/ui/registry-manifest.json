@@ -594,6 +594,7 @@
       "FormMessage.vue",
       "FormWizard.vue",
       "form-context.ts",
+      "form-variants.ts",
       "form-wizard-types.ts",
       "form-wizard-utils.ts",
       "form-wizard-variants.ts"
