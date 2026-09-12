@@ -37,7 +37,7 @@
     --color-brutal-status-error-foreground: var(--brutal-status-error-foreground, #000000);
     --color-brutal-overlay: var(--brutal-overlay, rgba(0, 0, 0, 0.5));
     --color-brutal-overlay-subtle: var(--brutal-overlay-subtle, rgba(0, 0, 0, 0.05));
-    --color-brutal-placeholder: var(--brutal-placeholder, #9CA3AF);
+    --color-brutal-placeholder: var(--brutal-placeholder, #6e7788);
     --color-brutal-black: var(--brutal-black, #000000);
     --color-brutal-yellow: var(--brutal-yellow, #FFE66D);
 
@@ -137,7 +137,7 @@
         --brutal-status-error-foreground: #000000;
         --brutal-overlay: rgba(0, 0, 0, 0.5);
         --brutal-overlay-subtle: rgba(0, 0, 0, 0.05);
-        --brutal-placeholder: #9CA3AF;
+        --brutal-placeholder: #6e7788;
         --brutal-black: #000000;
         --brutal-yellow: #FFE66D;
         --shadow-brutal: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000);
@@ -204,7 +204,7 @@
         --brutal-status-error-foreground: #000000;
         --brutal-overlay: rgba(0, 0, 0, 0.7);
         --brutal-overlay-subtle: rgba(255, 255, 255, 0.05);
-        --brutal-placeholder: #6B7280;
+        --brutal-placeholder: #767e8c;
         --brutal-black: #000000;
         --brutal-yellow: #FFE66D;
         --brutal-primary-subtle: color-mix(in srgb, var(--brutal-primary, #FF6B6B) 20%, var(--brutal-bg, #141414));
@@ -257,15 +257,15 @@
         --brutal-info: #a8c8e8;
         --brutal-info-foreground: #1e1e24;
         --brutal-overlay: rgba(0, 0, 0, 0.4);
-        --brutal-placeholder: #b0aeb5;
+        --brutal-placeholder: #74717c;
     }
 
     .dark .theme-pastel, .theme-pastel.dark {
         --brutal-border-width: 2px;
-        --brutal-border-color: #5c5c72;
+        --brutal-border-color: #66667c;
         --brutal-shadow-offset-x: 3px;
         --brutal-shadow-offset-y: 3px;
-        --brutal-shadow-color: #5c5c72;
+        --brutal-shadow-color: #66667c;
         --brutal-radius: 8px;
         --brutal-bg: #16161e;
         --brutal-fg: #f0f0f5;
@@ -285,7 +285,7 @@
         --brutal-info: #88b8e6;
         --brutal-info-foreground: #16161e;
         --brutal-overlay: rgba(0, 0, 0, 0.6);
-        --brutal-placeholder: #666677;
+        --brutal-placeholder: #7e7e90;
     }
 
     /* Mono theme: 纯粹黑白、4px 粗边框与 5px 大阴影 */
@@ -315,7 +315,7 @@
         --brutal-info: #666666;
         --brutal-info-foreground: #ffffff;
         --brutal-overlay: rgba(0, 0, 0, 0.5);
-        --brutal-placeholder: #888888;
+        --brutal-placeholder: #767676;
     }
 
     .dark .theme-mono, .theme-mono.dark {
@@ -373,7 +373,7 @@
         --brutal-info: #d4956a;
         --brutal-info-foreground: #2d1810;
         --brutal-overlay: rgba(45, 24, 16, 0.5);
-        --brutal-placeholder: #b8a898;
+        --brutal-placeholder: #846f5b;
     }
 
     .dark .theme-warm, .theme-warm.dark {
@@ -401,7 +401,7 @@
         --brutal-info: #e0a97e;
         --brutal-info-foreground: #1a1410;
         --brutal-overlay: rgba(0, 0, 0, 0.7);
-        --brutal-placeholder: #8c7a6b;
+        --brutal-placeholder: #8e7c6d;
     }
     /* @brutx:theme-presets:end */
 }

@@ -2,6 +2,12 @@ import { describe, it, expect } from 'vitest'
 import { cn } from '../lib/utils'
 
 describe('cn', () => {
+    it('keeps texture and background color together while replacing textures', () => {
+        expect(cn('bg-brutal-accent', 'bg-pattern-hatch')).toBe('bg-brutal-accent bg-pattern-hatch')
+        expect(cn('bg-pattern-dots', 'bg-brutal-primary')).toBe('bg-pattern-dots bg-brutal-primary')
+        expect(cn('bg-brutal-accent bg-pattern-hatch', 'bg-pattern-dots')).toBe('bg-brutal-accent bg-pattern-dots')
+    })
+
     it('should merge class names', () => {
         expect(cn('foo', 'bar')).toBe('foo bar')
     })

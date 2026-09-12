@@ -265,6 +265,7 @@ const customTwMerge = extendTailwindMerge({
         },
         classGroups: {
             z: [{ z: [...BRUTAL_Z_INDEX_NAMES] }],
+            'bg-image': ['bg-pattern-dots', 'bg-pattern-grid', 'bg-pattern-hazard', 'bg-pattern-hatch', 'bg-pattern-scanlines'],
         },
     },
 });
@@ -345,6 +346,7 @@ const customTwMerge = extendTailwindMerge({
         },
         classGroups: {
             z: [{ z: [...BRUTAL_Z_INDEX_NAMES] }],
+            'bg-image': ['bg-pattern-dots', 'bg-pattern-grid', 'bg-pattern-hazard', 'bg-pattern-hatch', 'bg-pattern-scanlines'],
         },
     },
 });

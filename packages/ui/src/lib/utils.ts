@@ -73,7 +73,7 @@ const customTwMerge = extendTailwindMerge({
             // 纹理工具类归入既有 bg-image 组：它们走 background-image（可与背景色叠加共存），
             // 未注册时会被默认 bg-color 组的任意值判定吞并，与语义色背景类互斥误删
             'bg-image': [
-                { 'bg-image': ['bg-pattern-dots', 'bg-pattern-grid', 'bg-pattern-hazard', 'bg-pattern-hatch', 'bg-pattern-scanlines'] },
+                'bg-pattern-dots', 'bg-pattern-grid', 'bg-pattern-hazard', 'bg-pattern-hatch', 'bg-pattern-scanlines',
             ],
         },
     },

@@ -98,7 +98,7 @@ export const BASE_THEME: Readonly<Record<ThemeMode, Readonly<ThemeTokens>>> = Ob
         overlay: 'rgba(0, 0, 0, 0.5)',
         // 5% 微妙叠色（拖拽指示等浅层覆盖）
         overlaySubtle: 'rgba(0, 0, 0, 0.05)',
-        placeholder: '#9CA3AF',
+        placeholder: '#6e7788',
         black: PALETTE_BLACK,
         yellow: PALETTE_YELLOW,
     }),
@@ -139,7 +139,7 @@ export const BASE_THEME: Readonly<Record<ThemeMode, Readonly<ThemeTokens>>> = Ob
         overlay: 'rgba(0, 0, 0, 0.7)',
         // 5% 微妙叠色（dark 下为白叠色，见 light 注释）
         overlaySubtle: 'rgba(255, 255, 255, 0.05)',
-        placeholder: '#6B7280',
+        placeholder: '#767e8c',
         black: PALETTE_BLACK,
         yellow: PALETTE_YELLOW,
     }),
@@ -220,14 +220,14 @@ export const THEME_PRESETS: Readonly<Record<string, Readonly<ThemePresetOverride
             info: '#a8c8e8',
             infoForeground: '#1e1e24',
             overlay: 'rgba(0, 0, 0, 0.4)',
-            placeholder: '#b0aeb5',
+            placeholder: '#74717c',
         }),
         dark: Object.freeze({
             borderWidth: '2px',
-            borderColor: '#5c5c72',
+            borderColor: '#66667c',
             shadowOffsetX: '3px',
             shadowOffsetY: '3px',
-            shadowColor: '#5c5c72',
+            shadowColor: '#66667c',
             radius: '8px',
             bg: '#16161e',
             fg: '#f0f0f5',
@@ -247,7 +247,7 @@ export const THEME_PRESETS: Readonly<Record<string, Readonly<ThemePresetOverride
             info: '#88b8e6',
             infoForeground: '#16161e',
             overlay: 'rgba(0, 0, 0, 0.6)',
-            placeholder: '#666677',
+            placeholder: '#7e7e90',
         }),
     }),
     mono: Object.freeze({
@@ -278,7 +278,7 @@ export const THEME_PRESETS: Readonly<Record<string, Readonly<ThemePresetOverride
             info: '#666666',
             infoForeground: '#ffffff',
             overlay: 'rgba(0, 0, 0, 0.5)',
-            placeholder: '#888888',
+            placeholder: '#767676',
         }),
         dark: Object.freeze({
             borderWidth: '4px',
@@ -336,7 +336,7 @@ export const THEME_PRESETS: Readonly<Record<string, Readonly<ThemePresetOverride
             info: '#d4956a',
             infoForeground: '#2d1810',
             overlay: 'rgba(45, 24, 16, 0.5)',
-            placeholder: '#b8a898',
+            placeholder: '#846f5b',
         }),
         dark: Object.freeze({
             borderWidth: '3px',
@@ -363,7 +363,7 @@ export const THEME_PRESETS: Readonly<Record<string, Readonly<ThemePresetOverride
             info: '#e0a97e',
             infoForeground: '#1a1410',
             overlay: 'rgba(0, 0, 0, 0.7)',
-            placeholder: '#8c7a6b',
+            placeholder: '#8e7c6d',
         }),
     }),
 });

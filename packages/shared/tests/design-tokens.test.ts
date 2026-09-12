@@ -6,8 +6,14 @@ import {
     SHADOW_DEFINITIONS,
     SUBTLE_COLOR_DEFS,
     TOKEN_TO_CSS_VAR,
+    THEME_PRESETS,
     type ThemeTokens,
 } from '../src/design-tokens.js';
+import {
+    calculateContrastRatio,
+    CONTRAST_RATIO_THRESHOLDS,
+    isContrastCompliant,
+} from '../src/color-contrast.js';
 
 describe('design-tokens: BRUTAL_COLOR_NAMES 纯函数派生', () => {
     it('NON_COLOR_TOKEN_KEYS 包含所有预期的非颜色令牌', () => {
@@ -60,6 +66,46 @@ describe('design-tokens: BRUTAL_COLOR_NAMES 纯函数派生', () => {
         expect(BRUTAL_COLOR_NAMES).toContain('brutal-success-subtle');
         expect(BRUTAL_COLOR_NAMES).toContain('brutal-info-subtle');
     });
+});
+
+const SEMANTIC_COLOR_PAIRS: ReadonlyArray<readonly [keyof ThemeTokens, keyof ThemeTokens]> = [
+    ['bg', 'fg'],
+    ['primary', 'primaryForeground'],
+    ['secondary', 'secondaryForeground'],
+    ['accent', 'accentForeground'],
+    ['destructive', 'destructiveForeground'],
+    ['success', 'successForeground'],
+    ['info', 'infoForeground'],
+    ['muted', 'mutedForeground'],
+    ['statusSuccess', 'statusSuccessForeground'],
+    ['statusWarning', 'statusWarningForeground'],
+    ['statusInfo', 'statusInfoForeground'],
+    ['statusError', 'statusErrorForeground'],
+    ['bg', 'placeholder'],
+];
+
+const THEME_VARIANTS: readonly string[] = ['classic', ...Object.keys(THEME_PRESETS)];
+
+describe('design-tokens: 主题颜色对比度', () => {
+    for (const presetName of THEME_VARIANTS) {
+        for (const mode of ['light', 'dark'] as const) {
+            const overrides = THEME_PRESETS[presetName]?.[mode] ?? {};
+            const tokens: ThemeTokens = { ...BASE_THEME[mode], ...overrides };
+
+            for (const [backgroundKey, foregroundKey] of SEMANTIC_COLOR_PAIRS) {
+                it(`${presetName} ${mode} ${String(foregroundKey)}/${String(backgroundKey)} 满足 WCAG AA`, () => {
+                    const ratio = calculateContrastRatio(tokens[foregroundKey], tokens[backgroundKey]);
+                    expect(ratio).toBeGreaterThanOrEqual(CONTRAST_RATIO_THRESHOLDS.AA);
+                    expect(isContrastCompliant(ratio, 'AA')).toBe(true);
+                });
+            }
+
+            it(`${presetName} ${mode} 边界色与背景满足图形对比度`, () => {
+                const ratio = calculateContrastRatio(tokens.borderColor, tokens.bg);
+                expect(ratio).toBeGreaterThanOrEqual(CONTRAST_RATIO_THRESHOLDS['AA-large']);
+            });
+        }
+    }
 });
 
 /** 将阴影值按层拆分（括号感知：var()/calc() 内部的逗号不分层），返回每层的空白分隔 token 序列 */

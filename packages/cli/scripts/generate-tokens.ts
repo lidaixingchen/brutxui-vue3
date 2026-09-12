@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import fs from 'node:fs/promises';
 import {
     TokenStyleCompiler,
+    PATTERN_UTILITIES,
     replaceBetweenMarkers,
     THEME_START,
     THEME_END,
@@ -48,6 +49,8 @@ function printBlockDiff(
 export function compileCliUtilsTemplate(): string {
     const colorLines = BRUTAL_COLOR_NAMES.map(name => `    '${name}',`).join('\n');
     const zIndexLines = BRUTAL_Z_INDEX_NAMES.map(name => `    '${name}',`).join('\n');
+    const patternClasses = PATTERN_UTILITIES.filter(pattern => pattern.name.startsWith('bg-pattern-'))
+        .map(pattern => `'${pattern.name}'`).join(', ');
     const utilsTemplateStr = [
         'import { type ClassValue, clsx } from "clsx";',
         'import { extendTailwindMerge } from "tailwind-merge";',
@@ -67,6 +70,7 @@ export function compileCliUtilsTemplate(): string {
         '        },',
         '        classGroups: {',
         '            z: [{ z: [...BRUTAL_Z_INDEX_NAMES] }],',
+        `            'bg-image': [${patternClasses}],`,
         '        },',
         '    },',
         '});',
@@ -96,6 +100,7 @@ export function compileCliUtilsTemplate(): string {
         '        },',
         '        classGroups: {',
         '            z: [{ z: [...BRUTAL_Z_INDEX_NAMES] }],',
+        `            'bg-image': [${patternClasses}],`,
         '        },',
         '    },',
         '});',
