@@ -14,7 +14,7 @@ Make sure you have imported the BrutxUI stylesheet in your project entry file:
 
 ```ts
 // main.ts
-import 'brutx-ui-vue/dist/style.css'
+import 'brutx-ui-vue/style.css'
 ```
 
 If installed via the CLI (`npx brutx-vue add`), styles are configured automatically.
@@ -69,10 +69,10 @@ Usage:
 Yes. Use the `useLocale` composable and `provideLocale` to switch languages:
 
 ```ts
-import { provideLocale, enUS } from 'brutx-ui-vue'
+import { provideLocale, en } from 'brutx-ui-vue'
 
 // Provide the English language pack in the root component
-provideLocale(enUS)
+provideLocale(en)
 ```
 
 Get the current language in a component:
@@ -81,7 +81,7 @@ Get the current language in a component:
 import { useLocale } from 'brutx-ui-vue'
 
 const { locale, t } = useLocale()
-// t('button.submit') to get localized text
+// t('submitButton.submitting') to get localized text
 ```
 
 ---

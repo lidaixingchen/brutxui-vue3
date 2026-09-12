@@ -13,7 +13,7 @@ description: BrutxUI 使用过程中常见问题及解答。
 
 ```ts
 // main.ts
-import 'brutx-ui-vue/dist/style.css'
+import 'brutx-ui-vue/style.css'
 ```
 
 如果使用 CLI 安装（`npx brutx-vue add`），样式会自动配置。
@@ -68,10 +68,10 @@ BrutxUI 内置四套主题预设：
 支持。使用 `useLocale` 组合式函数和 `provideLocale` 切换语言：
 
 ```ts
-import { provideLocale, enUS } from 'brutx-ui-vue'
+import { provideLocale, en } from 'brutx-ui-vue'
 
 // 在根组件中提供英文语言包
-provideLocale(enUS)
+provideLocale(en)
 ```
 
 在组件中获取当前语言：
@@ -80,7 +80,7 @@ provideLocale(enUS)
 import { useLocale } from 'brutx-ui-vue'
 
 const { locale, t } = useLocale()
-// t('button.submit') 获取本地化文本
+// t('submitButton.submitting') 获取本地化文本
 ```
 
 ---

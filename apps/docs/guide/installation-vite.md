@@ -32,18 +32,24 @@ cd my-app
 pnpm add -D tailwindcss @tailwindcss/vite
 ```
 
-在 `vite.config.ts` 中添加 Tailwind CSS 插件：
+在 `vite.config.ts` 中添加 Tailwind CSS 插件并配置别名：
 
 ```ts
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import tailwindcss from '@tailwindcss/vite'
+import path from 'node:path'
 
 export default defineConfig({
     plugins: [
         vue(),
         tailwindcss(),
     ],
+    resolve: {
+        alias: {
+            '@': path.resolve(__dirname, './src'),
+        },
+    },
 })
 ```
 
@@ -55,7 +61,7 @@ export default defineConfig({
 
 ## 第 3 步：初始化 BrutxUI
 
-运行 init 命令来注入 CSS 自定义属性和样式：
+运行 init 命令来生成配置并注入粗野主义设计令牌：
 
 ```bash
 npx brutx-vue@latest init
@@ -63,14 +69,15 @@ npx brutx-vue@latest init
 
 此命令将：
 
-- 安装所需依赖（`reka-ui`、`class-variance-authority`、`clsx`、`tailwind-merge`、`@lucide/vue`）
-- 将 `--brutal-*` CSS 自定义属性注入到你的样式表中
-- 创建 `cn()` 工具函数
-- 将 BrutxUI 样式（包括 Tailwind 工具类层）添加到你的 `style.css` 中（`main.ts` 中已有的 `import './style.css'` 会自动加载这些样式）
+- 自动检测项目框架与 Tailwind 版本；
+- 安装基础依赖（`reka-ui`、`class-variance-authority`、`clsx`、`tailwind-merge`、`@lucide/vue`）；
+- 在 `src/lib/utils.ts` 中生成带粗野主义色彩扩展的 `cn()` 工具函数；
+- 生成 `components.json` 契约文件；
+- 将 `--brutal-*` CSS 自定义属性与 `@theme` 工具类注入到你的样式表中（支持交互式选择拆分到独立的 `brutx-tokens.css`）。
 
 ## 第 4 步：添加组件
 
-只添加你需要的组件：
+按需添加所需组件：
 
 ```bash
 npx brutx-vue@latest add button
@@ -86,15 +93,17 @@ npx brutx-vue@latest add --all
 
 ## 第 5 步：使用组件
 
-在你的 Vue 文件中导入并使用组件：
+在你的 Vue 文件中导入并使用已添加的组件：
 
 ```vue
-<script setup>
-import Button from '@/components/ui/Button.vue'
-import Card from '@/components/ui/Card.vue'
-import CardHeader from '@/components/ui/CardHeader.vue'
-import CardTitle from '@/components/ui/CardTitle.vue'
-import CardContent from '@/components/ui/CardContent.vue'
+<script setup lang="ts">
+import { Button } from '@/components/ui/button'
+import {
+    Card,
+    CardHeader,
+    CardTitle,
+    CardContent,
+} from '@/components/ui/card'
 </script>
 
 <template>
@@ -111,19 +120,25 @@ import CardContent from '@/components/ui/CardContent.vue'
 </template>
 ```
 
+> [!TIP]
+> 也可以通过子文件直接导入：  
+> `import Button from '@/components/ui/button/Button.vue'`
+
 ## 配置语言（可选）
 
-BrutxUI 默认显示中文文本。如需切换为英文或其他语言，在 `main.ts` 中配置 `BrutxUIPlugin`：
+BrutxUI 默认展示中文文本。如果项目需要切换为英文或其他语言：
 
-```ts
-import { createApp } from 'vue'
-import App from './App.vue'
-import { BrutxUIPlugin, en } from 'brutx-ui-vue'
-import './style.css'
+- **方案 A（安装依赖包）**：安装 `pnpm add brutx-ui-vue`，在 `main.ts` 中直接使用 `BrutxUIPlugin`：
+  ```ts
+  import { createApp } from 'vue'
+  import App from './App.vue'
+  import { BrutxUIPlugin, en } from 'brutx-ui-vue'
+  import './style.css'
 
-const app = createApp(App)
-app.use(BrutxUIPlugin, { locale: en })
-app.mount('#app')
-```
+  const app = createApp(App)
+  app.use(BrutxUIPlugin, { locale: en })
+  app.mount('#app')
+  ```
+- **方案 B（源码模式全局注入）**：在 `App.vue` 顶层使用 `provideLocale` 注入语言包。
 
-更多语言配置选项请参考[国际化](/guide/locale)指南。
+更多多语言配置选项请参考[国际化](/guide/locale)指南。
