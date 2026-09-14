@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, shallowRef, onMounted, onUnmounted, watch } from 'vue'
+import { computed, ref, shallowRef, onMounted, onUnmounted, watch } from 'vue'
 import { cn } from '@/lib/utils'
 import { useReducedMotion } from '@/composables/useReducedMotion'
 import { hasIntersectionObserver, getIntersectionObserverCtor } from '@/lib/env'
@@ -171,13 +171,22 @@ onUnmounted(() => {
     }
 })
 
+const rootClasses = computed(() => cn('w-full', props.class))
+
+const loadingClasses = computed(() =>
+    cn(
+        'flex items-center gap-2 text-brutal-placeholder',
+        !prefersReducedMotion.value && 'animate-pulse',
+    ),
+)
+
 defineExpose({
     resetLoading,
 })
 </script>
 
 <template>
-    <div :class="cn('w-full', props.class)">
+    <div :class="rootClasses">
         <!-- 默认插槽 -->
         <slot />
 
@@ -187,12 +196,7 @@ defineExpose({
             class="flex items-center justify-center py-4"
         >
             <slot name="loading">
-                <div
-                    :class="cn(
-                        'flex items-center gap-2 text-brutal-placeholder',
-                        !prefersReducedMotion && 'animate-pulse',
-                    )"
-                >
+                <div :class="loadingClasses">
                     <div class="w-2 h-2 rounded-full bg-brutal-primary" />
                     <div class="w-2 h-2 rounded-full bg-brutal-primary animation-delay-200" />
                     <div class="w-2 h-2 rounded-full bg-brutal-primary animation-delay-400" />

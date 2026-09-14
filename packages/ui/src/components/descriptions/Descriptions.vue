@@ -61,10 +61,23 @@ const gridStyle = computed(() => {
         gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
     }
 })
+
+const rootClasses = computed(() => cn('w-full', props.class))
+
+const borderedClasses = computed(() =>
+    cn(
+        'relative border-3 border-brutal rounded-brutal overflow-hidden',
+        sizeClasses.value,
+    ),
+)
+
+const unborderedClasses = computed(() =>
+    cn('grid min-w-0 gap-2', sizeClasses.value),
+)
 </script>
 
 <template>
-    <div :class="cn('w-full', props.class)">
+    <div :class="rootClasses">
         <!-- 标题（title 或 title 插槽实际有内容时才渲染） -->
         <div
             v-if="hasTitle"
@@ -80,10 +93,7 @@ const gridStyle = computed(() => {
         <!-- 带边框的描述列表 -->
         <div
             v-if="border"
-            :class="cn(
-                'relative border-3 border-brutal rounded-brutal overflow-hidden',
-                sizeClasses,
-            )"
+            :class="borderedClasses"
         >
             <!-- 技术档案印章插槽：右上角悬浮（容器 overflow-hidden，印章不越界负偏移以免被裁剪） -->
             <div v-if="$slots.stamp" class="absolute top-0 right-4 z-10">
@@ -100,10 +110,7 @@ const gridStyle = computed(() => {
         <!-- 无边框的描述列表 -->
         <div
             v-else
-            :class="cn(
-                'grid min-w-0 gap-2',
-                sizeClasses,
-            )"
+            :class="unborderedClasses"
             :style="gridStyle"
         >
             <slot />

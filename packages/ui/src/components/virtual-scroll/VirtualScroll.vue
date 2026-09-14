@@ -178,6 +178,13 @@ function measure() {
     virtualizerRef.value?.measure()
 }
 
+function getItemClasses(index: number) {
+    return cn(
+        virtualScrollItemVariants({ variant: props.variant }),
+        props.variant === 'striped' && index % 2 === 1 && 'bg-brutal-muted/50',
+    )
+}
+
 defineExpose({ scrollToIndex, measureElement, measure, virtualizer: virtualizerRef })
 </script>
 
@@ -226,10 +233,7 @@ defineExpose({ scrollToIndex, measureElement, measure, virtualizer: virtualizerR
                 :key="virtualRow.key"
                 :ref="onItemRef"
                 :data-index="virtualRow.index"
-                :class="cn(
-                    virtualScrollItemVariants({ variant: props.variant }),
-                    props.variant === 'striped' && virtualRow.index % 2 === 1 && 'bg-brutal-muted/50'
-                )"
+                :class="getItemClasses(virtualRow.index)"
                 :style="{
                     position: 'absolute',
                     top: 0,

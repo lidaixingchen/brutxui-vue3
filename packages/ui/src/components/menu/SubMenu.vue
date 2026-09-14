@@ -210,6 +210,12 @@ const triggerClasses = computed(() => {
     )
 })
 
+const arrowClasses = computed(() =>
+    cn('w-4 h-4 transition-transform duration-200 stroke-3 shrink-0', {
+        'rotate-180': isOpened.value,
+    }),
+)
+
 function handleMouseEnter() {
     if (isVertical.value) return
     isHovered.value = true
@@ -356,11 +362,7 @@ function onAfterLeave(el: Element) {
             <span class="flex items-center gap-2 truncate">
                 <slot name="title">{{ title }}</slot>
             </span>
-            <ChevronDown
-                :class="cn('w-4 h-4 transition-transform duration-200 stroke-3 shrink-0', {
-                    'rotate-180': isOpened
-                })"
-            />
+            <ChevronDown :class="arrowClasses" />
         </div>
 
         <!-- Vertical collapsible content list -->

@@ -14,14 +14,25 @@ const delegatedProps = computed(() => {
     const { class: _, ...delegated } = props
     return delegated
 })
+
+const contentClasses = computed(() =>
+    cn(
+        'overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down',
+        props.class,
+    ),
+)
+
+const innerClasses = computed(() =>
+    accordionContentVariants({ variant: context.variant.value }),
+)
 </script>
 
 <template>
     <AccordionContent
         v-bind="delegatedProps"
-        :class="cn('overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down', props.class)"
+        :class="contentClasses"
     >
-        <div :class="accordionContentVariants({ variant: context.variant.value })">
+        <div :class="innerClasses">
             <slot />
         </div>
     </AccordionContent>

@@ -69,6 +69,7 @@ function handleUpdateModelValue(value: string) {
 }
 
 const wrapperClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class))
+const rootClasses = computed(() => cn(props.class))
 </script>
 
 <template>
@@ -121,7 +122,7 @@ const wrapperClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class
         v-else
         :model-value="activeValue"
         :orientation="orientation"
-        :class="cn(props.class)"
+        :class="rootClasses"
         @update:model-value="(val) => { if (typeof val === 'string') handleUpdateModelValue(val) }"
     >
         <slot />

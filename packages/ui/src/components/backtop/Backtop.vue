@@ -42,6 +42,15 @@ const styles = computed<CSSProperties>(() => ({
     bottom: `${props.bottom}px`
 }))
 
+const buttonClasses = computed(() =>
+    cn(
+        positionClass.value,
+        'z-[999]',
+        props.variant === 'primary' && 'bg-brutal-yellow text-brutal-black font-black',
+        props.class,
+    ),
+)
+
 function getScrollContainer(): HTMLElement | Window | null {
     if (!props.target) return getWindow() ?? null
     if (typeof props.target === 'string') {
@@ -170,12 +179,7 @@ onBeforeUnmount(() => {
             :style="styles"
             :variant="props.variant"
             size="icon"
-            :class="cn(
-                positionClass,
-                'z-[999]',
-                props.variant === 'primary' && 'bg-brutal-yellow text-brutal-black font-black',
-                props.class
-            )"
+            :class="buttonClasses"
             aria-label="Back to top"
             @click="handleClick"
         >

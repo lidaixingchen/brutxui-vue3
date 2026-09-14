@@ -42,6 +42,44 @@ const labelStyle = computed(() => {
     const width = typeof props.labelWidth === 'number' ? `${props.labelWidth}px` : props.labelWidth
     return { width }
 })
+
+const horizontalSpanContainerClasses = computed(() =>
+    cn('flex border-b-3 border-brutal', props.class),
+)
+
+const horizontalSpanLabelClasses = computed(() =>
+    cn(
+        'flex min-w-0 items-center break-words px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-r-3 border-brutal w-1/2',
+        'bg-pattern-dots',
+    ),
+)
+
+const horizontalSpanContentClasses = computed(() =>
+    cn('flex-1 min-w-0 break-words flex items-center px-3 py-2 text-brutal-fg'),
+)
+
+const horizontalContainerClasses = computed(() =>
+    cn('flex', props.class),
+)
+
+const horizontalLabelClasses = computed(() =>
+    cn(
+        'flex min-w-0 items-center break-words px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-b-3 border-brutal w-1/2',
+        'bg-pattern-dots',
+    ),
+)
+
+const horizontalContentClasses = computed(() =>
+    cn('flex-1 min-w-0 break-words flex items-center px-3 py-2 text-brutal-fg border-b-3 border-brutal'),
+)
+
+const verticalContainerClasses = computed(() =>
+    cn('flex flex-col border-b-3 border-brutal', props.class),
+)
+
+const borderlessContainerClasses = computed(() =>
+    cn('flex flex-col gap-1', props.class),
+)
 </script>
 
 <template>
@@ -51,46 +89,36 @@ const labelStyle = computed(() => {
         <template v-if="parentDirection === 'horizontal'">
             <div
                 v-if="normalizedSpan > 1"
-                :class="cn('flex border-b-3 border-brutal', props.class)"
+                :class="horizontalSpanContainerClasses"
                 :style="{ gridColumn: `span ${normalizedSpan * 2}` }"
             >
                 <div
-                    :class="cn(
-                        'flex min-w-0 items-center break-words px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-r-3 border-brutal w-1/2',
-                        'bg-pattern-dots',
-                    )"
+                    :class="horizontalSpanLabelClasses"
                     :style="labelStyle"
                 >
                     <slot name="label">
                         {{ label }}
                     </slot>
                 </div>
-                <div :class="cn('flex-1 min-w-0 break-words flex items-center px-3 py-2 text-brutal-fg')">
+                <div :class="horizontalSpanContentClasses">
                     <slot />
                 </div>
             </div>
             <!-- span<=1 时包装 label+value 为单个 grid item（占两轨），class 只应用一次 -->
             <div
                 v-else
-                :class="cn('flex', props.class)"
+                :class="horizontalContainerClasses"
                 :style="{ gridColumn: 'span 2' }"
             >
                 <div
-                    :class="cn(
-                        'flex min-w-0 items-center break-words px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-b-3 border-brutal w-1/2',
-                        'bg-pattern-dots',
-                    )"
+                    :class="horizontalLabelClasses"
                     :style="labelStyle"
                 >
                     <slot name="label">
                         {{ label }}
                     </slot>
                 </div>
-                <div
-                    :class="cn(
-                        'flex-1 min-w-0 break-words flex items-center px-3 py-2 text-brutal-fg border-b-3 border-brutal',
-                    )"
-                >
+                <div :class="horizontalContentClasses">
                     <slot />
                 </div>
             </div>
@@ -99,10 +127,7 @@ const labelStyle = computed(() => {
         <!-- 垂直方向 -->
         <template v-else>
             <div
-                :class="cn(
-                    'flex flex-col border-b-3 border-brutal',
-                    props.class,
-                )"
+                :class="verticalContainerClasses"
                 :style="spanStyle"
             >
                 <div
@@ -124,7 +149,7 @@ const labelStyle = computed(() => {
     <!-- 无边框模式 -->
     <div
         v-else
-        :class="cn('flex flex-col gap-1', props.class)"
+        :class="borderlessContainerClasses"
         :style="spanStyle"
     >
         <div class="min-w-0 break-words font-medium text-brutal-placeholder text-sm">
