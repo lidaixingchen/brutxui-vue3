@@ -103,6 +103,7 @@ const STATUS_META: Record<MessageStatus, { icon: Component; className: string }>
 // 用可选链兜底避免 STATUS_META[...] 为 undefined 时访问 .icon/.className 抛 TypeError
 const statusIcon = computed(() => (props.message.status ? STATUS_META[props.message.status]?.icon ?? null : null));
 const statusClass = computed(() => (props.message.status ? STATUS_META[props.message.status]?.className ?? '' : ''));
+const statusIconClass = computed(() => cn('w-3 h-3', statusClass.value));
 </script>
 
 <template>
@@ -138,7 +139,7 @@ const statusClass = computed(() => (props.message.status ? STATUS_META[props.mes
                 <component
                     :is="statusIcon"
                     v-if="showStatus && isSent && statusIcon"
-                    :class="cn('w-3 h-3', statusClass)"
+                    :class="statusIconClass"
                     :aria-label="message.status"
                     role="img"
                 />

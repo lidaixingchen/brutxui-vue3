@@ -113,6 +113,10 @@ const containerClasses = computed(() =>
     cn(scratchCardVariants(), props.class)
 )
 
+const canvasClasses = computed(() =>
+    cn('absolute inset-0 cursor-crosshair select-none z-10', isRevealed.value && 'pointer-events-none')
+)
+
 const canvasStyle = computed(() => {
     const duration = prefersReducedMotion.value ? 0 : props.fadeDuration
     return {
@@ -181,7 +185,7 @@ onUnmounted(() => {
         <canvas
             v-show="!canvasRemoved"
             ref="canvasRef"
-            :class="cn('absolute inset-0 cursor-crosshair select-none z-10', isRevealed && 'pointer-events-none')"
+            :class="canvasClasses"
             :style="{ ...canvasStyle, touchAction }"
             @pointerdown="handlePointerDown"
             @pointermove="handlePointerMove"

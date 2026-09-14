@@ -41,6 +41,12 @@ const rootClasses = computed(() =>
     cn(codeBlockRootVariants(), props.class)
 )
 
+const headerClasses = computed(() => codeBlockHeaderVariants())
+const languageClasses = computed(() => codeBlockLanguageVariants())
+const copyButtonClasses = computed(() => codeBlockCopyButtonVariants())
+const bodyClasses = computed(() => codeBlockBodyVariants())
+const lineNumbersClasses = computed(() => codeBlockLineNumbersVariants())
+
 // 行号以「渲染出的实际行数」为准：丢弃 split 产生的末尾空片段（'a\nb\n' → ['a','b']），
 // 避免末尾换行多出一个无内容的行号；空串（['']）同样被丢弃，退化为无行号
 const lines = computed(() => {
@@ -143,9 +149,9 @@ function escapeHtml(str: string): string {
 
 <template>
     <div :class="rootClasses">
-        <div :class="codeBlockHeaderVariants()">
+        <div :class="headerClasses">
             <div class="flex items-center gap-2">
-                <span :class="codeBlockLanguageVariants()">
+                <span :class="languageClasses">
                     {{ resolvedLanguage }}
                 </span>
                 <span v-if="resolvedFilename" class="text-brutal-fg/80 font-black">
@@ -154,7 +160,7 @@ function escapeHtml(str: string): string {
             </div>
             <CopyToClipboard
                 :text="code"
-                :class="codeBlockCopyButtonVariants()"
+                :class="copyButtonClasses"
             >
                 <template #default="{ copied }">
                     <span>{{ copied ? t('codeBlock.copied') : t('codeBlock.copy') }}</span>
@@ -162,10 +168,10 @@ function escapeHtml(str: string): string {
             </CopyToClipboard>
         </div>
 
-        <div :class="codeBlockBodyVariants()" :style="bodyStyle">
+        <div :class="bodyClasses" :style="bodyStyle">
             <div
                 v-if="showLineNumbers"
-                :class="codeBlockLineNumbersVariants()"
+                :class="lineNumbersClasses"
                 :style="clipStyle"
             >
                 <span v-for="(_, i) in lines" :key="i">{{ i + 1 }}</span>

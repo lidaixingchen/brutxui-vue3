@@ -58,6 +58,12 @@ const rootClasses = computed(() =>
     )
 )
 const iconClasses = computed(() => cn(props.iconSize ? iconSizeVariants({ size: props.iconSize }) : 'w-10 h-10', 'stroke-[3]'))
+const iconBoxClasses = computed(() =>
+    cn(
+        'w-16 h-16 rounded-none flex items-center justify-center border-3 border-brutal shadow-[3px_3px_0px_0px_var(--brutal-shadow-color,#000000)]',
+        activeConfig.value.colorClass
+    )
+)
 </script>
 
 <template>
@@ -65,10 +71,7 @@ const iconClasses = computed(() => cn(props.iconSize ? iconSizeVariants({ size: 
         <div class="mb-6 select-none" aria-hidden="true">
             <slot name="icon">
                 <div
-                    :class="cn(
-                        'w-16 h-16 rounded-none flex items-center justify-center border-3 border-brutal shadow-[3px_3px_0px_0px_var(--brutal-shadow-color,#000000)]',
-                        activeConfig.colorClass
-                    )"
+                    :class="iconBoxClasses"
                 >
                     <component 
                         :is="activeConfig.icon" 

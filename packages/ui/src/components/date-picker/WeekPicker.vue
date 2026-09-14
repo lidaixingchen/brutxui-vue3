@@ -85,6 +85,19 @@ const triggerClasses = computed(() =>
     )
 )
 
+const calendarIconClasses = computed(() =>
+    iconSizeVariants({ size: props.size === 'default' ? 'md' : props.size })
+)
+const smallIconClasses = computed(() =>
+    props.size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'
+)
+const clearPlaceholderClasses = computed(() =>
+    props.size === 'sm' ? 'w-4 h-4' : 'w-5 h-5'
+)
+const clearButtonClasses = computed(() =>
+    props.size === 'sm' ? 'right-8 w-4 h-4' : 'right-10 w-5 h-5'
+)
+
 defineExpose({ open })
 </script>
 
@@ -107,7 +120,7 @@ defineExpose({ open })
                 >
                     <CalendarIcon
                         class="shrink-0 stroke-[3] opacity-70"
-                        :class="iconSizeVariants({ size: size === 'default' ? 'md' : size })"
+                        :class="calendarIconClasses"
                     />
                     <span class="flex-1 text-left truncate font-mono text-sm">
                         {{ formattedDisplay || resolvedPlaceholder }}
@@ -117,11 +130,11 @@ defineExpose({ open })
                             v-if="clearable && modelValue && !disabled && !readonly"
                             aria-hidden="true"
                             class="inline-flex items-center justify-center opacity-0 pointer-events-none"
-                            :class="size === 'sm' ? 'w-4 h-4' : 'w-5 h-5'"
+                            :class="clearPlaceholderClasses"
                         >
-                            <X :class="size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'" class="stroke-[3]" />
+                            <X :class="smallIconClasses" class="stroke-[3]" />
                         </span>
-                        <ChevronDown class="opacity-60 stroke-[3]" :class="size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'" />
+                        <ChevronDown class="opacity-60 stroke-[3]" :class="smallIconClasses" />
                     </span>
                 </button>
             </PopoverTrigger>
@@ -129,14 +142,12 @@ defineExpose({ open })
                 v-if="clearable && modelValue && !disabled && !readonly"
                 type="button"
                 class="absolute top-1/2 z-10 -translate-y-1/2 inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors"
-                :class="[
-                    size === 'sm' ? 'right-8 w-4 h-4' : 'right-10 w-5 h-5',
-                ]"
+                :class="clearButtonClasses"
                 :aria-label="t('datePicker.clear')"
                 @pointerdown.stop
                 @click="handleClearClick"
             >
-                <X :class="size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'" class="stroke-[3]" />
+                <X :class="smallIconClasses" class="stroke-[3]" />
             </button>
         </div>
         <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent" align="start">

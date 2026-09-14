@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, nextTick, onMounted, onUnmounted, useAttrs } from 'vue'
 import { FocusScope } from 'reka-ui'
 import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCw, RotateCcw, FlipHorizontal } from '@lucide/vue'
 import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
@@ -380,18 +380,31 @@ onUnmounted(() => {
     getDocument()?.removeEventListener('mousemove', handleDragMove)
     getDocument()?.removeEventListener('mouseup', handleDragEnd)
 })
+
+const attrs = useAttrs()
+
+const rootClasses = computed(() =>
+    cn(
+        'relative inline-block overflow-hidden w-full h-full border-3 border-brutal bg-brutal-bg rounded-brutal shadow-brutal',
+        attrs.class as string
+    )
+)
+
+const imageClasses = computed(() =>
+    cn('w-full h-full select-none transition-opacity duration-300', props.preview ? 'cursor-pointer' : '')
+)
 </script>
 
 <template>
     <div
         ref="containerRef"
-        :class="cn('relative inline-block overflow-hidden w-full h-full border-3 border-brutal bg-brutal-bg rounded-brutal shadow-brutal', $attrs.class as string)"
+        :class="rootClasses"
     >
         <img
             v-if="!hasError && srcToShow"
             :src="srcToShow"
             :alt="alt"
-            :class="cn('w-full h-full select-none transition-opacity duration-300', preview ? 'cursor-pointer' : '')"
+            :class="imageClasses"
             :style="imageStyle"
             @load="handleLoad"
             @error="handleError"

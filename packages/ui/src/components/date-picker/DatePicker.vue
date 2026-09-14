@@ -87,6 +87,22 @@ const hiddenInputValue = computed(() => {
     return formatDate(props.modelValue, 'YYYY-MM-DD')
 })
 
+const calendarIconClasses = computed(() =>
+    iconSizeVariants({ size: props.size === 'default' ? 'md' : props.size })
+)
+const smallIconClasses = computed(() =>
+    iconSizeVariants({ size: props.size === 'sm' ? 'sm' : 'md' })
+)
+const clearPlaceholderClasses = computed(() =>
+    iconSizeVariants({ size: props.size === 'sm' ? 'md' : 'lg' })
+)
+const clearButtonClasses = computed(() =>
+    cn(
+        props.size === 'sm' ? 'right-8' : 'right-10',
+        iconSizeVariants({ size: props.size === 'sm' ? 'md' : 'lg' })
+    )
+)
+
 defineExpose({ open })
 </script>
 
@@ -111,7 +127,7 @@ defineExpose({ open })
                 >
                     <CalendarIcon
                         class="shrink-0 stroke-[3] opacity-70"
-                        :class="iconSizeVariants({ size: size === 'default' ? 'md' : size })"
+                        :class="calendarIconClasses"
                     />
                     <span class="flex-1 text-left truncate font-mono text-sm">
                         {{ formattedDisplay || resolvedPlaceholder }}
@@ -121,11 +137,11 @@ defineExpose({ open })
                             v-if="clearable && modelValue && !disabled && !readonly"
                             aria-hidden="true"
                             class="inline-flex items-center justify-center opacity-0 pointer-events-none"
-                            :class="iconSizeVariants({ size: size === 'sm' ? 'md' : 'lg' })"
+                            :class="clearPlaceholderClasses"
                         >
-                            <X :class="iconSizeVariants({ size: size === 'sm' ? 'sm' : 'md' })" class="stroke-[3]" />
+                            <X :class="smallIconClasses" class="stroke-[3]" />
                         </span>
-                        <ChevronDown class="opacity-60 stroke-[3]" :class="iconSizeVariants({ size: size === 'sm' ? 'sm' : 'md' })" />
+                        <ChevronDown class="opacity-60 stroke-[3]" :class="smallIconClasses" />
                     </span>
                 </button>
             </PopoverTrigger>
@@ -133,15 +149,12 @@ defineExpose({ open })
                 v-if="clearable && modelValue && !disabled && !readonly"
                 type="button"
                 class="absolute top-1/2 z-10 -translate-y-1/2 inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors"
-                :class="[
-                    size === 'sm' ? 'right-8' : 'right-10',
-                    iconSizeVariants({ size: size === 'sm' ? 'md' : 'lg' }),
-                ]"
+                :class="clearButtonClasses"
                 :aria-label="t('datePicker.clear')"
                 @pointerdown.stop
                 @click="handleClearClick"
             >
-                <X :class="iconSizeVariants({ size: size === 'sm' ? 'sm' : 'md' })" class="stroke-[3]" />
+                <X :class="smallIconClasses" class="stroke-[3]" />
             </button>
         </div>
         <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent" align="start">

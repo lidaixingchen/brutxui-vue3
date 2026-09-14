@@ -55,6 +55,12 @@ const hasProgress = computed(() => props.progress != null)
 const clampedProgress = computed(() =>
     props.progress != null ? Math.min(Math.max(props.progress, 0), 100) : undefined
 )
+const maskClasses = computed(() =>
+    cn(
+        'absolute inset-0 flex flex-col items-center justify-center z-loading select-none bg-brutal-bg/80',
+        props.customClass
+    )
+)
 </script>
 
 <template>
@@ -100,10 +106,7 @@ const clampedProgress = computed(() =>
         >
             <div
                 v-if="loading"
-                :class="cn(
-                    'absolute inset-0 flex flex-col items-center justify-center z-loading select-none bg-brutal-bg/80',
-                    customClass
-                )"
+                :class="maskClasses"
                 :style="maskStyles"
             >
                 <div class="flex flex-col items-center gap-3">
