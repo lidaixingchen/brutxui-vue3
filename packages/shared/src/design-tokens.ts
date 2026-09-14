@@ -523,6 +523,7 @@ export const Z_INDEX_TOKENS = Object.freeze({
     // Layer 1: Inline / Sticky
     sticky: 10,
     header: 40,
+    floating: 50,
     // Layer 2: Popper / Dropdown
     popover: 100,
     dropdown: 100,
@@ -548,6 +549,7 @@ export type ZIndexTokenKey = keyof typeof Z_INDEX_TOKENS;
 export const Z_INDEX_CLASS_ENTRIES: ReadonlyArray<{ name: string; value: number }> = Object.freeze([
     { name: 'sticky', value: Z_INDEX_TOKENS.sticky },
     { name: 'header', value: Z_INDEX_TOKENS.header },
+    { name: 'floating', value: Z_INDEX_TOKENS.floating },
     { name: 'popover', value: Z_INDEX_TOKENS.popover },
     { name: 'dropdown', value: Z_INDEX_TOKENS.dropdown },
     { name: 'tooltip', value: Z_INDEX_TOKENS.tooltip },

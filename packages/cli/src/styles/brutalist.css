@@ -67,6 +67,7 @@
     /* Z-Index scale hierarchy derived from design-tokens.ts */
     --z-index-sticky: 10;
     --z-index-header: 40;
+    --z-index-floating: 50;
     --z-index-popover: 100;
     --z-index-dropdown: 100;
     --z-index-tooltip: 200;
@@ -136,6 +137,7 @@
     --brutal-info-subtle: color-mix(in srgb, var(--brutal-info, #4A90D9) 12%, var(--brutal-bg, #ffffff));
     --z-index-sticky: 10;
     --z-index-header: 40;
+    --z-index-floating: 50;
     --z-index-popover: 100;
     --z-index-dropdown: 100;
     --z-index-tooltip: 200;
@@ -194,6 +196,7 @@
     --brutal-info-subtle: color-mix(in srgb, var(--brutal-info, #3B82F6) 20%, var(--brutal-bg, #141414));
     --z-index-sticky: 10;
     --z-index-header: 40;
+    --z-index-floating: 50;
     --z-index-popover: 100;
     --z-index-dropdown: 100;
     --z-index-tooltip: 200;

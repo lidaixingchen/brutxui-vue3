@@ -81,6 +81,7 @@
       "Backtop.vue"
     ],
     "composables": [
+      "useLocale.ts",
       "useThrottle.ts"
     ],
     "directives": [],
@@ -653,10 +654,11 @@
     "files": [
       "Image.vue"
     ],
-    "composables": [],
+    "composables": [
+      "useLocale.ts"
+    ],
     "directives": [],
     "lib": [
-      "brutal-interaction-variants.ts",
       "env.ts",
       "z-index.ts"
     ]
@@ -963,7 +965,8 @@
       "types.ts"
     ],
     "composables": [
-      "useClearable.ts"
+      "useClearable.ts",
+      "useLocale.ts"
     ],
     "directives": [],
     "lib": [
@@ -1316,6 +1319,7 @@
       "upload-types.ts"
     ],
     "composables": [
+      "useLocale.ts",
       "useUpload.ts"
     ],
     "directives": [],

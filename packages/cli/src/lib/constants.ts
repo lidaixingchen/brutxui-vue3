@@ -246,6 +246,7 @@ const BRUTAL_COLOR_NAMES = [
 const BRUTAL_Z_INDEX_NAMES = [
     'dialog',
     'dropdown',
+    'floating',
     'header',
     'loading',
     'message',
@@ -327,6 +328,7 @@ export const CN_FUNCTION_BODY_TEMPLATE = `const BRUTAL_COLOR_NAMES = [
 const BRUTAL_Z_INDEX_NAMES = [
     'dialog',
     'dropdown',
+    'floating',
     'header',
     'loading',
     'message',
