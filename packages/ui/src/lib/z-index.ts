@@ -1,13 +1,24 @@
-import { Z_INDEX_TOKENS as SHARED_Z_INDEX_TOKENS } from 'brutx-shared-vue'
-
 /**
- * 全局浮层与覆盖层 Z-Index 常量（单一数据源从 shared Z_INDEX_TOKENS 派生）。
+ * 全局浮层与覆盖层 Z-Index 常量。
  */
 export const Z_INDEX_TOKENS = Object.freeze({
     hide: -1,
     base: 0,
     docked: 10,
-    ...SHARED_Z_INDEX_TOKENS,
+    sticky: 10,
+    header: 40,
+    floating: 50,
+    popover: 100,
+    dropdown: 100,
+    tooltip: 200,
+    dialog: 1000,
+    tourCanvas: 9000,
+    tourPopover: 9001,
+    previewOverlay: 9100,
+    previewControl: 9101,
+    loading: 9200,
+    toast: 10010,
+    message: 10010,
 } as const)
 
 export const Z_INDEX = {
