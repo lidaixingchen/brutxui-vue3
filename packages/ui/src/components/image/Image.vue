@@ -2,19 +2,13 @@
 import { ref, computed, watch, nextTick, onMounted, onUnmounted, useAttrs } from 'vue'
 import { FocusScope } from 'reka-ui'
 import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCw, RotateCcw, FlipHorizontal } from '@lucide/vue'
-import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
+import { Button } from '@/components/button'
+import { cn } from '@/lib/utils'
 import { Z_INDEX } from '@/lib/z-index'
 import { hasIntersectionObserver, getDocument, getIntersectionObserverCtor } from '@/lib/env'
-import { brutalHoverLiftNoX, brutalPress } from '@/lib/brutal-interaction-variants'
+import { useLocale } from '@/composables/useLocale'
 
-// 预览大按钮共享交互类（hover 悬浮 / 按压反馈 / 焦点环）：
-// 复用 lib 共享变体（brutalHoverLiftNoX + brutalPress + FOCUS_RING_CLASSES），避免三处内联手抄
-const viewerControlClasses = cn(
-    'flex items-center justify-center w-12 h-12 border-3 border-brutal rounded-brutal shadow-brutal transition-all cursor-pointer',
-    brutalHoverLiftNoX,
-    brutalPress,
-    FOCUS_RING_CLASSES,
-)
+const { t } = useLocale()
 
 interface ImageProps {
     src: string
@@ -413,15 +407,15 @@ const imageClasses = computed(() =>
 
         <!-- 占位符/加载状态 -->
         <slot v-if="isLoading" name="placeholder">
-            <div class="absolute inset-0 flex items-center justify-center w-full h-full font-bold select-none border-3 border-brutal" style="background: repeating-linear-gradient(45deg, var(--brutal-muted, #e5e5e5), var(--brutal-muted, #e5e5e5) 6px, var(--brutal-bg, #fff) 6px, var(--brutal-bg, #fff) 12px)">
-                <span class="bg-brutal-bg px-2 py-0.5 border-2 border-brutal shadow-brutal-sm">加载中...</span>
+            <div class="absolute inset-0 flex items-center justify-center w-full h-full font-bold select-none border-3 border-brutal" style="background: repeating-linear-gradient(45deg, var(--brutal-muted, #f3f4f6), var(--brutal-muted, #f3f4f6) 6px, var(--brutal-bg, #ffffff) 6px, var(--brutal-bg, #ffffff) 12px)">
+                <span class="bg-brutal-bg px-2 py-0.5 border-2 border-brutal shadow-brutal-sm">{{ t('image.loading') }}</span>
             </div>
         </slot>
 
         <!-- 错误状态 -->
         <slot v-if="hasError" name="error">
-            <div class="absolute inset-0 flex items-center justify-center w-full h-full font-bold select-none border-3 border-brutal-destructive" style="background: repeating-linear-gradient(45deg, rgba(239,68,68,0.08), rgba(239,68,68,0.08) 6px, var(--brutal-bg, #fff) 6px, var(--brutal-bg, #fff) 12px)">
-                <span class="bg-brutal-bg px-2 py-0.5 border-2 border-brutal-destructive text-brutal-destructive shadow-brutal-destructive">加载失败</span>
+            <div class="absolute inset-0 flex items-center justify-center w-full h-full font-bold select-none border-3 border-brutal-destructive" style="background: repeating-linear-gradient(45deg, color-mix(in srgb, var(--brutal-destructive, #EF476F) 10%, transparent), color-mix(in srgb, var(--brutal-destructive, #EF476F) 10%, transparent) 6px, var(--brutal-bg, #ffffff) 6px, var(--brutal-bg, #ffffff) 12px)">
+                <span class="bg-brutal-bg px-2 py-0.5 border-2 border-brutal-destructive text-brutal-destructive shadow-brutal-destructive">{{ t('image.loadFailed') }}</span>
             </div>
         </slot>
     </div>
@@ -434,47 +428,53 @@ const imageClasses = computed(() =>
             class="fixed inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm select-none"
             :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_OVERLAY }"
             tabindex="-1"
+            role="dialog"
+            aria-modal="true"
+            :aria-label="t('image.preview')"
             @click.self="handleMaskClick"
             @keydown="handleKeyDown"
         >
             <FocusScope trapped loop>
                 <!-- 关闭按钮 -->
-                <button
-                    class="absolute top-6 right-6 bg-brutal-accent text-brutal-accent-foreground"
-                    :class="viewerControlClasses"
+                <Button
+                    variant="accent"
+                    size="icon"
+                    class="absolute top-6 right-6 w-12 h-12"
                     :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_CONTROL }"
-                    aria-label="关闭预览"
+                    :aria-label="t('image.close')"
                     data-testid="image-viewer-close"
                     @click="closeViewer"
                 >
                     <X class="w-6 h-6 stroke-[3]" />
-                </button>
+                </Button>
 
                 <!-- 切换上一张 -->
-                <button
+                <Button
                     v-if="previewSrcList && previewSrcList.length > 1"
-                    class="absolute left-6 bg-brutal-bg text-brutal-fg"
-                    :class="viewerControlClasses"
+                    variant="default"
+                    size="icon"
+                    class="absolute left-6 w-12 h-12"
                     :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_CONTROL }"
-                    aria-label="上一张"
+                    :aria-label="t('image.prev')"
                     data-testid="image-viewer-prev"
                     @click="prevImage"
                 >
                     <ChevronLeft class="w-6 h-6 stroke-[3]" />
-                </button>
+                </Button>
 
                 <!-- 切换下一张 -->
-                <button
+                <Button
                     v-if="previewSrcList && previewSrcList.length > 1"
-                    class="absolute right-6 bg-brutal-bg text-brutal-fg"
-                    :class="viewerControlClasses"
+                    variant="default"
+                    size="icon"
+                    class="absolute right-6 w-12 h-12"
                     :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_CONTROL }"
-                    aria-label="下一张"
+                    :aria-label="t('image.next')"
                     data-testid="image-viewer-next"
                     @click="nextImage"
                 >
                     <ChevronRight class="w-6 h-6 stroke-[3]" />
-                </button>
+                </Button>
 
                 <!-- 图片展示区域 -->
                 <div
@@ -483,7 +483,8 @@ const imageClasses = computed(() =>
                 >
                     <img
                         :src="currentPreviewSrc"
-                        alt="预览图片"
+                        :alt="alt || t('image.preview')"
+                        data-testid="image-viewer-img"
                         class="max-w-full max-h-[70vh] select-none transition-transform duration-100 ease-out cursor-grab active:cursor-grabbing"
                         :style="previewImageStyle"
                         @mousedown="handleDragStart"
@@ -496,50 +497,60 @@ const imageClasses = computed(() =>
                     :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_CONTROL }"
                 >
                     <!-- 缩小 -->
-                    <button
-                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[2px] active:shadow-none cursor-pointer focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden"
-                        title="缩小"
+                    <Button
+                        variant="default"
+                        size="icon"
+                        class="w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg"
+                        :aria-label="t('image.zoomOut')"
                         data-testid="image-viewer-zoom-out"
                         @click="zoomOut"
                     >
                         <ZoomOut class="w-5 h-5 stroke-[2.5]" />
-                    </button>
+                    </Button>
                     <!-- 放大 -->
-                    <button
-                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[2px] active:shadow-none cursor-pointer focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden"
-                        title="放大"
+                    <Button
+                        variant="default"
+                        size="icon"
+                        class="w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg"
+                        :aria-label="t('image.zoomIn')"
                         data-testid="image-viewer-zoom-in"
                         @click="zoomIn"
                     >
                         <ZoomIn class="w-5 h-5 stroke-[2.5]" />
-                    </button>
+                    </Button>
                     <!-- 左旋 -->
-                    <button
-                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[2px] active:shadow-none cursor-pointer focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden"
-                        title="向左旋转"
+                    <Button
+                        variant="default"
+                        size="icon"
+                        class="w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg"
+                        :aria-label="t('image.rotateLeft')"
                         data-testid="image-viewer-rotate-left"
                         @click="rotateLeft"
                     >
                         <RotateCcw class="w-5 h-5 stroke-[2.5]" />
-                    </button>
+                    </Button>
                     <!-- 右旋 -->
-                    <button
-                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[2px] active:shadow-none cursor-pointer focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden"
-                        title="向右旋转"
+                    <Button
+                        variant="default"
+                        size="icon"
+                        class="w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg"
+                        :aria-label="t('image.rotateRight')"
                         data-testid="image-viewer-rotate-right"
                         @click="rotateRight"
                     >
                         <RotateCw class="w-5 h-5 stroke-[2.5]" />
-                    </button>
+                    </Button>
                     <!-- 翻转 -->
-                    <button
-                        class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[2px] active:shadow-none cursor-pointer focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden"
-                        title="左右翻转"
+                    <Button
+                        variant="default"
+                        size="icon"
+                        class="w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg"
+                        :aria-label="t('image.flip')"
                         data-testid="image-viewer-flip"
                         @click="flipHorizontal"
                     >
                         <FlipHorizontal class="w-5 h-5 stroke-[2.5]" />
-                    </button>
+                    </Button>
                 </div>
             </FocusScope>
         </div>

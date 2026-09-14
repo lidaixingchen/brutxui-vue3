@@ -6,13 +6,14 @@ import SelectContent from './SelectContent.vue'
 import SelectItem from './SelectItem.vue'
 import SelectLabel from './SelectLabel.vue'
 import { cn } from '@/lib/utils'
+import { useLocale } from '@/composables/useLocale'
 import type { SelectProps, SelectOption } from './types'
 
 const {
     options = [],
     groupField = undefined,
     groupLabel = undefined,
-    placeholder = 'Select an option',
+    placeholder = undefined,
     disabled = false,
     required = false,
     name = undefined,
@@ -27,6 +28,9 @@ const {
     contentClass = undefined,
     itemVariant = 'default',
 } = defineProps<SelectProps>()
+
+const { t } = useLocale()
+const computedPlaceholder = computed(() => placeholder ?? t('select.placeholder'))
 
 const modelValue = defineModel<string>()
 
@@ -119,7 +123,7 @@ const triggerClasses = computed(() => cn(className, triggerClass))
                 :class="triggerClasses"
                 @clear="modelValue = undefined"
             >
-                <SelectValue :placeholder="placeholder" />
+                <SelectValue :placeholder="computedPlaceholder" />
             </SelectTrigger>
 
             <!-- 内容区：始终由 props 数据驱动渲染 -->

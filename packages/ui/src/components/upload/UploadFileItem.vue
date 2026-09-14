@@ -15,6 +15,9 @@ import { cn } from '@/lib/utils'
 import type { UploadFile } from './upload-types'
 import { Progress } from '@/components/progress'
 import { Button } from '@/components/button'
+import { useLocale } from '@/composables/useLocale'
+
+const { t } = useLocale()
 
 interface UploadFileItemProps {
     /** 文件信息 */
@@ -156,7 +159,7 @@ const listItemClasses = computed(() =>
                 size="sm"
                 variant="ghost"
                 class="h-9 w-9 p-0"
-                aria-label="重试上传"
+                :aria-label="t('upload.retryUpload')"
                 @click.stop="emit('retry')"
             >
                 <RefreshCw class="h-4 w-4" aria-hidden="true" />
@@ -165,7 +168,7 @@ const listItemClasses = computed(() =>
                 size="sm"
                 variant="ghost"
                 class="h-9 w-9 p-0"
-                aria-label="删除文件"
+                :aria-label="t('upload.deleteFile')"
                 @click.stop="emit('remove')"
             >
                 <X class="h-4 w-4" aria-hidden="true" />
@@ -248,11 +251,11 @@ const listItemClasses = computed(() =>
                 v-if="file.status === 'error'"
                 size="sm"
                 variant="outline"
-                aria-label="重试上传"
+                :aria-label="t('upload.retryUpload')"
                 @click.stop="emit('retry')"
             >
                 <RefreshCw class="h-3 w-3 mr-1" aria-hidden="true" />
-                重试
+                {{ t('upload.retry') }}
             </Button>
 
             <!-- 删除按钮 -->
@@ -260,7 +263,7 @@ const listItemClasses = computed(() =>
                 size="sm"
                 variant="ghost"
                 class="h-8 w-8 p-0"
-                aria-label="删除文件"
+                :aria-label="t('upload.deleteFile')"
                 @click.stop="emit('remove')"
             >
                 <X class="h-4 w-4" aria-hidden="true" />

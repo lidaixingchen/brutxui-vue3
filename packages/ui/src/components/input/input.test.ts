@@ -517,5 +517,30 @@ describe('Input', () => {
             expect(classes).toContain('focus-within:shadow-brutal-primary')
             expect(classes).not.toContain('focus-within:shadow-brutal-lg')
         })
+
+        it('binds explicit id to native input instead of root container', () => {
+            const wrapper = mount(Input, { props: { id: 'test-input-id' } })
+            expect(wrapper.find('input').attributes('id')).toBe('test-input-id')
+            expect(wrapper.attributes('id')).toBeUndefined()
+        })
+
+        it('generates fallback id for native input when id prop is not provided', () => {
+            const wrapper = mount(Input)
+            const inputId = wrapper.find('input').attributes('id')
+            expect(inputId).toBeDefined()
+            expect(inputId).not.toBe('')
+        })
+
+        it('links error message with aria-describedby and aria-errormessage when error variant is active', () => {
+            const wrapper = mount(Input, {
+                props: { id: 'field-1', variant: 'error', errorMessage: '请输入正确格式' },
+            })
+            const input = wrapper.find('input')
+            const alert = wrapper.find('[role="alert"]')
+            expect(input.attributes('aria-describedby')).toBe('field-1-error')
+            expect(input.attributes('aria-errormessage')).toBe('field-1-error')
+            expect(alert.attributes('id')).toBe('field-1-error')
+            expect(alert.text()).toBe('请输入正确格式')
+        })
     })
 })

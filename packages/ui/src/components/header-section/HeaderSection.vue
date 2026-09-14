@@ -61,7 +61,7 @@ function handleCtaClick() {
 
 const rootClasses = computed(() =>
     cn(
-        'sticky top-0 z-40 w-full',
+        'sticky top-0 z-header w-full',
         'bg-brutal-bg border-b-3 border-brutal shadow-brutal-sm',
         props.class
     )

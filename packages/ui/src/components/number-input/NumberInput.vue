@@ -113,7 +113,11 @@ const iconClasses = computed(() =>
     <div class="w-full">
         <NumberFieldRoot v-bind="forwarded" :class="containerClasses">
             <template v-if="layout === 'split'">
-                <NumberFieldDecrement :class="decrementClasses" @click="haptics.click()">
+                <NumberFieldDecrement
+                    :class="decrementClasses"
+                    :aria-label="t('numberInput.decrease')"
+                    @click="haptics.click()"
+                >
                     <Minus :class="iconClasses" />
                 </NumberFieldDecrement>
 
@@ -125,7 +129,11 @@ const iconClasses = computed(() =>
                     @animationend="isDrumming = false"
                 />
 
-                <NumberFieldIncrement :class="incrementClasses" @click="haptics.click()">
+                <NumberFieldIncrement
+                    :class="incrementClasses"
+                    :aria-label="t('numberInput.increase')"
+                    @click="haptics.click()"
+                >
                     <Plus :class="iconClasses" />
                 </NumberFieldIncrement>
             </template>
@@ -140,10 +148,18 @@ const iconClasses = computed(() =>
                 />
 
                 <div class="flex flex-col border-l-3 border-brutal w-10 shrink-0">
-                    <NumberFieldIncrement :class="incrementClasses" @click="haptics.click()">
+                    <NumberFieldIncrement
+                        :class="incrementClasses"
+                        :aria-label="t('numberInput.increase')"
+                        @click="haptics.click()"
+                    >
                         <ChevronUp :class="iconClasses" />
                     </NumberFieldIncrement>
-                    <NumberFieldDecrement :class="decrementClasses" @click="haptics.click()">
+                    <NumberFieldDecrement
+                        :class="decrementClasses"
+                        :aria-label="t('numberInput.decrease')"
+                        @click="haptics.click()"
+                    >
                         <ChevronDown :class="iconClasses" />
                     </NumberFieldDecrement>
                 </div>

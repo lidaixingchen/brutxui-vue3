@@ -569,6 +569,7 @@ function getItemClasses(option: CascaderOption, colIdx: number) {
                         v-if="showClear"
                         role="button"
                         :tabindex="disabled ? -1 : 0"
+                        :aria-label="t('cascader.clear')"
                         class="p-0.5 hover:bg-brutal-muted rounded-brutal focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden"
                         @click="handleClear"
                         @keydown.enter="handleClear"

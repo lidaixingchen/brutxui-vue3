@@ -182,6 +182,6 @@ export const dataTableLoadingVariants = cva(
     [
         'absolute inset-0 flex items-center justify-center',
         'bg-brutal-bg',
-        'z-10',
+        'z-sticky',
     ],
 )

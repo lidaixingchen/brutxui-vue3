@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Component } from 'vue'
+import { computed, useId, type Component } from 'vue'
 import { TriangleAlert } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/popover'
@@ -38,6 +38,10 @@ const emit = defineEmits<{
 const { t } = useLocale()
 const isOpen = defineModel<boolean>('open', { default: false })
 
+const uid = useId()
+const titleId = computed(() => `popconfirm-title-${uid}`)
+const descId = computed(() => `popconfirm-desc-${uid}`)
+
 function handleConfirm() {
     isOpen.value = false
     emit('confirm')
@@ -58,7 +62,12 @@ function handleCancel() {
             :class="props.class"
             align="center"
         >
-            <div class="flex gap-3">
+            <div
+                class="flex gap-3"
+                role="alertdialog"
+                :aria-labelledby="titleId"
+                :aria-describedby="$slots.description ? descId : undefined"
+            >
                 <!-- 图标 -->
                 <div class="flex-shrink-0">
                     <slot name="icon">
@@ -71,12 +80,12 @@ function handleCancel() {
 
                 <!-- 内容 -->
                 <div class="flex-1">
-                    <p class="font-medium text-brutal-fg">
+                    <p :id="titleId" class="font-medium text-brutal-fg">
                         {{ title }}
                     </p>
 
                     <!-- 描述 -->
-                    <div v-if="$slots.description" class="mt-1">
+                    <div v-if="$slots.description" :id="descId" class="mt-1">
                         <slot name="description" />
                     </div>
 

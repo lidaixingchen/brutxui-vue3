@@ -89,6 +89,7 @@ const handleValueChange = (value: AcceptableValue) => {
         size="icon"
         :class="props.class"
         :title="t('colorModeSwitcher.currentToggle', { mode: currentLabel })"
+        :aria-label="t('colorModeSwitcher.currentToggle', { mode: currentLabel })"
         @click="toggleColorModeLocal"
     >
         <component :is="currentIcon" :size="20" :stroke-width="2.5" class="text-brutal-fg" />

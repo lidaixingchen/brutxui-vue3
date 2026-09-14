@@ -294,4 +294,16 @@ describe('Backtop.vue', () => {
         expect(removeSpy).toHaveBeenCalledWith('scroll', expect.any(Function))
         container.remove()
     })
+
+    it('applies z-floating class and localized aria-label', async () => {
+        const wrapper = mount(Backtop, {
+            props: { visibilityHeight: 0 },
+            attachTo: document.body,
+        })
+        await nextTick()
+        const btn = wrapper.find('button')
+        expect(btn.classes()).toContain('z-floating')
+        expect(btn.attributes('aria-label')).toBe('回到顶部')
+        wrapper.unmount()
+    })
 })

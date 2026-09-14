@@ -76,8 +76,8 @@ describe('NumberInput', () => {
         const wrapper = mount(NumberInput, {
             props: { layout: 'split' },
         })
-        const decrement = wrapper.find('[aria-label="Decrease"]')
-        const increment = wrapper.find('[aria-label="Increase"]')
+        const decrement = wrapper.find('[aria-label="减少数值"]')
+        const increment = wrapper.find('[aria-label="增加数值"]')
         expect(decrement.exists()).toBe(true)
         expect(increment.exists()).toBe(true)
     })
@@ -86,8 +86,8 @@ describe('NumberInput', () => {
         const wrapper = mount(NumberInput, {
             props: { layout: 'stacked' },
         })
-        const decrement = wrapper.find('[aria-label="Decrease"]')
-        const increment = wrapper.find('[aria-label="Increase"]')
+        const decrement = wrapper.find('[aria-label="减少数值"]')
+        const increment = wrapper.find('[aria-label="增加数值"]')
         expect(decrement.exists()).toBe(true)
         expect(increment.exists()).toBe(true)
         expect(decrement.classes()).toContain('border-t-3')
@@ -123,14 +123,14 @@ describe('NumberInput', () => {
         const wrapper = mount(NumberInput, {
             attachTo: document.body,
         })
-        expect(wrapper.find('[aria-label="Increase"]').exists()).toBe(true)
+        expect(wrapper.find('[aria-label="增加数值"]').exists()).toBe(true)
     })
 
     it('decrement button has correct aria-label', () => {
         const wrapper = mount(NumberInput, {
             attachTo: document.body,
         })
-        expect(wrapper.find('[aria-label="Decrease"]').exists()).toBe(true)
+        expect(wrapper.find('[aria-label="减少数值"]').exists()).toBe(true)
     })
 
     it('applies default icon size to increment/decrement icons', () => {

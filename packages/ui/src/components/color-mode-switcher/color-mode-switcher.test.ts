@@ -45,8 +45,11 @@ describe('ColorModeSwitcher', () => {
         const wrapper = mount(ColorModeSwitcher, {
             global: { stubs: selectStubs },
         })
-        // Should render a button with icon
-        expect(wrapper.find('button').exists()).toBe(true)
+        // Should render a button with icon and accessible name
+        const btn = wrapper.find('button')
+        expect(btn.exists()).toBe(true)
+        expect(btn.attributes('aria-label')).toBeDefined()
+        expect(btn.attributes('aria-label')).toContain('浅色')
     })
 
     it('renders in button display mode', () => {

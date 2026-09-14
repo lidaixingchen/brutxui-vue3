@@ -327,7 +327,7 @@ const rootStyle = computed(() => {
 })
 
 const toolbarClasses = computed(() => cn(dataTableToolbarVariants()))
-const headerClasses = computed(() => cn(dataTableHeaderVariants(), props.stickyHeader && 'sticky top-0 z-10'))
+const headerClasses = computed(() => cn(dataTableHeaderVariants(), props.stickyHeader && 'sticky top-0 z-sticky'))
 const emptyClasses = computed(() => cn(dataTableEmptyVariants()))
 const paginationClasses = computed(() => cn(dataTablePaginationVariants()))
 const loadingClasses = computed(() => cn(dataTableLoadingVariants()))

@@ -255,7 +255,7 @@ describe('Image Component', () => {
         })
 
         await wrapper.find('img').trigger('click')
-        const previewImg = document.body.querySelector('img[alt="预览图片"]') as HTMLImageElement
+        const previewImg = document.body.querySelector('[data-testid="image-viewer-img"]') as HTMLImageElement
         expect(previewImg.style.transform).toContain('scale(1, 1)')
 
         // 放大
@@ -300,7 +300,7 @@ describe('Image Component', () => {
         })
 
         await wrapper.find('img').trigger('click')
-        const previewImg = document.body.querySelector('img[alt="预览图片"]') as HTMLImageElement
+        const previewImg = document.body.querySelector('[data-testid="image-viewer-img"]') as HTMLImageElement
         expect(previewImg.src).toBe('https://example.com/img1.jpg')
 
         // 下一张
@@ -326,7 +326,7 @@ describe('Image Component', () => {
         })
 
         await wrapper.find('img').trigger('click')
-        const previewImg = document.body.querySelector('img[alt="预览图片"]') as HTMLImageElement
+        const previewImg = document.body.querySelector('[data-testid="image-viewer-img"]') as HTMLImageElement
         const overlay = document.body.querySelector('.fixed.inset-0') as HTMLElement
 
         // ArrowRight 切下一张
@@ -422,5 +422,45 @@ describe('Image Component', () => {
         await nextTick()
         expect(document.body.querySelector('[data-testid="image-viewer-canvas"]')).toBeNull()
         expect(document.activeElement).toBe(trigger.element)
+    })
+
+    it('provides accessible modal role, aria attributes, and button labels in viewer', async () => {
+        wrapper = mount(Image, {
+            props: {
+                src: 'https://example.com/img1.jpg',
+                preview: true,
+                previewSrcList: ['https://example.com/img1.jpg', 'https://example.com/img2.jpg'],
+            },
+        })
+
+        await wrapper.find('img').trigger('click')
+        const overlay = document.body.querySelector('.fixed.inset-0') as HTMLElement
+        expect(overlay.getAttribute('role')).toBe('dialog')
+        expect(overlay.getAttribute('aria-modal')).toBe('true')
+        expect(overlay.getAttribute('aria-label')).toBe('图片预览')
+
+        const closeBtn = document.body.querySelector('[data-testid="image-viewer-close"]')
+        expect(closeBtn?.getAttribute('aria-label')).toBe('关闭预览')
+
+        const prevBtn = document.body.querySelector('[data-testid="image-viewer-prev"]')
+        expect(prevBtn?.getAttribute('aria-label')).toBe('上一张')
+
+        const nextBtn = document.body.querySelector('[data-testid="image-viewer-next"]')
+        expect(nextBtn?.getAttribute('aria-label')).toBe('下一张')
+
+        const zoomInBtn = document.body.querySelector('[data-testid="image-viewer-zoom-in"]')
+        expect(zoomInBtn?.getAttribute('aria-label')).toBe('放大')
+
+        const zoomOutBtn = document.body.querySelector('[data-testid="image-viewer-zoom-out"]')
+        expect(zoomOutBtn?.getAttribute('aria-label')).toBe('缩小')
+
+        const rotateLeftBtn = document.body.querySelector('[data-testid="image-viewer-rotate-left"]')
+        expect(rotateLeftBtn?.getAttribute('aria-label')).toBe('向左旋转')
+
+        const rotateRightBtn = document.body.querySelector('[data-testid="image-viewer-rotate-right"]')
+        expect(rotateRightBtn?.getAttribute('aria-label')).toBe('向右旋转')
+
+        const flipBtn = document.body.querySelector('[data-testid="image-viewer-flip"]')
+        expect(flipBtn?.getAttribute('aria-label')).toBe('左右翻转')
     })
 })

@@ -626,5 +626,15 @@ describe('Select.vue', () => {
             const trigger = wrapper.findComponent(SelectTrigger)
             expect(trigger.props('clearable')).toBe(false)
         })
+
+        it('falls back to locale placeholder when placeholder is not provided', () => {
+            const wrapper = mount(Select, {
+                props: {
+                    options: defaultOptions,
+                },
+                global: { stubs: selectStubs },
+            })
+            expect(wrapper.find('[data-testid="select-value"]').text()).toBe('请选择')
+        })
     })
 })

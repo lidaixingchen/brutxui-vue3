@@ -162,6 +162,19 @@ describe('ColorPicker', () => {
         expect(clearBtn.exists()).toBe(true)
     })
 
+    it('renders clear button outside trigger button to avoid nested interactive controls', () => {
+        wrapper = mount(ColorPicker, {
+            ...localeProvide,
+            props: { modelValue: '#ff0000', clearable: true },
+            attachTo: document.body,
+        })
+        const trigger = wrapper.find('button[role="combobox"]')
+        const clearBtn = wrapper.find('button[aria-label="Clear"]')
+        expect(trigger.exists()).toBe(true)
+        expect(clearBtn.exists()).toBe(true)
+        expect(trigger.element.contains(clearBtn.element)).toBe(false)
+    })
+
     it('does not show clear button when no value', () => {
         wrapper = mount(ColorPicker, {
             ...localeProvide,

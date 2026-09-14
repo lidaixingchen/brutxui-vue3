@@ -4,8 +4,11 @@ import { ArrowUp } from '@lucide/vue'
 import { useThrottle } from '@/composables/useThrottle'
 import { cn } from '@/lib/utils'
 import { getWindow, getDocument, getMutationObserverCtor } from '@/lib/env'
+import { useLocale } from '@/composables/useLocale'
 import Button from '../button/Button.vue'
 import type { ButtonVariant } from '../button/shared-button-variants'
+
+const { t } = useLocale()
 
 interface BacktopProps {
     visibilityHeight?: number
@@ -45,7 +48,7 @@ const styles = computed<CSSProperties>(() => ({
 const buttonClasses = computed(() =>
     cn(
         positionClass.value,
-        'z-[999]',
+        'z-floating',
         props.variant === 'primary' && 'bg-brutal-yellow text-brutal-black font-black',
         props.class,
     ),
@@ -180,7 +183,7 @@ onBeforeUnmount(() => {
             :variant="props.variant"
             size="icon"
             :class="buttonClasses"
-            aria-label="Back to top"
+            :aria-label="t('backtop.backToTop')"
             @click="handleClick"
         >
             <slot>

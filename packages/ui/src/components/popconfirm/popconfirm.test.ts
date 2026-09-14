@@ -1,9 +1,13 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, afterEach } from 'vitest'
 import { nextTick, ref } from 'vue'
 import Popconfirm from './Popconfirm.vue'
 
 describe('Popconfirm', () => {
+    afterEach(() => {
+        document.body.innerHTML = ''
+    })
+
     it('renders slot trigger and opens popover content on click', async () => {
         const wrapper = mount(Popconfirm, {
             props: {
@@ -116,5 +120,33 @@ describe('Popconfirm', () => {
         await wrapper.setProps({ open: true })
         await nextTick()
         expect(document.body.textContent).toContain('受控测试')
+    })
+
+    it('renders content with role=alertdialog and connects aria labels', async () => {
+        const wrapper = mount(Popconfirm, {
+            props: {
+                title: '删除确认',
+            },
+            slots: {
+                default: '<button id="btn">打开</button>',
+                description: '<span id="desc-text">此操作不可逆</span>',
+            },
+            attachTo: document.body,
+        })
+        const trigger = wrapper.find('#btn')
+        await trigger.trigger('click')
+        await nextTick()
+
+        const dialog = document.body.querySelector('[role="alertdialog"]')
+        expect(dialog).not.toBeNull()
+        const labelledBy = dialog?.getAttribute('aria-labelledby')
+        const describedBy = dialog?.getAttribute('aria-describedby')
+        expect(labelledBy).toBeDefined()
+        expect(describedBy).toBeDefined()
+
+        const titleEl = document.getElementById(labelledBy!)
+        const descEl = document.getElementById(describedBy!)
+        expect(titleEl?.textContent?.trim()).toBe('删除确认')
+        expect(descEl?.textContent?.trim()).toBe('此操作不可逆')
     })
 })

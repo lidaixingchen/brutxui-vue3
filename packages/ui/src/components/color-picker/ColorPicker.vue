@@ -84,6 +84,15 @@ const ICON_SIZE_CLASSES = {
     smallIcon: { sm: 'w-3 h-3', default: 'w-4 h-4', lg: 'w-4 h-4' },
 } as const
 
+const clearButtonClasses = computed(() => {
+    const size = props.size ?? 'default'
+    const rightOffset = size === 'sm' ? 'right-7' : size === 'lg' ? 'right-9' : 'right-8'
+    return cn(
+        rightOffset,
+        ICON_SIZE_CLASSES.clearButton[size],
+    )
+})
+
 defineExpose({ open })
 
 // 手动维护 contentId 并绑定到面板根节点：reka 的 rootContext.contentId 是普通属性（非响应式），
@@ -99,52 +108,64 @@ const presetsForPanel = computed<string[] | readonly ColorPreset[] | undefined>(
          渲染隐藏 input 携带当前颜色值，值随 modelValue 变化同步 -->
     <input v-if="name" type="hidden" :name="name" :value="modelValue ?? ''" :disabled="disabled">
     <PopoverRoot v-model:open="open">
-        <PopoverTrigger as-child>
-            <button
-                :id="id"
-                type="button"
-                role="combobox"
-                :aria-expanded="open"
-                :aria-controls="open ? contentId : undefined"
-                :aria-label="resolvedAriaLabel"
-                aria-haspopup="dialog"
-                :disabled="disabled"
-                :class="triggerClasses"
-                @keydown="handleTriggerKeydown"
-            >
-                <span
-                    class="inline-block border-2 border-brutal shrink-0"
-                    :class="[
-                        ICON_SIZE_CLASSES.swatch[size],
-                        !modelValue && 'opacity-40',
-                    ]"
-                    :style="swatchStyle"
-                />
-                <span v-if="showInput" class="flex-1 text-left truncate font-mono text-sm">
-                    {{ normalizedDisplay ?? resolvedPlaceholder }}
-                </span>
-                <span v-else class="flex-1 text-left truncate">
-                    {{ normalizedDisplay ?? resolvedPlaceholder }}
-                </span>
-                <span class="flex items-center gap-1 shrink-0">
-                    <!-- 与 lib/utils FOCUS_RING_CLASSES 保持一致 -->
+        <div class="relative w-full">
+            <PopoverTrigger as-child>
+                <button
+                    :id="id"
+                    type="button"
+                    role="combobox"
+                    :aria-expanded="open"
+                    :aria-controls="open ? contentId : undefined"
+                    :aria-label="resolvedAriaLabel"
+                    aria-haspopup="dialog"
+                    :disabled="disabled"
+                    :class="triggerClasses"
+                    @keydown="handleTriggerKeydown"
+                >
                     <span
-                        v-if="clearable && modelValue && !disabled"
-                        role="button"
-                        class="inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden rounded-brutal"
-                        :class="ICON_SIZE_CLASSES.clearButton[size]"
-                        :aria-label="t('colorPicker.clear')"
-                        tabindex="0"
-                        @click.stop="handleClearClick"
-                        @keydown.enter.prevent.stop="handleClearClick"
-                        @keydown.space.prevent.stop="handleClearClick"
-                    >
-                        <X :class="ICON_SIZE_CLASSES.smallIcon[size]" class="stroke-[3]" />
+                        class="inline-block border-2 border-brutal shrink-0"
+                        :class="[
+                            ICON_SIZE_CLASSES.swatch[size],
+                            !modelValue && 'opacity-40',
+                        ]"
+                        :style="swatchStyle"
+                    />
+                    <span v-if="showInput" class="flex-1 text-left truncate font-mono text-sm">
+                        {{ normalizedDisplay ?? resolvedPlaceholder }}
                     </span>
-                    <ChevronDown class="opacity-60 stroke-[3]" :class="ICON_SIZE_CLASSES.smallIcon[size]" />
-                </span>
+                    <span v-else class="flex-1 text-left truncate">
+                        {{ normalizedDisplay ?? resolvedPlaceholder }}
+                    </span>
+                    <span class="flex items-center gap-1 shrink-0">
+                        <!-- 透明占位符保持布局稳定 -->
+                        <span
+                            v-if="clearable && modelValue && !disabled"
+                            aria-hidden="true"
+                            class="inline-flex items-center justify-center opacity-0 pointer-events-none"
+                            :class="ICON_SIZE_CLASSES.clearButton[size]"
+                        >
+                            <X :class="ICON_SIZE_CLASSES.smallIcon[size]" class="stroke-[3]" />
+                        </span>
+                        <ChevronDown class="opacity-60 stroke-[3]" :class="ICON_SIZE_CLASSES.smallIcon[size]" />
+                    </span>
+                </button>
+            </PopoverTrigger>
+            <!-- 平级定位清空按钮，与触发器解耦 -->
+            <button
+                v-if="clearable && modelValue && !disabled"
+                type="button"
+                role="button"
+                class="absolute top-1/2 z-10 -translate-y-1/2 inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden rounded-brutal"
+                :class="clearButtonClasses"
+                :aria-label="t('colorPicker.clear')"
+                @pointerdown.stop
+                @click.stop="handleClearClick"
+                @keydown.enter.prevent.stop="handleClearClick"
+                @keydown.space.prevent.stop="handleClearClick"
+            >
+                <X :class="ICON_SIZE_CLASSES.smallIcon[size]" class="stroke-[3]" />
             </button>
-        </PopoverTrigger>
+        </div>
         <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent" align="start">
             <ColorPickerPanel
                 :id="contentId"

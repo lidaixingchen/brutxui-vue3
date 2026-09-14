@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, type ConcreteComponent, type Component } from 'vue'
+import { computed, ref, useId, type ConcreteComponent, type Component } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { Eye, EyeOff, X } from '@lucide/vue'
 import { useSlots } from 'vue'
@@ -58,6 +58,8 @@ interface InputProps {
     suffixIcon?: ConcreteComponent | (() => Component)
     /** 错误消息 */
     errorMessage?: string
+    /** 控件 ID（外部未传入时自动生成唯一 ID） */
+    id?: string
     /** 无障碍标签 */
     ariaLabel?: string
     /** 关联的标签元素 ID */
@@ -89,6 +91,7 @@ const props = withDefaults(defineProps<InputProps>(), {
     prefixIcon: undefined,
     suffixIcon: undefined,
     errorMessage: undefined,
+    id: undefined,
     ariaLabel: undefined,
     ariaLabelledby: undefined,
     ariaDescribedby: undefined,
@@ -102,6 +105,10 @@ const emit = defineEmits<{
     'update:modelValue': [value: string]
     clear: []
 }>()
+
+const generatedId = useId()
+const inputId = computed(() => props.id ?? generatedId)
+const errorTextId = computed(() => `${inputId.value}-error`)
 
 const slots = useSlots()
 const inputRef = ref<HTMLInputElement | null>(null)
@@ -245,6 +252,7 @@ defineExpose({
                 </div>
 
                 <input
+                    :id="inputId"
                     ref="inputRef"
                     :type="actualType"
                     :value="modelValue"
@@ -256,9 +264,9 @@ defineExpose({
                     :class="inputClasses"
                     :aria-label="ariaLabel"
                     :aria-labelledby="ariaLabelledby"
-                    :aria-describedby="ariaDescribedby"
+                    :aria-describedby="ariaDescribedby ?? (variant === 'error' && errorMessage ? errorTextId : undefined)"
                     :aria-invalid="ariaInvalid ?? (variant === 'error')"
-                    :aria-errormessage="ariaErrormessage"
+                    :aria-errormessage="ariaErrormessage ?? (variant === 'error' && errorMessage ? errorTextId : undefined)"
                     :aria-required="ariaRequired"
                     @compositionstart="isComposing = true"
                     @compositionend="handleCompositionEnd"
@@ -319,6 +327,7 @@ defineExpose({
         <!-- 错误消息 -->
         <p
             v-if="variant === 'error' && errorMessage"
+            :id="errorTextId"
             class="text-sm text-brutal-destructive mt-1"
             role="alert"
         >
