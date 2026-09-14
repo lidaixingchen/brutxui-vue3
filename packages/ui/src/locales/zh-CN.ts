@@ -356,6 +356,21 @@ export const zhCN: Locale = {
     },
     numberInput: {
         placeholder: '请输入数字...',
+        increase: '增加数值',
+        decrease: '减少数值',
+    },
+    image: {
+        preview: '图片预览',
+        close: '关闭预览',
+        prev: '上一张',
+        next: '下一张',
+        zoomIn: '放大',
+        zoomOut: '缩小',
+        rotateLeft: '向左旋转',
+        rotateRight: '向右旋转',
+        flip: '左右翻转',
+        loading: '加载中...',
+        loadFailed: '加载失败',
     },
     textarea: {
         placeholder: '请输入...',
@@ -384,13 +399,15 @@ export const zhCN: Locale = {
         confirm: '确认',
         cancel: '取消',
     },
-    // 预留语言包键：上传组件暂未消费，为后续提示文案本地化预留（见 types.ts UploadLocale）
     upload: {
         dragText: '点击或拖拽文件到此区域上传',
         browseText: '浏览文件',
         maxSizeError: '文件大小超过限制',
         limitError: '最多只能上传 {limit} 个文件',
         retry: '重试',
+        retryUpload: '重试上传',
+        deleteFile: '删除文件',
+        delete: '删除',
     },
     infiniteScroll: {
         loading: '加载中...',
@@ -409,5 +426,11 @@ export const zhCN: Locale = {
     },
     countdown: {
         finished: '倒计时已结束',
+    },
+    select: {
+        placeholder: '请选择',
+    },
+    backtop: {
+        backToTop: '回到顶部',
     },
 }

@@ -356,6 +356,21 @@ export const en: Locale = {
     },
     numberInput: {
         placeholder: 'Enter a number...',
+        increase: 'Increase',
+        decrease: 'Decrease',
+    },
+    image: {
+        preview: 'Image Preview',
+        close: 'Close preview',
+        prev: 'Previous',
+        next: 'Next',
+        zoomIn: 'Zoom in',
+        zoomOut: 'Zoom out',
+        rotateLeft: 'Rotate left',
+        rotateRight: 'Rotate right',
+        flip: 'Flip horizontally',
+        loading: 'Loading...',
+        loadFailed: 'Failed to load',
     },
     textarea: {
         placeholder: 'Type here...',
@@ -384,13 +399,15 @@ export const en: Locale = {
         confirm: 'Confirm',
         cancel: 'Cancel',
     },
-    // Reserved locale keys: upload components do not consume these yet, kept for future i18n (see types.ts UploadLocale)
     upload: {
         dragText: 'Click or drag files to this area to upload',
         browseText: 'Browse files',
         maxSizeError: 'File size exceeds limit',
         limitError: 'Maximum {limit} files can be uploaded',
         retry: 'Retry',
+        retryUpload: 'Retry upload',
+        deleteFile: 'Delete file',
+        delete: 'Delete',
     },
     infiniteScroll: {
         loading: 'Loading...',
@@ -409,5 +426,11 @@ export const en: Locale = {
     },
     countdown: {
         finished: 'Countdown finished',
+    },
+    select: {
+        placeholder: 'Select an option',
+    },
+    backtop: {
+        backToTop: 'Back to top',
     },
 }

@@ -6,6 +6,10 @@ export interface CommandLocale {
     searchLabel: string
 }
 
+export interface SelectLocale {
+    placeholder: string
+}
+
 export interface ComboboxLocale {
     placeholder: string
     multiPlaceholder: string
@@ -414,6 +418,22 @@ export interface InputLocale {
 
 export interface NumberInputLocale {
     placeholder: string
+    increase: string
+    decrease: string
+}
+
+export interface ImageLocale {
+    preview: string
+    close: string
+    prev: string
+    next: string
+    zoomIn: string
+    zoomOut: string
+    rotateLeft: string
+    rotateRight: string
+    flip: string
+    loading: string
+    loadFailed: string
 }
 
 export interface TextareaLocale {
@@ -460,6 +480,13 @@ export interface UploadLocale {
     /** 文件数量超限提示文案，占位符：{limit}，如「Maximum {limit} files can be uploaded」 */
     limitError: string
     retry: string
+    retryUpload: string
+    deleteFile: string
+    delete: string
+}
+
+export interface BacktopLocale {
+    backToTop: string
 }
 
 export interface InfiniteScrollLocale {
@@ -531,6 +558,7 @@ export interface Locale {
     colorModeSwitcher: ColorModeSwitcherLocale
     input: InputLocale
     numberInput: NumberInputLocale
+    image: ImageLocale
     textarea: TextareaLocale
     virtualScroll: VirtualScrollLocale
     switch: SwitchLocale
@@ -544,4 +572,6 @@ export interface Locale {
     tour: TourLocale
     statistic: StatisticLocale
     countdown: CountdownLocale
+    select: SelectLocale
+    backtop: BacktopLocale
 }

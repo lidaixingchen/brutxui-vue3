@@ -97,13 +97,13 @@ pre[class*="language-"] {
 /* --- 行号样式（Prism 插件兼容） --- */
 
 .line-numbers .line-numbers-rows {
-    border-right: var(--brutal-border-width, 3px) solid var(--brutal-border-color);
+    border-right: var(--brutal-border-width, 3px) solid var(--brutal-border-color, #000000);
     padding-right: 1rem;
     margin-right: 1rem;
 }
 
 .line-numbers-rows > span::before {
-    color: var(--brutal-fg);
+    color: var(--brutal-fg, #000000);
     opacity: 0.3;
 }
 
@@ -123,6 +123,6 @@ pre[class*="language-"] {
     left: 0;
     right: 0;
     pointer-events: none;
-    background: var(--brutal-accent);
+    background: var(--brutal-accent, #FFE66D);
     opacity: 0.15;
 }
