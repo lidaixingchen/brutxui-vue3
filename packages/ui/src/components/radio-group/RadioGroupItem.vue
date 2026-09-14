@@ -32,12 +32,16 @@ const iconSizeClasses = computed(() => {
     if (props.size === 'lg') return 'h-3.5 w-3.5'
     return 'h-2.5 w-2.5'
 })
+
+const indicatorIconClasses = computed(() =>
+    cn(iconSizeClasses.value, 'fill-current stroke-none')
+)
 </script>
 
 <template>
     <RadioGroupItemPrimitive :value="value" :disabled="disabled" :class="classes">
         <RadioGroupIndicatorPrimitive class="flex items-center justify-center">
-            <Square :class="cn(iconSizeClasses, 'fill-current stroke-none')" />
+            <Square :class="indicatorIconClasses" />
         </RadioGroupIndicatorPrimitive>
     </RadioGroupItemPrimitive>
 </template>

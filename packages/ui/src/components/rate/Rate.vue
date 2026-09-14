@@ -129,11 +129,39 @@ const handleKeydown = (event: KeyboardEvent) => {
         }
     }
 }
+
+const containerClasses = computed(() =>
+    cn('inline-flex items-center select-none', gapClass.value)
+)
+
+function getStarWrapperClass(index: number): string {
+    return cn(
+        'relative inline-block transition-all duration-150',
+        starSizeClass.value,
+        !props.readonly && 'cursor-pointer active:scale-90 active:translate-y-0',
+        isStarActive(index) && 'scale-115 -translate-y-0.5',
+        stampedIndex.value === index && 'animate-brutal-stamp'
+    )
+}
+
+const backgroundStarClass = computed(() =>
+    cn(
+        'w-full h-full text-brutal-muted stroke-brutal-muted-foreground stroke-[1.5px]',
+        props.readonly ? 'opacity-60' : 'opacity-80'
+    )
+)
+
+const foregroundStarClass = computed(() =>
+    cn(
+        'fill-brutal-accent text-brutal-fg stroke-brutal-fg stroke-[2px]',
+        starSizeClass.value
+    )
+)
 </script>
 
 <template>
     <div
-        :class="cn('inline-flex items-center select-none', gapClass)"
+        :class="containerClasses"
         role="slider"
         :aria-valuenow="displayValue"
         :aria-valuemin="0"
@@ -147,22 +175,13 @@ const handleKeydown = (event: KeyboardEvent) => {
         <div
             v-for="i in max"
             :key="i"
-            :class="cn(
-                'relative inline-block transition-all duration-150',
-                starSizeClass,
-                !readonly && 'cursor-pointer active:scale-90 active:translate-y-0',
-                isStarActive(i - 1) && 'scale-115 -translate-y-0.5',
-                stampedIndex === i - 1 && 'animate-brutal-stamp'
-            )"
+            :class="getStarWrapperClass(i - 1)"
             @animationend="stampedIndex === i - 1 && clearStampImpact()"
         >
             <!-- 底层未选中灰图腾 -->
             <Star
                 v-if="!usesGlyphIcon"
-                :class="cn(
-                    'w-full h-full text-brutal-muted stroke-brutal-muted-foreground stroke-[1.5px]',
-                    readonly ? 'opacity-60' : 'opacity-80'
-                )"
+                :class="backgroundStarClass"
             />
             <BrutalShape
                 v-else
@@ -182,10 +201,7 @@ const handleKeydown = (event: KeyboardEvent) => {
             >
                 <Star
                     v-if="!usesGlyphIcon"
-                    :class="cn(
-                        'fill-brutal-accent text-brutal-fg stroke-brutal-fg stroke-[2px]',
-                        starSizeClass
-                    )"
+                    :class="foregroundStarClass"
                 />
                 <BrutalShape
                     v-else

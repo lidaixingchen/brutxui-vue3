@@ -68,6 +68,10 @@ const iconClasses = computed(() =>
     )
 )
 
+const clearIconClasses = computed(() =>
+    cn(iconSizeVariants({ size: 'sm' }), 'stroke-[3]')
+)
+
 const hasValue = computed(() => {
     const value = props.modelValue
     if (value === null || value === undefined || value === '') return false
@@ -119,7 +123,7 @@ function handleKeyDown(e: KeyboardEvent) {
                         aria-hidden="true"
                         @click.stop="handleClear"
                     >
-                        <X :class="cn(iconSizeVariants({ size: 'sm' }), 'stroke-[3]')" />
+                        <X :class="clearIconClasses" />
                     </span>
                     <ChevronDown v-else :class="iconClasses" />
                 </div>

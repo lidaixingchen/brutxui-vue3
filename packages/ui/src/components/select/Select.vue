@@ -91,6 +91,8 @@ const grouped = computed<GroupedItems[]>(() => {
 
     return result
 })
+
+const triggerClasses = computed(() => cn(className, triggerClass))
 </script>
 
 <template>
@@ -114,7 +116,7 @@ const grouped = computed<GroupedItems[]>(() => {
                 :disabled="disabled"
                 :clearable="required ? false : clearable"
                 :model-value="modelValue"
-                :class="cn(className, triggerClass)"
+                :class="triggerClasses"
                 @clear="modelValue = undefined"
             >
                 <SelectValue :placeholder="placeholder" />

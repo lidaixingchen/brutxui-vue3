@@ -84,18 +84,31 @@ watchEffect((onCleanup) => {
 })
 
 const previewUrl = computed(() => props.file.url ?? objectUrl.value)
+
+const pictureCardClasses = computed(() =>
+    cn(
+        'relative w-24 h-24 border-3 border-brutal rounded-brutal overflow-hidden',
+        'flex items-center justify-center',
+        props.file.status === 'error' && 'border-brutal-destructive',
+        props.class,
+    )
+)
+
+const listItemClasses = computed(() =>
+    cn(
+        'flex items-center gap-3 p-3 border-3 border-brutal rounded-brutal',
+        'transition-colors duration-200',
+        props.file.status === 'error' && 'border-brutal-destructive',
+        props.class,
+    )
+)
 </script>
 
 <template>
     <!-- 图片卡片类型 -->
     <div
         v-if="listType === 'picture-card'"
-        :class="cn(
-            'relative w-24 h-24 border-3 border-brutal rounded-brutal overflow-hidden',
-            'flex items-center justify-center',
-            file.status === 'error' && 'border-brutal-destructive',
-            props.class,
-        )"
+        :class="pictureCardClasses"
     >
         <!-- 图片预览 -->
         <img
@@ -168,12 +181,7 @@ const previewUrl = computed(() => props.file.url ?? objectUrl.value)
     <!-- 列表类型（text 和 picture） -->
     <div
         v-else
-        :class="cn(
-            'flex items-center gap-3 p-3 border-3 border-brutal rounded-brutal',
-            'transition-colors duration-200',
-            file.status === 'error' && 'border-brutal-destructive',
-            props.class,
-        )"
+        :class="listItemClasses"
     >
         <!-- 图片预览或文件图标 -->
         <div

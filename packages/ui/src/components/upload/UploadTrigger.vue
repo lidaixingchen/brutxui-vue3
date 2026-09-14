@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { Upload } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 
@@ -94,15 +94,37 @@ function handleDrop(event: DragEvent) {
         emit('select', files, 'drop')
     }
 }
+
+const containerClasses = computed(() =>
+    cn(
+        'relative cursor-pointer',
+        props.disabled && 'cursor-not-allowed opacity-50',
+        props.class,
+    )
+)
+
+const dropzoneClasses = computed(() =>
+    cn(
+        'flex flex-col items-center justify-center gap-2 p-8',
+        'border-3 border-dashed rounded-brutal',
+        'transition-colors duration-200',
+        isDragging.value
+            ? 'border-brutal-primary bg-brutal-primary/10 bg-pattern-grid'
+            : 'border-brutal hover:border-brutal-primary',
+    )
+)
+
+const uploadIconClasses = computed(() =>
+    cn(
+        'h-10 w-10',
+        isDragging.value ? 'text-brutal-primary' : 'text-brutal-placeholder',
+    )
+)
 </script>
 
 <template>
     <div
-        :class="cn(
-            'relative cursor-pointer',
-            disabled && 'cursor-not-allowed opacity-50',
-            props.class,
-        )"
+        :class="containerClasses"
         role="button"
         :tabindex="disabled ? -1 : 0"
         :aria-disabled="disabled"
@@ -129,20 +151,10 @@ function handleDrop(event: DragEvent) {
         <!-- 默认触发区域 -->
         <slot :is-dragging="isDragging" :trigger-file-input="triggerFileInput">
             <div
-                :class="cn(
-                    'flex flex-col items-center justify-center gap-2 p-8',
-                    'border-3 border-dashed rounded-brutal',
-                    'transition-colors duration-200',
-                    isDragging
-                        ? 'border-brutal-primary bg-brutal-primary/10 bg-pattern-grid'
-                        : 'border-brutal hover:border-brutal-primary',
-                )"
+                :class="dropzoneClasses"
             >
                 <Upload
-                    :class="cn(
-                        'h-10 w-10',
-                        isDragging ? 'text-brutal-primary' : 'text-brutal-placeholder',
-                    )"
+                    :class="uploadIconClasses"
                 />
                 <div class="text-center">
                     <p class="font-medium text-brutal-fg">

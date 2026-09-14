@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { cn } from '@/lib/utils'
 import { useUpload } from '@/composables/useUpload'
 import type { UploadFile, UploadError, UploadRequestOptions } from './upload-types'
@@ -307,6 +307,8 @@ onBeforeUnmount(() => {
     }
 })
 
+const containerClasses = computed(() => cn('w-full', props.class))
+
 // 暴露方法
 defineExpose({
     handleFileSelect,
@@ -316,7 +318,7 @@ defineExpose({
 </script>
 
 <template>
-    <div :class="cn('w-full', props.class)">
+    <div :class="containerClasses">
         <!-- 触发区域插槽 -->
         <slot
             name="trigger"
