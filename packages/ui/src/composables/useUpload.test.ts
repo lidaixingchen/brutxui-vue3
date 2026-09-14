@@ -226,6 +226,10 @@ describe('useUpload', () => {
             // 标识不同的文件正常追加
             addFiles([createFile('b.txt', 10)])
             expect(selectedFiles.value).toHaveLength(2)
+
+            // 同名同尺寸但 lastModified 不同的文件（如不同版本）正常追加
+            addFiles([createFile('a.txt', 10, 'text/plain', 999)])
+            expect(selectedFiles.value).toHaveLength(3)
         })
 
         it('addFiles 同批内重复文件只保留一个', () => {

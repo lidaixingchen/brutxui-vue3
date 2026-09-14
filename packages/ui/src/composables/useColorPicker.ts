@@ -1,4 +1,4 @@
-import { ref, computed, watch, toValue, type ComputedRef, type MaybeRefOrGetter, type Ref } from 'vue'
+import { ref, readonly, computed, watch, toValue, type ComputedRef, type MaybeRefOrGetter, type Ref } from 'vue'
 import { formatColor, parseColor } from '../lib/color'
 import type { ColorPickerFormat } from '../components/color-picker/types'
 
@@ -19,7 +19,7 @@ export interface UseColorPickerOptions {
 
 export interface UseColorPickerReturn {
     open: Ref<boolean>
-    displayValue: Ref<string | null>
+    displayValue: Readonly<Ref<string | null>>
     normalizedDisplay: ComputedRef<string | null>
     swatchStyle: ComputedRef<{ backgroundColor: string }>
     handlePanelUpdate: (value: string | null) => void
@@ -131,7 +131,7 @@ export function useColorPicker(options: UseColorPickerOptions): UseColorPickerRe
 
     return {
         open,
-        displayValue,
+        displayValue: readonly(displayValue),
         normalizedDisplay,
         swatchStyle,
         handlePanelUpdate,

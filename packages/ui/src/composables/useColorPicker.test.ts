@@ -120,11 +120,11 @@ describe('useColorPicker', () => {
     it('closing resets displayValue to modelValue without emitting change', async () => {
         const emitted: Array<[string, unknown]> = []
         const modelValue = ref<string | null>('#ff0000')
-        const { open, displayValue } = createColorPicker({
+        const { open, displayValue, handlePanelUpdate } = createColorPicker({
             modelValue,
             emit: (event: string, ...args: unknown[]) => emitted.push([event, args[0]]),
         })
-        displayValue.value = '#00ff00'
+        handlePanelUpdate('#00ff00')
         open.value = true
         await nextTick()
         open.value = false

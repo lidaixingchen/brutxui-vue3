@@ -42,8 +42,8 @@ export interface ThemeOptions {
 }
 
 export interface UseThemeReturn {
-    theme: Ref<ThemeName>
-    colorMode: Ref<ColorMode>
+    theme: Readonly<Ref<ThemeName>>
+    colorMode: Readonly<Ref<ColorMode>>
     resolvedColorMode: ComputedRef<ResolvedColorMode>
     isSystemDark: Readonly<Ref<boolean>>
     setTheme: (name: ThemeName) => void
@@ -240,8 +240,8 @@ export function createTheme(options?: ThemeOptions): UseThemeReturn {
     }
 
     const returnObj: UseThemeReturn = {
-        theme,
-        colorMode,
+        theme: readonly(theme),
+        colorMode: readonly(colorMode),
         resolvedColorMode,
         isSystemDark: readonly(isSystemDark),
         setTheme,

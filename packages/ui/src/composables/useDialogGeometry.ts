@@ -44,8 +44,8 @@ export interface UseDialogGeometryOptions extends DraggableDialogOptions, Resiza
 
 export interface UseDialogGeometryReturn {
     contentRef: Ref<HTMLElement | null>
-    isDragging: Ref<boolean>
-    isResizing: Ref<boolean>
+    isDragging: Readonly<Ref<boolean>>
+    isResizing: Readonly<Ref<boolean>>
     /** 只读视图：修改请经 setPosition */
     position: DeepReadonly<Ref<{ x: number; y: number }>>
     /** 只读视图：修改请经 setSize */
@@ -436,8 +436,8 @@ export function useDialogGeometry(
 
     return {
         contentRef,
-        isDragging,
-        isResizing,
+        isDragging: readonly(isDragging),
+        isResizing: readonly(isResizing),
         position: readonly(position),
         size: readonly(size),
         contentStyle,

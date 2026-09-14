@@ -109,4 +109,19 @@ describe('useDataTablePagination', () => {
         })
         expect(currentPageSize.value).toBe(10)
     })
+
+    it('protects currentPage and currentPageSize with readonly view', () => {
+        const { currentPage, currentPageSize } = useDataTablePagination({
+            paginated: () => true,
+            pageSize: () => 10,
+            totalItems: () => 25,
+        })
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+        // @ts-expect-error - testing runtime readonly guard
+        currentPage.value = 99
+        // @ts-expect-error - testing runtime readonly guard
+        currentPageSize.value = 50
+        expect(warnSpy).toHaveBeenCalled()
+        warnSpy.mockRestore()
+    })
 })

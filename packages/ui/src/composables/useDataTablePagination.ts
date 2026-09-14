@@ -1,4 +1,4 @@
-import { ref, computed, watch, toValue, isRef, isReadonly, type ComputedRef, type MaybeRefOrGetter, type Ref } from 'vue'
+import { ref, readonly, computed, watch, toValue, isRef, isReadonly, type ComputedRef, type MaybeRefOrGetter, type Ref } from 'vue'
 import { DEFAULT_PAGE_SIZE } from '../lib/defaults'
 
 export { DEFAULT_PAGE_SIZE }
@@ -10,8 +10,8 @@ export interface UseDataTablePaginationOptions {
 }
 
 export interface UseDataTablePaginationReturn {
-    currentPage: Ref<number>
-    currentPageSize: Ref<number>
+    currentPage: Readonly<Ref<number>>
+    currentPageSize: Readonly<Ref<number>>
     totalPages: ComputedRef<number>
     paginatedData: <T>(data: T[]) => T[]
     goToPage: (page: number) => boolean
@@ -88,5 +88,12 @@ export function useDataTablePagination(options: UseDataTablePaginationOptions): 
         currentPage.value = 1
     }
 
-    return { currentPage, currentPageSize, totalPages, paginatedData, goToPage, setPageSize }
+    return {
+        currentPage: readonly(currentPage),
+        currentPageSize: readonly(currentPageSize),
+        totalPages,
+        paginatedData,
+        goToPage,
+        setPageSize,
+    }
 }

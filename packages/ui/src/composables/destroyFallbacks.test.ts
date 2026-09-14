@@ -3,6 +3,7 @@ import { useToast } from './useToast'
 import { useTheme } from './useTheme'
 import { useMessage, messageStore } from './useMessage'
 import { destroyBrutxFallbacks } from './destroyFallbacks'
+import { getSharedAudioRuntime } from '../lib/shared-audio-runtime'
 
 const mockMatchMedia = vi.fn()
 const mockAddEventListener = vi.fn()
@@ -63,5 +64,17 @@ describe('destroyBrutxFallbacks', () => {
         expect(nextToast).not.toBe(toast)
         expect(nextToast.toasts.value).toHaveLength(0)
         expect(nextTheme).not.toBe(theme)
+    })
+
+    it('resets shared audio runtime singleton', () => {
+        const runtime1 = getSharedAudioRuntime()
+        runtime1.acquireLease('test-lease')
+        expect(runtime1.activeLeaseCount).toBe(1)
+
+        destroyBrutxFallbacks()
+
+        const runtime2 = getSharedAudioRuntime()
+        expect(runtime2).not.toBe(runtime1)
+        expect(runtime2.activeLeaseCount).toBe(0)
     })
 })

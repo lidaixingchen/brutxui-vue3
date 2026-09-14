@@ -1,4 +1,4 @@
-import { ref, computed, watch, toValue, type ComputedRef, type MaybeRefOrGetter, type Ref } from 'vue'
+import { ref, readonly, computed, watch, toValue, type ComputedRef, type MaybeRefOrGetter, type Ref } from 'vue'
 import { formatDate } from '../lib/date'
 
 type DatePickerEmit = ((event: 'open') => void)
@@ -18,7 +18,7 @@ export interface UseDatePickerOptions {
 
 export interface UseDatePickerReturn {
     open: Ref<boolean>
-    displayValue: Ref<Date | null>
+    displayValue: Readonly<Ref<Date | null>>
     formattedDisplay: ComputedRef<string>
     handlePanelUpdate: (value: Date | null) => void
     handlePanelConfirm: (value: Date | null) => void
@@ -134,7 +134,7 @@ export function useDatePicker(options: UseDatePickerOptions): UseDatePickerRetur
 
     return {
         open,
-        displayValue,
+        displayValue: readonly(displayValue),
         formattedDisplay,
         handlePanelUpdate,
         handlePanelConfirm,

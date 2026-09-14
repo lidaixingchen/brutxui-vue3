@@ -722,4 +722,17 @@ describe('useTheme', () => {
             warnSpy.mockRestore()
         })
     })
+
+    describe('readonly boundary', () => {
+        it('theme and colorMode are exposed as readonly refs', () => {
+            const themeInstance = createTheme()
+            const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+            // @ts-expect-error - testing runtime readonly guard
+            themeInstance.theme.value = 'pastel'
+            // @ts-expect-error - testing runtime readonly guard
+            themeInstance.colorMode.value = 'dark'
+            expect(warnSpy).toHaveBeenCalled()
+            warnSpy.mockRestore()
+        })
+    })
 })
