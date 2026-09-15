@@ -2,7 +2,7 @@
 
 面向 Vue 3 + Tailwind CSS 的新粗野主义组件注册表。将组件复制到你的代码库中，获得完全的自定义和控制权。
 
-**[English](/packages/ui/README-en.md)**
+**[English](./README-en.md)**
 
 [![npm version](https://img.shields.io/npm/v/brutx-ui-vue.svg?style=flat-square&color=FF6B6B)](https://www.npmjs.com/package/brutx-ui-vue)
 [![npm downloads](https://img.shields.io/npm/dm/brutx-ui-vue.svg?style=flat-square)](https://www.npmjs.com/package/brutx-ui-vue)
@@ -19,63 +19,53 @@
 - **国际化与多语言**：内置轻量 `useLocale()`，支持运行时切换。
 - **四大主题预设**：内置经典（Classic）、柔和（Pastel）、单色（Mono）以及温暖（Warm）四套主题预设。
 
-## 快速开始
+## 安装与使用
 
-使用 CLI 初始化你的项目并添加组件：
+### 1. npm 包安装（开箱即用）
 
 ```bash
-# 初始化你的项目（生成 components.json 并配置路径）
-npx brutx-vue@latest init
-
-# 添加指定组件
-npx brutx-vue@latest add button card badge
-
-# 或一键添加全部组件
-npx brutx-vue@latest add --all
+pnpm add brutx-ui-vue
 ```
 
-## 用法
+在全局样式或入口文件中引入聚合样式表：
 
-添加组件后，直接从你项目的相应文件夹（默认是 `@/components/ui`）中导入并使用它们：
+```ts
+import 'brutx-ui-vue/style.css'
+```
+
+在 Vue 组件中直接导入使用：
 
 ```vue
 <script setup lang="ts">
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Button, Card, CardHeader, CardTitle, CardContent } from 'brutx-ui-vue'
 </script>
 
 <template>
   <Card>
     <CardHeader>
-      <CardTitle>欢迎使用 Brutx</CardTitle>
+      <CardTitle>Hello BrutxUI</CardTitle>
     </CardHeader>
-    <CardContent class="space-y-3">
-      <Input placeholder="邮箱" />
+    <CardContent>
       <Button variant="primary">开始使用</Button>
-      <Button variant="outline" size="sm">
-        了解更多
-      </Button>
     </CardContent>
   </Card>
 </template>
 ```
 
-## CLI 详细命令
+### 2. CLI 源码交付模式
 
-`brutx-vue` CLI 提供了丰富的命令来帮助你维护和操作组件：
+如果你希望完全拥有组件源码并在本地自由扩展变体，可以使用官方 CLI 工具 [`brutx-vue`](../cli)：
 
-| 命令 | 参数/选项 | 说明 |
-| :--- | :--- | :--- |
-| `init` | - | 在项目根目录下初始化 `components.json` 配置文件 |
-| `add <components...>` | `--all`, `--overwrite`, `--yes` | 将指定组件（或全部组件）复制到项目中，使用 `--overwrite` 可覆盖已存在的本地组件 |
-| `remove <components...>` | `--dry-run`, `--yes` | 安全地移除项目中的组件，并会自动检测并提示清理不再被引用的孤儿文件（如 composable / locale） |
-| `list` | - | 列出所有可添加的组件，以及当前项目已安装的组件列表 |
-| `info <component>` | - | 查看指定组件的详细元数据，包括描述、类型和外部/内部依赖项 |
-| `diff <component>` | - | 对比本地组件和注册表中最新组件的行级代码差异 |
-| `update` | `--dry-run`, `--all`, `--yes` | 一键检测并更新本地组件，使用 `--dry-run` 可只进行差异预览 |
-| `doctor` | `--fix`, `--yes` | 项目健康度诊断，检测并自动修复配置、依赖、工具函数和 CSS token 等 8 类问题 |
-| `create <name>` | - | 快速为本地的自定义新组件或区块生成模板骨架代码 |
+```bash
+npx brutx-vue@latest init
+npx brutx-vue@latest add button card badge
+```
+
+## 架构与分发机制
+
+- **设计令牌与生成**：设计令牌统一定义于 `brutx-shared-vue`，样式表由生成器编译派生。
+- **公开 API 契约**：所有公开导出由 `api-contract.ts` 集中管理。
+- **详细架构**：请参阅 [项目架构总览](../../docs/architecture/项目架构总览.md) 与 [分发与公开 API 契约](../../docs/architecture/分发与公开API契约.md)。
 
 ## Claude Code Skill
 

@@ -2,7 +2,7 @@
 
 A Neo-Brutalist styled Vue 3 component library with rich CLI tool support. Copy components into your codebase for full customization and control.
 
-**[中文](/packages/ui/README.md)**
+**[中文](./README.md)**
 
 [![npm version](https://img.shields.io/npm/v/brutx-ui-vue.svg?style=flat-square&color=FF6B6B)](https://www.npmjs.com/package/brutx-ui-vue)
 [![npm downloads](https://img.shields.io/npm/dm/brutx-ui-vue.svg?style=flat-square)](https://www.npmjs.com/package/brutx-ui-vue)

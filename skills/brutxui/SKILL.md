@@ -38,25 +38,39 @@ BrutxUI 是面向 Vue 3 + Tailwind CSS 的新粗野主义（Neo-Brutalist）组�
 
 ---
 
-## 导入规范
+## 导入规范与模式选型
 
-BrutxUI 包含两种开发模式，根据项目环境选择：
+根据项目对代码掌控度与维护成本的偏好选择适用的引入模式：
 
-### 1. npm 包导入（快速原型开发）
-```typescript
-import { Button, Card, Badge, cn } from 'brutx-ui-vue'
-import type { PricingPlan, TreeNode } from 'brutx-ui-vue'
+### 1. npm 包模式（标准化依赖分发）
+适用于通过 `package.json` 集中管理依赖、享受平滑版本升级与确定性锁定、零源码维护成本的项目：
+```bash
+pnpm add brutx-ui-vue
 ```
-> [!IMPORTANT]
-> **导入路径规范：**
-> - **子路径导入限制**：
->   - `DatePicker` 与 `useDatePicker` 必须从 `brutx-ui-vue/date-picker` 导入。
->   - `useCarousel` 必须从 `brutx-ui-vue/carousel` 导入。
 
-### 2. 复制粘贴导入（生产级组件定制）
 ```typescript
-import Button from '@/components/ui/Button.vue'
-import Card from '@/components/ui/Card.vue'
+// 基础通用组件从根入口导入
+import { Button, Card, Badge } from 'brutx-ui-vue'
+// 复合组件与专属类型推荐从对应子路径导入
+import { DatePicker } from 'brutx-ui-vue/date-picker'
+import { TreeSelect, type TreeNode } from 'brutx-ui-vue/tree-select'
+// 组合式函数支持独立子路径或聚合子路径导入
+import { useDatePicker } from 'brutx-ui-vue/useDatePicker'
+import { useCarousel } from 'brutx-ui-vue/useCarousel'
+// 全局引入样式表（一次性引入）
+import 'brutx-ui-vue/style.css'
+```
+
+### 2. CLI 源码交付模式（深度定制与完全掌控）
+适用于需要深度修改组件模板、扩展自定义变体、消除三方库锁定或由 AI 助手直接读写组件源码的项目：
+```bash
+npx brutx-vue init
+npx brutx-vue add button card
+```
+
+```typescript
+import Button from '@/components/ui/button/Button.vue'
+import Card from '@/components/ui/card/Card.vue'
 import { cn } from '@/lib/utils'
 ```
 

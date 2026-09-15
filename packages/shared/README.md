@@ -62,3 +62,11 @@ pnpm --filter brutx-shared-vue typecheck
 # 代码规范检查
 pnpm --filter brutx-shared-vue lint
 ```
+
+---
+
+## 🔗 相关架构文档
+
+- 虚拟文件系统与令牌信源：[生成与构建机制](../../docs/architecture/生成与构建机制.md)
+- 跨包共享与分发契约：[分发与公开 API 契约](../../docs/architecture/分发与公开API契约.md)
+- Monorepo 体系概览：[项目架构总览](../../docs/architecture/项目架构总览.md)

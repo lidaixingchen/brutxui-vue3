@@ -1,6 +1,6 @@
 # BrutxUI 组合式函数词典 (Composables Dictionary)
 
-本文件收录常用公开组合式函数及其核心功能。根入口使用具名导入，如 `import { useReducedMotion } from 'brutx-ui-vue'`；独立子路径可使用 `brutx-ui-vue/useReducedMotion`。
+本文件收录常用公开组合式函数及其核心功能。根入口使用具名导入，如 `import { useReducedMotion } from 'brutx-ui-vue'`；独立子路径使用 `brutx-ui-vue/useReducedMotion`，亦可通过聚合子路径 `brutx-ui-vue/composables` 统一导入。
 
 ---
 
@@ -8,9 +8,9 @@
 
 | 组合式函数 | 说明 | 导入路径 |
 | --- | --- | --- |
-| `useCarousel` | 轮播逻辑（embla 初始化、autoplay、状态管理），自动尊重 prefers-reduced-motion | `brutx-ui-vue/carousel` |
-| `useDatePicker` | 日期选择逻辑（面板开关、显示值、选择确认） | `brutx-ui-vue/date-picker` |
-| `useColorPicker` | 颜色选择逻辑 | `brutx-ui-vue/color-picker` |
+| `useCarousel` | 轮播逻辑（embla 初始化、autoplay、状态管理），自动尊重 prefers-reduced-motion | `brutx-ui-vue/useCarousel` 或 `brutx-ui-vue/composables` |
+| `useDatePicker` | 日期选择逻辑（面板开关、显示值、选择确认） | `brutx-ui-vue/useDatePicker` 或 `brutx-ui-vue/composables` |
+| `useColorPicker` | 颜色选择逻辑 | `brutx-ui-vue/useColorPicker` 或 `brutx-ui-vue/composables` |
 | `useColorHistory` | 颜色历史记录管理（localStorage 持久化、去重、最大数量限制） | 根入口具名导出 |
 | `useReducedMotion` | 检测系统减少动态效果偏好，支持 `{ enabled }` 响应式控制监听 | `brutx-ui-vue/useReducedMotion` |
 | `useFormFieldValidation` | 通用表单验证（rules、validateOn、validationState） | 根入口具名导出 |

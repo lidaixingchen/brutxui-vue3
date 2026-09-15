@@ -81,3 +81,11 @@ pnpm --filter brutx-registry-vue lint
    - 遵循稳定的 UTF-16 码元排序与规范化序列化口径，确保在跨操作系统（Linux / macOS / Windows）环境下产物哈希与序列号 100% 确定性可验证。
 4. **传递依赖闭包自动发现**：
    - 自动递归探测组件引用的子组件、`composables`、`locales`、`lib` 与 `directives`，并在产物中生成派生 barrel 文件。
+
+---
+
+## 🔗 相关架构文档
+
+- 编译管道与分发模型：[分发与公开 API 契约](../../docs/architecture/分发与公开API契约.md)
+- 生成依赖与 Turbo 编排：[生成与构建机制](../../docs/architecture/生成与构建机制.md)
+- Monorepo 依赖拓扑：[项目架构总览](../../docs/architecture/项目架构总览.md)

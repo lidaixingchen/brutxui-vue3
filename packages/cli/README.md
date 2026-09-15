@@ -2,7 +2,7 @@
 
 > 将 Neo-Brutalist 风格的 Vue 3 UI 组件添加到你的项目中。
 >
-> [English](/packages/cli/README-en.md)
+> [English](./README-en.md)
 
 ## 安装
 
@@ -409,6 +409,12 @@ pnpm test
 # 本地运行 CLI
 pnpm start
 ```
+
+## 架构与分发机制
+
+- **CLI 源码交付原理**：详见 [分发与公开 API 契约](../../docs/architecture/分发与公开API契约.md)。
+- **全局设计令牌同构生成**：详见 [生成与构建机制](../../docs/architecture/生成与构建机制.md)。
+- **Monorepo 架构**：详见 [项目架构总览](../../docs/architecture/项目架构总览.md)。
 
 ## 许可证
 

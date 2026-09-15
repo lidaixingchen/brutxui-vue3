@@ -23,11 +23,11 @@ BrutxUI 中的每个元素都基于高对比度 Neo-Brutalist 设计语言：
 
 ## 组件蓝图与架构
 
-组件编码规范（变体隔离到 `*-variants.ts`、`cn(...)` 类合并必须 `computed()` 包裹、以 reka-ui 无头原语为基础并优先复用 BrutxUI 组件、国际化文本约定、导入路径别名等）以 [AGENTS.md](../AGENTS.md) 的「代码风格」「导入」「技术栈」章节为准，此处不复述。
+组件编码规范（变体隔离到 `*-variants.ts`、`cn(...)` 类合并必须在 `computed()` 中包裹、以 reka-ui 无头原语为基础并优先复用 BrutxUI 组件、国际化文本约定、Composable 状态只读等）以 [AGENTS.md](../AGENTS.md) 的「核心开发与代码风格规范」及 [组件开发指南](../docs/guides/COMPONENT_GUIDE.md) 为准，此处不复述。
 
 以下为本文件补充项：
 1. **Vue 3 SFC：** 所有组件使用 `<script setup lang="ts">` 配合 `defineProps<T>()` + `withDefaults()`。
-2. **导出：** 始终从 `src/index.ts` 导出新组件。
+2. **导出机制：** 始终在 `packages/ui/api-contract.ts` 中登记新组件，并由生成器自动同步根入口与子路径导出，严禁手动编辑被保护的 `src/index.ts`（详见 [生成与构建机制](../docs/architecture/生成与构建机制.md)）。
 
 ---
 
