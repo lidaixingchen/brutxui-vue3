@@ -50,7 +50,7 @@ jobs:
                   fi
                   echo "✓ Changeset 检查通过（$added 个新增 changeset）"
 
-            - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+            - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
 
             - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
               with:
@@ -115,9 +115,14 @@ jobs:
                   git fetch origin "$BASE_REF" --depth=50
                   # 两点 diff + --no-merges：PR 事件 checkout 检出的是合成 merge commit，三点 diff
                   # 会把该 merge 提交与 base 侧已合并提交一并纳入 → commitlint type-empty 恒红；
-                  # --no-merges 排除合成 merge commit，只校验 PR 分支自身提交
-                  git log --format=%s --no-merges "$base..HEAD" | while IFS= read -r subject; do
+                  # --no-merges 排除合成 merge commit，只校验 PR 分支自身提交；
+                  # 自动化提交（如各类 bot）豁免规范长度限制
+                  git log --format="%an%x09%ae%x09%s" --no-merges "$base..HEAD" | while IFS=$'\t' read -r author email subject; do
                     [ -z "$subject" ] && continue
+                    if [[ "$author" == *"[bot]"* ]] || [[ "$email" == *"@users.noreply.github.com"* && "$email" == *"bot"* ]]; then
+                      echo "::notice::自动化提交豁免 commitlint 校验: ($author) $subject"
+                      continue
+                    fi
                     echo "$subject" | pnpm exec commitlint || { echo "::error::提交信息不符合规范（描述≤50字符/type 合规）：$subject"; exit 1; }
                   done
 
@@ -140,7 +145,7 @@ jobs:
               with:
                   fetch-depth: 1
 
-            - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+            - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
 
             - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
               with:
@@ -173,7 +178,7 @@ jobs:
               with:
                   fetch-depth: 1
 
-            - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+            - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
 
             - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
               with:
@@ -252,7 +257,7 @@ jobs:
               with:
                   fetch-depth: 1
 
-            - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+            - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
 
             - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
               with:
@@ -287,7 +292,7 @@ jobs:
               with:
                   fetch-depth: 1
 
-            - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+            - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
 
             - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
               with:
