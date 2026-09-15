@@ -30,24 +30,24 @@
 ### 1. 标准发版时序
 
 ```text
-[日常迭代]             [版本冻结]               [发布准备]             [远程发布]
-pnpm changeset  ──>  pnpm version-packages  ──>  pnpm release:prepare ──>  git push --follow-tags
-(声明变更意图)          (消耗变更/升级版本)        (更新根 CHANGELOG/Tag)     (CI 自动签名并发布 NPM)
+[日常迭代]             [版本准备]                                          [发布门禁]               [版本打 Tag]           [远程发布]
+pnpm changeset  ──>  pnpm release:prepare                           ──>  pnpm release:check  ──>  pnpm release:tag  ──>  git push origin main --tags
+(声明变更意图)          (守卫 + 自动 version-packages + 根 CHANGELOG + 提交)    (构建/契约/消费者门禁)     (读取 UI 版本打 tag)    (CI 自动化签名发布)
 ```
 
 ### 2. 发布相关命令
 
 | 指令 | 说明 | 执行位置 |
 | --- | --- | --- |
-| `pnpm changeset` | 交互式生成变更说明文档（放入 `.changeset/*.md`） | 根目录 |
-| `pnpm version-packages` | 消耗 changeset，自动升级各子包 `package.json` 版本号 | 根目录 |
-| `pnpm changelog` | 生成根 `CHANGELOG.md` 最新版本段 | 根目录 |
+| `pnpm changeset` | 交互式生成变更说明文档（放入 `.changeset/*.md`，PR 阶段执行） | 根目录 |
+| `pnpm release:prepare` | 发布准备一体化：工作区守卫 + 消费 changeset 升级版本 + 生成包与根 CHANGELOG 并自动提交 | 根目录 |
+| `pnpm release:check` | 本地发布门禁全量检查（构建/契约/消费者/发布状态机，`pnpm release` 是其同名别名） | 根目录 |
+| `pnpm release:tag` | 基于当前 UI 包版本打本地 Git Tag `v<version>`（`--force` 支持覆盖重打） | 根目录 |
+| `pnpm version-packages` | 底层调用 `changeset version`（`release:prepare` 已内置，无需手动前置运行） | 根目录 |
+| `pnpm changelog` | 单独生成根 `CHANGELOG.md` 最新版本段（`release:prepare` 已内置，通常无需手动） | 根目录 |
 | `pnpm changelog:dry` | 预览即将生成的 changelog 内容，不写入文件 | 根目录 |
-| `pnpm release:prepare` | 发布前版本校验与预备检查 | 根目录 |
-| `pnpm release:check` | 本地发布门禁全量检查（构建/契约/消费者/发布状态机） | 根目录 |
-| `pnpm release:tag` | 基于当前版本打本地 Git Tag（自动幂等校验） | 根目录 |
 | `pnpm test:release` | 发布状态机协调器与 provenance 演练测试 | 根目录 |
-| `pnpm test:consumers` | 默认运行 U1/C1；`--all` 运行 U1/C1/C3；`--filter U1` 聚焦场景，未知值会失败 | 根目录 |
+| `pnpm test:consumers` | 真实消费者安装构建矩阵：默认 U1/C1；`--all` 运行 U1/C1/C3；`--filter U1` 聚焦场景 | 根目录 |
 
 详细发布规范参见 [发布流程与 Changelog 指南](RELEASE.md)。
 

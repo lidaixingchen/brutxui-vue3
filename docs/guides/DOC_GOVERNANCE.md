@@ -12,6 +12,10 @@
 docs/
 ├── index.md                              # 全局知识地图与导航索引（常青）
 ├── README-en.md                          # 根 README 英文镜像（常青）
+├── architecture/                         # 现行系统架构说明（常青，中文命名）
+│   ├── 项目架构总览.md
+│   ├── 分发与公开API契约.md
+│   └── 生成与构建机制.md
 ├── guides/                               # 规范与操作手册（常青，英文全大写命名）
 │   ├── DOC_GOVERNANCE.md                 # 文档治理指南（本文）
 │   ├── VISUAL_SYSTEM.md                  # 视觉设计系统
@@ -38,6 +42,7 @@ docs/
 
 | 目录 | 内容定义 | 生命周期特征 | 维护策略 |
 | :--- | :--- | :--- | :--- |
+| `architecture/` | 现行系统架构 / 核心分发契约 / 构建机制 | **常青**（Long-lived） | 随系统架构演进同步更新，中文大纲 |
 | `guides/` | 规范 / 约定 / 操作手册 | **常青**（Long-lived） | 随工程演进而就地持续更新，永久有效 |
 | `plans/` | 方案计划 / RFC / 详细设计 | **进行中**（In-progress） | 提出（draft） $\to$ 实施（active），落地后必须移入 `archive/` |
 | `reports/` | 扫描快照 / 技术审计 / 选型调研 | **快照型 / 结论型** | 时间点静态记录，供历史溯源，不随代码变更加载 |
@@ -77,7 +82,7 @@ draft ──评审通过──▶ active ──落地完成──▶ done ──
 ```yaml
 ---
 方案类型: 重构 / 流程改造 / 功能设计 / 视觉重塑 / 底层架构
-状态: draft | active | done
+状态: draft | active | done | archived
 日期: YYYY-MM-DD
 关联文档:
   - ../../guides/VISUAL_SYSTEM.md
@@ -89,7 +94,7 @@ draft ──评审通过──▶ active ──落地完成──▶ done ──
 
 ### 字段说明
 - **`方案类型`**（必填）：简明扼要概括本方案属性。
-- **`状态`**（必填）：严格取 `draft`、`active`、`done` 之一。
+- **`状态`**（必填）：严格取 `draft`（草案）、`active`（推进中）、`done`（落地待归档）或 `archived`（已归档封存）。活跃方案必须位于 `plans/`；归档方案位于 `archive/`。
 - **`日期`**（必填）：方案最初立项或提出的日期，格式 `YYYY-MM-DD`（提出后保持不可变）。
 - **`完工日期`**（选填 / 归档时自动注入）：方案落地完结并移入归档区的日期，由自动归档引擎写入。
 - **`关联文档`**（选填）：关联的规范手册或审查报告相对路径。
@@ -131,8 +136,8 @@ pnpm check:docs --verbose      # 展开各项详细底层输出
 ### 2. 专项排查与看板命令（按需）
 ```bash
 node scripts/docs/scan-doc-status.mjs --table   # 终端输出全库方案领域与状态分布看板
-pnpm check:doc-links                            # 仅校验相对链接与绝对路径
-pnpm check:doc-status                           # 仅校验方案 Frontmatter 契约
+node scripts/docs/check-doc-links.mjs check     # 仅校验相对链接与绝对路径
+node scripts/docs/scan-doc-status.mjs --check   # 仅校验方案 Frontmatter 契约
 ```
 
 ---
@@ -188,7 +193,7 @@ pnpm check:contracts   # 验证静态样式、令牌、导出等 6 合 1 契约�
 | 检查维度 | 自检问题 | 达标标准 |
 | :--- | :--- | :--- |
 | **代码与测试** | 方案声明的功能与边界是否均已实现并附带单测？ | 单测通过，`typecheck` 0 错误 |
-| **方案状态** | 原方案的 YAML Frontmatter 是否已改为 `done` / `archived`？ | `pnpm check:doc-status` 通过 |
+| **方案状态** | 原方案的 YAML Frontmatter 是否已改为 `done` / `archived`？ | `pnpm check:docs` 通过 |
 | **物理落位** | 原方案是否已通过 `git mv` 移至 `docs/archive/YYYY/<domain>/`？ | `docs/plans/` 中无已完结方案残留 |
 | **路径校准** | 归档后文档内的相对链接层级（如 `../../../../`）是否已修正？ | `docs/archive/` 内无死链 |
 | **知识地图** | `docs/index.md` 活跃/归档列表与数量是否已同步更新？ | 知识地图与实际目录 1:1 对齐 |

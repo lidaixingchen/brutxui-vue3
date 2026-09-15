@@ -11,7 +11,7 @@ pnpm changeset             # ① 声明变更（PR 时已声明则跳过）
 pnpm release:prepare       # ② 守卫 + bump 版本 + 生成包/根 CHANGELOG + 自动提交（一条命令）
 pnpm release:check         # ③ 本地全量门禁检验（构建/契约/消费者/发布状态机）（或 pnpm release）
 pnpm release:tag           # ④ 自动读 ui 版本打 annotated tag v<version>
-git pushp origin main --tags   # ⑤ 推送后 CI 自动发布
+git push origin main --tags   # ⑤ 推送后 CI 自动发布
 ```
 
 > [!NOTE]
@@ -54,7 +54,7 @@ git pushp origin main --tags   # ⑤ 推送后 CI 自动发布
 
 4. **`pnpm release:tag`**：自动读取 UI 包版本打 `v<version>` tag。tag 命名以 UI 包版本为主（如 `v0.10.0`），CLI 版本不单独打 tag。若 tag 已存在且指向当前提交，自动视为已完成。
 
-5. **推送**：`git pushp origin main --tags`（直连为 `git push origin main --tags`）。推送后由云端发布状态机协调器自动发布（`publish.yml`）
+5. **推送**：`git push origin main --tags`。推送后由云端发布状态机协调器自动发布（`publish.yml`）
 
 6. **发布后核对**：确认 GitHub Actions 的 Publish run 成功，npm 上 `brutx-ui-vue` / `brutx-vue` 出新版本
 

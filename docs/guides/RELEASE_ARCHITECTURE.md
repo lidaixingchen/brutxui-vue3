@@ -26,9 +26,7 @@
 4. **`NPM_PACKAGES_READY`**：以一次性打包的密封原件逐包发布到 npm。若版本已存在，执行双哈希强校验（本地 tarball 与远程 npm 的 shasum / integrity），一致则安全幂等通过，不一致则立即熔断阻断；
 5. **`CHANNELS_ADVANCED`**：npm 验证全部通过后，针对正式版本原子推进分发通道：更新 GitHub Release 为 `make_latest: "true"`，并将 npm latest dist-tag 指向当前版本（预发布版本严格隔离）；
 6. **`COMPLETED`**：持久化发布审计清单，发布成功结束。
-
-本地与 CI 均可通过 `pnpm release`（加 `--dry-run` 预览）执行全流程协调；针对状态机逻辑的自动化演练由 `pnpm test:release` 独立保障。
-
+本地通过 `pnpm release`（`pnpm release:check` 的同名别名）执行发布门禁核验；云端 CI 则在 Tag 触发后统一调用 `node scripts/release/release-coordinator.mjs` 执行六阶段原子发布。针对状态机逻辑的自动化演练与流程测试由 `pnpm test:release` 独立保障。
 ## Changelog 自动生成（changeset）
 
 ### 工作原理
@@ -37,11 +35,11 @@
 2. **版本提升**：合并 PR 后运行 `pnpm release:prepare`（底层调用 `changeset version`），读取 `.changeset/*.md`，自动 bump 受影响包版本号并生成各包 CHANGELOG；配置了 `"commit"` 时自动生成 `RELEASING` commit（`skipCI` 已配置为 `false`）
 3. **门禁与发布**：本地运行 `pnpm release:check` 验证全部契约，打 tag 推送后由 CI 状态机协调器完成发布
 
-### `[skip ci]` 陷阱（已规避，供溯源）
+### Changeset Commit 与 CI 发布触发契约
 
 > [!NOTE]
-> **Changeset 默认 `[skip ci]` 行为规避**
-> changeset 2.31 在 `"commit": true` 时，`pnpm version-packages` 生成的 `RELEASING` 提交**默认带 `[skip ci]`**。若 tag 指向该提交，`publish.yml`（由 `v*` tag 触发）会被 `[skip ci]` 静默跳过、npm 不发布。已在 `.changeset/config.json` 通过 `"commit": ["@changesets/cli/commit", { "skipCI": false }]` 关闭。即便如此，发布后仍需核对 GitHub Actions 的 Publish run 是否成功、npm 是否真的出新版本。
+> **Changeset Commit 配置契约**
+> 工程在 `.changeset/config.json` 中配置了 `"commit": ["@changesets/cli/commit", { "skipCI": false }]`，确保 `pnpm release:prepare` 生成的提交不包含 `[skip ci]`，从而保障推送 `v*` 对应 Tag 时正常触发云端 CI 发布流水线。发布后需核对 GitHub Actions 的 Publish run 成功与 npm 产物发布状态。
 
 ### Commit 格式要求
 
@@ -148,7 +146,7 @@ apps/docs/changelog/                          # 归档目录（VitePress srcDir 
 
 ## Breaking Change 迁移文档规范
 
-任何包含 breaking change 的发布都必须提供迁移指南，让用户能低成本完成手动的版本升级。本规范是 v2.2 改进计划 [Item 9（组件迁移引擎）](../archive/2026/core/辅助包改进方案-v2.md#9-组件迁移引擎) 暂缓期间的轻量替代方案——在缺少 codemod 自动迁移的前提下，把"迁移成本"压到最低。
+任何包含 breaking change 的发布都必须提供详尽的迁移指南，确保使用者能够低成本、确定性地完成升级。
 
 ### Commit 标记
 
@@ -193,7 +191,7 @@ After（新 API）：
 - 没有 breaking change 的 release 可以省略此章节
 - 单个 release 含多个 breaking change 时，每个组件独立成段
 - 迁移步骤必须给出可复制的 before/after 代码片段，不允许仅文字描述
-- "自动迁移可行性" 字段用于在未来累积 codemod 候选清单——当评估为"需要 codemod"的 case 累计 ≥ 3 个时，触发 Item 9 启动条件
+- "自动迁移可行性" 字段用于评估是否需要提供自动化 codemod 脚本或仅需手动检查与类型纠偏
 
 ## 供应链安全
 

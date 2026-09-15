@@ -16,7 +16,7 @@
 - **变体隔离**：变体逻辑提取到同目录 `*-variants.ts`，使用 CVA 定义并由组件 `import` 引入，不得在 `.vue` 内联定义。
 - **层级标尺与浮层语义规范**：所有弹窗、抽屉、下拉、气泡、提示及遮罩必须统一使用全局语义 `z-*` 类名（`z-dropdown`, `z-dialog`, `z-popover`, `z-tooltip`, `z-toast`, `z-loading` 等），禁止手写 `z-50` 或任意值 `z-[9999]`（规则见 [VISUAL_SYSTEM.md](VISUAL_SYSTEM.md) R9）。
 - **完整类名字面量（@source 契约）**：始终通过 `cn()` 合并类——禁止把运行时值插值进类名（每个完整类名必须是可被 `@source` 扫描的源码字面量，由 `check:class-literals` 门禁强制，测试文件不得成为产物 CSS 的字面量来源）；从封闭常量表选取完整字面量再与静态片段组合（如 shared-input-variants 的 `validationBorderColors[variant]`）属合法例外，不算拼接。
-- **动态类计算规范**：动态类合并默认在 `computed()` 中完成（条件三目/多分支/动态对象键留在 JS 侧）；模板内 `cn()` 仅限「计算值或静态字面量 + 单个尾巴」的轻量二参数合并（如 `:class="cn('flex flex-col gap-1', props.class)"`）。
+- **类名合并规范**：用 `computed()` 包裹 `cn(...)` 派生最终类名，模板统一绑定计算结果；严禁在 `<template>` 内联直接调用 `cn()`。这作为全库编码规范，保障响应式依赖追踪与模板纯粹性。
 - **变体键命名统一**：变体键 `danger` 是统一惯例（alert/badge/button/checkbox/counter/progress/radio-group/switch/tags-input/timeline）：语义键 `danger` 映射 `brutal-destructive` token，勿重命名。
 - **共享变体波及面**：`input`/`textarea`/`number-input`/`hardcore-input` 共享 `shared-input-variants`；`checkbox`/`switch` 共享 `formToggleVariantColors`（改选中态前景色在组件侧拼接，不动共享）；`dialog`/`alert-dialog` 是镜像组件，行为改动需同步。
 
@@ -45,6 +45,20 @@
 - **翻译函数调用**：可翻译文本使用 `t('componentName.key')` 访问，含插值的使用 `t('key', { param: value })`。
 - **复合过滤条件数据流**：多输入构成一个过滤条件（DataTable 模式）时，子组件 emit 增量（空值传 null）、父级按列函数式合并；严禁使用本地 draft 常驻（违反单向数据流，外部程序化设置会与 draft 冲突）。
 
+### 5. 组合式函数状态契约 (Composable State Contract)
+
+- **只读返回值边界**：Composable 内部状态可变，但向外导出的返回值边界必须使用 `readonly()` 运行时包装；集合、数组与对象类型标注使用 `DeepReadonly<Ref<T>>`，基础标量使用 `Readonly<Ref<T>>`。
+- **模块级单例状态**：模块级状态须拆分为「内部可变 ref + 导出的 readonly 视图」，避免内部写入也被拦截。
+- **公开可配置状态与豁免**：
+  - 属于公开配置或组件双向绑定的状态（如 `v-model` 绑定、`defineExpose` 供编程控制的属性如 `Combobox.searchQuery`）豁免只读约束。
+  - `useDialogEnhanced` 的 `setPosition` 与 `setSize` 属于外部几何直接设定，不强制 clamp（clamp 仅在用户鼠标/触摸交互路径强制生效）。
+
+### 6. 处理 AI 审查报告 (AI Code Review Handling)
+
+面对 `.ocr-reports/*.md` 等工具审查结论时，严格基于设计契约与第一性原理判断：
+- **测试固化设计意图 → 不改代码**：测试名或注释明确声明设计意图（如 `intentionally`、`by design`），属于刻意架构选择，在交付说明中说明理由。
+- **测试固化缺陷行为 → 修复源码并更新断言**：测试仅是对偶发异常路径的记录且无设计意图，若报告指出的确系缺陷，应修复代码并同步修改测试。
+- **已知架构局限**：真实 API 局限且暂无破坏式重构计划时，应在代码中明确注释为已知限制，严禁拿测试当挡箭牌。
 ## 共享交互变体使用契约
 
 组件交互动效（按压位移、持久按下、高亮反馈等）统一由 `@/lib/brutal-interaction-variants` 提供，开发组件时须遵守以下使用契约：

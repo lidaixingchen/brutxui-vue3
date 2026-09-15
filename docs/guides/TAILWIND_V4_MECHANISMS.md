@@ -21,11 +21,10 @@ outline 工具类拆写（产物实证）：
 - `outline-<n>` 只写 `outline-style: var(--tw-outline-style)` + `outline-width: <n>`（不重置该变量）；
 - 颜色类只写 `outline-color`。
 
-**旧陷阱**：若使用 outline 表达焦点，同一元素上 `outline-none` 与 `outline-<n>` 并存时，`outline-<n>` 读到被置为 `none` 的变量 → 焦点环静默不渲染；`focus-visible:outline-2` 不把 style 恢复为 solid。twMerge 不帮忙（不同类组，两个都保留，实证见 §2）。
-
-**现状与方案**：
-随着阴影全面迁移至 `@theme` 组装通道，box-shadow 与 ring（`--tw-ring-shadow`）分层共存、互不顶替。全库焦点体系统一为 `FOCUS_RING_CLASSES`（ring 五件套），焦点指示不再受 `--tw-outline-style` 陷阱影响。
-配套的 `outline-hidden` 工具类在常规模式下抑制 UA 焦点环（`outline-style: none`），同时在 `@media (forced-colors: active)` 下自带 2px solid 恢复块，满足 WCAG 2.4.7 可访问性契约。
+**机制与焦点体系设计**：
+在 Tailwind CSS v4 中，若使用 outline 表达焦点，`outline-none` 会将 `--tw-outline-style` 重置为 `none`，若与 `outline-<n>` 组合会导致焦点指示无法渲染。
+工程采用 ring 通道表达焦点：box-shadow 与 ring（`--tw-ring-shadow`）分层共存、互不顶替。全库焦点体系采用 `FOCUS_RING_CLASSES`（ring 组合套件），焦点指示不依赖 `--tw-outline-style`。
+配套的 `outline-hidden` 工具类在常规模式下抑制 UA 焦点环（`outline-style: none`），同时在 `@media (forced-colors: active)` 下自带 2px solid 恢复块，保障 WCAG 2.4.7 可访问性契约。
 
 **推论规则**：
 
@@ -57,9 +56,7 @@ node --input-type=module -e "import { twMerge } from 'tailwind-merge'; console.l
 - **@theme 令牌派生**（`--color-*` / `--shadow-*` 等）；
 - **@utility 指令**。
 
-普通 `@layer utilities` 手写类**不进工具引擎**，带变体写法（`hover:border-brutal`、`data-[highlighted]:border-brutal`）会被**静默丢弃**。
-
-**实证**：`grep -c 'hover:border-brutal' packages/ui/dist/styles.css` = 0；`data-[highlighted]:border-brutal` 在 dist 中 0 命中，而 `.border-brutal` 基础类存在——正是普通 @layer utilities 手写类不带变体支持的证据。全库 6+ 处引用因此失效。
+普通 `@layer utilities` 手写类**不进工具引擎**，带变体写法（`hover:border-brutal`、`data-[highlighted]:border-brutal`）不会被生成。
 
 **规则**：需要变体支持的自定义工具类必须用 `@utility` 或 `@theme` 派生；禁止写带变体的手写 `@layer utilities` 类。
 
@@ -90,8 +87,8 @@ node --input-type=module -e "import { twMerge } from 'tailwind-merge'; console.l
 
 **开发期规则**：
 - 严禁手动修改 `styles.css`、`brutalist.css`、`utils.ts` 或 `constants.ts` 中的令牌与模板声明；
-- 修改令牌只需更新 `packages/shared/src/design-tokens.ts`，运行 `pnpm prebuild:tokens`（或 `pnpm --filter brutx-ui-vue prebuild:tokens`）即可完成多端自动化同构同步；
-- CI 门禁通过 `pnpm --filter brutx-ui-vue prebuild:tokens -- --check` 与 `tsx scripts/check-twmerge-colors.ts` 双重拦截任何未重新生成的漂移。
+- 修改令牌只需更新 `packages/shared/src/design-tokens.ts`，运行 `pnpm generate:tokens` 即可完成多端自动化同构同步；
+- 门禁通过 `pnpm check:generated` 与 `pnpm check:contracts` 双重拦截任何未重新生成的漂移。
 
 ## §6 `extendTailwindMerge` 粗野主义颜色与 Z-Index 覆盖去重机制
 
