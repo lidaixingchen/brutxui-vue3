@@ -197,7 +197,10 @@ export class RegistryClient {
 
         // 3. 通用 HTTP 注册表源带版本路径 (如 https://registry.brutxui.com 或 https://registry.brutxui.com/v0.11.0)
         if (isHttpUrl(baseSource)) {
-            const trimmed = baseSource.replace(/\/+$/, '');
+            let trimmed = baseSource;
+            while (trimmed.endsWith('/')) {
+                trimmed = trimmed.slice(0, -1);
+            }
             if (/\/v?\d+\.\d+(\.\d+)?(-[a-zA-Z0-9._-]+)?$/.test(trimmed)) {
                 return trimmed.replace(/\/v?\d+\.\d+(\.\d+)?(-[a-zA-Z0-9._-]+)?$/, `/${normalizedTag}`);
             }

@@ -4,7 +4,7 @@ import { createServer, type IncomingMessage, type ServerResponse } from 'node:ht
 import { createReadStream } from 'node:fs'
 import { cp, lstat, mkdir, mkdtemp, readFile, readdir, rmdir, stat, unlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { dirname, extname, join, relative, resolve, sep } from 'node:path'
+import { dirname, extname, isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { brotliCompressSync, gzipSync } from 'node:zlib'
 import { once } from 'node:events'
@@ -898,12 +898,13 @@ function httpPath(urlPath: string): string {
 }
 
 async function serveDirectory(root: string): Promise<{ server: ReturnType<typeof createServer>; url: string }> {
+    const safeRoot = resolve(root)
     const server = createServer(async (request: IncomingMessage, response: ServerResponse) => {
         try {
             const relativePath = httpPath(request.url ?? '/')
-            const filePath = resolve(root, `.${relativePath}`)
-            const rootPrefix = `${resolve(root)}${sep}`
-            if (filePath !== resolve(root) && !filePath.startsWith(rootPrefix)) {
+            const filePath = resolve(safeRoot, `.${relativePath}`)
+            const rel = relative(safeRoot, filePath)
+            if (!filePath.startsWith(safeRoot) || rel.startsWith('..') || isAbsolute(rel)) {
                 response.writeHead(403).end('forbidden')
                 return
             }

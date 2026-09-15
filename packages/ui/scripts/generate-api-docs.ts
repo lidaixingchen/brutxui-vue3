@@ -301,19 +301,21 @@ function getChecker(): ComponentMetaChecker {
 const IGNORED_PROP_NAMES = new Set(['key', 'ref', 'ref_for', 'ref_key', 'style'])
 
 function escapeMarkdownTable(str: string): string {
-    return str.replace(/\|/g, '\\|')
+    return str.replace(/\\/g, '\\\\').replace(/\|/g, '\\|')
+}
+
+function stripNullishUnion(typeStr: string): string {
+    let t = typeStr.trim()
+    t = t.replace(/(?:\s*\|\s*(?:undefined|null))+$/u, '').trim()
+    t = t.replace(/^(?:(?:undefined|null)\s*\|\s*)+/u, '').trim()
+    return t
 }
 
 function cleanPropType(rawType: string): string {
-    let t = rawType.trim()
-    // 递归剔除顶层联合类型中的 undefined / null
-    t = t.replace(/(\s*\|\s*(?:undefined|null)\s*)+$/g, '').trim()
-    t = t.replace(/^((?:undefined|null)\s*\|\s*)+/g, '').trim()
+    let t = stripNullishUnion(rawType)
     const nonNullableMatch = t.match(/^NonNullable<([\s\S]+)>$/)
     if (nonNullableMatch) {
-        t = nonNullableMatch[1].trim()
-        t = t.replace(/(\s*\|\s*(?:undefined|null)\s*)+$/g, '').trim()
-        t = t.replace(/^((?:undefined|null)\s*\|\s*)+/g, '').trim()
+        t = stripNullishUnion(nonNullableMatch[1])
     }
     t = t.replace(/""([^"']+)""/g, "'$1'")
     t = t.replace(/"([^"']+)"/g, "'$1'")
@@ -357,9 +359,7 @@ function formatSlotProps(rawType: string): string {
 }
 
 function cleanExposeType(rawType: string): string {
-    let t = rawType.trim()
-    t = t.replace(/(\s*\|\s*(?:undefined|null)\s*)+$/g, '').trim()
-    t = t.replace(/^((?:undefined|null)\s*\|\s*)+/g, '').trim()
+    const t = stripNullishUnion(rawType)
     return t.replace(/\r?\n\s*/g, ' ') || 'unknown'
 }
 

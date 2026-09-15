@@ -84,12 +84,15 @@ export function maskInlineCodeSpans(line) {
  * GitHub 与 VitePress 兼容的标题 Slugify
  */
 export function slugify(heading) {
-  return heading
-    .trim()
-    .toLowerCase()
-    .replace(/<[^>]+>/g, '') // 剥离内联 HTML 标签
-    .replace(/[`*_~]/g, '') // 剥离内联样式符
-    .replace(/[^\p{L}\p{N}\s-]/gu, '') // 保留 Unicode 字符、数字、横线与空格
+  let s = heading.trim().toLowerCase()
+  let prev = ''
+  while (s !== prev) {
+    prev = s
+    s = s.replace(/<[^>]+>/g, '')
+  }
+  return s
+    .replace(/[`*_~]/g, '')
+    .replace(/[^\p{L}\p{N}\s-]/gu, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '')

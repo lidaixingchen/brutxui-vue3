@@ -93,11 +93,8 @@ function appendEntryExports(source: string, entryId: string, exports: readonly P
     if (exportsIndex < 0 || boundary < 0) throw new Error(`API 契约入口缺少 exports 数组: ${entryId}`);
     const existing = source.slice(exportsIndex, boundary);
     for (const item of exports) {
-        const duplicatePattern = new RegExp(
-            `publicName: ${quoteContractValue(item.publicName)}, kind: '${item.kind}'`,
-            'u',
-        );
-        if (duplicatePattern.test(existing)) {
+        const needle = `publicName: ${quoteContractValue(item.publicName)}, kind: '${item.kind}'`;
+        if (existing.includes(needle)) {
             throw new Error(`API 契约入口已存在公开符号: ${entryId}#${item.publicName}`);
         }
     }

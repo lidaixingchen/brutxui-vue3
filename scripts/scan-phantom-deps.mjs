@@ -149,7 +149,7 @@ function extractImports(src) {
  * @returns {string}
  */
 function extractVueScripts(content) {
-  const scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script>/gi
+  const scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script\b[^>]*>/gi
   const scripts = []
   let m
   while ((m = scriptRegex.exec(content)) !== null) {

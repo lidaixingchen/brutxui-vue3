@@ -24,7 +24,7 @@ export function parseCountdownTarget(val: CountdownValue): number | null {
 
 export function formatCountdown(remainingMs: number, format = 'HH:mm:ss'): string {
     const clamped = Math.max(0, Math.floor(remainingMs))
-    const stripEscaped = format.replace(/\[[^\]]*\]/g, '')
+    const stripEscaped = format.replace(/\[[^\[\]]*\]/g, '')
 
     const hasDays = /D/.test(stripEscaped)
     const hasHours = /H/.test(stripEscaped)
@@ -55,7 +55,7 @@ export function formatCountdown(remainingMs: number, format = 'HH:mm:ss'): strin
     }
     const ms = rem
 
-    const regex = /\[([^\]]*)\]|DD|D|HH|H|mm|m|ss|s|SSS|SS|S/g
+    const regex = /\[([^\[\]]*)\]|DD|D|HH|H|mm|m|ss|s|SSS|SS|S/g
     return format.replace(regex, (match, escaped: string | undefined) => {
         if (escaped !== undefined) return escaped
         switch (match) {
