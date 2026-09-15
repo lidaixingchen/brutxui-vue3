@@ -15,16 +15,23 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import {
+  VALID_STATUS_SET,
+  VALID_STATUSES,
+  ArchiveEngine,
+  parseFrontmatter,
+  deriveDomain,
+  normalizeStatus,
+} from './lib/archive-engine.mjs'
 
 const ROOT = resolve(fileURLToPath(new URL('../../', import.meta.url)))
 const PLANS_DIR = join(ROOT, 'docs', 'plans')
 const ARCHIVE_DIR = join(ROOT, 'docs', 'archive')
 
 const isCheck = process.argv.includes('--check')
+const isCheckIndex = process.argv.includes('--check-index')
 const isTable = process.argv.includes('--table')
 const isJson = process.argv.includes('--json')
-
-const VALID_STATUSES = new Set(['draft', 'active', 'done', 'archived', 'implemented'])
 
 function toPosix(p) {
   return p.split('\\').join('/')
@@ -48,68 +55,7 @@ function walkMdFiles(dir, acc = []) {
   return acc
 }
 
-function parseFrontmatter(content) {
-  // 1. 尝试匹配标准 YAML Frontmatter: --- \n ... \n ---
-  const yamlMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---/)
-  if (yamlMatch) {
-    const yaml = yamlMatch[1]
-    const getField = (name) => {
-      const m = yaml.match(new RegExp(`^${name}[：:]\\s*(.+)$`, 'm'))
-      return m ? m[1].trim() : null
-    }
-    return {
-      format: 'yaml',
-      type: getField('方案类型'),
-      status: normalizeStatus(getField('状态')),
-      rawStatus: getField('状态'),
-      date: getField('日期'),
-    }
-  }
-
-  // 2. 尝试匹配 Markdown 引用块风格: > 方案类型：...
-  const getBlockField = (name) => {
-    const m = content.match(new RegExp(`^>\\s*${name}[：:]\\s*(.+)$`, 'm'))
-    return m ? m[1].trim() : null
-  }
-  const bType = getBlockField('方案类型')
-  const bStatus = getBlockField('状态')
-  const bDate = getBlockField('日期')
-
-  if (bType || bStatus || bDate) {
-    return {
-      format: 'blockquote',
-      type: bType,
-      status: normalizeStatus(bStatus),
-      rawStatus: bStatus,
-      date: bDate,
-    }
-  }
-
-  return null
-}
-
-function normalizeStatus(raw) {
-  if (!raw) return null
-  const cleaned = raw.replace(/[*_`]/g, '').trim().toLowerCase()
-  for (const s of VALID_STATUSES) {
-    if (cleaned.startsWith(s)) return s
-  }
-  return cleaned
-}
-
-function deriveDomain(relPath) {
-  const parts = toPosix(relPath).split('/')
-  // docs/plans/<domain>/xxx.md 或 docs/archive/2026/<domain>/xxx.md
-  if (parts[1] === 'plans' && parts.length >= 4) {
-    return parts[2]
-  }
-  if (parts[1] === 'archive' && parts.length >= 5) {
-    return parts[3]
-  }
-  return 'root'
-}
-
-function main() {
+async function main() {
   const planFiles = walkMdFiles(PLANS_DIR)
   const archiveFiles = walkMdFiles(ARCHIVE_DIR)
   const allFiles = [...planFiles, ...archiveFiles].sort()
@@ -133,18 +79,32 @@ function main() {
     }
     if (!fm.rawStatus) {
       errors.push({ file: rel, error: '缺失 [状态] 字段' })
-    } else if (!VALID_STATUSES.has(fm.status)) {
-      errors.push({ file: rel, error: `非法状态值 [${fm.rawStatus}]，允许取值: ${Array.from(VALID_STATUSES).join(', ')}` })
+    } else if (!VALID_STATUS_SET.has(fm.status)) {
+      errors.push({ file: rel, error: `非法状态值 [${fm.rawStatus}]，允许取值: ${VALID_STATUSES.join(', ')}` })
     }
     if (!fm.date) {
       errors.push({ file: rel, error: '缺失 [日期] 字段' })
     }
 
-    if (fm.status === 'done' && !rel.startsWith('docs/archive')) {
-      errors.push({
-        file: rel,
-        error: '方案状态已为 [done]，但仍滞留在 docs/plans/ 尚未归档。请运行 pnpm doc:archive 一键归档并同步知识地图',
-      })
+    if (rel.startsWith('docs/plans/')) {
+      if (fm.status === 'archived') {
+        errors.push({
+          file: rel,
+          error: '状态为 [archived] 的方案不可滞留在 docs/plans/，请移入对应年度归档目录。',
+        })
+      } else if (fm.status === 'done') {
+        errors.push({
+          file: rel,
+          error: '方案状态已为 [done]，但仍滞留在 docs/plans/ 尚未归档。请运行 pnpm doc:archive 一键归档并同步知识地图',
+        })
+      }
+    } else if (rel.startsWith('docs/archive/')) {
+      if (fm.status !== 'archived') {
+        errors.push({
+          file: rel,
+          error: `归档库 docs/archive/ 内方案状态必须为 [archived]，当前为 [${fm.rawStatus}]。`,
+        })
+      }
     }
 
     items.push({
@@ -156,13 +116,31 @@ function main() {
     })
   }
 
+  if (isCheck || isCheckIndex) {
+    const engine = new ArchiveEngine({ rootDir: ROOT, git: false })
+    try {
+      const indexResult = await engine.refreshIndex({ checkOnly: true })
+      if (!indexResult.consistent) {
+        errors.push({
+          file: 'docs/index.md',
+          error: '知识地图索引与方案物理状态不一致。请运行 pnpm doc:archive --refresh 刷新 docs/index.md',
+        })
+      }
+    } catch (err) {
+      errors.push({
+        file: 'docs/index.md',
+        error: `知识地图索引校验异常: ${err.message}`,
+      })
+    }
+  }
+
   if (isJson) {
     console.log(JSON.stringify({ total: items.length, items, errors }, null, 2))
-    if (errors.length > 0 && isCheck) process.exit(1)
+    if (errors.length > 0 && (isCheck || isCheckIndex)) process.exit(1)
     return
   }
 
-  if (isTable || (!isCheck && !isJson)) {
+  if (isTable || (!isCheck && !isCheckIndex && !isJson)) {
     console.log('\n=== BrutxUI 方案工程全景状态矩阵 ===\n')
     const domains = ['cli', 'ui', 'styles', 'core', 'root']
     for (const d of domains) {
@@ -190,10 +168,13 @@ function main() {
     for (const e of errors) {
       console.error(`  ✖ ${e.file}: ${e.error}`)
     }
-    if (isCheck) process.exit(1)
-  } else if (isCheck) {
-    console.log(`[check:doc-status] ✓ 全部 ${items.length} 篇方案文档 Frontmatter 契约验证通过 (0 错误)`)
+    if (isCheck || isCheckIndex) process.exit(1)
+  } else if (isCheck || isCheckIndex) {
+    console.log(`[check:doc-status] ✓ 全部 ${items.length} 篇方案文档 Frontmatter 契约与索引验证通过 (0 错误)`)
   }
 }
 
-main()
+main().catch((err) => {
+  console.error('[check:doc-status] 致命异常:', err)
+  process.exit(1)
+})

@@ -24,9 +24,13 @@ BrutxUI 方案自动归档与知识地图自愈工具
 示例：
   pnpm doc:archive docs/plans/core/xxx.md    # 归档指定方案
   pnpm doc:archive                          # 批量归档全仓标记为 done 的方案
+  pnpm doc:archive --refresh                # 刷新 docs/index.md 活跃与归档索引
+  pnpm doc:archive --check                  # 校验 docs/index.md 索引一致性
   pnpm doc:archive --dry-run                # 预检模式（只读模拟）
 
 选项：
+  --refresh      刷新 docs/index.md 知识地图（不迁移方案）
+  --check        校验 docs/index.md 与方案物理状态一致性
   --dry-run      仅在内存中预检并打印拟变更，不执行落盘与 Git 暂存
   -h, --help     显示帮助信息
 `)
@@ -41,6 +45,8 @@ async function main() {
   }
 
   const dryRun = args.includes('--dry-run')
+  const isRefresh = args.includes('--refresh')
+  const isCheck = args.includes('--check')
   const targetFiles = args.filter((a) => !a.startsWith('--') && !a.startsWith('-'))
 
   const engine = new ArchiveEngine({
@@ -52,6 +58,33 @@ async function main() {
   console.log(`\n📦 BrutxUI 方案自动归档引擎启动... ${dryRun ? '【DRY-RUN 演练预检】' : ''}\n`)
 
   try {
+    if (isCheck) {
+      console.log('🔍 校验知识地图 docs/index.md 索引一致性...')
+      const checkRes = await engine.refreshIndex({ checkOnly: true })
+      if (!checkRes.consistent) {
+        console.error('❌ docs/index.md 知识地图索引与方案物理状态不一致。')
+        console.error('👉 请运行: pnpm doc:archive --refresh 刷新索引。\n')
+        process.exit(1)
+      }
+      console.log('✓ docs/index.md 知识地图索引一致性校验通过。\n')
+      return
+    }
+
+    if (isRefresh) {
+      console.log('🔄 正在基于全仓方案物理状态刷新 docs/index.md...')
+      const refreshRes = await engine.refreshIndex({ checkOnly: false })
+      if (refreshRes.changed) {
+        if (dryRun) {
+          console.log('💡 发现索引差异，但在 --dry-run 模式下未写入文件。\n')
+        } else {
+          console.log('✓ docs/index.md 知识地图已成功刷新并完成 Git 暂存。\n')
+        }
+      } else {
+        console.log('✓ docs/index.md 知识地图已经是最新状态，无需变更。\n')
+      }
+      return
+    }
+
     let results = []
 
     if (targetFiles.length > 0) {

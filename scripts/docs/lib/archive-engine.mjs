@@ -24,6 +24,9 @@ import { DiskFileSystemAdapter } from './doc-link-fs.mjs'
 
 export const DOMAINS = ['cli', 'ui', 'styles', 'core']
 
+export const VALID_STATUSES = ['draft', 'active', 'done', 'archived']
+export const VALID_STATUS_SET = new Set(VALID_STATUSES)
+
 export const DOMAIN_META = {
   cli: {
     title: 'CLI 工具链（CLI）',
@@ -52,6 +55,15 @@ export const ACTIVE_END_TAG = '<!-- AUTO_ACTIVE_PLANS_END -->'
 export const ARCHIVE_START_TAG = '<!-- AUTO_ARCHIVE_PLANS_START -->'
 export const ARCHIVE_END_TAG = '<!-- AUTO_ARCHIVE_PLANS_END -->'
 
+export function normalizeStatus(raw) {
+  if (!raw) return null
+  const cleaned = raw.replace(/[*_`]/g, '').trim().toLowerCase()
+  for (const s of VALID_STATUSES) {
+    if (cleaned.startsWith(s)) return s
+  }
+  return cleaned
+}
+
 export function parseFrontmatter(content) {
   const yamlMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---/)
   if (!yamlMatch) return null
@@ -63,7 +75,7 @@ export function parseFrontmatter(content) {
   }
 
   const rawStatus = getField('状态')
-  const status = rawStatus ? rawStatus.replace(/[*_`]/g, '').trim().toLowerCase() : null
+  const status = normalizeStatus(rawStatus)
 
   return {
     format: 'yaml',
@@ -77,7 +89,14 @@ export function parseFrontmatter(content) {
   }
 }
 
-export function updateFrontmatter(content, newStatus, completionDate) {
+export function updateFrontmatter(
+  content,
+  newStatus,
+  completionDate,
+  rootDir = process.cwd(),
+  oldRelPath = null,
+  newRelPath = null
+) {
   const eolMatch = content.match(/\r\n|\n/)
   const eol = eolMatch ? eolMatch[0] : '\n'
 
@@ -98,6 +117,23 @@ export function updateFrontmatter(content, newStatus, completionDate) {
     yaml = yaml.replace(/^(日期[：:].*)$/m, `$1${eol}完工日期: ${completionDate}`)
   } else {
     yaml += `${eol}完工日期: ${completionDate}`
+  }
+
+  if (oldRelPath && newRelPath) {
+    const oldDirAbs = path.resolve(rootDir, path.dirname(oldRelPath))
+    const newDirAbs = path.resolve(rootDir, path.dirname(newRelPath))
+    const docSectionMatch = yaml.match(/(关联文档[：:][\s\S]*?)(?=(?:\r?\n[^\s#-]+[：:]|$))/)
+    if (docSectionMatch) {
+      const origSection = docSectionMatch[1]
+      const updatedSection = origSection.replace(/^(\s*-\s+)(.+)$/gm, (match, prefix, linkTarget) => {
+        const trimmed = linkTarget.trim()
+        if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return match
+        const targetAbs = path.resolve(oldDirAbs, trimmed)
+        const newRel = toPosix(path.relative(newDirAbs, targetAbs))
+        return `${prefix}${newRel}`
+      })
+      yaml = yaml.replace(origSection, updatedSection)
+    }
   }
 
   return content.replace(/^---\r?\n([\s\S]*?)\r?\n---/, `---${eol}${yaml.trim()}${eol}---`)
@@ -190,12 +226,12 @@ export class ArchiveEngine {
   }
 
   async preflightPlan(planRelPath) {
-    const normalizedRel = toPosix(planRelPath)
+    const absPath = path.resolve(this.rootDir, planRelPath)
+    const normalizedRel = toPosix(path.relative(this.rootDir, absPath))
     if (!normalizedRel.startsWith('docs/plans/')) {
       throw new Error(`待归档方案必须位于 docs/plans/ 目录下: ${planRelPath}`)
     }
 
-    const absPath = path.resolve(this.rootDir, normalizedRel)
     if (!(await this.fs.pathExists(absPath))) {
       throw new Error(`方案文件不存在: ${normalizedRel}`)
     }
@@ -327,7 +363,6 @@ export class ArchiveEngine {
     const activePlansByDomain = { cli: [], ui: [], styles: [], core: [] }
     for (const rel of allPlanFiles) {
       if (currentMigratingPlan && rel === currentMigratingPlan.oldRel) continue
-      if (this.git && !this.isGitTracked(rel)) continue
       const content = await this.fs.readFile(path.resolve(this.rootDir, rel))
       const fm = parseFrontmatter(content)
       if (!fm) continue
@@ -396,19 +431,23 @@ export class ArchiveEngine {
       }
       activeLines.push('')
     }
-    const renderedActive = activeLines.join('\n').trim()
+    const eolMatch = indexContent.match(/\r\n|\n/)
+    const eol = eolMatch ? eolMatch[0] : '\n'
+
+    const renderedActive = activeLines.join(eol).trim()
 
     // 4. 构建归档区文本
     const archiveLines = []
     const sortedYears = Array.from(archiveTree.keys()).sort((a, b) => Number(b) - Number(a))
 
     for (const year of sortedYears) {
-      archiveLines.push(`### ${year} 年度落地方案（[\`docs/archive/${year}/\`](archive/${year}/)）\n`)
+      archiveLines.push(`### ${year} 年度落地方案（[\`docs/archive/${year}/\`](archive/${year}/)）${eol}`)
       const dMap = archiveTree.get(year)
 
       for (const d of DOMAINS) {
         const meta = DOMAIN_META[d]
-        const files = dMap.get(d) || []
+        const rawFiles = dMap.get(d) || []
+        const files = rawFiles.slice().sort()
         const count = files.length
 
         // 提取归档目录下真实文件的主题名，剥离“方案”或“设计”后缀
@@ -427,14 +466,14 @@ export class ArchiveEngine {
       }
       archiveLines.push('')
     }
-    const renderedArchive = archiveLines.join('\n').trim()
+    const renderedArchive = archiveLines.join(eol).trim()
 
     // 5. 替换或插入到 indexContent
     const activeReg = new RegExp(`${ACTIVE_START_TAG}[\\s\\S]*?${ACTIVE_END_TAG}`)
-    let updatedIndex = indexContent.replace(activeReg, `${ACTIVE_START_TAG}\n${renderedActive}\n${ACTIVE_END_TAG}`)
+    let updatedIndex = indexContent.replace(activeReg, `${ACTIVE_START_TAG}${eol}${renderedActive}${eol}${ACTIVE_END_TAG}`)
 
     const archiveReg = new RegExp(`${ARCHIVE_START_TAG}[\\s\\S]*?${ARCHIVE_END_TAG}`)
-    updatedIndex = updatedIndex.replace(archiveReg, `${ARCHIVE_START_TAG}\n${renderedArchive}\n${ARCHIVE_END_TAG}`)
+    updatedIndex = updatedIndex.replace(archiveReg, `${ARCHIVE_START_TAG}${eol}${renderedArchive}${eol}${ARCHIVE_END_TAG}`)
 
     return updatedIndex
   }
@@ -483,7 +522,14 @@ export class ArchiveEngine {
     const todayStr = formatDate(this.now)
 
     // 2. Frontmatter 更新
-    const updatedFrontmatterContent = updateFrontmatter(pre.content, 'archived', todayStr)
+    const updatedFrontmatterContent = updateFrontmatter(
+      pre.content,
+      'archived',
+      todayStr,
+      this.rootDir,
+      pre.planRelPath,
+      pre.targetRelPath
+    )
 
     // 3. 文档内部正向链接重算
     const linkFixedContent = this.recomputeInternalLinks(
@@ -554,7 +600,11 @@ export class ArchiveEngine {
     }
 
     // 精准 Git 暂存
-    this.gitStage(result.changedFiles)
+    const filesToStage = [...result.changedFiles]
+    if (!movedByGit && isTracked) {
+      filesToStage.push(pre.planRelPath)
+    }
+    this.gitStage(filesToStage)
 
     return result
   }
@@ -578,5 +628,42 @@ export class ArchiveEngine {
     }
 
     return results
+  }
+
+  async refreshIndex({ checkOnly = false } = {}) {
+    const allPlanFiles = await this.walkMdFiles('docs/plans')
+    const allArchiveFiles = await this.walkMdFiles('docs/archive')
+
+    const indexPath = path.resolve(this.rootDir, 'docs/index.md')
+    let currentIndexContent = ''
+    try {
+      currentIndexContent = await this.fs.readFile(indexPath)
+    } catch {
+      throw new Error('docs/index.md 文件不存在')
+    }
+
+    const newIndexContent = await this.projectIndex(allPlanFiles, allArchiveFiles, null)
+    const normalizeEol = (str) => str.replace(/\r\n/g, '\n')
+    const isDifferent = normalizeEol(currentIndexContent) !== normalizeEol(newIndexContent)
+
+    if (checkOnly) {
+      return {
+        consistent: !isDifferent,
+        changed: isDifferent,
+      }
+    }
+
+    if (isDifferent && !this.dryRun) {
+      await this.fs.writeFile(indexPath, newIndexContent)
+      if (this.git && this.isGitTracked('docs/index.md')) {
+        this.gitStage(['docs/index.md'])
+      }
+    }
+
+    return {
+      consistent: !isDifferent,
+      changed: isDifferent,
+      dryRun: this.dryRun,
+    }
   }
 }

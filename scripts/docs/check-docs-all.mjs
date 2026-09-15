@@ -74,6 +74,16 @@ const suite = defineGuardSuite({
         description: '组件使用文档缺失必要章节（如用法、API 或无障碍说明），请补全对应章节。',
       },
     },
+    {
+      id: 'commands',
+      desc: '文档内仓库命令有效性',
+      target: 'scripts/docs/check-commands.mjs',
+      action: {
+        type: 'manual_fix',
+        command: null,
+        description: '请检查文档中引用的 pnpm 命令或脚本路径是否真实存在。',
+      },
+    },
   ],
 })
 

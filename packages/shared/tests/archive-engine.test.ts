@@ -342,4 +342,130 @@ describe('ArchiveEngine (方案自动归档与自愈核心引擎)', () => {
     expect(archived).toContain('\r\n完工日期: 2026-09-10\r\n')
     expect(archived.includes('\r\n')).toBe(true)
   })
+
+  it('VALID_STATUSES 严格收敛为 draft, active, done, archived，且不包含 implemented', async () => {
+    const { VALID_STATUSES } = await import('../../../scripts/docs/lib/archive-engine.mjs')
+    expect(VALID_STATUSES).toEqual(['draft', 'active', 'done', 'archived'])
+    expect(VALID_STATUSES).not.toContain('implemented')
+  })
+
+  it('refreshIndex 支持 checkOnly 与落盘模式，覆盖新方案感知与幂等性', async () => {
+    const planContent = [
+      '---',
+      '方案类型: 核心',
+      '状态: active',
+      '日期: 2026-09-15',
+      '---',
+      '',
+      '# 新增活跃方案',
+      '',
+      '> 这是一个活跃方案的测试描述。',
+    ].join('\n')
+
+    await vfs.writeFile(`${ROOT}/docs/plans/core/新增活跃方案.md`, planContent)
+    await vfs.writeFile(
+      `${ROOT}/docs/index.md`,
+      '<!-- AUTO_ACTIVE_PLANS_START -->\n旧活跃区内容\n<!-- AUTO_ACTIVE_PLANS_END -->\n<!-- AUTO_ARCHIVE_PLANS_START -->\n<!-- AUTO_ARCHIVE_PLANS_END -->'
+    )
+
+    const engine = new ArchiveEngine({
+      rootDir: ROOT,
+      fs: vfs,
+      now: mockNow,
+      git: false,
+    })
+
+    // 1. checkOnly 为 true，检测到不一致
+    const checkRes = await engine.refreshIndex({ checkOnly: true })
+    expect(checkRes.consistent).toBe(false)
+    expect(checkRes.changed).toBe(true)
+
+    // 确认 index.md 此时未被修改
+    const unchangedIndex = await vfs.readFile(`${ROOT}/docs/index.md`)
+    expect(unchangedIndex).toContain('旧活跃区内容')
+
+    // 2. 执行刷新落盘
+    const refreshRes = await engine.refreshIndex({ checkOnly: false })
+    expect(refreshRes.changed).toBe(true)
+
+    const updatedIndex = await vfs.readFile(`${ROOT}/docs/index.md`)
+    expect(updatedIndex).toContain('[新增活跃方案](plans/core/新增活跃方案.md)（状态：`active`）')
+    expect(updatedIndex).toContain('*这是一个活跃方案的测试描述。*')
+
+    // 3. 再次 checkOnly，应当一致（幂等）
+    const idempotentCheck = await engine.refreshIndex({ checkOnly: true })
+    expect(idempotentCheck.consistent).toBe(true)
+    expect(idempotentCheck.changed).toBe(false)
+  })
+
+  it('archiveAllDone 能够精准提取全部 done 方案批量归档并保持幂等', async () => {
+    const planDraft = '---\n方案类型: 核心\n状态: draft\n日期: 2026-09-01\n---\n# 草案\n'
+    const planActive = '---\n方案类型: 核心\n状态: active\n日期: 2026-09-01\n---\n# 活跃\n'
+    const planDone1 = '---\n方案类型: core\n状态: done\n日期: 2026-09-01\n---\n# 待归档1\n'
+    const planDone2 = '---\n方案类型: cli\n状态: done\n日期: 2026-09-01\n---\n# 待归档2\n'
+
+    await vfs.writeFile(`${ROOT}/docs/plans/core/草案.md`, planDraft)
+    await vfs.writeFile(`${ROOT}/docs/plans/core/活跃.md`, planActive)
+    await vfs.writeFile(`${ROOT}/docs/plans/core/待归档1.md`, planDone1)
+    await vfs.writeFile(`${ROOT}/docs/plans/cli/待归档2.md`, planDone2)
+    await vfs.writeFile(
+      `${ROOT}/docs/index.md`,
+      '<!-- AUTO_ACTIVE_PLANS_START -->\n<!-- AUTO_ACTIVE_PLANS_END -->\n<!-- AUTO_ARCHIVE_PLANS_START -->\n<!-- AUTO_ARCHIVE_PLANS_END -->'
+    )
+
+    const engine = new ArchiveEngine({
+      rootDir: ROOT,
+      fs: vfs,
+      now: mockNow,
+      git: false,
+    })
+
+    const results = await engine.archiveAllDone()
+    expect(results).toHaveLength(2)
+    expect(await vfs.pathExists(`${ROOT}/docs/archive/2026/core/待归档1.md`)).toBe(true)
+    expect(await vfs.pathExists(`${ROOT}/docs/archive/2026/cli/待归档2.md`)).toBe(true)
+    expect(await vfs.pathExists(`${ROOT}/docs/plans/core/草案.md`)).toBe(true)
+    expect(await vfs.pathExists(`${ROOT}/docs/plans/core/活跃.md`)).toBe(true)
+
+    // 再次调用，没有待归档方案
+    const secondResults = await engine.archiveAllDone()
+    expect(secondResults).toHaveLength(0)
+  })
+
+  it('支持 Windows 前缀路径输入并自愈 Frontmatter 关联文档相对路径', async () => {
+    const planContent = [
+      '---',
+      '方案类型: 核心',
+      '状态: active',
+      '日期: 2026-09-01',
+      '关联文档:',
+      '  - ../../guides/DOC_GOVERNANCE.md',
+      '  - https://example.com/external',
+      '---',
+      '# 路径容错方案',
+    ].join('\n')
+
+    await vfs.writeFile(`${ROOT}/docs/plans/core/路径容错方案.md`, planContent)
+    await vfs.writeFile(
+      `${ROOT}/docs/index.md`,
+      '<!-- AUTO_ACTIVE_PLANS_START -->\n<!-- AUTO_ACTIVE_PLANS_END -->\n<!-- AUTO_ARCHIVE_PLANS_START -->\n<!-- AUTO_ARCHIVE_PLANS_END -->'
+    )
+
+    const engine = new ArchiveEngine({
+      rootDir: ROOT,
+      fs: vfs,
+      now: mockNow,
+      git: false,
+    })
+
+    // 模拟 Windows PowerShell 补全输入带有 .\\docs\\plans\\...
+    const result = await engine.archive('.\\docs\\plans\\core\\路径容错方案.md')
+    expect(result.newPath).toBe('docs/archive/2026/core/路径容错方案.md')
+
+    const archived = await vfs.readFile(`${ROOT}/docs/archive/2026/core/路径容错方案.md`)
+    // 相对路径由 ../../ 自愈为 ../../../
+    expect(archived).toContain('- ../../../guides/DOC_GOVERNANCE.md')
+    // 外部链接保持不变
+    expect(archived).toContain('- https://example.com/external')
+  })
 })
