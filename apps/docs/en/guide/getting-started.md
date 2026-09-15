@@ -6,7 +6,7 @@ translated: true
 
 # Getting Started
 
-BrutxUI is a **copy-paste-first** Neo-Brutalism component library built for Vue 3 + Tailwind CSS. It provides bold, accessible, and highly customizable UI components following the Neo-Brutalism design philosophy.
+BrutxUI is a Neo-Brutalism component library built for Vue 3 + Tailwind CSS. It provides bold, accessible, and highly customizable UI components, supporting both **npm package distribution** and **CLI source delivery** models.
 
 ## Where BrutxUI Shines
 
@@ -23,15 +23,17 @@ BrutxUI is a **copy-paste-first** Neo-Brutalism component library built for Vue 
 - **Data-intensive tables** — brutalist borders can feel heavy at scale
 - **Accessibility-critical scenarios** — reduced motion and high-contrast modes are primary requirements
 
-## Why Copy-Paste?
+## Dual Distribution & Installation Models
 
-BrutxUI adopts a copy-paste component model rather than the traditional npm package approach:
+BrutxUI provides two ways to adopt components based on your team's code ownership preferences and maintenance tradeoffs:
 
-- **Full ownership** of component source code in your project
-- **Zero dependency lock-in** — modify any component without forking
-- **Smaller bundle size** — only include components you actually use
-- **Easy customization** — directly modify variants, styles, and behavior
-- **AI-friendly** — LLMs can read and modify your components directly
+### 1. npm Package Model (`brutx-ui-vue`)
+- **Use cases**: Standard application development, projects favoring centralized dependency upgrades via `package.json`, and teams seeking zero maintenance overhead for component source files.
+- **Key benefits**: Out-of-the-box readiness, deterministic versions pinned by lockfile, and standard semver releases and bugfixes.
+
+### 2. CLI Source Delivery Model (`brutx-vue`)
+- **Use cases**: Projects requiring deep customization of component templates and internals, proprietary custom variants, elimination of external package lock-in, or direct LLM/AI agent collaboration on source files.
+- **Key benefits**: Full source ownership inside your repository, zero lock-in without needing to fork upstream, and on-demand component addition.
 
 ## System Customizability
 

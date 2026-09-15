@@ -14,9 +14,55 @@ Set up BrutxUI in a new or existing Vite + Vue 3 project.
 - **Vue** 3.5+
 - **Tailwind CSS** 4.3+
 
-Examples below use pnpm; you can also use npm, yarn, or bun. `brutx-vue init` automatically detects your package manager from lockfiles, or you can specify it explicitly via `--package-manager`.
+Examples below use pnpm; you can also use npm, yarn, or bun.
 
-## Step 1: Create a Vite Project
+## Choosing Your Adoption Model
+
+Choose the installation approach that best aligns with your team's code ownership and maintenance goals:
+- **Model A: npm Package Model (Out-of-the-Box)**: Install `brutx-ui-vue` and import styles. Dependency updates and semantic versions are managed cleanly via your package manager.
+- **Model B: CLI Source Delivery Model (Full Ownership)**: Use `npx brutx-vue init` to scaffold components and design tokens directly into your project's codebase, ideal for deep customization without package lock-in.
+
+---
+
+## Model A: Quick Setup via npm
+
+If you prefer adopting BrutxUI as a standard package:
+
+### 1. Install the Package
+```bash
+pnpm add brutx-ui-vue
+```
+
+### 2. Import Components and Styles
+<<< @/.vitepress/examples/installation-modes.ts#npm-installation{ts}
+
+### 3. Import Styles in Entry File (`src/main.ts`)
+```ts
+import { createApp } from 'vue'
+import App from './App.vue'
+import 'brutx-ui-vue/style.css'
+
+createApp(App).mount('#app')
+```
+
+### 4. Use Components in Vue SFCs
+```vue
+<script setup lang="ts">
+import { Button } from 'brutx-ui-vue'
+</script>
+
+<template>
+  <Button variant="primary">Hello BrutxUI</Button>
+</template>
+```
+
+---
+
+## Model B: CLI Source Delivery
+
+If you want component source files directly in your repository:
+
+### Step 1: Create a Vite Project & Configure Tailwind
 
 If you do not have an existing project, create one first:
 
@@ -94,7 +140,11 @@ npx brutx-vue@latest add --all
 
 ## Step 5: Use Components
 
-Import and use installed components in your Vue files:
+Import installed components via local project paths:
+
+<<< @/.vitepress/examples/installation-modes.ts#cli-installation{ts}
+
+Or use them inside your Vue SFCs:
 
 ```vue
 <script setup lang="ts">

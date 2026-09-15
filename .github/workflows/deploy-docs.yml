@@ -47,10 +47,17 @@ jobs:
                       ${{ runner.os }}-turbo-docs-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
                       ${{ runner.os }}-turbo-docs-
 
+            # 部署前置门禁：快速校验文档健康度，Fail-Fast 秒级阻断
+            - name: Run documentation health check
+              run: pnpm check:docs
+
             # turbo 自动处理依赖顺序：先 build brutx-ui-vue（及 shared），再 build docs
             # 配合 turbo 缓存，若 UI 源码未变则跳过 UI 构建
             - name: Build docs (turbo)
               run: pnpm build:docs
+
+            - name: Verify docs & examples type check
+              run: pnpm --filter docs typecheck
 
             - name: Setup Pages
               uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0

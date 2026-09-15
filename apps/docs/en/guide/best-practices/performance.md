@@ -14,14 +14,21 @@ import { Button, Input, Card } from 'brutx-ui-vue'
 import 'brutx-ui-vue/style.css'
 ```
 
-### 1.2 Sub-path Imports (Stable Allowlist)
+### 1.2 Sub-path Imports & Cost Breakdown
 
-The root entry is the stable component import surface for BrutxUI. Sub-path imports are supported only for the stable allowlist declared in `package.json` `exports`: `button`, `input`, `dialog`, `toast`, `form`, `select`, `dropdown-menu`, `table`, `card`, `tabs`, `calendar`, `carousel`, `code-block`, `hooks`, `locales`, `devtools-plugin`, and the style entries. Import components that are not listed here from the root entry.
+The `exports` field in `package.json` is projected automatically from the public API Contract (`packages/ui/api-contract.ts`), providing subpaths for public components, composables, and style assets (e.g. `button`, `dialog`, `combobox`, `tree-select`, `useReducedMotion`).
+
+Tradeoffs of subpath imports:
+- **Smaller JavaScript Dependency Closure**: Subpath imports narrow the dependency tree traversed by bundlers, reducing JavaScript bundle size for initial page loads or isolated entry points.
+- **Independent CSS Cost**: Whether importing from the root entry or via subpaths, Tailwind CSS v4 Neo-Brutalist utility classes are distributed via a single consolidated stylesheet (`brutx-ui-vue/style.css`). Measure CSS asset sizes independently from JavaScript tree-shaking gains.
 
 ```typescript
-// Use direct imports only for allowlisted sub-paths
+// Import components and variants from dedicated subpaths
 import { Button, buttonVariants } from 'brutx-ui-vue/button'
-import { Dialog, DialogContent } from 'brutx-ui-vue/dialog'
+import { DialogContent } from 'brutx-ui-vue/dialog'
+
+// Import consolidated stylesheet globally once
+import 'brutx-ui-vue/style.css'
 ```
 
 ### 1.3 Bundler Optimization Configurations
@@ -418,3 +425,117 @@ During development, monitor rendering cycles and compute timings:
   </div>
 </template>
 ```
+
+---
+
+## 7. Advanced Render Optimization (v-memo & markRaw)
+
+### 7.1 When to Use v-memo
+
+`v-memo` is a Vue 3 directive for memorizing template subtrees: when its dependency array remains unchanged, re-rendering of that subtree is skipped. It is best suited for **large `v-for` lists where each row has independent state**.
+
+**Recommended: Independent row state with enumerable properties**
+
+```vue
+<template>
+  <div
+    v-for="item in list"
+    :key="item.id"
+    v-memo="[item.id, item.selected, item.expanded]"
+  >
+    {{ item.name }}
+  </div>
+</template>
+```
+
+**Anti-pattern: Omitted reactive dependencies**
+
+```vue
+<!-- Anti-pattern: Missing item.expanded causes toggle updates to be missed -->
+<div
+  v-for="item in list"
+  :key="item.id"
+  v-memo="[item.id, item.selected]"
+>
+  <span v-if="item.expanded">{{ item.detail }}</span>
+</div>
+```
+
+**Usage Rules**:
+1. The dependency array must cover all reactive state that affects the subtree's rendering (data, selection, expansion, etc.).
+2. Omitting a dependency causes stale views—this is the most frequent pitfall with `v-memo`.
+3. Small lists (< 100 items) do not need `v-memo`; the tracking overhead may outweigh any performance benefit.
+4. `v-memo` cannot be used where rows depend on global layout state (e.g. cell merging or fixed column offsets).
+
+### 7.2 When to Use markRaw
+
+`markRaw` permanently marks an object so that it will never be converted into a reactive proxy. It is ideal for **third-party instances that do not require reactivity** (e.g., map/chart instances or custom renderers).
+
+```typescript
+import { markRaw } from 'vue'
+
+// Third-party instances do not need reactive tracking
+const chartInstance = markRaw(echarts.init(domEl))
+
+// Using an object as a custom component renderer
+const CellRenderer = markRaw({
+  props: { cellFn: Function, row: Object, value: null },
+  render(props) { return props.cellFn({ row: props.row, value: props.value }) },
+})
+```
+
+**Anti-pattern: Marking data that needs two-way reactivity**
+
+```typescript
+// Anti-pattern: Mutating markRaw data will not trigger view updates
+const tableData = markRaw(largeDataSet)
+tableData[0].name = 'updated' // View will NOT update!
+```
+
+### 7.3 Choosing Between shallowRef and ref
+
+| Scenario | Recommendation | Rationale |
+| --- | --- | --- |
+| Large list datasets (> 1000 items) | `shallowRef` | Avoids deep recursive reactive proxy creation for each element |
+| Set / Map collections | `shallowRef` | Deep reactivity overhead on Set/Map is significant |
+| Third-party instances (charts, editors) | `shallowRef` + `markRaw` | Instance internals do not need reactive tracking |
+| Form objects requiring two-way binding | `ref` | Requires deep reactive tracking on individual fields |
+| Primitive values (string / number / boolean) | `ref` | `shallowRef` provides no performance benefit |
+
+---
+
+## 8. Performance Benchmarks (bench)
+
+### 8.1 Current Baseline Metrics
+
+> Baseline environment: Local development machine (Node.js 22), `--time=200` fast sampling.
+> Official CI baseline runs on `ubuntu-latest` with `--time=1000`.
+
+| Component | Scenario | Hz | Note |
+| --- | --- | --- | --- |
+| DataTable | 100 rows | ~30 | Small list baseline |
+| DataTable | 1000 rows | ~3 | Large list observation point |
+| TreeView | 100 nodes | ~9 | Small tree baseline |
+| TreeView | 1000 nodes | ~1 | Large tree observation point |
+
+### 8.2 Reproduction Commands
+
+```bash
+# Run benchmarks locally (Markdown table output)
+pnpm --filter brutx-ui-vue bench
+
+# Output JSON format (consumed by benchmark comparison scripts)
+pnpm --filter brutx-ui-vue bench:json
+
+# Compare two benchmark JSON results
+node scripts/bench-diff.mjs bench-main.json bench-pr.json
+```
+
+### 8.3 Regression Decision Criteria
+
+CI automatically reports benchmark comparisons in PR comments:
+
+- `|delta| < 5%`: Within standard runner noise threshold.
+- `delta < -5%`: Potential performance regression.
+- `delta > 5%`: Performance improvement.
+- If more than 2 scenarios show suspected regressions, manual maintainer review is required before merging.

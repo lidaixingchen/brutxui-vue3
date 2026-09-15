@@ -13,11 +13,57 @@ description: 在 Vite + Vue 3 项目中安装和配置 BrutxUI
 - **Vue** 3.5+
 - **Tailwind CSS** 4.3+
 
-本文示例使用 pnpm；你也可以使用 npm、yarn 或 bun。`brutx-vue init` 会根据 lockfile 自动判断包管理器，也可以通过 `--package-manager` 显式指定。
+本文示例使用 pnpm；你也可以使用 npm、yarn 或 bun。
 
-## 第 1 步：创建 Vite 项目
+## 安装模式选型
 
-如果你还没有项目，先创建一个：
+你可以根据项目的架构诉求选择适用的安装方式：
+- **模式 A：npm 包模式（开箱即用）**：运行 `pnpm add brutx-ui-vue` 并引入样式，由包管理器统一维护版本与依赖，适合绝大多数常规业务开发。
+- **模式 B：CLI 源码模式（完全掌控）**：运行 `npx brutx-vue init` 将组件源码与样式令牌下载到项目本地，适合需要深度修改变体或免除依赖锁定的团队。
+
+---
+
+## 模式 A：npm 包极速引入
+
+如果你希望通过 npm 包直接使用 BrutxUI：
+
+### 1. 安装组件库
+```bash
+pnpm add brutx-ui-vue
+```
+
+### 2. 导入组件与样式
+<<< @/.vitepress/examples/installation-modes.ts#npm-installation{ts}
+
+### 3. 在入口文件引入样式 (`src/main.ts`)
+```ts
+import { createApp } from 'vue'
+import App from './App.vue'
+import 'brutx-ui-vue/style.css'
+
+createApp(App).mount('#app')
+```
+
+### 4. 直接在组件中使用
+```vue
+<script setup lang="ts">
+import { Button } from 'brutx-ui-vue'
+</script>
+
+<template>
+  <Button variant="primary">Hello BrutxUI</Button>
+</template>
+```
+
+---
+
+## 模式 B：CLI 源码引入
+
+如果你希望将组件源码完全托管在自己的代码库中：
+
+### 第 1 步：创建 Vite 项目与配置 Tailwind
+
+如果还没有项目，先创建一个：
 
 ```bash
 pnpm create vite my-app --template vue-ts
@@ -93,7 +139,11 @@ npx brutx-vue@latest add --all
 
 ## 第 5 步：使用组件
 
-在你的 Vue 文件中导入并使用已添加的组件：
+通过本地路径导入已添加的组件：
+
+<<< @/.vitepress/examples/installation-modes.ts#cli-installation{ts}
+
+在你的 Vue 单文件组件中使用：
 
 ```vue
 <script setup lang="ts">

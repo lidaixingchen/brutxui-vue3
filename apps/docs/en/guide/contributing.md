@@ -14,7 +14,7 @@ Thank you for your interest in BrutxUI! Here are the guidelines and workflows fo
 ### Prerequisites
 
 - Node.js 22.5+
-- pnpm 10+ (The repository strictly requires pnpm; npm or yarn is forbidden)
+- pnpm 11+ (The repository strictly requires pnpm; npm or yarn is forbidden)
 - Git
 
 ### Clone & Install
@@ -25,15 +25,16 @@ cd brutxui-vue3
 pnpm install
 ```
 
-### Common Commands
+### Scenario-Matched Checks
 
-```bash
-pnpm build          # Turbo builds all workspace packages
-pnpm lint           # Global linting and formatting fixes
-pnpm typecheck      # Global strict TypeScript type checking
-pnpm test           # Runs unit tests across all packages
-pnpm test:ssr       # Server-Side Rendering (SSR) compatibility tests
-```
+**Avoid running global `pnpm test` or `lint` indiscriminately** during active development. Run focused checks targeted at touched areas:
+
+| Touched Area | Recommended Check | Purpose |
+| --- | --- | --- |
+| Logic / Components / Functions | `pnpm --filter <pkg> test <path>`<br>`pnpm exec eslint <file> --fix` | Runs targeted unit tests and code formatting |
+| Types / Cross-Package Exports | `pnpm --filter <pkg> typecheck` | Validates strict TypeScript compatibility |
+| Styles / Tokens / Dependencies | `pnpm check:contracts` | Static contracts concurrency gate (~2s) |
+| Docs / Guidelines / Links | `pnpm check:docs` | Documentation health gate (~0.4s, add `--fix` to auto-heal links) |
 
 ---
 
@@ -91,29 +92,21 @@ Commit messages must adhere to Conventional Commits:
 
 ## Pull Request Verification
 
-Run targeted local quality gates before opening a PR to ensure green status across all checks:
+Run targeted local quality gates for your touched areas before opening a PR:
 
-```bash
-# 1. Static contract verification (styles, tokens, exports, dependency parity)
-pnpm check:contracts
+- **Source Code Changes**: Run package unit tests `pnpm --filter <pkg> test <path>` and ensure zero Lint errors;
+- **Types or Contracts**: Run `pnpm --filter <pkg> typecheck` and `pnpm check:contracts`;
+- **Documentation & Examples**: Run `pnpm check:docs`;
+- **Commit Formatting**: Adheres to Conventional Commits.
 
-# 2. Documentation health gate (dead links, format, guidelines)
-pnpm check:docs
+---
 
-# 3. Strict type checking
-pnpm typecheck
+## Architectural Deep Dive
 
-# 4. Unit tests
-pnpm test
-```
-
-### PR Checklist
-
-- [ ] Passes `pnpm check:contracts`
-- [ ] Passes `pnpm check:docs`
-- [ ] Passes `pnpm typecheck`
-- [ ] Relevant tests pass `pnpm test`
-- [ ] Commit messages follow Conventional Commits
+Before proposing core architectural changes or introducing critical capabilities, review the evergreen architectural documentation:
+- [Architecture Overview](https://github.com/lidaixingchen/brutxui-vue3/blob/main/docs/architecture/%E9%A1%B9%E7%9B%AE%E6%9E%B6%E6%9E%84%E6%80%BB%E8%A7%88.md): Package boundaries and dependency topology
+- [Distribution & API Contracts](https://github.com/lidaixingchen/brutxui-vue3/blob/main/docs/architecture/%E5%88%86%E5%8F%91%E4%B8%8E%E5%85%AC%E5%BC%8FAPI%E5%A5%91%E7%BA%A6.md): Dual-distribution model and internal helper isolation
+- [Generation & Build Mechanisms](https://github.com/lidaixingchen/brutxui-vue3/blob/main/docs/architecture/%E7%94%9F%E6%88%90%E4%B8%8E%E6%9E%84%E5%BB%BA%E6%9C%BA%E5%88%B6.md): Design tokens compilation and Git staged snapshot checks
 
 ---
 

@@ -14,7 +14,7 @@ description: 如何参与 BrutxUI 开发与贡献代码
 ### 前置要求
 
 - Node.js 22.5+
-- pnpm 10+（仓库包管理器限定为 pnpm，严禁使用 npm 或 yarn）
+- pnpm 11+（仓库包管理器限定为 pnpm，严禁使用 npm 或 yarn）
 - Git
 
 ### 克隆与安装
@@ -25,15 +25,16 @@ cd brutxui-vue3
 pnpm install
 ```
 
-### 常用高频指令
+### 场景匹配的最小化自检
 
-```bash
-pnpm build          # Turbo 并行构建所有包
-pnpm lint           # 全局代码检查与格式修复
-pnpm typecheck      # 全局严格类型检查
-pnpm test           # 运行所有子包单元测试
-pnpm test:ssr       # 服务端渲染（SSR）兼容性测试
-```
+开发阶段**严禁无脑运行全量 `pnpm test` 或 `lint`**。请依据触碰领域运行针对性检查：
+
+| 变动领域 | 推荐自检命令 | 说明 |
+| --- | --- | --- |
+| 业务逻辑 / 组件 / 函数 | `pnpm --filter <pkg> test <相对路径>`<br>`pnpm exec eslint <file> --fix` | 运行局部单元测试与代码风格修复 |
+| 类型接口 / 跨包导出 | `pnpm --filter <pkg> typecheck` | 验证 TS 严格类型与接口兼容 |
+| 样式 / 令牌 / 导出 / 依赖 | `pnpm check:contracts` | 静态契约并发 6 合 1 门禁（~2s，全绿放行） |
+| 文档 / 规范 / 技能 / 链接 | `pnpm check:docs` | 文档健康度并发门禁（~0.4s，加 `--fix` 自动纠偏链接） |
 
 ---
 
@@ -91,29 +92,21 @@ pnpm generate:page         # 生成文档演示页面
 
 ## Pull Request 自检流程
 
-提交 PR 前，请在本地运行针对性的质量门禁，确保所有检查绿灯通过：
+提交 PR 前，请在本地运行对应领域的质量门禁，确保检查全绿：
 
-```bash
-# 1. 静态契约并发 6 合 1 门禁（样式/令牌/导出/依赖一致性校验）
-pnpm check:contracts
+- **业务代码修改**：运行对应包局部测试 `pnpm --filter <pkg> test <path>`，且无 Lint 违规；
+- **类型或契约调整**：运行 `pnpm --filter <pkg> typecheck` 与 `pnpm check:contracts`；
+- **文档与示例变动**：运行 `pnpm check:docs`；
+- **提交信息格式**：符合 Conventional Commits 规范。
 
-# 2. 文档健康度门禁（死链/格式/规范检查）
-pnpm check:docs
+---
 
-# 3. 严格类型检查
-pnpm typecheck
+## 了解系统架构
 
-# 4. 单元测试
-pnpm test
-```
-
-### PR 检查清单
-
-- [ ] 代码通过 `pnpm check:contracts`
-- [ ] 文档通过 `pnpm check:docs`
-- [ ] 全局类型检查通过 `pnpm typecheck`
-- [ ] 相关测试通过 `pnpm test`
-- [ ] 提交信息遵循 Conventional Commits 规范
+在参与核心架构改造或新增关键能力前，推荐深入阅读仓库内的常青架构文档：
+- [项目架构总览](https://github.com/lidaixingchen/brutxui-vue3/blob/main/docs/architecture/%E9%A1%B9%E7%9B%AE%E6%9E%B6%E6%9E%84%E6%80%BB%E8%A7%88.md)：了解各包边界与依赖拓扑
+- [分发与公开 API 契约](https://github.com/lidaixingchen/brutxui-vue3/blob/main/docs/architecture/%E5%88%86%E5%8F%91%E4%B8%8E%E5%85%AC%E5%BC%8FAPI%E5%A5%91%E7%BA%A6.md)：双轨分发模型与内部 helper 边界
+- [生成与构建机制](https://github.com/lidaixingchen/brutxui-vue3/blob/main/docs/architecture/%E7%94%9F%E6%88%90%E4%B8%8E%E6%9E%84%E5%BB%BA%E6%9C%BA%E5%88%B6.md)：设计令牌编译与暂存区一致性快照
 
 ---
 

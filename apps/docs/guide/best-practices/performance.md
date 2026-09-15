@@ -14,17 +14,21 @@ import { Button, Input, Card } from 'brutx-ui-vue'
 import 'brutx-ui-vue/style.css'
 ```
 
-### 1.2 子路径导入
+### 1.2 子路径导入与成本核算
 
-`package.json` 的 `exports` 字段由 `packages/ui/scripts/generate-exports.ts` 自动生成（§2.1），为每个组件目录（`packages/ui/src/components/<name>/index.ts`）生成对应的子路径。包括 `button`、`input`、`dialog`、`toast`、`form`、`select`、`dropdown-menu`、`table`、`card`、`tabs`、`calendar`、`carousel`、`code-block`、`locales`、`style.css`、`preflight.css` 等所有存在 `index.ts` 的组件目录。
+`package.json` 的 `exports` 字段由公开 API 契约（`packages/ui/api-contract.ts`）自动投影生成，覆盖了所有公共组件目录、组合式函数及样式入口（如 `button`、`dialog`、`combobox`、`tree-select`、`useReducedMotion` 等）。
+
+按子路径导入的优势与开销：
+- **JavaScript 依赖闭包更小**：使用子路径导入能更精准地限制构建工具解析的 JS 依赖图谱，减小首屏或独立页面的 JS 打包体积。
+- **聚合 CSS 成本独立**：无论使用主入口还是子路径导入，Tailwind v4 新粗野主义原子样式均由 `brutx-ui-vue/style.css` 统一集中交付，应将 CSS 资源体积与 JS 树摇成果分开独立核算。
 
 ```typescript
-// 从组件子路径导入
+// 从组件子路径导入组件与变体
 import { Button, buttonVariants } from 'brutx-ui-vue/button'
 import { DialogContent } from 'brutx-ui-vue/dialog'
 
-// reka-ui 原语需直接从 reka-ui 导入（brutx-ui-vue 不再 re-export，见 §2.2 迁移指南）
-import { DialogRoot as Dialog } from 'reka-ui'
+// 全局引入聚合样式表（一次性引入）
+import 'brutx-ui-vue/style.css'
 ```
 
 ### 1.3 Vite 配置优化
