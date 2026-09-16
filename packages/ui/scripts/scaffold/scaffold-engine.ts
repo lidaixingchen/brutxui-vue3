@@ -420,12 +420,15 @@ export class ScaffoldEngine {
 
     constructor(options: ScaffoldEngineOptions) {
         this.fs = options.fs;
-        this.projectRoot = path.resolve(options.projectRoot);
-        this.uiSrcDir = path.join(this.projectRoot, 'packages', 'ui', 'src');
-        this.componentsDir = path.join(this.uiSrcDir, 'components');
-        this.composablesDir = path.join(this.uiSrcDir, 'composables');
-        this.sharedComponentsFile = path.join(this.projectRoot, 'packages', 'shared', 'src', 'components.ts');
-        this.apiContractFile = path.join(this.projectRoot, ...API_CONTRACT_PATH);
+        const rawRoot = options.projectRoot.replace(/\\/g, '/');
+        this.projectRoot = rawRoot.startsWith('/') && !/^[a-zA-Z]:/.test(rawRoot)
+            ? path.posix.normalize(rawRoot)
+            : path.resolve(options.projectRoot).replace(/\\/g, '/');
+        this.uiSrcDir = path.posix.join(this.projectRoot, 'packages', 'ui', 'src');
+        this.componentsDir = path.posix.join(this.uiSrcDir, 'components');
+        this.composablesDir = path.posix.join(this.uiSrcDir, 'composables');
+        this.sharedComponentsFile = path.posix.join(this.projectRoot, 'packages', 'shared', 'src', 'components.ts');
+        this.apiContractFile = path.posix.join(this.projectRoot, ...API_CONTRACT_PATH);
         this.metadataManager = new MetadataManager();
     }
 
@@ -451,7 +454,7 @@ export class ScaffoldEngine {
         if (type === 'component') {
             const kebabName = vars.kebabName;
             return {
-                targetDir: path.join(this.componentsDir, kebabName),
+                targetDir: path.posix.join(this.componentsDir, kebabName),
                 files: [
                     {
                         relativePath: `${vars.PascalName}.vue`,
@@ -495,7 +498,7 @@ export class ScaffoldEngine {
 
         const kebabName = vars.kebabName;
         return {
-            targetDir: path.join(this.componentsDir, kebabName),
+            targetDir: path.posix.join(this.componentsDir, kebabName),
             files: [
                 {
                     relativePath: `${vars.PascalName}.vue`,
@@ -608,7 +611,7 @@ export class ScaffoldEngine {
 
         const plannedFiles: PlannedFile[] = [];
         for (const file of config.files) {
-            const filePath = path.join(config.targetDir, file.relativePath);
+            const filePath = path.posix.join(config.targetDir, file.relativePath.replace(/\\/g, '/'));
             const exists = await this.fs.pathExists(filePath);
             if (exists && !overwrite) {
                 return {
