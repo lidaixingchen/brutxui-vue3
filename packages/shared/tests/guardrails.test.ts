@@ -20,14 +20,86 @@ describe('scripts/shared 基础工具链套件', () => {
       expect(toPosixPath('mixed/path\\to/file.md')).toBe('mixed/path/to/file.md')
     })
 
-    it('normalizeAbsPath 能处理 file:/// URL、常规路径与带 fragment/query 的 URL', () => {
+    it('normalizeAbsPath 能处理 file:/// URL、常规路径与带 fragment/query 的 URL，并在双轨实现中保持一致', async () => {
+      const sharedPath = await import('../src/path.js')
       const root = getRepoRoot()
       const absPkg = path.join(root, 'package.json')
       expect(normalizeAbsPath(absPkg)).toBe(absPkg)
+      expect(sharedPath.normalizeAbsPath(absPkg)).toBe(absPkg)
 
       // 带 fragment/query 的 URL 剥离测试（使用跨平台标准 URL 构造）
       const fileUrl = `${pathToFileURL(absPkg).href}#L10-L20?v=1`
       expect(normalizeAbsPath(fileUrl)).toBe(absPkg)
+      expect(sharedPath.normalizeAbsPath(fileUrl)).toBe(absPkg)
+    })
+
+    it('categorizePathInput 精准识别各类路径输入类别', async () => {
+      const { categorizePathInput } = await import('../../../scripts/shared/path.mjs')
+      const sharedPath = await import('../src/path.js')
+
+      const cases = [
+        { input: '', expected: 'empty' },
+        { input: '   ', expected: 'empty' },
+        { input: 'https://example.com/a.md', expected: 'url' },
+        { input: 'http://example.com/a.md', expected: 'url' },
+        { input: 'mailto:test@example.com', expected: 'url' },
+        { input: 'custom-scheme://test', expected: 'url' },
+        { input: 'file:///c:/test.md', expected: 'url' },
+        { input: '\\\\?\\C:\\device\\path', expected: 'device' },
+        { input: '\\\\.\\COM1', expected: 'device' },
+        { input: '\\??\\C:\\device\\path', expected: 'device' },
+        { input: '//?/C:/device/path', expected: 'device' },
+        { input: '\\\\server\\share\\path', expected: 'unc' },
+        { input: '//server/share/path', expected: 'unc' },
+        { input: 'C:relative.md', expected: 'win32-drive-relative' },
+        { input: 'C:\\absolute\\path.md', expected: 'win32-drive-absolute' },
+        { input: 'c:/absolute/path.md', expected: 'win32-drive-absolute' },
+        { input: '/tmp/rooted.md', platform: 'win32', expected: 'win32-root-relative' },
+        { input: '\\tmp\\rooted.md', platform: 'win32', expected: 'win32-root-relative' },
+        { input: '\\tmp\\rooted.md', platform: 'linux', expected: 'win32-root-relative' },
+        { input: '/home/user/file.md', platform: 'linux', expected: 'posix-absolute' },
+        { input: './docs/plans/a.md', expected: 'portable-relative' },
+        { input: '.\\docs\\plans\\a.md', expected: 'portable-relative' },
+        { input: 'docs/plans/a.md', expected: 'portable-relative' },
+        { input: 'docs\\plans\\a.md', expected: 'portable-relative' },
+      ]
+
+      for (const c of cases) {
+        const platform = c.platform || (process.platform as NodeJS.Platform)
+        expect(categorizePathInput(c.input, { platform })).toBe(c.expected)
+        expect(sharedPath.categorizePathInput(c.input, { platform })).toBe(c.expected)
+      }
+    })
+
+    it('resolvePortablePath 严格解析相对路径并拦截异系统与非法输入', async () => {
+      const { resolvePortablePath, isInsideDir } = await import('../../../scripts/shared/path.mjs')
+      const sharedPath = await import('../src/path.js')
+
+      const base = '/workspace/repo'
+
+      // 可移植相对路径（含正反斜杠）在两个实现中解析一致
+      const p1 = resolvePortablePath(base, '.\\docs\\plans\\core\\a.md', { platform: 'linux', pathImpl: path.posix })
+      const s1 = sharedPath.resolvePortablePath(base, '.\\docs\\plans\\core\\a.md', { platform: 'linux', pathImpl: path.posix })
+      expect(p1).toBe('/workspace/repo/docs/plans/core/a.md')
+      expect(s1).toBe('/workspace/repo/docs/plans/core/a.md')
+
+      // 异系统绝对路径在两个实现中均被拦截
+      expect(() => resolvePortablePath(base, 'C:\\repo\\a.md', { platform: 'linux', pathImpl: path.posix })).toThrow(/跨操作系统/)
+      expect(() => sharedPath.resolvePortablePath(base, 'C:\\repo\\a.md', { platform: 'linux', pathImpl: path.posix })).toThrow(/跨操作系统/)
+
+      // Linux 平台下单反斜杠根相对路径阻断逃逸
+      expect(() => resolvePortablePath(base, '\\foo', { platform: 'linux', pathImpl: path.posix })).toThrow(/不支持隐式当前驱动器的根相对路径/)
+      expect(() => sharedPath.resolvePortablePath(base, '\\foo', { platform: 'linux', pathImpl: path.posix })).toThrow(/不支持隐式当前驱动器的根相对路径/)
+
+      // 越界检查
+      expect(() => resolvePortablePath(base, '../../etc/passwd', { pathImpl: path.posix, checkInsideBase: true })).toThrow(/越界/)
+      expect(() => sharedPath.resolvePortablePath(base, '../../etc/passwd', { pathImpl: path.posix, checkInsideBase: true })).toThrow(/越界/)
+
+      // isInsideDir
+      expect(isInsideDir(base, '/workspace/repo/docs/a.md', { pathImpl: path.posix })).toBe(true)
+      expect(isInsideDir(base, '/workspace/other/a.md', { pathImpl: path.posix })).toBe(false)
+      expect(sharedPath.isInsideDir(base, '/workspace/repo/docs/a.md', { pathImpl: path.posix })).toBe(true)
+      expect(sharedPath.isInsideDir(base, '/workspace/other/a.md', { pathImpl: path.posix })).toBe(false)
     })
   })
 

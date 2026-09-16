@@ -14,7 +14,8 @@
         "./ast": "./src/ast/index.ts",
         "./generation": "./src/generation.ts",
         "./api-contract": "./src/api-contract.ts",
-        "./module-resolver": "./src/module-resolver.ts"
+        "./module-resolver": "./src/module-resolver.ts",
+        "./path": "./src/path.ts"
     },
     "engines": {
         "node": ">=22.5"
