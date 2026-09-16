@@ -448,13 +448,21 @@ function linkEntry(sourcePath, destinationPath) {
 function isWorkspaceSource(sourcePath, repositoryRoot) {
     let resolvedSource
     try {
-        resolvedSource = realpathSync(sourcePath)
+        resolvedSource = realpathSync.native ? realpathSync.native(sourcePath) : realpathSync(sourcePath)
     } catch {
         return false
     }
-    const workspaceRoot = path.resolve(repositoryRoot, WORKSPACE_PACKAGE_SCOPE)
-    const workspaceRootWithSeparator = `${workspaceRoot}${path.sep}`
-    return resolvedSource === workspaceRoot || resolvedSource.startsWith(workspaceRootWithSeparator)
+    let workspaceRoot
+    try {
+        const rawWorkspaceRoot = path.resolve(repositoryRoot, WORKSPACE_PACKAGE_SCOPE)
+        workspaceRoot = realpathSync.native ? realpathSync.native(rawWorkspaceRoot) : realpathSync(rawWorkspaceRoot)
+    } catch {
+        workspaceRoot = path.resolve(repositoryRoot, WORKSPACE_PACKAGE_SCOPE)
+    }
+    const resolvedPath = process.platform === 'win32' ? resolvedSource.toLowerCase() : resolvedSource
+    const targetRoot = process.platform === 'win32' ? workspaceRoot.toLowerCase() : workspaceRoot
+    const workspaceRootWithSeparator = `${targetRoot}${path.sep}`
+    return resolvedPath === targetRoot || resolvedPath.startsWith(workspaceRootWithSeparator)
 }
 
 function linkExternalDependencyTree(

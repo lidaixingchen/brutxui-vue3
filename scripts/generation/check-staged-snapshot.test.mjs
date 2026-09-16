@@ -19,13 +19,17 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
 
-import { checkStagedSnapshot, determineAffectedPackages } from './check-staged-snapshot.mjs'
+import { checkStagedSnapshot, determineAffectedPackages, parseIndexEntries } from './check-staged-snapshot.mjs'
 
 const UI_SOURCE = 'packages/ui/src/components/example/Example.vue'
 const UI_GENERATOR = 'packages/ui/scripts/generate.ts'
 const UI_MANIFEST = 'packages/ui/registry-manifest.json'
 const UI_STYLES = 'packages/ui/src/styles.css'
 const SHARED_TOKENS = 'packages/shared/src/design-tokens.ts'
+const RUNNER_FILE =
+    process.platform === 'win32'
+        ? 'packages/ui/src/components/example/runner input.ts'
+        : 'packages/ui/src/components/example/runner\tinput.ts'
 
 function runGit(repoRoot, ...args) {
     return execFileSync('git', args, {
@@ -43,7 +47,8 @@ function writeRepoFile(repoRoot, relativePath, content, mode = 0o644) {
 }
 
 function createRepo() {
-    const repoRoot = mkdtempSync(join(tmpdir(), 'brutx-snapshot-test-'))
+    const rawRepoRoot = mkdtempSync(join(tmpdir(), 'brutx-snapshot-test-'))
+    const repoRoot = realpathSync.native ? realpathSync.native(rawRepoRoot) : realpathSync(rawRepoRoot)
     runGit(repoRoot, 'init', '--quiet')
     runGit(repoRoot, 'config', 'user.email', 'snapshot@example.test')
     runGit(repoRoot, 'config', 'user.name', 'Snapshot Test')
@@ -55,7 +60,7 @@ function createRepo() {
     writeRepoFile(repoRoot, SHARED_TOKENS, 'export const TOKEN = "base"\n')
     writeRepoFile(repoRoot, UI_MANIFEST, '{"source":"base"}\n')
     writeRepoFile(repoRoot, UI_STYLES, '/* @brutx:theme-tokens:start */\nbase\n/* @brutx:theme-tokens:end */\nmanual\n')
-    writeRepoFile(repoRoot, 'packages/ui/src/components/example/runner\tinput.ts', 'export const value = "base"\n', 0o755)
+    writeRepoFile(repoRoot, RUNNER_FILE, 'export const value = "base"\n', 0o755)
     writeRepoFile(repoRoot, '.gitignore', 'packages/ui/src/components/*/index.ts\n')
     runGit(repoRoot, 'add', '.')
     runGit(repoRoot, 'commit', '--quiet', '-m', 'fixture')
@@ -302,18 +307,31 @@ test('仅文档暂存时快速通过且不运行生成器', async t => {
     assert.equal(called, false)
 })
 
-test('物化 index 保留带制表符路径内容和可执行 mode', async t => {
+test('物化 index 保留路径内容和可执行 mode', async t => {
     const repoRoot = createRepo()
     t.after(() => disposeRepo(repoRoot))
-    stageFile(repoRoot, 'packages/ui/src/components/example/runner\tinput.ts', 'export const value = "staged"\n', 0o755)
+    stageFile(repoRoot, RUNNER_FILE, 'export const value = "staged"\n', 0o755)
     await checkStagedSnapshot({
         repoRoot,
         generatorRunner: createRunner([], ({ candidateRoot }) => {
-            const filePath = join(candidateRoot, 'packages/ui/src/components/example/runner\tinput.ts')
+            const filePath = join(candidateRoot, RUNNER_FILE)
             assert.equal(readFileSync(filePath, 'utf8'), 'export const value = "staged"\n')
-            assert.equal(statSync(filePath).mode & 0o111, 0o111)
+            if (process.platform !== 'win32') {
+                assert.equal(statSync(filePath).mode & 0o111, 0o111)
+            }
             assert.equal(existsSync(join(candidateRoot, 'packages/ui/src/components/example/index.ts')), false)
             return successfulRun()
         }),
     })
 })
+
+test('parseIndexEntries 正确解析包含制表符的相对路径', () => {
+    const rawIndex = Buffer.from(
+        '100755 0123456789abcdef0123456789abcdef01234567 0\tpackages/ui/src/components/example/runner\tinput.ts\0',
+    )
+    const entries = parseIndexEntries(rawIndex)
+    assert.equal(entries.length, 1)
+    assert.equal(entries[0].mode, '100755')
+    assert.equal(entries[0].relativePath, 'packages/ui/src/components/example/runner\tinput.ts')
+})
+

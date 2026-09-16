@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { resolvePortablePath } from '../shared/path.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -219,7 +220,7 @@ export function packCandidateArtifacts(destinationDir, rootDir = REPO_ROOT) {
 }
 
 function resolveCandidateManifestPath(inputPath) {
-    const resolvedInput = path.resolve(inputPath);
+    const resolvedInput = resolvePortablePath(process.cwd(), inputPath, { allowAbsolute: true });
     if (fs.existsSync(resolvedInput) && fs.statSync(resolvedInput).isDirectory()) {
         return path.join(resolvedInput, CANDIDATE_MANIFEST_NAME);
     }
@@ -229,12 +230,10 @@ function resolveCandidateManifestPath(inputPath) {
 function resolveCandidateTarballPath(record, manifestDir) {
     const candidates = [];
     if (typeof record.tarballFile === 'string' && record.tarballFile.length > 0) {
-        candidates.push(path.resolve(manifestDir, record.tarballFile));
+        candidates.push(resolvePortablePath(manifestDir, record.tarballFile, { allowAbsolute: true }));
     }
     if (typeof record.tarballPath === 'string' && record.tarballPath.length > 0) {
-        candidates.push(path.isAbsolute(record.tarballPath)
-            ? record.tarballPath
-            : path.resolve(manifestDir, record.tarballPath));
+        candidates.push(resolvePortablePath(manifestDir, record.tarballPath, { allowAbsolute: true }));
     }
 
     for (const candidate of candidates) {
