@@ -117,6 +117,34 @@ describe('module resolver', () => {
         expect(nodeBuiltin.packageName).toBe('node:path');
         expect(nodeBuiltin.isNodeBuiltin).toBe(true);
     });
+
+    it('支持 Windows 反斜杠风格相对说明符并保持统一解析', () => {
+        const rootDir = createFixture();
+        const importer = writeFixture(rootDir, 'src/entry.ts');
+        const targetFile = writeFixture(rootDir, 'src/widgets/Panel.vue', '<template />');
+        const resolver = createModuleResolver({ rootDir });
+
+        const result = resolver.resolve(importer, '.\\widgets\\Panel');
+        expect(result.kind).toBe('internal');
+        expect(result.resolvedPath).toBe(path.resolve(targetFile).split(path.sep).join('/'));
+        expect(result.normalizedPath).toBe('src/widgets/Panel.vue');
+    });
+
+    it('在非 Windows 平台对 Windows 盘符绝对路径返回 unresolved 诊断', () => {
+        const rootDir = createFixture();
+        const importer = writeFixture(rootDir, 'src/entry.ts');
+        const resolver = createModuleResolver({ rootDir });
+
+        const originalPlatform = process.platform;
+        try {
+            Object.defineProperty(process, 'platform', { value: 'linux' });
+            const result = resolver.resolve(importer, 'C:/some/file.ts');
+            expect(result.kind).toBe('unresolved');
+            expect(result.diagnostics.map((d) => d.code)).toContain('MODULE_NOT_FOUND');
+        } finally {
+            Object.defineProperty(process, 'platform', { value: originalPlatform });
+        }
+    });
 });
 
 describe('SfcAstEngine module analysis adapter', () => {

@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import ts from 'typescript';
 import { SfcAstEngine } from './ast/sfc-ast-engine.js';
+import { toPosixPath } from './path.js';
 import type {
     ModuleAnalysisResult,
     SourceLanguage,
@@ -100,14 +101,13 @@ interface ExactPathResult {
     readonly candidates?: readonly string[];
 }
 
-const POSIX_SEPARATOR = '/';
 const PACKAGE_SCOPE_SEPARATOR = '/';
 const CURRENT_DIRECTORY = '.';
 const PARENT_DIRECTORY = '..';
 const WILDCARD = '*';
 
 function toPosix(value: string): string {
-    return value.split(path.sep).join(POSIX_SEPARATOR);
+    return toPosixPath(value);
 }
 
 function normalizeAbsolute(value: string): string {
@@ -118,7 +118,7 @@ function isPathInside(rootDir: string, targetPath: string): boolean {
     const root = path.resolve(rootDir);
     const target = path.resolve(targetPath);
     const relative = path.relative(root, target);
-    return relative === '' || (relative !== PARENT_DIRECTORY && !relative.startsWith(`${PARENT_DIRECTORY}${path.sep}`) && !path.isAbsolute(relative));
+    return relative === '' || (relative !== PARENT_DIRECTORY && !relative.startsWith(`${PARENT_DIRECTORY}${path.sep}`) && !relative.startsWith(`${PARENT_DIRECTORY}/`) && !path.isAbsolute(relative));
 }
 
 function normalizeRelative(rootDir: string, targetPath: string): string {
@@ -478,18 +478,33 @@ export function createModuleResolver(options: ModuleResolverOptions): ModuleReso
         rootDir,
         extensions,
         aliases,
-        resolve(importer, specifier): ModuleResolution {
-            const normalizedImporter = normalizeAbsolute(importer);
-            const cacheKey = `${normalizedImporter}\0${specifier}`;
-            const cached = cache.resolutions.get(cacheKey);
+        resolve(importer: string, specifier: string): ModuleResolution {
+            const normalizedImporter: string = normalizeAbsolute(importer);
+            const cacheKey: string = `${normalizedImporter}\0${specifier}`;
+            const cached: ModuleResolution | undefined = cache.resolutions.get(cacheKey);
             if (cached) return cached;
 
-            const isRelative = /^(?:\.{1,2})(?:[\\/]|$)/u.test(specifier);
-            const isAbsolute = path.isAbsolute(specifier) || path.posix.isAbsolute(specifier) || path.win32.isAbsolute(specifier);
+            const isRelative: boolean = /^(?:\.{1,2})(?:[\\/]|$)/u.test(specifier);
+            const isWinDrive: boolean = /^[a-zA-Z]:[/\\]/.test(specifier);
+            const isPosixAbs: boolean = specifier.startsWith('/');
+            const isAbsolute: boolean = isWinDrive || isPosixAbs || path.isAbsolute(specifier);
 
             let result: ModuleResolution;
 
-            if (!isRelative && !isAbsolute) {
+            if (isWinDrive && process.platform !== 'win32') {
+                result = {
+                    importer: normalizedImporter,
+                    specifier,
+                    kind: 'unresolved',
+                    candidates: [],
+                    diagnostics: [createDiagnostic(
+                        'MODULE_NOT_FOUND',
+                        normalizedImporter,
+                        specifier,
+                        `当前操作系统环境不支持解析 Windows 驱动器绝对路径：${specifier}`,
+                    )],
+                };
+            } else if (!isRelative && !isAbsolute) {
                 const matches = aliases
                     .map((alias) => aliasMatches(specifier, alias))
                     .filter((match): match is AliasMatch => match !== undefined);
@@ -530,8 +545,9 @@ export function createModuleResolver(options: ModuleResolverOptions): ModuleReso
                     };
                 }
             } else {
-                const basePath = isAbsolute ? path.resolve(specifier) : path.resolve(path.dirname(normalizedImporter), specifier);
-                const candidatePaths = collectCandidates(basePath, extensions).map((item) => item.absolutePath);
+                const normalizedSpec: string = isRelative ? toPosixPath(specifier) : specifier;
+                const basePath: string = isAbsolute ? path.resolve(normalizedSpec) : path.resolve(path.dirname(normalizedImporter), normalizedSpec);
+                const candidatePaths: string[] = collectCandidates(basePath, extensions).map((item) => item.absolutePath);
                 result = resolveInternal(rootDir, normalizedImporter, specifier, candidatePaths, enforceCaseSensitive, cache);
             }
 

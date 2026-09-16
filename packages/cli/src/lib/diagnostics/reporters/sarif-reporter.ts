@@ -1,5 +1,6 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { toPosixPath, resolvePortablePath } from 'brutx-shared-vue/path';
 import type { CheckResult, DiagnosticReport } from '../types.js';
 import type { DiagnosticReporter, ReporterOptions } from './types.js';
 
@@ -36,7 +37,7 @@ function toPosixRelativePath(cwd: string, filePath: string): string {
     const relative = path.isAbsolute(filePath)
         ? path.relative(cwd, filePath)
         : filePath;
-    const posix = relative.split(path.sep).join('/');
+    const posix = toPosixPath(relative);
     return encodeURI(posix).replace(/#/g, '%23');
 }
 
@@ -121,7 +122,7 @@ export class SarifReporter implements DiagnosticReporter {
         const jsonString = JSON.stringify(sarifPayload, null, 2);
 
         if (options.outputFile) {
-            const targetPath = path.resolve(options.cwd, options.outputFile);
+            const targetPath: string = resolvePortablePath(options.cwd, options.outputFile, { allowAbsolute: true });
             await mkdir(path.dirname(targetPath), { recursive: true });
             await writeFile(targetPath, jsonString + '\n', 'utf-8');
         }

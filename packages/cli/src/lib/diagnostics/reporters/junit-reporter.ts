@@ -1,5 +1,6 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { resolvePortablePath } from 'brutx-shared-vue/path';
 import type { DiagnosticReport } from '../types.js';
 import type { DiagnosticReporter, ReporterOptions } from './types.js';
 
@@ -53,7 +54,7 @@ export class JunitReporter implements DiagnosticReporter {
             `</testsuites>\n`;
 
         if (options.outputFile) {
-            const targetPath = path.resolve(options.cwd, options.outputFile);
+            const targetPath: string = resolvePortablePath(options.cwd, options.outputFile, { allowAbsolute: true });
             await mkdir(path.dirname(targetPath), { recursive: true });
             await writeFile(targetPath, xmlContent, 'utf-8');
         }

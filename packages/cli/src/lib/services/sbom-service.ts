@@ -1,5 +1,6 @@
 import path from 'path';
 import { createRequire } from 'module';
+import { resolvePortablePath } from 'brutx-shared-vue/path';
 import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
 import { ProjectContext } from '../project-context.js';
 import { readManifest } from '../manifest.js';
@@ -121,7 +122,9 @@ export async function generateProjectSbom(options: ProjectSbomOptions = {}): Pro
         components,
     };
 
-    const targetPath = path.resolve(cwd, options.outputPath ?? 'brutx-sbom.json');
+    const targetPath: string = options.outputPath
+        ? resolvePortablePath(cwd, options.outputPath, { allowAbsolute: true })
+        : path.resolve(cwd, 'brutx-sbom.json');
     await projectContext.fs.ensureDir(path.dirname(targetPath));
     await projectContext.fs.writeJson(targetPath, sbom, { spaces: 2 });
 

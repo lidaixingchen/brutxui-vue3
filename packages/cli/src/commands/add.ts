@@ -2,6 +2,7 @@ import ora from 'ora';
 import chalk from 'chalk';
 import { checkbox } from '@inquirer/prompts';
 import path from 'path';
+import { resolvePortablePath } from 'brutx-shared-vue/path';
 
 import {
     type AddOptions,
@@ -109,8 +110,19 @@ function getStatusHint(item: RegistryItem): string {
 
 
 export async function add(components: string[], options: AddOptions): Promise<void> {
-    const cwd = options.cwd ?? process.cwd();
-    const targetCwd = options.path ? path.resolve(cwd, options.path) : cwd;
+    const cwd: string = options.cwd ? resolvePortablePath(process.cwd(), options.cwd, { allowAbsolute: true }) : process.cwd();
+    let targetCwd: string = cwd;
+    if (options.path) {
+        try {
+            targetCwd = resolvePortablePath(cwd, options.path, { allowAbsolute: true, checkInsideBase: true });
+        } catch (error: unknown) {
+            throw new CliError(`Security Error: Path traversal detected. Access denied to path "${options.path}".`, {
+                code: 'PATH_UNSAFE',
+                exitCode: 2,
+                cause: error,
+            });
+        }
+    }
 
     const useCache = options.cache !== false;
 
