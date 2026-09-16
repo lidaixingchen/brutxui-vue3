@@ -1,5 +1,6 @@
+import path from 'node:path'
 import { describe, it, expect, beforeEach } from 'vitest'
-import { ArchiveEngine } from '../../../scripts/docs/lib/archive-engine.mjs'
+import { ArchiveEngine, resolvePlanInputPath } from '../../../scripts/docs/lib/archive-engine.mjs'
 import { MemoryFileSystemAdapter } from '../../../scripts/docs/lib/doc-link-fs.mjs'
 
 describe('ArchiveEngine (方案自动归档与自愈核心引擎)', () => {
@@ -468,4 +469,175 @@ describe('ArchiveEngine (方案自动归档与自愈核心引擎)', () => {
     // 外部链接保持不变
     expect(archived).toContain('- https://example.com/external')
   })
+
+  it('resolvePlanInputPath 跨平台纯逻辑矩阵：正反斜杠、混合分隔符、点段与绝对路径解析', () => {
+    const rootPosix = '/workspace/repo'
+    const rootWin = 'C:\\workspace\\repo'
+
+    // 1. 可移植相对路径在 Linux (posix) 语义下解析为统一的 docs/plans/...
+    const posixRes1 = resolvePlanInputPath('.\\docs\\plans\\core\\a.md', rootPosix, {
+      platform: 'linux',
+      pathImpl: path.posix,
+    })
+    expect(posixRes1.normalizedRel).toBe('docs/plans/core/a.md')
+    expect(posixRes1.absPath).toBe('/workspace/repo/docs/plans/core/a.md')
+
+    const posixRes2 = resolvePlanInputPath('docs\\plans/core\\sub/a.md', rootPosix, {
+      platform: 'linux',
+      pathImpl: path.posix,
+    })
+    expect(posixRes2.normalizedRel).toBe('docs/plans/core/sub/a.md')
+
+    // 2. 合法点段折叠
+    const foldedRes = resolvePlanInputPath('./docs/plans/core/../core/b.md', rootPosix, {
+      platform: 'linux',
+      pathImpl: path.posix,
+    })
+    expect(foldedRes.normalizedRel).toBe('docs/plans/core/b.md')
+
+    // 3. 可移植相对路径在 Windows 语义下正确解析
+    const winRes = resolvePlanInputPath('.\\docs\\plans\\core\\a.md', rootWin, {
+      platform: 'win32',
+      pathImpl: path.win32,
+    })
+    expect(winRes.normalizedRel).toBe('docs/plans/core/a.md')
+    expect(winRes.absPath).toBe('C:\\workspace\\repo\\docs\\plans\\core\\a.md')
+
+    // 4. Linux 原生绝对路径接受合法范围
+    const posixAbs = resolvePlanInputPath('/workspace/repo/docs/plans/core/a.md', rootPosix, {
+      platform: 'linux',
+      pathImpl: path.posix,
+    })
+    expect(posixAbs.normalizedRel).toBe('docs/plans/core/a.md')
+
+    // 5. Windows 原生绝对路径接受合法范围
+    const winAbs = resolvePlanInputPath('C:\\workspace\\repo\\docs\\plans\\core\\a.md', rootWin, {
+      platform: 'win32',
+      pathImpl: path.win32,
+    })
+    expect(winAbs.normalizedRel).toBe('docs/plans/core/a.md')
+  })
+
+  it('resolvePlanInputPath 严格拒绝非法及异系统格式', () => {
+    const rootPosix = '/workspace/repo'
+    const rootWin = 'C:\\workspace\\repo'
+
+    // 1. 空输入
+    expect(() => resolvePlanInputPath('', rootPosix)).toThrow(/待归档方案路径不能为空/)
+    expect(() => resolvePlanInputPath('   ', rootPosix)).toThrow(/待归档方案路径不能为空/)
+
+    // 2. URL 协议拒绝
+    expect(() => resolvePlanInputPath('file:///workspace/repo/docs/plans/a.md', rootPosix)).toThrow(/不支持 URL 格式/)
+    expect(() => resolvePlanInputPath('https://example.com/a.md', rootPosix)).toThrow(/不支持 URL 格式/)
+
+    // 3. UNC 路径拒绝
+    expect(() => resolvePlanInputPath('\\\\server\\share\\a.md', rootPosix)).toThrow(/不支持 UNC 路径/)
+    expect(() => resolvePlanInputPath('//server/share/a.md', rootPosix)).toThrow(/不支持 UNC 路径/)
+
+    // 4. Windows 驱动器相对路径拒绝
+    expect(() => resolvePlanInputPath('C:relative.md', rootWin, { platform: 'win32', pathImpl: path.win32 })).toThrow(/不支持 Windows 驱动器相对路径/)
+
+    // 5. Windows 隐式当前驱动器根相对路径拒绝
+    expect(() => resolvePlanInputPath('/tmp/a.md', rootWin, { platform: 'win32', pathImpl: path.win32 })).toThrow(/不支持隐式当前驱动器的根相对路径/)
+    expect(() => resolvePlanInputPath('\\tmp\\a.md', rootWin, { platform: 'win32', pathImpl: path.win32 })).toThrow(/不支持隐式当前驱动器的根相对路径/)
+
+    // 6. Linux 平台拒绝跨系统绝对路径（禁止静默拼入 cwd）
+    expect(() => resolvePlanInputPath('C:\\workspace\\repo\\docs\\plans\\a.md', rootPosix, { platform: 'linux', pathImpl: path.posix })).toThrow(/不支持跨操作系统绝对路径/)
+    expect(() => resolvePlanInputPath('D:/workspace/repo/docs/plans/a.md', rootPosix, { platform: 'linux', pathImpl: path.posix })).toThrow(/不支持跨操作系统绝对路径/)
+
+    // 7. 越界拒绝
+    expect(() => resolvePlanInputPath('docs/plans/../../guides/DOC.md', rootPosix, { platform: 'linux', pathImpl: path.posix })).toThrow(/待归档方案必须位于 docs\/plans\/ 目录下/)
+    expect(() => resolvePlanInputPath('../../etc/passwd', rootPosix, { platform: 'linux', pathImpl: path.posix })).toThrow(/待归档方案必须位于 docs\/plans\/ 目录下/)
+  })
+
+  describe('归档安全加固与真实路径核验', () => {
+    const validPlanContent = [
+      '---',
+      '方案类型: 重构',
+      '状态: active',
+      '日期: 2026-09-01',
+      '---',
+      '# 安全加固方案',
+    ].join('\n')
+
+    const baseIndexContent = [
+      '# 文档中心',
+      '<!-- AUTO_ACTIVE_PLANS_START -->',
+      '<!-- AUTO_ACTIVE_PLANS_END -->',
+      '<!-- AUTO_ARCHIVE_PLANS_START -->',
+      '<!-- AUTO_ARCHIVE_PLANS_END -->',
+    ].join('\n')
+
+    it('拒绝源文件本身为符号链接，保持文件与索引未修改', async () => {
+      await vfs.writeFile(`${ROOT}/docs/plans/core/real.md`, validPlanContent)
+      await vfs.symlink(`${ROOT}/docs/plans/core/real.md`, `${ROOT}/docs/plans/core/symlink.md`)
+      await vfs.writeFile(`${ROOT}/docs/index.md`, baseIndexContent)
+
+      const engine = new ArchiveEngine({ rootDir: ROOT, fs: vfs, now: mockNow, git: false })
+      await expect(engine.archive('docs/plans/core/symlink.md')).rejects.toThrow(/待归档方案文件不能为符号链接/)
+
+      expect(await vfs.pathExists(`${ROOT}/docs/plans/core/real.md`)).toBe(true)
+      expect(await vfs.pathExists(`${ROOT}/docs/plans/core/symlink.md`)).toBe(true)
+      expect(await vfs.readFile(`${ROOT}/docs/index.md`)).toBe(baseIndexContent)
+    })
+
+    it('拒绝源目录通过符号链接导向仓库范围外', async () => {
+      await vfs.writeFile('/outside/plans/secret.md', validPlanContent)
+      await vfs.symlink('/outside/plans', `${ROOT}/docs/plans/external`)
+      await vfs.writeFile(`${ROOT}/docs/index.md`, baseIndexContent)
+
+      const engine = new ArchiveEngine({ rootDir: ROOT, fs: vfs, now: mockNow, git: false })
+      await expect(engine.archive('docs/plans/external/secret.md')).rejects.toThrow(/待归档方案真实路径超出 docs\/plans\/ 范围/)
+    })
+
+    it('拒绝归档目标祖先目录通过符号链接导向仓库范围外', async () => {
+      await vfs.writeFile(`${ROOT}/docs/plans/core/plan.md`, validPlanContent)
+      await vfs.ensureDir('/outside/archive')
+      await vfs.symlink('/outside/archive', `${ROOT}/docs/archive`)
+      await vfs.writeFile(`${ROOT}/docs/index.md`, baseIndexContent)
+
+      const engine = new ArchiveEngine({ rootDir: ROOT, fs: vfs, now: mockNow, git: false })
+      await expect(engine.archive('docs/plans/core/plan.md')).rejects.toThrow(/归档目标目录的祖先目录真实路径超出仓库根目录范围/)
+    })
+
+    it('目标多级目录尚不存在时安全创建祖先并完成归档', async () => {
+      await vfs.writeFile(`${ROOT}/docs/plans/core/new-plan.md`, validPlanContent)
+      await vfs.writeFile(`${ROOT}/docs/index.md`, baseIndexContent)
+
+      const engine = new ArchiveEngine({ rootDir: ROOT, fs: vfs, now: mockNow, git: false })
+      const result = await engine.archive('docs/plans/core/new-plan.md')
+
+      expect(result.newPath).toBe('docs/archive/2026/core/new-plan.md')
+      expect(await vfs.pathExists(`${ROOT}/docs/archive/2026/core/new-plan.md`)).toBe(true)
+      expect(await vfs.pathExists(`${ROOT}/docs/plans/core/new-plan.md`)).toBe(false)
+    })
+
+    it('允许仓库范围内的合法目录符号链接', async () => {
+      await vfs.writeFile(`${ROOT}/docs/plans/core/target.md`, validPlanContent)
+      await vfs.symlink(`${ROOT}/docs/plans/core`, `${ROOT}/docs/plans/internal-symlink`)
+      await vfs.writeFile(`${ROOT}/docs/index.md`, baseIndexContent)
+
+      const engine = new ArchiveEngine({ rootDir: ROOT, fs: vfs, now: mockNow, git: false })
+      const result = await engine.archive('docs/plans/internal-symlink/target.md')
+
+      expect(result.newPath).toBe('docs/archive/2026/core/target.md')
+      expect(await vfs.pathExists(`${ROOT}/docs/archive/2026/core/target.md`)).toBe(true)
+    })
+
+    it('dry-run 完整执行安全预检与链接重算，但保持文件树绝对不变', async () => {
+      await vfs.writeFile(`${ROOT}/docs/plans/core/dry-plan.md`, validPlanContent)
+      await vfs.writeFile(`${ROOT}/docs/index.md`, baseIndexContent)
+
+      const engine = new ArchiveEngine({ rootDir: ROOT, fs: vfs, now: mockNow, git: false, dryRun: true })
+      const result = await engine.archive('docs/plans/core/dry-plan.md')
+
+      expect(result.dryRun).toBe(true)
+      expect(result.newPath).toBe('docs/archive/2026/core/dry-plan.md')
+      expect(await vfs.pathExists(`${ROOT}/docs/plans/core/dry-plan.md`)).toBe(true)
+      expect(await vfs.pathExists(`${ROOT}/docs/archive/2026/core/dry-plan.md`)).toBe(false)
+      expect(await vfs.readFile(`${ROOT}/docs/index.md`)).toBe(baseIndexContent)
+    })
+  })
 })
+
+

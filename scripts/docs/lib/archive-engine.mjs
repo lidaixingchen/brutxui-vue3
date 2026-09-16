@@ -15,11 +15,11 @@ import path from 'node:path'
 import {
   extractMarkdownLinks,
   applySpanReplacements,
-  toPosix,
   splitTarget,
   isExternal,
   safeDecodeURI,
 } from './doc-link-engine.mjs'
+import { toPosixPath, isInsideDir } from '../../shared/path.mjs'
 import { DiskFileSystemAdapter } from './doc-link-fs.mjs'
 
 export const DOMAINS = ['cli', 'ui', 'styles', 'core']
@@ -128,8 +128,9 @@ export function updateFrontmatter(
       const updatedSection = origSection.replace(/^(\s*-\s+)(.+)$/gm, (match, prefix, linkTarget) => {
         const trimmed = linkTarget.trim()
         if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return match
-        const targetAbs = path.resolve(oldDirAbs, trimmed)
-        const newRel = toPosix(path.relative(newDirAbs, targetAbs))
+        const portableTarget = toPosixPath(trimmed)
+        const targetAbs = path.resolve(oldDirAbs, portableTarget)
+        const newRel = toPosixPath(path.relative(newDirAbs, targetAbs))
         return `${prefix}${newRel}`
       })
       yaml = yaml.replace(origSection, updatedSection)
@@ -140,7 +141,7 @@ export function updateFrontmatter(
 }
 
 export function deriveDomain(relPath) {
-  const parts = toPosix(relPath).split('/')
+  const parts = toPosixPath(relPath).split('/')
   if (parts.includes('plans')) {
     const idx = parts.indexOf('plans')
     return parts[idx + 1] || 'core'
@@ -171,6 +172,75 @@ function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
+export function resolvePlanInputPath(
+  input,
+  rootDir,
+  { platform = process.platform, pathImpl = path } = {}
+) {
+  if (typeof input !== 'string' || !input.trim()) {
+    throw new Error('待归档方案路径不能为空')
+  }
+
+  const rawPath = input.trim()
+
+  // 1. 拦截 URL 协议（file://, http://, https:// 等）
+  if (/^([a-zA-Z][a-zA-Z0-9+.-]*:\/\/|file:)/i.test(rawPath)) {
+    throw new Error(`不支持 URL 格式的方案路径: ${rawPath}`)
+  }
+
+  // 2. 拦截 UNC 路径与设备路径（如 \\server\share 或 //server/share）
+  if (/^[/\\]{2}/.test(rawPath)) {
+    throw new Error(`不支持 UNC 路径或设备路径: ${rawPath}`)
+  }
+
+  // 3. 拦截 Windows 驱动器相对路径（如 C:relative.md）或识别 Windows 驱动器绝对路径
+  const driveMatch = rawPath.match(/^([a-zA-Z]):(.*)$/)
+  if (driveMatch) {
+    const rest = driveMatch[2]
+    if (!rest.startsWith('/') && !rest.startsWith('\\')) {
+      throw new Error(`不支持 Windows 驱动器相对路径: ${rawPath}`)
+    }
+    // 异系统绝对路径：非 Windows 平台禁止将 Windows 驱动器绝对路径静默拼入 cwd
+    if (platform !== 'win32') {
+      throw new Error(`不支持跨操作系统绝对路径: ${rawPath}`)
+    }
+    const absPath = pathImpl.resolve(rawPath)
+    return validatePlanBoundary(absPath, rootDir, rawPath, pathImpl)
+  }
+
+  // 4. Windows 平台拦截无盘符的隐式当前驱动器根相对路径（如 /tmp/a 或 \tmp\a）
+  if (platform === 'win32' && /^[/\\]/.test(rawPath)) {
+    throw new Error(`不支持隐式当前驱动器的根相对路径: ${rawPath}`)
+  }
+
+  // 5. POSIX 平台原生绝对路径
+  if (platform !== 'win32' && rawPath.startsWith('/')) {
+    const absPath = pathImpl.resolve(rawPath)
+    return validatePlanBoundary(absPath, rootDir, rawPath, pathImpl)
+  }
+
+  // 6. 可移植相对路径：先归一化分隔符为正斜杠并去除冗余前导 ./，再按基准目录解析
+  const normalizedInput = toPosixPath(rawPath).replace(/^\.\//, '')
+  const absPath = pathImpl.resolve(rootDir, normalizedInput)
+  return validatePlanBoundary(absPath, rootDir, rawPath, pathImpl)
+}
+
+function validatePlanBoundary(absPath, rootDir, rawPath, pathImpl = path) {
+  const relative = pathImpl.relative(rootDir, absPath)
+  const normalizedRel = toPosixPath(relative)
+  if (
+    !normalizedRel.startsWith('docs/plans/') ||
+    normalizedRel === 'docs/plans' ||
+    normalizedRel === 'docs/plans/' ||
+    normalizedRel.startsWith('../') ||
+    normalizedRel === '..' ||
+    pathImpl.isAbsolute(relative)
+  ) {
+    throw new Error(`待归档方案必须位于 docs/plans/ 目录下: ${rawPath}`)
+  }
+  return { absPath, normalizedRel }
+}
+
 export class ArchiveEngine {
   constructor(options = {}) {
     this.rootDir = path.resolve(options.rootDir || process.cwd())
@@ -178,6 +248,15 @@ export class ArchiveEngine {
     this.dryRun = Boolean(options.dryRun)
     this.now = options.now instanceof Date ? options.now : new Date()
     this.git = options.git !== undefined ? options.git : true
+  }
+
+  async getRealpath(targetPath) {
+    if (typeof this.fs.realpath === 'function') {
+      const p = await this.fs.realpath(targetPath)
+      return toPosixPath(p)
+    }
+    const raw = fs.realpathSync.native ? fs.realpathSync.native(targetPath) : fs.realpathSync(targetPath)
+    return toPosixPath(raw)
   }
 
   async walkMdFiles(dirRel) {
@@ -201,7 +280,7 @@ export class ArchiveEngine {
           if (name === 'node_modules' || name === '.git' || name === 'dist') continue
           await walk(subAbs)
         } else if (name.endsWith('.md')) {
-          const rel = toPosix(path.relative(this.rootDir, subAbs))
+          const rel = toPosixPath(path.relative(this.rootDir, subAbs))
           results.push(rel)
         }
       }
@@ -226,14 +305,29 @@ export class ArchiveEngine {
   }
 
   async preflightPlan(planRelPath) {
-    const absPath = path.resolve(this.rootDir, planRelPath)
-    const normalizedRel = toPosix(path.relative(this.rootDir, absPath))
-    if (!normalizedRel.startsWith('docs/plans/')) {
-      throw new Error(`待归档方案必须位于 docs/plans/ 目录下: ${planRelPath}`)
-    }
+    const { absPath, normalizedRel } = resolvePlanInputPath(planRelPath, this.rootDir)
 
     if (!(await this.fs.pathExists(absPath))) {
       throw new Error(`方案文件不存在: ${normalizedRel}`)
+    }
+
+    if (typeof this.fs.lstat === 'function') {
+      const fileStat = await this.fs.lstat(absPath)
+      if (fileStat.isSymbolicLink && fileStat.isSymbolicLink()) {
+        throw new Error(`待归档方案文件不能为符号链接: ${normalizedRel}`)
+      }
+    }
+
+    const plansDirAbs = path.resolve(this.rootDir, 'docs/plans')
+    let plansRealRoot
+    try {
+      plansRealRoot = await this.getRealpath(plansDirAbs)
+    } catch {
+      plansRealRoot = toPosixPath(plansDirAbs)
+    }
+    const sourceReal = await this.getRealpath(absPath)
+    if (!isInsideDir(plansRealRoot, sourceReal)) {
+      throw new Error(`待归档方案真实路径超出 docs/plans/ 范围: ${normalizedRel}`)
     }
 
     const content = await this.fs.readFile(absPath)
@@ -245,14 +339,46 @@ export class ArchiveEngine {
       throw new Error(`方案 Frontmatter 必填字段缺失: ${normalizedRel}`)
     }
 
-    const domain = deriveDomain(normalizedRel)
+    const realRelToRepo = toPosixPath(path.relative(this.rootDir, sourceReal))
+    const domain = deriveDomain(realRelToRepo)
     const fileName = path.basename(normalizedRel)
     const deliveryYear = deriveDeliveryYear(fm, this.now)
     const targetRelPath = `docs/archive/${deliveryYear}/${domain}/${fileName}`
     const targetAbsPath = path.resolve(this.rootDir, targetRelPath)
 
+    const archiveDirAbs = path.resolve(this.rootDir, 'docs/archive')
+    if (!isInsideDir(archiveDirAbs, targetAbsPath)) {
+      throw new Error(`归档目标路径超出 docs/archive/ 范围: ${targetRelPath}`)
+    }
+
     if (await this.fs.pathExists(targetAbsPath)) {
       throw new Error(`目标归档路径已存在同名文件，无法覆盖: ${targetRelPath}`)
+    }
+
+    if (typeof this.fs.lstat === 'function') {
+      try {
+        const targetStat = await this.fs.lstat(targetAbsPath)
+        if (targetStat) {
+          throw new Error(`目标归档路径已存在同名文件或符号链接，无法覆盖: ${targetRelPath}`)
+        }
+      } catch (e) {
+        if (e.message.includes('无法覆盖')) throw e
+      }
+    }
+
+    const repoRealRoot = await this.getRealpath(this.rootDir)
+    let existingAncestor = path.dirname(targetAbsPath)
+    while (existingAncestor && !(await this.fs.pathExists(existingAncestor))) {
+      const parent = path.dirname(existingAncestor)
+      if (parent === existingAncestor) break
+      existingAncestor = parent
+    }
+
+    if (existingAncestor && (await this.fs.pathExists(existingAncestor))) {
+      const ancestorReal = await this.getRealpath(existingAncestor)
+      if (!isInsideDir(repoRealRoot, ancestorReal)) {
+        throw new Error(`归档目标目录的祖先目录真实路径超出仓库根目录范围: ${targetRelPath}`)
+      }
     }
 
     return {
@@ -280,8 +406,8 @@ export class ArchiveEngine {
       if (!href || isExternal(href)) continue
 
       const decodedHref = safeDecodeURI(href)
-      const targetAbs = path.resolve(oldDir, decodedHref)
-      const newRelativeHref = toPosix(path.relative(newDir, targetAbs))
+      const targetAbs = path.resolve(oldDir, toPosixPath(decodedHref))
+      const newRelativeHref = toPosixPath(path.relative(newDir, targetAbs))
       const replacementTarget = anchor ? `${newRelativeHref}#${anchor}` : newRelativeHref
 
       replacements.push({
@@ -320,10 +446,10 @@ export class ArchiveEngine {
         if (!href || isExternal(href)) continue
 
         const decodedHref = safeDecodeURI(href)
-        const targetAbs = path.resolve(docDir, decodedHref)
+        const targetAbs = path.resolve(docDir, toPosixPath(decodedHref))
 
         if (targetAbs.toLowerCase() === oldAbs.toLowerCase()) {
-          const newRelativeHref = toPosix(path.relative(docDir, newAbs))
+          const newRelativeHref = toPosixPath(path.relative(docDir, newAbs))
           const replacementTarget = anchor ? `${newRelativeHref}#${anchor}` : newRelativeHref
 
           replacements.push({
@@ -572,6 +698,33 @@ export class ArchiveEngine {
     }
 
     // Phase 2: 落盘
+    // 目录创建后、迁移前重新核验真实目标父目录及重名状态
+    const targetDir = path.dirname(pre.targetAbsPath)
+    if (typeof this.fs.ensureDir === 'function') {
+      await this.fs.ensureDir(targetDir)
+    } else if (typeof this.fs.mkdir === 'function') {
+      await this.fs.mkdir(targetDir, { recursive: true })
+    }
+
+    const repoRealRoot = await this.getRealpath(this.rootDir)
+    const targetDirReal = await this.getRealpath(targetDir)
+    if (!isInsideDir(repoRealRoot, targetDirReal)) {
+      throw new Error(`归档目标真实父目录超出仓库根目录范围: ${pre.targetRelPath}`)
+    }
+    if (await this.fs.pathExists(pre.targetAbsPath)) {
+      throw new Error(`目标归档路径已存在同名文件，无法覆盖: ${pre.targetRelPath}`)
+    }
+    if (typeof this.fs.lstat === 'function') {
+      try {
+        const targetStat = await this.fs.lstat(pre.targetAbsPath)
+        if (targetStat) {
+          throw new Error(`目标归档路径已存在同名文件或符号链接，无法覆盖: ${pre.targetRelPath}`)
+        }
+      } catch (e) {
+        if (e.message.includes('无法覆盖')) throw e
+      }
+    }
+
     // 物理移动与内容重写
     const isTracked = this.isGitTracked(pre.planRelPath)
     let movedByGit = false
