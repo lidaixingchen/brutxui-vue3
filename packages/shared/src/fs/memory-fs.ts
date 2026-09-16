@@ -6,8 +6,11 @@ import {
     FsRemoveOptions,
 } from './types.js';
 
+const MAX_SYMLINK_DEPTH = 32;
+
 interface MemoryFileNode {
     type: 'file';
+    rawPath: string;
     content: string | Uint8Array;
     mtimeMs: number;
     size: number;
@@ -15,27 +18,40 @@ interface MemoryFileNode {
 
 interface MemoryDirNode {
     type: 'dir';
+    rawPath: string;
     mtimeMs: number;
 }
 
 interface MemorySymlinkNode {
     type: 'symlink';
+    rawPath: string;
     target: string;
     mtimeMs: number;
 }
 
 type MemoryNode = MemoryFileNode | MemoryDirNode | MemorySymlinkNode;
 
-export class MemoryFileSystemAdapter implements FileSystemAdapter {
-    private nodes = new Map<string, MemoryNode>();
-    private tempCounter = 0;
+export interface MemoryFsOptions {
+    readonly caseSensitive?: boolean;
+    readonly platform?: NodeJS.Platform;
+}
 
-    constructor(initialFiles: Record<string, string> = {}) {
+export class MemoryFileSystemAdapter implements FileSystemAdapter {
+    private nodes: Map<string, MemoryNode> = new Map<string, MemoryNode>();
+    private tempCounter: number = 0;
+    readonly caseSensitive: boolean;
+    readonly platform: NodeJS.Platform;
+
+    constructor(initialFiles: Record<string, string> = {}, options: MemoryFsOptions = {}) {
+        this.platform = options.platform ?? process.platform;
+        this.caseSensitive = options.caseSensitive ?? (this.platform !== 'win32');
+
         for (const [filePath, content] of Object.entries(initialFiles)) {
-            const normalized = this.normalizePath(filePath);
+            const normalized: string = this.normalizePath(filePath);
             this.ensureDirSync(this.getParentDir(normalized));
             this.nodes.set(normalized, {
                 type: 'file',
+                rawPath: this.resolveRawPath(filePath),
                 content,
                 mtimeMs: Date.now(),
                 size: Buffer.byteLength(content),
@@ -43,17 +59,32 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
         }
     }
 
-    private normalizePath(p: string): string {
-        const resolved = path.resolve(p).replace(/\\/g, '/');
-        // Windows 盘符统一小写，消除大小写差异（如 C:/ vs c:/）
-        if (/^[a-zA-Z]:\//.test(resolved)) {
-            return resolved[0].toLowerCase() + resolved.slice(1);
+    private resolveRawPath(p: string): string {
+        const isWin: boolean = this.platform === 'win32';
+        const pathImpl = isWin ? path.win32 : path.posix;
+        let resolved: string = pathImpl.resolve(p);
+        if (isWin) {
+            resolved = resolved.replace(/\\/g, '/');
         }
         return resolved;
     }
 
+    private normalizePath(p: string): string {
+        const isWin: boolean = this.platform === 'win32';
+        const pathImpl = isWin ? path.win32 : path.posix;
+        let resolved: string = pathImpl.resolve(p);
+        if (isWin) {
+            resolved = resolved.replace(/\\/g, '/');
+            // Windows 盘符统一小写，消除大小写差异（如 C:/ vs c:/）
+            if (/^[a-zA-Z]:\//.test(resolved)) {
+                resolved = resolved[0].toLowerCase() + resolved.slice(1);
+            }
+        }
+        return this.caseSensitive ? resolved : resolved.toLowerCase();
+    }
+
     private getParentDir(p: string): string {
-        const lastSlash = p.lastIndexOf('/');
+        const lastSlash: number = p.lastIndexOf('/');
         if (lastSlash === -1) return p;
         if (lastSlash === 0) return '/';
         if (/^[a-zA-Z]:$/.test(p.slice(0, lastSlash))) {
@@ -63,11 +94,11 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
     }
 
     private ensureDirSync(dirPath: string): void {
-        const normalized = this.normalizePath(dirPath);
+        const normalized: string = this.normalizePath(dirPath);
         if (this.nodes.has(normalized)) {
-            const node = this.nodes.get(normalized);
+            const node: MemoryNode | undefined = this.nodes.get(normalized);
             if (node?.type === 'symlink') {
-                const targetPath = path.isAbsolute(node.target)
+                const targetPath: string = path.isAbsolute(node.target)
                     ? this.normalizePath(node.target)
                     : this.normalizePath(path.join(this.getParentDir(normalized), node.target));
                 this.ensureDirSync(targetPath);
@@ -79,19 +110,20 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
             return;
         }
 
-        const parent = this.getParentDir(normalized);
+        const parent: string = this.getParentDir(normalized);
         if (parent !== normalized) {
             this.ensureDirSync(parent);
         }
 
         this.nodes.set(normalized, {
             type: 'dir',
+            rawPath: this.resolveRawPath(dirPath),
             mtimeMs: Date.now(),
         });
     }
 
-    private async resolveSymlinkTarget(normalizedPath: string, depth = 0): Promise<string> {
-        if (depth > 32) {
+    private async resolveSymlinkTarget(normalizedPath: string, depth: number = 0): Promise<string> {
+        if (depth > MAX_SYMLINK_DEPTH) {
             throw new Error(`Too many symbolic links encountered: ${normalizedPath}`);
         }
         const node = this.nodes.get(normalizedPath);
@@ -147,6 +179,7 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
 
         this.nodes.set(normalized, {
             type: 'file',
+            rawPath: this.resolveRawPath(filePath),
             content: storedContent,
             mtimeMs: Date.now(),
             size: byteSize,
@@ -223,23 +256,25 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
             this.ensureDirSync(this.getParentDir(normalizedDest));
             this.nodes.set(normalizedDest, {
                 type: 'file',
+                rawPath: this.resolveRawPath(dest),
                 content: typeof node.content === 'string' ? node.content : new Uint8Array(node.content),
                 mtimeMs: Date.now(),
                 size: node.size,
             });
         } else if (node.type === 'dir') {
             this.ensureDirSync(normalizedDest);
-            const prefix = `${resolvedSrc}/`;
+            const prefix: string = `${resolvedSrc}/`;
             for (const [key, n] of this.nodes.entries()) {
                 if (key.startsWith(prefix)) {
-                    const relative = key.slice(prefix.length);
-                    const destPath = `${normalizedDest}/${relative}`;
+                    const relative: string = key.slice(prefix.length);
+                    const destPath: string = `${normalizedDest}/${relative}`;
                     if (n.type === 'dir') {
                         this.ensureDirSync(destPath);
                     } else if (n.type === 'file') {
                         this.ensureDirSync(this.getParentDir(destPath));
                         this.nodes.set(destPath, {
                             type: 'file',
+                            rawPath: this.resolveRawPath(destPath),
                             content: typeof n.content === 'string' ? n.content : new Uint8Array(n.content),
                             mtimeMs: Date.now(),
                             size: n.size,
@@ -267,9 +302,20 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
         };
     }
 
+    private async resolvePathForLstat(p: string): Promise<string> {
+        const normalized: string = this.normalizePath(p);
+        const parent: string = this.getParentDir(normalized);
+        if (parent && parent !== normalized) {
+            const resolvedParent: string = await this.resolveSymlinkTarget(parent);
+            const baseName: string = path.posix.basename(normalized);
+            return path.posix.join(resolvedParent, baseName);
+        }
+        return normalized;
+    }
+
     async lstat(filePath: string): Promise<FileStat> {
-        const normalized = this.normalizePath(filePath);
-        const node = this.nodes.get(normalized);
+        const target: string = await this.resolvePathForLstat(filePath);
+        const node: MemoryNode | undefined = this.nodes.get(target);
         if (!node) {
             throw new Error(`ENOENT: no such file or directory, lstat '${filePath}'`);
         }
@@ -287,8 +333,8 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
     readdir(dirPath: string, options?: { withFileTypes?: false }): Promise<string[]>;
     readdir(dirPath: string, options?: { withFileTypes?: boolean }): Promise<FileEntry[] | string[]>;
     async readdir(dirPath: string, options?: { withFileTypes?: boolean }): Promise<FileEntry[] | string[]> {
-        const normalized = await this.resolveSymlinkTarget(this.normalizePath(dirPath));
-        const node = this.nodes.get(normalized);
+        const normalized: string = await this.resolveSymlinkTarget(this.normalizePath(dirPath));
+        const node: MemoryNode | undefined = this.nodes.get(normalized);
         if (!node) {
             throw new Error(`ENOENT: no such file or directory, scandir '${dirPath}'`);
         }
@@ -296,15 +342,17 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
             throw new Error(`ENOTDIR: not a directory, scandir '${dirPath}'`);
         }
 
-        const prefix = `${normalized}/`;
-        const directChildren = new Map<string, FileEntry>();
+        const prefix: string = `${normalized}/`;
+        const directChildren: Map<string, FileEntry> = new Map<string, FileEntry>();
+        const separatorRegex: RegExp = this.platform === 'win32' ? /[/\\]/ : /\//;
 
         for (const [key, n] of this.nodes.entries()) {
             if (key.startsWith(prefix) && key !== normalized) {
-                const subPath = key.slice(prefix.length);
-                const firstSegment = subPath.split('/')[0];
+                const subPath: string = key.slice(prefix.length);
+                const rawSubPath: string = n.rawPath.slice(node.rawPath.length).replace(/^[/\\]/, '');
+                const firstSegment: string = rawSubPath.split(separatorRegex)[0] || path.posix.basename(n.rawPath);
                 if (!directChildren.has(firstSegment)) {
-                    const isSubDir = subPath.includes('/') || n.type === 'dir';
+                    const isSubDir: boolean = subPath.includes('/') || n.type === 'dir';
                     directChildren.set(firstSegment, {
                         name: firstSegment,
                         isDirectory: () => isSubDir,
@@ -322,12 +370,13 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
     }
 
     async realpath(filePath: string): Promise<string> {
-        const normalized = this.normalizePath(filePath);
-        const resolved = await this.resolveSymlinkTarget(normalized);
-        if (!this.nodes.has(resolved)) {
+        const normalized: string = this.normalizePath(filePath);
+        const resolved: string = await this.resolveSymlinkTarget(normalized);
+        const node: MemoryNode | undefined = this.nodes.get(resolved);
+        if (!node) {
             throw new Error(`ENOENT: no such file or directory, realpath '${filePath}'`);
         }
-        return process.platform === 'win32' ? path.win32.normalize(resolved) : path.posix.normalize(resolved);
+        return this.platform === 'win32' ? path.win32.normalize(node.rawPath) : path.posix.normalize(node.rawPath);
     }
 
     async mkdtemp(prefix: string): Promise<string> {
@@ -401,10 +450,11 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
 
     /** 测试辅助：手动创建符号链接 */
     async symlink(target: string, linkPath: string): Promise<void> {
-        const normalizedLink = this.normalizePath(linkPath);
+        const normalizedLink: string = this.normalizePath(linkPath);
         this.ensureDirSync(this.getParentDir(normalizedLink));
         this.nodes.set(normalizedLink, {
             type: 'symlink',
+            rawPath: this.resolveRawPath(linkPath),
             target,
             mtimeMs: Date.now(),
         });

@@ -186,5 +186,34 @@ describe('MemoryFileSystemAdapter', () => {
             await vfs.writeFile('/file.txt', 'content');
             await expect(vfs.rename('/file.txt', '/dest-dir')).rejects.toThrow('EISDIR');
         });
+
+        it('显式大小写敏感策略控制', async () => {
+            const caseSensitiveFs = new MemoryFileSystemAdapter({}, { caseSensitive: true });
+            await caseSensitiveFs.writeFile('/test/File.txt', 'uppercase');
+            await caseSensitiveFs.writeFile('/test/file.txt', 'lowercase');
+
+            expect(await caseSensitiveFs.readFile('/test/File.txt')).toBe('uppercase');
+            expect(await caseSensitiveFs.readFile('/test/file.txt')).toBe('lowercase');
+
+            const caseInsensitiveFs = new MemoryFileSystemAdapter({}, { caseSensitive: false });
+            await caseInsensitiveFs.writeFile('/test/File.txt', 'uppercase');
+            await caseInsensitiveFs.writeFile('/test/file.txt', 'lowercase');
+
+            expect(await caseInsensitiveFs.readFile('/test/File.txt')).toBe('lowercase');
+            expect(await caseInsensitiveFs.readFile('/test/file.txt')).toBe('lowercase');
+        });
+
+        it('POSIX 环境下反斜杠作为文件名合法字符并与正斜杠层级保持独立身份', async () => {
+            const posixFs = new MemoryFileSystemAdapter({}, { platform: 'linux', caseSensitive: true });
+            await posixFs.writeFile('/workspace/a\\b.md', 'backslash-name');
+            await posixFs.writeFile('/workspace/a/b.md', 'nested-name');
+
+            expect(await posixFs.readFile('/workspace/a\\b.md')).toBe('backslash-name');
+            expect(await posixFs.readFile('/workspace/a/b.md')).toBe('nested-name');
+
+            const entries = await posixFs.readdir('/workspace');
+            expect(entries).toContain('a\\b.md');
+            expect(entries).toContain('a');
+        });
     });
 });
