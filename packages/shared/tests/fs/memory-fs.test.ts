@@ -215,5 +215,18 @@ describe('MemoryFileSystemAdapter', () => {
             expect(entries).toContain('a\\b.md');
             expect(entries).toContain('a');
         });
+
+        it('rename 文件后 readdir 与 realpath 准确返回目标路径的新名称', async () => {
+            const fs = new MemoryFileSystemAdapter();
+            await fs.writeFile('/cache/item.tmp', 'data');
+            await fs.rename('/cache/item.tmp', '/cache/item.json');
+
+            const entries = await fs.readdir('/cache');
+            expect(entries).toContain('item.json');
+            expect(entries).not.toContain('item.tmp');
+
+            const real = await fs.realpath('/cache/item.json');
+            expect(real.endsWith('item.json')).toBe(true);
+        });
     });
 });

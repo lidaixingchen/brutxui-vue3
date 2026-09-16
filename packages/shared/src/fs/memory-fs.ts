@@ -344,17 +344,19 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
 
         const prefix: string = `${normalized}/`;
         const directChildren: Map<string, FileEntry> = new Map<string, FileEntry>();
-        const separatorRegex: RegExp = this.platform === 'win32' ? /[/\\]/ : /\//;
 
         for (const [key, n] of this.nodes.entries()) {
             if (key.startsWith(prefix) && key !== normalized) {
                 const subPath: string = key.slice(prefix.length);
-                const rawSubPath: string = n.rawPath.slice(node.rawPath.length).replace(/^[/\\]/, '');
-                const firstSegment: string = rawSubPath.split(separatorRegex)[0] || path.posix.basename(n.rawPath);
-                if (!directChildren.has(firstSegment)) {
-                    const isSubDir: boolean = subPath.includes('/') || n.type === 'dir';
-                    directChildren.set(firstSegment, {
-                        name: firstSegment,
+                const isDirectChild: boolean = !subPath.includes('/');
+                const isSubDir: boolean = subPath.includes('/') || n.type === 'dir';
+                const segmentName: string = isDirectChild
+                    ? path.posix.basename(n.rawPath)
+                    : subPath.split('/')[0];
+
+                if (!directChildren.has(segmentName) || isDirectChild) {
+                    directChildren.set(segmentName, {
+                        name: segmentName,
                         isDirectory: () => isSubDir,
                         isFile: () => !isSubDir && n.type === 'file',
                         isSymbolicLink: () => !isSubDir && n.type === 'symlink',
@@ -388,24 +390,24 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
     }
 
     async rename(oldPath: string, newPath: string): Promise<void> {
-        const normalizedOld = this.normalizePath(oldPath);
-        const normalizedNew = this.normalizePath(newPath);
+        const normalizedOld: string = this.normalizePath(oldPath);
+        const normalizedNew: string = this.normalizePath(newPath);
 
         if (normalizedOld === normalizedNew) return;
 
-        const node = this.nodes.get(normalizedOld);
+        const node: MemoryNode | undefined = this.nodes.get(normalizedOld);
         if (!node) {
             throw new Error(`ENOENT: no such file or directory, rename '${oldPath}' -> '${newPath}'`);
         }
 
-        const existingDest = this.nodes.get(normalizedNew);
+        const existingDest: MemoryNode | undefined = this.nodes.get(normalizedNew);
 
         if (node.type === 'dir') {
             if (existingDest && existingDest.type !== 'dir') {
                 throw new Error(`ENOTDIR: not a directory, rename '${oldPath}' -> '${newPath}'`);
             }
             if (existingDest && existingDest.type === 'dir') {
-                const destPrefix = `${normalizedNew}/`;
+                const destPrefix: string = `${normalizedNew}/`;
                 for (const key of this.nodes.keys()) {
                     if (key.startsWith(destPrefix) && key !== normalizedNew) {
                         throw new Error(`ENOTEMPTY: directory not empty, rename '${oldPath}' -> '${newPath}'`);
@@ -416,8 +418,8 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
 
             this.ensureDirSync(this.getParentDir(normalizedNew));
 
-            const oldPrefix = `${normalizedOld}/`;
-            const newPrefix = `${normalizedNew}/`;
+            const oldPrefix: string = `${normalizedOld}/`;
+            const newPrefix: string = `${normalizedNew}/`;
             const keysToMove: Array<[string, MemoryNode]> = [];
 
             for (const [key, n] of this.nodes.entries()) {
@@ -431,10 +433,21 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
             }
 
             this.nodes.delete(normalizedOld);
+            node.rawPath = this.resolveRawPath(newPath);
             this.nodes.set(normalizedNew, node);
 
+            const oldRawBase: string = this.resolveRawPath(oldPath);
+            const newRawBase: string = this.resolveRawPath(newPath);
+            const oldRawPrefix: string = `${oldRawBase}/`;
+            const newRawPrefix: string = `${newRawBase}/`;
+
             for (const [key, n] of keysToMove) {
-                const subPath = key.slice(oldPrefix.length);
+                const subPath: string = key.slice(oldPrefix.length);
+                if (n.rawPath.startsWith(oldRawPrefix)) {
+                    n.rawPath = `${newRawPrefix}${n.rawPath.slice(oldRawPrefix.length)}`;
+                } else {
+                    n.rawPath = `${newRawBase}/${subPath}`;
+                }
                 this.nodes.set(`${newPrefix}${subPath}`, n);
             }
         } else {
@@ -444,6 +457,7 @@ export class MemoryFileSystemAdapter implements FileSystemAdapter {
 
             this.ensureDirSync(this.getParentDir(normalizedNew));
             this.nodes.delete(normalizedOld);
+            node.rawPath = this.resolveRawPath(newPath);
             this.nodes.set(normalizedNew, node);
         }
     }

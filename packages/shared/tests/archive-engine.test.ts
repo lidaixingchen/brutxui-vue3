@@ -1,6 +1,11 @@
 import path from 'node:path'
 import { describe, it, expect, beforeEach } from 'vitest'
-import { ArchiveEngine, resolvePlanInputPath } from '../../../scripts/docs/lib/archive-engine.mjs'
+import {
+  ArchiveEngine,
+  resolvePlanInputPath,
+  DEFAULT_MAX_ARCHIVE_TOPICS,
+  compareArchivePlanMetas,
+} from '../../../scripts/docs/lib/archive-engine.mjs'
 import { MemoryFileSystemAdapter } from '../../../scripts/docs/lib/doc-link-fs.mjs'
 
 describe('ArchiveEngine (方案自动归档与自愈核心引擎)', () => {
@@ -191,10 +196,10 @@ describe('ArchiveEngine (方案自动归档与自愈核心引擎)', () => {
     expect(newIndex).toContain('[活跃方案A](plans/cli/活跃方案A.md)')
     expect(newIndex).not.toContain('[待归档方案B](plans/core/待归档方案B.md)')
 
-    // 归档区应该有 2026 年度统计与主题名
+    // 归档区应该有 2026 年度统计与主题名（<= 5 篇不带“等”字）
     expect(newIndex).toContain('### 2026 年度落地方案')
     expect(newIndex).toContain('核心架构与基建（1 篇）')
-    expect(newIndex).toContain('待归档方案B等。')
+    expect(newIndex).toContain('待归档方案B。')
   })
 
   it('--dry-run 模式下不修改磁盘与文件树', async () => {
@@ -636,6 +641,134 @@ describe('ArchiveEngine (方案自动归档与自愈核心引擎)', () => {
       expect(await vfs.pathExists(`${ROOT}/docs/plans/core/dry-plan.md`)).toBe(true)
       expect(await vfs.pathExists(`${ROOT}/docs/archive/2026/core/dry-plan.md`)).toBe(false)
       expect(await vfs.readFile(`${ROOT}/docs/index.md`)).toBe(baseIndexContent)
+    })
+
+    it('归档区主题名按完工日期倒序收敛，超出上限时截断并以等字结尾', async () => {
+      const planOld = [
+        '---',
+        '方案类型: 核心',
+        '状态: archived',
+        '日期: 2026-07-01',
+        '完工日期: 2026-08-01',
+        '---',
+        '# 旧方案',
+      ].join('\n')
+
+      const planMid = [
+        '---',
+        '方案类型: 核心',
+        '状态: archived',
+        '日期: 2026-08-10',
+        '完工日期: 2026-09-10',
+        '---',
+        '# 中期方案',
+      ].join('\n')
+
+      const planNew = [
+        '---',
+        '方案类型: 核心',
+        '状态: archived',
+        '日期: 2026-09-01',
+        '完工日期: 2026-09-15',
+        '---',
+        '# 最新方案',
+      ].join('\n')
+
+      await vfs.writeFile(`${ROOT}/docs/archive/2026/core/旧方案.md`, planOld)
+      await vfs.writeFile(`${ROOT}/docs/archive/2026/core/中期方案.md`, planMid)
+      await vfs.writeFile(`${ROOT}/docs/archive/2026/core/最新方案.md`, planNew)
+      await vfs.writeFile(`${ROOT}/docs/index.md`, baseIndexContent)
+
+      // 配置 maxArchiveTopics 为 2
+      const engine = new ArchiveEngine({
+        rootDir: ROOT,
+        fs: vfs,
+        now: mockNow,
+        git: false,
+        maxArchiveTopics: 2,
+      })
+
+      const refreshRes = await engine.refreshIndex()
+      expect(refreshRes.changed).toBe(true)
+
+      const updatedIndex = await vfs.readFile(`${ROOT}/docs/index.md`)
+
+      // 总篇数仍为 3 篇
+      expect(updatedIndex).toContain('核心架构与基建（3 篇）')
+      // 主题截断为最新的 2 个并带“等。”，旧方案被截断省略
+      expect(updatedIndex).toContain('最新、中期等。')
+      expect(updatedIndex).not.toContain('旧')
+    })
+
+    it('恰好等于上限阈值时完整罗列全部主题并以句号结尾（不带“等”字）', async () => {
+      const planA = '---\n方案类型: 核心\n状态: archived\n日期: 2026-09-01\n完工日期: 2026-09-01\n---\n# 方案A'
+      const planB = '---\n方案类型: 核心\n状态: archived\n日期: 2026-09-02\n完工日期: 2026-09-02\n---\n# 方案B'
+
+      await vfs.writeFile(`${ROOT}/docs/archive/2026/core/方案A.md`, planA)
+      await vfs.writeFile(`${ROOT}/docs/archive/2026/core/方案B.md`, planB)
+      await vfs.writeFile(`${ROOT}/docs/index.md`, baseIndexContent)
+
+      const engine = new ArchiveEngine({ rootDir: ROOT, fs: vfs, now: mockNow, git: false, maxArchiveTopics: 2 })
+      await engine.refreshIndex()
+
+      const updatedIndex = await vfs.readFile(`${ROOT}/docs/index.md`)
+      expect(updatedIndex).toContain('- **[核心架构与基建（2 篇）](archive/2026/core/)**：方案B、方案A。')
+      expect(updatedIndex).not.toContain('等。')
+    })
+
+    it('archive 两阶段事务中，内存注入的新归档方案参与排序并在超出上限时正确触发截断', async () => {
+      const planOld1 = '---\n方案类型: 核心\n状态: archived\n日期: 2026-08-01\n完工日期: 2026-08-01\n---\n# 老方案1'
+      const planOld2 = '---\n方案类型: 核心\n状态: archived\n日期: 2026-08-02\n完工日期: 2026-08-02\n---\n# 老方案2'
+      const newActivePlan = '---\n方案类型: 核心\n状态: active\n日期: 2026-09-10\n---\n# 最新活跃方案'
+
+      await vfs.writeFile(`${ROOT}/docs/archive/2026/core/老方案1.md`, planOld1)
+      await vfs.writeFile(`${ROOT}/docs/archive/2026/core/老方案2.md`, planOld2)
+      await vfs.writeFile(`${ROOT}/docs/plans/core/最新活跃方案.md`, newActivePlan)
+      await vfs.writeFile(`${ROOT}/docs/index.md`, baseIndexContent)
+
+      const engine = new ArchiveEngine({ rootDir: ROOT, fs: vfs, now: mockNow, git: false, maxArchiveTopics: 2 })
+      await engine.archive('docs/plans/core/最新活跃方案.md')
+
+      const updatedIndex = await vfs.readFile(`${ROOT}/docs/index.md`)
+      expect(updatedIndex).toContain('- **[核心架构与基建（3 篇）](archive/2026/core/)**：最新活跃、老方案2等。')
+      expect(updatedIndex).not.toContain('老方案1')
+    })
+
+    it('compareArchivePlanMetas 纯函数：日期倒序、zh-CN 中文拼音平局决胜与全序兜底', () => {
+      // 1. 日期不同：最新日期排在前面
+      expect(
+        compareArchivePlanMetas(
+          { date: '2026-09-01', topic: 'B', file: 'b.md' },
+          { date: '2026-09-02', topic: 'A', file: 'a.md' }
+        )
+      ).toBeGreaterThan(0) // b 排在 a 后面
+
+      // 2. 日期相同：按中文拼音倒序排（shǒu > sān > èr）
+      expect(
+        compareArchivePlanMetas(
+          { date: '2026-09-12', topic: '第三批', file: '3.md' },
+          { date: '2026-09-12', topic: '首批', file: '1.md' }
+        )
+      ).toBeGreaterThan(0) // 首批 排在 第三批 前面
+
+      // 3. 日期与主题完全相同：按文件路径兜底降序
+      expect(
+        compareArchivePlanMetas(
+          { date: '2026-09-12', topic: '同名', file: 'alpha.md' },
+          { date: '2026-09-12', topic: '同名', file: 'beta.md' }
+        )
+      ).toBeGreaterThan(0) // beta 排在 alpha 前面
+    })
+
+    it('maxArchiveTopics 对非正整数进行防空并回退到 DEFAULT_MAX_ARCHIVE_TOPICS', () => {
+      const engineDefault = new ArchiveEngine({ rootDir: ROOT, fs: vfs, git: false })
+      expect(engineDefault.maxArchiveTopics).toBe(DEFAULT_MAX_ARCHIVE_TOPICS)
+
+      const engineZero = new ArchiveEngine({ rootDir: ROOT, fs: vfs, git: false, maxArchiveTopics: 0 })
+      expect(engineZero.maxArchiveTopics).toBe(DEFAULT_MAX_ARCHIVE_TOPICS)
+
+      const engineNegative = new ArchiveEngine({ rootDir: ROOT, fs: vfs, git: false, maxArchiveTopics: -1 })
+      expect(engineNegative.maxArchiveTopics).toBe(DEFAULT_MAX_ARCHIVE_TOPICS)
     })
   })
 })

@@ -82,3 +82,23 @@
   - 覆盖写入（`overwrite: true`）前自动暂存被覆盖文件原始内容快照；
   - 遇到异常时执行无损自动回滚（删除新建文件、精准还原被覆盖文件、恢复 `index.ts` 导出索引）。
 
+---
+
+## 文档治理与知识地图自愈引擎 (Documentation Governance & Knowledge Map Engine)
+
+### 归档方案时间戳排序器 (Archive Temporal Sorter)
+- **定义**：负责在派生与刷新全局知识地图（`docs/index.md`）时，对历史沉淀归档库（`docs/archive/`）内各领域方案进行确定性时间线排序的纯函数 Seam（`compareArchivePlanMetas`）。
+- **归属**：`scripts/docs/lib/archive-engine.mjs`。
+- **职责**：
+  - 第一优先级：基于方案 Frontmatter 中的 `完工日期`（回退 `日期`）执行时间倒序排列（最新优先）。
+  - 第二优先级：在日期相同时，显式使用 `'zh-CN'` 中文拼音规则对方案主题名执行降序排列，消除 Windows（默认拼音）与 Linux CI 容器（默认 Unicode 码点）因默认区域设置差异导致的排序漂移。
+  - 第三优先级：在主题名仍相同时，使用相对文件路径倒序兜底，构成严格全序关系，保证构建结果在全新 clone 与 CI 环境下绝对确定且幂等。
+
+### 知识地图主题收敛器 (Knowledge Map Topics Truncator)
+- **定义**：防止知识地图归档区单行文本随工程演进无上限膨胀的展示收敛机制。
+- **职责**：
+  - 受控于单一常量 `DEFAULT_MAX_ARCHIVE_TOPICS = 5`（支持引擎选项自定义注入）。
+  - 维持 `CLI`、`UI`、`Styles`、`Core` 四大领域分类及其总篇数统计（`N 篇`）。
+  - 当领域归档方案超过阈值时截取最新 5 个主题名并以 `等。` 结尾；未超出时全部列出并以 `。` 结尾，保障文档导航紧凑度与可读性。
+
+

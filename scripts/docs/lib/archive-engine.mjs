@@ -24,6 +24,8 @@ import { DiskFileSystemAdapter } from './doc-link-fs.mjs'
 
 export const DOMAINS = ['cli', 'ui', 'styles', 'core']
 
+export const DEFAULT_MAX_ARCHIVE_TOPICS = 5
+
 export const VALID_STATUSES = ['draft', 'active', 'done', 'archived']
 export const VALID_STATUS_SET = new Set(VALID_STATUSES)
 
@@ -62,6 +64,24 @@ export function normalizeStatus(raw) {
     if (cleaned.startsWith(s)) return s
   }
   return cleaned
+}
+
+/**
+ * 归档方案时间戳排序器（纯函数 Seam）
+ * 排序优先级：
+ * 1. 完工日期（或日期）倒序（最新优先）
+ * 2. 完工日期相同时，按主题名显式使用 zh-CN 中文拼音倒序，保证跨操作系统与 CI 环境绝对一致
+ * 3. 若主题名仍相同，使用相对文件路径倒序兜底，构成严格全序关系
+ */
+export function compareArchivePlanMetas(a, b) {
+  if (a.date !== b.date) {
+    return b.date.localeCompare(a.date)
+  }
+  const topicDiff = b.topic.localeCompare(a.topic, 'zh-CN')
+  if (topicDiff !== 0) {
+    return topicDiff
+  }
+  return (b.file || '').localeCompare(a.file || '')
 }
 
 export function parseFrontmatter(content) {
@@ -248,6 +268,10 @@ export class ArchiveEngine {
     this.dryRun = Boolean(options.dryRun)
     this.now = options.now instanceof Date ? options.now : new Date()
     this.git = options.git !== undefined ? options.git : true
+    this.maxArchiveTopics =
+      typeof options.maxArchiveTopics === 'number' && options.maxArchiveTopics > 0
+        ? Math.floor(options.maxArchiveTopics)
+        : DEFAULT_MAX_ARCHIVE_TOPICS
   }
 
   async getRealpath(targetPath) {
@@ -573,22 +597,52 @@ export class ArchiveEngine {
       for (const d of DOMAINS) {
         const meta = DOMAIN_META[d]
         const rawFiles = dMap.get(d) || []
-        const files = rawFiles.slice().sort()
-        const count = files.length
+        const count = rawFiles.length
 
-        // 提取归档目录下真实文件的主题名，剥离“方案”或“设计”后缀
-        const topicNames = files.map((f) => {
-          const base = path.basename(f, '.md')
-          return base.replace(/(方案|设计)$/, '').trim()
-        })
-
-        const topicStr = topicNames.length > 0 ? `${topicNames.join('、')}等。` : '暂无归档。'
-
-        if (count > 0) {
-          archiveLines.push(`- **[${meta.archiveTitle}（${count} 篇）](archive/${year}/${d}/)**：${topicStr}`)
-        } else {
+        if (count === 0) {
           archiveLines.push(`- **${meta.archiveTitle}（0 篇）**：暂无归档。`)
+          continue
         }
+
+        // 提取归档目录下方案元数据，按完工日期（或日期）倒序排序
+        const planMetas = await Promise.all(
+          rawFiles.map(async (f) => {
+            let date = ''
+            if (currentMigratingPlan && f === currentMigratingPlan.newRel) {
+              date = currentMigratingPlan.completionDate || currentMigratingPlan.date || ''
+            } else {
+              try {
+                const fileContent = await this.fs.readFile(path.resolve(this.rootDir, f))
+                const fm = parseFrontmatter(fileContent)
+                date = fm?.completionDate || fm?.date || ''
+              } catch {
+                // 异常降级为空日期
+              }
+            }
+            const base = path.basename(f, '.md')
+            const topic = base.replace(/(方案|设计)$/, '').trim() || base
+            return {
+              file: f,
+              date,
+              topic,
+            }
+          })
+        )
+
+        // 使用归档方案时间戳排序器（纯函数 Seam）排序
+        planMetas.sort(compareArchivePlanMetas)
+
+        const displayMetas = planMetas.slice(0, this.maxArchiveTopics)
+        const topicNames = displayMetas.map((m) => m.topic)
+
+        let topicStr = '暂无归档。'
+        if (count > this.maxArchiveTopics) {
+          topicStr = `${topicNames.join('、')}等。`
+        } else {
+          topicStr = `${topicNames.join('、')}。`
+        }
+
+        archiveLines.push(`- **[${meta.archiveTitle}（${count} 篇）](archive/${year}/${d}/)**：${topicStr}`)
       }
       archiveLines.push('')
     }
@@ -677,6 +731,8 @@ export class ArchiveEngine {
       newRel: pre.targetRelPath,
       year: pre.deliveryYear,
       domain: pre.domain,
+      completionDate: todayStr,
+      date: pre.fm?.date || todayStr,
     })
 
     const result = {
