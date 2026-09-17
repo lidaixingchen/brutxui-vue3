@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="apps/docs/public/favicon.svg" alt="Brutx Logo" width="120" height="120" />
+  <img src="../apps/docs/public/favicon.svg" alt="Brutx Logo" width="120" height="120" />
 
   # BrutxUI
 
@@ -80,6 +80,8 @@ npx brutx-vue@latest add --all --overwrite
 ```
 
 > **Upgrade Tip:** Always use `npx brutx-vue@latest` to ensure you're running the latest CLI version. When upgrading components, adding `--overwrite` will overwrite local modifications — make sure to back up or use version control beforehand.
+>
+> **Supply Chain Security:** The official Registry manifest is signed with Ed25519, and the CLI includes built-in official public keys for zero-config verification out of the box; use `--require-signature` to enforce verification. The default source uses GitHub Release assets (built and uploaded during release), and `--offline` allows complete offline usage with local cache.
 
 ---
 
@@ -114,66 +116,6 @@ import { BrutxUIPlugin, en } from 'brutx-ui-vue'
 
 app.use(BrutxUIPlugin, { locale: en })
 ```
-
----
-
-## Supported Components & Blocks
-
-BrutxUI includes components and layout blocks needed for common product UIs:
-
-### Layout Blocks & Templates
-
-#### Landing Page / Marketing
-
-`BrutalistHero`, `PricingSection`
-
-`PricingSection` is the unified pricing implementation for lifetime and subscription pricing.
-
-#### Dashboard
-
-`DashboardShell`, `DataTable`
-
-#### Pages
-
-`AuthCard`
-
-#### Navigation
-
-`HeaderSection`, `FooterSection`
-
-#### Cards / Components
-
-`Result`, `Upload`
-
-#### Interactive
-
-`FeedbackForm`, `CookieConsent`, `Stepper`
-
-### Atomic Components
-
-#### Form
-
-`Button`, `Input`, `NumberInput`, `HardcoreInput`, `Textarea`, `Checkbox`, `Switch`, `RadioGroup`, `Select`, `Combobox`, `Slider`, `Toggle`, `ToggleGroup`, `TagsInput`, `Calendar`, `Form`
-
-#### Layout & Container
-
-`Card`, `Separator`, `ScrollArea`, `Sheet`, `Tabs`, `Accordion`, `Breadcrumb`, `Stepper`, `Timeline`, `Carousel`, `TreeView`
-
-#### Data Display
-
-`Table`, `Badge`, `Avatar`, `Progress`, `Pagination`, `Counter`, `Kbd`, `CodeBlock`, `Marquee`, `BeforeAfter`, `ChatBubble`, `Skeleton`, `Spinner`
-
-#### Feedback & Overlay
-
-`Dialog`, `AlertDialog`, `Alert`, `Toast`, `Popover`, `Tooltip`, `DropdownMenu`, `Command`
-
-#### Neo-Brutalist Specials
-
-`Card3D`, `GlitchText`, `ScratchCard`, `SketchyChart`, `CopyToClipboard`, `KanbanBoard`
-
-#### Blocks / Pages
-
-`PricingSection`, `DashboardShell`, `BrutalistHero`, `AuthCard`, `HeaderSection`, `FooterSection`, `Upload`, `DataTable`, `Stepper`, `Result`, `CookieConsent`, `Tabs`, `FeedbackForm`
 
 ---
 
