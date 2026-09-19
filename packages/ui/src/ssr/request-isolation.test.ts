@@ -6,6 +6,7 @@ import { useTheme, provideTheme, createTheme } from '../composables/useTheme'
 import { useMessage } from '../composables/useMessage'
 import { mountOverlay } from '../lib/render-imperative'
 import { BrutxUIPlugin, getGlobalAppContext } from '../plugin'
+import { renderToStringChecked, withSsrDiagnostics } from '../test/ssr-render'
 
 describe('SSR Request Isolation & Context Guards', () => {
     it('sequential SSR requests must not leak toast state across applications', async () => {
@@ -25,11 +26,11 @@ describe('SSR Request Isolation & Context Guards', () => {
         })
 
         const appA = createSSRApp(AppA)
-        const htmlA = await renderToString(appA)
+        const htmlA = await renderToStringChecked(appA)
         expect(htmlA).toContain('Request-A-Token')
 
         const appB = createSSRApp(AppB)
-        const htmlB = await renderToString(appB)
+        const htmlB = await renderToStringChecked(appB)
         expect(htmlB).not.toContain('Request-A-Token')
         expect(htmlB).toContain('empty')
     })
@@ -60,13 +61,17 @@ describe('SSR Request Isolation & Context Guards', () => {
         const appA = createSSRApp(AppA)
         const appB = createSSRApp(AppB)
 
-        const promiseA = renderToString(appA)
-        const htmlB = await renderToString(appB)
-        expect(htmlB).toContain('Concurrent-B')
-        expect(htmlB).not.toContain('Concurrent-A')
+        const htmlA = await withSsrDiagnostics([appA, appB], async () => {
+            const promiseA = renderToString(appA)
+            const htmlB = await renderToString(appB)
+            expect(htmlB).toContain('Concurrent-B')
+            expect(htmlB).not.toContain('Concurrent-A')
 
-        releaseBarrierA!()
-        const htmlA = await promiseA
+            releaseBarrierA!()
+            const htmlA = await promiseA
+            return htmlA
+        })
+
         expect(htmlA).toContain('Concurrent-A')
         expect(htmlA).not.toContain('Concurrent-B')
     })
@@ -94,7 +99,7 @@ describe('SSR Request Isolation & Context Guards', () => {
         })
 
         const app = createSSRApp(App)
-        const html = await renderToString(app)
+        const html = await renderToStringChecked(app)
         expect(html).toContain('Shared-Sibling')
     })
 
@@ -139,11 +144,11 @@ describe('SSR Request Isolation & Context Guards', () => {
         })
 
         const appA = createSSRApp(AppA)
-        const htmlA = await renderToString(appA)
+        const htmlA = await renderToStringChecked(appA)
         expect(htmlA).toContain('mono')
 
         const appB = createSSRApp(AppB)
-        const htmlB = await renderToString(appB)
+        const htmlB = await renderToStringChecked(appB)
         expect(htmlB).toContain('classic')
         expect(htmlB).not.toContain('mono')
     })
@@ -171,7 +176,7 @@ describe('SSR Request Isolation & Context Guards', () => {
         })
 
         const app = createSSRApp(App)
-        const html = await renderToString(app)
+        const html = await renderToStringChecked(app)
         expect(html).toContain('Local-Override')
         expect(html).toContain('empty-root')
     })
@@ -188,7 +193,7 @@ describe('SSR Request Isolation & Context Guards', () => {
 
         const app1 = createSSRApp(App)
         app1.use(BrutxUIPlugin, { theme: { defaultTheme: 'pastel' } })
-        const html1 = await renderToString(app1)
+        const html1 = await renderToStringChecked(app1)
         expect(html1).toContain('Plugin-Toast-pastel')
 
         // Server guard: globalAppContext must remain null in SSR
@@ -234,7 +239,7 @@ describe('SSR Request Isolation & Context Guards', () => {
         })
 
         const app = createSSRApp(App)
-        const html = await renderToString(app)
+        const html = await renderToStringChecked(app)
         expect(html).toContain('pastel:dark')
     })
 
@@ -253,7 +258,7 @@ describe('SSR Request Isolation & Context Guards', () => {
         })
 
         const app = createSSRApp(App)
-        const html = await renderToString(app)
+        const html = await renderToStringChecked(app)
         expect(html).toContain('rendered')
     })
 })

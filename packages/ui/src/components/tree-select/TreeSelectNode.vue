@@ -89,13 +89,26 @@ function getVisibleTreeItems(): HTMLElement[] {
 function focusAdjacent(direction: -1 | 1) {
     const doc = getDocument()
     if (!doc) return
-    const items = getVisibleTreeItems()
-    if (items.length === 0) return
+    const tree = doc.activeElement?.closest('[role="tree"]')
+    if (!tree) return
+    const allItems = Array.from(tree.querySelectorAll<HTMLElement>('[role="treeitem"]'))
+    if (allItems.length === 0) return
     const activeEl = doc.activeElement as HTMLElement | null
-    const currentIndex = activeEl ? items.indexOf(activeEl) : -1
-    const nextIndex = currentIndex + direction
-    if (nextIndex >= 0 && nextIndex < items.length) {
-        items[nextIndex].focus()
+    const currentIndex = activeEl ? allItems.indexOf(activeEl) : -1
+    let nextIndex = currentIndex < 0
+        ? (direction === 1 ? 0 : -1)
+        : currentIndex + direction
+
+    while (
+        nextIndex >= 0 &&
+        nextIndex < allItems.length &&
+        allItems[nextIndex].getAttribute('aria-disabled') === 'true'
+    ) {
+        nextIndex += direction
+    }
+
+    if (nextIndex >= 0 && nextIndex < allItems.length) {
+        allItems[nextIndex].focus()
     }
 }
 
@@ -104,9 +117,16 @@ function focusParent() {
     if (!doc) return
     const activeEl = doc.activeElement as HTMLElement | null
     if (!activeEl) return
-    const currentItem = activeEl.closest('[role="treeitem"]')
-    if (!currentItem) return
-    const parentGroup = currentItem.parentElement?.closest('[role="treeitem"]')
+    let currentItem = activeEl.closest('[role="treeitem"]')
+    if (!(currentItem instanceof HTMLElement)) return
+    let parentGroup = currentItem.parentElement?.closest('[role="treeitem"]')
+    while (
+        parentGroup instanceof HTMLElement &&
+        parentGroup.getAttribute('aria-disabled') === 'true'
+    ) {
+        currentItem = parentGroup
+        parentGroup = currentItem.parentElement?.closest('[role="treeitem"]')
+    }
     if (parentGroup instanceof HTMLElement) parentGroup.focus()
 }
 
@@ -119,12 +139,23 @@ function focusFirstChild() {
     if (!currentItem) return
     const childGroup = currentItem.querySelector('[role="group"]')
     if (childGroup) {
-        const firstChild = childGroup.querySelector('[role="treeitem"]')
-        if (firstChild instanceof HTMLElement) firstChild.focus()
+        const firstChild = Array.from(childGroup.children)
+            .filter((item): item is HTMLElement => item instanceof HTMLElement && item.getAttribute('role') === 'treeitem')
+            .find((item) => item.getAttribute('aria-disabled') !== 'true')
+        if (firstChild) firstChild.focus()
     }
 }
 
 function handleKeydown(e: KeyboardEvent) {
+    const isTreeKey = e.key === 'Enter' ||
+        e.key === ' ' ||
+        e.key === 'ArrowRight' ||
+        e.key === 'ArrowLeft' ||
+        e.key === 'ArrowDown' ||
+        e.key === 'ArrowUp' ||
+        e.key === 'Home' ||
+        e.key === 'End'
+    if (isTreeKey) e.stopPropagation()
     // 禁用节点仅拦截 Enter/Space 触发类按键，导航类按键（方向键/Home/End）仍可移走焦点
     if (props.node.disabled && (e.key === 'Enter' || e.key === ' ')) return
     switch (e.key) {

@@ -45,6 +45,8 @@ const active = ref('1')
 
 设置 `mode="horizontal"` 可以调整菜单布局为水平横排。在此模式下，嵌套的 `SubMenu` 会以悬浮框（绝对定位）的形式显示。
 
+指针进入或离开子菜单时，展开与收起使用短暂延迟；快速移回会取消待处理的收起动作。按 Escape、选择菜单项、点击外部、禁用或卸载时会清理待处理的悬停动作。
+
 ```vue
 <script setup>
 import { ref } from 'vue'
@@ -139,4 +141,3 @@ const active = ref('home')
 - **键盘操作**：支持使用 `Enter` 或 `Space` 键激活 `MenuItem` 或展开/收起 `SubMenu`。
 - **ARIA 属性**：根组件自动设置 `role="menubar"`，各菜单项使用 `role="menuitem"`。子菜单触发器自动管理 `aria-haspopup="true"` 和 `aria-expanded` 属性。
 - **动效降级**：垂直模式下的折叠动画支持 `prefers-reduced-motion` 自动降级（如适用）。
-

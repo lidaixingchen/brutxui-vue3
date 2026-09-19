@@ -7,6 +7,8 @@ export interface MenuItemEntry {
     isSubMenuTrigger?: boolean
 }
 
+export const SUB_MENU_HOVER_DELAY_MS = 150
+
 export interface MenuContext {
     activeIndex: Ref<string>
     focusedIndex: Ref<string | null>
