@@ -45,6 +45,8 @@ const active = ref('1')
 
 Set `mode="horizontal"` to align items horizontally. Under horizontal mode, nested `SubMenu` lists will display as absolutely-positioned hover dropdowns instead of collapsing inline.
 
+Opening and closing on hover use a short delay. Moving back into the submenu cancels a pending close. Escape, item selection, an outside click, disabling, or unmounting clears pending hover actions.
+
 ```vue
 <script setup>
 import { ref } from 'vue'
@@ -139,4 +141,3 @@ Set `router` to `true` to auto-push routes on click. If `route` prop is not expl
 - **Keyboard Interaction**: Supports using `Enter` or `Space` keys to select `MenuItem` or expand/collapse `SubMenu`.
 - **ARIA Attributes**: The root component automatically sets `role="menubar"`, and each menu item sets `role="menuitem"`. The submenu trigger automatically manages `aria-haspopup="true"` and `aria-expanded` attributes.
 - **Reduced Motion**: Fold animation in vertical mode respects `prefers-reduced-motion` settings and automatically downgrades (if applicable).
-

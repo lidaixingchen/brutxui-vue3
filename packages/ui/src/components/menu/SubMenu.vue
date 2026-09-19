@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, onUnmounted, provide, ref, watch } from 'vue'
 import { ChevronDown } from '@lucide/vue'
-import { MENU_KEY } from './menu-types'
+import { MENU_KEY, SUB_MENU_HOVER_DELAY_MS } from './menu-types'
 import { hasDocument, getDocument } from '@/lib/env'
 import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 
@@ -39,6 +39,7 @@ const isHovered = ref(false)
 const isOpenClick = ref(false)
 const rootRef = ref<HTMLElement | null>(null)
 const triggerRef = ref<HTMLElement | null>(null)
+const hoverTimer = ref<ReturnType<typeof setTimeout> | null>(null)
 
 const isOpened = computed(() => {
     if (isVertical.value) {
@@ -78,7 +79,7 @@ function unregisterChild(idx: string) {
 
 function notifyItemSelected() {
     if (!isVertical.value) {
-        isOpenClick.value = false
+        resetHorizontalState()
         context?.focusItem(props.index)
     }
     parentSubMenu?.notifyItemSelected()
@@ -88,7 +89,7 @@ function closeAndFocusTrigger() {
     if (isVertical.value) {
         context?.closeSubMenu(props.index)
     } else {
-        isOpenClick.value = false
+        resetHorizontalState()
         context?.focusItem(props.index)
     }
 }
@@ -111,6 +112,27 @@ function registerTrigger() {
     }
 }
 
+function clearHoverTimer(): void {
+    if (hoverTimer.value !== null) {
+        clearTimeout(hoverTimer.value)
+        hoverTimer.value = null
+    }
+}
+
+function resetHorizontalState(): void {
+    clearHoverTimer()
+    isHovered.value = false
+    isOpenClick.value = false
+}
+
+function scheduleHoverState(nextState: boolean): void {
+    clearHoverTimer()
+    hoverTimer.value = setTimeout(() => {
+        isHovered.value = nextState
+        hoverTimer.value = null
+    }, SUB_MENU_HOVER_DELAY_MS)
+}
+
 onMounted(() => {
     if (parentSubMenu) {
         parentSubMenu.registerChild(props.index)
@@ -125,6 +147,9 @@ onMounted(() => {
 
 watch(() => props.disabled, () => {
     registerTrigger()
+    if (props.disabled) {
+        resetHorizontalState()
+    }
 })
 
 watch(
@@ -158,6 +183,7 @@ watch(
 )
 
 onUnmounted(() => {
+    clearHoverTimer()
     context?.unregisterSubMenu(props.index)
     context?.unregisterItem(props.index)
     if (parentSubMenu) {
@@ -217,13 +243,21 @@ const arrowClasses = computed(() =>
 )
 
 function handleMouseEnter() {
-    if (isVertical.value) return
-    isHovered.value = true
+    if (isVertical.value || props.disabled) return
+    if (isHovered.value) {
+        clearHoverTimer()
+        return
+    }
+    scheduleHoverState(true)
 }
 
 function handleMouseLeave() {
     if (isVertical.value) return
-    isHovered.value = false
+    if (!isHovered.value) {
+        clearHoverTimer()
+        return
+    }
+    scheduleHoverState(false)
 }
 
 function handleTriggerClick() {
@@ -288,20 +322,20 @@ function handleTriggerKeydown(e: KeyboardEvent) {
 
 function handleDocumentClick(event: MouseEvent) {
     if (isVertical.value) return
-    if (!isOpenClick.value) return
+    if (!isOpened.value && hoverTimer.value === null) return
     const target = event.target
     if (!(target instanceof Node)) return
     if (rootRef.value && !rootRef.value.contains(target)) {
-        isOpenClick.value = false
+        resetHorizontalState()
     }
 }
 
 function handleDocumentKeydown(event: KeyboardEvent) {
     if (isVertical.value) return
-    if (!isOpenClick.value) return
+    if (!isOpened.value && hoverTimer.value === null) return
     if (event.key === 'Escape') {
         if (rootRef.value?.querySelector('.absolute [aria-expanded="true"]')) return
-        isOpenClick.value = false
+        resetHorizontalState()
         context?.focusItem(props.index)
     }
 }

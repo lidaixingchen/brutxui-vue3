@@ -17,8 +17,7 @@
  * under src/composables/.
  */
 import { describe, it, expect } from 'vitest'
-import { renderToString } from '@vue/server-renderer'
-import { createSSRApp, h, defineComponent, ref, type Component } from 'vue'
+import { createSSRApp, h, defineComponent, ref, type Component, type VNode } from 'vue'
 import {
     DialogRoot,
     AlertDialogRoot,
@@ -40,12 +39,13 @@ import {
     ToastProvider,
 } from 'reka-ui'
 import * as BrutxUI from '../index'
+import { renderToStringChecked } from '../test/ssr-render'
 
 async function renderComponent(comp: Component, props?: Record<string, unknown>): Promise<string> {
     const app = createSSRApp({
         render: () => h(comp, props),
     })
-    return renderToString(app)
+    return renderToStringChecked(app)
 }
 
 async function renderWithProvider(
@@ -53,12 +53,82 @@ async function renderWithProvider(
     provider: Component,
     providerProps?: Record<string, unknown>,
     compProps?: Record<string, unknown>,
+    slotText?: string,
 ): Promise<string> {
     const app = createSSRApp({
-        render: () => h(provider, providerProps || {}, () => h(comp, compProps)),
+        render: () => h(
+            provider,
+            providerProps || {},
+            () => h(comp, compProps, slotText === undefined ? undefined : () => slotText),
+        ),
     })
-    return renderToString(app)
+    return renderToStringChecked(app)
 }
+
+function defineRenderRoot(render: () => VNode): Component {
+    return defineComponent({ render })
+}
+
+type ColorPickerEmit = {
+    (event: 'open' | 'close'): void
+    (event: 'change' | 'update:modelValue', value: string | null): void
+}
+
+type DatePickerEmit = {
+    (event: 'open' | 'close'): void
+    (event: 'change' | 'update:modelValue', value: Date | null): void
+}
+
+const emitColorPicker: ColorPickerEmit = (
+    _event: 'open' | 'close' | 'change' | 'update:modelValue',
+    _value?: string | null,
+): void => undefined
+
+const emitDatePicker: DatePickerEmit = (
+    _event: 'open' | 'close' | 'change' | 'update:modelValue',
+    _value?: Date | null,
+): void => undefined
+
+describe('SSR diagnostics guard', () => {
+    it('propagates ordinary render errors', async () => {
+        const app = createSSRApp({
+            render: () => {
+                throw new Error('fixture render failure')
+            },
+        })
+
+        await expect(renderToStringChecked(app)).rejects.toThrow('fixture render failure')
+    })
+
+    it('fails on console warnings and restores the console listener', async () => {
+        const originalWarn = console.warn
+        const app = createSSRApp(defineComponent({
+            setup() {
+                console.warn('fixture console warning')
+                return () => h('div', 'warning')
+            },
+        }))
+
+        await expect(renderToStringChecked(app)).rejects.toThrow(/console\.warn: fixture console warning/)
+        expect(console.warn).toBe(originalWarn)
+    })
+
+    it('fails on Vue warnings and restores the app warning handler', async () => {
+        const app = createSSRApp(defineComponent({
+            props: {
+                requiredLabel: { type: String, required: true },
+            },
+            setup() {
+                return () => h('div')
+            },
+        }))
+        const originalWarnHandler = () => undefined
+        app.config.warnHandler = originalWarnHandler
+
+        await expect(renderToStringChecked(app)).rejects.toThrow(/vue: Missing required prop: "requiredLabel"/)
+        expect(app.config.warnHandler).toBe(originalWarnHandler)
+    })
+})
 
 // ---------------------------------------------------------------------------
 // Layer 1a: Simple component rendering smoke tests
@@ -93,7 +163,7 @@ describe('SSR smoke: simple components', () => {
         { name: 'Timeline', comp: BrutxUI.Timeline, expectContains: '<div' },
         { name: 'Result', comp: BrutxUI.Result, expectContains: '<div' },
         { name: 'Loading', comp: BrutxUI.Loading, expectContains: '<div' },
-        { name: 'CopyToClipboard', comp: BrutxUI.CopyToClipboard, expectContains: '<' },
+        { name: 'CopyToClipboard', comp: BrutxUI.CopyToClipboard, expectContains: '<', props: { text: 'Copy me' } },
         { name: 'Statistic', comp: BrutxUI.Statistic, expectContains: '<div', props: { value: 12345 } },
         { name: 'Countdown', comp: BrutxUI.Countdown, expectContains: '<div', props: { value: 1700000000000 } },
 
@@ -135,7 +205,7 @@ describe('SSR smoke: simple components', () => {
         { name: 'RadioGroup', comp: BrutxUI.RadioGroup, expectContains: '<' },
         // 注：RadioGroupItem 需要 RadioGroupRoot context，移至 provider-wrapped
         { name: 'Slider', comp: BrutxUI.Slider, expectContains: '<' },
-        { name: 'Pagination', comp: BrutxUI.Pagination, expectContains: '<' },
+        { name: 'Pagination', comp: BrutxUI.Pagination, expectContains: '<', props: { modelValue: 1, totalPages: 1 } },
         { name: 'NumberInput', comp: BrutxUI.NumberInput, expectContains: '<' },
 
         // 视觉/营销类
@@ -148,7 +218,7 @@ describe('SSR smoke: simple components', () => {
         { name: 'FooterSection', comp: BrutxUI.FooterSection, expectContains: '<' },
         { name: 'FeedbackForm', comp: BrutxUI.FeedbackForm, expectContains: '<' },
         { name: 'CookieConsent', comp: BrutxUI.CookieConsent, expectContains: '<' },
-        { name: 'BeforeAfter', comp: BrutxUI.BeforeAfter, expectContains: '<' },
+        { name: 'BeforeAfter', comp: BrutxUI.BeforeAfter, expectContains: '<', props: { before: '/before.png', after: '/after.png' } },
         { name: 'Card3D', comp: BrutxUI.Card3D, expectContains: '<' },
         { name: 'NoiseBackground', comp: BrutxUI.NoiseBackground, expectContains: '<' },
         { name: 'ScratchCard', comp: BrutxUI.ScratchCard, expectContains: '<' },
@@ -157,14 +227,19 @@ describe('SSR smoke: simple components', () => {
 
         // 数据展示类（提供最小 props）
         { name: 'Descriptions', comp: BrutxUI.Descriptions, expectContains: '<' },
-        { name: 'DescriptionsItem', comp: BrutxUI.DescriptionsItem, expectContains: '<' },
+        { name: 'DescriptionsItem', comp: BrutxUI.DescriptionsItem, expectContains: '<', props: { label: 'Name' } },
         { name: 'Rate', comp: BrutxUI.Rate, expectContains: '<' },
         { name: 'Watermark', comp: BrutxUI.Watermark, expectContains: '<' },
         { name: 'Backtop', comp: BrutxUI.Backtop, expectContains: '<' },
-        { name: 'Image', comp: BrutxUI.Image, expectContains: '<' },
+        { name: 'Image', comp: BrutxUI.Image, expectContains: '<', props: { src: '/image.png', alt: 'Image' } },
         { name: 'Counter', comp: BrutxUI.Counter, expectContains: '<', props: { to: 100 } },
         { name: 'ChatBubble', comp: BrutxUI.ChatBubble, expectContains: '<', props: { message: { id: '1', content: 'Hello', role: 'user' } } },
-        { name: 'ChatContainer', comp: BrutxUI.ChatContainer, expectContains: '<' },
+        {
+            name: 'ChatContainer',
+            comp: BrutxUI.ChatContainer,
+            expectContains: '<',
+            props: { messages: [{ id: 'message-1', content: 'Hello', role: 'user' }] },
+        },
 
         // Stepper（需要 steps + modelValue）
         {
@@ -220,18 +295,19 @@ describe('SSR smoke: provider-wrapped components', () => {
         provider: Component
         providerProps?: Record<string, unknown>
         compProps?: Record<string, unknown>
+        expectedHtml?: RegExp
     }> = [
         // Dialog 系列（需要 DialogRoot + open）
         { name: 'DialogOverlay', comp: BrutxUI.DialogOverlay, provider: DialogRoot, providerProps: { open: true } },
-        { name: 'DialogContent', comp: BrutxUI.DialogContent, provider: DialogRoot, providerProps: { open: true } },
+        { name: 'DialogContent', comp: BrutxUI.DialogContent, provider: DialogRoot, providerProps: { open: true }, compProps: { forceMount: true }, expectedHtml: /<!--/ },
         { name: 'DialogHeader', comp: BrutxUI.DialogHeader, provider: DialogRoot, providerProps: { open: true } },
         { name: 'DialogFooter', comp: BrutxUI.DialogFooter, provider: DialogRoot, providerProps: { open: true } },
         { name: 'DialogTitle', comp: BrutxUI.DialogTitle, provider: DialogRoot, providerProps: { open: true } },
         { name: 'DialogDescription', comp: BrutxUI.DialogDescription, provider: DialogRoot, providerProps: { open: true } },
-        { name: 'DialogEnhanced', comp: BrutxUI.DialogEnhanced, provider: DialogRoot, providerProps: { open: true } },
+        { name: 'DialogEnhanced', comp: BrutxUI.DialogEnhanced, provider: DialogRoot, providerProps: { open: true }, compProps: { forceMount: true }, expectedHtml: /<!--/ },
 
         // AlertDialog 系列（Header/Footer/Title/Description 在 AlertDialogContent 外层也可）
-        { name: 'AlertDialogContent', comp: BrutxUI.AlertDialogContent, provider: AlertDialogRoot, providerProps: { open: true } },
+        { name: 'AlertDialogContent', comp: BrutxUI.AlertDialogContent, provider: AlertDialogRoot, providerProps: { open: true }, compProps: { forceMount: true }, expectedHtml: /<!--/ },
         { name: 'AlertDialogHeader', comp: BrutxUI.AlertDialogHeader, provider: AlertDialogRoot, providerProps: { open: true } },
         { name: 'AlertDialogFooter', comp: BrutxUI.AlertDialogFooter, provider: AlertDialogRoot, providerProps: { open: true } },
         { name: 'AlertDialogTitle', comp: BrutxUI.AlertDialogTitle, provider: AlertDialogRoot, providerProps: { open: true } },
@@ -239,14 +315,14 @@ describe('SSR smoke: provider-wrapped components', () => {
         { name: 'AlertDialogAction', comp: BrutxUI.AlertDialogAction, provider: AlertDialogRoot, providerProps: { open: true } },
 
         // Sheet 系列（基于 DialogRoot）
-        { name: 'SheetContent', comp: BrutxUI.SheetContent, provider: DialogRoot, providerProps: { open: true } },
+        { name: 'SheetContent', comp: BrutxUI.SheetContent, provider: DialogRoot, providerProps: { open: true }, compProps: { forceMount: true }, expectedHtml: /<!--/ },
         { name: 'SheetHeader', comp: BrutxUI.SheetHeader, provider: DialogRoot, providerProps: { open: true } },
         { name: 'SheetFooter', comp: BrutxUI.SheetFooter, provider: DialogRoot, providerProps: { open: true } },
         { name: 'SheetTitle', comp: BrutxUI.SheetTitle, provider: DialogRoot, providerProps: { open: true } },
         { name: 'SheetDescription', comp: BrutxUI.SheetDescription, provider: DialogRoot, providerProps: { open: true } },
 
         // Popover
-        { name: 'PopoverContent', comp: BrutxUI.PopoverContent, provider: PopoverRoot, providerProps: { open: true } },
+        { name: 'PopoverContent', comp: BrutxUI.PopoverContent, provider: PopoverRoot, providerProps: { open: true }, compProps: { forceMount: true }, expectedHtml: /<!--/ },
 
         // Select 系列（Trigger/Label/Separator 在 SelectRoot 下即可）
         {
@@ -289,24 +365,25 @@ describe('SSR smoke: provider-wrapped components', () => {
         { name: 'ToastContainer', comp: BrutxUI.ToastContainer, provider: ToastProvider },
 
         // AvatarImage / AvatarFallback 需要 AvatarRoot context
-        { name: 'AvatarImage', comp: BrutxUI.AvatarImage, provider: AvatarRoot },
+        { name: 'AvatarImage', comp: BrutxUI.AvatarImage, provider: AvatarRoot, compProps: { src: '/avatar.png', alt: 'Avatar' } },
         { name: 'AvatarFallback', comp: BrutxUI.AvatarFallback, provider: AvatarRoot },
 
         // RadioGroupItem 需要 RadioGroupRoot context
-        { name: 'RadioGroupItem', comp: BrutxUI.RadioGroupItem, provider: RadioGroupRoot },
+        { name: 'RadioGroupItem', comp: BrutxUI.RadioGroupItem, provider: RadioGroupRoot, compProps: { value: 'a' } },
     ]
 
     // 嵌套 provider 的组件（需要多层 context）
     const nestedProviderCases: Array<{
         name: string
         render: () => Component
+        expectedHtml?: RegExp
     }> = [
         // AlertDialogCancel 需要 AlertDialogContent context
         {
             name: 'AlertDialogCancel',
             render: () => defineComponent({
                 render: () => h(AlertDialogRoot, { open: true }, () =>
-                    h(AlertDialogContent, () => h(BrutxUI.AlertDialogCancel)),
+                    h(AlertDialogContent, () => h(BrutxUI.AlertDialogCancel, undefined, () => 'Cancel')),
                 ),
             }),
         },
@@ -315,53 +392,59 @@ describe('SSR smoke: provider-wrapped components', () => {
             name: 'TooltipContent',
             render: () => defineComponent({
                 render: () => h(RekaTooltipProvider, () =>
-                    h(TooltipRoot, { open: true }, () => h(BrutxUI.TooltipContent)),
+                    h(TooltipRoot, { open: true }, () => h(BrutxUI.TooltipContent, { forceMount: true }, () => 'Tooltip')),
                 ),
             }),
+            expectedHtml: /<!--/,
         },
         // SelectContent 需要 SelectRoot；SelectItem/ScrollUp/Down 需要 SelectContent context
         {
             name: 'SelectContent',
             render: () => defineComponent({
-                render: () => h(SelectRoot, { open: true, modelValue: 'a' }, () => h(BrutxUI.SelectContent)),
+                render: () => h(SelectRoot, { open: true, modelValue: 'a' }, () => h(BrutxUI.SelectContent, undefined, () => 'Select')),
             }),
+            expectedHtml: /<!--/,
         },
         {
             name: 'SelectItem',
             render: () => defineComponent({
                 render: () => h(SelectRoot, { open: true, modelValue: 'a' }, () =>
-                    h(BrutxUI.SelectContent, () => h(BrutxUI.SelectItem, { value: 'a' })),
+                    h(BrutxUI.SelectContent, { forceMount: true }, () => h(BrutxUI.SelectItem, { value: 'a' }, () => 'A')),
                 ),
             }),
+            expectedHtml: /<!--/,
         },
         {
             name: 'SelectScrollUpButton',
             render: () => defineComponent({
                 render: () => h(SelectRoot, { open: true }, () =>
-                    h(BrutxUI.SelectContent, () => h(BrutxUI.SelectScrollUpButton)),
+                    h(BrutxUI.SelectContent, { forceMount: true }, () => h(BrutxUI.SelectScrollUpButton, undefined, () => 'Up')),
                 ),
             }),
+            expectedHtml: /<!--/,
         },
         {
             name: 'SelectScrollDownButton',
             render: () => defineComponent({
                 render: () => h(SelectRoot, { open: true }, () =>
-                    h(BrutxUI.SelectContent, () => h(BrutxUI.SelectScrollDownButton)),
+                    h(BrutxUI.SelectContent, { forceMount: true }, () => h(BrutxUI.SelectScrollDownButton, undefined, () => 'Down')),
                 ),
             }),
+            expectedHtml: /<!--/,
         },
         // DropdownMenuItem/CheckboxItem/RadioItem 需要 Content context
         {
             name: 'DropdownMenuContent',
             render: () => defineComponent({
-                render: () => h(DropdownMenuRoot, { open: true }, () => h(BrutxUI.DropdownMenuContent)),
+                render: () => h(DropdownMenuRoot, { open: true }, () => h(BrutxUI.DropdownMenuContent, { forceMount: true }, () => h(BrutxUI.DropdownMenuItem, undefined, () => 'Item'))),
             }),
+            expectedHtml: /<!--/,
         },
         {
             name: 'DropdownMenuItem',
             render: () => defineComponent({
                 render: () => h(DropdownMenuRoot, { open: true }, () =>
-                    h(RekaDropdownMenuContent, () => h(BrutxUI.DropdownMenuItem)),
+                    h(RekaDropdownMenuContent, { forceMount: true }, () => h(BrutxUI.DropdownMenuItem, undefined, () => 'Item')),
                 ),
             }),
         },
@@ -369,7 +452,7 @@ describe('SSR smoke: provider-wrapped components', () => {
             name: 'DropdownMenuCheckboxItem',
             render: () => defineComponent({
                 render: () => h(DropdownMenuRoot, { open: true }, () =>
-                    h(RekaDropdownMenuContent, () => h(BrutxUI.DropdownMenuCheckboxItem)),
+                    h(RekaDropdownMenuContent, { forceMount: true }, () => h(BrutxUI.DropdownMenuCheckboxItem, undefined, () => 'Check')),
                 ),
             }),
         },
@@ -377,8 +460,8 @@ describe('SSR smoke: provider-wrapped components', () => {
             name: 'DropdownMenuRadioItem',
             render: () => defineComponent({
                 render: () => h(DropdownMenuRoot, { open: true }, () =>
-                    h(RekaDropdownMenuContent, () =>
-                        h(DropdownMenuRadioGroup, { modelValue: 'a' }, () => h(BrutxUI.DropdownMenuRadioItem, { value: 'a' })),
+                    h(RekaDropdownMenuContent, { forceMount: true }, () =>
+                        h(DropdownMenuRadioGroup, { modelValue: 'a' }, () => h(BrutxUI.DropdownMenuRadioItem, { value: 'a' }, () => 'Radio')),
                     ),
                 ),
             }),
@@ -388,8 +471,8 @@ describe('SSR smoke: provider-wrapped components', () => {
             name: 'DropdownMenuSubTrigger',
             render: () => defineComponent({
                 render: () => h(DropdownMenuRoot, { open: true }, () =>
-                    h(RekaDropdownMenuContent, () =>
-                        h(DropdownMenuSub, () => h(BrutxUI.DropdownMenuSubTrigger)),
+                    h(RekaDropdownMenuContent, { forceMount: true }, () =>
+                        h(DropdownMenuSub, () => h(BrutxUI.DropdownMenuSubTrigger, undefined, () => 'Sub')),
                     ),
                 ),
             }),
@@ -398,8 +481,8 @@ describe('SSR smoke: provider-wrapped components', () => {
             name: 'DropdownMenuSubContent',
             render: () => defineComponent({
                 render: () => h(DropdownMenuRoot, { open: true }, () =>
-                    h(RekaDropdownMenuContent, () =>
-                        h(DropdownMenuSub, { open: true }, () => h(BrutxUI.DropdownMenuSubContent)),
+                    h(RekaDropdownMenuContent, { forceMount: true }, () =>
+                        h(DropdownMenuSub, { open: true }, () => h(BrutxUI.DropdownMenuSubContent, { forceMount: true }, () => 'Sub content')),
                     ),
                 ),
             }),
@@ -409,7 +492,7 @@ describe('SSR smoke: provider-wrapped components', () => {
             name: 'TabsTrigger',
             render: () => defineComponent({
                 render: () => h(TabsRoot, { modelValue: 'tab1' }, () =>
-                    h(RekaTabsList, () => h(BrutxUI.TabsTrigger, { value: 'tab1' })),
+                    h(RekaTabsList, () => h(BrutxUI.TabsTrigger, { value: 'tab1' }, () => 'Tab')),
                 ),
             }),
         },
@@ -417,7 +500,7 @@ describe('SSR smoke: provider-wrapped components', () => {
             name: 'TabsContent',
             render: () => defineComponent({
                 render: () => h(TabsRoot, { modelValue: 'tab1' }, () =>
-                    h(BrutxUI.TabsContent, { value: 'tab1' }),
+                    h(BrutxUI.TabsContent, { value: 'tab1' }, () => 'Content'),
                 ),
             }),
         },
@@ -426,7 +509,7 @@ describe('SSR smoke: provider-wrapped components', () => {
             name: 'AccordionTrigger',
             render: () => defineComponent({
                 render: () => h(AccordionRoot, { defaultValue: 'item1' }, () =>
-                    h(RekaAccordionItem, { value: 'item1' }, () => h(BrutxUI.AccordionTrigger)),
+                    h(RekaAccordionItem, { value: 'item1' }, () => h(BrutxUI.AccordionTrigger, undefined, () => 'Trigger')),
                 ),
             }),
         },
@@ -434,29 +517,29 @@ describe('SSR smoke: provider-wrapped components', () => {
             name: 'AccordionContent',
             render: () => defineComponent({
                 render: () => h(AccordionRoot, { defaultValue: 'item1' }, () =>
-                    h(RekaAccordionItem, { value: 'item1' }, () => h(BrutxUI.AccordionContent)),
+                    h(RekaAccordionItem, { value: 'item1' }, () => h(BrutxUI.AccordionContent, undefined, () => 'Content')),
                 ),
             }),
         },
         // TooltipProvider（本身就是 provider，单独渲染）
         {
             name: 'TooltipProvider',
-            render: () => BrutxUI.TooltipProvider,
+            render: () => defineRenderRoot(() => h(BrutxUI.TooltipProvider, undefined, () => h('span', 'tooltip'))),
         },
     ]
 
-    for (const { name, comp, provider, providerProps, compProps } of singleProviderCases) {
+    for (const { name, comp, provider, providerProps, compProps, expectedHtml } of singleProviderCases) {
         it(`${name} renders within provider on SSR`, async () => {
-            const html = await renderWithProvider(comp, provider, providerProps, compProps)
-            expect(html.length).toBeGreaterThanOrEqual(0)
+            const html = await renderWithProvider(comp, provider, providerProps, compProps, name)
+            expect(html).toMatch(expectedHtml ?? /<[a-z][^>]*>/)
         })
     }
 
-    for (const { name, render } of nestedProviderCases) {
+    for (const { name, render, expectedHtml } of nestedProviderCases) {
         it(`${name} renders within nested providers on SSR`, async () => {
             const app = createSSRApp(render())
-            const html = await renderToString(app)
-            expect(typeof html).toBe('string')
+            const html = await renderToStringChecked(app)
+            expect(html).toMatch(expectedHtml ?? /<[a-z][^>]*>/)
         })
     }
 })
@@ -468,14 +551,19 @@ describe('SSR smoke: provider-wrapped components', () => {
 describe('SSR smoke: wrapper components', () => {
     const cases: Array<{
         name: string
-        comp: Component
+        comp?: Component
         props?: Record<string, unknown>
+        render?: () => Component
+        expectedHtml?: RegExp
     }> = [
         // Accordion (root wrapper)
         { name: 'Accordion', comp: BrutxUI.Accordion },
         // ScrollArea (root wrapper)
         { name: 'ScrollArea', comp: BrutxUI.ScrollArea },
-        { name: 'ScrollBar', comp: BrutxUI.ScrollBar },
+        {
+            name: 'ScrollBar',
+            render: () => defineRenderRoot(() => h(BrutxUI.ScrollArea, undefined, () => h(BrutxUI.ScrollBar))),
+        },
         // Tabs (wrapper，内含 TabsRoot)
         { name: 'Tabs', comp: BrutxUI.Tabs, props: { modelValue: 'tab1', tabs: [{ label: 'Tab 1', value: 'tab1' }] } },
         // Select (wrapper，内含 SelectRoot)
@@ -483,24 +571,51 @@ describe('SSR smoke: wrapper components', () => {
         // ColorPicker (wrapper)
         { name: 'ColorPicker', comp: BrutxUI.ColorPicker },
         { name: 'ColorPickerPanel', comp: BrutxUI.ColorPickerPanel },
-        { name: 'ColorPickerSwatch', comp: BrutxUI.ColorPickerSwatch },
-        { name: 'ColorPickerInput', comp: BrutxUI.ColorPickerInput },
-        { name: 'ColorPickerHistory', comp: BrutxUI.ColorPickerHistory },
+        { name: 'ColorPickerSwatch', comp: BrutxUI.ColorPickerSwatch, props: { value: '#ff0000' } },
+        { name: 'ColorPickerInput', comp: BrutxUI.ColorPickerInput, props: { modelValue: '#ff0000' } },
+        { name: 'ColorPickerHistory', comp: BrutxUI.ColorPickerHistory, props: { history: ['#ff0000'] } },
         // Command 系列（Command 是 root wrapper）
         { name: 'Command', comp: BrutxUI.Command },
-        { name: 'CommandInput', comp: BrutxUI.CommandInput },
-        { name: 'CommandList', comp: BrutxUI.CommandList },
-        { name: 'CommandEmpty', comp: BrutxUI.CommandEmpty },
-        { name: 'CommandGroup', comp: BrutxUI.CommandGroup },
-        { name: 'CommandItem', comp: BrutxUI.CommandItem, props: { value: 'item1' } },
-        { name: 'CommandSeparator', comp: BrutxUI.CommandSeparator },
-        { name: 'CommandShortcut', comp: BrutxUI.CommandShortcut },
+        {
+            name: 'CommandInput',
+            render: () => defineRenderRoot(() => h(BrutxUI.Command, undefined, () => h(BrutxUI.CommandInput))),
+        },
+        {
+            name: 'CommandList',
+            render: () => defineRenderRoot(() => h(BrutxUI.Command, undefined, () => h(BrutxUI.CommandList))),
+        },
+        {
+            name: 'CommandEmpty',
+            render: () => defineRenderRoot(() => h(BrutxUI.Command, undefined, () => h(BrutxUI.CommandEmpty))),
+        },
+        {
+            name: 'CommandGroup',
+            render: () => defineRenderRoot(() => h(BrutxUI.Command, undefined, () => h(BrutxUI.CommandGroup, { title: 'Group' }))),
+        },
+        {
+            name: 'CommandItem',
+            render: () => defineRenderRoot(() => h(BrutxUI.Command, undefined, () => h(BrutxUI.CommandItem, { value: 'item1' }, () => 'Item 1'))),
+        },
+        {
+            name: 'CommandSeparator',
+            render: () => defineRenderRoot(() => h(BrutxUI.Command, undefined, () => h(BrutxUI.CommandSeparator))),
+        },
+        {
+            name: 'CommandShortcut',
+            render: () => defineRenderRoot(() => h(BrutxUI.Command, undefined, () => h(BrutxUI.CommandShortcut, undefined, () => '⌘K'))),
+        },
         // TagsInput (root wrapper)
         { name: 'TagsInput', comp: BrutxUI.TagsInput, props: { modelValue: ['tag1'] } },
-        { name: 'TagsInputInput', comp: BrutxUI.TagsInputInput },
+        {
+            name: 'TagsInputInput',
+            render: () => defineRenderRoot(() => h(BrutxUI.TagsInput, { modelValue: [] }, () => h(BrutxUI.TagsInputInput, { placeholder: 'Add tag' }))),
+        },
         // ToggleGroup (root wrapper)
         { name: 'ToggleGroup', comp: BrutxUI.ToggleGroup },
-        { name: 'ToggleGroupItem', comp: BrutxUI.ToggleGroupItem, props: { value: 'a' } },
+        {
+            name: 'ToggleGroupItem',
+            render: () => defineRenderRoot(() => h(BrutxUI.ToggleGroup, { type: 'single', modelValue: 'a' }, () => h(BrutxUI.ToggleGroupItem, { value: 'a' }, () => 'A'))),
+        },
         // Menu (root wrapper)
         { name: 'Menu', comp: BrutxUI.Menu },
         // Table 系列（HTML 原生，无 reka-ui context 依赖）
@@ -517,8 +632,9 @@ describe('SSR smoke: wrapper components', () => {
             name: 'DataTable',
             comp: BrutxUI.DataTable,
             props: {
-                columns: [{ key: 'name', title: 'Name' }],
-                data: [{ name: 'Test' }],
+                columns: [{ id: 'name', header: 'Name', accessorKey: 'name' }],
+                data: [{ id: 'row-1', name: 'Test' }],
+                rowKey: 'id',
             },
         },
         // Carousel（需要 slides）
@@ -531,17 +647,26 @@ describe('SSR smoke: wrapper components', () => {
         {
             name: 'TreeSelect',
             comp: BrutxUI.TreeSelect,
-            props: { options: [{ id: '1', label: 'Root' }] },
+            props: { nodes: [{ id: '1', label: 'Root' }] },
         },
         {
             name: 'TreeSelectNode',
             comp: BrutxUI.TreeSelectNode,
-            props: { node: { id: '1', label: 'Root' }, level: 0 },
+            props: {
+                node: { id: '1', label: 'Root' },
+                selectedIds: new Set<string>(),
+                expandedIds: new Set<string>(),
+                depth: 0,
+            },
         },
         {
             name: 'TreeViewNode',
             comp: BrutxUI.TreeViewNode,
-            props: { node: { id: '1', label: 'Root' }, level: 0 },
+            props: {
+                node: { id: '1', label: 'Root' },
+                expandedIds: new Set<string>(),
+                depth: 0,
+            },
         },
         // Combobox
         { name: 'Combobox', comp: BrutxUI.Combobox, props: { options: [{ label: 'A', value: 'a' }] } },
@@ -550,15 +675,27 @@ describe('SSR smoke: wrapper components', () => {
         // Upload 系列
         { name: 'Upload', comp: BrutxUI.Upload },
         { name: 'UploadTrigger', comp: BrutxUI.UploadTrigger },
-        { name: 'UploadFileList', comp: BrutxUI.UploadFileList },
-        { name: 'UploadFileItem', comp: BrutxUI.UploadFileItem, props: { file: { name: 'test.txt', status: 'ready' } } },
+        {
+            name: 'UploadFileList',
+            comp: BrutxUI.UploadFileList,
+            props: {
+                files: [{ id: 'file-1', name: 'test.txt', size: 4, type: 'text/plain', status: 'ready', progress: 0 }],
+            },
+        },
+        {
+            name: 'UploadFileItem',
+            comp: BrutxUI.UploadFileItem,
+            props: {
+                file: { id: 'file-1', name: 'test.txt', size: 4, type: 'text/plain', status: 'ready', progress: 0 },
+            },
+        },
         // InfiniteScroll
         { name: 'InfiniteScroll', comp: BrutxUI.InfiniteScroll },
         // VirtualScroll（需要 items）
         {
             name: 'VirtualScroll',
             comp: BrutxUI.VirtualScroll,
-            props: { items: [{ id: '1' }], itemSize: 40 },
+            props: { items: [{ id: '1' }], itemHeight: 40 },
         },
         // Tour（需要 steps）
         {
@@ -567,20 +704,15 @@ describe('SSR smoke: wrapper components', () => {
             props: { steps: [{ target: '#el', title: 'Step 1' }] },
         },
         // Popconfirm
-        { name: 'Popconfirm', comp: BrutxUI.Popconfirm },
+        { name: 'Popconfirm', comp: BrutxUI.Popconfirm, props: { title: 'Confirm action', open: true }, expectedHtml: /<!--/ },
     ]
 
-    for (const { name, comp, props } of cases) {
+    for (const { name, comp, props, render, expectedHtml } of cases) {
         it(`${name} renders on SSR`, async () => {
-            try {
-                const html = await renderComponent(comp, props)
-                // 允许空字符串（某些组件在 SSR 可能渲染为注释）
-                expect(typeof html).toBe('string')
-            } catch (e) {
-                // 对于无法独立渲染的组件，记录但不失败测试
-                // （smoke 测试的目标是捕获 SSR 抛错，而非验证渲染内容）
-                expect.soft((e as Error).message).not.toMatch(/window is not defined|document is not defined/)
-            }
+            const root = render ? render() : comp
+            if (!root) throw new Error(`${name} SSR fixture has no root component`)
+            const html = await renderComponent(root, props)
+            expect(html).toMatch(expectedHtml ?? /<[a-z][^>]*>/)
         })
     }
 })
@@ -620,7 +752,7 @@ describe('SSR smoke: composables', () => {
             name: 'useColorPicker',
             fn: () => BrutxUI.useColorPicker({
                 modelValue: null,
-                emit: (() => {}) as never,
+                emit: emitColorPicker,
             }),
         },
         { name: 'useFormFieldValidation', fn: () => BrutxUI.useFormFieldValidation() },
@@ -629,15 +761,15 @@ describe('SSR smoke: composables', () => {
         {
             name: 'useCanvasInteraction',
             fn: () => BrutxUI.useCanvasInteraction({
-                containerRef: { value: null } as never,
-                canvasRef: { value: null } as never,
-                brushRadius: { value: 10 } as never,
-                percentage: { value: 50 } as never,
-                fadeDuration: { value: 300 } as never,
-                prefersReducedMotion: { value: false } as never,
+                containerRef: ref<HTMLDivElement | null>(null),
+                canvasRef: ref<HTMLCanvasElement | null>(null),
+                brushRadius: ref(10),
+                percentage: ref(50),
+                fadeDuration: ref(300),
+                prefersReducedMotion: ref(false),
                 onProgress: () => {},
                 onCompleted: () => {},
-                drawOverlay: () => {},
+                drawOverlay: (_ctx, _width, _height) => {},
             }),
         },
         {
@@ -662,7 +794,7 @@ describe('SSR smoke: composables', () => {
             name: 'useDatePicker',
             fn: () => BrutxUI.useDatePicker({
                 modelValue: null,
-                emit: (() => {}) as never,
+                emit: emitDatePicker,
             }),
         },
         {
@@ -691,7 +823,7 @@ describe('SSR smoke: composables', () => {
         },
         {
             name: 'useInfiniteScroll',
-            fn: () => BrutxUI.useInfiniteScroll(ref(null) as never, { loadMore: () => {} } as never),
+            fn: () => BrutxUI.useInfiniteScroll(ref<HTMLElement | null>(null), { onLoad: () => {} }),
         },
     ]
 
@@ -705,7 +837,7 @@ describe('SSR smoke: composables', () => {
             })
             const Root = providerWrap ? providerWrap(Wrapper) : Wrapper
             const app = createSSRApp(Root)
-            const html = await renderToString(app)
+            const html = await renderToStringChecked(app)
             expect(html).toBeTruthy()
         })
     }

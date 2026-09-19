@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { Upload } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 
@@ -30,6 +30,13 @@ const emit = defineEmits<{
 const isDragging = ref(false)
 const fileInputRef = ref<HTMLInputElement | null>(null)
 
+watch(
+    () => [props.drag, props.disabled] as const,
+    ([drag, disabled]) => {
+        if (!drag || disabled) isDragging.value = false
+    },
+)
+
 // 触发文件选择
 function triggerFileInput() {
     if (props.disabled) return
@@ -41,7 +48,10 @@ function handleFileChange(event: Event) {
     const target = event.target as HTMLInputElement
     // target.files 是随 input 实时变化的 FileList，重置前先拷贝成数组；
     // 否则消费方持有该引用稍后读取时，拿到的是被清空的空列表
-    const files = Array.from(target.files ?? [])
+    let files = Array.from(target.files ?? [])
+    if (!props.multiple && files.length > 1) {
+        files = files.slice(0, 1)
+    }
     if (files.length > 0) {
         emit('select', files, 'browse')
         target.value = '' // 重置 input

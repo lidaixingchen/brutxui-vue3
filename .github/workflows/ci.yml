@@ -101,9 +101,44 @@ jobs:
             - name: Check bundle size limits
               run: pnpm --filter brutx-ui-vue size
 
-            - name: UI coverage (main and candidate)
-              if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/vue')
+            - name: UI coverage
+              id: ui-coverage
               run: pnpm --filter brutx-ui-vue test:coverage
+
+            - name: Record UI coverage environment
+              if: always() && steps.ui-coverage.outcome != 'skipped'
+              env:
+                  COVERAGE_OUTCOME: ${{ steps.ui-coverage.outcome }}
+              run: |
+                  node --input-type=module <<'NODE'
+                  import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+                  import { execFileSync } from 'node:child_process'
+                  import { createHash } from 'node:crypto'
+                  import { platform, release } from 'node:os'
+                  const command = (program, args) => execFileSync(program, args, { encoding: 'utf8' }).trim()
+                  const directory = 'packages/ui/coverage/full'
+                  mkdirSync(directory, { recursive: true })
+                  writeFileSync(`${directory}/environment.json`, JSON.stringify({
+                    commit: process.env.GITHUB_SHA,
+                    workingTree: command('git', ['status', '--short']),
+                    os: `${platform()} ${release()}`,
+                    node: process.version,
+                    pnpm: command('pnpm', ['--version']),
+                    vitest: command('pnpm', ['--filter', 'brutx-ui-vue', 'exec', 'vitest', '--version']),
+                    lockfileSha256: createHash('sha256').update(readFileSync('pnpm-lock.yaml')).digest('hex'),
+                    command: 'pnpm --filter brutx-ui-vue test:coverage',
+                    outcome: process.env.COVERAGE_OUTCOME,
+                    run: `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
+                  }, null, 2))
+                  NODE
+
+            - name: Upload UI coverage evidence
+              if: always() && steps.ui-coverage.outcome != 'skipped'
+              uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+              with:
+                  name: ui-coverage-${{ github.sha }}
+                  path: packages/ui/coverage/full
+                  if-no-files-found: error
 
             - name: Commitlint on PR commits
               if: github.event_name == 'pull_request'
