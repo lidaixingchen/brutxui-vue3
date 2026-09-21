@@ -79,11 +79,13 @@
 - **stacked 档位按压**：承载 `shadow-brutal-stacked` 的元素必须复用同文件的 `brutalPressStacked`——位移以 calc 同源派生最外层 1.5x 偏移（`active:translate-x-[calc(var(--brutal-shadow-offset-x,4px)*1.5)]`）并去影；严禁内联手抄像素字面量造成位移与阴影脱同步。
 - **合法例外**：
   - *低强调变体*：`ghost` / `link` 变体豁免位移与阴影（`shadow-none` + 仅背景或下划线悬浮反馈）。
-  - *私有与紧凑设计*：无阴影组件、分段控件、整宽单元格等小尺度私有设计允许使用轻量字面量（如 `active:translate-y-[2px]`）。
-- **过渡协同**：本规则不规定 transition 具体属性，过渡属性统一遵循 [COMPONENT_GUIDE.md](COMPONENT_GUIDE.md)「视觉与交互行为」节。同一交互元素只应声明一份 transition（避免 twMerge 同组静默移除陷阱，机制见 [TAILWIND_V4_MECHANISMS.md](TAILWIND_V4_MECHANISMS.md) §2）。
+  - *分段选择与嵌入式触发器*：分段选择控件（`TabsTrigger`）以及外壳由父级 Item/容器承担的触发器（`AccordionTrigger`）豁免瞬态按压物理位移与去影，使用稳定几何位置的成对背景色/前景色与边框反馈，避免容器内相对晃动或与展开动效冲突。
+  - *私有与紧凑设计*：无阴影组件、整宽单元格等小尺度私有设计允许使用轻量字面量（如 `active:translate-y-[2px]`）。
+- **过渡协同与减弱动画**：本规则不规定 transition 具体属性，过渡属性统一遵循 [COMPONENT_GUIDE.md](COMPONENT_GUIDE.md)「视觉与交互行为」节。同一交互元素只应声明一份 transition（避免 twMerge 同组静默移除陷阱，机制见 [TAILWIND_V4_MECHANISMS.md](TAILWIND_V4_MECHANISMS.md) §2）。所有交互过渡与动效类名必须同步声明 `motion-reduce:transition-none` 或 `motion-reduce:animate-none` 防御。
 
 ### R5 悬停反馈 (Hover Feedback)
 - **核心动作**：`hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5`（微上浮并放大硬阴影）。
+- **合法例外**：嵌在列表或卡片内部的次级触发器（如 `TabsTrigger`、`AccordionTrigger`）悬停保持位置与阴影稳定，通过背景叠色提供交互提示，悬浮反馈归属于外层卡片整体（如 `AccordionItem` 的 `interactive` 变体）。
 
 ### R6 颜色体系 (Colors)
 - **核心规则**：一律使用 `--brutal-*` CSS 变量（语义色及其 `*-foreground` 前景家族、`--brutal-status-*` 状态色家族）。

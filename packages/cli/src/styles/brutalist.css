@@ -871,7 +871,8 @@
     color: var(--color-brutal-fg);
 }
 
-.data-\[state\=active\]\:border-brutal[data-state="active"] {
+.data-\[state\=active\]\:border-brutal[data-state="active"],
+.data-\[state\=open\]\:border-brutal[data-state="open"] {
     border-color: var(--brutal-border-color, #000000);
 }
 
