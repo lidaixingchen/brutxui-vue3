@@ -205,6 +205,7 @@ import {
 | Prop | Type | Default | Description |
 |------|------|--------|------|
 | `value` | `string` | — (required) | Corresponding tab value |
+| `surface` | `'plain' \| 'panel'` | `'plain'` | Surface shell mode: `plain` for zero-padding fitting (ideal for nested Card), `panel` for standalone card shell with borders and shadow |
 | `forceMount` | `boolean` | `false` | Force mount content for custom transition control |
 | `class` | `string` | — | Custom CSS class name |
 

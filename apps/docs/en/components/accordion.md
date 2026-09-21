@@ -65,14 +65,14 @@ Use the `variant` prop on `AccordionItem` to set different neo-brutalist styles:
 
 ### Content Area Styling
 
-`AccordionContent` styling automatically inherits the `variant` of its parent `AccordionItem` (synchronized via `provide`/`inject`, no manual specification needed). All variants share the base classes `border-t-3 p-6 bg-brutal-bg text-brutal-fg`, with the border color declared explicitly per variant (avoiding unreliable overrides when both base and variant carry a border-color class), then variant-specific differences are applied as follows:
+`AccordionContent` styling automatically inherits the `variant` of its parent `AccordionItem` (synchronized via `provide`/`inject`, no manual specification needed). The separator line is activated at the bottom of `AccordionTrigger` upon expand, allowing the content panel to focus on padding and secondary background hierarchy:
 
-| Variant | Content Area Difference | Visual Effect |
+| Variant | Content Area Styling | Visual Effect |
 | ------ | ---------------- | ---------- |
-| `default` | `border-brutal` | Black thick separator line at top + default background |
-| `flat` | `border-brutal bg-brutal-muted/30` | Background replaced with semi-transparent muted color, matching the flat style |
-| `ghost` | `border-transparent` | Top border transparent, overall more minimal and lightweight |
-| `interactive` | `border-brutal hover:bg-brutal-muted/20` | Slight highlight on hover in the content area, enhancing interactive feedback |
+| `default` | `bg-brutal-muted` | Secondary muted background creating depth against the collapsed state |
+| `flat` | `bg-brutal-muted/30` | Gentle semi-transparent muted tone, echoing the flat design |
+| `ghost` | Transparent background | Clean transparent background, lightweight and minimal |
+| `interactive` | `bg-brutal-muted hover:bg-brutal-muted/20` | Secondary background with subtle hover highlight |
 
 > Note: The variant applies across all three layers -- `AccordionItem` (container), `AccordionTrigger` (trigger), and `AccordionContent` (content area) -- to maintain visual consistency.
 

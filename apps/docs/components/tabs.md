@@ -285,6 +285,8 @@ import {
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `value` | `string` | —（必填） | 对应标签页的值 |
+| `surface` | `'plain' \| 'panel'` | `'plain'` | 外壳渲染模式：`plain` 为零边距贴合（适合内嵌 Card），`panel` 为带实体边框与阴影的独立卡片面板 |
+| `forceMount` | `boolean` | `false` | 强制挂载内容，适用于自定义过渡动画 |
 | `class` | `string` | — | 自定义 CSS 类名 |
 
 ## 事件

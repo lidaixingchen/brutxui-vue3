@@ -18,12 +18,12 @@ const arrayTabs: TabItem[] = [
                     <TabsTrigger value="account">账户</TabsTrigger>
                     <TabsTrigger value="password">密码</TabsTrigger>
                 </TabsList>
-                <TabsContent value="account">
+                <TabsContent value="account" surface="panel">
                     <p class="text-sm font-medium">
                         在此修改您的账户信息。完成后请点击保存。
                     </p>
                 </TabsContent>
-                <TabsContent value="password">
+                <TabsContent value="password" surface="panel">
                     <p class="text-sm font-medium">
                         在此修改您的密码。保存后将自动退出登录。
                     </p>
@@ -40,17 +40,17 @@ const arrayTabs: TabItem[] = [
                     <TabsTrigger value="notifications">通知</TabsTrigger>
                 </TabsList>
                 <div class="flex-1">
-                    <TabsContent value="general">
+                    <TabsContent value="general" surface="panel">
                         <p class="text-sm font-medium">
                             通用设置选项，包括语言、主题等基础配置。
                         </p>
                     </TabsContent>
-                    <TabsContent value="security">
+                    <TabsContent value="security" surface="panel">
                         <p class="text-sm font-medium">
                             安全设置选项，包括密码、两步验证等。
                         </p>
                     </TabsContent>
-                    <TabsContent value="notifications">
+                    <TabsContent value="notifications" surface="panel">
                         <p class="text-sm font-medium">
                             通知设置选项，包括邮件、推送等提醒方式。
                         </p>

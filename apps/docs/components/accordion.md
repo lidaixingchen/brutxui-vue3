@@ -64,14 +64,14 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from 'br
 
 ### 内容区域样式
 
-`AccordionContent` 的样式会自动继承父级 `AccordionItem` 的 `variant`（通过 `provide`/`inject` 同步，无需手动指定）。所有变体共享基础类 `border-t-3 p-6 bg-brutal-bg text-brutal-fg`，边框颜色由各变体显式声明（避免 base 与变体的 border-color 类同时存在导致覆盖不可靠），再按下表叠加差异样式：
+`AccordionContent` 的样式会自动继承父级 `AccordionItem` 的 `variant`（通过 `provide`/`inject` 同步，无需手动指定）。展开分隔线由 `AccordionTrigger` 底部在展开态激活，内容面板专注于内边距与次级背景层级：
 
-| 变体 | 内容区差异样式 | 视觉效果 |
+| 变体 | 内容区样式特征 | 视觉效果 |
 | ------ | ---------------- | ---------- |
-| `default` | `border-brutal` | 顶部黑色粗分隔线 + 默认背景色 |
-| `flat` | `border-brutal bg-brutal-muted/30` | 背景替换为半透明静音色，呼应扁平化风格 |
-| `ghost` | `border-transparent` | 顶部边框透明，整体更简约轻盈 |
-| `interactive` | `border-brutal hover:bg-brutal-muted/20` | 鼠标悬停时内容区出现轻微高亮，增强交互反馈 |
+| `default` | `bg-brutal-muted` | 次级静音背景色，与收起态形成明暗层次 |
+| `flat` | `bg-brutal-muted/30` | 柔和半透明静音色，呼应扁平化风格 |
+| `ghost` | 无背景色 | 纯净透明背景，整体更简约轻盈 |
+| `interactive` | `bg-brutal-muted hover:bg-brutal-muted/20` | 次级背景配合轻微悬停高亮，增强交互反馈 |
 
 > 说明：变体同时作用于 `AccordionItem`（容器）、`AccordionTrigger`（触发器）与 `AccordionContent`（内容区）三层，保持整体视觉一致。
 

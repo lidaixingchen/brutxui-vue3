@@ -26,9 +26,9 @@ const activeInteractive = ref('interactive-1')
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-3" variant="interactive">
-                    <AccordionTrigger>为什么它会有点击位移？</AccordionTrigger>
+                    <AccordionTrigger>交互动效设计哲学？</AccordionTrigger>
                     <AccordionContent>
-                        这是粗野主义交互的灵魂——所有的可点击元素在被按下时都会发生位移（并清除阴影），以便为用户提供极度拟真的物理反馈。
+                        外层卡片在悬停时提供微妙的浮起反馈，而折叠触发器与展开内容则遵循严格的视觉层级与位置稳定性，杜绝容器内部相对晃动。
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>
