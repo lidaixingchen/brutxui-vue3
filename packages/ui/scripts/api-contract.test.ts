@@ -20,7 +20,7 @@ describe('UI API contract', () => {
         expect(API_CONTRACT_COUNTS).toEqual({
             components: 92,
             composables: 31,
-            rootExports: 684,
+            rootExports: 686,
             composableExports: 114,
             localeExports: 59,
         })

@@ -203,15 +203,29 @@ describe('TabsContent', () => {
         expect(wrapper.classes()).toContain('custom-content')
     })
 
-    it('applies default styling classes', () => {
+    it('applies default styling classes (surface plain)', () => {
         const wrapper = mount(TabsContent, {
             props: { value: 'tab1' },
             global: { stubs: { TabsContent: primitiveStub } },
         })
         const classes = wrapper.classes().join(' ')
         expect(classes).toContain('focus-visible:ring-2')
+        expect(classes).toContain('mt-3')
+        expect(classes).toContain('p-0')
+        expect(classes).not.toContain('border-3')
+    })
+
+    it('applies panel surface styling classes', () => {
+        const wrapper = mount(TabsContent, {
+            props: { value: 'tab1', surface: 'panel' },
+            global: { stubs: { TabsContent: primitiveStub } },
+        })
+        const classes = wrapper.classes().join(' ')
+        expect(classes).toContain('focus-visible:ring-2')
         expect(classes).toContain('border-3')
         expect(classes).toContain('border-brutal')
+        expect(classes).toContain('shadow-brutal')
+        expect(classes).toContain('p-6')
     })
 
     it('passes forceMount prop to primitive', () => {

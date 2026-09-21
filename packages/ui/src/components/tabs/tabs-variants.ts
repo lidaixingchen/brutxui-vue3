@@ -1,11 +1,10 @@
-import { cva } from 'class-variance-authority'
-import { brutalPress } from '@/lib/brutal-interaction-variants'
+import { cva, type VariantProps } from 'class-variance-authority'
 import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const tabsListVariants = cva(
     [
         'inline-flex justify-center p-1 gap-1',
-        'bg-brutal-bg border-3 border-brutal shadow-brutal rounded-brutal',
+        'bg-brutal-bg border-3 border-brutal shadow-brutal-sm rounded-brutal',
     ],
     {
         variants: {
@@ -40,12 +39,10 @@ export const tabsTriggerVariants = cva(
         'font-bold text-sm tracking-wide',
         'border-3 border-transparent',
         'rounded-brutal',
-        'transition-all duration-150',
+        'transition-all duration-150 motion-reduce:transition-none',
         FOCUS_RING_CLASSES,
-        brutalPress,
         'disabled:pointer-events-none disabled:opacity-50',
-        'data-[state=active]:border-brutal data-[state=active]:shadow-brutal-sm',
-        'data-[state=active]:hover:-translate-x-0.5 data-[state=active]:hover:-translate-y-0.5 data-[state=active]:hover:shadow-brutal',
+        'data-[state=active]:border-brutal data-[state=active]:shadow-none',
         'data-[state=inactive]:text-brutal-fg data-[state=inactive]:hover:bg-brutal-muted data-[state=inactive]:shadow-none',
     ],
     {
@@ -75,8 +72,21 @@ export const tabsTriggerVariants = cva(
 
 export const tabsContentVariants = cva(
     [
-        'mt-3 p-4',
-        'bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal rounded-brutal',
+        'mt-3',
         FOCUS_RING_CLASSES,
-    ]
+    ],
+    {
+        variants: {
+            surface: {
+                plain: 'p-0',
+                panel: 'p-6 bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal rounded-brutal',
+            },
+        },
+        defaultVariants: {
+            surface: 'plain',
+        },
+    }
 )
+
+export type TabsContentVariantProps = VariantProps<typeof tabsContentVariants>
+export type TabsContentSurface = NonNullable<TabsContentVariantProps['surface']>

@@ -297,6 +297,8 @@ export const API_CONTRACT: ApiContract = {
                 { source: './components/tabs/tabs-variants', sourceName: 'tabsListVariants', publicName: 'tabsListVariants', kind: 'value' },
                 { source: './components/tabs/tabs-variants', sourceName: 'tabsTriggerVariants', publicName: 'tabsTriggerVariants', kind: 'value' },
                 { source: './components/tabs/tabs-variants', sourceName: 'tabsContentVariants', publicName: 'tabsContentVariants', kind: 'value' },
+                { source: './components/tabs/tabs-variants', sourceName: 'TabsContentVariantProps', publicName: 'TabsContentVariantProps', kind: 'type' },
+                { source: './components/tabs/tabs-variants', sourceName: 'TabsContentSurface', publicName: 'TabsContentSurface', kind: 'type' },
                 { source: './components/avatar/Avatar.vue', sourceName: 'default', publicName: 'Avatar', kind: 'value' },
                 { source: './components/avatar/AvatarImage.vue', sourceName: 'default', publicName: 'AvatarImage', kind: 'value' },
                 { source: './components/avatar/AvatarFallback.vue', sourceName: 'default', publicName: 'AvatarFallback', kind: 'value' },
@@ -1924,6 +1926,8 @@ export const API_CONTRACT: ApiContract = {
                 { source: './tabs-variants', sourceName: 'tabsListVariants', publicName: 'tabsListVariants', kind: 'value' },
                 { source: './tabs-variants', sourceName: 'tabsTriggerVariants', publicName: 'tabsTriggerVariants', kind: 'value' },
                 { source: './tabs-variants', sourceName: 'tabsContentVariants', publicName: 'tabsContentVariants', kind: 'value' },
+                { source: './tabs-variants', sourceName: 'TabsContentVariantProps', publicName: 'TabsContentVariantProps', kind: 'type' },
+                { source: './tabs-variants', sourceName: 'TabsContentSurface', publicName: 'TabsContentSurface', kind: 'type' },
                 { source: './types', sourceName: 'TabItem', publicName: 'TabItem', kind: 'type' },
                 { source: './types', sourceName: 'TABS_ORIENTATION_KEY', publicName: 'TABS_ORIENTATION_KEY', kind: 'value' },
             ],
@@ -2487,7 +2491,7 @@ export function getApiEntry(entryId: string): ApiEntryContract {
 export const API_CONTRACT_COUNTS = Object.freeze({
     components: 92,
     composables: 31,
-    rootExports: 684,
+    rootExports: 686,
     composableExports: 114,
     localeExports: 59,
 })

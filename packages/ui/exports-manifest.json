@@ -1810,6 +1810,18 @@
           "kind": "value"
         },
         {
+          "source": "./components/tabs/tabs-variants",
+          "sourceName": "TabsContentVariantProps",
+          "publicName": "TabsContentVariantProps",
+          "kind": "type"
+        },
+        {
+          "source": "./components/tabs/tabs-variants",
+          "sourceName": "TabsContentSurface",
+          "publicName": "TabsContentSurface",
+          "kind": "type"
+        },
+        {
           "source": "./components/avatar/Avatar.vue",
           "sourceName": "default",
           "publicName": "Avatar",
@@ -10407,6 +10419,18 @@
           "sourceName": "tabsContentVariants",
           "publicName": "tabsContentVariants",
           "kind": "value"
+        },
+        {
+          "source": "./tabs-variants",
+          "sourceName": "TabsContentVariantProps",
+          "publicName": "TabsContentVariantProps",
+          "kind": "type"
+        },
+        {
+          "source": "./tabs-variants",
+          "sourceName": "TabsContentSurface",
+          "publicName": "TabsContentSurface",
+          "kind": "type"
         },
         {
           "source": "./types",
