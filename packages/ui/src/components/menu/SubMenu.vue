@@ -152,6 +152,15 @@ watch(() => props.disabled, () => {
     }
 })
 
+watch(isOpened, (val) => {
+    if (isVertical.value) return
+    if (val) {
+        context?.openSubMenu(props.index)
+    } else {
+        context?.closeSubMenu(props.index)
+    }
+})
+
 watch(
     () => props.index,
     (newIndex, oldIndex) => {
@@ -184,6 +193,9 @@ watch(
 
 onUnmounted(() => {
     clearHoverTimer()
+    if (!isVertical.value && isOpened.value) {
+        context?.closeSubMenu(props.index)
+    }
     context?.unregisterSubMenu(props.index)
     context?.unregisterItem(props.index)
     if (parentSubMenu) {
@@ -223,7 +235,7 @@ const subMenuClasses = computed(() => {
 
 const triggerClasses = computed(() => {
     return cn(
-        'flex items-center justify-between gap-4 px-4 py-2.5 rounded-brutal border-3 font-semibold text-sm cursor-pointer select-none transition-all duration-150 outline-none',
+        'flex items-center justify-between gap-4 px-4 py-2.5 rounded-brutal border-3 font-semibold text-sm cursor-pointer select-none transition-all duration-150 motion-reduce:transition-none',
         FOCUS_RING_CLASSES,
         props.inset && 'pl-10',
         isChildActive.value
@@ -237,7 +249,7 @@ const triggerClasses = computed(() => {
 })
 
 const arrowClasses = computed(() =>
-    cn('w-4 h-4 transition-transform duration-200 stroke-3 shrink-0', {
+    cn('w-4 h-4 transition-transform duration-200 motion-reduce:transition-none stroke-3 shrink-0', {
         'rotate-180': isOpened.value,
     }),
 )
@@ -335,13 +347,24 @@ function handleDocumentKeydown(event: KeyboardEvent) {
     if (!isOpened.value && hoverTimer.value === null) return
     if (event.key === 'Escape') {
         if (rootRef.value?.querySelector('.absolute [aria-expanded="true"]')) return
+        event.stopPropagation()
         resetHorizontalState()
         context?.focusItem(props.index)
     }
 }
 
+function prefersReducedMotion(): boolean {
+    if (typeof window === 'undefined' || !window.matchMedia) return false
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
+
 function onEnter(el: Element) {
     const htmlEl = el as HTMLElement
+    if (prefersReducedMotion()) {
+        htmlEl.style.height = ''
+        htmlEl.style.overflow = ''
+        return
+    }
     htmlEl.style.height = '0'
     htmlEl.style.overflow = 'hidden'
     htmlEl.style.transition = 'height 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
@@ -358,6 +381,11 @@ function onAfterEnter(el: Element) {
 
 function onLeave(el: Element) {
     const htmlEl = el as HTMLElement
+    if (prefersReducedMotion()) {
+        htmlEl.style.height = '0'
+        htmlEl.style.overflow = 'hidden'
+        return
+    }
     htmlEl.style.height = `${htmlEl.scrollHeight}px`
     htmlEl.style.overflow = 'hidden'
     htmlEl.style.transition = 'height 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
@@ -414,10 +442,24 @@ function onAfterLeave(el: Element) {
         </Transition>
 
         <!-- Horizontal absolute dropdown overlays -->
-        <div v-else-if="isOpened" class="absolute top-full left-0 z-dropdown pt-1.5">
-            <ul class="min-w-[200px] border-3 border-brutal bg-brutal-bg p-1.5 shadow-brutal rounded-brutal flex flex-col gap-1 list-none">
-                <slot />
-            </ul>
-        </div>
+        <Transition
+            v-else
+            enter-active-class="transition-all duration-150 ease-out motion-reduce:transition-none"
+            enter-from-class="opacity-0 scale-95 -translate-y-1"
+            enter-to-class="opacity-100 scale-100 translate-y-0"
+            leave-active-class="transition-all duration-100 ease-in motion-reduce:transition-none pointer-events-none"
+            leave-from-class="opacity-100 scale-100 translate-y-0"
+            leave-to-class="opacity-0 scale-95 -translate-y-1"
+        >
+            <div v-if="isOpened" class="absolute top-full left-0 z-dropdown pt-1.5">
+                <ul
+                    role="menu"
+                    aria-orientation="vertical"
+                    class="min-w-[200px] border-3 border-brutal bg-brutal-bg p-1.5 shadow-brutal rounded-brutal flex flex-col gap-1 list-none"
+                >
+                    <slot />
+                </ul>
+            </div>
+        </Transition>
     </li>
 </template>

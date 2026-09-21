@@ -246,4 +246,56 @@ describe('SubMenu hover lifecycle', () => {
         await vi.advanceTimersByTimeAsync(SUB_MENU_HOVER_DELAY_MS)
         expect(vi.getTimerCount()).toBe(0)
     })
+
+    it('renders horizontal dropdown overlay inside transition container when opened', async () => {
+        wrapper = mount({
+            components: { Menu, MenuItem, SubMenu },
+            template: `
+                <Menu mode="horizontal">
+                    <SubMenu index="products" title="Products" id="products-menu">
+                        <MenuItem index="products-one" id="products-one">One</MenuItem>
+                    </SubMenu>
+                </Menu>
+            `,
+        }, { attachTo: document.body })
+
+        const root = wrapper.find('#products-menu')
+        await root.trigger('mouseenter')
+        await advanceHoverDelay()
+
+        const overlay = root.find('.absolute.top-full')
+        expect(overlay.exists()).toBe(true)
+        expect(overlay.classes()).toContain('z-dropdown')
+        expect(overlay.find('#products-one').exists()).toBe(true)
+
+        const menuList = overlay.find('ul')
+        expect(menuList.attributes('role')).toBe('menu')
+        expect(menuList.attributes('aria-orientation')).toBe('vertical')
+    })
+
+    it('synchronizes horizontal open state with parent context openedMenus', async () => {
+        wrapper = mount({
+            components: { Menu, MenuItem, SubMenu },
+            template: `
+                <Menu mode="horizontal" ref="menuRef">
+                    <SubMenu index="products" title="Products" id="products-menu">
+                        <MenuItem index="products-one" id="products-one">One</MenuItem>
+                    </SubMenu>
+                </Menu>
+            `,
+        }, { attachTo: document.body })
+
+        const root = wrapper.find('#products-menu')
+        await root.trigger('mouseenter')
+        await advanceHoverDelay()
+
+        const menuComponent = wrapper.findComponent(Menu)
+        // @ts-expect-error context inspection
+        expect(menuComponent.vm.openedMenus?.has('products') ?? false).toBe(true)
+
+        await root.trigger('mouseleave')
+        await advanceHoverDelay()
+        // @ts-expect-error context inspection
+        expect(menuComponent.vm.openedMenus?.has('products') ?? false).toBe(false)
+    })
 })
