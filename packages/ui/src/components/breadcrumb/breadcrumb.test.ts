@@ -126,7 +126,7 @@ describe('BreadcrumbLink', () => {
 
     it('applies variant classes', () => {
         const wrapper = mount(BreadcrumbLink, { ...localeProvide })
-        expect(wrapper.classes()).toContain('transition-[transform,box-shadow,color]')
+        expect(wrapper.classes()).toContain('transition-[translate,box-shadow,background-color]')
         expect(wrapper.classes()).toContain('cursor-pointer')
     })
 
@@ -161,7 +161,7 @@ describe('BreadcrumbLink', () => {
         const anchor = wrapper.find('a')
         expect(anchor.exists()).toBe(true)
         expect(anchor.attributes('href')).toBe('/home')
-        expect(anchor.classes()).toContain('transition-[transform,box-shadow,color]')
+        expect(anchor.classes()).toContain('transition-[translate,box-shadow,background-color]')
         expect(anchor.classes()).toContain('cursor-pointer')
     })
 

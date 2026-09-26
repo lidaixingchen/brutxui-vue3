@@ -8,6 +8,8 @@ translated: true
 
 A neo-brutalist breadcrumb navigation component built on Reka UI's breadcrumb primitives, suitable for displaying multi-level page trees, especially as a standard navigation element in complex nested scenarios such as admin dashboards.
 
+Default links render as solid labels with a full border, background, and hard shadow. Hover changes the background; pressing moves the text and border together toward the shadow and hides it. The current page uses an accent fill with a smaller hard shadow. The `folder` variant retains its open-bottom tab appearance and flat surface, with background feedback on hover.
+
 ## Demo
 
 <ComponentPreview>
