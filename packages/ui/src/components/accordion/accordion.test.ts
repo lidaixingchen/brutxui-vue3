@@ -111,8 +111,8 @@ describe('AccordionItem', () => {
         expect(classes).toContain('data-[state=open]:shadow-brutal')
         expect(classes).toContain('mb-4')
         expect(classes).toContain('hover:shadow-brutal')
-        expect(classes).toContain('hover:-translate-x-0.5')
-        expect(classes).toContain('hover:-translate-y-0.5')
+        expect(classes).not.toContain('hover:-translate-x-0.5')
+        expect(classes).not.toContain('hover:-translate-y-0.5')
     })
 
     it('applies custom class', () => {
@@ -226,13 +226,13 @@ describe('AccordionTrigger', () => {
         expect(wrapper.find('[data-accordion-icon]').exists()).toBe(false)
     })
 
-    it('applies default variant hover lift via context', () => {
+    it('applies default variant color feedback via context', () => {
         const wrapper = mount(AccordionTrigger, {
             global: { stubs: triggerStubs },
         })
         const trigger = wrapper.find('[data-testid="accordion-trigger"]')
-        expect(trigger.classes()).toContain('hover:shadow-brutal-sm')
-        expect(trigger.classes()).toContain('hover:-translate-y-0.5')
+        expect(trigger.classes()).not.toContain('hover:shadow-brutal-sm')
+        expect(trigger.classes()).not.toContain('hover:-translate-y-0.5')
         expect(trigger.classes()).toContain('hover:bg-brutal-muted')
     })
 

@@ -78,12 +78,15 @@
 - **代码复用**：完整类名串复用 `@/lib/brutal-interaction-variants` 的 `brutalPress`（遵循完整字面量契约）。
 - **stacked 档位按压**：承载 `shadow-brutal-stacked` 的元素必须复用同文件的 `brutalPressStacked`——位移以 calc 同源派生最外层 1.5x 偏移（`active:translate-x-[calc(var(--brutal-shadow-offset-x,4px)*1.5)]`）并去影；严禁内联手抄像素字面量造成位移与阴影脱同步。
 - **合法例外**：
+  - *折叠面板标题*：Accordion 标题栏与外框保持对齐，按压通过颜色和焦点提示反馈；内容展开动画独立控制高度，标题与面板不附加平移。
   - *低强调变体*：`ghost` / `link` 变体豁免位移与阴影（`shadow-none` + 仅背景或下划线悬浮反馈）。
   - *私有与紧凑设计*：无阴影组件、分段控件、整宽单元格等小尺度私有设计允许使用轻量字面量（如 `active:translate-y-[2px]`）。
 - **过渡协同**：本规则不规定 transition 具体属性，过渡属性统一遵循 [COMPONENT_GUIDE.md](COMPONENT_GUIDE.md)「视觉与交互行为」节。同一交互元素只应声明一份 transition（避免 twMerge 同组静默移除陷阱，机制见 [TAILWIND_V4_MECHANISMS.md](TAILWIND_V4_MECHANISMS.md) §2）。
 
 ### R5 悬停反馈 (Hover Feedback)
 - **核心动作**：`hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5`（微上浮并放大硬阴影）。
+
+- **结构稳定性**：Accordion 与 Breadcrumb 悬停时保持布局位置，通过底色或阴影变化反馈。Breadcrumb 实体标签按压时文字、底色和边框作为整体移动。
 
 ### R6 颜色体系 (Colors)
 - **核心规则**：一律使用 `--brutal-*` CSS 变量（语义色及其 `*-foreground` 前景家族、`--brutal-status-*` 状态色家族）。

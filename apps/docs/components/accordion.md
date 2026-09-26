@@ -51,13 +51,13 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from 'br
 | `default` | 默认带有黑粗边框和右下方偏移实心阴影 |
 | `flat` | 仅带有黑粗边框，无任何投影效果 |
 | `ghost` | 透明背景，无边框和阴影，简约展示 |
-| `interactive` | 在悬停时拥有阴影放大和位移，交互感更强 |
+| `interactive` | 悬停时增强阴影与高亮，标题栏和面板保持原位 |
 
 ```vue
 <template>
     <AccordionItem value="item" variant="interactive">
         <AccordionTrigger>交互式折叠子项</AccordionTrigger>
-        <AccordionContent>Hover 看看！有悬停偏移效果。</AccordionContent>
+        <AccordionContent>悬停时增强阴影，展开时标题栏保持原位。</AccordionContent>
     </AccordionItem>
 </template>
 ```

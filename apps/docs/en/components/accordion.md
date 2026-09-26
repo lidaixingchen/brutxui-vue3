@@ -52,13 +52,13 @@ Use the `variant` prop on `AccordionItem` to set different neo-brutalist styles:
 | `default` | Default with thick black border and solid shadow offset at the bottom-right |
 | `flat` | Thick black border only, no shadow effects |
 | `ghost` | Transparent background, no border or shadow, minimal presentation |
-| `interactive` | Shadow scale-up and shift on hover for a stronger interactive feel |
+| `interactive` | Enhanced shadow and highlight on hover while the header and panel stay in place |
 
 ```vue
 <template>
     <AccordionItem value="item" variant="interactive">
         <AccordionTrigger>Interactive Accordion Item</AccordionTrigger>
-        <AccordionContent>Hover to see! There's a hover offset effect.</AccordionContent>
+        <AccordionContent>Hover enhances the shadow; the header stays in place when expanded.</AccordionContent>
     </AccordionItem>
 </template>
 ```

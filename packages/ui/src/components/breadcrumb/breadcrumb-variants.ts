@@ -1,5 +1,6 @@
 import { cva } from 'class-variance-authority'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
+import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const breadcrumbListVariants = cva(
     'list-none flex flex-wrap items-center gap-2.5 break-words text-sm font-medium text-brutal-fg sm:gap-4',
@@ -10,7 +11,7 @@ export const breadcrumbListVariants = cva(
             variant: {
                 default: '',
                 folder:
-                    '[&_a]:font-mono [&_a]:uppercase [&_a]:tracking-widest [&_a]:text-xs [&_a]:border-3 [&_a]:border-b-transparent [&_a]:border-brutal [&_a]:bg-brutal-muted [&_a]:rounded-none [&_a]:px-3 [&_a]:py-1',
+                    '[&_a]:font-mono [&_a]:uppercase [&_a]:tracking-widest [&_a]:text-xs [&_a]:border-3 [&_a]:border-b-transparent [&_a]:border-brutal [&_a]:bg-brutal-muted [&_a:hover]:bg-brutal-secondary-subtle [&_a]:shadow-none [&_a]:rounded-none [&_a]:px-3 [&_a]:py-1',
             },
         },
         defaultVariants: {
@@ -25,16 +26,16 @@ export const breadcrumbItemVariants = cva(
 
 export const breadcrumbLinkVariants = cva(
     [
-        // 过渡属性精确列出 hover 悬浮（color/box-shadow/transform）与 brutalPress（transform/box-shadow）
-        // 涉及的可动画属性，而非 transition-all（遵循 brutal-interaction-variants 惯例避免无谓开销）；
-        // transition-colors 不覆盖 transform/shadow 会导致按压/悬浮瞬间跳变
-        'font-semibold transition-[transform,box-shadow,color] hover:text-brutal-primary hover:underline hover:shadow-brutal-sm hover:-translate-y-0.5 cursor-pointer', /* 组件私有：面包屑项悬浮下划线及浮起效果，不抽取 */
+        'inline-flex items-center justify-center px-3 py-1',
+        'border-3 border-brutal rounded-brutal bg-brutal-bg text-brutal-fg shadow-brutal',
+        'font-semibold transition-[translate,box-shadow,background-color] hover:bg-brutal-secondary-subtle cursor-pointer',
+        FOCUS_RING_CLASSES,
         brutalPress,
     ]
 )
 
 export const breadcrumbPageVariants = cva(
-    'font-black text-brutal-fg bg-brutal-accent px-2 py-0.5 border-3 border-brutal rounded-brutal shadow-brutal-sm select-none'
+    'inline-flex items-center justify-center font-black text-brutal-fg bg-brutal-accent px-3 py-1 border-3 border-brutal rounded-brutal shadow-brutal-sm select-none'
 )
 
 export const breadcrumbSeparatorVariants = cva(

@@ -32,7 +32,7 @@
 - **过渡声明规范**：只声明实际变化的属性——
   1. 交互反馈默认 `transition-all`（位移+阴影+颜色统一过渡，全库多数派惯例而非强制）；
   2. 仅位移/阴影时用共享变体 `transition-[transform,box-shadow]`（`brutalPressWithTransition`/`brutalHoverLiftWithTransition`）；
-  3. 位移/阴影+颜色时显式列出全部变化属性（breadcrumb 的 `transition-[transform,box-shadow,color]`；含背景变化场景需 `background-color`）；
+  3. 位移/阴影+颜色时显式列出全部变化属性（breadcrumb 的 `transition-[translate,box-shadow,background-color]`；Tailwind 位移工具使用独立的 `translate` 属性）；
   4. opacity 变化用 `transition-opacity`（`transition-colors` 不过渡 opacity）。
 
 > [!WARNING]
