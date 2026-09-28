@@ -150,22 +150,34 @@ node scripts/bench-diff.mjs <main-bench.json> <pr-bench.json>
 
 | 指令 | 说明 | 执行位置 |
 | --- | --- | --- |
-| `pnpm --filter brutx-ui-vue docs:api` | 基于 TypeDoc 提取组件与 Composable 类型定义 | 根目录 |
-| `pnpm --filter brutx-ui-vue docs:api:full` | 全量生成组件 API 规格与 Props/Emits/Slots 文档 | 根目录 |
-| `pnpm --filter brutx-ui-vue docs:api:vue` | 仅提取 Vue SFC 声明文档（跳过 TypeDoc） | 根目录 |
+| `pnpm --filter brutx-ui-vue docs:api` | 按 `typedoc.json` 生成 TypeScript API Markdown 文档 | 根目录 |
+| `pnpm --filter brutx-ui-vue docs:api:full` | 运行 TypeDoc，并生成 Vue 组件、Composable、索引与类型汇总 Markdown，输出到 `packages/ui/docs/api` | 根目录 |
+| `pnpm --filter brutx-ui-vue docs:api:vue` | 生成 Vue 组件、Composable、索引与类型汇总 Markdown，跳过 TypeDoc | 根目录 |
+| `pnpm --filter brutx-ui-vue docs:catalog` | 按公开契约生成组件页面清单，报告成员分类与页面归属冲突 | 根目录 |
+| `pnpm --filter brutx-ui-vue docs:catalog:check` | 只读检查组件页面清单内容及公开范围诊断 | 根目录 |
+| `pnpm --filter brutx-ui-vue docs:manifest` | 生成组件 API 双语分组数据与页面目录 | 根目录 |
+| `pnpm --filter brutx-ui-vue docs:manifest:check` | 只读检查组件 API 双语分组数据与页面目录 | 根目录 |
+| `pnpm --filter docs dev` | 生成 API 数据并启动文档站，监听相关源码和配置变化 | 根目录 |
+
+`docs:api`、`docs:api:full` 与 `docs:api:vue` 输出供包内阅读的 Markdown 文档。VitePress 使用的结构化双语 API 数据由 `docs:manifest` 经共享 API collector 独立生成，不由上述 Markdown 命令生成。文档开发参数会传给 VitePress，例如：
+
+```bash
+pnpm --filter docs dev -- --host 127.0.0.1 --port 5180
+```
 
 ## 七、 生成编排与候选快照
 
-根目录和包级 `build/lint/typecheck` 通过统一 Turbo 图进入包级 `generate`。`build:artifact`、`lint:source`、`typecheck:source` 是底层消费任务；独立调用它们前须准备生成结果。联合验收使用 `pnpm exec turbo run build:artifact typecheck:source lint:source`，同一图中的 UI/CLI 生成各执行一次。
+根目录和包级 `build/lint/typecheck` 通过统一 Turbo 图进入包级 `generate`。文档构建另依赖独立的 `brutx-ui-vue#docs:manifest`，不把 API 数据生成并入令牌任务。联合验收使用 `pnpm exec turbo run build:artifact typecheck:source lint:source`，Turbo 图中的 UI/CLI 生成与文档 API 数据任务各执行一次。
 
-源码生成任务 `cache: false`，每次比较完整输出并保留混合文件手写区域。构建缓存只恢复 `dist`；Registry 构建同样保持 `cache: false`。
+源码生成任务 `cache: false`，每次比较完整输出并保留混合文件手写区域。`docs:manifest` 同样关闭缓存；构建缓存只恢复 `dist`，Registry 构建保持 `cache: false`。
 
 | 命令 | 职责 |
 | --- | --- |
 | `pnpm generate:tokens` | 统一运行 UI/CLI 生成入口 |
 | `pnpm --filter brutx-ui-vue generate` | 生成 UI 清单、公开入口、exports 及令牌 |
 | `pnpm --filter brutx-vue generate` | 生成 CLI 令牌与模板区域 |
-| `pnpm check:generated` | 只读比较 UI/CLI 全部生成结果 |
+| `pnpm --filter brutx-ui-vue docs:manifest` | 生成组件 API 双语分组数据及页面目录 |
+| `pnpm check:generated` | 只读比较 UI、CLI 和组件 API 文档生成结果 |
 | `pnpm check:staged-snapshot` | 从 Git index 物化候选快照并检查生成一致性 |
 | `pnpm test:tooling` | 生成事务、锁、缓存输入、部分暂存与门禁等价回归 |
 

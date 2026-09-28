@@ -96,7 +96,7 @@
 | 4 | **国际化检查** | 运行 `pnpm check:i18n:strict` | 严格校验中英文国际化 key 的镜像对称性 |
 | 5 | **本地局部自检** | ① 对修改文件运行 `pnpm exec eslint <changed-files> --fix`<br>② 对修改的子包运行类型检查（如 `pnpm --filter brutx-ui-vue typecheck`） | **核心**：仅自检被修改的文件或子包，严禁全局重型自检以节省资源 |
 | 6 | **编写演示组件** | 在 `apps/docs/.vitepress/theme/components/demos/` 目录下创建 `{ComponentName}Demo.vue` | 遵循 `PascalCaseDemo.vue` 命名规范，由 `import.meta.glob` 自动发现注册，无需手写 `index.ts` 注册 |
-| 7 | **编写文档** | 在 `apps/docs/components/` 和 `apps/docs/en/components/` 创建或更新 `{name}.md` 文档，并通过 `<{ComponentName}Demo />` 引入演示 | 必须符合 [COMPONENT_DOC_TEMPLATE.md](COMPONENT_DOC_TEMPLATE.md) 模板 |
+| 7 | **编写文档与 API 语义** | 在 apps/docs/components/ 和 apps/docs/en/components/ 维护双语页面；在 apps/docs/.vitepress/api-content/{slug}.ts 为公开成员逐项补齐中英文语义；API 表使用 ComponentApi，手写保留数据类型、原语说明和业务示例 | 按 COMPONENT_DOC_TEMPLATE.md 编写，源码维护中文成员注释，API 语义不得以中文回退英文；运行 pnpm --filter brutx-ui-vue docs:manifest:check --groups=<slug> 校验所选组件组 |
 | 8 | **文档侧边栏** | 侧边栏由 `sidebar-generator.ts` 基于 `COMPONENTS` 自动派生 | 无需手动维护中文名字典，可通过 `pnpm --filter docs build` 验证文档构建 |
 | 9 | **更新 AI 技能** | 在 `skills/brutxui/SKILL.md` 中同步新组件和函数 | 便于后续 AI Agent 能够识别并合理复用 |
 | 10 | **约定引用校验** | 运行 `pnpm check:docs` | 校验 guide/skills 无已删除符号引用，登记组件均有中英文文档 |
