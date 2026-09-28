@@ -1,5 +1,17 @@
 # brutx-ui-vue
 
+## 0.11.3
+
+### Patch Changes
+
+- 553091e: Button 的 effect 开关统一约束 autoplay 与实例 play()；关闭特效时释放媒体监听、定时器和文本同步。完善禁用、loading、减少动态效果及 KeepAlive 生命周期资源管理。
+- a9c6631: 公开 API 移除 DialogTestFixture、NestedDialogTestFixture、SelectTestFixture 和 VirtualScrollTestFixture；内部测试继续通过源码路径使用夹具。组件 API 文档提供完整双语成员、类型定义、默认值及搜索定位。
+
+  Accordion 标题与面板在交互时保持对齐，Breadcrumb 默认链接采用完整边框实体标签，按压时文字和边框整体移动；依赖旧视觉效果的调用方可通过 class 调整样式。
+
+- 553091e: 通过显式契约生成公开入口与子路径，内部化 useClearableSelection、useSelectableTrigger、useSelectionDisplayText、useTransferPanelSelection。业务输入类型保持公开，组件 Props 通过组件类型推导；loading 子路径提供 Loading 与 vLoading。迁移说明见 docs/guides/API_MIGRATION.md。
+- 906eaf8: 修复 TreeSelect 嵌套键盘事件重复处理及禁用节点焦点导航，完善 Upload 拖拽状态复位与单选限制。SubMenu 悬停切换采用可取消延迟，关闭、禁用和卸载时清理待处理动作。
+
 ## 0.11.2
 
 ### Patch Changes
