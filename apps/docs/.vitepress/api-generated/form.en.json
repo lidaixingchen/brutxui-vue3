@@ -1,0 +1,1130 @@
+{
+  "id": "component:form",
+  "name": "form",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:form/Form",
+      "name": "Form",
+      "source": {
+        "file": "packages/ui/src/components/form/Form.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aform_2FForm-props-inline",
+          "name": "inline",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Arranges form items in a wrapping horizontal layout.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/form/Form.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FForm-props-labelPosition",
+          "name": "labelPosition",
+          "kind": "props",
+          "type": {
+            "text": "\"right\" | \"left\" | \"top\" | undefined",
+            "literals": [
+              "\"left\"",
+              "\"right\"",
+              "\"top\""
+            ],
+            "references": []
+          },
+          "description": "left and right place labels to the left of controls with the corresponding alignment; top places labels above controls.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'right'",
+              "source": {
+                "file": "packages/ui/src/components/form/Form.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"right\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FForm-props-labelWidth",
+          "name": "labelWidth",
+          "kind": "props",
+          "type": {
+            "text": "string | number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The label-column width in horizontal label layouts. Numbers are pixels and strings are CSS widths; top layouts do not use this value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/form/Form.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FForm-props-scrollToError",
+          "name": "scrollToError",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Smoothly scrolls to the first invalid field when the instance validate() method fails. Native submission handling does not use this option.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/form/Form.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FForm-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"lg\" | \"sm\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Provides a shared size for item spacing, labels, descriptions, and errors, and exposes size to controls through the FormControl slot.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/form/Form.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FForm-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes merged onto the native form root.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/form/Form.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FForm-props-initialValues",
+          "name": "initialValues",
+          "kind": "props",
+          "type": {
+            "text": "Record<string, unknown> | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Initial field values passed to vee-validate. A changed prop reference resets the form with the new values while the form is pristine.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/form/Form.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FForm-props-validationSchema",
+          "name": "validationSchema",
+          "kind": "props",
+          "type": {
+            "text": "unknown",
+            "literals": [],
+            "references": []
+          },
+          "description": "The reactive validation schema passed to vee-validate, using supported rules or a converted Zod schema.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/form/Form.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FForm-events-submit",
+          "name": "submit",
+          "kind": "events",
+          "type": {
+            "text": "[values: Record<string, unknown>]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits field values after form submission passes vee-validate validation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aform_2FForm-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Form fields, descriptions, and submission controls. Descendants can access the validation and layout context provided by Form.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aform_2FForm-exposes-validate",
+          "name": "validate",
+          "kind": "exposes",
+          "type": {
+            "text": "() => Promise<boolean>",
+            "literals": [],
+            "references": []
+          },
+          "description": "Validates all fields and asynchronously returns their validity. On failure, scrolls to the first invalid field when scrollToError is enabled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 140
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Aform_2FForm-exposes-validateField",
+          "name": "validateField",
+          "kind": "exposes",
+          "type": {
+            "text": "(field: string) => Promise<boolean>",
+            "literals": [],
+            "references": []
+          },
+          "description": "Validates one field by name and asynchronously returns whether it is valid.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 141
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Aform_2FForm-exposes-resetFields",
+          "name": "resetFields",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Calls vee-validate resetForm to restore fields and form state to their initial state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 142
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Aform_2FForm-exposes-clearValidate",
+          "name": "clearValidate",
+          "kind": "exposes",
+          "type": {
+            "text": "(fields?: string[] | undefined) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Clears validation errors for the specified fields. Omission or an empty array clears all errors while preserving current field values.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 143
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Aform_2FForm-exposes-scrollToField",
+          "name": "scrollToField",
+          "kind": "exposes",
+          "type": {
+            "text": "(field: string) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Finds a form control by name and smoothly scrolls to its top. Radio groups use the first control; no scrolling occurs when the field is absent.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 144
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": "component:form/FormConditional",
+      "name": "FormConditional",
+      "source": {
+        "file": "packages/ui/src/components/form/FormConditional.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aform_2FFormConditional-props-when",
+          "name": "when",
+          "kind": "props",
+          "type": {
+            "text": "(values: Record<string, unknown>) => boolean",
+            "literals": [],
+            "references": []
+          },
+          "description": "The predicate deciding whether conditional content is mounted. Use it inside Form and prefer a stable named function reference.",
+          "notes": [
+            "The current implementation reads values.value from the form context and passes an empty object when it is absent; a normal flat field record is not passed as the complete values object."
+          ],
+          "source": {
+            "file": "packages/ui/src/components/form/FormConditional.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormConditional-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes merged onto the content wrapper div when the condition is true.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormConditional.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/form/FormConditional.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormConditional-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Fields or other content mounted when the condition is true. The entire region is unmounted when it becomes false.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormConditional.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:form/FormControl",
+      "name": "FormControl",
+      "source": {
+        "file": "packages/ui/src/components/form/FormControl.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aform_2FFormControl-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes merged with form-control layout styles and applied through as-child to the single root control in the default slot.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormControl.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormControl-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{ ariaDescribedby: string | undefined; ariaInvalid: true | undefined; size: FormLayoutSize | undefined; class: string; id: string | undefined; }",
+            "literals": [],
+            "references": [
+              {
+                "name": "FormLayoutSize",
+                "text": "export type FormLayoutSize = 'sm' | 'default' | 'lg'",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fform%2Fform-variants.ts%23FormLayoutSize"
+              }
+            ]
+          },
+          "description": "Contains one root control. Provides the FormItem-linked id, class, ariaDescribedby, ariaInvalid, and Form size for explicit binding. The description relationship includes the error message when meaningful error text is present.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormControl.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:form/FormDescription",
+      "name": "FormDescription",
+      "source": {
+        "file": "packages/ui/src/components/form/FormDescription.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aform_2FFormDescription-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes merged onto the field description paragraph, which uses the description ID provided by FormItem.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormDescription.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormDescription-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Supporting guidance for the field. The description paragraph is not rendered when this slot is omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormDescription.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:form/FormField",
+      "name": "FormField",
+      "source": {
+        "file": "packages/ui/src/components/form/FormField.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aform_2FFormField-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The field name registered with vee-validate. Keep it stable during the component lifetime; changing it requires handling retained values and errors for the previous name.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormField.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormField-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Content that consumes the current field context, typically FormItem. The slot does not directly provide field arguments.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormField.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:form/FormItem",
+      "name": "FormItem",
+      "source": {
+        "file": "packages/ui/src/components/form/FormItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aform_2FFormItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes merged onto the field layout container, which follows the Form label position, width, and size.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormItem.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The field label, control, description, and error message, sharing the IDs generated by this FormItem.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:form/FormLabel",
+      "name": "FormLabel",
+      "source": {
+        "file": "packages/ui/src/components/form/FormLabel.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aform_2FFormLabel-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes merged onto the field label. Meaningful error text automatically applies the error color.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormLabel.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormLabel-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The field label content, linked through for to the FormItem control ID.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormLabel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:form/FormMessage",
+      "name": "FormMessage",
+      "source": {
+        "file": "packages/ui/src/components/form/FormMessage.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aform_2FFormMessage-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes merged onto the validation error paragraph. It renders with role=\"alert\" only when the field error is non-empty after trimming.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormMessage.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:form/FormWizard",
+      "name": "FormWizard",
+      "source": {
+        "file": "packages/ui/src/components/form/FormWizard.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aform_2FFormWizard-props-steps",
+          "name": "steps",
+          "kind": "props",
+          "type": {
+            "text": "FormStep[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "FormStep",
+                "text": "export interface FormStep {\n    id: string\n    title: string\n    description?: string\n    icon?: Component\n    /** 入参为全量 values（跨步骤共享的扁平字段集合），约定只返回当前步骤相关字段的错误 */\n    validator?: (values: Record<string, unknown>) => ValidationResult\n    /** 线性导航下可跳过（不要求完成即可前进），但不豁免 validator */\n    optional?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fform%2Fform-wizard-types.ts%23FormStep"
+              }
+            ]
+          },
+          "description": "The step configuration list with stable IDs, titles, and optional validators. Each ID determines its step-{id} slot name.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/form-wizard-types.ts",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "Record<string, unknown> | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The flat field record shared across steps and controlled through v-model. useFormWizard().updateValues() emits updates after shallowly merging field patches.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/form-wizard-types.ts",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => ({})",
+              "source": {
+                "file": "packages/ui/src/components/form/FormWizard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "{  }"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-props-initialStep",
+          "name": "initialStep",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The initial zero-based step index, clamped to the valid steps range at creation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/form-wizard-types.ts",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0",
+              "source": {
+                "file": "packages/ui/src/components/form/FormWizard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-props-validateOnNext",
+          "name": "validateOnNext",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Validates the current step when advancing, and revalidates all steps with validators when completing, including optional steps.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/form-wizard-types.ts",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/form/FormWizard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-props-showIndicator",
+          "name": "showIndicator",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows the top step indicator, which users can use to request navigation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/form-wizard-types.ts",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/form/FormWizard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-props-linear",
+          "name": "linear",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Requires preceding required steps to be completed before forward navigation. Optional steps may be skipped; backward navigation is unrestricted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/form-wizard-types.ts",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/form/FormWizard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes merged onto the wizard root container with role=\"form\".",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/form-wizard-types.ts",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/form/FormWizard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[values: Record<string, unknown>]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the complete field record after shallowly merging a field update made through the wizard context.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormWizard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-events-complete",
+          "name": "complete",
+          "kind": "events",
+          "type": {
+            "text": "[values: Record<string, unknown>]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits all form data when the completion action passes the enabled step validation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormWizard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-events-step_2Dchange",
+          "name": "step-change",
+          "kind": "events",
+          "type": {
+            "text": "[step: number, previousStep: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the target and previous zero-based indices on navigation or when completion validation returns to a failing step.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormWizard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-events-validation_2Derror",
+          "name": "validation-error",
+          "kind": "events",
+          "type": {
+            "text": "[step: number, errors: Record<string, string>]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the step index and field error record when a step validator returns an invalid result.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormWizard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-events-navigation_2Dblocked",
+          "name": "navigation-blocked",
+          "kind": "events",
+          "type": {
+            "text": "[targetStep: number, blockedStep: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the target and blocking indices when linear navigation encounters an incomplete required preceding step.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormWizard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-slots-step_2D_7Bid_7D",
+          "name": "step-{id}",
+          "kind": "slots",
+          "type": {
+            "text": "{ step: FormStep; index: number }",
+            "literals": [],
+            "references": []
+          },
+          "description": "A dynamic slot named after the step ID, receiving its configuration and zero-based index. All step content remains mounted, with v-show selecting the current panel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormWizard.vue",
+            "line": 217
+          },
+          "origin": "supplement"
+        }
+      ]
+    }
+  ]
+}

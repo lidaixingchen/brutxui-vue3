@@ -1,0 +1,253 @@
+{
+  "id": "component:rate",
+  "name": "rate",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:rate/Rate",
+      "name": "Rate",
+      "source": {
+        "file": "packages/ui/src/components/rate/Rate.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Arate_2FRate-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前评分，通过 v-model 绑定；鼠标悬停时临时预览悬停分值，移出后恢复显示绑定值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/rate/Rate.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0",
+              "source": {
+                "file": "packages/ui/src/components/rate/Rate.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Arate_2FRate-props-max",
+          "name": "max",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "评分上限，同时决定渲染的图标数量和键盘 End 键选中的分值；应传入正整数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/rate/Rate.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "5",
+              "source": {
+                "file": "packages/ui/src/components/rate/Rate.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "5"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Arate_2FRate-props-allowHalf",
+          "name": "allowHalf",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用半分选择与半图标填充；鼠标可选择每个图标的左半区，方向键步长也变为半分。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/rate/Rate.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/rate/Rate.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Arate_2FRate-props-readonly",
+          "name": "readonly",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "仅展示评分，停止鼠标预览、点击选择和键盘修改，并将组件移出 Tab 焦点顺序。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/rate/Rate.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/rate/Rate.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Arate_2FRate-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "\"lg\" | \"sm\" | \"md\" | undefined",
+            "literals": [
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "控制评分图标的尺寸和图标之间的间距。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/rate/Rate.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/rate/Rate.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Arate_2FRate-props-icon",
+          "name": "icon",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "用于评分图标的 BrutalShape 图腾名称，例如 heart、lightning 或 star-5。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/rate/Rate.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/rate/Rate.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "未提供、传入空字符串或名称不在图腾库中时，使用 Lucide Star 星形。"
+          }
+        },
+        {
+          "id": "api-component_3Arate_2FRate-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "用户通过鼠标或键盘选择了与当前值不同的评分时触发，用于更新 v-model；悬停预览不会触发。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/rate/Rate.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Arate_2FRate-events-change",
+          "name": "change",
+          "kind": "events",
+          "type": {
+            "text": "[value: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "用户选中的评分发生变化时，在 update:modelValue 之后触发，参数为相同的新评分。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/rate/Rate.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

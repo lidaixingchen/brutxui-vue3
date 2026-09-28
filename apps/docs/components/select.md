@@ -21,15 +21,8 @@ description: 选择器组件，可替代浏览器原生下拉，提供更好的�
 
 ```vue
 <script setup>
-import {
-    Select,
-    SelectTrigger,
-    SelectContent,
-    SelectItem,
-    SelectValue,
-    SelectGroup,
-    SelectLabel,
-} from 'brutx-ui-vue'
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectLabel } from 'brutx-ui-vue'
+import { SelectGroup, SelectValue } from 'reka-ui'
 </script>
 
 <template>
@@ -52,25 +45,19 @@ import {
 
 ### 自定义插槽与属性透传
 
-当使用默认插槽来自定义装配原子组件时，为了保证表单验证（如必填项校验）和无障碍访问（A11y）正常工作，你需要把 `Select` 组件上绑定的 `id`、`name`、`required` 以及 `disabled` 等属性透传给内部的 `SelectTrigger` 组件。
-
-你可以通过 `v-slot` 作用域插槽来接收并绑定这些属性：
+默认插槽用于完全自定义选择器内容，不提供作用域参数。组合原子组件时，Select 接收表单 name、required 和 disabled；触发器的 id 及禁用状态应在插槽内容中直接绑定。
 
 ```vue
+<script setup>
+import { ref } from 'vue'
+import { Select, SelectTrigger, SelectContent, SelectItem } from 'brutx-ui-vue'
+import { SelectValue } from 'reka-ui'
+const isDisabled = ref(false)
+</script>
+
 <template>
-    <Select
-        id="my-select"
-        name="fruit"
-        required
-        v-slot="{ id, name, required, disabled }"
-    >
-        <SelectTrigger
-            :id="id"
-            :name="name"
-            :required="required"
-            :disabled="disabled"
-            class="w-[280px]"
-        >
+    <Select name="fruit" required :disabled="isDisabled">
+        <SelectTrigger id="fruit-select" :disabled="isDisabled" class="w-[280px]">
             <SelectValue placeholder="Select a fruit" />
         </SelectTrigger>
         <SelectContent>
@@ -153,8 +140,8 @@ import {
     SelectTrigger,
     SelectContent,
     SelectItem,
-    SelectValue,
 } from 'brutx-ui-vue'
+import { SelectValue } from 'reka-ui'
 
 const selectedFruit = ref('')
 </script>
@@ -177,126 +164,37 @@ const selectedFruit = ref('')
 
 | 组件 | 说明 |
 |------|------|
-| `Select` | 根组件（从 reka-ui 重新导出为 `SelectRoot`） |
+| `Select` | 支持 options 数据源和插槽组合的一体化选择器，内部使用 Reka UI 原语 |
+| `SelectRoot` | Reka UI 根原语，为原子组合提供选择器上下文（从 reka-ui 导入） |
+| `SelectValue` | Reka UI 原语，显示当前值或占位文本（从 reka-ui 导入） |
+| `SelectGroup` | Reka UI 原语，将选项组合为一个分组（从 reka-ui 导入） |
 | `SelectTrigger` | 打开下拉菜单的按钮 |
 | `SelectContent` | 下拉内容面板 |
 | `SelectItem` | 可选项 |
-| `SelectValue` | 显示已选中的值 |
-| `SelectGroup` | 选项分组 |
 | `SelectLabel` | 分组标签 |
 | `SelectSeparator` | 视觉分隔线 |
 | `SelectScrollUpButton` | 向上滚动指示器 |
 | `SelectScrollDownButton` | 向下滚动指示器 |
 
-## Props
+## API 参考
 
-### Select (一体化组件)
+<span id="select-一体化组件"></span>
+<span id="select-原子组件"></span>
+<span id="selecttrigger"></span>
+<span id="selectcontent"></span>
+<span id="selectitem"></span>
+<span id="selectvalue"></span>
+<span id="selectlabel"></span>
+<span id="selectseparator"></span>
+<span id="selectscrollupbutton"></span>
+<span id="selectscrolldownbutton"></span>
+<span id="selecttrigger-事件"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `options` | `SelectOption[]` | `[]` | 选项数据源，每个选项包含 `label`, `value`, `disabled` 等属性 |
-| `groupField` | `string` | — | 自动分组所依据的键名（如 `category`） |
-| `groupLabel` | `string` | — | 分组显示名称在选项中对应的键名（如 `categoryName`），不提供时使用 `groupField` 的值 |
-| `placeholder` | `string` | `'Select an option'` | 占位文本 |
-| `disabled` | `boolean` | `false` | 是否禁用 |
-| `required` | `boolean` | `false` | 是否必填 |
-| `name` | `string` | — | 表单字段名称 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 触发器尺寸 |
-| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | 边框样式变体 |
-| `errorMessage` | `string` | — | 错误提示消息 |
-| `clearable` | `boolean` | `false` | 是否显示清除按钮 |
-| `position` | `'popper' \| 'item-aligned'` | `'popper'` | 下拉浮层定位方式 |
-| `class` | `string` | — | 根组件（触发器）样式类 |
-| `triggerClass` | `string` | — | 触发器自定义样式类 |
-| `contentClass` | `string` | — | 下拉内容浮层样式类 |
-| `itemVariant` | `'default' \| 'primary' \| 'secondary'` | `'default'` | 选项选中/激活变体 |
+<ComponentApi name="select" />
 
-### Select (原子组件)
+### Reka UI 原语
 
-根组件，继承 reka-ui `SelectRoot` 的所有属性。常用属性如下：
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `modelValue` | `string` | — | 选中的值，支持 `v-model` |
-| `defaultValue` | `string` | — | 默认选中值 |
-| `open` | `boolean` | — | 下拉框是否展开，支持 `v-model:open` |
-| `defaultOpen` | `boolean` | `false` | 默认是否展开 |
-| `disabled` | `boolean` | `false` | 是否禁用 |
-| `required` | `boolean` | `false` | 是否必填 |
-| `name` | `string` | — | 表单字段名称 |
-
-### SelectTrigger
-
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 触发器尺寸 |
-| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | 边框样式变体 |
-| `errorMessage` | `string` | — | 错误消息文本，仅在 `variant="error"` 时显示 |
-| `disabled` | `boolean` | `false` | 是否禁用 |
-| `clearable` | `boolean` | `false` | 悬停时显示清除按钮 |
-| `modelValue` | `string \| number \| null` | — | 当前选中值（用于清除功能） |
-| `class` | `string` | — | 自定义样式类 |
-| `iconClass` | `string` | — | 图标自定义样式类 |
-
-### SelectContent
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `position` | `'popper' \| 'item-aligned'` | `'popper'` | 定位方式 |
-| `class` | `string` | — | 自定义样式类 |
-
-### SelectItem
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `value` | `string` | —（必填） | 选项值 |
-| `disabled` | `boolean` | `false` | 是否禁用 |
-| `variant` | `'default' \| 'primary' \| 'secondary'` | `'default'` | 选项样式变体 |
-| `class` | `string` | — | 自定义样式类 |
-| `indicatorClass` | `string` | — | 选中指示器自定义样式类 |
-| `iconClass` | `string` | — | 勾选图标自定义样式类 |
-| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 勾选图标尺寸 |
-
-### SelectValue
-
-显示已选中值的组件，继承 reka-ui `SelectValue` 的所有属性。
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `placeholder` | `string` | — | 占位符文本 |
-
-### SelectLabel
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 自定义样式类 |
-
-### SelectSeparator
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `decorative` | `boolean` | `true` | 是否为纯装饰性元素（为 true 时在无障碍树中隐藏） |
-| `class` | `string` | — | 自定义样式类 |
-
-### SelectScrollUpButton
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 自定义样式类 |
-| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 向上箭头图标尺寸 |
-
-### SelectScrollDownButton
-
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `class` | `string` | — | 自定义样式类 |
-| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 向下箭头图标尺寸 |
-
-## SelectTrigger 事件
-
-| 事件 | 参数 | 说明 |
-| --- | --- | --- |
-| `clear` | — | 点击清除按钮时触发 |
+一体化 Select 的公开属性、事件和插槽列在上方。使用原子组合时，SelectRoot、SelectValue 等无头原语由 reka-ui 提供，应从 reka-ui 直接导入；其余属性与插槽契约由 Reka UI 定义。
 
 ## 可访问性
 

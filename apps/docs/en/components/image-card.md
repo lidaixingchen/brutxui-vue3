@@ -68,23 +68,9 @@ The default slot replaces the title/description structure for free-form footer c
 </template>
 ```
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `src` | `string` | *(required)* | Image source URL |
-| `alt` | `string` | `''` | Alternative text; an empty string marks the image as decorative |
-| `aspect` | `'4/3' \| 'video' \| 'square'` | `undefined` | Image area aspect ratio; `video` is 16:9 |
-| `accent` | `'primary' \| 'secondary' \| 'accent' \| 'destructive' \| 'success' \| 'info' \| 'muted'` | `undefined` | Footer color family |
-| `title` | `string` | `undefined` | Footer title in monospace uppercase |
-| `description` | `string` | `undefined` | Footer description text |
-| `class` | `ClassValue` | `undefined` | Custom CSS class name |
-
-## Slots
-
-| Slot | Description |
-|------|-------------|
-| `default` | Replaces the footer's default title/description structure |
+<ComponentApi name="image-card" />
 
 ::: tip Frameless-footer mode
 When neither `title` nor `description` is provided and no default slot content exists, `<figcaption>` is skipped and the component degrades to a pure framed image.

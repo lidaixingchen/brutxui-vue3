@@ -1,0 +1,6095 @@
+{
+  "id": "component:date-picker",
+  "name": "date-picker",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:date-picker/DatePicker",
+      "name": "DatePicker",
+      "source": {
+        "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "受控的面板开关状态，通过 v-model:open 接收组件发出的开关请求。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePicker.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 时使用组件内部开关状态，初始为关闭。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "控制日期触发按钮的高度、内边距及图标尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePicker.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"success\" | \"error\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"error\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "控制日期触发按钮的视觉状态，提供常规、错误和成功配色。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePicker.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "Date | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "当前选中的单个日期，通过 v-model 绑定；null 表示尚未选择或已清除。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "null",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "null"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "没有可显示日期时呈现在触发按钮中的占位文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时读取 datePicker.placeholder，简体中文文案为“请选择日期”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-props-shortcuts",
+          "name": "shortcuts",
+          "kind": "props",
+          "type": {
+            "text": "DatePickerShortcut[] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "DatePickerShortcut",
+                "text": "export interface DatePickerShortcut {\n    label: string\n    value: Date | (() => Date)\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fdate-picker%2Ftypes.ts%23DatePickerShortcut"
+              }
+            ]
+          },
+          "description": "日期面板中的快捷选项；每项提供显示标签和 Date 值或返回 Date 的函数，选择后仍需遵守日期上下界。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-props-displayFormat",
+          "name": "displayFormat",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "格式化触发器中显示的日期文本，支持 YYYY、YY、MM、DD、HH、mm、ss 和 WW；不改变绑定值的 Date 类型。WW 使用 ISO 周数，仅含周数而不含月日时，年份使用 ISO 周所属年份。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 6
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'YYYY-MM-DD'",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"YYYY-MM-DD\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-props-minDate",
+          "name": "minDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传给日历的最早可选日期；单日期快捷项按本地年月日比较，早于该日的快捷值会被忽略。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-props-maxDate",
+          "name": "maxDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传给日历的最晚可选日期；单日期快捷项按本地年月日比较，晚于该日的快捷值会被忽略。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用触发按钮并隐藏触发器清除按钮；具有隐藏表单字段的选择器也会禁用该字段。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-props-readonly",
+          "name": "readonly",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "阻止组件内部打开面板，并隐藏触发器清除按钮，保留当前日期的显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示面板底部的清除和确认操作；有值且未禁用、未只读时，也显示触发器清除按钮。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "原生表单字段名。提供后创建隐藏字段，以 YYYY-MM-DD 提交日期；空值提交空字符串，禁用时不提交。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递给日期触发按钮的 HTML ID，可供 label 或辅助技术引用。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "日期触发按钮和日期面板的无障碍名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时读取 datePicker.placeholder，简体中文文案为“请选择日期”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到日期触发按钮上的补充 CSS 类名。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "面板选择、确认或清除日期时触发，用于更新 v-model；清除时传入 null。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-events-open",
+          "name": "open",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "面板开关状态变为打开时触发，面板显示值同时从当前 modelValue 重新初始化。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-events-close",
+          "name": "close",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "面板开关状态变为关闭时触发。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "组件请求设置面板开关时触发，用于 v-model:open；受控模式下需由父组件更新 open 才会改变显示状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-events-change",
+          "name": "change",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "确认或清除时立即触发；其他关闭场景中，仅当面板显示值与当时 modelValue 的时间戳不同才触发。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-exposes-open",
+          "name": "open",
+          "kind": "exposes",
+          "type": {
+            "text": "Ref<boolean, boolean>",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "可读写的面板开关引用；通过组件实例赋值可请求打开或关闭，readonly 会阻止打开请求。受控模式下写入会触发 update:open，仍需父组件更新 open。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": "component:date-picker/DatePickerPanel",
+      "name": "DatePickerPanel",
+      "source": {
+        "file": "packages/ui/src/components/date-picker/DatePickerPanel.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerPanel-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "Date | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "独立日期面板中的当前选中日期，通过 v-model 与调用方同步。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerPanel.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "null",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "null"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerPanel-props-minDate",
+          "name": "minDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传给日历的最早可选日期；单日期快捷项按本地年月日比较，早于该日的快捷值会被忽略。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerPanel.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerPanel-props-maxDate",
+          "name": "maxDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传给日历的最晚可选日期；单日期快捷项按本地年月日比较，晚于该日的快捷值会被忽略。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerPanel.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerPanel-props-shortcuts",
+          "name": "shortcuts",
+          "kind": "props",
+          "type": {
+            "text": "DatePickerShortcut[] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "DatePickerShortcut",
+                "text": "export interface DatePickerShortcut {\n    label: string\n    value: Date | (() => Date)\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fdate-picker%2Ftypes.ts%23DatePickerShortcut"
+              }
+            ]
+          },
+          "description": "面板侧栏中的带标签日期快捷项，可提供 Date 或返回 Date 的函数；越过日期上下界的快捷值会被忽略。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerPanel.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerPanel-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示包含清除和确认按钮的面板页脚；关闭时两个按钮一并隐藏。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerPanel.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerPanel-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "日期面板 dialog 的无障碍名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerPanel.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时读取 datePicker.placeholder，简体中文文案为“请选择日期”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerPanel-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "面板选中的日期变化时触发；清除操作会传入 null，父组件需接收更新以同步选中状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerPanel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerPanel-events-clear",
+          "name": "clear",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "点击面板清除按钮时触发，随后发出 update:modelValue(null)。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerPanel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerPanel-events-confirm",
+          "name": "confirm",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "点击面板确认按钮时触发，携带当前 modelValue，包括未选择时的 null。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerPanel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:date-picker/DatePickerPanelFooter",
+      "name": "DatePickerPanelFooter",
+      "source": {
+        "file": "packages/ui/src/components/date-picker/DatePickerPanelFooter.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerPanelFooter-props-clearLabel",
+          "name": "clearLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "面板页脚清除按钮的文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerPanelFooter.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerPanelFooter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined、null 或空字符串时读取 datePicker.clear，简体中文文案为“清除”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerPanelFooter-props-confirmLabel",
+          "name": "confirmLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "面板页脚确认按钮的文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerPanelFooter.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerPanelFooter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined、null 或空字符串时读取 datePicker.confirm，简体中文文案为“确认”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerPanelFooter-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "同时禁用清除和确认按钮，可在异步处理期间阻止用户重复提交。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerPanelFooter.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerPanelFooter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerPanelFooter-events-clear",
+          "name": "clear",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "启用状态下点击清除按钮时触发，具体清除行为由调用方处理。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerPanelFooter.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerPanelFooter-events-confirm",
+          "name": "confirm",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "启用状态下点击确认按钮时触发，具体确认行为由调用方处理。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerPanelFooter.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:date-picker/DatePickerRange",
+      "name": "DatePickerRange",
+      "source": {
+        "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRange-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "控制日期触发按钮的高度、内边距及图标尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerRange.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRange-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"success\" | \"error\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"error\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "控制日期触发按钮的视觉状态，提供常规、错误和成功配色。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerRange.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRange-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "DateRange | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": [
+              {
+                "name": "DateRange",
+                "text": "export type DateRange = readonly [Date, Date]",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fdate-picker%2Ftypes.ts%23DateRange"
+              }
+            ]
+          },
+          "description": "当前起止日期组成的只读元组，通过 v-model 绑定；null 表示空范围。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 48
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "null",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "null"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRange-props-startPlaceholder",
+          "name": "startPlaceholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "尚无完整日期范围时，在触发器起始日期位置显示的文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 49
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时读取 datePicker.startPlaceholder，简体中文文案为“开始日期”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRange-props-endPlaceholder",
+          "name": "endPlaceholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "尚无完整日期范围时，在触发器结束日期位置显示的文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 50
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时读取 datePicker.endPlaceholder，简体中文文案为“结束日期”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRange-props-separator",
+          "name": "separator",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "显示在起止日期或对应占位文本之间的分隔文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 51
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时读取 datePicker.separator，简体中文文案为“至”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRange-props-shortcuts",
+          "name": "shortcuts",
+          "kind": "props",
+          "type": {
+            "text": "DatePickerRangeShortcut[] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "DatePickerRangeShortcut",
+                "text": "export interface DatePickerRangeShortcut {\n    label: string\n    value: DateRange | (() => DateRange)\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fdate-picker%2Ftypes.ts%23DatePickerRangeShortcut"
+              }
+            ]
+          },
+          "description": "日期范围快捷项，包含标签和起止日期元组或返回该元组的函数；选中后直接更新范围。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 52
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRange-props-displayFormat",
+          "name": "displayFormat",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "分别格式化起始和结束日期，支持 YYYY、YY、MM、DD、HH、mm、ss 和 WW；不改变 DateRange 绑定值。WW 遵循 ISO 周数与周所属年份规则。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 6
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'YYYY-MM-DD'",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"YYYY-MM-DD\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRange-props-minDate",
+          "name": "minDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传给范围日历的最早可选日期；快捷范围直接作为更新值发出，需由调用方保证快捷项符合边界。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRange-props-maxDate",
+          "name": "maxDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传给范围日历的最晚可选日期；快捷范围直接作为更新值发出，需由调用方保证快捷项符合边界。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRange-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用范围选择触发按钮并隐藏触发器清除按钮。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRange-props-readonly",
+          "name": "readonly",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "阻止组件内部打开面板，并隐藏触发器清除按钮，保留当前日期的显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRange-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示面板底部的清除和确认操作；有值且未禁用、未只读时，也显示触发器清除按钮。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRange-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传给范围触发按钮的原生 name 属性；此组件不创建用于提交日期范围的隐藏字段。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRange-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递给日期触发按钮的 HTML ID，可供 label 或辅助技术引用。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRange-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "范围触发按钮和范围面板的无障碍名称，与占位文本独立配置。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时读取 datePicker.rangeLabel，简体中文文案为“日期范围”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRange-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到日期触发按钮上的补充 CSS 类名。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRange-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: DateRange | null]",
+            "literals": [
+              "null"
+            ],
+            "references": [
+              {
+                "name": "DateRange",
+                "text": "export type DateRange = readonly [Date, Date]",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fdate-picker%2Ftypes.ts%23DateRange"
+              }
+            ]
+          },
+          "description": "日历选择、拖动范围、快捷选择、确认或清除时触发，用于更新 v-model；参数为起止日期元组或 null。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRange-events-open",
+          "name": "open",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "面板开关状态变为打开时触发，面板显示值同时从当前 modelValue 重新初始化。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRange-events-close",
+          "name": "close",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "面板开关状态变为关闭时触发。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRange-events-change",
+          "name": "change",
+          "kind": "events",
+          "type": {
+            "text": "[value: DateRange | null]",
+            "literals": [
+              "null"
+            ],
+            "references": [
+              {
+                "name": "DateRange",
+                "text": "export type DateRange = readonly [Date, Date]",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fdate-picker%2Ftypes.ts%23DateRange"
+              }
+            ]
+          },
+          "description": "确认或清除范围时立即触发；其他关闭场景中，仅当面板起始或结束日期与当时 modelValue 的时间戳不同才触发。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerRange.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:date-picker/DatePickerRangePanel",
+      "name": "DatePickerRangePanel",
+      "source": {
+        "file": "packages/ui/src/components/date-picker/DatePickerRangePanel.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRangePanel-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "DateRange | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": [
+              {
+                "name": "DateRange",
+                "text": "export type DateRange = readonly [Date, Date]",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fdate-picker%2Ftypes.ts%23DateRange"
+              }
+            ]
+          },
+          "description": "独立范围面板中的起止日期只读元组，通过 v-model 同步；null 表示空范围。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerRangePanel.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "null",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRangePanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "null"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRangePanel-props-minDate",
+          "name": "minDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传给范围日历的最早可选日期；快捷范围直接作为更新值发出，需由调用方保证快捷项符合边界。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerRangePanel.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRangePanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRangePanel-props-maxDate",
+          "name": "maxDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传给范围日历的最晚可选日期；快捷范围直接作为更新值发出，需由调用方保证快捷项符合边界。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerRangePanel.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRangePanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRangePanel-props-shortcuts",
+          "name": "shortcuts",
+          "kind": "props",
+          "type": {
+            "text": "DatePickerRangeShortcut[] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "DatePickerRangeShortcut",
+                "text": "export interface DatePickerRangeShortcut {\n    label: string\n    value: DateRange | (() => DateRange)\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fdate-picker%2Ftypes.ts%23DatePickerRangeShortcut"
+              }
+            ]
+          },
+          "description": "侧栏中的范围快捷项。函数值会用于解析显示状态，并在选择时重新求值，选中高亮与该次更新的范围保持一致。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerRangePanel.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRangePanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRangePanel-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示包含清除和确认按钮的面板页脚；关闭时两个按钮一并隐藏。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerRangePanel.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRangePanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRangePanel-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "日期范围面板 dialog 的无障碍名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerRangePanel.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePickerRangePanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时读取 datePicker.rangeLabel，简体中文文案为“日期范围”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRangePanel-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: DateRange | null]",
+            "literals": [
+              "null"
+            ],
+            "references": [
+              {
+                "name": "DateRange",
+                "text": "export type DateRange = readonly [Date, Date]",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fdate-picker%2Ftypes.ts%23DateRange"
+              }
+            ]
+          },
+          "description": "日历范围更新、拖动选区或选择快捷项时触发，携带起止日期元组；清除时传入 null。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerRangePanel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRangePanel-events-clear",
+          "name": "clear",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "点击面板清除按钮时触发，随后发出 update:modelValue(null)。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerRangePanel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePickerRangePanel-events-confirm",
+          "name": "confirm",
+          "kind": "events",
+          "type": {
+            "text": "[value: DateRange | null]",
+            "literals": [
+              "null"
+            ],
+            "references": [
+              {
+                "name": "DateRange",
+                "text": "export type DateRange = readonly [Date, Date]",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fdate-picker%2Ftypes.ts%23DateRange"
+              }
+            ]
+          },
+          "description": "点击确认时触发，携带当前起止日期元组；尚无范围时传入 null。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DatePickerRangePanel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:date-picker/DateTimePicker",
+      "name": "DateTimePicker",
+      "source": {
+        "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "受控的面板开关状态，通过 v-model:open 接收组件发出的开关请求。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DateTimePicker.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 时使用组件内部开关状态，初始为关闭。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "控制日期触发按钮的高度、内边距及图标尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DateTimePicker.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"success\" | \"error\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"error\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "控制日期触发按钮的视觉状态，提供常规、错误和成功配色。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DateTimePicker.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "Date | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "当前选中的日期和时间，通过 v-model 绑定；更换日期时会保留已有值的时分秒。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 65
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "null",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "null"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-props-showSeconds",
+          "name": "showSeconds",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示秒选择器，同时决定默认显示格式和隐藏表单字段是否包含秒；关闭后仍保留 Date 中已有的秒值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 66
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-props-timeStep",
+          "name": "timeStep",
+          "kind": "props",
+          "type": {
+            "text": "{ hour?: number | undefined; minute?: number | undefined; second?: number | undefined; } | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "分别设置小时、分钟和秒的选项步长。步长向下取整，小时最多为 24，分钟和秒最多为 60；当前值不在步进序列中时，仍会作为选项保留。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 67
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => ({ hour: 1, minute: 1, second: 1 })",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "{ \"hour\": 1, \"minute\": 1, \"second\": 1 }"
+            },
+            "fallback": "缺失、非有限数或取整后小于 1 的分量使用步长 1。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "没有可显示日期时间时呈现在触发按钮中的占位文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 68
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时读取 datePicker.dateTimePlaceholder，简体中文文案为“选择日期时间”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-props-shortcuts",
+          "name": "shortcuts",
+          "kind": "props",
+          "type": {
+            "text": "DatePickerShortcut[] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "DatePickerShortcut",
+                "text": "export interface DatePickerShortcut {\n    label: string\n    value: Date | (() => Date)\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fdate-picker%2Ftypes.ts%23DatePickerShortcut"
+              }
+            ]
+          },
+          "description": "日期时间面板的日期快捷项；已有选中值时保留其时分秒，否则使用快捷值的时间，并将更新结果按日期时间边界收敛。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 69
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-props-displayFormat",
+          "name": "displayFormat",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "格式化触发器中显示的日期文本，支持 YYYY、YY、MM、DD、HH、mm、ss 和 WW；不改变绑定值的 Date 类型。WW 使用 ISO 周数，仅含周数而不含月日时，年份使用 ISO 周所属年份。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 6
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时，showSeconds 为真使用 YYYY-MM-DD HH:mm:ss，否则使用 YYYY-MM-DD HH:mm。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-props-minDate",
+          "name": "minDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "日历选择下界，同时限制日期、时间和快捷项更新后的完整时间；早于下界的更新值会收敛到该 Date。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-props-maxDate",
+          "name": "maxDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "日历选择上界，同时限制日期、时间和快捷项更新后的完整时间；当边界的时、分、秒均为零时，允许该边界日内的其他时间。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用触发按钮并隐藏触发器清除按钮；具有隐藏表单字段的选择器也会禁用该字段。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-props-readonly",
+          "name": "readonly",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "阻止组件内部打开面板，并隐藏触发器清除按钮，保留当前日期的显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示面板清除按钮；有值且未禁用、未只读时也显示触发器清除按钮。面板确认按钮始终显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "原生隐藏表单字段名；按 showSeconds 提交 YYYY-MM-DD HH:mm 或 YYYY-MM-DD HH:mm:ss，与 displayFormat 独立。空值提交空字符串，禁用时不提交。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递给日期触发按钮的 HTML ID，可供 label 或辅助技术引用。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "日期时间触发按钮及弹出日期时间面板的无障碍名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时读取 datePicker.dateTimePlaceholder，简体中文文案为“选择日期时间”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到日期触发按钮上的补充 CSS 类名。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "面板选择、确认或清除日期时触发，用于更新 v-model；清除时传入 null。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-events-open",
+          "name": "open",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "面板开关状态变为打开时触发，面板显示值同时从当前 modelValue 重新初始化。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-events-close",
+          "name": "close",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "面板开关状态变为关闭时触发。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "组件请求设置面板开关时触发，用于 v-model:open；受控模式下需由父组件更新 open 才会改变显示状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-events-change",
+          "name": "change",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "确认或清除时立即触发；其他关闭场景中，仅当面板显示值与当时 modelValue 的时间戳不同才触发。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-exposes-open",
+          "name": "open",
+          "kind": "exposes",
+          "type": {
+            "text": "Ref<boolean, boolean>",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "可读写的面板开关引用；通过组件实例赋值可请求打开或关闭，readonly 会阻止打开请求。受控模式下写入会触发 update:open，仍需父组件更新 open。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": "component:date-picker/DateTimePickerPanel",
+      "name": "DateTimePickerPanel",
+      "source": {
+        "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePickerPanel-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "Date | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "独立日期时间面板的当前值，同时驱动日历和时间选择器，通过 v-model 同步。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "null",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "null"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePickerPanel-props-minDate",
+          "name": "minDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "日历选择下界，同时限制日期、时间和快捷项更新后的完整时间；早于下界的更新值会收敛到该 Date。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePickerPanel-props-maxDate",
+          "name": "maxDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "日历选择上界，同时限制日期、时间和快捷项更新后的完整时间；当边界的时、分、秒均为零时，允许该边界日内的其他时间。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePickerPanel-props-shortcuts",
+          "name": "shortcuts",
+          "kind": "props",
+          "type": {
+            "text": "DatePickerShortcut[] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "DatePickerShortcut",
+                "text": "export interface DatePickerShortcut {\n    label: string\n    value: Date | (() => Date)\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fdate-picker%2Ftypes.ts%23DatePickerShortcut"
+              }
+            ]
+          },
+          "description": "带标签的日期快捷项；已有值时合并其时分秒，否则保留快捷值的时间，更新结果按日期时间边界收敛。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePickerPanel-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制面板清除按钮的显示，确认按钮始终显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePickerPanel-props-showSeconds",
+          "name": "showSeconds",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "在内嵌时间选择器中显示秒选择项，隐藏时保留已有 Date 中的秒值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue",
+            "line": 37
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePickerPanel-props-timeStep",
+          "name": "timeStep",
+          "kind": "props",
+          "type": {
+            "text": "{ hour?: number | undefined; minute?: number | undefined; second?: number | undefined; } | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "分别设置小时、分钟和秒的选项步长。步长向下取整，小时最多为 24，分钟和秒最多为 60；当前值不在步进序列中时，仍会作为选项保留。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue",
+            "line": 38
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => ({ hour: 1, minute: 1, second: 1 })",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "{ \"hour\": 1, \"minute\": 1, \"second\": 1 }"
+            },
+            "fallback": "缺失、非有限数或取整后小于 1 的分量使用步长 1。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePickerPanel-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "日期时间面板 dialog 的无障碍名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue",
+            "line": 39
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时读取 datePicker.dateTimePlaceholder，简体中文文案为“选择日期时间”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePickerPanel-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "日期、时间或快捷选择变化时，合并并按日期时间边界处理后触发；清除时传入 null。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePickerPanel-events-clear",
+          "name": "clear",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "点击面板清除按钮时触发，随后发出 update:modelValue(null)。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePickerPanel-events-confirm",
+          "name": "confirm",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "点击面板确认按钮时触发，携带当前 modelValue，包括未选择时的 null。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:date-picker/MonthPicker",
+      "name": "MonthPicker",
+      "source": {
+        "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPicker-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "受控的面板开关状态，通过 v-model:open 接收组件发出的开关请求。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/MonthPicker.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 时使用组件内部开关状态，初始为关闭。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPicker-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "控制日期触发按钮的高度、内边距及图标尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/MonthPicker.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPicker-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"success\" | \"error\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"error\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "控制日期触发按钮的视觉状态，提供常规、错误和成功配色。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/MonthPicker.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPicker-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "Date | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "用 Date 表示的当前月份，通过 v-model 绑定；选月时从该月第一日生成日期，再按上下界收敛。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 98
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "null",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "null"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPicker-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "没有可显示月份时呈现在触发按钮中的占位文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 99
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时读取 datePicker.monthPlaceholder，简体中文文案为“选择月份”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPicker-props-displayFormat",
+          "name": "displayFormat",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "格式化触发器中显示的日期文本，支持 YYYY、YY、MM、DD、HH、mm、ss 和 WW；不改变绑定值的 Date 类型。WW 使用 ISO 周数，仅含周数而不含月日时，年份使用 ISO 周所属年份。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 6
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'YYYY-MM'",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"YYYY-MM\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPicker-props-minDate",
+          "name": "minDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "月份选择下界；月末日期早于该值的月份不可选，选择或跨年确认得到的月初值会收敛到此下界。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPicker-props-maxDate",
+          "name": "maxDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "月份选择上界；月初晚于该值的月份不可选，选择或跨年确认得到的值会收敛到此上界。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPicker-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用触发按钮并隐藏触发器清除按钮；具有隐藏表单字段的选择器也会禁用该字段。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPicker-props-readonly",
+          "name": "readonly",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "阻止组件内部打开面板，并隐藏触发器清除按钮，保留当前日期的显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPicker-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示面板底部的清除和确认操作；有值且未禁用、未只读时，也显示触发器清除按钮。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPicker-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "原生隐藏表单字段名，以 YYYY-MM 提交月份，与 displayFormat 独立；空值提交空字符串，禁用时不提交。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPicker-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递给日期触发按钮的 HTML ID，可供 label 或辅助技术引用。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPicker-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "月份触发按钮和月份面板的无障碍名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时读取 datePicker.monthPlaceholder，简体中文文案为“选择月份”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPicker-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到日期触发按钮上的补充 CSS 类名。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPicker-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "面板选择、确认或清除日期时触发，用于更新 v-model；清除时传入 null。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPicker-events-open",
+          "name": "open",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "面板开关状态变为打开时触发，面板显示值同时从当前 modelValue 重新初始化。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPicker-events-close",
+          "name": "close",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "面板开关状态变为关闭时触发。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPicker-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "组件请求设置面板开关时触发，用于 v-model:open；受控模式下需由父组件更新 open 才会改变显示状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPicker-events-change",
+          "name": "change",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "确认或清除时立即触发；其他关闭场景中，仅当面板显示值与当时 modelValue 的时间戳不同才触发。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPicker-exposes-open",
+          "name": "open",
+          "kind": "exposes",
+          "type": {
+            "text": "Ref<boolean, boolean>",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "可读写的面板开关引用；通过组件实例赋值可请求打开或关闭，readonly 会阻止打开请求。受控模式下写入会触发 update:open，仍需父组件更新 open。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/MonthPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": "component:date-picker/MonthPickerPanel",
+      "name": "MonthPickerPanel",
+      "source": {
+        "file": "packages/ui/src/components/date-picker/MonthPickerPanel.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPickerPanel-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "Date | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "面板当前月份对应的 Date，并用其年份初始化显示视图；空值初始显示当前年份。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/MonthPickerPanel.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "null",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/MonthPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "null"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPickerPanel-props-minDate",
+          "name": "minDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "月份选择下界；月末日期早于该值的月份不可选，选择或跨年确认得到的月初值会收敛到此下界。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/MonthPickerPanel.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/MonthPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPickerPanel-props-maxDate",
+          "name": "maxDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "月份选择上界；月初晚于该值的月份不可选，选择或跨年确认得到的值会收敛到此上界。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/MonthPickerPanel.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/MonthPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPickerPanel-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示包含清除和确认按钮的面板页脚；关闭时两个按钮一并隐藏。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/MonthPickerPanel.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/MonthPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPickerPanel-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "月份面板 dialog 的无障碍名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/MonthPickerPanel.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/MonthPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时读取 datePicker.monthPlaceholder，简体中文文案为“选择月份”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPickerPanel-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "选择可用月份时触发，值从该月第一日生成并按上下界收敛；清除时传入 null。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/MonthPickerPanel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPickerPanel-events-clear",
+          "name": "clear",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "点击面板清除按钮时触发，随后发出 update:modelValue(null)。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/MonthPickerPanel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FMonthPickerPanel-events-confirm",
+          "name": "confirm",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "确认当前月份；若仅翻年而未重新选月，则以视图年份和已有月份生成日期并按上下界收敛。没有选中值时传入 null。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/MonthPickerPanel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:date-picker/TimePicker",
+      "name": "TimePicker",
+      "source": {
+        "file": "packages/ui/src/components/date-picker/TimePicker.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adate_2Dpicker_2FTimePicker-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "Date | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "承载时分秒的 Date，通过 v-model 绑定。更改某个时间分量时保留日期及其他分量；空值显示零，首次选择以本地当天零点为基准。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/TimePicker.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "null",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/TimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "null"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FTimePicker-props-showSeconds",
+          "name": "showSeconds",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示秒选择器；隐藏秒选择器不会清零 Date 中已有的秒值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/TimePicker.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/TimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FTimePicker-props-timeStep",
+          "name": "timeStep",
+          "kind": "props",
+          "type": {
+            "text": "{ hour?: number | undefined; minute?: number | undefined; second?: number | undefined; } | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "分别设置小时、分钟和秒的选项步长。步长向下取整，小时最多为 24，分钟和秒最多为 60；当前值不在步进序列中时，仍会作为选项保留。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/TimePicker.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => ({ hour: 1, minute: 1, second: 1 })",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/TimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "{ \"hour\": 1, \"minute\": 1, \"second\": 1 }"
+            },
+            "fallback": "缺失、非有限数或取整后小于 1 的分量使用步长 1。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FTimePicker-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用全部时间下拉框，并阻止小时、分钟和秒的选择回调更新值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/TimePicker.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/TimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FTimePicker-props-embedded",
+          "name": "embedded",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用用于嵌入日期时间面板的布局和边框样式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/TimePicker.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/TimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FTimePicker-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "包裹时分秒选择器的 group 元素的无障碍名称，各时间下拉框保留对应的国际化标签。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/TimePicker.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/TimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时读取 datePicker.timePlaceholder，简体中文文案为“选择时间”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FTimePicker-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "选择小时、分钟或秒时立即触发，携带更新后的 Date，用于 v-model 同步。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/TimePicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:date-picker/WeekPicker",
+      "name": "WeekPicker",
+      "source": {
+        "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "受控的面板开关状态，通过 v-model:open 接收组件发出的开关请求。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/WeekPicker.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 时使用组件内部开关状态，初始为关闭。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "控制日期触发按钮的高度、内边距及图标尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/WeekPicker.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"success\" | \"error\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"error\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "控制日期触发按钮的视觉状态，提供常规、错误和成功配色。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/WeekPicker.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "Date | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "表示当前周的 Date，通过 v-model 绑定；从面板选择日期或快捷项后，返回 weekStartsOn 指定的周起始日零点。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 82
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "null",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "null"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-props-weekStartsOn",
+          "name": "weekStartsOn",
+          "kind": "props",
+          "type": {
+            "text": "0 | 1 | undefined",
+            "literals": [
+              "0",
+              "1"
+            ],
+            "references": []
+          },
+          "description": "设置周起始日，0 为周日、1 为周一，同时决定日历首列、整周高亮和选中值的周起始日期；不会从当前语言自动推导。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 83
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "1",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "1"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "没有可显示周次时呈现在触发按钮中的占位文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 84
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时读取 datePicker.weekPlaceholder，简体中文文案为“选择周”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-props-shortcuts",
+          "name": "shortcuts",
+          "kind": "props",
+          "type": {
+            "text": "DatePickerShortcut[] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "DatePickerShortcut",
+                "text": "export interface DatePickerShortcut {\n    label: string\n    value: Date | (() => Date)\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fdate-picker%2Ftypes.ts%23DatePickerShortcut"
+              }
+            ]
+          },
+          "description": "周选择快捷项，值可为 Date 或返回 Date 的函数；选中时转换为 weekStartsOn 指定的周起始日。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 85
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-props-displayFormat",
+          "name": "displayFormat",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "格式化触发器中显示的日期文本，支持 YYYY、YY、MM、DD、HH、mm、ss 和 WW；不改变绑定值的 Date 类型。WW 使用 ISO 周数，仅含周数而不含月日时，年份使用 ISO 周所属年份。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 6
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'YYYY-WW'",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"YYYY-WW\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-props-minDate",
+          "name": "minDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传给周选择日历的最早可选日期。选中后转换为周起始日，结果可能早于该边界；快捷项也直接转换为周起始日。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-props-maxDate",
+          "name": "maxDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传给周选择日历的最晚可选日期。该限制针对日历中的选日，不要求整周位于边界内；快捷项需由调用方保证范围有效。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用触发按钮并隐藏触发器清除按钮；具有隐藏表单字段的选择器也会禁用该字段。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-props-readonly",
+          "name": "readonly",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "阻止组件内部打开面板，并隐藏触发器清除按钮，保留当前日期的显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示面板底部的清除和确认操作；有值且未禁用、未只读时，也显示触发器清除按钮。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "原生隐藏表单字段名，以 YYYY-MM-DD 提交当前 Date，与周次显示格式独立；空值提交空字符串，禁用时不提交。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递给日期触发按钮的 HTML ID，可供 label 或辅助技术引用。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "周选择触发按钮和周选择面板的无障碍名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时读取 datePicker.weekPlaceholder，简体中文文案为“选择周”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到日期触发按钮上的补充 CSS 类名。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "面板选择、确认或清除日期时触发，用于更新 v-model；清除时传入 null。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-events-open",
+          "name": "open",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "面板开关状态变为打开时触发，面板显示值同时从当前 modelValue 重新初始化。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-events-close",
+          "name": "close",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "面板开关状态变为关闭时触发。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "组件请求设置面板开关时触发，用于 v-model:open；受控模式下需由父组件更新 open 才会改变显示状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-events-change",
+          "name": "change",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "确认或清除时立即触发；其他关闭场景中，仅当面板显示值与当时 modelValue 的时间戳不同才触发。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPicker-exposes-open",
+          "name": "open",
+          "kind": "exposes",
+          "type": {
+            "text": "Ref<boolean, boolean>",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "可读写的面板开关引用；通过组件实例赋值可请求打开或关闭，readonly 会阻止打开请求。受控模式下写入会触发 update:open，仍需父组件更新 open。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/WeekPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": "component:date-picker/WeekPickerPanel",
+      "name": "WeekPickerPanel",
+      "source": {
+        "file": "packages/ui/src/components/date-picker/WeekPickerPanel.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPickerPanel-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "Date | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "面板当前周对应的日期，按其所在周绘制整周高亮；选择更新时返回周起始日。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/WeekPickerPanel.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "null",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "null"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPickerPanel-props-weekStartsOn",
+          "name": "weekStartsOn",
+          "kind": "props",
+          "type": {
+            "text": "0 | 1 | undefined",
+            "literals": [
+              "0",
+              "1"
+            ],
+            "references": []
+          },
+          "description": "设置周起始日，0 为周日、1 为周一，同时决定日历首列、整周高亮和选中值的周起始日期；不会从当前语言自动推导。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/WeekPickerPanel.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "1",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "1"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPickerPanel-props-minDate",
+          "name": "minDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传给周选择日历的最早可选日期。选中后转换为周起始日，结果可能早于该边界；快捷项也直接转换为周起始日。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/WeekPickerPanel.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPickerPanel-props-maxDate",
+          "name": "maxDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传给周选择日历的最晚可选日期。该限制针对日历中的选日，不要求整周位于边界内；快捷项需由调用方保证范围有效。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/WeekPickerPanel.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPickerPanel-props-shortcuts",
+          "name": "shortcuts",
+          "kind": "props",
+          "type": {
+            "text": "DatePickerShortcut[] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "DatePickerShortcut",
+                "text": "export interface DatePickerShortcut {\n    label: string\n    value: Date | (() => Date)\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fdate-picker%2Ftypes.ts%23DatePickerShortcut"
+              }
+            ]
+          },
+          "description": "侧栏中的带标签日期快捷项，选中和高亮比较都使用对应的周起始日。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/WeekPickerPanel.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPickerPanel-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示包含清除和确认按钮的面板页脚；关闭时两个按钮一并隐藏。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/WeekPickerPanel.vue",
+            "line": 37
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPickerPanel-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "周选择面板 dialog 的无障碍名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/WeekPickerPanel.vue",
+            "line": 38
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/WeekPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时读取 datePicker.weekPlaceholder，简体中文文案为“选择周”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPickerPanel-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "选择日历日期或快捷项时触发，携带按 weekStartsOn 对齐的本地周起始日零点；清除时传入 null。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/WeekPickerPanel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPickerPanel-events-clear",
+          "name": "clear",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "点击面板清除按钮时触发，随后发出 update:modelValue(null)。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/WeekPickerPanel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FWeekPickerPanel-events-confirm",
+          "name": "confirm",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "点击面板确认按钮时触发，携带当前 modelValue，包括未选择时的 null。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/WeekPickerPanel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:date-picker/YearPicker",
+      "name": "YearPicker",
+      "source": {
+        "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPicker-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "受控的面板开关状态，通过 v-model:open 接收组件发出的开关请求。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/YearPicker.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 时使用组件内部开关状态，初始为关闭。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPicker-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "控制日期触发按钮的高度、内边距及图标尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/YearPicker.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPicker-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"success\" | \"error\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"error\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "控制日期触发按钮的视觉状态，提供常规、错误和成功配色。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/YearPicker.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPicker-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "Date | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "用 Date 表示的当前年份，通过 v-model 绑定；选择年份时保留已有值的月日，空值以当天月日为基准，闰日会收敛至有效日期。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 112
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "null",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "null"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPicker-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "没有可显示年份时呈现在触发按钮中的占位文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 113
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时读取 datePicker.yearPlaceholder，简体中文文案为“选择年”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPicker-props-displayFormat",
+          "name": "displayFormat",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "格式化触发器中显示的日期文本，支持 YYYY、YY、MM、DD、HH、mm、ss 和 WW；不改变绑定值的 Date 类型。WW 使用 ISO 周数，仅含周数而不含月日时，年份使用 ISO 周所属年份。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 6
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'YYYY'",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"YYYY\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPicker-props-minDate",
+          "name": "minDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "用于禁用年份按钮的下界；某年 12 月 31 日早于该值时，该年不可选。选择仍保留基准日期的月日，不会按完整日期收敛到边界。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPicker-props-maxDate",
+          "name": "maxDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "用于禁用年份按钮的上界；某年 1 月 1 日晚于该值时，该年不可选。选择仍保留基准日期的月日，不会按完整日期收敛到边界。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPicker-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用触发按钮并隐藏触发器清除按钮；具有隐藏表单字段的选择器也会禁用该字段。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPicker-props-readonly",
+          "name": "readonly",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "阻止组件内部打开面板，并隐藏触发器清除按钮，保留当前日期的显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPicker-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示面板底部的清除和确认操作；有值且未禁用、未只读时，也显示触发器清除按钮。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPicker-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "原生隐藏表单字段名，以 YYYY 提交年份，与 displayFormat 独立；空值提交空字符串，禁用时不提交。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPicker-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递给日期触发按钮的 HTML ID，可供 label 或辅助技术引用。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPicker-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "年份触发按钮和年份面板的无障碍名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时读取 datePicker.yearPlaceholder，简体中文文案为“选择年”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPicker-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到日期触发按钮上的补充 CSS 类名。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPicker-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "面板选择、确认或清除日期时触发，用于更新 v-model；清除时传入 null。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPicker-events-open",
+          "name": "open",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "面板开关状态变为打开时触发，面板显示值同时从当前 modelValue 重新初始化。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPicker-events-close",
+          "name": "close",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "面板开关状态变为关闭时触发。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPicker-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "组件请求设置面板开关时触发，用于 v-model:open；受控模式下需由父组件更新 open 才会改变显示状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPicker-events-change",
+          "name": "change",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "确认或清除时立即触发；其他关闭场景中，仅当面板显示值与当时 modelValue 的时间戳不同才触发。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPicker-exposes-open",
+          "name": "open",
+          "kind": "exposes",
+          "type": {
+            "text": "Ref<boolean, boolean>",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "可读写的面板开关引用；通过组件实例赋值可请求打开或关闭，readonly 会阻止打开请求。受控模式下写入会触发 update:open，仍需父组件更新 open。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/YearPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": "component:date-picker/YearPickerPanel",
+      "name": "YearPickerPanel",
+      "source": {
+        "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPickerPanel-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "Date | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "面板当前年份对应的 Date，用于初始化所处年代；清空后视图回到当前年份所在年代。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "null",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "null"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPickerPanel-props-minDate",
+          "name": "minDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "用于禁用年份按钮的下界；某年 12 月 31 日早于该值时，该年不可选。选择仍保留基准日期的月日，不会按完整日期收敛到边界。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPickerPanel-props-maxDate",
+          "name": "maxDate",
+          "kind": "props",
+          "type": {
+            "text": "Date | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "用于禁用年份按钮的上界；某年 1 月 1 日晚于该值时，该年不可选。选择仍保留基准日期的月日，不会按完整日期收敛到边界。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPickerPanel-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示包含清除和确认按钮的面板页脚；关闭时两个按钮一并隐藏。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPickerPanel-props-yearRange",
+          "name": "yearRange",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "每页展示的连续年份数量，同时作为前后翻页步幅；初始视图起点仍为所选年份或当前年份所在年代的起始年。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_YEAR_RANGE",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "12"
+            },
+            "fallback": "向下取整后不是有限数或小于 1 时，使用 DEFAULT_YEAR_RANGE。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPickerPanel-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "年份面板 dialog 的无障碍名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "为 undefined 或 null 时读取 datePicker.yearPlaceholder，简体中文文案为“选择年”。"
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPickerPanel-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "选择可用年份时触发，以已有日期或当天的月日生成本地零点日期；2 月 29 日切换到平年时收敛为 2 月 28 日。清除时传入 null。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPickerPanel-events-clear",
+          "name": "clear",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "点击面板清除按钮时触发，随后发出 update:modelValue(null)。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FYearPickerPanel-events-confirm",
+          "name": "confirm",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "确认当前年份。若已有值不在当前页面的年份范围中，则改用该页起始年份并保留月日，闰日会收敛至有效日期；空值传入 null。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/YearPickerPanel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

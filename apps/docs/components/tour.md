@@ -191,37 +191,13 @@ interface TourStep {
 import type { TourStep, TourProps } from 'brutx-ui-vue'
 ```
 
-## Props
+## API 参考
 
-### TourStep
+<span id="tourstep-1"></span>
+<span id="tour"></span>
+<span id="事件"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `target` | `string \| HTMLElement` | — | 目标元素，CSS 选择器字符串或 DOM 元素引用（必需） |
-| `title` | `string` | — | 步骤标题 |
-| `description` | `string` | — | 步骤描述文本 |
-| `placement` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'bottom'` | 弹出面板相对目标元素的显示方向 |
-| `mask` | `boolean` | — | 是否为此步骤显示遮罩，未指定时继承组件级 `mask` 属性 |
-
-### Tour
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `steps` | `TourStep[]` | — | 导览步骤数据数组（必需） |
-| `mask` | `boolean` | `true` | 是否显示遮罩（全局默认值，可被单个步骤的 `mask` 覆盖） |
-| `scrollIntoViewOptions` | `ScrollIntoViewOptions` | `{ block: 'center', inline: 'nearest' }` | 切换步骤时目标元素滚动到视口的配置 |
-| `v-model:current` | `number` | `0` | 当前步骤索引，双向绑定 |
-| `v-model:open` | `boolean` | `true` | 是否显示导览，双向绑定 |
-
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:current` | `(val: number)` | 步骤切换时触发 |
-| `update:open` | `(val: boolean)` | 打开/关闭状态变化时触发 |
-| `skip` | — | 用户点击"跳过"按钮时触发 |
-| `finish` | — | 用户完成最后一步点击"结束"按钮时触发 |
-| `close` | — | 导览关闭时触发（跳过或完成均会触发） |
+<ComponentApi name="tour" />
 
 ## 可访问性
 

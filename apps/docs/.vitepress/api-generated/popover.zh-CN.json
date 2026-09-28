@@ -1,0 +1,382 @@
+{
+  "id": "component:popover",
+  "name": "popover",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:popover/Popover",
+      "name": "Popover",
+      "source": {
+        "file": "packages/ui/src/components/popover/Popover.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Apopover_2FPopover-props-defaultOpen",
+          "name": "defaultOpen",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "非受控模式下首次渲染时的打开状态；省略时由 Reka UI 原语使用其默认关闭状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/Popover.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopover_2FPopover-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "受控的打开状态；监听 `update:open` 并回写该属性以保持同步。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/Popover.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopover_2FPopover-props-modal",
+          "name": "modal",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用模态行为时禁用外部元素交互，并将屏幕阅读器关注限制在弹出内容中。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/Popover.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopover_2FPopover-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "打开状态变化时发出新布尔值，用于受控模式更新。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/Popover.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Apopover_2FPopover-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Popover 内部的触发器、内容面板及其他 Reka UI 子原语。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/Popover.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:popover/PopoverContent",
+      "name": "PopoverContent",
+      "source": {
+        "file": "packages/ui/src/components/popover/PopoverContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Apopover_2FPopoverContent-props-align",
+          "name": "align",
+          "kind": "props",
+          "type": {
+            "text": "\"center\" | \"start\" | \"end\" | undefined",
+            "literals": [
+              "\"center\"",
+              "\"end\"",
+              "\"start\""
+            ],
+            "references": []
+          },
+          "description": "内容面板相对于触发器的对齐位置。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/PopoverContent.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'center'",
+              "source": {
+                "file": "packages/ui/src/components/popover/PopoverContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"center\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopover_2FPopoverContent-props-sideOffset",
+          "name": "sideOffset",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "内容面板与触发器之间的间距，单位为像素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/PopoverContent.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "floatingContentSideOffsets.popover",
+              "source": {
+                "file": "packages/ui/src/components/popover/PopoverContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "8"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopover_2FPopoverContent-props-collisionPadding",
+          "name": "collisionPadding",
+          "kind": "props",
+          "type": {
+            "text": "number | Partial<Record<\"right\" | \"bottom\" | \"left\" | \"top\", number>> | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "浮层避让边界的内缩量；可传统一数值或按上、右、下、左分别设置。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/PopoverContent.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "floatingContentSideOffsets.popover",
+              "source": {
+                "file": "packages/ui/src/components/popover/PopoverContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "8"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopover_2FPopoverContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到 Reka UI 浮层内容元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/PopoverContent.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/popover/PopoverContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopover_2FPopoverContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "弹出面板中的内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/PopoverContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:popover/PopoverTrigger",
+      "name": "PopoverTrigger",
+      "source": {
+        "file": "packages/ui/src/components/popover/PopoverTrigger.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Apopover_2FPopoverTrigger-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将触发器的属性和交互行为合并到唯一子元素上。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/PopoverTrigger.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopover_2FPopoverTrigger-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "选择触发器渲染的 HTML 标签或组件；`asChild` 启用时由子元素决定渲染目标。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/PopoverTrigger.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopover_2FPopoverTrigger-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "触发器的子内容，通常是按钮或链接。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/PopoverTrigger.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

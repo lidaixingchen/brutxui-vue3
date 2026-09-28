@@ -1,0 +1,220 @@
+{
+  "id": "component:code-block",
+  "name": "code-block",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:code-block/CodeBlock",
+      "name": "CodeBlock",
+      "source": {
+        "file": "packages/ui/src/components/code-block/CodeBlock.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acode_2Dblock_2FCodeBlock-props-code",
+          "name": "code",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "必填的原始代码文本，用于内置语法高亮、行号和复制操作。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/code-block/CodeBlock.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acode_2Dblock_2FCodeBlock-props-language",
+          "name": "language",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置语法高亮语言和顶栏徽章；未指定时按 plaintext 处理，支持的语言及别名见页面语言列表。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/code-block/CodeBlock.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/code-block/CodeBlock.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acode_2Dblock_2FCodeBlock-props-filename",
+          "name": "filename",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "在代码块顶栏显示文件名或路径。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/code-block/CodeBlock.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/code-block/CodeBlock.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acode_2Dblock_2FCodeBlock-props-showLineNumbers",
+          "name": "showLineNumbers",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "在代码左侧显示与 code 文本行数对应的行号。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/code-block/CodeBlock.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/code-block/CodeBlock.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acode_2Dblock_2FCodeBlock-props-maxLines",
+          "name": "maxLines",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "限制折叠状态下可见的最大代码行数；超出时提供展开和收起操作，未设置时不限制。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/code-block/CodeBlock.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/code-block/CodeBlock.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acode_2Dblock_2FCodeBlock-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到代码卡片根容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/code-block/CodeBlock.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/code-block/CodeBlock.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acode_2Dblock_2FCodeBlock-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "可选的自定义代码渲染内容；提供后跳过内置 Prism 高亮并直接渲染插槽。复制文本和行号仍以 code 属性为准。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/code-block/CodeBlock.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

@@ -134,44 +134,15 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 | `CardContent` | 主内容区域 |
 | `CardFooter` | 底部区域，弹性布局 |
 
-## Props
+## API 参考
 
-### Card
+<span id="card"></span>
+<span id="事件"></span>
+<span id="cardtitle"></span>
+<span id="cardheader-carddescription-cardcontent-cardfooter"></span>
+<span id="插槽"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `variant` | `'default' \| 'elevated' \| 'flat' \| 'interactive' \| 'primary' \| 'secondary'` | `'default'` | 卡片变体类型 |
-| `padding` | `'none' \| 'sm' \| 'default' \| 'lg'` | `'default'` | 卡片内边距 |
-| `texture` | `'none' \| 'grid' \| 'dots'` | `'none'` | 背景纹理：蓝图网格 / 点阵 |
-| `deco` | `'none' \| 'hud'` | `'none'` | HUD 四角十字准星装饰层 |
-| `interactive` | `boolean` | `false` | 是否可点击，添加 `role="button"`、`tabindex="0"` 和键盘支持 |
-| `disabled` | `boolean` | `false` | 禁用交互：`tabindex="-1"`、`aria-disabled="true"`，且不触发 `activate` |
-| `class` | `string` | — | 自定义 CSS 类 |
-
-#### 事件
-
-| 事件 | 说明 |
-| --- | --- |
-| `activate` | 当 `interactive=true`（或 `variant="interactive"`）时，点击或按 Enter/Space 键触发，返回原生 `Event` 对象 |
-
-### CardTitle
-
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `as` | `'h1' \| 'h2' \| 'h3' \| 'h4' \| 'h5' \| 'h6'` | `'h3'` | 渲染的标题元素；非法值回退到 `h3` |
-| `class` | `string` | — | 自定义 CSS 类 |
-
-### CardHeader / CardDescription / CardContent / CardFooter
-
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `class` | `string` | — | 自定义 CSS 类 |
-
-## 插槽
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 所有组件的默认插槽，用于插入内容 |
+<ComponentApi name="card" />
 
 ## 可访问性
 

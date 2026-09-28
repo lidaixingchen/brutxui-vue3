@@ -156,45 +156,19 @@ type MessageStatus = 'sending' | 'sent' | 'delivered' | 'read' | 'failed'
 
 > **注意：** `status` 在类型层面为上述闭联合类型，但消息数据通常来自后端 API，运行时可能拿到枚举之外的未知值；此时 ChatBubble 会静默忽略该状态（不显示状态图标），不会抛出错误。
 
-## Props
+## API 参考
 
-### ChatBubble
+<span id="chatbubble"></span>
+<span id="chatcontainer"></span>
+<span id="插槽"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `message` | `ChatMessage` | — | 消息数据对象（必填） |
-| `color` | `'default' \| 'primary' \| 'accent'` | `'default'` | sent 气泡的背景配色；仅对 `variant="sent"` 生效，received/system 不受影响 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 气泡内边距/文字大小，同时联动头像尺寸 |
-| `showAvatar` | `boolean` | `true` | 是否显示头像区域（system 消息始终隐藏） |
-| `showStatus` | `boolean` | `true` | 是否显示消息状态图标（仅 sent 消息） |
-| `showTimestamp` | `boolean` | `true` | 是否显示时间戳 |
-| `dateFormat` | `(date: Date) => string` | — | 自定义日期格式化函数，未设置时使用 `Date.toLocaleString()` |
-| `class` | `string` | — | 气泡自定义样式类 |
-
-### ChatContainer
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `messages` | `ChatMessage[]` | — | 消息数组（必填） |
-| `groupByTime` | `boolean` | `false` | 是否按时间分组（今天/昨天/日期） |
-| `groupInterval` | `number` | `5` | 同一日期内的时间分组间隔（分钟），下限钳制为 1；相邻消息时间差**超过**该间隔（严格 `>`）则拆分为新分组 |
-| `showAvatar` | `boolean` | `true` | 是否显示头像 |
-| `showStatus` | `boolean` | `true` | 是否显示消息状态 |
-| `showTimestamp` | `boolean` | `true` | 是否显示时间戳 |
-| `dateFormat` | `(date: Date) => string` | — | 自定义日期格式化函数，同时用于分组日期标签（非今天/昨天）与间隔切分组的时间标签 |
-| `class` | `string` | — | 自定义样式类 |
+<ComponentApi name="chat-bubble" />
 
 > **注意：** 当 `groupByTime` 为 `true` 时：
 > - 带有效时间戳的消息按时间**升序排序**，乱序输入也能得到连续、不跳变的日期分组；缺失或无法解析出有效时间戳的消息（如 `'14:30'`、`'昨天'` 等展示型字符串）按原索引锚定在原始位置，不沉底、相对顺序不变；
 > - 分组边界基于真实日历日期（年/月/日）比较，与 `dateFormat` 的展示字符串解耦：即使自定义格式只输出时间维度（如 HH:mm），跨日期的消息也不会被误合并、同日期的消息也不会被拆成多个日期组；
 > - 分组之间显示分隔线和日期标签（今天/昨天/具体日期）；
 > - 同一日期内相邻消息时间差超过 `groupInterval` 分钟时，进一步拆分为独立分组，并展示具体时刻（HH:mm，可用 `dateFormat` 自定义），不重复日期标签。
-
-## 插槽
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 自定义气泡内容（默认显示 `message.content`） |
 
 ## 可访问性
 

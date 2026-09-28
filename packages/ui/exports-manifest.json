@@ -8233,21 +8233,9 @@
           "kind": "value"
         },
         {
-          "source": "./DialogTestFixture.vue",
-          "sourceName": "default",
-          "publicName": "DialogTestFixture",
-          "kind": "value"
-        },
-        {
           "source": "./DialogTitle.vue",
           "sourceName": "default",
           "publicName": "DialogTitle",
-          "kind": "value"
-        },
-        {
-          "source": "./NestedDialogTestFixture.vue",
-          "sourceName": "default",
-          "publicName": "NestedDialogTestFixture",
           "kind": "value"
         },
         {
@@ -9644,12 +9632,6 @@
           "kind": "value"
         },
         {
-          "source": "./SelectTestFixture.vue",
-          "sourceName": "default",
-          "publicName": "SelectTestFixture",
-          "kind": "value"
-        },
-        {
           "source": "./SelectTrigger.vue",
           "sourceName": "default",
           "publicName": "SelectTrigger",
@@ -10994,12 +10976,6 @@
           "source": "./VirtualScroll.vue",
           "sourceName": "default",
           "publicName": "VirtualScroll",
-          "kind": "value"
-        },
-        {
-          "source": "./VirtualScrollTestFixture.vue",
-          "sourceName": "default",
-          "publicName": "VirtualScrollTestFixture",
           "kind": "value"
         },
         {

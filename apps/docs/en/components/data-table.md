@@ -451,73 +451,21 @@ function goNextPage() {
 </template>
 ```
 
-### Exposed API
+### Exposed Members
 
-After accessing `tableRef` via `ref`, you can use the following four namespaces:
+A component ref provides sorting, filtering, selection, pagination, and row-expansion namespaces and their state. See the API reference below for every exposed member. Programmatic sort.toggleSort and selection state mutations do not emit sort or select; filter state changes still emit filter; pagination methods do not emit page-change or page-size-change; expand.toggleRow emits expand-change.
 
-#### sort
+## API Reference
 
-| Member | Type | Description |
-|------|------|------|
-| `toggleSort(columnId)` | `(columnId: string) => void` | Toggle sort direction for the specified column; cycle order is `asc -> desc -> cancel` |
-| `sortState` | `Ref<{ column: string; direction: 'asc' \| 'desc' \| null }>` | Current sort state (reactive) |
+<span id="exposed-api"></span>
+<span id="sort"></span>
+<span id="filter"></span>
+<span id="selection"></span>
+<span id="pagination"></span>
 
-#### filter
+<ComponentApi name="data-table" />
 
-| Member | Type | Description |
-|------|------|------|
-| `setGlobalFilter(value)` | `(value: string) => void` | Set global filter keyword |
-| `filterState` | `Ref<DataTableFilterState>` | Current filter state (reactive), includes `global` field |
-
-#### selection
-
-| Member | Type | Description |
-|------|------|------|
-| `toggleRow(row)` | `(row: T) => void` | Toggle selection state of the specified row |
-| `toggleAllRows()` | `() => void` | Toggle select all / deselect all on the current page |
-| `clearSelection()` | `() => void` | Clear all selected rows |
-| `getSelectedRows()` | `() => T[]` | Get the full row data array of currently selected rows |
-| `selectedRows` | `Ref<Set<string \| number>>` | Set of selected row keys (reactive) |
-| `isAllSelected` | `ComputedRef<boolean>` | Whether all rows on the current page are selected |
-
-#### pagination
-
-| Member | Type | Description |
-|------|------|------|
-| `goToPage(page)` | `(page: number) => boolean` | Navigate to the specified page number; returns whether the switch actually occurred |
-| `nextPage()` | `() => void` | Go to the next page |
-| `previousPage()` | `() => void` | Go to the previous page |
-| `setPageSize(size)` | `(size: number) => void` | Set the number of items per page (resets to page 1) |
-| `pageIndex` | `Ref<number>` | Current page number (reactive, starts from 1) |
-| `pageCount` | `ComputedRef<number>` | Total number of pages (reactive) |
-
-> Note: Programmatic calls to `toggleSort` / `setGlobalFilter` / `toggleRow` and similar methods do **not** automatically trigger the `sort` / `filter` / `select` events. If you need to notify the parent component, monitor the corresponding state changes or handle them explicitly after calling.
-
-## Props
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `data` | `T[]` | — (required) | Table data source |
-| `columns` | `DataTableColumn<T>[]` | — (required) | Column definition configuration |
-| `rowKey` | `keyof T \| ((row: T) => string \| number)` | — (required) | Row unique identifier, used for selection and virtual scrolling |
-| `sortable` | `boolean` | `false` | Whether to enable sorting |
-| `filterable` | `boolean` | `false` | Whether to enable filtering |
-| `filterPlaceholder` | `string` | locale: `dataTable.filterPlaceholder` | Placeholder for the global search input |
-| `selectable` | `boolean` | `false` | Whether to enable row selection |
-| `paginated` | `boolean` | `false` | Whether to enable pagination |
-| `pageSize` | `number` | `10` | Number of items per page |
-| `pageSizeOptions` | `number[]` | `[10, 20, 50, 100]` | Page size options |
-| `loading` | `boolean` | `false` | Whether to show loading state |
-| `emptyMessage` | `string` | locale: `dataTable.noData` | Message displayed when data is empty |
-| `virtualScroll` | `DataTableVirtualScroll` | — | Virtual scrolling configuration |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Table size |
-| `dense` | `boolean` | `false` | Whether to enable compact density |
-| `striped` | `boolean` | `true` | Whether to show stripes |
-| `stickyHeader` | `boolean` | `false` | Whether to enable sticky header |
-| `expandable` | `boolean` | `false` | Whether to enable expandable rows |
-| `expandRowKeys` | `Set<string \| number>` | — | Controlled expanded row keys |
-| `spanMethod` | `(params) => [number, number] \| void` | — | Cell merge method, returns `[rowspan, colspan]` |
-| `class` | `string` | — | Custom CSS class name |
+## DataTableColumn Type
 
 ### DataTableColumn Props
 
@@ -536,28 +484,6 @@ After accessing `tableRef` via `ref`, you can use the following four namespaces:
 | `align` | `'left' \| 'center' \| 'right'` | — | Column content alignment |
 | `fixed` | `'left' \| 'right'` | — | Fixed column direction |
 | `type` | `'default' \| 'expand'` | `'default'` | Column type (`expand` for expand column) |
-
-## Events
-
-| Event | Payload | Description |
-| --- | --- | --- |
-| `sort` | `[column: string, direction: 'asc' \| 'desc' \| null]` | Fired when sort changes |
-| `filter` | `[filters: DataTableFilterState]` | Fired when filter criteria change |
-| `select` | `[rows: T[]]` | Fired when selected rows change |
-| `page-change` | `[page: number]` | Fired when page number changes |
-| `page-size-change` | `[size: number]` | Fired when page size changes |
-| `expand-change` | `[row: T, expanded: boolean]` | Fired when row expand state changes |
-| `export` | `[format: 'csv' \| 'json', selectedRows?: T[]]` | Fired on export operation, carries selected row data (requires selectable) |
-
-## Slots
-
-| Slot | Scope | Description |
-| --- | --- | --- |
-| `toolbar` | — | Toolbar area, positioned to the right of the filter input |
-| `cell-{columnId}` | `{ row: T; value: unknown }` | Custom cell rendering for a specific column |
-| `expanded-row` | `{ row: T; index: number }` | Custom expanded row content |
-| `empty` | — | Custom empty state when data is empty |
-| `loading` | — | Custom loading content, only rendered when `loading` is `true` |
 
 ## Accessibility
 

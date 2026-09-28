@@ -107,36 +107,13 @@ const density = ref('comfortable')
 | `RadioGroup` | Root container, manages selected state and keyboard navigation |
 | `RadioGroupItem` | Radio option, each option corresponds to a selectable value |
 
-## Props
+## API Reference
 
-### RadioGroup
+<span id="radiogroup"></span>
+<span id="radiogroupitem"></span>
+<span id="radiogroup-1"></span>
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `modelValue` | `string` | — | Binding value, currently selected value |
-| `name` | `string` | — | Form field name |
-| `disabled` | `boolean` | — | Whether to disable the entire radio group |
-| `orientation` | `'horizontal' \| 'vertical'` | — | Layout direction |
-| `ariaLabel` | `string` | — | Accessibility label, provides a readable group name for screen readers |
-| `class` | `string` | — | Custom style class |
-
-### RadioGroupItem
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `value` | `string` | — (required) | Radio option value |
-| `disabled` | `boolean` | `false` | Whether to disable this option |
-| `variant` | `'default' \| 'secondary' \| 'accent' \| 'success' \| 'danger'` | `'default'` | Color variant |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Size |
-| `class` | `string` | — | Custom style class |
-
-## Events
-
-### RadioGroup
-
-| Event | Payload | Description |
-| --- | --- | --- |
-| `update:modelValue` | `string` | Triggered when selected value changes |
+<ComponentApi name="radio-group" />
 
 ## Accessibility
 

@@ -116,23 +116,42 @@ function onComplete(finalValues) {
 
 ### FormConditional Conditional Fields
 
-Dynamically show/hide field groups based on form values:
+Use a predicate to control whether a group is mounted. This example closes over caller-managed reactive values and passes initial values to Form:
 
 ```vue
+<script setup>
+import { ref } from 'vue'
+import { Form, FormConditional, FormField } from 'brutx-ui-vue/form'
+
+const values = ref({ type: 'company' })
+const showCompany = () => values.value.type === 'company'
+const showPersonal = () => values.value.type === 'personal'
+</script>
+
 <template>
-    <Form v-model="values">
+    <Form :initial-values="values">
         <FormField name="type" />
 
-        <FormConditional :when="(v) => v.type === 'company'">
+        <FormConditional :when="showCompany">
             <FormField name="companyName" />
             <FormField name="taxId" />
         </FormConditional>
 
-        <FormConditional :when="(v) => v.type === 'personal'">
+        <FormConditional :when="showPersonal">
             <FormField name="idNumber" />
         </FormConditional>
     </Form>
 </template>
+```
+
+### Binding FormControl to an Input
+
+`FormControl` requires exactly one root control. Its scoped slot provides the generated ID, description and invalid-state attributes, and the shared form size:
+
+```vue
+<FormControl v-slot="{ id, ariaDescribedby, ariaInvalid, size }">
+    <Input :id="id" :size="size" :aria-describedby="ariaDescribedby" :aria-invalid="ariaInvalid" />
+</FormControl>
 ```
 
 ## Sub-components
@@ -225,121 +244,9 @@ const {
 } = useFormWizard()
 ```
 
-## Props
-
-### Form
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `inline` | `boolean` | `false` | Inline form layout |
-| `labelPosition` | `'left' \| 'right' \| 'top'` | `'right'` | In horizontal layouts the label is in the first column; `left` aligns it left, `right` aligns it right; `top` places it above the control |
-| `labelWidth` | `string \| number` | — | Width of the first label column in horizontal layouts |
-| `scrollToError` | `boolean` | `false` | Scroll to first error field on validation failure |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Unified size for all form items |
-| `class` | `string` | — | Custom CSS class |
-| `initialValues` | `Record<string, unknown>` | — | Initial form values |
-| `validationSchema` | `unknown` | — | Validation schema (supports vee-validate schema) |
-
-### FormField
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `name` | `string` | — (required) | Field name |
-
-### FormItem
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `class` | `string` | — | Custom CSS class |
-
-### FormLabel
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `class` | `string` | — | Custom CSS class (`text-brutal-destructive` is automatically added in error state) |
-
-### FormControl
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `class` | `string` | — | Custom CSS class |
-
-**Slot Props:** `FormControl` provides the following attributes via a scoped slot for binding to the inner input control:
-
-| Prop | Type | Description |
-|------|------|-------------|
-| `id` | `string` | Unique ID associated with `FormItem` |
-| `class` | `string` | CSS class |
-| `aria-describedby` | `string` | IDs of describing elements (includes `FormDescription` and `FormMessage`) |
-| `aria-invalid` | `boolean` | Whether the field has a validation error |
-| `size` | `'sm' \| 'default' \| 'lg'` | Unified `Form` size, ready to pass to the control's `size` prop |
-
-```vue
-<FormControl v-slot="{ id, ariaDescribedby, ariaInvalid, size }">
-    <Input :id="id" :size="size" :aria-describedby="ariaDescribedby" :aria-invalid="ariaInvalid" />
-</FormControl>
-```
-
-### FormDescription
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `class` | `string` | — | Custom CSS class |
-
-### FormMessage
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `class` | `string` | — | Custom CSS class |
-
-### FormWizard
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `steps` | `FormStep[]` | — | Step configuration array (required) |
-| `modelValue` | `Record<string, unknown>` | `{}` | Form data (v-model) |
-| `initialStep` | `number` | `0` | Initial step index |
-| `validateOnNext` | `boolean` | `true` | Whether to validate on next |
-| `showIndicator` | `boolean` | `true` | Whether to show the step indicator |
-| `linear` | `boolean` | `true` | Whether steps must be completed in order |
-| `class` | `string` | — | Custom CSS class |
-
-### FormConditional
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `when` | `(values: Record<string, unknown>) => boolean` | — | Condition evaluation function (required) |
-| `class` | `string` | — | Custom CSS class |
-
-## Events
-
-### Form Events
-
-| Event | Payload | Description |
-| --- | --- | --- |
-| `submit` | `Record<string, unknown>` | Triggered on form submission, contains all field values |
-
-### FormWizard Events
-
-| Event | Payload | Description |
-| --- | --- | --- |
-| `update:modelValue` | `Record<string, unknown>` | Form data update |
-| `step-change` | `[step: number, previousStep: number]` | Step change |
-| `complete` | `Record<string, unknown>` | Form completion |
-| `validation-error` | `[step: number, errors: Record<string, string>]` | Validation failure |
-| `navigation-blocked` | `[targetStep: number, blockedStep: number]` | Navigation blocked in linear mode |
-
-## Exposed Methods (Form)
+## Programmatic Control
 
 Access the Form component instance via `ref` to call the following methods:
-
-| Method | Return Type | Description |
-| --- | --- | --- |
-| `validate()` | `Promise<boolean>` | Validate all fields, returns `true` if valid |
-| `validateField(field)` | `Promise<boolean>` | Validate a single field |
-| `resetFields()` | `void` | Reset all fields to initial values |
-| `clearValidate(fields?)` | `void` | Clear validation errors for specified or all fields |
-| `scrollToField(field)` | `void` | Scroll to the specified field |
 
 ```vue
 <script setup>
@@ -366,6 +273,23 @@ function handleReset() {
     </Form>
 </template>
 ```
+
+## API Reference
+
+<span id="form-1"></span>
+<span id="formfield"></span>
+<span id="formitem"></span>
+<span id="formlabel"></span>
+<span id="formcontrol"></span>
+<span id="formdescription"></span>
+<span id="formmessage"></span>
+<span id="formwizard"></span>
+<span id="formconditional"></span>
+<span id="form-events"></span>
+<span id="formwizard-events"></span>
+<span id="exposed-methods-form"></span>
+
+<ComponentApi name="form" />
 
 ## Accessibility
 

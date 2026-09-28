@@ -1,0 +1,356 @@
+{
+  "id": "component:transfer",
+  "name": "transfer",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:transfer/Transfer",
+      "name": "Transfer",
+      "source": {
+        "file": "packages/ui/src/components/transfer/Transfer.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atransfer_2FTransfer-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the transfer root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/transfer/Transfer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atransfer_2FTransfer-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "(string | number)[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The keys of items in the right target panel, bound with v-model.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/transfer/Transfer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atransfer_2FTransfer-props-data",
+          "name": "data",
+          "kind": "props",
+          "type": {
+            "text": "TransferDataItem[] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "TransferDataItem",
+                "text": "export interface TransferDataItem {\n    key: string | number\n    label: string\n    disabled?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Ftransfer%2Ftypes.ts%23TransferDataItem"
+              }
+            ]
+          },
+          "description": "The transfer data source. Each item has a key and label, and may be disabled to prevent moving it.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/transfer/Transfer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atransfer_2FTransfer-props-filterable",
+          "name": "filterable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows a filter input in each panel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/transfer/Transfer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atransfer_2FTransfer-props-filterMethod",
+          "name": "filterMethod",
+          "kind": "props",
+          "type": {
+            "text": "((query: string, item: TransferDataItem) => boolean) | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "TransferDataItem",
+                "text": "export interface TransferDataItem {\n    key: string | number\n    label: string\n    disabled?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Ftransfer%2Ftypes.ts%23TransferDataItem"
+              }
+            ]
+          },
+          "description": "Custom query-to-item matcher; return true to keep an item in the filtered results.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/transfer/Transfer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atransfer_2FTransfer-props-titles",
+          "name": "titles",
+          "kind": "props",
+          "type": {
+            "text": "string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the source and target panel titles in order; localized defaults are used when both titles are not supplied.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/transfer/Transfer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atransfer_2FTransfer-props-buttonTexts",
+          "name": "buttonTexts",
+          "kind": "props",
+          "type": {
+            "text": "string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the left and right transfer button labels in order; direction icons are shown when labels are omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/transfer/Transfer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atransfer_2FTransfer-props-panelWidth",
+          "name": "panelWidth",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the width of each panel in pixels.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "260",
+              "source": {
+                "file": "packages/ui/src/components/transfer/Transfer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "260"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atransfer_2FTransfer-props-panelHeight",
+          "name": "panelHeight",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the height of each panel in pixels.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "400",
+              "source": {
+                "file": "packages/ui/src/components/transfer/Transfer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "400"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atransfer_2FTransfer-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: (string | number)[]]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the updated target key array when the right-side selection changes so v-model can be updated.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atransfer_2FTransfer-events-change",
+          "name": "change",
+          "kind": "events",
+          "type": {
+            "text": "[value: (string | number)[], direction: \"right\" | \"left\", movedKeys: (string | number)[]]",
+            "literals": [
+              "\"left\"",
+              "\"right\""
+            ],
+            "references": []
+          },
+          "description": "Emits the updated target keys, movement direction, and keys moved in this operation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

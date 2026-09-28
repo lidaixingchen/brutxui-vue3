@@ -102,6 +102,10 @@ function close() {
 </template>
 ```
 
+## API Reference
+
+<ComponentApi name="message" />
+
 ## Props
 
 Message is invoked as a function (`message.success(options)` / `useMessage()` `show(options)`); the argument is `MessageOptions`. Key options:

@@ -1,0 +1,1699 @@
+{
+  "id": "component:data-table",
+  "name": "data-table",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:data-table/DataTable",
+      "name": "DataTable",
+      "source": {
+        "file": "packages/ui/src/components/data-table/DataTable.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the table root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 86
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-data",
+          "name": "data",
+          "kind": "props",
+          "type": {
+            "text": "T[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "The rows to display. Generic type T is carried through column definitions, row events, and the programmatic API.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 55
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-columns",
+          "name": "columns",
+          "kind": "props",
+          "type": {
+            "text": "DataTableColumn<T>[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "DataTableColumn",
+                "text": "export interface DataTableColumn<T extends object = Record<string, unknown>> {\n    id: string\n    /** 函数签名已更新：回调参数从 DataTableColumn<T> 改为 DataTableColumnHeaderContext */\n    header: string | ((ctx: DataTableColumnHeaderContext) => string)\n    accessorKey?: keyof T & string\n    accessorFn?: (row: T) => unknown\n    cell?: (props: { row: T; value: unknown }) => VNode | string\n    sortable?: boolean\n    hidden?: boolean\n    width?: number | 'auto'\n    minWidth?: number\n    maxWidth?: number\n    align?: 'left' | 'center' | 'right'\n    /** 固定列方向 */\n    fixed?: 'left' | 'right'\n    /** 列类型 */\n    type?: 'default' | 'expand'\n    /** 过滤器类型 */\n    filterType?: 'text' | 'select' | 'multi-select' | 'date-range'\n    /** 过滤可选项 */\n    filterOptions?: Array<{ label: string; value: string | number }>\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Fdata-table.ts%23DataTableColumn"
+              }
+            ]
+          },
+          "description": "The column definitions that control headers, value access, sorting, filtering, rendering, and column layout.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 56
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-sortable",
+          "name": "sortable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables sortable-column header interaction and sorted data; an individual column can opt out with sortable: false.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 57
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-filterable",
+          "name": "filterable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows the global search input and column filters for columns that declare filterType.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 58
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-filterPlaceholder",
+          "name": "filterPlaceholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The global search input placeholder and accessible name; when omitted, the localized dataTable.filterPlaceholder message is used.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 59
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-selectable",
+          "name": "selectable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows row checkboxes and a select-all checkbox, and enables reading and exporting selected rows.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 60
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-paginated",
+          "name": "paginated",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables page slicing and the pagination controls.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 61
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-pageSize",
+          "name": "pageSize",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The number of rows per page when pagination is enabled; data is not sliced into pages when pagination is disabled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 62
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_PAGE_SIZE",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "10"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-pageSizeOptions",
+          "name": "pageSizeOptions",
+          "kind": "props",
+          "type": {
+            "text": "number[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The page sizes offered by the pagination control.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 63
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => [...DEFAULT_PAGE_SIZE_OPTIONS]",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[10, 20, 50, 100]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-loading",
+          "name": "loading",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Displays the loading overlay and the loading slot content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 64
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-emptyMessage",
+          "name": "emptyMessage",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The empty-state message; when omitted or empty, the localized dataTable.noData message is used.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 65
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-rowKey",
+          "name": "rowKey",
+          "kind": "props",
+          "type": {
+            "text": "keyof T | ((row: T) => string | number)",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides a unique row-key field or accessor; row selection and expansion rely on the resolved string or number key.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 66
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-rowClickable",
+          "name": "rowClickable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Makes a row activate the row-click event through pointer click or the Enter key.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 67
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The heading shown above the table when the header slot is not supplied.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 68
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-description",
+          "name": "description",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The supporting text shown below the heading when the header slot is not supplied.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 69
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-section",
+          "name": "section",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Applies a constrained width and centered layout to the table root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 70
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-framed",
+          "name": "framed",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls the root border, shadow, and rounded corners; false removes those frame styles.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 71
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-virtualScroll",
+          "name": "virtualScroll",
+          "kind": "props",
+          "type": {
+            "text": "DataTableVirtualScroll | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "DataTableVirtualScroll",
+                "text": "export interface DataTableVirtualScroll {\n    enabled?: boolean\n    rowHeight?: number | 'auto'\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Fdata-table.ts%23DataTableVirtualScroll"
+              }
+            ]
+          },
+          "description": "Configures row virtualization. It is enabled when enabled is true; rowHeight can be fixed or measured dynamically with auto.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 72
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"lg\" | \"sm\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Sets the table size variant.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 73
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-dense",
+          "name": "dense",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Uses more compact row and cell spacing.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 74
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-striped",
+          "name": "striped",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls alternating background stripes on data rows.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 75
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-stickyHeader",
+          "name": "stickyHeader",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Makes the header sticky at the top of its scrolling container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 76
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-expandable",
+          "name": "expandable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows row expansion controls and allows the expanded-row slot to render.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 78
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-expandRowKeys",
+          "name": "expandRowKeys",
+          "kind": "props",
+          "type": {
+            "text": "Set<string | number> | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The controlled set of expanded row keys. Keys must match rowKey resolution, and changes synchronize the internal expansion state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 83
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-spanMethod",
+          "name": "spanMethod",
+          "kind": "props",
+          "type": {
+            "text": "((params: DataTableSpanMethodParams<T>) => void | [number, number]) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Calculates a merge span for each displayed row and visible column. Return rowspan and colspan, or nothing to use the default span.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 85
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-events-sort",
+          "name": "sort",
+          "kind": "events",
+          "type": {
+            "text": "[column: string, direction: \"asc\" | \"desc\" | null]",
+            "literals": [
+              "\"asc\"",
+              "\"desc\"",
+              "null"
+            ],
+            "references": []
+          },
+          "description": "Emits the column ID and direction after the user interacts with a sortable header; direction is asc, desc, or null.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-events-filter",
+          "name": "filter",
+          "kind": "events",
+          "type": {
+            "text": "[filters: DataTableFilterState]",
+            "literals": [],
+            "references": [
+              {
+                "name": "DataTableFilterState",
+                "text": "export interface DataTableFilterState {\n    global?: string\n    columns: Record<string, DataTableFilterValue>\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Fdata-table.ts%23DataTableFilterState"
+              }
+            ]
+          },
+          "description": "Emits the current global and column filter state when filtering changes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-events-select",
+          "name": "select",
+          "kind": "events",
+          "type": {
+            "text": "[rows: T[]]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the selected row data array after the user toggles a row or the current-page select-all control.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-events-page_2Dchange",
+          "name": "page-change",
+          "kind": "events",
+          "type": {
+            "text": "[page: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the page number after user navigation changes the current page; no event is emitted when the page stays the same.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-events-page_2Dsize_2Dchange",
+          "name": "page-size-change",
+          "kind": "events",
+          "type": {
+            "text": "[size: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the new page size after the user selects it in the pagination control.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-events-expand_2Dchange",
+          "name": "expand-change",
+          "kind": "events",
+          "type": {
+            "text": "[row: T, expanded: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Emits the row data and its new expanded boolean when the row expansion state toggles.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-events-row_2Dclick",
+          "name": "row-click",
+          "kind": "events",
+          "type": {
+            "text": "[row: T]",
+            "literals": [],
+            "references": []
+          },
+          "description": "When rowClickable is enabled, emits row data after a pointer click or Enter activation; events originating inside buttons, inputs, links, or other interactive elements are ignored.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-events-export",
+          "name": "export",
+          "kind": "events",
+          "type": {
+            "text": "[format: \"csv\" | \"json\", selectedRows?: T[] | undefined]",
+            "literals": [
+              "\"csv\"",
+              "\"json\""
+            ],
+            "references": []
+          },
+          "description": "Emits the selected format and current selected-row array when a table export control is activated.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-slots-header",
+          "name": "header",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the default table header; when omitted, the heading area is rendered from title and description.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-slots-toolbar",
+          "name": "toolbar",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional content for the global filtering toolbar; when filterable is enabled, it appears beside the search input.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-slots-expanded_2Drow",
+          "name": "expanded-row",
+          "kind": "slots",
+          "type": {
+            "text": "{ row: T; index: number; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional expanded-row content with row and its index in the displayed list; rendered only for an expanded row when expandable is enabled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-slots-empty",
+          "name": "empty",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the empty-state content; rendered only when there is no display data and loading is false.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-slots-loading",
+          "name": "loading",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the loading overlay content; rendered only when loading is true.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-slots-footer",
+          "name": "footer",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional footer content rendered after the table and loading area.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-sort",
+          "name": "sort",
+          "kind": "exposes",
+          "type": {
+            "text": "{ toggleSort: (columnId: string) => void; sortState: Readonly<Ref<{ readonly column: string; readonly direction: \"asc\" | \"desc\" | null; }, { readonly column: string; readonly direction: \"asc\" | \"desc\" | null; }>>; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "The table sorting namespace, containing toggleSort and the read-only sortState.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-sort.toggleSort",
+          "name": "sort.toggleSort",
+          "kind": "exposes",
+          "type": {
+            "text": "(columnId: string) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Toggles sorting for a column ID. Sorting must be enabled and the column must not opt out; the cycle is ascending, descending, then cleared.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-sort.sortState",
+          "name": "sort.sortState",
+          "kind": "exposes",
+          "type": {
+            "text": "Readonly<Ref<{ readonly column: string; readonly direction: \"asc\" | \"desc\" | null; }, { readonly column: string; readonly direction: \"asc\" | \"desc\" | null; }>>",
+            "literals": [],
+            "references": []
+          },
+          "description": "The read-only reactive sort state containing the current column ID and asc, desc, or null direction.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": true
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-filter",
+          "name": "filter",
+          "kind": "exposes",
+          "type": {
+            "text": "{ filterState: Readonly<Ref<{ readonly global?: string | undefined; readonly columns: { readonly [x: string]: string | number | readonly (string | number)[] | { readonly start: string | null; readonly end: string | null; } | null | undefined; }; }, { readonly global?: string | undefined; readonly columns: { readonly [x: string]: string | number | readonly (string | number)[] | { readonly start: string | null; readonly end: string | null; } | null | undefined; }; }>>; setGlobalFilter: (value: string) => void; setFilterState: (state: DataTableFilterState) => void; }",
+            "literals": [],
+            "references": [
+              {
+                "name": "DataTableFilterState",
+                "text": "export interface DataTableFilterState {\n    global?: string\n    columns: Record<string, DataTableFilterValue>\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Fdata-table.ts%23DataTableFilterState"
+              }
+            ]
+          },
+          "description": "The table filtering namespace, providing state access and methods to set global or complete filter criteria.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-filter.filterState",
+          "name": "filter.filterState",
+          "kind": "exposes",
+          "type": {
+            "text": "Readonly<Ref<{ readonly global?: string | undefined; readonly columns: { readonly [x: string]: string | number | readonly (string | number)[] | { readonly start: string | null; readonly end: string | null; } | null | undefined; }; }, { readonly global?: string | undefined; readonly columns: { readonly [x: string]: string | number | readonly (string | number)[] | { readonly start: string | null; readonly end: string | null; } | null | undefined; }; }>>",
+            "literals": [],
+            "references": []
+          },
+          "description": "The read-only reactive filter state, with an optional global value and columns indexed by column ID.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": true
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-filter.setGlobalFilter",
+          "name": "filter.setGlobalFilter",
+          "kind": "exposes",
+          "type": {
+            "text": "(value: string) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the global search keyword.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-filter.setFilterState",
+          "name": "filter.setFilterState",
+          "kind": "exposes",
+          "type": {
+            "text": "(state: DataTableFilterState) => void",
+            "literals": [],
+            "references": [
+              {
+                "name": "DataTableFilterState",
+                "text": "export interface DataTableFilterState {\n    global?: string\n    columns: Record<string, DataTableFilterValue>\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Fdata-table.ts%23DataTableFilterState"
+              }
+            ]
+          },
+          "description": "Replaces the complete filtering state with the supplied DataTableFilterState.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-selection",
+          "name": "selection",
+          "kind": "exposes",
+          "type": {
+            "text": "{ toggleRow: (row: T) => void; toggleAllRows: () => void; clearSelection: () => void; getSelectedRows: () => T[]; selectedRows: Readonly<ShallowRef<ReadonlySet<string | number>>>; isAllSelected: ComputedRef<boolean>; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "The table selection namespace, providing row-selection actions, selected-key state, and a method to read selected row data.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-selection.toggleRow",
+          "name": "selection.toggleRow",
+          "kind": "exposes",
+          "type": {
+            "text": "(row: T) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Toggles selection for the specified row; selectable must be enabled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-selection.toggleAllRows",
+          "name": "selection.toggleAllRows",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Toggles selection for all rows on the current display page; clearing preserves selections from other pages or filtered-out rows.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-selection.clearSelection",
+          "name": "selection.clearSelection",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Clears all selected row keys.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-selection.getSelectedRows",
+          "name": "selection.getSelectedRows",
+          "kind": "exposes",
+          "type": {
+            "text": "() => T[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Returns the full row data array for the current selection.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-selection.selectedRows",
+          "name": "selection.selectedRows",
+          "kind": "exposes",
+          "type": {
+            "text": "Readonly<ShallowRef<ReadonlySet<string | number>>>",
+            "literals": [],
+            "references": []
+          },
+          "description": "The read-only shallow-reactive set of selected row keys.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": true
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-selection.isAllSelected",
+          "name": "selection.isAllSelected",
+          "kind": "exposes",
+          "type": {
+            "text": "ComputedRef<boolean>",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "A read-only computed state indicating whether all rows on the current display page are selected.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": true
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-pagination",
+          "name": "pagination",
+          "kind": "exposes",
+          "type": {
+            "text": "{ goToPage: (page: number) => boolean; nextPage: () => boolean; previousPage: () => boolean; setPageSize: (size: number) => void; pageIndex: Readonly<Ref<number, number>>; pageCount: ComputedRef<number>; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "The table pagination namespace, containing page state and pagination control methods.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-pagination.goToPage",
+          "name": "pagination.goToPage",
+          "kind": "exposes",
+          "type": {
+            "text": "(page: number) => boolean",
+            "literals": [],
+            "references": []
+          },
+          "description": "Navigates to the requested page, clamps it to the valid range, and returns whether the page changed.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-pagination.nextPage",
+          "name": "pagination.nextPage",
+          "kind": "exposes",
+          "type": {
+            "text": "() => boolean",
+            "literals": [],
+            "references": []
+          },
+          "description": "Attempts to move to the next page and returns whether the page changed.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-pagination.previousPage",
+          "name": "pagination.previousPage",
+          "kind": "exposes",
+          "type": {
+            "text": "() => boolean",
+            "literals": [],
+            "references": []
+          },
+          "description": "Attempts to move to the previous page and returns whether the page changed.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-pagination.setPageSize",
+          "name": "pagination.setPageSize",
+          "kind": "exposes",
+          "type": {
+            "text": "(size: number) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the page size and resets the current page to the first page; invalid sizes are ignored.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-pagination.pageIndex",
+          "name": "pagination.pageIndex",
+          "kind": "exposes",
+          "type": {
+            "text": "Readonly<Ref<number, number>>",
+            "literals": [],
+            "references": []
+          },
+          "description": "The read-only reactive current page number, starting at 1.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": true
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-pagination.pageCount",
+          "name": "pagination.pageCount",
+          "kind": "exposes",
+          "type": {
+            "text": "ComputedRef<number>",
+            "literals": [],
+            "references": []
+          },
+          "description": "The read-only computed page count; it is at least 1 when there are no rows.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": true
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-expand",
+          "name": "expand",
+          "kind": "exposes",
+          "type": {
+            "text": "{ toggleRow: (row: T) => void; isRowExpanded: (row: T) => boolean; expandedRowKeys: ShallowRef<Set<string | number>, Set<string | number>>; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "The table row-expansion namespace, providing toggle and query methods plus the expanded-key state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-expand.toggleRow",
+          "name": "expand.toggleRow",
+          "kind": "exposes",
+          "type": {
+            "text": "(row: T) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Toggles expansion for the specified row and emits expand-change.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-expand.isRowExpanded",
+          "name": "expand.isRowExpanded",
+          "kind": "exposes",
+          "type": {
+            "text": "(row: T) => boolean",
+            "literals": [],
+            "references": []
+          },
+          "description": "Checks whether the specified row is currently expanded.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-expand.expandedRowKeys",
+          "name": "expand.expandedRowKeys",
+          "kind": "exposes",
+          "type": {
+            "text": "ShallowRef<Set<string | number>, Set<string | number>>",
+            "literals": [],
+            "references": []
+          },
+          "description": "The shallow-reactive set containing the currently expanded row keys.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-slots-cell_2D_7BcolumnId_7D",
+          "name": "cell-{columnId}",
+          "kind": "slots",
+          "type": {
+            "text": "{ row: T; value: unknown }",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides custom content for a column cell. Use the cell-{columnId} slot name; its scope exposes the current row and cell value.",
+          "notes": [
+            "Used only for regular data columns. If absent, the table falls back to the column cell renderer or the default cell value."
+          ],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "supplement"
+        }
+      ]
+    },
+    {
+      "id": "component:data-table/DataTableColumnFilter",
+      "name": "DataTableColumnFilter",
+      "source": {
+        "file": "packages/ui/src/components/data-table/DataTableColumnFilter.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTableColumnFilter-props-column",
+          "name": "column",
+          "kind": "props",
+          "type": {
+            "text": "DataTableColumn<any>",
+            "literals": [],
+            "references": [
+              {
+                "name": "DataTableColumn",
+                "text": "export interface DataTableColumn<T extends object = Record<string, unknown>> {\n    id: string\n    /** 函数签名已更新：回调参数从 DataTableColumn<T> 改为 DataTableColumnHeaderContext */\n    header: string | ((ctx: DataTableColumnHeaderContext) => string)\n    accessorKey?: keyof T & string\n    accessorFn?: (row: T) => unknown\n    cell?: (props: { row: T; value: unknown }) => VNode | string\n    sortable?: boolean\n    hidden?: boolean\n    width?: number | 'auto'\n    minWidth?: number\n    maxWidth?: number\n    align?: 'left' | 'center' | 'right'\n    /** 固定列方向 */\n    fixed?: 'left' | 'right'\n    /** 列类型 */\n    type?: 'default' | 'expand'\n    /** 过滤器类型 */\n    filterType?: 'text' | 'select' | 'multi-select' | 'date-range'\n    /** 过滤可选项 */\n    filterOptions?: Array<{ label: string; value: string | number }>\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Fdata-table.ts%23DataTableColumn"
+              }
+            ]
+          },
+          "description": "The column definition for this filter control; its filterType and filterOptions determine the filter UI.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTableColumnFilter.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTableColumnFilter-props-filterState",
+          "name": "filterState",
+          "kind": "props",
+          "type": {
+            "text": "{ readonly global?: string | undefined; readonly columns: { readonly [x: string]: string | number | readonly (string | number)[] | { readonly start: string | null; readonly end: string | null; } | null | undefined; }; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "The current read-only filter state, used to display this column’s text, option, or date-range value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTableColumnFilter.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTableColumnFilter-props-headerLabel",
+          "name": "headerLabel",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The displayed column-header text used to label the filter control.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTableColumnFilter.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTableColumnFilter-events-update_3AfilterState",
+          "name": "update:filterState",
+          "kind": "events",
+          "type": {
+            "text": "[state: DataTableFilterState]",
+            "literals": [],
+            "references": [
+              {
+                "name": "DataTableFilterState",
+                "text": "export interface DataTableFilterState {\n    global?: string\n    columns: Record<string, DataTableFilterValue>\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Fdata-table.ts%23DataTableFilterState"
+              }
+            ]
+          },
+          "description": "Emits a state object containing only the current column change when its filter value changes; a null column value clears that column filter.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTableColumnFilter.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

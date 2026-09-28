@@ -83,32 +83,12 @@ function handleClick(event) {
 </template>
 ```
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `maxRotation` | `number` | `15` | 最大偏转角度（度） |
-| `perspective` | `number` | `1000` | 3D 透视深度 (px) |
-| `scale` | `number` | `1.02` | Hover 时的缩放比例 |
-| `shadowOffset` | `number` | `10` | 阴影最大物理位移像素量 (px) |
-| `shadow` | `'default' \| 'lg' \| 'xl'` | `'default'` | 阴影大小变体 |
-| `variant` | `'default' \| 'primary' \| 'accent' \| 'muted'` | `'default'` | 卡片背景色变体 |
-| `disabled` | `boolean` | `false` | 禁用 3D 效果，卡片保持静态 |
-| `clickable` | `boolean` | `false` | 是否启用点击，true 时添加 `role="button"`、`tabindex="0"`、键盘支持并触发 click 事件 |
-| `ariaLabel` | `string` | — | 可点击卡片（`clickable`）的可访问名称；仅显式传入时设置 `aria-label`，未传入时由 slot 内容充当可访问名称 |
-| `class` | `string` | — | 外部类覆盖 |
+<span id="事件"></span>
+<span id="插槽"></span>
 
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `click` | `MouseEvent \| KeyboardEvent` | 仅当 `clickable` 为 `true` 且 `disabled` 为 `false` 时，指针点击发出 `MouseEvent`、Enter/Space 键盘激活发出 `KeyboardEvent` |
-
-## 插槽
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 卡片内容，支持任意自定义内容 |
+<ComponentApi name="card-3d" />
 
 ## 可访问性
 

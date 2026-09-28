@@ -1,0 +1,15 @@
+{
+  "id": "component:message",
+  "name": "message",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:message/MessageContainer",
+      "name": "MessageContainer",
+      "source": {
+        "file": "packages/ui/src/components/message/MessageContainer.vue"
+      },
+      "members": []
+    }
+  ]
+}

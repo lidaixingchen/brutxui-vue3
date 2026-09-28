@@ -1,0 +1,317 @@
+{
+  "id": "component:scroll-area",
+  "name": "scroll-area",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:scroll-area/ScrollArea",
+      "name": "ScrollArea",
+      "source": {
+        "file": "packages/ui/src/components/scroll-area/ScrollArea.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Ascroll_2Darea_2FScrollArea-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\""
+            ],
+            "references": []
+          },
+          "description": "选择滚动条与滑块的 default、primary 或 accent 颜色变体，并传递给内部 ScrollBar。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scroll-area/ScrollArea.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/scroll-area/ScrollArea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascroll_2Darea_2FScrollArea-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "选择内部滚动条的粗细尺寸，并传递给 ScrollBar。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scroll-area/ScrollArea.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/scroll-area/ScrollArea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascroll_2Darea_2FScrollArea-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到 Reka UI 滚动区域根元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scroll-area/ScrollArea.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/scroll-area/ScrollArea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascroll_2Darea_2FScrollArea-props-viewportClass",
+          "name": "viewportClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到可滚动 Viewport 元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scroll-area/ScrollArea.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/scroll-area/ScrollArea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascroll_2Darea_2FScrollArea-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "放置要在可滚动 viewport 中呈现的内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scroll-area/ScrollArea.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:scroll-area/ScrollBar",
+      "name": "ScrollBar",
+      "source": {
+        "file": "packages/ui/src/components/scroll-area/ScrollBar.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Ascroll_2Darea_2FScrollBar-props-orientation",
+          "name": "orientation",
+          "kind": "props",
+          "type": {
+            "text": "\"vertical\" | \"horizontal\" | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "选择竖直或水平滚动条方向。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scroll-area/ScrollBar.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'vertical'",
+              "source": {
+                "file": "packages/ui/src/components/scroll-area/ScrollBar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"vertical\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascroll_2Darea_2FScrollBar-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\""
+            ],
+            "references": []
+          },
+          "description": "选择滚动条与滑块的 default、primary 或 accent 颜色变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scroll-area/ScrollBar.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/scroll-area/ScrollBar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascroll_2Darea_2FScrollBar-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "选择滚动条粗细尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scroll-area/ScrollBar.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/scroll-area/ScrollBar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascroll_2Darea_2FScrollBar-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到 Reka UI scrollbar 元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scroll-area/ScrollBar.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/scroll-area/ScrollBar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

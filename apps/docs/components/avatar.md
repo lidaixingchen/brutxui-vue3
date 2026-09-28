@@ -150,49 +150,16 @@ import { Avatar, AvatarFallback } from 'brutx-ui-vue'
 | `AvatarImage` | 头像图片，加载失败时自动隐藏 |
 | `AvatarFallback` | 回退内容，图片不可见时自动显示 |
 
-## Props
+## API 参考
 
-### Avatar
+<span id="avatar"></span>
+<span id="avatarimage"></span>
+<span id="avatarfallback"></span>
+<span id="插槽"></span>
+<span id="avatar-插槽"></span>
+<span id="avatarfallback-插槽"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 颜色变体，下发给 `AvatarFallback` |
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | 尺寸 |
-| `shape` | `'square' \| 'rounded'` | `'square'` | 形状 |
-| `status` | `'online' \| 'offline' \| 'busy' \| 'none'` | `'none'` | 右下角状态圆点 |
-| `lanyard` | `boolean` | `false` | 工牌吊孔：顶部渲染金属圆环挂孔（纯装饰，aria-hidden） |
-| `class` | `string` | — | 附加类名 |
-
-### AvatarImage
-
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `src` | `string` | — | 图片地址 |
-| `alt` | `string` | `''` | 替代文本；默认空字符串语义化为装饰性图片（读屏跳过），需语义化时必须显式传入 |
-| `class` | `string` | — | 附加类名 |
-
-### AvatarFallback
-
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `delayMs` | `number` | — | 图片加载期间回退内容延迟出现的时长（毫秒）；不传则立即渲染 |
-| `as` | `string \| Component` | `'span'` | 渲染为指定元素 |
-| `asChild` | `boolean` | `false` | 是否将默认插槽内容作为子元素渲染（作为 `true` 时忽略 `as`） |
-| `class` | `string` | — | 附加类名 |
-
-## 插槽
-
-### Avatar 插槽
-
-| 插槽 | 作用域 | 说明 |
-| --- | --- | --- |
-| `default` | — | 默认插槽，用于放置 `AvatarImage` 和 `AvatarFallback` 子组件 |
-
-### AvatarFallback 插槽
-
-| 插槽 | 作用域 | 说明 |
-| --- | --- | --- |
-| `default` | — | 默认插槽，用于放置回退内容（文字或图标） |
+<ComponentApi name="avatar" />
 
 ## 可访问性
 

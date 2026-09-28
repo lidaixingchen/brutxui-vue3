@@ -122,35 +122,46 @@ interface KanbanColumn {
 }
 ```
 
-## Props
+## 程序化控制
 
-### KanbanBoard Props
+通过 `ref` 访问组件实例后可调用以下方法：
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `modelValue` | `KanbanColumn[]` | — | 看板数据（v-model） |
-| `class` | `string` | — | 根节点自定义样式类 |
+```vue
+<script setup>
+import { ref } from 'vue'
+import { KanbanBoard } from 'brutx-ui-vue'
 
-## 事件
+const kanbanRef = ref(null)
+const columns = ref([
+    { id: 'todo', title: 'Todo', cards: [{ id: 'card-1', title: 'Task 1' }] },
+    { id: 'done', title: 'Done', cards: [] },
+])
 
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:modelValue` | `KanbanColumn[]` | 列数据更新（卡片移动或列排序后） |
-| `card-move` | `(cardId: string, fromColumn: string, toColumn: string)` | 卡片移动完成时触发（鼠标拖拽与键盘操作均触发） |
-| `card-click` | `(card: KanbanCard, columnId: string)` | 点击卡片时触发（拖拽过程中不会触发） |
-| `column-move` | `(columnId: string, fromIndex: number, toIndex: number)` | 拖拽列标题完成排序时触发 |
-| `add-card` | `columnId: string` | 点击默认「添加卡片」按钮时触发 |
+function moveCardRight() {
+    // 将卡片移动到右侧列
+    kanbanRef.value?.moveCard('card-1', 'todo', 1)
+}
+</script>
 
-## 插槽
+<template>
+    <KanbanBoard ref="kanbanRef" v-model="columns" />
+    <button @click="moveCardRight">Move Card Right</button>
+</template>
+```
 
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `add-{columnId}` | `columnId: string` | 在指定列底部自定义「添加卡片」入口；未提供时渲染默认 `Button`（`variant="outline"` `size="sm"`）并触发 `add-card` 事件 |
+## API 参考
+
+<span id="kanbanboard-props"></span>
+<span id="事件"></span>
+<span id="插槽"></span>
+<span id="方法-defineexpose"></span>
+
+<ComponentApi name="kanban-board" />
 
 ## 可访问性
 
 - 卡片支持键盘导航，可通过 `Tab` 键聚焦
-- 聚焦后按 `Enter` 或 `Space` 键可触发 `card-click` 事件
+- 聚焦后按 `Enter` 键可触发 `card-click` 事件，`Space` 用于抓取和放下卡片
 - 空列会显示本地化的提示文本，引导用户拖放卡片
 - **键盘拖拽**：聚焦卡片后按 `Space` 键抓取卡片，使用方向键移动，再次按 `Space` 放下，`Escape` 取消
   - `↑/↓`：在当前列内上下移动卡片
@@ -183,38 +194,6 @@ const columns = ref([
          5. 按 Escape 取消操作
     -->
     <KanbanBoard v-model="columns" />
-</template>
-```
-
-## 方法（defineExpose）
-
-通过 `ref` 访问组件实例后可调用以下方法：
-
-| 方法 | 参数 | 说明 |
-|------|------|------|
-| `moveCard` | `(cardId: string, columnId: string, direction: number)` | 移动卡片到相邻列 |
-| `moveColumn` | `(fromId: string, toId: string)` | 交换两列位置 |
-| `addCard` | `(columnId: string)` | 触发添加卡片事件 |
-| `getColumn` | `(columnId: string)` | 获取指定列数据 |
-| `getAllColumns` | `() => KanbanColumn[]` | 获取所有列数据（返回数组） |
-
-```vue
-<script setup>
-import { ref } from 'vue'
-import { KanbanBoard } from 'brutx-ui-vue'
-
-const kanbanRef = ref(null)
-const columns = ref([...])
-
-function moveCardRight() {
-    // 将卡片移动到右侧列
-    kanbanRef.value?.moveCard('card-1', 'todo', 1)
-}
-</script>
-
-<template>
-    <KanbanBoard ref="kanbanRef" v-model="columns" />
-    <button @click="moveCardRight">Move Card Right</button>
 </template>
 ```
 

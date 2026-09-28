@@ -1,0 +1,751 @@
+{
+  "id": "component:skeleton",
+  "name": "skeleton",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:skeleton/Skeleton",
+      "name": "Skeleton",
+      "source": {
+        "file": "packages/ui/src/components/skeleton/Skeleton.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Askeleton_2FSkeleton-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "设置骨架占位块使用的颜色变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/Skeleton.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/Skeleton.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeleton-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | \"xl\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\"",
+              "\"xl\""
+            ],
+            "references": []
+          },
+          "description": "设置骨架块高度；shape 为 circle 时也决定圆形的直径。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/Skeleton.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/Skeleton.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeleton-props-shape",
+          "name": "shape",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"rect\" | \"circle\" | null | undefined> | undefined",
+            "literals": [
+              "\"circle\"",
+              "\"rect\""
+            ],
+            "references": []
+          },
+          "description": "选择矩形或圆形占位外观；圆形会保持宽高相等。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/Skeleton.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'rect'",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/Skeleton.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"rect\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeleton-props-effect",
+          "name": "effect",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"none\" | \"scanlines\" | \"ascii\" | null | undefined> | undefined",
+            "literals": [
+              "\"ascii\"",
+              "\"none\"",
+              "\"scanlines\""
+            ],
+            "references": []
+          },
+          "description": "选择占位动效质感：none 使用默认脉冲，scanlines 添加 CRT 扫描线，ascii 渲染闪烁终端块。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/Skeleton.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'none'",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/Skeleton.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"none\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeleton-props-width",
+          "name": "width",
+          "kind": "props",
+          "type": {
+            "text": "string | number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "覆盖骨架块宽度；数字按像素转换，字符串作为 CSS 宽度使用。圆形模式下此值同时设置高度。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/Skeleton.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/Skeleton.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeleton-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到骨架块状态容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/Skeleton.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/Skeleton.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeleton-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "可选的占位块内容；使用 ascii 效果且未提供插槽时，组件会渲染默认终端块字符。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/Skeleton.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:skeleton/SkeletonAvatar",
+      "name": "SkeletonAvatar",
+      "source": {
+        "file": "packages/ui/src/components/skeleton/SkeletonAvatar.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Askeleton_2FSkeletonAvatar-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "设置圆形头像占位块的颜色变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonAvatar.vue",
+            "line": 6
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonAvatar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeletonAvatar-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | \"xl\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\"",
+              "\"xl\""
+            ],
+            "references": []
+          },
+          "description": "设置头像占位圆形的直径。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonAvatar.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonAvatar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeletonAvatar-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到头像骨架圆形元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonAvatar.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonAvatar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:skeleton/SkeletonCard",
+      "name": "SkeletonCard",
+      "source": {
+        "file": "packages/ui/src/components/skeleton/SkeletonCard.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Askeleton_2FSkeletonCard-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "设置卡片内骨架占位块的颜色变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonCard.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeletonCard-props-label",
+          "name": "label",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置卡片状态区域的无障碍名称；空字符串会回退到当前语言的加载文案。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonCard.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeletonCard-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到卡片骨架外层容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonCard.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:skeleton/SkeletonTable",
+      "name": "SkeletonTable",
+      "source": {
+        "file": "packages/ui/src/components/skeleton/SkeletonTable.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Askeleton_2FSkeletonTable-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "设置表格占位单元格的颜色变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonTable.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeletonTable-props-rows",
+          "name": "rows",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置占位数据行数；默认 5，非有限值回退到默认值，结果限制在 0 到 100 行。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonTable.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_ROWS",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "5"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeletonTable-props-columns",
+          "name": "columns",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置占位列数；默认 4，非有限值回退到默认值，结果限制在 0 到 20 列。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonTable.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_COLUMNS",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "4"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeletonTable-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到骨架表格容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonTable.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:skeleton/SkeletonText",
+      "name": "SkeletonText",
+      "source": {
+        "file": "packages/ui/src/components/skeleton/SkeletonText.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Askeleton_2FSkeletonText-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "设置文本行骨架的颜色变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonText.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeletonText-props-lines",
+          "name": "lines",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置占位文本行数，默认 3 行，结果截断并限制在 0 到 100 行。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonText.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "3",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "3"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeletonText-props-lastLineWidth",
+          "name": "lastLineWidth",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置最后一行的 CSS 宽度，默认 60%；其余行占满可用宽度。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonText.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'60%'",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"60%\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeletonText-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到多行骨架文本容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonText.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

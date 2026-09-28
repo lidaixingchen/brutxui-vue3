@@ -1,0 +1,315 @@
+{
+  "id": "component:typewriter-text",
+  "name": "typewriter-text",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:typewriter-text/TypewriterText",
+      "name": "TypewriterText",
+      "source": {
+        "file": "packages/ui/src/components/typewriter-text/TypewriterText.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atypewriter_2Dtext_2FTypewriterText-props-text",
+          "name": "text",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The full text to reveal one character at a time.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/typewriter-text/TypewriterText.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atypewriter_2Dtext_2FTypewriterText-props-speed",
+          "name": "speed",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The delay between revealing characters, in milliseconds.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/typewriter-text/TypewriterText.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "50",
+              "source": {
+                "file": "packages/ui/src/components/typewriter-text/TypewriterText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "50"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atypewriter_2Dtext_2FTypewriterText-props-delay",
+          "name": "delay",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The wait before typing begins; in loop mode it is also the delay before each restart.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/typewriter-text/TypewriterText.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0",
+              "source": {
+                "file": "packages/ui/src/components/typewriter-text/TypewriterText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atypewriter_2Dtext_2FTypewriterText-props-loop",
+          "name": "loop",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Repeats the typing animation after the text is fully displayed.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/typewriter-text/TypewriterText.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/typewriter-text/TypewriterText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atypewriter_2Dtext_2FTypewriterText-props-cursor",
+          "name": "cursor",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows the typing cursor; in non-loop mode it hides after typing completes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/typewriter-text/TypewriterText.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/typewriter-text/TypewriterText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atypewriter_2Dtext_2FTypewriterText-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | \"xl\" | \"2xl\" | null | undefined> | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\"",
+              "\"xl\""
+            ],
+            "references": []
+          },
+          "description": "Sets the preset font size for the typed text.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/typewriter-text/TypewriterText.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/typewriter-text/TypewriterText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atypewriter_2Dtext_2FTypewriterText-props-weight",
+          "name": "weight",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"medium\" | \"bold\" | \"normal\" | \"black\" | null | undefined> | undefined",
+            "literals": [
+              "\"black\"",
+              "\"bold\"",
+              "\"medium\"",
+              "\"normal\""
+            ],
+            "references": []
+          },
+          "description": "Sets the font weight of the typed text.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/typewriter-text/TypewriterText.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'normal'",
+              "source": {
+                "file": "packages/ui/src/components/typewriter-text/TypewriterText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"normal\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atypewriter_2Dtext_2FTypewriterText-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the typed text root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/typewriter-text/TypewriterText.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/typewriter-text/TypewriterText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atypewriter_2Dtext_2FTypewriterText-events-complete",
+          "name": "complete",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits when one text pass completes; it fires after every pass in loop mode.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/typewriter-text/TypewriterText.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atypewriter_2Dtext_2FTypewriterText-events-start",
+          "name": "start",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits when each typing pass begins.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/typewriter-text/TypewriterText.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

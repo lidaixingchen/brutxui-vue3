@@ -62,8 +62,8 @@ const currentPage = ref(1)
 
 ### Custom Layout & Quick Jumper
 
-You can arrange and display different functional blocks by configuring the `layout` prop, including: total items count (`total`), page size selector (`sizes`), previous page (`prev`), page numbers (`pager`), next page (`next`), and quick jumper (`jumper`).
-The default value is `'sizes, prev, pager, next, jumper, total'`. In the jumper input field, you can input a target page number and press `Enter` to jump.
+Use the `layout` prop to choose the visible sections, including: total items count (`total`), page size selector (`sizes`), previous page (`prev`), page numbers (`pager`), next page (`next`), and quick jumper (`jumper`).
+Sections render in the fixed order total, sizes, prev, pager, next, jumper. In the jumper input field, you can input a target page number and press `Enter` to jump.
 
 ```vue
 <script setup>
@@ -153,33 +153,9 @@ function handleJump() {
 | `default` | `h-10` | `gap-2` | `h-4 w-4` |
 | `lg` | `h-12` | `gap-3` | `h-5 w-5` |
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `modelValue` | `number` | — (required) | Current page number, supports `v-model` two-way binding |
-| `totalPages` | `number` | — | Total number of pages (mutually exclusive with `total` + `pageSize`) |
-| `total` | `number` | — | Total number of items |
-| `pageSize` | `number` | `10` | Number of items per page |
-| `pageSizes` | `number[]` | `[10, 20, 50, 100]` | Page size options |
-| `layout` | `string` | `'sizes, prev, pager, next, jumper, total'` | Custom layout (comma-separated: `total`, `sizes`, `prev`, `pager`, `next`, `jumper`) |
-| `disabled` | `boolean` | `false` | Whether disabled |
-| `background` | `boolean` | `false` | Whether page buttons have background color |
-| `hideOnSinglePage` | `boolean` | `false` | Whether to hide when there is only one page |
-| `siblingCount` | `number` | `1` | Number of sibling pages displayed on each side of the current page |
-| `showFirstLast` | `boolean` | `true` | Whether to show first/last page buttons |
-| `showPageNumbers` | `boolean` | `true` | Whether to show page number buttons; when `false`, displays a page counter instead |
-| `variant` | `'default' \| 'rounded' \| 'minimal'` | `'default'` | Component variant style |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Component size |
-| `class` | `string` | — | Custom CSS class name, merged onto the root `<nav>` element |
-
-## Events
-
-| Event | Payload | Description |
-| --- | --- | --- |
-| `update:modelValue` | `page: number` | Triggered when the page number changes, used for `v-model` binding |
-| `update:pageSize` | `size: number` | Triggered when the page size changes |
-| `jump` | — | Triggered when the ellipsis `...` button is clicked, used for custom page-jump interactions |
+<ComponentApi name="pagination" />
 
 ## Accessibility
 

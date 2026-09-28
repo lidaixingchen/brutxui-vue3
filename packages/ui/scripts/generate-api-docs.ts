@@ -4,13 +4,11 @@
  * 功能：
  * 1. 使用 TypeDoc 生成 TypeScript API 文档（composables、types、utils）
  * 2. 解析 Vue SFC 文件提取组件 Props、Events、Slots、Expose 文档
- * 3. 抽取结构化元数据输出至 apps/docs/.vitepress/api-manifest.json（支持 VitePress 动态渲染）
- * 4. 生成统一的 Markdown 格式 API 文档
+ * 3. 生成统一的 Markdown 格式 API 文档
  *
  * 用法：
  *   pnpm docs:api
- *   pnpm docs:api -- --skip-typedoc      # 跳过 TypeDoc，仅生成 Vue 组件文档与 manifest
- *   pnpm docs:api -- --manifest-only    # 仅抽取并生成 api-manifest.json 供 docs 渲染
+ *   pnpm docs:api:vue                  # 跳过 TypeDoc，仅生成 Vue 组件与 Composable Markdown
  */
 
 import * as fs from 'node:fs'
@@ -60,8 +58,6 @@ export interface ComponentExpose {
 /** Vue 组件完整文档元数据 */
 export interface ComponentDoc {
     name: string
-    kebabName: string
-    dirName: string
     category: string
     description: string
     filePath: string
@@ -69,22 +65,6 @@ export interface ComponentDoc {
     events: ComponentEvent[]
     slots: ComponentSlot[]
     exposes: ComponentExpose[]
-}
-
-/** 组件组（按目录归类，例如 alert 目录下包含 Alert, AlertTitle, AlertDescription） */
-export interface ComponentGroupDoc {
-    name: string
-    category: string
-    components: ComponentDoc[]
-}
-
-/** API Manifest 产物结构 */
-export interface ApiManifest {
-    generatedAt: string
-    totalComponents: number
-    totalGroups: number
-    groups: Record<string, ComponentGroupDoc>
-    components: Record<string, ComponentDoc>
 }
 
 /** Composable 文档 */
@@ -100,32 +80,17 @@ export interface ComposableDoc {
 export interface DocGenConfig {
     srcDir: string
     outputDir: string
-    manifestPath: string
     skipTypeDoc: boolean
-    manifestOnly: boolean
 }
 
 // ============================================================================
 // 常量、默认配置与集中覆盖定义
 // ============================================================================
 
-const APPS_DOCS_DIR = path.resolve(__dirname, '../../../apps/docs')
-const DEFAULT_MANIFEST_PATH = path.resolve(APPS_DOCS_DIR, '.vitepress/api-manifest.json')
-
-function getCliArg(flag: string): string | undefined {
-    const idx = process.argv.indexOf(flag)
-    if (idx !== -1 && idx + 1 < process.argv.length) {
-        return process.argv[idx + 1]
-    }
-    return undefined
-}
-
 const DEFAULT_CONFIG: DocGenConfig = {
     srcDir: path.resolve(__dirname, '../src'),
     outputDir: path.resolve(__dirname, '../docs/api'),
-    manifestPath: getCliArg('--output-manifest') || DEFAULT_MANIFEST_PATH,
-    skipTypeDoc: process.argv.includes('--skip-typedoc') || process.argv.includes('--manifest-only'),
-    manifestOnly: process.argv.includes('--manifest-only'),
+    skipTypeDoc: process.argv.includes('--skip-typedoc'),
 }
 
 /** 通用属性默认中文说明回退表 */
@@ -370,9 +335,6 @@ function parseVueSFC(filePath: string): ComponentDoc | null {
     const content = fs.readFileSync(filePath, 'utf-8')
     const fileName = path.basename(filePath, '.vue')
     const dirName = path.basename(path.dirname(filePath))
-    const kebabName = fileName
-        .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
-        .toLowerCase()
 
     // 提取 description（从文件顶部注释或组件名推断）
     const descMatch = content.match(/\/\*\*\s*\n([^*]|\*[^/])*\*\/\s*\n/)
@@ -452,8 +414,6 @@ function parseVueSFC(filePath: string): ComponentDoc | null {
 
     return {
         name: fileName,
-        kebabName,
-        dirName,
         category,
         description: description || `${fileName} 组件`,
         filePath: normalizedFilePath,
@@ -530,86 +490,8 @@ function parseComposable(filePath: string): ComposableDoc | null {
 }
 
 // ============================================================================
-// Manifest 与 Markdown 生成器
+// Markdown 生成器
 // ============================================================================
-
-/**
- * 生成 API Manifest JSON 产物
- */
-function generateApiManifest(
-    components: ComponentDoc[],
-    manifestPath: string
-): void {
-    const groups: Record<string, ComponentGroupDoc> = {}
-    const componentMap: Record<string, ComponentDoc> = {}
-
-    for (const comp of components) {
-        const dir = comp.dirName
-        if (!groups[dir]) {
-            groups[dir] = {
-                name: dir,
-                category: comp.category,
-                components: [],
-            }
-        }
-        groups[dir].components.push(comp)
-
-        // 索引映射 (PascalCase, lowercase, kebab-case)
-        componentMap[comp.name] = comp
-        const lowerName = comp.name.toLowerCase()
-        if (!componentMap[lowerName]) {
-            componentMap[lowerName] = comp
-        }
-        if (comp.kebabName && !componentMap[comp.kebabName]) {
-            componentMap[comp.kebabName] = comp
-        }
-    }
-
-    // 组内排序：主组件排首位，其余子组件按字母顺序排序
-    for (const group of Object.values(groups)) {
-        group.components.sort((a, b) => {
-            const dirNormalized = group.name.replace(/-/g, '').toLowerCase()
-            const aIsMain = a.name.replace(/-/g, '').toLowerCase() === dirNormalized
-            const bIsMain = b.name.replace(/-/g, '').toLowerCase() === dirNormalized
-            if (aIsMain && !bIsMain) return -1
-            if (!aIsMain && bIsMain) return 1
-            return a.name.localeCompare(b.name)
-        })
-    }
-
-    // 门禁守卫校验
-    const CRITICAL_GROUPS = ['button', 'alert', 'input', 'dialog', 'card', 'badge']
-    const missingCriticalGroups = CRITICAL_GROUPS.filter(dir => !groups[dir])
-    if (missingCriticalGroups.length > 0) {
-        throw new Error(`[generate-api-docs] 缺失关键组件组元数据: ${missingCriticalGroups.join(', ')}`)
-    }
-
-    const CRITICAL_COMPONENTS = ['Button', 'Alert', 'Input', 'Badge', 'Card']
-    const missingCriticalComps = CRITICAL_COMPONENTS.filter(name => !componentMap[name])
-    if (missingCriticalComps.length > 0) {
-        throw new Error(`[generate-api-docs] 缺失关键组件元数据: ${missingCriticalComps.join(', ')}`)
-    }
-
-    if (components.length < 50) {
-        throw new Error(`[generate-api-docs] 抽取组件数量异常 (${components.length} < 50)，可能存在解析中断`)
-    }
-
-    const manifest: ApiManifest = {
-        generatedAt: new Date().toISOString(),
-        totalComponents: components.length,
-        totalGroups: Object.keys(groups).length,
-        groups,
-        components: componentMap,
-    }
-
-    const dir = path.dirname(manifestPath)
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true })
-    }
-
-    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf-8')
-    console.log(`📦 生成了 API Manifest: ${manifestPath} (共 ${components.length} 个组件，${Object.keys(groups).length} 个组件组)`)
-}
 
 /**
  * 生成单个组件的 Markdown 文档
@@ -876,12 +758,12 @@ async function runTypeDoc(): Promise<void> {
 
     try {
         if (process.platform === 'win32') {
-            execFileSync('cmd', ['/c', 'npx', 'typedoc'], {
+            execFileSync('cmd', ['/c', 'pnpm', 'exec', 'typedoc'], {
                 cwd,
                 stdio: 'inherit',
             })
         } else {
-            execFileSync('npx', ['typedoc'], {
+            execFileSync('pnpm', ['exec', 'typedoc'], {
                 cwd,
                 stdio: 'inherit',
             })
@@ -1101,15 +983,6 @@ async function main(): Promise<void> {
     const components = scanVueComponents(config.srcDir)
     console.log(`   找到 ${components.length} 个组件`)
 
-    // 步骤 2: 输出 API Manifest
-    console.log('📦 抽取并生成 API Manifest...')
-    generateApiManifest(components, config.manifestPath)
-
-    if (config.manifestOnly) {
-        console.log('\n✅ API Manifest 生成完毕（已按 --manifest-only 跳过其余文档生成）！')
-        return
-    }
-
     // 确保输出目录存在
     if (!fs.existsSync(config.outputDir)) {
         fs.mkdirSync(config.outputDir, { recursive: true })
@@ -1152,9 +1025,8 @@ async function main(): Promise<void> {
     generateTypesSummary(components, composables, config.outputDir)
 
     console.log('')
-    console.log('✅ API 文档与 Manifest 生成完成！')
+    console.log('✅ API Markdown 文档生成完成！')
     console.log(`📁 输出目录: ${config.outputDir}`)
-    console.log(`📄 Manifest: ${config.manifestPath}`)
     console.log('')
     console.log('📊 统计信息:')
     console.log(`   - 组件数量: ${components.length}`)

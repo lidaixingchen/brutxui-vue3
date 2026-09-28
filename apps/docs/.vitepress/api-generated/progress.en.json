@@ -1,0 +1,292 @@
+{
+  "id": "component:progress",
+  "name": "progress",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:progress/Progress",
+      "name": "Progress",
+      "source": {
+        "file": "packages/ui/src/components/progress/Progress.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aprogress_2FProgress-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the progress root track.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/progress/Progress.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/progress/Progress.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aprogress_2FProgress-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The current progress value; values outside the range or non-finite values are normalized to `0...max`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/progress/Progress.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0",
+              "source": {
+                "file": "packages/ui/src/components/progress/Progress.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aprogress_2FProgress-props-max",
+          "name": "max",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The upper progress bound; non-positive or non-finite values fall back to `100`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/progress/Progress.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "100",
+              "source": {
+                "file": "packages/ui/src/components/progress/Progress.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "100"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aprogress_2FProgress-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Sets the height preset of the progress track.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/progress/Progress.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/progress/Progress.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aprogress_2FProgress-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"secondary\" | \"success\" | \"danger\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"secondary\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "Sets the color variant of the progress indicator.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/progress/Progress.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/progress/Progress.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aprogress_2FProgress-props-pattern",
+          "name": "pattern",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"none\" | \"hazard\" | \"segmented\" | null | undefined> | undefined",
+            "literals": [
+              "\"hazard\"",
+              "\"none\"",
+              "\"segmented\""
+            ],
+            "references": []
+          },
+          "description": "Adds no texture, segmented LED styling, or animated hazard stripes to the fill. Indeterminate mode uses the track animation and suppresses the pattern.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/progress/Progress.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'none'",
+              "source": {
+                "file": "packages/ui/src/components/progress/Progress.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"none\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aprogress_2FProgress-props-indeterminate",
+          "name": "indeterminate",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows a looping indeterminate indicator that does not use `modelValue`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/progress/Progress.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/progress/Progress.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aprogress_2FProgress-props-showLabel",
+          "name": "showLabel",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows a centered percentage label for determinate progress; it is hidden in indeterminate mode.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/progress/Progress.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/progress/Progress.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -69,37 +69,14 @@ import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell, TableCap
 | `TableCell` | 数据单元格（`<td>`） |
 | `TableCaption` | 表格标题（`<caption>`） |
 
-## Props
+## API 参考
 
-### 通用属性
+<span id="通用属性"></span>
+<span id="table"></span>
+<span id="tableheader-tablehead"></span>
+<span id="tablefooter"></span>
 
-所有子组件均接受：
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 自定义样式类 |
-
-### Table
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `ariaLabel` | `string` | — | 表格的可访问名称，用于屏幕阅读器 |
-| `class` | `string` | — | 自定义样式类 |
-
-### TableHeader / TableHead
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'secondary'` | `'default'` | 表头颜色变体 |
-| `texture` | `'none' \| 'hatch' \| 'dots'` | `'none'` | 表头底纹：工程制图剖面线 / 报刊点阵（叠加在配色之上） |
-| `class` | `string` | — | 自定义样式类 |
-
-### TableFooter
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'accent'` | `'default'` | 表尾颜色变体 |
-| `class` | `string` | — | 自定义样式类 |
+<ComponentApi name="table" />
 
 ## 可访问性
 

@@ -1,0 +1,508 @@
+{
+  "id": "component:virtual-scroll",
+  "name": "virtual-scroll",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:virtual-scroll/VirtualScroll",
+      "name": "VirtualScroll",
+      "source": {
+        "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到虚拟滚动根容器的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/types.ts",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-props-items",
+          "name": "items",
+          "kind": "props",
+          "type": {
+            "text": "T[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "参与虚拟化的数据数组；其长度决定虚拟器中的条目总数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/types.ts",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-props-itemHeight",
+          "name": "itemHeight",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "固定高度模式下的每项估算高度，单位为像素；动态高度模式也使用它作为初始估算值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/types.ts",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "48",
+              "source": {
+                "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "48"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-props-dynamicHeight",
+          "name": "dynamicHeight",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用已挂载条目的实际高度测量；关闭时每项使用 itemHeight 固定高度。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/types.ts",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"lg\" | \"sm\" | \"xl\" | \"full\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"full\"",
+              "\"lg\"",
+              "\"sm\"",
+              "\"xl\""
+            ],
+            "references": []
+          },
+          "description": "容器尺寸变体；full 需要父容器提供确定高度。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/types.ts",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"bordered\" | \"striped\" | undefined",
+            "literals": [
+              "\"bordered\"",
+              "\"default\"",
+              "\"striped\""
+            ],
+            "references": []
+          },
+          "description": "选择列表项样式；striped 为索引奇数项添加交替背景，bordered 添加边框。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/types.ts",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-props-overscan",
+          "name": "overscan",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "可视区域之外额外预渲染的条目数，传给虚拟器。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/types.ts",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "5",
+              "source": {
+                "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "5"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-props-scrollEndThreshold",
+          "name": "scrollEndThreshold",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "距离滚动底部小于此像素数时触发 scroll-end。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/types.ts",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "50",
+              "source": {
+                "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "50"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-props-role",
+          "name": "role",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置虚拟列表滚动容器的 ARIA role，默认 list。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/types.ts",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'list'",
+              "source": {
+                "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"list\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-props-itemRole",
+          "name": "itemRole",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置每个虚拟列表项的 ARIA role，默认 listitem。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/types.ts",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'listitem'",
+              "source": {
+                "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"listitem\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-events-scroll_2Dend",
+          "name": "scroll-end",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "滚动位置进入 scrollEndThreshold 指定的底部范围时发出；离开该范围后再次进入可重新触发。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-events-scroll",
+          "name": "scroll",
+          "kind": "events",
+          "type": {
+            "text": "[scrollTop: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "滚动容器发生滚动时发出当前 scrollTop，单位为像素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-slots-loading",
+          "name": "loading",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "提供加载状态内容；虚拟器动态导入加载时和非空列表就绪后的底部都会渲染该插槽。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-slots-empty",
+          "name": "empty",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "items 为空时替换空状态文案；仅空列表分支渲染。",
+          "notes": [
+            "未提供插槽内容时显示 virtualScroll.empty：“暂无数据”。"
+          ],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{ item: T; index: number; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "渲染每个可见虚拟条目；作用域提供原始 item 和其零基 index。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-exposes-scrollToIndex",
+          "name": "scrollToIndex",
+          "kind": "exposes",
+          "type": {
+            "text": "(index: number) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "滚动到指定条目索引；索引会限制在现有范围内，空列表或虚拟器尚不可用时不执行。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-exposes-measureElement",
+          "name": "measureElement",
+          "kind": "exposes",
+          "type": {
+            "text": "(el: Element | null) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "将指定 DOM 元素交给虚拟器测量；元素为 null 或虚拟器未就绪时不执行。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-exposes-measure",
+          "name": "measure",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "重新测量所有已挂载条目的尺寸，适用于内容高度变化后。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-exposes-virtualizer",
+          "name": "virtualizer",
+          "kind": "exposes",
+          "type": {
+            "text": "ShallowRef<VirtualizerInstance | null, VirtualizerInstance | null>",
+            "literals": [
+              "null"
+            ],
+            "references": [
+              {
+                "name": "VirtualizerInstance",
+                "text": "export interface VirtualizerInstance {\n    getVirtualItems: () => VirtualizerVirtualItem[]\n    getTotalSize: () => number\n    scrollToIndex: (index: number) => void\n    measure: () => void\n    measureElement: (el: Element | null) => void\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fvirtual-scroll%2Ftypes.ts%23VirtualizerInstance"
+              }
+            ]
+          },
+          "description": "底层 TanStack Virtualizer 的浅层响应式引用；依赖加载完成前或加载失败时引用值为 null。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    }
+  ]
+}

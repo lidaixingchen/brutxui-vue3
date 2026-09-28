@@ -62,61 +62,32 @@ import { Button } from 'brutx-ui-vue'
 | `AlertDialogAction` | 确认操作按钮 |
 | `AlertDialogCancel` | 关闭对话框的取消按钮 |
 
-## Props
+## API 参考
 
-### AlertDialogContent
+<span id="alertdialogcontent"></span>
+<span id="alertdialogheader"></span>
+<span id="alertdialogfooter"></span>
+<span id="alertdialogtitle"></span>
+<span id="alertdialogdescription"></span>
+<span id="alertdialogaction"></span>
+<span id="alertdialogcancel"></span>
+<span id="插槽"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 自定义样式类 |
-| `overlayClass` | `string` | — | 遮罩层自定义样式类（合并进 overlay，供二次封装定制遮罩样式） |
+<ComponentApi name="alert-dialog" />
 
-### AlertDialogHeader
+### Reka UI 原语
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 自定义样式类 |
+`AlertDialogRoot`（示例中命名为 `AlertDialog`）、`AlertDialogTrigger` 和 `AlertDialogPortal` 从 `reka-ui` 导入。上方 API 清单覆盖 BrutxUI 的七个公开子组件；`AlertDialogContent` 已在内部组合 Portal 和遮罩层，额外的属性及监听器会转发到内容原语，例如 `aria-*`、`data-*`、`style` 和 `@escape-key-down`。
 
-### AlertDialogFooter
+`AlertDialogCancel` 使用 `outline` 按钮变体。`AlertDialogTitle` 通过默认插槽提供标题；缺少可渲染内容时显示英文占位文本 `Alert`，业务应提供对应语言的明确标题。
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 自定义样式类 |
+### 原生属性与事件
 
-### AlertDialogTitle
+`AlertDialogAction` 显式继承 Reka `PrimitiveProps` 和 Vue `ButtonHTMLAttributes` 的属性。API 清单保留这些继承成员，包括 HTML 属性、ARIA 属性和 `on*` 事件监听器。默认根元素是 `button`，其类型回退为 `button`；使用 `as` 或 `asChild` 时，属性的实际效果取决于渲染元素。例如，媒体事件需要媒体根元素，表单事件发生在表单上，ARIA 状态须符合当前元素角色。
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 自定义样式类 |
+`onClick` 等监听器可在模板中写为 `@click`。激活 `AlertDialogAction` 会请求关闭对话框，异步处理函数不会延迟该关闭请求；需要业务决定关闭时机时，通过 `AlertDialogRoot` 的受控 `open` 状态管理。
 
-### AlertDialogDescription
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 自定义样式类 |
-
-### AlertDialogAction
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success' \| 'outline' \| 'ghost' \| 'link'` | `'default'` | 按钮变体 |
-| `class` | `string` | — | 自定义样式类 |
-| `as` | `string \| Component` | — | 渲染为指定元素或组件 |
-| `asChild` | `boolean` | — | 是否以子元素方式渲染 |
-
-### AlertDialogCancel
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 自定义样式类 |
-
-> `AlertDialogCancel` 使用硬编码的 `variant: 'outline'`。
-
-## 插槽
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 所有子组件均支持默认插槽，用于插入自定义内容 |
+继承属性的语义可查阅 [HTML 按钮属性](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button) 与 [RDFa 属性定义](https://www.w3.org/TR/rdfa-core/#s_syntax)。`autosave`、`results` 等浏览器扩展的适用范围见 [Safari HTML 属性参考](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/Attributes.html)。
 
 ## 可访问性
 

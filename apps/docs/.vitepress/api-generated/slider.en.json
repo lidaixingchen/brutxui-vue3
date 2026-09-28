@@ -1,0 +1,474 @@
+{
+  "id": "component:slider",
+  "name": "slider",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:slider/Slider",
+      "name": "Slider",
+      "source": {
+        "file": "packages/ui/src/components/slider/Slider.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aslider_2FSlider-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "number[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The current slider values. One value renders a single thumb; two values create a range slider. Supports controlled `v-model`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-min",
+          "name": "min",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The minimum value and the fallback value when the model array is empty.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-max",
+          "name": "max",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The maximum permitted value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "100",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "100"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-step",
+          "name": "step",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The increment used when adjusting the value by keyboard or pointer.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "1",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "1"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables interaction with all slider thumbs.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 30
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The accessible name passed to the slider primitive.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Sets the size preset for the track and thumb.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"success\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "Sets the color variant for the range fill and thumb.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-orientation",
+          "name": "orientation",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"vertical\" | \"horizontal\" | null | undefined> | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "Selects horizontal or vertical layout and positions marks and tooltips accordingly.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'horizontal'",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"horizontal\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-marks",
+          "name": "marks",
+          "kind": "props",
+          "type": {
+            "text": "number[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Values at which tick marks are drawn along the track.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-showTooltip",
+          "name": "showTooltip",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows the value tooltip beside the currently focused or hovered thumb.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the slider root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 37
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: number[]]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the updated number array when the slider changes; a controlled value is applied when the parent updates `modelValue`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-exposes-currentValue",
+          "name": "currentValue",
+          "kind": "exposes",
+          "type": {
+            "text": "number[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "The computed array of effective slider values. It is read-only and contains `min` when the model is omitted or empty.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 65
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-exposes-setValue",
+          "name": "setValue",
+          "kind": "exposes",
+          "type": {
+            "text": "(value: number[]) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Requests a new slider value array from the parent by emitting `update:modelValue`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 66
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    }
+  ]
+}

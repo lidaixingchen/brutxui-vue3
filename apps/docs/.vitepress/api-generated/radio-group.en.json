@@ -1,0 +1,374 @@
+{
+  "id": "component:radio-group",
+  "name": "radio-group",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:radio-group/RadioGroup",
+      "name": "RadioGroup",
+      "source": {
+        "file": "packages/ui/src/components/radio-group/RadioGroup.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroup-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The currently selected string value, synchronized through a controlled v-model.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroup.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroup-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The form field name passed to the radio-group primitive.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroup.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroup-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables every radio item in the group.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroup.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroup-props-orientation",
+          "name": "orientation",
+          "kind": "props",
+          "type": {
+            "text": "\"vertical\" | \"horizontal\" | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "Sets item layout: vertical stacks items, while horizontal lays them out with wrapping; vertical is the default.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroup.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroup-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes applied to the radio-group root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroup.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroup-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides an accessible name for the whole radio group.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroup.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroup-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the new string value when the selection changes so v-model can be synchronized.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroup.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroup-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Contains the RadioGroupItem options belonging to this group.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroup.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:radio-group/RadioGroupItem",
+      "name": "RadioGroupItem",
+      "source": {
+        "file": "packages/ui/src/components/radio-group/RadioGroupItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroupItem-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The string value represented by this option; when selected, it becomes the RadioGroup modelValue.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroupItem.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroupItem-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables this option while leaving other enabled options in the group interactive.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroupItem.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/radio-group/RadioGroupItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroupItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes applied to the radio option button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroupItem.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/radio-group/RadioGroupItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroupItem-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"secondary\" | \"success\" | \"danger\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"secondary\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "Sets the color variant of the radio option and its selected indicator.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroupItem.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/radio-group/RadioGroupItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroupItem-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Sets the size of the radio button and selected indicator icon.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroupItem.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/radio-group/RadioGroupItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

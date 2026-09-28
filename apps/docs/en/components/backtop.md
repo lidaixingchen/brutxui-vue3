@@ -63,28 +63,15 @@ Apply customized alignment offsets via `right` or `bottom` coordinates, and togg
 </template>
 ```
 
-## Props
+## API Reference
 
-### Backtop
+<span id="backtop-1"></span>
+<span id="backtop-2"></span>
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `visibilityHeight` | `number` | `200` | Minimum scroll height (in pixels) required to show the shortcut button |
-| `target` | `string \| HTMLElement` | `undefined` | The scroll viewport container element or selector ID. Resolves to `window` if empty. When set, the button is positioned `absolute` and the component must be placed inside a positioned container (e.g. `position: relative`) — otherwise it resolves against the initial containing block and may be misplaced |
-| `right` | `number` | `40` | Offset pixel distance from the right edge of viewport/container |
-| `bottom` | `number` | `40` | Offset pixel distance from the bottom edge of viewport/container |
-| `variant` | `'primary' \| 'secondary' \| 'accent'` | `'primary'` | Theme color layout variation (primary renders yellow background) |
-| `class` | `string` | `undefined` | Extra CSS classes passed down to the inner button element |
-
-## Events
-
-### Backtop
-
-| Event | Parameters | Description |
-|-------|------------|-------------|
-| `click` | `event: MouseEvent` | Triggers when the button is clicked to perform the scroll reset action |
+<ComponentApi name="backtop" />
 
 ## Accessibility
 
-- **ARIA Semantics**: Emits `aria-label="Back to top"` on the inner trigger to describe its functionality to assistive screen readers.
-- **Smooth Scroll Transitions**: Uses native smooth-scroll behaviors. If the client has activated "Reduce Motion" system accessibility flags, it immediately jumps to top to avoid visual fatigue.
+- **Keyboard**: The button supports focus with Tab and activation with Enter or Space.
+- **ARIA Semantics**: The button uses the localized `backtop.backToTop` message as its accessible name.
+- **Scrolling**: Activation requests native scrolling with `{ top: 0, behavior: 'smooth' }`; the browser controls the resulting scrolling behavior.

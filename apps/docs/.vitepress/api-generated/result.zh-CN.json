@@ -1,0 +1,333 @@
+{
+  "id": "component:result",
+  "name": "result",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:result/Result",
+      "name": "Result",
+      "source": {
+        "file": "packages/ui/src/components/result/Result.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aresult_2FResult-props-status",
+          "name": "status",
+          "kind": "props",
+          "type": {
+            "text": "\"success\" | \"warning\" | \"info\" | \"error\" | \"empty\" | undefined",
+            "literals": [
+              "\"empty\"",
+              "\"error\"",
+              "\"info\"",
+              "\"success\"",
+              "\"warning\""
+            ],
+            "references": []
+          },
+          "description": "选择结果图标和配色状态；支持 success、warning、info、error、empty，运行时未知值回退为 info。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'info'",
+              "source": {
+                "file": "packages/ui/src/components/result/Result.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"info\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aresult_2FResult-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "结果标题文本；可由 title 插槽替换。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/result/Result.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aresult_2FResult-props-subTitle",
+          "name": "subTitle",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "结果副标题或补充说明；可由 subTitle 插槽替换。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/result/Result.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aresult_2FResult-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "\"card\" | \"plain\" | undefined",
+            "literals": [
+              "\"card\"",
+              "\"plain\""
+            ],
+            "references": []
+          },
+          "description": "选择带边框和硬投影的 card 布局，或无卡片外观的 plain 布局。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'card'",
+              "source": {
+                "file": "packages/ui/src/components/result/Result.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"card\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aresult_2FResult-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "设置状态图标尺寸；未指定时使用组件内置的 40px 图标尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/result/Result.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aresult_2FResult-props-titleAs",
+          "name": "titleAs",
+          "kind": "props",
+          "type": {
+            "text": "\"h2\" | \"h3\" | undefined",
+            "literals": [
+              "\"h2\"",
+              "\"h3\""
+            ],
+            "references": []
+          },
+          "description": "选择标题使用 h2 或 h3 语义元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'h2'",
+              "source": {
+                "file": "packages/ui/src/components/result/Result.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"h2\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aresult_2FResult-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到结果根容器的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/result/Result.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aresult_2FResult-slots-icon",
+          "name": "icon",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换默认状态图标及其图标盒；该图标装饰区域对辅助技术隐藏。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aresult_2FResult-slots-title",
+          "name": "title",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换结果标题内容结构。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aresult_2FResult-slots-subTitle",
+          "name": "subTitle",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换结果副标题内容结构。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aresult_2FResult-slots-extra",
+          "name": "extra",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "在标题和副标题下方呈现额外操作或补充内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

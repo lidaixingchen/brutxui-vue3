@@ -121,34 +121,9 @@ import {
 } from 'brutx-ui-vue'
 ```
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-| ---- | ---- | ------- | ----------- |
-| `value` | `number \| string \| bigint \| null` | `undefined` | Numerical value to display, supports numbers, strings, and BigInt |
-| `title` | `string` | `undefined` | Statistic item title |
-| `prefix` | `string` | `undefined` | Prefix text before the value (e.g. `$` or `¥`) |
-| `suffix` | `string` | `undefined` | Suffix text after the value (e.g. `%` or units) |
-| `precision` | `number` | `undefined` | Number of decimal places to preserve |
-| `decimalSeparator` | `string` | `'.'` | Decimal point separator |
-| `groupSeparator` | `string` | `','` | Thousands group separator |
-| `formatter` | `(val: StatisticValue) => string` | `undefined` | Custom formatting function |
-| `placeholder` | `string` | `'-'` | Fallback placeholder text when value is empty or invalid |
-| `trend` | `'up' \| 'down'` | `undefined` | Trend direction, rendering arrow icons with status colors |
-| `trendPlacement` | `'prefix' \| 'suffix'` | `'suffix'` | Position of the trend indicator |
-| `variant` | `'default' \| 'card' \| 'bordered' \| 'subtle'` | `'default'` | Visual container variant |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Size preset |
-| `class` | `string` | `undefined` | Custom CSS class name |
-
-## Slots
-
-| Slot | Scope | Description |
-| ---- | ----- | ----------- |
-| `default` | `{ value: StatisticValue; formatted: string }` | Custom content for the formatted value |
-| `title` | `{ title?: string }` | Custom content for the title area |
-| `prefix` | `{ prefix?: string }` | Custom content for the prefix area |
-| `suffix` | `{ suffix?: string }` | Custom content for the suffix area |
-| `trend` | `{ trend: 'up' \| 'down' }` | Custom content for the trend indicator |
+<ComponentApi name="statistic" />
 
 ## Accessibility
 

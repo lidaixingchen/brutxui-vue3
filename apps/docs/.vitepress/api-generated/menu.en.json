@@ -1,0 +1,601 @@
+{
+  "id": "component:menu",
+  "name": "menu",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:menu/Menu",
+      "name": "Menu",
+      "source": {
+        "file": "packages/ui/src/components/menu/Menu.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Amenu_2FMenu-props-mode",
+          "name": "mode",
+          "kind": "props",
+          "type": {
+            "text": "\"vertical\" | \"horizontal\" | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "Sets the menu item layout direction to horizontal or vertical.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/Menu.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'vertical'",
+              "source": {
+                "file": "packages/ui/src/components/menu/Menu.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"vertical\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FMenu-props-defaultActive",
+          "name": "defaultActive",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the index of the initially highlighted menu item and initializes the active item.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/Menu.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "''",
+              "source": {
+                "file": "packages/ui/src/components/menu/Menu.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FMenu-props-router",
+          "name": "router",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "When enabled, menu items with route navigate through vue-router.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/Menu.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/menu/Menu.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FMenu-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the menu root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/Menu.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/menu/Menu.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FMenu-events-select",
+          "name": "select",
+          "kind": "events",
+          "type": {
+            "text": "[index: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the selected menu item’s index.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/Menu.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Amenu_2FMenu-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Menu content, typically MenuItem and SubMenu components.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/Menu.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:menu/MenuItem",
+      "name": "MenuItem",
+      "source": {
+        "file": "packages/ui/src/components/menu/MenuItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Amenu_2FMenuItem-props-index",
+          "name": "index",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "Unique item identifier used for active state and the select event; router mode also uses it to match the current route.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/MenuItem.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FMenuItem-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables selection and navigation for this menu item.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/MenuItem.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/menu/MenuItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FMenuItem-props-route",
+          "name": "route",
+          "kind": "props",
+          "type": {
+            "text": "string | Record<string, unknown> | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The path or route object to navigate to when this item is clicked in router mode.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/MenuItem.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/menu/MenuItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FMenuItem-props-inset",
+          "name": "inset",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Indents the item content to align it with items that include icons.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/MenuItem.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/menu/MenuItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FMenuItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the menu item root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/MenuItem.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/menu/MenuItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FMenuItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The menu item label, optionally including an icon.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/MenuItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:menu/SubMenu",
+      "name": "SubMenu",
+      "source": {
+        "file": "packages/ui/src/components/menu/SubMenu.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Amenu_2FSubMenu-props-index",
+          "name": "index",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "Unique identifier for this submenu, used by menu state and nested hierarchy tracking.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/SubMenu.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FSubMenu-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The submenu trigger title; the title slot provides the rendered content when supplied.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/SubMenu.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "''",
+              "source": {
+                "file": "packages/ui/src/components/menu/SubMenu.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FSubMenu-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables the submenu trigger and prevents it from opening.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/SubMenu.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/menu/SubMenu.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FSubMenu-props-inset",
+          "name": "inset",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Indents the submenu trigger content to align it with menu items that include icons.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/SubMenu.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/menu/SubMenu.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FSubMenu-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the submenu root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/SubMenu.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/menu/SubMenu.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FSubMenu-props-triggerClass",
+          "name": "triggerClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the submenu title trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/SubMenu.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/menu/SubMenu.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FSubMenu-slots-title",
+          "name": "title",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Customizes the submenu trigger content and takes precedence over the title prop.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/SubMenu.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Amenu_2FSubMenu-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Submenu content, which can contain MenuItem or further nested SubMenu components.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/SubMenu.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

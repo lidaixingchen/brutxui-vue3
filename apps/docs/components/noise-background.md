@@ -81,25 +81,11 @@ import { NoiseBackground } from 'brutx-ui-vue'
 </template>
 ```
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `type` | `'fractalNoise' \| 'turbulence'` | `'fractalNoise'` | 噪点类型 |
-| `frequency` | `number` | `0.65` | 噪点频率（0-1） |
-| `octaves` | `number` | `3` | 噪点层数（越多越复杂） |
-| `opacity` | `number` | `0.5` | 噪点不透明度（0-1） |
-| `animated` | `boolean` | `false` | 是否启用动画效果 |
-| `animationDuration` | `number` | `8` | 动画周期（秒） |
-| `animationRange` | `number` | `0.1` | 动画频率变化范围 |
-| `rounded` | `'none' \| 'default' \| 'lg' \| 'full'` | `'none'` | 圆角变体 |
-| `class` | `string` | — | 自定义类名 |
+<span id="插槽"></span>
 
-## 插槽
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 嵌套内容，会显示在噪点背景上方 |
+<ComponentApi name="noise-background" />
 
 ## 噪点类型说明
 

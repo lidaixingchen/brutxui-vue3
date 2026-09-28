@@ -51,7 +51,7 @@ const data = [
 
 ## 手绘抖动
 
-`sketchiness` prop 控制手绘抖动幅度 (0-10)，值越大抖动越明显：
+sketchiness prop 控制手绘抖动幅度，值越大抖动越明显。0-10 可作为调节范围参考，组件不会钳制传入值：
 
 ```vue
 <SketchyChart type="line" :data="data" :sketchiness="8" />
@@ -63,17 +63,9 @@ const data = [
 - **负值**：取绝对值
 - **大数据集**（>30 项）：自动降采样
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `type` | `'line' \| 'bar' \| 'pie'` | `'line'` | 图表类型 |
-| `data` | `Array<{ label: string, value: number }>` | `[]` | 图表数据源 |
-| `sketchiness` | `number` | `2` | 手绘抖动幅度 (0-10) |
-| `grid` | `boolean` | `true` | 是否绘制背景网格（饼图下无效） |
-| `width` | `number` | `600` | 图表宽度 (px) |
-| `height` | `number` | `400` | 图表高度 (px) |
-| `class` | `string` | — | 外部类覆盖 |
+<ComponentApi name="sketchy-chart" />
 
 ## 可访问性
 

@@ -1,0 +1,657 @@
+{
+  "id": "component:carousel",
+  "name": "carousel",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:carousel/Carousel",
+      "name": "Carousel",
+      "source": {
+        "file": "packages/ui/src/components/carousel/Carousel.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acarousel_2FCarousel-props-loop",
+          "name": "loop",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables looping from the last slide to the first; previous and next navigation remain available.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/types.ts",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/carousel/Carousel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-props-autoplay",
+          "name": "autoplay",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables automatic slide playback; autoplay stops while reduced motion is preferred.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/types.ts",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/carousel/Carousel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-props-autoplayDelay",
+          "name": "autoplayDelay",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the autoplay interval between slides, in milliseconds.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/types.ts",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_AUTOPLAY_DELAY",
+              "source": {
+                "file": "packages/ui/src/components/carousel/Carousel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "3000"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-props-showArrows",
+          "name": "showArrows",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether previous and next navigation buttons are shown.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/types.ts",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/carousel/Carousel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-props-showDots",
+          "name": "showDots",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether bottom dot navigation is shown; dots are hidden when thumbnails are displayed.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/types.ts",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/carousel/Carousel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"lg\" | \"sm\" | \"md\" | \"full\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"full\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Sets the height preset for the carousel viewport.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/types.ts",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/carousel/Carousel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-props-thumbnails",
+          "name": "thumbnails",
+          "kind": "props",
+          "type": {
+            "text": "CarouselThumbnails | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "CarouselThumbnails",
+                "text": "export interface CarouselThumbnails {\n    show?: boolean\n    position?: 'bottom' | 'left' | 'right'\n    size?: 'sm' | 'md' | 'lg'\n    gap?: number\n    highlightCurrent?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcarousel%2Ftypes.ts%23CarouselThumbnails"
+              }
+            ]
+          },
+          "description": "Configures thumbnail navigation visibility, position, size, spacing, and current-item highlighting.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/types.ts",
+            "line": 30
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => ({ show: false, position: 'bottom', size: 'sm', gap: 8, highlightCurrent: true })",
+              "source": {
+                "file": "packages/ui/src/components/carousel/Carousel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "{ \"gap\": 8, \"highlightCurrent\": true, \"position\": \"bottom\", \"show\": false, \"size\": \"sm\" }"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-props-autoplayIndicator",
+          "name": "autoplayIndicator",
+          "kind": "props",
+          "type": {
+            "text": "AutoplayIndicator | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "AutoplayIndicator",
+                "text": "export interface AutoplayIndicator {\n    type: 'progress' | 'dots' | 'fraction'\n    position?: 'top' | 'bottom'\n    pauseOnHover?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcarousel%2Ftypes.ts%23AutoplayIndicator"
+              }
+            ]
+          },
+          "description": "Configures the autoplay indicator type, position, and pause-on-hover behavior.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/types.ts",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/carousel/Carousel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-props-parallax",
+          "name": "parallax",
+          "kind": "props",
+          "type": {
+            "text": "ParallaxEffect | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "ParallaxEffect",
+                "text": "export interface ParallaxEffect {\n    enabled?: boolean\n    scale?: number\n    opacity?: boolean\n    duration?: number\n    easing?: string\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcarousel%2Ftypes.ts%23ParallaxEffect"
+              }
+            ]
+          },
+          "description": "Configures the slide parallax effect, including scale, opacity, and animation duration.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/types.ts",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/carousel/Carousel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the carousel root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/types.ts",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/carousel/Carousel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Contains CarouselItem slide components.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/Carousel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-slots-thumbnail",
+          "name": "thumbnail",
+          "kind": "slots",
+          "type": {
+            "text": "{ index: number; scrollTo: (index: number) => void; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "Customizes thumbnail content; the slot scope provides the thumbnail index and a scrollTo function for navigating to a slide.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/Carousel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-exposes-scrollPrev",
+          "name": "scrollPrev",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Scrolls to the previous slide; in loop mode it wraps from the first slide to the last.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/Carousel.vue",
+            "line": 132
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-exposes-scrollNext",
+          "name": "scrollNext",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Scrolls to the next slide; in loop mode it wraps from the last slide to the first.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/Carousel.vue",
+            "line": 133
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-exposes-scrollTo",
+          "name": "scrollTo",
+          "kind": "exposes",
+          "type": {
+            "text": "(index: number) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Scrolls to the slide at the specified zero-based index.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/Carousel.vue",
+            "line": 134
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-exposes-selectedIndex",
+          "name": "selectedIndex",
+          "kind": "exposes",
+          "type": {
+            "text": "number",
+            "literals": [],
+            "references": []
+          },
+          "description": "The zero-based index of the selected slide as read-only reactive state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/Carousel.vue",
+            "line": 135
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-exposes-canScrollPrev",
+          "name": "canScrollPrev",
+          "kind": "exposes",
+          "type": {
+            "text": "boolean",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Indicates whether scrolling backward is possible; it is always true in loop mode.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/Carousel.vue",
+            "line": 136
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-exposes-canScrollNext",
+          "name": "canScrollNext",
+          "kind": "exposes",
+          "type": {
+            "text": "boolean",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Indicates whether scrolling forward is possible; it is always true in loop mode.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/Carousel.vue",
+            "line": 137
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-exposes-startAutoplay",
+          "name": "startAutoplay",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Starts autoplay; a reduced-motion preference still prevents playback.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/Carousel.vue",
+            "line": 138
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-exposes-stopAutoplay",
+          "name": "stopAutoplay",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Stops autoplay.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/Carousel.vue",
+            "line": 139
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": "component:carousel/CarouselItem",
+      "name": "CarouselItem",
+      "source": {
+        "file": "packages/ui/src/components/carousel/CarouselItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acarousel_2FCarouselItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the individual slide container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/CarouselItem.vue",
+            "line": 6
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/carousel/CarouselItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarouselItem-props-ariaHidden",
+          "name": "ariaHidden",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Marks the slide and its descendants as hidden from assistive technology; set it to true for slides outside the viewport.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/CarouselItem.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/carousel/CarouselItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarouselItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom content displayed inside the slide.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/CarouselItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

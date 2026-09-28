@@ -1,0 +1,622 @@
+{
+  "id": "component:combobox",
+  "name": "combobox",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:combobox/Combobox",
+      "name": "Combobox",
+      "source": {
+        "file": "packages/ui/src/components/combobox/Combobox.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-options",
+          "name": "options",
+          "kind": "props",
+          "type": {
+            "text": "ComboboxOption[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "ComboboxOption",
+                "text": "export interface ComboboxOption {\n    value: string\n    label: string\n    disabled?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcombobox%2Fcombobox-types.ts%23ComboboxOption"
+              }
+            ]
+          },
+          "description": "The available options. Each item has a string value, a display label, and an optional disabled flag.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The selected string or array of strings, bound with v-model; multiple mode uses an array.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-multiple",
+          "name": "multiple",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables multiple selection so users can choose more than one option.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "The dropdown open state. When supplied, the state is controlled and the parent must write back update:open changes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Placeholder shown with no selection; when omitted, localized text is chosen for single or multiple mode.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-searchPlaceholder",
+          "name": "searchPlaceholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Placeholder for the search field inside the dropdown; localized text is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-emptyText",
+          "name": "emptyText",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Text shown when the search has no matching options; localized text is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 30
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables the trigger and option interactions.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-loading",
+          "name": "loading",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows a loading state while options are being prepared or refreshed asynchronously.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-creative",
+          "name": "creative",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows a create option when a non-empty query has no matches; the component emits create without changing modelValue.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-maxDisplay",
+          "name": "maxDisplay",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The maximum selected tags shown in the trigger in multiple mode; additional selections are summarized by count.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "3",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "3"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the accessible name of the combobox trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the combobox root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "Sets the size of the dropdown indicator icon.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 37
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string | string[] | undefined]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the new selection; multiple mode emits an array, while selecting the current single option again emits undefined.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Emits the requested boolean state when the dropdown opens or closes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-events-create",
+          "name": "create",
+          "kind": "events",
+          "type": {
+            "text": "[value: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the trimmed search text when the user chooses the create action; the caller adds the option and value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-exposes-searchQuery",
+          "name": "searchQuery",
+          "kind": "exposes",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The current search text; it is cleared when the panel closes or a single selection completes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 190
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-exposes-selectedValue",
+          "name": "selectedValue",
+          "kind": "exposes",
+          "type": {
+            "text": "string | string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "A read-only computed value of the current modelValue.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 191
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-exposes-focus",
+          "name": "focus",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Moves keyboard focus to the combobox trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 192
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-exposes-open",
+          "name": "open",
+          "kind": "exposes",
+          "type": {
+            "text": "WritableComputedRef<boolean, boolean>",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "The readable and writable dropdown state. Setting true opens the panel; controlled mode still requires the parent to write back changes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    }
+  ]
+}

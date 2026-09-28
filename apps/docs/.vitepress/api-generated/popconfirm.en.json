@@ -1,0 +1,377 @@
+{
+  "id": "component:popconfirm",
+  "name": "popconfirm",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:popconfirm/Popconfirm",
+      "name": "Popconfirm",
+      "source": {
+        "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The title text displayed in the confirmation popover.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-props-confirmButtonText",
+          "name": "confirmButtonText",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The confirm button label; localized default text is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-props-cancelButtonText",
+          "name": "cancelButtonText",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The cancel button label; localized default text is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-props-confirmButtonType",
+          "name": "confirmButtonType",
+          "kind": "props",
+          "type": {
+            "text": "\"primary\" | \"destructive\" | undefined",
+            "literals": [
+              "\"destructive\"",
+              "\"primary\""
+            ],
+            "references": []
+          },
+          "description": "Sets the confirm button to the primary or destructive action style.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'primary'",
+              "source": {
+                "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"primary\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-props-icon",
+          "name": "icon",
+          "kind": "props",
+          "type": {
+            "text": "Component | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The Vue icon component replacing the default warning icon; TriangleAlert is shown when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-props-cancelable",
+          "name": "cancelable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether the cancel button is rendered.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the popover content container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "The confirmation popover open state, available through v-model:open.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Emits the new boolean value when the popover open state changes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-events-confirm",
+          "name": "confirm",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Closes the popover and emits after the user activates the confirm button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-events-cancel",
+          "name": "cancel",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Closes the popover and emits after the user activates the cancel button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides the element that triggers the confirmation popover.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-slots-icon",
+          "name": "icon",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the content of the default warning icon area.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-slots-description",
+          "name": "description",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Renders explanatory content below the title and associates it as the alert dialog description.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

@@ -180,39 +180,11 @@ function onBlur() {
 
 ## Programmatic Control
 
-| Name | Description |
-|------|-------------|
-| `validate()` | Trigger validation manually |
-| `validationState` | Current validation state |
-| `errorMessage` | Current error message |
+Use the component ref to trigger validation and read the current validation state and error message; see API Reference for member types and behavior.
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `modelValue` | `string` | `undefined` | v-model binding value |
-| `sound` | `boolean` | `true` | Whether to enable 8-bit retro sound effects |
-| `rules` | `Array<(val: string) => boolean \| string>` | `[]` | List of validation rule functions |
-| `shakeOnError` | `boolean` | `true` | Whether to trigger input shake on error |
-| `type` | `string` | `'text'` | HTML input type attribute |
-| `placeholder` | `string` | `undefined` | Placeholder text |
-| `disabled` | `boolean` | `false` | Whether disabled |
-| `readonly` | `boolean` | `false` | Whether readonly |
-| `validateOn` | `'input' \| 'blur' \| 'submit'` | `'blur'` | Validation trigger timing |
-| `class` | `string` | `undefined` | External class override |
-
-## Events
-
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `@update:modelValue` | `(value: string)` | v-model update event |
-| `@validation-change` | `(state: ValidationState, message?: string)` | Validation state change event, only triggered when state actually changes |
-
-## Slots
-
-| Slot | Scope | Description |
-|------|-------|-------------|
-| `default` | — | Additional content to the right of the input (e.g. icons, emoji area overlay) |
+<ComponentApi name="hardcore-input" />
 
 ## Accessibility
 

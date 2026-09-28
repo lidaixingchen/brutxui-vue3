@@ -1,0 +1,1909 @@
+{
+  "id": "component:color-picker",
+  "name": "color-picker",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:color-picker/ColorPicker",
+      "name": "ColorPicker",
+      "source": {
+        "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "The controlled open state of the color panel, used with `v-model:open`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPicker.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "The size of the trigger and color controls.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPicker.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "The current color string; `null` means no color is selected. Supports two-way binding with `v-model`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/types.ts",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "null",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "null"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-props-format",
+          "name": "format",
+          "kind": "props",
+          "type": {
+            "text": "ColorPickerFormat | undefined",
+            "literals": [
+              "\"hex\"",
+              "\"hsl\"",
+              "\"rgb\""
+            ],
+            "references": []
+          },
+          "description": "The input and output color format: HEX, RGB, or HSL.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/types.ts",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'hex'",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"hex\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-props-showAlpha",
+          "name": "showAlpha",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows the opacity slider and includes the alpha channel in emitted color values.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/types.ts",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-props-presets",
+          "name": "presets",
+          "kind": "props",
+          "type": {
+            "text": "string[] | readonly ColorPreset[] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "ColorPreset",
+                "text": "export interface ColorPreset {\n    readonly label: string\n    readonly value: string\n    readonly disabled?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Fdefault-presets.ts%23ColorPreset"
+              }
+            ]
+          },
+          "description": "Optional swatches as color strings or `ColorPreset` objects with labels and disabled states. The panel uses its built-in presets when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/types.ts",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-props-showPresets",
+          "name": "showPresets",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether the panel displays preset swatches.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/types.ts",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-props-presetsLabel",
+          "name": "presetsLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The visible heading for the preset area; localized text is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/types.ts",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-props-showHistory",
+          "name": "showHistory",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether the panel displays and maintains recently selected colors.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/types.ts",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-props-historyMax",
+          "name": "historyMax",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The maximum number of entries retained in color history.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/types.ts",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "8",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "8"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-props-historyStorageKey",
+          "name": "historyStorageKey",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The `localStorage` key used to persist color history.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/types.ts",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'brutx-color-history'",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"brutx-color-history\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-props-showInput",
+          "name": "showInput",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows the color text in the trigger. When false, the trigger shows the swatch and placeholder only.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/types.ts",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Placeholder text shown when there is no valid color; it is also the localized fallback for the accessible name.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/types.ts",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables the trigger and clear action and prevents opening the color panel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/types.ts",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows a clear button when a color is selected and the control is enabled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/types.ts",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The form field name. When set, a hidden input submits the current color; a disabled control is excluded from form submission.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/types.ts",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the native HTML `id` on the trigger button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/types.ts",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The accessible name of the trigger; localized placeholder text is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/types.ts",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "CSS classes added to the color picker trigger. Supports array and object forms accepted by `ClassValue`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/types.ts",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "Emits the formatted color as it is typed, selected by dragging, or cleared; clearing emits `null`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-events-open",
+          "name": "open",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted without a payload when the panel opens.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-events-close",
+          "name": "close",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted without a payload when the panel closes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Emits the new boolean open state so a controlled `open` value can be updated.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-events-change",
+          "name": "change",
+          "kind": "events",
+          "type": {
+            "text": "[value: string | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "Emits the final value when the user confirms or clears a color, separate from intermediate `update:modelValue` changes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-exposes-open",
+          "name": "open",
+          "kind": "exposes",
+          "type": {
+            "text": "Ref<boolean, boolean>",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "A `Ref` for the panel open state. Read or write it through the component instance to open or close the panel programmatically.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": "component:color-picker/ColorPickerHistory",
+      "name": "ColorPickerHistory",
+      "source": {
+        "file": "packages/ui/src/components/color-picker/ColorPickerHistory.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerHistory-props-history",
+          "name": "history",
+          "kind": "props",
+          "type": {
+            "text": "readonly string[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "The list of historical color strings to display; invalid colors are filtered out.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerHistory.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerHistory-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "The current color, used to highlight a swatch with the same normalized color value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerHistory.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "null",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerHistory.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "null"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerHistory-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"lg\" | \"sm\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "The size of the history swatches.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerHistory.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerHistory.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerHistory-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The accessible name of the history group; a localized heading is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerHistory.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerHistory.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerHistory-props-clearLabel",
+          "name": "clearLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The accessible name of the clear-history button; localized text is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerHistory.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerHistory.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerHistory-events-clear",
+          "name": "clear",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted without a payload when the user activates the clear button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerHistory.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerHistory-events-select",
+          "name": "select",
+          "kind": "events",
+          "type": {
+            "text": "[value: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the color string when the user selects a valid history swatch.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerHistory.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:color-picker/ColorPickerInput",
+      "name": "ColorPickerInput",
+      "source": {
+        "file": "packages/ui/src/components/color-picker/ColorPickerInput.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerInput-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "The current color. Valid values are displayed in the requested `format`; `null` leaves the input empty.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerInput.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "null",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "null"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerInput-props-format",
+          "name": "format",
+          "kind": "props",
+          "type": {
+            "text": "\"hex\" | \"rgb\" | \"hsl\" | undefined",
+            "literals": [
+              "\"hex\"",
+              "\"hsl\"",
+              "\"rgb\""
+            ],
+            "references": []
+          },
+          "description": "The format used to normalize and emit the input value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerInput.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'hex'",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"hex\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerInput-props-showAlpha",
+          "name": "showAlpha",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Whether formatted color values include the alpha channel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerInput.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerInput-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables the native text input.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerInput.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerInput-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The accessible name of the text input.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerInput.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerInput-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "Emitted when the input is empty or contains a valid color; invalid text does not update the color value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerInput.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerInput-events-confirm",
+          "name": "confirm",
+          "kind": "events",
+          "type": {
+            "text": "[value: string | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "Confirms a valid color or empty value on Enter or blur; invalid text is restored from the current model value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerInput.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:color-picker/ColorPickerPanel",
+      "name": "ColorPickerPanel",
+      "source": {
+        "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerPanel-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "The panel current color; `null` means no color is selected.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "null",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "null"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerPanel-props-format",
+          "name": "format",
+          "kind": "props",
+          "type": {
+            "text": "ColorFormat | undefined",
+            "literals": [
+              "\"hex\"",
+              "\"hsl\"",
+              "\"rgb\""
+            ],
+            "references": [
+              {
+                "name": "ColorFormat",
+                "text": "export type ColorFormat = 'hex' | 'rgb' | 'hsl'",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Fcolor.ts%23ColorFormat"
+              }
+            ]
+          },
+          "description": "The color format used when the panel creates and formats color values.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'hex'",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"hex\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerPanel-props-showAlpha",
+          "name": "showAlpha",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows the opacity control and includes the alpha channel in color values.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerPanel-props-presets",
+          "name": "presets",
+          "kind": "props",
+          "type": {
+            "text": "string[] | readonly ColorPreset[] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "ColorPreset",
+                "text": "export interface ColorPreset {\n    readonly label: string\n    readonly value: string\n    readonly disabled?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Fdefault-presets.ts%23ColorPreset"
+              }
+            ]
+          },
+          "description": "Swatches as strings or `ColorPreset` objects. The built-in palette is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
+            "line": 30
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => DEFAULT_COLOR_PRESETS",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "expression",
+              "text": "() => DEFAULT_COLOR_PRESETS"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerPanel-props-showPresets",
+          "name": "showPresets",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Whether to render the preset swatches section.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerPanel-props-presetsLabel",
+          "name": "presetsLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The preset-section heading; localized text is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerPanel-props-showHistory",
+          "name": "showHistory",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Whether to display the color history section.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerPanel-props-historyMax",
+          "name": "historyMax",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The maximum number of colors retained in history.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "8",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "8"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerPanel-props-historyStorageKey",
+          "name": "historyStorageKey",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The `localStorage` key passed to the color-history storage logic.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerPanel-props-showInput",
+          "name": "showInput",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Whether to show the editable color text input.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerPanel-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Whether to show the action for clearing the current color.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
+            "line": 37
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerPanel-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "ColorPickerSize | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": [
+              {
+                "name": "ColorPickerSize",
+                "text": "export type ColorPickerSize = 'sm' | 'default' | 'lg'",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcolor-picker%2Ftypes.ts%23ColorPickerSize"
+              }
+            ]
+          },
+          "description": "The size of the panel swatches and controls.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
+            "line": 38
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerPanel-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "Emits the new value when a panel control changes the color.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerPanel-events-clear",
+          "name": "clear",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted without a payload when the user clears the current color.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerPanel-events-confirm",
+          "name": "confirm",
+          "kind": "events",
+          "type": {
+            "text": "[value: string | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "Emits the final color value when the user confirms the panel selection.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerPanel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:color-picker/ColorPickerSwatch",
+      "name": "ColorPickerSwatch",
+      "source": {
+        "file": "packages/ui/src/components/color-picker/ColorPickerSwatch.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerSwatch-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The color string represented by the swatch; invalid colors disable the button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerSwatch.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerSwatch-props-label",
+          "name": "label",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The swatch tooltip and fallback accessible name.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerSwatch.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerSwatch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerSwatch-props-selected",
+          "name": "selected",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Whether the swatch is selected, also reflected by `aria-pressed`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerSwatch.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerSwatch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerSwatch-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables mouse and keyboard selection of the swatch.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerSwatch.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerSwatch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerSwatch-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "The size of the swatch button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerSwatch.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerSwatch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerSwatch-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Explicitly sets the swatch button accessible name, taking precedence over `label` and the color value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerSwatch.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPickerSwatch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPickerSwatch-events-select",
+          "name": "select",
+          "kind": "events",
+          "type": {
+            "text": "[value: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the color string when a valid, enabled swatch is activated.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/ColorPickerSwatch.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

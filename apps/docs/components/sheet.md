@@ -89,81 +89,37 @@ import { SheetContent, Button } from 'brutx-ui-vue'
 
 | 组件 | 说明 |
 |------|------|
-| `Sheet` | 根组件（从 reka-ui 重新导出的 `DialogRoot`） |
-| `SheetTrigger` | 打开面板的触发器（从 reka-ui 重新导出的 `DialogTrigger`） |
-| `SheetPortal` | 渲染 portal 容器（从 reka-ui 重新导出的 `DialogPortal`） |
+| `Sheet` | 根原语（从 reka-ui 导入 `DialogRoot` 并命名为 Sheet） |
+| `SheetTrigger` | 触发原语（从 reka-ui 导入 `DialogTrigger`） |
+| `SheetPortal` | 传送容器原语（从 reka-ui 导入 `DialogPortal`） |
 | `SheetContent` | 带方向变体的面板内容，内置关闭按钮 |
 | `SheetHeader` | 头部容器 |
 | `SheetFooter` | 底部容器 |
-| `SheetTitle` | 面板标题（从 reka-ui 重新导出的 `DialogTitle`） |
-| `SheetDescription` | 面板描述文字（从 reka-ui 重新导出的 `DialogDescription`） |
-| `SheetClose` | 关闭按钮（从 reka-ui 重新导出的 `DialogClose`） |
+| `SheetTitle` | 带样式的面板标题，包装 Reka UI DialogTitle |
+| `SheetDescription` | 带样式的面板描述，包装 Reka UI DialogDescription |
+| `SheetClose` | 关闭原语（从 reka-ui 导入 `DialogClose`） |
 
-## Props
+## Reka UI 原语
 
-### Sheet
+`Sheet`、`SheetTrigger`、`SheetPortal` 和 `SheetClose` 分别是从 `reka-ui` 导入的 `DialogRoot`、`DialogTrigger`、`DialogPortal` 和 `DialogClose` 的本地别名。下方生成 API 中的五个样式组件从 BrutxUI 导入。
 
-根组件，继承 reka-ui `DialogRoot` 的全部属性。
+`Sheet` 使用布尔值 `open` 和 `v-model:open` 控制打开状态，通过 `update:open` 发出新的布尔状态。`defaultOpen` 设置非受控初始状态，默认 false；`modal` 默认 true。默认插槽用于放置触发器与面板，并提供当前 `open` 状态和 `close()` 方法。
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `open` | `boolean` | — | 受控的打开状态 |
-| `defaultOpen` | `boolean` | — | 非受控的默认打开状态 |
-| `modal` | `boolean` | `true` | 是否为模态对话框 |
+`SheetContent` 将其他属性和事件监听器传给 `DialogContent`。例如 `openAutoFocus` 可在模板中使用 `@open-auto-focus` 监听。内置关闭按钮使用 `sheet.close` 本地化文本；`side="left"` 时位于左上角，其余方向位于右上角。
 
-### SheetContent
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `side` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'right'` | 面板滑出方向 |
-| `class` | `string` | — | 自定义样式类 |
+<span id="sheet"></span>
+<span id="sheetcontent"></span>
+<span id="sheetheader-sheetfooter-sheettitle-sheetdescription"></span>
+<span id="事件"></span>
+<span id="sheet-1"></span>
+<span id="sheetcontent-1"></span>
+<span id="插槽"></span>
+<span id="sheetcontent-2"></span>
+<span id="sheetheader-sheetfooter-sheettitle-sheetdescription-1"></span>
 
-> **注意：** `SheetContent` 内置了关闭按钮（右上角或左上角的 X 图标，当 `side="left"` 时位于左上角），无需手动添加。关闭按钮的辅助文字支持国际化（`sheet.close`）。
-
-### SheetHeader / SheetFooter / SheetTitle / SheetDescription
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 自定义样式类 |
-
-## 事件
-
-### Sheet
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:open` | `boolean` | 打开状态变化时触发，用于 `v-model:open` 双向绑定 |
-| `open-change` | `boolean` | 打开状态变化时触发 |
-
-### SheetContent
-
-继承 reka-ui `DialogContent` 的全部事件。
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `open-auto-focus` | `Event` | 内容打开后自动聚焦时触发 |
-| `close-auto-focus` | `Event` | 内容关闭后自动聚焦时触发 |
-| `interact-outside` | `InteractOutsideEvent` | 在内容外部交互时触发 |
-| `escape-key-down` | `KeyboardEvent` | 按下 Escape 键时触发 |
-| `pointer-down-outside` | `PointerDownOutsideEvent` | 在内容外部按下指针时触发 |
-
-## 插槽
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 默认插槽，用于放置 `SheetTrigger`、`SheetContent` 等子组件 |
-
-### SheetContent
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 默认插槽，用于放置面板内容（`SheetHeader`、内容区域、`SheetFooter` 等） |
-
-### SheetHeader / SheetFooter / SheetTitle / SheetDescription
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 默认插槽 |
+<ComponentApi name="sheet" />
 
 ## 可访问性
 

@@ -1,0 +1,476 @@
+{
+  "id": "component:hardcore-input",
+  "name": "hardcore-input",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:hardcore-input/HardcoreInput",
+      "name": "HardcoreInput",
+      "source": {
+        "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The current input string, available through v-model for controlled binding.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-props-sound",
+          "name": "sound",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables or disables typing sounds and success/failure sounds on validation-state transitions.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-props-rules",
+          "name": "rules",
+          "kind": "props",
+          "type": {
+            "text": "((val: string) => string | boolean)[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "String validation functions evaluated in order. Return true to pass, a string to fail with that message, or false to use the localized generic error. An empty array produces no validation error.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-props-shakeOnError",
+          "name": "shakeOnError",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables the input shake feedback after validation fails.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-props-type",
+          "name": "type",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The HTML input type passed to the native input element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'text'",
+              "source": {
+                "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"text\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The native placeholder text shown when the input is empty.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables the native input element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-props-readonly",
+          "name": "readonly",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Makes the native input element read-only.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-props-validateOn",
+          "name": "validateOn",
+          "kind": "props",
+          "type": {
+            "text": "\"input\" | \"submit\" | \"blur\" | undefined",
+            "literals": [
+              "\"blur\"",
+              "\"input\"",
+              "\"submit\""
+            ],
+            "references": []
+          },
+          "description": "Selects when the component automatically validates. For submit, the component does not listen for form submission; call the exposed validate() method explicitly.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'blur'",
+              "source": {
+                "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"blur\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes appended to the outer container around the input and validation message.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the input string on user input or when IME composition completes. Intermediate composition values are not emitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-events-validation_2Dchange",
+          "name": "validation-change",
+          "kind": "events",
+          "type": {
+            "text": "[state: \"default\" | \"success\" | \"error\", message?: string | undefined]",
+            "literals": [
+              "\"default\"",
+              "\"error\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "Emitted when the validation state changes or the error message changes while in the error state. Unchanged state/message pairs are not repeated; returning to default with empty rules is also reported.",
+          "notes": [
+            "When a rule returns false, message uses the hardcoreInput.invalidInput text “Invalid input”."
+          ],
+          "source": {
+            "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the default validation-face area to the right of the input; the slot has no parameters.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-exposes-validate",
+          "name": "validate",
+          "kind": "exposes",
+          "type": {
+            "text": "() => boolean",
+            "literals": [],
+            "references": []
+          },
+          "description": "Validates the current modelValue and returns whether it passes. Within a Form context, the form value is synchronized first.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
+            "line": 222
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-exposes-validationState",
+          "name": "validationState",
+          "kind": "exposes",
+          "type": {
+            "text": "ValidationState",
+            "literals": [
+              "\"default\"",
+              "\"error\"",
+              "\"success\""
+            ],
+            "references": [
+              {
+                "name": "ValidationState",
+                "text": "export type ValidationState = 'default' | 'success' | 'error'",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomposables%2FuseFormFieldValidation.ts%23ValidationState"
+              }
+            ]
+          },
+          "description": "The validation state exposed on the component instance. Vue automatically unwraps its internal Ref, so read default, success, or error through `hardcoreInputRef.value.validationState`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
+            "line": 223
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-exposes-errorMessage",
+          "name": "errorMessage",
+          "kind": "exposes",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The current validation error exposed on the component instance. Vue automatically unwraps its internal Ref; the value is an empty string when there is no error.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
+            "line": 224
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    }
+  ]
+}

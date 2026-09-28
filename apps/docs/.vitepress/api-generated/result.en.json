@@ -1,0 +1,333 @@
+{
+  "id": "component:result",
+  "name": "result",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:result/Result",
+      "name": "Result",
+      "source": {
+        "file": "packages/ui/src/components/result/Result.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aresult_2FResult-props-status",
+          "name": "status",
+          "kind": "props",
+          "type": {
+            "text": "\"success\" | \"warning\" | \"info\" | \"error\" | \"empty\" | undefined",
+            "literals": [
+              "\"empty\"",
+              "\"error\"",
+              "\"info\"",
+              "\"success\"",
+              "\"warning\""
+            ],
+            "references": []
+          },
+          "description": "Selects the result icon and color state: success, warning, info, error, or empty. An unknown runtime value falls back to info.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'info'",
+              "source": {
+                "file": "packages/ui/src/components/result/Result.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"info\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aresult_2FResult-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The result title text; it can be replaced by the title slot.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/result/Result.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aresult_2FResult-props-subTitle",
+          "name": "subTitle",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The result subtitle or supporting description; it can be replaced by the subTitle slot.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/result/Result.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aresult_2FResult-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "\"card\" | \"plain\" | undefined",
+            "literals": [
+              "\"card\"",
+              "\"plain\""
+            ],
+            "references": []
+          },
+          "description": "Selects the card layout with border and hard shadow, or the plain layout without card chrome.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'card'",
+              "source": {
+                "file": "packages/ui/src/components/result/Result.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"card\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aresult_2FResult-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "Sets the status icon size. When omitted, the component uses its built-in 40px icon size.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/result/Result.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aresult_2FResult-props-titleAs",
+          "name": "titleAs",
+          "kind": "props",
+          "type": {
+            "text": "\"h2\" | \"h3\" | undefined",
+            "literals": [
+              "\"h2\"",
+              "\"h3\""
+            ],
+            "references": []
+          },
+          "description": "Selects h2 or h3 as the semantic heading element for the title.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'h2'",
+              "source": {
+                "file": "packages/ui/src/components/result/Result.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"h2\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aresult_2FResult-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes appended to the result root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/result/Result.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aresult_2FResult-slots-icon",
+          "name": "icon",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the default status icon and its icon box. This decorative icon area is hidden from assistive technology.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aresult_2FResult-slots-title",
+          "name": "title",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the result title content structure.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aresult_2FResult-slots-subTitle",
+          "name": "subTitle",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the result subtitle content structure.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aresult_2FResult-slots-extra",
+          "name": "extra",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Renders additional actions or supporting content below the title and subtitle.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/result/Result.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

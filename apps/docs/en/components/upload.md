@@ -132,44 +132,19 @@ async function beforeRemove(file) {
 | `UploadFileList` | File list container |
 | `UploadFileItem` | Single file item with preview, progress, and delete |
 
-## Props
+## API Reference
 
-### Upload
+<span id="upload-1"></span>
+<span id="uploadtrigger"></span>
+<span id="uploadfilelist"></span>
+<span id="upload-2"></span>
+<span id="uploadtrigger-1"></span>
+<span id="exposed-methods"></span>
+<span id="upload-3"></span>
+<span id="upload-4"></span>
+<span id="uploadtrigger-2"></span>
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `fileList` | `UploadFile[]` | `[]` | File list, supports `v-model:fileList` |
-| `limit` | `number` | — | Maximum number of files |
-| `multiple` | `boolean` | `true` | Whether to support multiple file selection |
-| `accept` | `string` | — | Accepted file types (e.g., `image/*`, `.pdf,.doc`) |
-| `maxSize` | `number` | — | Maximum file size in bytes |
-| `maxRetries` | `number` | `3` | Maximum retry count |
-| `beforeUpload` | `(file: File) => boolean \| Promise<boolean>` | — | Hook before upload |
-| `beforeRemove` | `(file: UploadFile) => boolean \| Promise<boolean>` | — | Hook before removal |
-| `httpRequest` | `(options: UploadRequestOptions) => Promise<void>` | — | Custom upload implementation |
-| `listType` | `'text' \| 'picture' \| 'picture-card'` | `'text'` | List display type |
-| `autoUpload` | `boolean` | `true` | Whether to upload automatically after selection |
-| `drag` | `boolean` | `true` | Whether to support drag and drop |
-| `onError` | `(error: UploadError, file: UploadFile) => void` | — | Error callback |
-| `class` | `string` | — | Custom CSS class |
-
-### UploadTrigger
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `drag` | `boolean` | `true` | Whether to support drag and drop |
-| `disabled` | `boolean` | `false` | Whether disabled |
-| `accept` | `string` | — | Accepted file types |
-| `multiple` | `boolean` | `true` | Whether to support multiple selection |
-| `class` | `string` | — | Custom CSS class |
-
-### UploadFileList
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `files` | `UploadFile[]` | — (required) | File list |
-| `listType` | `'text' \| 'picture' \| 'picture-card'` | `'text'` | List display type |
-| `class` | `string` | — | Custom CSS class |
+<ComponentApi name="upload" />
 
 ## Types
 
@@ -212,52 +187,6 @@ interface UploadRequestOptions {
     onError: (error: UploadError) => void
 }
 ```
-
-## Events
-
-### Upload
-
-| Event | Payload | Description |
-| --- | --- | --- |
-| `update:fileList` | `UploadFile[]` | Emitted when file list changes |
-| `file-change` | `UploadFile` | Emitted when a file is added |
-| `file-remove` | `UploadFile` | Emitted when a file is removed |
-| `file-success` | `UploadFile` | Emitted when a file is uploaded successfully |
-| `file-error` | `[UploadFile, UploadError]` | Emitted when a file upload fails |
-
-### UploadTrigger
-
-| Event | Payload | Description |
-| --- | --- | --- |
-| `select` | `[files: File[], source: 'browse' \| 'drop']` | Emitted when files are selected or dropped |
-
-
-## Exposed Methods
-
-### Upload
-
-| Method | Description |
-| --- | --- |
-| `handleFileSelect(files)` | Programmatically add files |
-| `handleFileRemove(file)` | Remove a file |
-| `retryUpload(file)` | Retry uploading a failed file |
-
-## Slots
-
-### Upload
-
-| Slot | Scope | Description |
-| --- | --- | --- |
-| `trigger` | `{ selectFiles, limit, multiple, accept, drag }` | Trigger area slot |
-| `file-list` | `{ files, listType, remove, retry }` | File list slot |
-
-### UploadTrigger
-
-| Slot | Scope | Description |
-| --- | --- | --- |
-| `default` | `{ isDragging }` | Custom trigger content |
-| `text` | — | Main text |
-| `hint` | — | Hint text |
 
 ## Accessibility
 

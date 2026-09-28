@@ -1,0 +1,416 @@
+{
+  "id": "component:card-window-header",
+  "name": "card-window-header",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:card-window-header/CardWindowHeader",
+      "name": "CardWindowHeader",
+      "source": {
+        "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The centered window title, styled in uppercase monospace text and truncated when too long.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-props-showControls",
+          "name": "showControls",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows static ASCII controls on the right when there is no actions slot and none of the three interactive controls are enabled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-props-closable",
+          "name": "closable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables the close button on the right; an actions slot replaces this button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-props-minimizable",
+          "name": "minimizable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables the minimize button on the right; an actions slot replaces this button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-props-maximizable",
+          "name": "maximizable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables the maximize button on the right; an actions slot replaces this button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-props-interactiveLamps",
+          "name": "interactiveLamps",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Makes the left lamps trigger their corresponding actions: red closes, yellow minimizes, and green maximizes.",
+          "notes": [
+            "When none of the three controls is enabled, all lamps are interactive. Otherwise, only lamps for enabled actions are interactive. The actions slot does not replace the left lamps."
+          ],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-props-closeAriaLabel",
+          "name": "closeAriaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The accessible name of the close button on the right.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "When omitted or blank after trimming, uses the localized cardWindowHeader.close message."
+          }
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-props-minimizeAriaLabel",
+          "name": "minimizeAriaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The accessible name of the minimize button on the right.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "When omitted or blank after trimming, uses the localized cardWindowHeader.minimize message."
+          }
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-props-maximizeAriaLabel",
+          "name": "maximizeAriaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The accessible name of the maximize button on the right.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "When omitted or blank after trimming, uses the localized cardWindowHeader.maximize message."
+          }
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes merged onto the window header root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-events-close",
+          "name": "close",
+          "kind": "events",
+          "type": {
+            "text": "[event: MouseEvent | KeyboardEvent]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted when the close button or interactive red lamp is activated. The consumer performs the actual close action.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-events-minimize",
+          "name": "minimize",
+          "kind": "events",
+          "type": {
+            "text": "[event: MouseEvent | KeyboardEvent]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted when the minimize button or interactive yellow lamp is activated. The consumer performs the actual collapse or minimize action.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-events-maximize",
+          "name": "maximize",
+          "kind": "events",
+          "type": {
+            "text": "[event: MouseEvent | KeyboardEvent]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted when the maximize button or interactive green lamp is activated. The consumer performs the actual expand or maximize action.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-slots-actions",
+          "name": "actions",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the entire right actions area, taking precedence over built-in interactive buttons and static ASCII controls.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

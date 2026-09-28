@@ -1,0 +1,1699 @@
+{
+  "id": "component:data-table",
+  "name": "data-table",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:data-table/DataTable",
+      "name": "DataTable",
+      "source": {
+        "file": "packages/ui/src/components/data-table/DataTable.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到表格根容器的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 86
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-data",
+          "name": "data",
+          "kind": "props",
+          "type": {
+            "text": "T[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "要显示的行数据；泛型 T 会传递到列定义、行事件及编程接口。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 55
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-columns",
+          "name": "columns",
+          "kind": "props",
+          "type": {
+            "text": "DataTableColumn<T>[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "DataTableColumn",
+                "text": "export interface DataTableColumn<T extends object = Record<string, unknown>> {\n    id: string\n    /** 函数签名已更新：回调参数从 DataTableColumn<T> 改为 DataTableColumnHeaderContext */\n    header: string | ((ctx: DataTableColumnHeaderContext) => string)\n    accessorKey?: keyof T & string\n    accessorFn?: (row: T) => unknown\n    cell?: (props: { row: T; value: unknown }) => VNode | string\n    sortable?: boolean\n    hidden?: boolean\n    width?: number | 'auto'\n    minWidth?: number\n    maxWidth?: number\n    align?: 'left' | 'center' | 'right'\n    /** 固定列方向 */\n    fixed?: 'left' | 'right'\n    /** 列类型 */\n    type?: 'default' | 'expand'\n    /** 过滤器类型 */\n    filterType?: 'text' | 'select' | 'multi-select' | 'date-range'\n    /** 过滤可选项 */\n    filterOptions?: Array<{ label: string; value: string | number }>\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Fdata-table.ts%23DataTableColumn"
+              }
+            ]
+          },
+          "description": "表格列定义，控制列头、取值、排序、筛选、渲染及列布局。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 56
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-sortable",
+          "name": "sortable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用可排序列的表头交互和排序数据处理；列可通过 sortable: false 单独关闭。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 57
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-filterable",
+          "name": "filterable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示全局搜索输入框，并为声明 filterType 的列显示列筛选器。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 58
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-filterPlaceholder",
+          "name": "filterPlaceholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "全局搜索输入框的占位文字及无障碍名称；未提供时使用当前语言的 dataTable.filterPlaceholder。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 59
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-selectable",
+          "name": "selectable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示行选择框及表头全选框，并允许读取和导出选中行。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 60
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-paginated",
+          "name": "paginated",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用分页切片和分页控件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 61
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-pageSize",
+          "name": "pageSize",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "分页启用时每页显示的行数；未启用分页时数据不会按页切片。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 62
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_PAGE_SIZE",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "10"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-pageSizeOptions",
+          "name": "pageSizeOptions",
+          "kind": "props",
+          "type": {
+            "text": "number[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "分页控件中可选的每页行数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 63
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => [...DEFAULT_PAGE_SIZE_OPTIONS]",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[10, 20, 50, 100]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-loading",
+          "name": "loading",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示加载遮罩和 loading 插槽内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 64
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-emptyMessage",
+          "name": "emptyMessage",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "无数据状态的提示文本；未提供或为空字符串时使用当前语言的 dataTable.noData。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 65
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-rowKey",
+          "name": "rowKey",
+          "kind": "props",
+          "type": {
+            "text": "keyof T | ((row: T) => string | number)",
+            "literals": [],
+            "references": []
+          },
+          "description": "提供行的唯一标识字段或取值函数；选中和展开行状态依赖解析后的字符串或数字键。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 66
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-rowClickable",
+          "name": "rowClickable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "使行可通过鼠标点击或 Enter 键触发 row-click 事件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 67
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "未提供 header 插槽时显示在表格头部的标题。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 68
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-description",
+          "name": "description",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "未提供 header 插槽时显示在标题下方的说明文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 69
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-section",
+          "name": "section",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "为表格根容器启用受限宽度并居中布局。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 70
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-framed",
+          "name": "framed",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制根容器边框、阴影和圆角；设为 false 时移除这些外框样式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 71
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-virtualScroll",
+          "name": "virtualScroll",
+          "kind": "props",
+          "type": {
+            "text": "DataTableVirtualScroll | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "DataTableVirtualScroll",
+                "text": "export interface DataTableVirtualScroll {\n    enabled?: boolean\n    rowHeight?: number | 'auto'\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Fdata-table.ts%23DataTableVirtualScroll"
+              }
+            ]
+          },
+          "description": "配置行虚拟滚动；enabled 为真时启用，rowHeight 可为固定行高或 auto 动态测量。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 72
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"lg\" | \"sm\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "设置表格尺寸变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 73
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-dense",
+          "name": "dense",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用更紧凑的行和单元格间距。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 74
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-striped",
+          "name": "striped",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制相邻数据行的条纹背景。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 75
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-stickyHeader",
+          "name": "stickyHeader",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将表头设为滚动容器顶部的粘性区域。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 76
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-expandable",
+          "name": "expandable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示行展开控制并允许呈现 expanded-row 插槽。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 78
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-expandRowKeys",
+          "name": "expandRowKeys",
+          "kind": "props",
+          "type": {
+            "text": "Set<string | number> | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "受控展开行键集合；键须与 rowKey 的解析结果一致，变更会同步内部展开状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 83
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-props-spanMethod",
+          "name": "spanMethod",
+          "kind": "props",
+          "type": {
+            "text": "((params: DataTableSpanMethodParams<T>) => void | [number, number]) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "对当前显示行和可见列的每个单元格计算合并范围；返回 rowspan、colspan，或不返回以使用默认跨度。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/types/data-table.ts",
+            "line": 85
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/data-table/DataTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-events-sort",
+          "name": "sort",
+          "kind": "events",
+          "type": {
+            "text": "[column: string, direction: \"asc\" | \"desc\" | null]",
+            "literals": [
+              "\"asc\"",
+              "\"desc\"",
+              "null"
+            ],
+            "references": []
+          },
+          "description": "用户通过可排序表头交互后发出列 ID 和方向；方向为 asc、desc 或 null。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-events-filter",
+          "name": "filter",
+          "kind": "events",
+          "type": {
+            "text": "[filters: DataTableFilterState]",
+            "literals": [],
+            "references": [
+              {
+                "name": "DataTableFilterState",
+                "text": "export interface DataTableFilterState {\n    global?: string\n    columns: Record<string, DataTableFilterValue>\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Fdata-table.ts%23DataTableFilterState"
+              }
+            ]
+          },
+          "description": "筛选状态变化时发出当前全局及列筛选状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-events-select",
+          "name": "select",
+          "kind": "events",
+          "type": {
+            "text": "[rows: T[]]",
+            "literals": [],
+            "references": []
+          },
+          "description": "用户切换行选择或当前页全选状态后发出所选行数据数组。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-events-page_2Dchange",
+          "name": "page-change",
+          "kind": "events",
+          "type": {
+            "text": "[page: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "用户导航到不同页码后发出实际生效的页码；页码未变化时不发出。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-events-page_2Dsize_2Dchange",
+          "name": "page-size-change",
+          "kind": "events",
+          "type": {
+            "text": "[size: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "用户在分页控件中选择新的每页行数后发出该行数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-events-expand_2Dchange",
+          "name": "expand-change",
+          "kind": "events",
+          "type": {
+            "text": "[row: T, expanded: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "行展开状态切换时发出对应行数据和新的展开布尔值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-events-row_2Dclick",
+          "name": "row-click",
+          "kind": "events",
+          "type": {
+            "text": "[row: T]",
+            "literals": [],
+            "references": []
+          },
+          "description": "rowClickable 启用时，行被鼠标点击或按 Enter 激活后发出行数据；事件来自按钮、输入框、链接等交互元素时跳过。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-events-export",
+          "name": "export",
+          "kind": "events",
+          "type": {
+            "text": "[format: \"csv\" | \"json\", selectedRows?: T[] | undefined]",
+            "literals": [
+              "\"csv\"",
+              "\"json\""
+            ],
+            "references": []
+          },
+          "description": "表格导出控件操作时发出所选格式和当前选中行数组。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-slots-header",
+          "name": "header",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换表格默认头部；未提供时根据 title 和 description 渲染标题区。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-slots-toolbar",
+          "name": "toolbar",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "全局筛选工具栏的扩展内容；启用 filterable 时显示在搜索输入框旁。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-slots-expanded_2Drow",
+          "name": "expanded-row",
+          "kind": "slots",
+          "type": {
+            "text": "{ row: T; index: number; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "展开行的附加内容，作用域提供 row 和当前展示列表中的 index；仅在该行展开且 expandable 启用时渲染。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-slots-empty",
+          "name": "empty",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换无数据状态内容；仅当没有可显示数据且未处于 loading 状态时渲染。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-slots-loading",
+          "name": "loading",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换加载遮罩内容；仅在 loading 为真时渲染。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-slots-footer",
+          "name": "footer",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "在表格及加载区域之后渲染的页脚扩展内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-sort",
+          "name": "sort",
+          "kind": "exposes",
+          "type": {
+            "text": "{ toggleSort: (columnId: string) => void; sortState: Readonly<Ref<{ readonly column: string; readonly direction: \"asc\" | \"desc\" | null; }, { readonly column: string; readonly direction: \"asc\" | \"desc\" | null; }>>; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "表格排序命名空间，包含 toggleSort 方法和只读 sortState。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-sort.toggleSort",
+          "name": "sort.toggleSort",
+          "kind": "exposes",
+          "type": {
+            "text": "(columnId: string) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "为给定列 ID 切换排序方向；需要 sortable 开启且列未禁用排序，顺序为升序、降序、取消。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-sort.sortState",
+          "name": "sort.sortState",
+          "kind": "exposes",
+          "type": {
+            "text": "Readonly<Ref<{ readonly column: string; readonly direction: \"asc\" | \"desc\" | null; }, { readonly column: string; readonly direction: \"asc\" | \"desc\" | null; }>>",
+            "literals": [],
+            "references": []
+          },
+          "description": "只读响应式排序状态，包含当前列 ID 和 asc、desc 或 null 方向。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": true
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-filter",
+          "name": "filter",
+          "kind": "exposes",
+          "type": {
+            "text": "{ filterState: Readonly<Ref<{ readonly global?: string | undefined; readonly columns: { readonly [x: string]: string | number | readonly (string | number)[] | { readonly start: string | null; readonly end: string | null; } | null | undefined; }; }, { readonly global?: string | undefined; readonly columns: { readonly [x: string]: string | number | readonly (string | number)[] | { readonly start: string | null; readonly end: string | null; } | null | undefined; }; }>>; setGlobalFilter: (value: string) => void; setFilterState: (state: DataTableFilterState) => void; }",
+            "literals": [],
+            "references": [
+              {
+                "name": "DataTableFilterState",
+                "text": "export interface DataTableFilterState {\n    global?: string\n    columns: Record<string, DataTableFilterValue>\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Fdata-table.ts%23DataTableFilterState"
+              }
+            ]
+          },
+          "description": "表格筛选命名空间，提供状态读取及设置全局或完整筛选条件的方法。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-filter.filterState",
+          "name": "filter.filterState",
+          "kind": "exposes",
+          "type": {
+            "text": "Readonly<Ref<{ readonly global?: string | undefined; readonly columns: { readonly [x: string]: string | number | readonly (string | number)[] | { readonly start: string | null; readonly end: string | null; } | null | undefined; }; }, { readonly global?: string | undefined; readonly columns: { readonly [x: string]: string | number | readonly (string | number)[] | { readonly start: string | null; readonly end: string | null; } | null | undefined; }; }>>",
+            "literals": [],
+            "references": []
+          },
+          "description": "只读响应式筛选状态，包含可选的 global 值和按列 ID 索引的 columns。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": true
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-filter.setGlobalFilter",
+          "name": "filter.setGlobalFilter",
+          "kind": "exposes",
+          "type": {
+            "text": "(value: string) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置全局搜索关键字。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-filter.setFilterState",
+          "name": "filter.setFilterState",
+          "kind": "exposes",
+          "type": {
+            "text": "(state: DataTableFilterState) => void",
+            "literals": [],
+            "references": [
+              {
+                "name": "DataTableFilterState",
+                "text": "export interface DataTableFilterState {\n    global?: string\n    columns: Record<string, DataTableFilterValue>\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Fdata-table.ts%23DataTableFilterState"
+              }
+            ]
+          },
+          "description": "用给定的 DataTableFilterState 更新完整筛选状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-selection",
+          "name": "selection",
+          "kind": "exposes",
+          "type": {
+            "text": "{ toggleRow: (row: T) => void; toggleAllRows: () => void; clearSelection: () => void; getSelectedRows: () => T[]; selectedRows: Readonly<ShallowRef<ReadonlySet<string | number>>>; isAllSelected: ComputedRef<boolean>; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "表格选择命名空间，提供行选择操作、选中行键状态及读取选中行数据的方法。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-selection.toggleRow",
+          "name": "selection.toggleRow",
+          "kind": "exposes",
+          "type": {
+            "text": "(row: T) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "切换指定行的选择状态；需要 selectable 开启。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-selection.toggleAllRows",
+          "name": "selection.toggleAllRows",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "切换当前显示页所有行的选择状态；取消时保留其他页或筛选隐藏行的选择。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-selection.clearSelection",
+          "name": "selection.clearSelection",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "清空全部已选行键。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-selection.getSelectedRows",
+          "name": "selection.getSelectedRows",
+          "kind": "exposes",
+          "type": {
+            "text": "() => T[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "返回当前所选行对应的完整行数据数组。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-selection.selectedRows",
+          "name": "selection.selectedRows",
+          "kind": "exposes",
+          "type": {
+            "text": "Readonly<ShallowRef<ReadonlySet<string | number>>>",
+            "literals": [],
+            "references": []
+          },
+          "description": "只读浅响应式集合，保存已选行键。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": true
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-selection.isAllSelected",
+          "name": "selection.isAllSelected",
+          "kind": "exposes",
+          "type": {
+            "text": "ComputedRef<boolean>",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "只读计算状态，表示当前显示页的全部行是否已选中。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": true
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-pagination",
+          "name": "pagination",
+          "kind": "exposes",
+          "type": {
+            "text": "{ goToPage: (page: number) => boolean; nextPage: () => boolean; previousPage: () => boolean; setPageSize: (size: number) => void; pageIndex: Readonly<Ref<number, number>>; pageCount: ComputedRef<number>; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "表格分页命名空间，包含页码和页数状态以及分页控制方法。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-pagination.goToPage",
+          "name": "pagination.goToPage",
+          "kind": "exposes",
+          "type": {
+            "text": "(page: number) => boolean",
+            "literals": [],
+            "references": []
+          },
+          "description": "跳转到指定页；页码会限制在有效范围，并返回页码是否实际改变。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-pagination.nextPage",
+          "name": "pagination.nextPage",
+          "kind": "exposes",
+          "type": {
+            "text": "() => boolean",
+            "literals": [],
+            "references": []
+          },
+          "description": "尝试前往下一页，并返回页码是否实际改变。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-pagination.previousPage",
+          "name": "pagination.previousPage",
+          "kind": "exposes",
+          "type": {
+            "text": "() => boolean",
+            "literals": [],
+            "references": []
+          },
+          "description": "尝试前往上一页，并返回页码是否实际改变。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-pagination.setPageSize",
+          "name": "pagination.setPageSize",
+          "kind": "exposes",
+          "type": {
+            "text": "(size: number) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置每页行数并将当前页重置为第一页；非法尺寸会被忽略。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-pagination.pageIndex",
+          "name": "pagination.pageIndex",
+          "kind": "exposes",
+          "type": {
+            "text": "Readonly<Ref<number, number>>",
+            "literals": [],
+            "references": []
+          },
+          "description": "只读响应式当前页码，从 1 开始。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": true
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-pagination.pageCount",
+          "name": "pagination.pageCount",
+          "kind": "exposes",
+          "type": {
+            "text": "ComputedRef<number>",
+            "literals": [],
+            "references": []
+          },
+          "description": "只读计算的总页数；没有行数据时至少为 1。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": true
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-expand",
+          "name": "expand",
+          "kind": "exposes",
+          "type": {
+            "text": "{ toggleRow: (row: T) => void; isRowExpanded: (row: T) => boolean; expandedRowKeys: ShallowRef<Set<string | number>, Set<string | number>>; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "表格行展开命名空间，提供切换、查询及读取已展开行键的方法和状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-expand.toggleRow",
+          "name": "expand.toggleRow",
+          "kind": "exposes",
+          "type": {
+            "text": "(row: T) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "切换指定行的展开状态并发出 expand-change 事件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-expand.isRowExpanded",
+          "name": "expand.isRowExpanded",
+          "kind": "exposes",
+          "type": {
+            "text": "(row: T) => boolean",
+            "literals": [],
+            "references": []
+          },
+          "description": "查询指定行当前是否展开。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-exposes-expand.expandedRowKeys",
+          "name": "expand.expandedRowKeys",
+          "kind": "exposes",
+          "type": {
+            "text": "ShallowRef<Set<string | number>, Set<string | number>>",
+            "literals": [],
+            "references": []
+          },
+          "description": "保存当前已展开行键的浅响应式集合。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTable-slots-cell_2D_7BcolumnId_7D",
+          "name": "cell-{columnId}",
+          "kind": "slots",
+          "type": {
+            "text": "{ row: T; value: unknown }",
+            "literals": [],
+            "references": []
+          },
+          "description": "为指定列提供自定义单元格内容；插槽名为 cell-{columnId}，作用域提供当前行 row 和单元格值 value。",
+          "notes": [
+            "仅用于普通数据列；未提供时回退到列的 cell 渲染函数或默认单元格值。"
+          ],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTable.vue"
+          },
+          "origin": "supplement"
+        }
+      ]
+    },
+    {
+      "id": "component:data-table/DataTableColumnFilter",
+      "name": "DataTableColumnFilter",
+      "source": {
+        "file": "packages/ui/src/components/data-table/DataTableColumnFilter.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTableColumnFilter-props-column",
+          "name": "column",
+          "kind": "props",
+          "type": {
+            "text": "DataTableColumn<any>",
+            "literals": [],
+            "references": [
+              {
+                "name": "DataTableColumn",
+                "text": "export interface DataTableColumn<T extends object = Record<string, unknown>> {\n    id: string\n    /** 函数签名已更新：回调参数从 DataTableColumn<T> 改为 DataTableColumnHeaderContext */\n    header: string | ((ctx: DataTableColumnHeaderContext) => string)\n    accessorKey?: keyof T & string\n    accessorFn?: (row: T) => unknown\n    cell?: (props: { row: T; value: unknown }) => VNode | string\n    sortable?: boolean\n    hidden?: boolean\n    width?: number | 'auto'\n    minWidth?: number\n    maxWidth?: number\n    align?: 'left' | 'center' | 'right'\n    /** 固定列方向 */\n    fixed?: 'left' | 'right'\n    /** 列类型 */\n    type?: 'default' | 'expand'\n    /** 过滤器类型 */\n    filterType?: 'text' | 'select' | 'multi-select' | 'date-range'\n    /** 过滤可选项 */\n    filterOptions?: Array<{ label: string; value: string | number }>\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Fdata-table.ts%23DataTableColumn"
+              }
+            ]
+          },
+          "description": "此筛选控件对应的列定义；其 filterType 和 filterOptions 决定筛选器控件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTableColumnFilter.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTableColumnFilter-props-filterState",
+          "name": "filterState",
+          "kind": "props",
+          "type": {
+            "text": "{ readonly global?: string | undefined; readonly columns: { readonly [x: string]: string | number | readonly (string | number)[] | { readonly start: string | null; readonly end: string | null; } | null | undefined; }; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前只读筛选状态；控件据此显示对应列的文本、选项或日期范围值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTableColumnFilter.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTableColumnFilter-props-headerLabel",
+          "name": "headerLabel",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "用于构造筛选控件标题的列头显示文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTableColumnFilter.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adata_2Dtable_2FDataTableColumnFilter-events-update_3AfilterState",
+          "name": "update:filterState",
+          "kind": "events",
+          "type": {
+            "text": "[state: DataTableFilterState]",
+            "literals": [],
+            "references": [
+              {
+                "name": "DataTableFilterState",
+                "text": "export interface DataTableFilterState {\n    global?: string\n    columns: Record<string, DataTableFilterValue>\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Fdata-table.ts%23DataTableFilterState"
+              }
+            ]
+          },
+          "description": "筛选值变化时发出只包含当前列增量的状态对象；列值为 null 表示清除该列筛选。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/data-table/DataTableColumnFilter.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

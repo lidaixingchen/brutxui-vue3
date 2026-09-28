@@ -1,0 +1,277 @@
+{
+  "id": "component:image-card",
+  "name": "image-card",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:image-card/ImageCard",
+      "name": "ImageCard",
+      "source": {
+        "file": "packages/ui/src/components/image-card/ImageCard.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aimage_2Dcard_2FImageCard-props-src",
+          "name": "src",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "图片元素使用的资源地址。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image-card/ImageCard.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2Dcard_2FImageCard-props-alt",
+          "name": "alt",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "图片替代文本；空字符串表示图片仅作装饰。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image-card/ImageCard.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "''",
+              "source": {
+                "file": "packages/ui/src/components/image-card/ImageCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2Dcard_2FImageCard-props-aspect",
+          "name": "aspect",
+          "kind": "props",
+          "type": {
+            "text": "ImageCardAspect | undefined",
+            "literals": [
+              "\"4/3\"",
+              "\"square\"",
+              "\"video\""
+            ],
+            "references": [
+              {
+                "name": "ImageCardAspect",
+                "text": "type ImageCardAspect = '4/3' | 'video' | 'square'",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fimage-card%2FImageCard.vue%23ImageCardAspect"
+              }
+            ]
+          },
+          "description": "设置图片区域的宽高比；video 对应 16:9，square 为正方形，4/3 为 4:3。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image-card/ImageCard.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/image-card/ImageCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2Dcard_2FImageCard-props-accent",
+          "name": "accent",
+          "kind": "props",
+          "type": {
+            "text": "ImageCardAccent | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"destructive\"",
+              "\"info\"",
+              "\"muted\"",
+              "\"primary\"",
+              "\"secondary\"",
+              "\"success\""
+            ],
+            "references": [
+              {
+                "name": "ImageCardAccent",
+                "text": "type ImageCardAccent = 'primary' | 'secondary' | 'accent' | 'destructive' | 'success' | 'info' | 'muted'",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fimage-card%2FImageCard.vue%23ImageCardAccent"
+              }
+            ]
+          },
+          "description": "设置底栏使用的主题色族。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image-card/ImageCard.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/image-card/ImageCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2Dcard_2FImageCard-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "显示在底栏中的标题文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image-card/ImageCard.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/image-card/ImageCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2Dcard_2FImageCard-props-description",
+          "name": "description",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "显示在底栏标题附近的描述文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image-card/ImageCard.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/image-card/ImageCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2Dcard_2FImageCard-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "追加到图片卡片根元素的自定义 CSS 类值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image-card/ImageCard.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/image-card/ImageCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2Dcard_2FImageCard-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换默认底栏内容；未提供标题、描述和插槽内容时，组件省略底栏并只显示图片。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image-card/ImageCard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

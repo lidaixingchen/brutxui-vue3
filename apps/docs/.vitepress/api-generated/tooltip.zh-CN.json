@@ -1,0 +1,738 @@
+{
+  "id": "component:tooltip",
+  "name": "tooltip",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:tooltip/TooltipContent",
+      "name": "TooltipContent",
+      "source": {
+        "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到 Portal 中工具提示内容面板的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-to",
+          "name": "to",
+          "kind": "props",
+          "type": {
+            "text": "string | HTMLElement | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "指定 Portal 挂载目标，可以是 CSS 选择器字符串或 HTMLElement；未指定时挂载到 body。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-forceMount",
+          "name": "forceMount",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "即使工具提示关闭也强制挂载内容，便于由 Vue 动画库等控制显示过渡。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "为内容面板提供无障碍名称；当面板内容不足以说明其用途时可设置。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将内容面板属性与交互行为合并到唯一子元素，并由子元素替代默认面板元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "指定内容面板使用的 HTML 标签或 Vue 组件；与 asChild 同时设置时由 asChild 决定渲染元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-sideOffset",
+          "name": "sideOffset",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置内容面板与触发器之间的距离，单位为像素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "floatingContentSideOffsets.tooltip",
+              "source": {
+                "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "6"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-align",
+          "name": "align",
+          "kind": "props",
+          "type": {
+            "text": "\"center\" | \"start\" | \"end\" | undefined",
+            "literals": [
+              "\"center\"",
+              "\"end\"",
+              "\"start\""
+            ],
+            "references": []
+          },
+          "description": "设置内容相对于触发器的首选对齐方式；发生边界碰撞时可能调整。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-collisionPadding",
+          "name": "collisionPadding",
+          "kind": "props",
+          "type": {
+            "text": "number | Partial<Record<\"right\" | \"bottom\" | \"left\" | \"top\", number>> | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置内容进行碰撞检测时与边界的留白；数字应用于各边，也可分别指定各方向的像素值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "floatingContentSideOffsets.tooltip",
+              "source": {
+                "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "6"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-side",
+          "name": "side",
+          "kind": "props",
+          "type": {
+            "text": "\"right\" | \"bottom\" | \"left\" | \"top\" | undefined",
+            "literals": [
+              "\"bottom\"",
+              "\"left\"",
+              "\"right\"",
+              "\"top\""
+            ],
+            "references": []
+          },
+          "description": "设置内容相对触发器的首选显示方向；启用碰撞处理时可翻转到其他方向。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-alignOffset",
+          "name": "alignOffset",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "沿 start 或 end 对齐方向额外偏移的像素数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-avoidCollisions",
+          "name": "avoidCollisions",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用后根据边界空间调整首选 side 与 align，避免内容越过碰撞边界。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-collisionBoundary",
+          "name": "collisionBoundary",
+          "kind": "props",
+          "type": {
+            "text": "Element | (Element | null)[] | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "参与碰撞检测的边界元素；默认使用视口，也可传入一个或多个额外元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-arrowPadding",
+          "name": "arrowPadding",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置箭头与内容边缘之间的留白，避免箭头越过圆角。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-sticky",
+          "name": "sticky",
+          "kind": "props",
+          "type": {
+            "text": "\"partial\" | \"always\" | undefined",
+            "literals": [
+              "\"always\"",
+              "\"partial\""
+            ],
+            "references": []
+          },
+          "description": "设置沿对齐轴的粘附策略；partial 在触发器仍部分可见时保持内容在边界内，always 则始终保持。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-hideWhenDetached",
+          "name": "hideWhenDetached",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "触发器完全离开视口或边界时隐藏内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-positionStrategy",
+          "name": "positionStrategy",
+          "kind": "props",
+          "type": {
+            "text": "\"fixed\" | \"absolute\" | undefined",
+            "literals": [
+              "\"absolute\"",
+              "\"fixed\""
+            ],
+            "references": []
+          },
+          "description": "设置浮层使用 fixed 或 absolute CSS 定位策略。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-updatePositionStrategy",
+          "name": "updatePositionStrategy",
+          "kind": "props",
+          "type": {
+            "text": "\"always\" | \"optimized\" | undefined",
+            "literals": [
+              "\"always\"",
+              "\"optimized\""
+            ],
+            "references": []
+          },
+          "description": "设置浮层位置更新策略；always 每帧更新，optimized 使用优化后的更新时机。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "渲染工具提示面板中的说明内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:tooltip/TooltipProvider",
+      "name": "TooltipProvider",
+      "source": {
+        "file": "packages/ui/src/components/tooltip/TooltipProvider.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atooltip_2FTooltipProvider-props-delayDuration",
+          "name": "delayDuration",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "指针进入触发器后打开工具提示前的等待时间，单位为毫秒；默认 400。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipProvider.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_DELAY_DURATION",
+              "source": {
+                "file": "packages/ui/src/components/tooltip/TooltipProvider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "400"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipProvider-props-skipDelayDuration",
+          "name": "skipDelayDuration",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "关闭一个工具提示后，在此毫秒数内进入另一个触发器时跳过打开延迟。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipProvider.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipProvider-props-disableHoverableContent",
+          "name": "disableHoverableContent",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用后，指针离开触发器时即关闭内容；指针不能移入内容区域继续保持打开。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipProvider.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipProvider-props-disableClosingTrigger",
+          "name": "disableClosingTrigger",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用后，点击触发器不会关闭已打开的工具提示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipProvider.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipProvider-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用此 Provider 下的所有工具提示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipProvider.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipProvider-props-ignoreNonKeyboardFocus",
+          "name": "ignoreNonKeyboardFocus",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "忽略非键盘产生的焦点；只有匹配 :focus-visible 的键盘焦点才会触发工具提示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipProvider.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipProvider-props-content",
+          "name": "content",
+          "kind": "props",
+          "type": {
+            "text": "TooltipContentProps | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "为此 Provider 下的 TooltipContent 设置默认定位与挂载选项；单个内容组件可以覆盖。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipProvider.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipProvider-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "放置受此 Provider 配置管理的 Tooltip 组件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipProvider.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

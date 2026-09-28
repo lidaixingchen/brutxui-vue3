@@ -1,0 +1,286 @@
+{
+  "id": "component:badge",
+  "name": "badge",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:badge/Badge",
+      "name": "Badge",
+      "source": {
+        "file": "packages/ui/src/components/badge/Badge.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abadge_2FBadge-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"success\" | \"danger\" | \"primary-subtle\" | \"secondary-subtle\" | \"danger-subtle\" | \"success-subtle\" | \"info-subtle\" | \"accent\" | \"outline\" | \"accent-subtle\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent-subtle\"",
+              "\"accent\"",
+              "\"danger-subtle\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"info-subtle\"",
+              "\"outline\"",
+              "\"primary-subtle\"",
+              "\"primary\"",
+              "\"secondary-subtle\"",
+              "\"secondary\"",
+              "\"success-subtle\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "The badge color and border variant.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/badge/Badge.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/badge/Badge.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abadge_2FBadge-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Sets the badge size, including its dot, icon spacing, and close icon.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/badge/Badge.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/badge/Badge.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abadge_2FBadge-props-closable",
+          "name": "closable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows the close button. The consumer decides whether to remove the badge after closing.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/badge/Badge.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/badge/Badge.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abadge_2FBadge-props-dot",
+          "name": "dot",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows a decorative dot before the badge content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/badge/Badge.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/badge/Badge.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abadge_2FBadge-props-pulse",
+          "name": "pulse",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows the dot with a pulse animation, even when dot is disabled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/badge/Badge.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/badge/Badge.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abadge_2FBadge-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes merged onto the badge root span.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/badge/Badge.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/badge/Badge.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abadge_2FBadge-events-close",
+          "name": "close",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted when the close button is clicked, after stopping the click from bubbling.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/badge/Badge.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Abadge_2FBadge-slots-icon",
+          "name": "icon",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "An icon before the main content. Its container is rendered only when the slot is provided.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/badge/Badge.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Abadge_2FBadge-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The badge text or main content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/badge/Badge.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

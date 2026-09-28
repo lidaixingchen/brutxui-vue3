@@ -57,21 +57,11 @@ Pass an array to render multi-line text, and customize font sizing, angles, and 
 </template>
 ```
 
-## Props
+## API Reference
 
-### Watermark
+<span id="watermark-1"></span>
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `width` | `number` | `120` | Single watermark box width |
-| `height` | `number` | `64` | Single watermark box height |
-| `rotate` | `number` | `-22` | Counter-clockwise angle rotation degrees |
-| `zIndex` | `number` | `9999` | Z-index layer depth |
-| `image` | `string` | `undefined` | Source Image URL (Image takes precedence over text content) |
-| `content` | `string \| string[]` | `''` | Text content (Supports array of strings for multi-lines) |
-| `gap` | `[number, number]` | `[100, 100]` | Mesh grid gaps (gapX, gapY) |
-| `offset` | `[number, number]` | `[0, 0]` | Canvas start-point alignment offsets (offsetX, offsetY) |
-| `font` | `WatermarkFont` | *(See below)* | Text rendering font styles |
+<ComponentApi name="watermark" />
 
 ### WatermarkFont Type Definitions
 

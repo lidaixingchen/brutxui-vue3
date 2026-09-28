@@ -112,21 +112,9 @@ Text separators also support `variant` and `size`:
 </template>
 ```
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'muted'` | `'default'` | Color variant |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Controls thickness |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Orientation |
-| `decorative` | `boolean` | `true` | Whether it is decorative (no semantic role) |
-| `class` | `string` | — | Custom style class |
-
-## Slots
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | Text separator content; only renders as a centered text separator when `orientation="horizontal"` and the slot has content |
+<ComponentApi name="separator" />
 
 ## Accessibility
 

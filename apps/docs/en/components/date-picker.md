@@ -6,7 +6,7 @@ translated: true
 
 # Date Picker
 
-A neo-brutalist style date picker component family built on v-calendar and reka-ui Popover. It provides 7 components covering various date selection scenarios, all sharing unified style variants, internationalization, and accessibility support.
+A neo-brutalist style date picker component family built on v-calendar and reka-ui Popover. It provides 7 ready-to-use pickers plus standalone panels and a reusable footer. Popup pickers share trigger style variants, while TimePicker uses its own layout of time dropdowns.
 
 ## Demo
 
@@ -120,6 +120,8 @@ const dateTime = ref(null)
 ```
 
 ### TimePicker - Time Only Selection
+
+`TimePicker` combines Select components for hours, minutes, and optional seconds, configured through `disabled`, `showSeconds`, `timeStep`, `embedded`, and `ariaLabel`. The popup date-picker props `open`, `readonly`, `clearable`, `size`, `variant`, `shortcuts`, `minDate`, `maxDate`, and `displayFormat` are not part of its public props.
 
 ```vue
 <script setup>
@@ -235,6 +237,13 @@ Supports `YYYY`, `YY`, `MM`, `DD`, `HH`, `mm`, `ss`, `WW` (ISO week number) toke
 | `WeekPicker` | Week selection (full week highlight) |
 | `MonthPicker` | Month selection |
 | `YearPicker` | Year selection |
+| `DatePickerPanel` | Embeddable single-date panel |
+| `DatePickerRangePanel` | Embeddable date-range panel |
+| `DateTimePickerPanel` | Datetime panel combining a calendar and TimePicker |
+| `WeekPickerPanel` | Week panel aligning selection to the week start |
+| `MonthPickerPanel` | Month grid with year navigation |
+| `YearPickerPanel` | Year grid with configurable years per page |
+| `DatePickerPanelFooter` | Reusable Clear and Confirm buttons and their events |
 
 ## Data Types
 
@@ -245,10 +254,13 @@ interface DatePickerShortcut {
     value: Date | (() => Date)
 }
 
+// Date range in start/end order
+type DateRange = readonly [Date, Date]
+
 // Date range shortcut
 interface DatePickerRangeShortcut {
     label: string
-    value: [Date, Date] | (() => [Date, Date])
+    value: DateRange | (() => DateRange)
 }
 ```
 
@@ -259,6 +271,8 @@ The logic for popup panel triggering, display formatting, clearing, and confirma
 ```ts
 import { useDatePicker } from 'brutx-ui-vue/useDatePicker'
 import type { UseDatePickerOptions } from 'brutx-ui-vue/useDatePicker'
+
+const props = defineProps<{ modelValue?: Date | null }>()
 
 const emit = defineEmits<{
     'update:modelValue': [value: Date | null]
@@ -277,7 +291,7 @@ const {
     handleClearClick,      // Trigger clear button click callback
     handleTriggerKeydown,  // Trigger keyboard event callback
 } = useDatePicker({
-    modelValue,
+    modelValue: () => props.modelValue ?? null,
     displayFormat: 'YYYY-MM-DD',
     disabled: false,
     readonly: false,
@@ -290,9 +304,11 @@ const {
 | Prop | Type | Default | Description |
 |------|------|--------|------|
 | `modelValue` | `MaybeRefOrGetter<Date \| null>` | `null` | Currently selected date (supports v-model) |
-| `displayFormat` | `MaybeRefOrGetter<string>` | `'YYYY-MM-DD'` | Display format (supports `YYYY`, `MM`, `DD`, `HH`, `mm`, `ss`, `WW` tokens) |
+| `displayFormat` | `MaybeRefOrGetter<string>` | `'YYYY-MM-DD'` | Display format (supports `YYYY`, `YY`, `MM`, `DD`, `HH`, `mm`, `ss`, `WW` tokens) |
 | `disabled` | `MaybeRefOrGetter<boolean>` | `false` | Whether disabled |
-| `readonly` | `MaybeRefOrGetter<boolean>` | `false` | Whether read-only |
+| `readonly` | `MaybeRefOrGetter<boolean>` | `false` | Prevents opening the panel internally |
+| `openProp` | `MaybeRefOrGetter<boolean \| undefined>` | `undefined` | Controlled open state; omitted values use internal state |
+| `emitUpdateOpen` | `(value: boolean) => void` | — | Called on open-state requests to synchronize controlled state with openProp |
 | `emit` | `DatePickerEmit` | — | Event emission function (required, type consistent with component emits) |
 
 ### Return Values
@@ -300,19 +316,19 @@ const {
 | Prop | Type | Description |
 |------|------|------|
 | `open` | `Ref<boolean>` | Whether the panel is open |
-| `displayValue` | `Ref<Date \| null>` | Current displayed value in the panel |
+| `displayValue` | `Readonly<Ref<Date \| null>>` | Current panel selection, read-only to the caller |
 | `formattedDisplay` | `ComputedRef<string>` | Formatted string according to `displayFormat` |
 | `handlePanelUpdate(value)` | `(value: Date \| null) => void` | Called when the panel value updates, synchronizes `displayValue` and triggers `update:modelValue` |
 | `handlePanelConfirm(value)` | `(value: Date \| null) => void` | Called when the panel is confirmed, triggers `update:modelValue` / `change` and closes the panel |
 | `handlePanelClear()` | `() => void` | Called when the panel is cleared, triggers `update:modelValue(null)` / `change(null)` |
-| `handleClearClick(event)` | `(event: MouseEvent) => void` | Trigger clear button click callback, prevents event propagation and clears the value |
-| `handleTriggerKeydown(event)` | `(event: KeyboardEvent) => void` | Trigger keyboard event callback, `Enter` / `Space` opens the panel |
+| `handleClearClick(event)` | `(event: Event) => void` | Trigger clear callback, stops propagation and clears the value |
+| `handleTriggerKeydown(event)` | `(event: KeyboardEvent) => void` | Prevents Enter / Space defaults when disabled or read-only; the trigger primitive handles ordinary opening |
 
-> Note: `emit` must be a function conforming to the `DatePickerEmit` signature (i.e., the return value of component `defineEmits`). `useDatePicker` does not automatically manage `onMounted` / `onUnmounted` side effects and can be called at any time.
+> Note: `emit` must conform to the `DatePickerEmit` signature. Call the composable within `setup()` or a managed Vue effect scope so its reactive watchers are disposed of appropriately.
 
 ## Programmatic Control
 
-`DatePicker`, `DateTimePicker`, `WeekPicker`, `MonthPicker`, and `YearPicker` expose an `open` reactive ref via `defineExpose`, allowing parent components to programmatically open or close the date panel. `open` is a `Ref<boolean>` that is two-way bound with the internal Popover, and can be read and written directly.
+`DatePicker`, `DateTimePicker`, `WeekPicker`, `MonthPicker`, and `YearPicker` expose an `open` reactive ref via `defineExpose`, allowing parent components to programmatically open or close the date panel. `open` is a writable reference bound to the internal Popover. Controlled writes emit `update:open` and take effect when the parent updates `open`. `readonly` blocks requests to open the panel internally.
 
 > Note: `DatePickerRange` and `TimePicker` do not expose `open`. `DatePicker`, `DateTimePicker`, `WeekPicker`, `MonthPicker`, and `YearPicker` also support `v-model:open` two-way binding. Using `v-model:open` is recommended over directly manipulating the ref.
 
@@ -320,6 +336,7 @@ const {
 <script setup>
 import { ref } from 'vue'
 import { DatePicker } from 'brutx-ui-vue/date-picker'
+import { Button } from 'brutx-ui-vue/button'
 
 const pickerRef = ref()
 const date = ref(null)
@@ -328,162 +345,24 @@ const date = ref(null)
 <template>
     <DatePicker ref="pickerRef" v-model="date" />
 
-    <button @click="pickerRef?.open = true">Open Panel</button>
-    <button @click="pickerRef?.open = false">Close Panel</button>
+    <Button @click="pickerRef && (pickerRef.open = true)">Open Panel</Button>
+    <Button @click="pickerRef && (pickerRef.open = false)">Close Panel</Button>
 </template>
 ```
 
-### Methods
+<span id="methods"></span>
 
-| Method/Property | Type | Description |
-|----------|------|------|
-| `open` | `Ref<boolean>` | Panel open/close state, readable and writable; set to `true` to open, `false` to close |
+## API Reference
 
-## Props
+<span id="datepicker"></span>
+<span id="datepickerrange"></span>
+<span id="datetimepicker"></span>
+<span id="timepicker"></span>
+<span id="weekpicker"></span>
+<span id="monthpicker"></span>
+<span id="yearpicker"></span>
 
-### DatePicker
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `modelValue` | `Date \| null` | `null` | Selected date, supports v-model |
-| `open` | `boolean` | — | Panel open state, supports v-model:open two-way binding |
-| `displayFormat` | `string` | `'YYYY-MM-DD'` | Display format (supports `YYYY`, `YY`, `MM`, `DD`, `HH`, `mm`, `ss`, `WW` tokens) |
-| `placeholder` | `string` | — | Placeholder text |
-| `minDate` | `Date` | — | Minimum selectable date |
-| `maxDate` | `Date` | — | Maximum selectable date |
-| `disabled` | `boolean` | `false` | Disabled state |
-| `readonly` | `boolean` | `false` | Read-only state |
-| `clearable` | `boolean` | `false` | Whether clearable |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Input size |
-| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | Input variant |
-| `shortcuts` | `DatePickerShortcut[]` | `[]` | Shortcut options |
-| `name` | `string` | — | Form field name |
-| `id` | `string` | — | Component ID |
-| `ariaLabel` | `string` | — | Accessibility label |
-
-### DatePickerRange
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `modelValue` | `[Date, Date] \| null` | `null` | Selected date range |
-| `displayFormat` | `string` | `'YYYY-MM-DD'` | Display format (supports `YYYY`, `YY`, `MM`, `DD`, `HH`, `mm`, `ss`, `WW` tokens) |
-| `startPlaceholder` | `string` | — | Start date placeholder |
-| `endPlaceholder` | `string` | — | End date placeholder |
-| `separator` | `string` | — | Separator |
-| `minDate` | `Date` | — | Minimum selectable date |
-| `maxDate` | `Date` | — | Maximum selectable date |
-| `disabled` | `boolean` | `false` | Disabled state |
-| `clearable` | `boolean` | `false` | Whether clearable |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Input size |
-| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | Input variant |
-| `shortcuts` | `DatePickerRangeShortcut[]` | `[]` | Shortcut options |
-| `name` | `string` | — | Form field name |
-| `id` | `string` | — | Component ID |
-| `ariaLabel` | `string` | — | Accessibility label |
-
-### DateTimePicker
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `modelValue` | `Date \| null` | `null` | Selected date and time |
-| `open` | `boolean` | — | Panel open state, supports v-model:open two-way binding |
-| `displayFormat` | `string` | `'YYYY-MM-DD HH:mm'` | Display format; defaults to `'YYYY-MM-DD HH:mm:ss'` when `showSeconds` is `true` |
-| `showSeconds` | `boolean` | `false` | Whether to show seconds |
-| `timeStep` | `{ hour?: number; minute?: number; second?: number }` | `{ hour: 1, minute: 1, second: 1 }` | Time step |
-| `placeholder` | `string` | — | Placeholder text |
-| `minDate` | `Date` | — | Minimum selectable date |
-| `maxDate` | `Date` | — | Maximum selectable date |
-| `disabled` | `boolean` | `false` | Disabled state |
-| `readonly` | `boolean` | `false` | Read-only state |
-| `clearable` | `boolean` | `false` | Whether clearable |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Input size |
-| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | Input variant |
-| `shortcuts` | `DatePickerShortcut[]` | `[]` | Shortcut options |
-| `name` | `string` | — | Form field name |
-| `id` | `string` | — | Component ID |
-| `ariaLabel` | `string` | — | Accessibility label |
-
-### TimePicker
-
-> Note: `TimePicker` is a pure time selector based on the Select component. It does not use a Popover popup panel, so it does not support Popover-related props such as `open`, `readonly`, `clearable`, `size`, `variant`, `shortcuts`, `minDate`, `maxDate`, and `displayFormat`.
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `modelValue` | `Date \| null` | `null` | Selected time |
-| `showSeconds` | `boolean` | `false` | Whether to show seconds |
-| `timeStep` | `{ hour?: number; minute?: number; second?: number }` | `{ hour: 1, minute: 1, second: 1 }` | Time step |
-| `disabled` | `boolean` | `false` | Disabled state |
-| `embedded` | `boolean` | `false` | Whether to render in embedded mode (no outer border) |
-| `ariaLabel` | `string` | — | Accessibility label |
-
-### WeekPicker
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `modelValue` | `Date \| null` | `null` | Selected week (aligned to week start date) |
-| `open` | `boolean` | — | Panel open state, supports v-model:open two-way binding |
-| `displayFormat` | `string` | `'YYYY-WW'` | Display format (supports `YYYY`, `YY`, `MM`, `DD`, `HH`, `mm`, `ss`, `WW` tokens) |
-| `weekStartsOn` | `0 \| 1` | `1` | Week start day (0=Sunday, 1=Monday) |
-| `placeholder` | `string` | — | Placeholder text |
-| `minDate` | `Date` | — | Minimum selectable date |
-| `maxDate` | `Date` | — | Maximum selectable date |
-| `disabled` | `boolean` | `false` | Disabled state |
-| `readonly` | `boolean` | `false` | Read-only state |
-| `clearable` | `boolean` | `false` | Whether clearable |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Input size |
-| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | Input variant |
-| `shortcuts` | `DatePickerShortcut[]` | `[]` | Shortcut options |
-| `name` | `string` | — | Form field name |
-| `id` | `string` | — | Component ID |
-| `ariaLabel` | `string` | — | Accessibility label |
-
-### MonthPicker
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `modelValue` | `Date \| null` | `null` | Selected month |
-| `open` | `boolean` | — | Panel open state, supports v-model:open two-way binding |
-| `displayFormat` | `string` | `'YYYY-MM'` | Display format (supports `YYYY`, `YY`, `MM` tokens) |
-| `placeholder` | `string` | — | Placeholder text |
-| `minDate` | `Date` | — | Minimum selectable date |
-| `maxDate` | `Date` | — | Maximum selectable date |
-| `disabled` | `boolean` | `false` | Disabled state |
-| `readonly` | `boolean` | `false` | Read-only state |
-| `clearable` | `boolean` | `false` | Whether clearable |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Input size |
-| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | Input variant |
-| `name` | `string` | — | Form field name |
-| `id` | `string` | — | Component ID |
-| `ariaLabel` | `string` | — | Accessibility label |
-
-### YearPicker
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `modelValue` | `Date \| null` | `null` | Selected year |
-| `open` | `boolean` | — | Panel open state, supports v-model:open two-way binding |
-| `displayFormat` | `string` | `'YYYY'` | Display format (supports `YYYY`, `YY` tokens) |
-| `placeholder` | `string` | — | Placeholder text |
-| `minDate` | `Date` | — | Minimum selectable date |
-| `maxDate` | `Date` | — | Maximum selectable date |
-| `disabled` | `boolean` | `false` | Disabled state |
-| `readonly` | `boolean` | `false` | Read-only state |
-| `clearable` | `boolean` | `false` | Whether clearable |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Input size |
-| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | Input variant |
-| `name` | `string` | — | Form field name |
-| `id` | `string` | — | Component ID |
-| `ariaLabel` | `string` | — | Accessibility label |
-
-## Events
-
-| Event | Payload | Description |
-|------|------|------|
-| `update:modelValue` | `Date \| [Date, Date] \| null` | Emitted when the value changes, applies to all components |
-| `change` | `Date \| [Date, Date] \| null` | Emitted when the panel closes and the value has changed, applies to all components except `TimePicker` |
-| `open` | — | Emitted when the panel opens, applies to all components except `TimePicker` |
-| `close` | — | Emitted when the panel closes, applies to all components except `TimePicker` |
-| `update:open` | `boolean` | Emitted when the panel open state changes, used with `v-model:open`, applies to `DatePicker`, `DateTimePicker`, `WeekPicker`, `MonthPicker`, and `YearPicker` |
+<ComponentApi name="date-picker" />
 
 ## Accessibility
 

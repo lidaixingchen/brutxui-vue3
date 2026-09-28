@@ -132,44 +132,21 @@ async function beforeRemove(file) {
 | `UploadFileList` | 文件列表容器 |
 | `UploadFileItem` | 单个文件项，支持预览、进度和删除 |
 
-## Props
+## API 参考
 
-### Upload
+<span id="upload"></span>
+<span id="uploadtrigger"></span>
+<span id="uploadfilelist"></span>
+<span id="事件"></span>
+<span id="upload-1"></span>
+<span id="uploadtrigger-1"></span>
+<span id="暴露的方法"></span>
+<span id="upload-2"></span>
+<span id="插槽"></span>
+<span id="upload-3"></span>
+<span id="uploadtrigger-2"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `fileList` | `UploadFile[]` | `[]` | 文件列表，支持 `v-model:fileList` |
-| `limit` | `number` | — | 最大文件数量 |
-| `multiple` | `boolean` | `true` | 是否支持多选 |
-| `accept` | `string` | — | 接受的文件类型（如 `image/*`、`.pdf,.doc`） |
-| `maxSize` | `number` | — | 最大文件大小（字节） |
-| `maxRetries` | `number` | `3` | 最大重试次数 |
-| `beforeUpload` | `(file: File) => boolean \| Promise<boolean>` | — | 上传前钩子 |
-| `beforeRemove` | `(file: UploadFile) => boolean \| Promise<boolean>` | — | 删除前钩子 |
-| `httpRequest` | `(options: UploadRequestOptions) => Promise<void>` | — | 自定义上传实现 |
-| `listType` | `'text' \| 'picture' \| 'picture-card'` | `'text'` | 列表显示类型 |
-| `autoUpload` | `boolean` | `true` | 选择后是否自动上传 |
-| `drag` | `boolean` | `true` | 是否支持拖拽 |
-| `onError` | `(error: UploadError, file: UploadFile) => void` | — | 错误回调 |
-| `class` | `string` | — | 自定义 CSS 类 |
-
-### UploadTrigger
-
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `drag` | `boolean` | `true` | 是否支持拖拽 |
-| `disabled` | `boolean` | `false` | 是否禁用 |
-| `accept` | `string` | — | 接受的文件类型 |
-| `multiple` | `boolean` | `true` | 是否支持多选 |
-| `class` | `string` | — | 自定义 CSS 类 |
-
-### UploadFileList
-
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `files` | `UploadFile[]` | —（必填） | 文件列表 |
-| `listType` | `'text' \| 'picture' \| 'picture-card'` | `'text'` | 列表显示类型 |
-| `class` | `string` | — | 自定义 CSS 类 |
+<ComponentApi name="upload" />
 
 ## 类型定义
 
@@ -212,52 +189,6 @@ interface UploadRequestOptions {
     onError: (error: UploadError) => void
 }
 ```
-
-## 事件
-
-### Upload
-
-| 事件 | 参数 | 说明 |
-| --- | --- | --- |
-| `update:fileList` | `UploadFile[]` | 文件列表变化时触发 |
-| `file-change` | `UploadFile` | 添加文件时触发 |
-| `file-remove` | `UploadFile` | 删除文件时触发 |
-| `file-success` | `UploadFile` | 文件上传成功时触发 |
-| `file-error` | `[UploadFile, UploadError]` | 文件上传失败时触发 |
-
-### UploadTrigger
-
-| 事件 | 参数 | 说明 |
-| --- | --- | --- |
-| `select` | `[files: File[], source: 'browse' \| 'drop']` | 选择或拖拽文件时触发 |
-
-
-## 暴露的方法
-
-### Upload
-
-| 方法 | 说明 |
-| --- | --- |
-| `handleFileSelect(files)` | 编程式添加文件 |
-| `handleFileRemove(file)` | 删除文件 |
-| `retryUpload(file)` | 重试上传失败的文件 |
-
-## 插槽
-
-### Upload
-
-| 插槽 | 作用域 | 说明 |
-| --- | --- | --- |
-| `trigger` | `{ selectFiles, limit, multiple, accept, drag }` | 触发区域插槽 |
-| `file-list` | `{ files, listType, remove, retry }` | 文件列表插槽 |
-
-### UploadTrigger
-
-| 插槽 | 作用域 | 说明 |
-| --- | --- | --- |
-| `default` | `{ isDragging }` | 自定义触发内容 |
-| `text` | — | 主要文本 |
-| `hint` | — | 提示文本 |
 
 ## 可访问性
 

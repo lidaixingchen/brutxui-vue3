@@ -1,0 +1,582 @@
+{
+  "id": "component:chat-bubble",
+  "name": "chat-bubble",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:chat-bubble/ChatBubble",
+      "name": "ChatBubble",
+      "source": {
+        "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatBubble-props-message",
+          "name": "message",
+          "kind": "props",
+          "type": {
+            "text": "ChatMessage",
+            "literals": [],
+            "references": [
+              {
+                "name": "ChatMessage",
+                "text": "export interface ChatMessage {\n    id: string\n    content: string\n    /** 消息角色，默认 'received' */\n    variant?: 'sent' | 'received' | 'system'\n    /** 头像图片 URL；加载失败时回退为首字母缩写 */\n    avatar?: string\n    /** 发送者姓名，用于展示名称与生成首字母缩写 */\n    name?: string\n    /**\n     * 时间戳。\n     * - `string`：按原样直接展示（不做格式化，传入方负责提供展示格式）；\n     * - `Date`：按 `dateFormat` 或 `toLocaleString` 格式化。\n     */\n    timestamp?: string | Date\n    /**\n     * 消息状态，**仅对 `variant === 'sent'` 生效**；received/system 携带时会被静默忽略。\n     */\n    status?: MessageStatus\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fchat-bubble%2Ftypes.ts%23ChatMessage"
+              }
+            ]
+          },
+          "description": "要展示的聊天消息对象，包含 id、content、角色、时间戳以及可选头像和状态信息。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatBubble-props-color",
+          "name": "color",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\""
+            ],
+            "references": []
+          },
+          "description": "设置 sent 角色气泡的配色；received 和 system 角色不受此属性影响。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatBubble-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "设置气泡内边距和文字尺寸，并同步调整头像尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatBubble-props-showAvatar",
+          "name": "showAvatar",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制头像区域的显示；system 角色始终不显示头像。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatBubble-props-showStatus",
+          "name": "showStatus",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制发送状态图标的显示；状态图标只用于 sent 角色。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatBubble-props-showTimestamp",
+          "name": "showTimestamp",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制消息时间戳的显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatBubble-props-dateFormat",
+          "name": "dateFormat",
+          "kind": "props",
+          "type": {
+            "text": "((date: Date) => string) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "自定义消息日期和时间的格式化函数；未提供时使用 Date.toLocaleString。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatBubble-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到消息气泡根元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatBubble-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换消息主体内容；未提供时显示 message.content。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:chat-bubble/ChatContainer",
+      "name": "ChatContainer",
+      "source": {
+        "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatContainer-props-messages",
+          "name": "messages",
+          "kind": "props",
+          "type": {
+            "text": "ChatMessage[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "ChatMessage",
+                "text": "export interface ChatMessage {\n    id: string\n    content: string\n    /** 消息角色，默认 'received' */\n    variant?: 'sent' | 'received' | 'system'\n    /** 头像图片 URL；加载失败时回退为首字母缩写 */\n    avatar?: string\n    /** 发送者姓名，用于展示名称与生成首字母缩写 */\n    name?: string\n    /**\n     * 时间戳。\n     * - `string`：按原样直接展示（不做格式化，传入方负责提供展示格式）；\n     * - `Date`：按 `dateFormat` 或 `toLocaleString` 格式化。\n     */\n    timestamp?: string | Date\n    /**\n     * 消息状态，**仅对 `variant === 'sent'` 生效**；received/system 携带时会被静默忽略。\n     */\n    status?: MessageStatus\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fchat-bubble%2Ftypes.ts%23ChatMessage"
+              }
+            ]
+          },
+          "description": "按顺序展示的聊天消息数组。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatContainer-props-groupByTime",
+          "name": "groupByTime",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用按真实日历日期和时间间隔对消息分组，并显示日期或时刻分隔标签。",
+          "notes": [
+            "有效时间戳按升序排序；缺失或无法解析的时间戳消息保留在输入数组对应位置和相对顺序。",
+            "日期边界按真实年月日判断，不依赖 dateFormat 的输出；同一天内相邻消息间隔超过 groupInterval 分钟时另起时间分组。"
+          ],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatContainer-props-groupInterval",
+          "name": "groupInterval",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "同一日期内相邻消息允许归入同一时间组的最大间隔，单位为分钟；小于 1 的值按 1 分钟处理。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "5",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "5"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatContainer-props-showAvatar",
+          "name": "showAvatar",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制各条消息头像区域的显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatContainer-props-showStatus",
+          "name": "showStatus",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制 sent 消息状态图标的显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatContainer-props-showTimestamp",
+          "name": "showTimestamp",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制各条消息时间戳的显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatContainer-props-dateFormat",
+          "name": "dateFormat",
+          "kind": "props",
+          "type": {
+            "text": "((date: Date) => string) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "格式化消息时间和分组标签的函数；未提供时使用本地日期时间格式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatContainer-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到聊天容器根元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

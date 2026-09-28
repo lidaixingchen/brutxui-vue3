@@ -1,0 +1,562 @@
+{
+  "id": "component:pagination",
+  "name": "pagination",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:pagination/Pagination",
+      "name": "Pagination",
+      "source": {
+        "file": "packages/ui/src/components/pagination/Pagination.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Apagination_2FPagination-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "number",
+            "literals": [],
+            "references": []
+          },
+          "description": "The current page number, starting at 1 and synchronized through v-model. Displayed values are clamped to the available page range.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-totalPages",
+          "name": "totalPages",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The explicit total page count, taking precedence over the total and pageSize calculation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-total",
+          "name": "total",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The total item count, used to calculate pages and display the total section.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 30
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-pageSize",
+          "name": "pageSize",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The item count per page, used for page calculation and the size selector. Supports v-model:pageSize.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_PAGE_SIZE",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "10"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-pageSizes",
+          "name": "pageSizes",
+          "kind": "props",
+          "type": {
+            "text": "number[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The available values in the page-size selector.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => [...DEFAULT_PAGE_SIZE_OPTIONS]",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[10, 20, 50, 100]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-layout",
+          "name": "layout",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Comma-separated section names: total, sizes, prev, pager, next, and jumper. Selects visible sections; their rendering order follows the fixed component layout.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'sizes, prev, pager, next, jumper, total'",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"sizes, prev, pager, next, jumper, total\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables page navigation, page-size selection, and the jump input.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 38
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-background",
+          "name": "background",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Adds a background to inactive page buttons and previous/next navigation controls.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 40
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-hideOnSinglePage",
+          "name": "hideOnSinglePage",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Hides the entire pagination navigation when the calculated page count is at most one.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 42
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-siblingCount",
+          "name": "siblingCount",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The number of neighboring pages around the current page, used to determine ellipsis regions.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 43
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "1",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "1"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-showFirstLast",
+          "name": "showFirstLast",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows first and last page buttons, also requiring the prev and next sections respectively in layout.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 44
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-showPageNumbers",
+          "name": "showPageNumbers",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Displays page buttons in the pager section. When disabled, shows the current page and total page count instead.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 45
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"rounded\" | \"minimal\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"minimal\"",
+              "\"rounded\""
+            ],
+            "references": []
+          },
+          "description": "The visual variant of the pagination navigation container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 46
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "The size variant of the pagination navigation and page buttons.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 47
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes merged onto the root nav element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 48
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[page: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the target page when a page or navigation button is used or a valid jump is submitted. Also emits an adjusted page when a page-size change places the current page out of range.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-events-update_3ApageSize",
+          "name": "update:pageSize",
+          "kind": "events",
+          "type": {
+            "text": "[size: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the new item count per page when the page-size selector changes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-events-jump",
+          "name": "jump",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted when an ellipsis button is clicked so the consumer can open custom page-jump controls. The event itself does not change the page.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

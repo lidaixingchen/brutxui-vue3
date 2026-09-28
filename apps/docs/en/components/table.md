@@ -70,37 +70,14 @@ import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell, TableCap
 | `TableCell` | Data cell (`<td>`) |
 | `TableCaption` | Table caption (`<caption>`) |
 
-## Props
+## API Reference
 
-### Common Props
+<span id="common-props"></span>
+<span id="table-1"></span>
+<span id="tableheader-tablehead"></span>
+<span id="tablefooter"></span>
 
-All sub-components accept:
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `class` | `string` | — | Custom CSS class |
-
-### Table
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `ariaLabel` | `string` | — | Accessible name for the table, used by screen readers |
-| `class` | `string` | — | Custom CSS class |
-
-### TableHeader / TableHead
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'secondary'` | `'default'` | Header color variant |
-| `texture` | `'none' \| 'hatch' \| 'dots'` | `'none'` | Header texture: engineering hatch lines / newspaper dots (overlaid on the color) |
-| `class` | `string` | — | Custom CSS class |
-
-### TableFooter
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'accent'` | `'default'` | Footer color variant |
-| `class` | `string` | — | Custom CSS class |
+<ComponentApi name="table" />
 
 ## Accessibility
 

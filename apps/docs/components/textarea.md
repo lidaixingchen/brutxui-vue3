@@ -137,40 +137,9 @@ const message = ref('')
 </template>
 ```
 
-## Props
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `modelValue` | `string` | — | 绑定值，支持 v-model |
-| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | 边框样式变体 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 尺寸 |
-| `resize` | `'none' \| 'vertical' \| 'horizontal' \| 'both'` | `'none'` | 尺寸调整模式 |
-| `disabled` | `boolean` | `false` | 是否禁用 |
-| `readonly` | `boolean` | `false` | 是否只读（不可编辑但可选中复制，光标为 `cursor-default`，不降低透明度） |
-| `placeholder` | `string` | 国际化回退文本 | 占位符文本 |
-| `errorMessage` | `string` | — | 错误消息文本，仅在 `variant="error"` 时显示 |
-| `ariaLabel` | `string` | — | 无障碍标签 |
-| `ariaLabelledby` | `string` | — | 关联的标签元素 ID |
-| `ariaDescribedby` | `string` | — | 描述元素 ID |
-| `ariaInvalid` | `boolean` | — | 是否标记为无效 |
-| `ariaRequired` | `boolean` | — | 是否标记为必填 |
-| `class` | `string` | — | 自定义 CSS 类 |
-
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:modelValue` | `string` | 值变化时触发 |
-
-## 方法（defineExpose）
+## 程序化控制
 
 通过 `ref` 访问组件实例后可调用以下方法：
-
-| 方法 | 说明 |
-|------|------|
-| `focus()` | 聚焦文本域 |
-| `blur()` | 移除焦点 |
-| `select()` | 选中文本域中的文本 |
 
 ```vue
 <script setup>
@@ -189,6 +158,13 @@ function handleFocus() {
     <button @click="handleFocus">Focus Textarea</button>
 </template>
 ```
+
+## API 参考
+
+<span id="事件"></span>
+<span id="方法-defineexpose"></span>
+
+<ComponentApi name="textarea" />
 
 ## 可访问性
 

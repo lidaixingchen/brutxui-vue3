@@ -1,0 +1,576 @@
+{
+  "id": "component:breadcrumb",
+  "name": "breadcrumb",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:breadcrumb/Breadcrumb",
+      "name": "Breadcrumb",
+      "source": {
+        "file": "packages/ui/src/components/breadcrumb/Breadcrumb.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumb-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到面包屑导航 `<nav>` 根元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/Breadcrumb.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/Breadcrumb.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumb-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "面包屑导航的子组件，通常包含 `BreadcrumbList`。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/Breadcrumb.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:breadcrumb/BreadcrumbEllipsis",
+      "name": "BreadcrumbEllipsis",
+      "source": {
+        "file": "packages/ui/src/components/breadcrumb/BreadcrumbEllipsis.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbEllipsis-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到省略号展示元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbEllipsis.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/BreadcrumbEllipsis.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbEllipsis-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "默认省略图标的尺寸，使用项目的 `IconSize` 预设。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbEllipsis.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/BreadcrumbEllipsis.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbEllipsis-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换默认 `MoreHorizontal` 图标；自定义内容应提供合适的可访问名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbEllipsis.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:breadcrumb/BreadcrumbItem",
+      "name": "BreadcrumbItem",
+      "source": {
+        "file": "packages/ui/src/components/breadcrumb/BreadcrumbItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到表示单个面包屑条目的 `<li>` 元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbItem.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/BreadcrumbItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "单个面包屑条目的内容，通常是链接或当前页面。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:breadcrumb/BreadcrumbLink",
+      "name": "BreadcrumbLink",
+      "source": {
+        "file": "packages/ui/src/components/breadcrumb/BreadcrumbLink.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbLink-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到链接或被 `asChild` 接管的子元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbLink.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/BreadcrumbLink.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbLink-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "使用 Reka UI Primitive 的子元素组合方式，将本组件的属性和行为合并到唯一子元素上。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbLink.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/BreadcrumbLink.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbLink-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "选择链接渲染的 HTML 标签或组件；`asChild` 生效时由子元素决定渲染目标。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbLink.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'a'",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/BreadcrumbLink.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"a\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbLink-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "链接可见文本或内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbLink.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:breadcrumb/BreadcrumbList",
+      "name": "BreadcrumbList",
+      "source": {
+        "file": "packages/ui/src/components/breadcrumb/BreadcrumbList.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbList-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到有序列表 `<ol>` 的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbList.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/BreadcrumbList.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbList-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"folder\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"folder\""
+            ],
+            "references": []
+          },
+          "description": "`default` 使用常规列表样式；`folder` 将链接呈现为档案文件夹标签插片。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbList.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/BreadcrumbList.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbList-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "面包屑条目和分隔符；子项应为有序列表允许的列表项组件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbList.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:breadcrumb/BreadcrumbPage",
+      "name": "BreadcrumbPage",
+      "source": {
+        "file": "packages/ui/src/components/breadcrumb/BreadcrumbPage.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbPage-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到当前页面 `<span>` 的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbPage.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/BreadcrumbPage.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbPage-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前页面名称；组件会以 `aria-current=\"page\"` 标记且不渲染为链接。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbPage.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:breadcrumb/BreadcrumbSeparator",
+      "name": "BreadcrumbSeparator",
+      "source": {
+        "file": "packages/ui/src/components/breadcrumb/BreadcrumbSeparator.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbSeparator-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到分隔符列表项的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbSeparator.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/BreadcrumbSeparator.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbSeparator-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "自定义分隔符内容；未提供时显示正斜杠 `/`。该项从无障碍树中隐藏。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbSeparator.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

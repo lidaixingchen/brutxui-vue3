@@ -91,66 +91,19 @@ When there are many page levels, use `BreadcrumbEllipsis` to collapse less impor
 | `BreadcrumbSeparator` | Separator, renders a forward slash `/` by default |
 | `BreadcrumbEllipsis` | Ellipsis indicator (presentational) for collapsing intermediate levels |
 
-## Props
+## API Reference
 
-### Breadcrumb
+<span id="breadcrumb-1"></span>
+<span id="breadcrumblist"></span>
+<span id="breadcrumbitem"></span>
+<span id="breadcrumblink"></span>
+<span id="breadcrumbpage"></span>
+<span id="breadcrumbseparator"></span>
+<span id="breadcrumbellipsis"></span>
+<span id="breadcrumbseparator-1"></span>
+<span id="breadcrumbellipsis-1"></span>
 
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `class` | `string` | — | Custom style class |
-
-### BreadcrumbList
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `class` | `string` | — | Custom style class |
-
-### BreadcrumbItem
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `class` | `string` | — | Custom style class |
-
-### BreadcrumbLink
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `as` | `string` | `'a'` | Rendered HTML tag, such as `'a'`, `'button'`, etc. |
-| `asChild` | `boolean` | `false` | Whether to enable Reka UI's asChild, for use with Vue-Router's `<router-link>` rendering |
-| `class` | `string` | — | Custom style class |
-
-### BreadcrumbPage
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `class` | `string` | — | Custom style class |
-
-### BreadcrumbSeparator
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `class` | `string` | — | Custom style class |
-
-### BreadcrumbEllipsis
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `iconSize` | `IconSize` | `'default'` | Icon size, supports `IconSize` enum values |
-| `class` | `string` | — | Custom style class |
-
-## Slots
-
-### BreadcrumbSeparator
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | Renders a forward slash `/` by default; you can place a custom small icon component inside |
-
-### BreadcrumbEllipsis
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | Renders the `MoreHorizontal` icon by default; you can place a custom ellipsis icon component inside |
+<ComponentApi name="breadcrumb" />
 
 ## Accessibility
 

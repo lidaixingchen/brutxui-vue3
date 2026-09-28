@@ -177,57 +177,19 @@ const url = ref('')
 | `default` | `h-11` | `px-4 py-2` | `text-base` |
 | `lg` | `h-14` | `px-5 py-3` | `text-lg` |
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `type` | `HTMLInputType` 1 | `'text'` | Input type |
-| `modelValue` | `string` | — | v-model binding value |
-| `variant` | `'default' \| 'error' \| 'success' \| 'inset'` | `'default'` | Input variant |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Input size |
-| `disabled` | `boolean` | `false` | Whether disabled |
-| `readonly` | `boolean` | `false` | Whether readonly |
-| `placeholder` | `string` | — | Placeholder text |
-| `maxlength` | `number` | — | Maximum input length |
-| `autocomplete` | `string` | — | Autofill hint for browser password managers (e.g. `email` / `current-password`) |
-| `clearable` | `boolean` | `false` | Show clear button on hover |
-| `showPassword` | `boolean` | `false` | Show password toggle button (for `type="password"`) |
-| `showWordLimit` | `boolean` | `false` | Show word count (requires `maxlength`) |
-| `prefixIcon` | `Component` | — | Prefix icon |
-| `suffixIcon` | `Component` | — | Suffix icon |
-| `errorMessage` | `string` | — | Error message text, only displayed when `variant="error"`, uses `role="alert"` for screen reader announcement |
-| `ariaLabel` | `string` | — | ARIA label |
-| `ariaLabelledby` | `string` | — | ARIA label reference ID |
-| `ariaDescribedby` | `string` | — | ARIA description reference ID |
-| `ariaInvalid` | `boolean` | — | ARIA invalid state; derived from `variant` when not explicitly set (`true` for `error`) |
-| `ariaRequired` | `boolean` | — | ARIA required state |
-| `class` | `string` | — | Custom CSS class |
+<span id="exposed-methods-defineexpose"></span>
 
-> 1 `HTMLInputType` is a union of all standard types supported by `HTMLInputElement.type`: `'button' | 'checkbox' | 'color' | 'date' | 'datetime-local' | 'email' | 'file' | 'hidden' | 'image' | 'month' | 'number' | 'password' | 'radio' | 'range' | 'reset' | 'search' | 'submit' | 'tel' | 'text' | 'time' | 'url' | 'week'`
+<ComponentApi name="input" />
 
-## Events
+## Data Types
 
-| Event | Payload | Description |
-| --- | --- | --- |
-| `update:modelValue` | `string` | Triggered when value changes |
-| `clear` | — | Triggered when clear button is clicked |
+HTMLInputType contains the native input types supported by HTMLInputElement.type: button, checkbox, color, date, datetime-local, email, file, hidden, image, month, number, password, radio, range, reset, search, submit, tel, text, time, url, and week.
 
-## Slots
+## Programmatic Control
 
-| Slot | Description |
-| --- | --- |
-| `prepend` | Content before the input (e.g., URL protocol) |
-| `append` | Content after the input (e.g., domain) |
-
-## Exposed Methods (defineExpose)
-
-Access the component instance via `ref` to call the following methods:
-
-| Method | Description |
-|--------|-------------|
-| `focus()` | Focus the input |
-| `blur()` | Remove focus |
-| `select()` | Select all text in the input |
+Use a component ref to call the native input operations below. See the API reference for all members.
 
 ```vue
 <script setup>
@@ -245,6 +207,7 @@ function handleFocus() {
     <button @click="handleFocus">Focus Input</button>
 </template>
 ```
+
 
 ## Accessibility
 

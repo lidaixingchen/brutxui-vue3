@@ -1,0 +1,956 @@
+{
+  "id": "component:input",
+  "name": "input",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:input/Input",
+      "name": "Input",
+      "source": {
+        "file": "packages/ui/src/components/input/Input.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Ainput_2FInput-props-type",
+          "name": "type",
+          "kind": "props",
+          "type": {
+            "text": "HTMLInputType | undefined",
+            "literals": [
+              "\"button\"",
+              "\"checkbox\"",
+              "\"color\"",
+              "\"date\"",
+              "\"datetime-local\"",
+              "\"email\"",
+              "\"file\"",
+              "\"hidden\"",
+              "\"image\"",
+              "\"month\"",
+              "\"number\"",
+              "\"password\"",
+              "\"radio\"",
+              "\"range\"",
+              "\"reset\"",
+              "\"search\"",
+              "\"submit\"",
+              "\"tel\"",
+              "\"text\"",
+              "\"time\"",
+              "\"url\"",
+              "\"week\""
+            ],
+            "references": [
+              {
+                "name": "HTMLInputType",
+                "text": "type HTMLInputType =\n    | 'button'\n    | 'checkbox'\n    | 'color'\n    | 'date'\n    | 'datetime-local'\n    | 'email'\n    | 'file'\n    | 'hidden'\n    | 'image'\n    | 'month'\n    | 'number'\n    | 'password'\n    | 'radio'\n    | 'range'\n    | 'reset'\n    | 'search'\n    | 'submit'\n    | 'tel'\n    | 'text'\n    | 'time'\n    | 'url'\n    | 'week'",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Finput%2FInput.vue%23HTMLInputType"
+              }
+            ]
+          },
+          "description": "原生 input 控件的输入类型，决定浏览器提供的输入行为。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 38
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'text'",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"text\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前输入值，可通过 v-model 受控绑定。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 39
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"success\" | \"error\" | \"inset\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"error\"",
+              "\"inset\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "输入框的视觉状态变体；error 会启用错误态样式和错误状态语义。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 40
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "输入框的尺寸变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 41
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用原生输入控件及其交互。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 42
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-readonly",
+          "name": "readonly",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "阻止修改输入值，但仍允许聚焦和选择文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 43
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "输入值为空时显示的占位文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 44
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-maxlength",
+          "name": "maxlength",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递给原生输入控件的最大字符数；与 showWordLimit 配合时用于显示计数上限。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 46
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-autocomplete",
+          "name": "autocomplete",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递给浏览器的自动填充提示，例如 email 或 current-password。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 48
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用清除按钮；仅当输入有值且控件既未禁用也非只读时显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 50
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-showPassword",
+          "name": "showPassword",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "为 password 类型显示密码显隐切换按钮；切换只改变实际 input 类型。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 52
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-showWordLimit",
+          "name": "showWordLimit",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "配合 maxlength 显示当前字符数和最大长度。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 54
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-prefixIcon",
+          "name": "prefixIcon",
+          "kind": "props",
+          "type": {
+            "text": "ConcreteComponent | (() => Component) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "在输入控件前方渲染的图标组件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 56
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-suffixIcon",
+          "name": "suffixIcon",
+          "kind": "props",
+          "type": {
+            "text": "ConcreteComponent | (() => Component) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "在输入控件后方渲染的图标组件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 58
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-errorMessage",
+          "name": "errorMessage",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "错误态下显示的错误文本，并作为错误提示内容提供给辅助技术。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 60
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "原生输入控件的 ID；未提供时由 useId 为实例生成唯一 ID。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 62
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递给原生输入控件的无障碍名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 64
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-ariaLabelledby",
+          "name": "ariaLabelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递给原生输入控件的标签元素 ID。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 66
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-ariaDescribedby",
+          "name": "ariaDescribedby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递给原生输入控件的描述元素 ID。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 68
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-ariaInvalid",
+          "name": "ariaInvalid",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显式设置输入控件的无效状态；未设置时根据 variant 是否为 error 推导。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 70
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-ariaErrormessage",
+          "name": "ariaErrormessage",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递给原生输入控件的错误消息元素 ID。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 72
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-ariaRequired",
+          "name": "ariaRequired",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "传递给原生输入控件的必填状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 74
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到输入框外层容器的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 75
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "用户输入值变化时发出新的字符串值以更新 v-model；输入法组合过程中不发出中间值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-events-clear",
+          "name": "clear",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "清除操作将输入值更新为空字符串后发出。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-slots-prepend",
+          "name": "prepend",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "在输入控件前渲染前置内容；仅在提供插槽内容时创建前置区域。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-slots-append",
+          "name": "append",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "在输入控件后渲染后置内容；仅在提供插槽内容时创建后置区域。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-exposes-focus",
+          "name": "focus",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "将焦点移到原生输入控件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 219
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-exposes-blur",
+          "name": "blur",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "从原生输入控件移除焦点。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 220
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-exposes-select",
+          "name": "select",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "选中原生输入控件中的文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 221
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-exposes-ref",
+          "name": "ref",
+          "kind": "exposes",
+          "type": {
+            "text": "Ref<HTMLInputElement | null, HTMLInputElement | null>",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "暴露内部输入元素引用；Vue 在公开组件实例上解包顶层 Ref，因此读取实例的 ref 可取得原生 HTMLInputElement。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    }
+  ]
+}

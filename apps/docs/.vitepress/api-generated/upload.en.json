@@ -1,0 +1,1295 @@
+{
+  "id": "component:upload",
+  "name": "upload",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:upload/Upload",
+      "name": "Upload",
+      "source": {
+        "file": "packages/ui/src/components/upload/Upload.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aupload_2FUpload-props-fileList",
+          "name": "fileList",
+          "kind": "props",
+          "type": {
+            "text": "UploadFile[] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "UploadFile",
+                "text": "export interface UploadFile {\n    /** 文件唯一标识符 */\n    id: string\n    /** 文件名 */\n    name: string\n    /** 文件大小（字节） */\n    size: number\n    /** 文件 MIME 类型 */\n    type: string\n    /** 上传状态 */\n    status: 'ready' | 'uploading' | 'success' | 'error' | 'canceled'\n    /** 上传进度，取值范围 0-100 */\n    progress: number\n    /** 文件远程访问 URL 或自定义预览地址 */\n    url?: string\n    /** 原始 File 对象，用于上传请求、重试及本地预览生成 */\n    raw?: File\n    /** 错误信息 */\n    error?: UploadError\n    /** 当前已重试次数 */\n    retryCount?: number\n    /** 上传中止控制器 */\n    abortController?: AbortController\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fupload%2Fupload-types.ts%23UploadFile"
+              }
+            ]
+          },
+          "description": "The current file list, available through v-model:fileList. The component syncs external entries by id and preserves in-progress upload state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/upload/Upload.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-props-limit",
+          "name": "limit",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Maximum number of files. Once reached, additional files are skipped and the limit error is reported through onError.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/upload/Upload.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-props-multiple",
+          "name": "multiple",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Whether to allow selecting multiple files at once. When false, the picker keeps only the first file.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/upload/Upload.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-props-accept",
+          "name": "accept",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The accepted file type hint passed to the native picker and used to validate selected files.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/upload/Upload.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-props-maxSize",
+          "name": "maxSize",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Maximum size of one file in bytes. Oversized files are skipped and reported through onError.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/upload/Upload.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-props-maxRetries",
+          "name": "maxRetries",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Maximum retry attempts per file. Once reached, another retry reports an error and does not start an upload.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "3",
+              "source": {
+                "file": "packages/ui/src/components/upload/Upload.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "3"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-props-beforeUpload",
+          "name": "beforeUpload",
+          "kind": "props",
+          "type": {
+            "text": "((file: File) => boolean | Promise<boolean>) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "A synchronous or asynchronous check run before a file is added to the list. Returning false skips that file.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/upload/Upload.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-props-beforeRemove",
+          "name": "beforeRemove",
+          "kind": "props",
+          "type": {
+            "text": "((file: UploadFile) => boolean | Promise<boolean>) | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "UploadFile",
+                "text": "export interface UploadFile {\n    /** 文件唯一标识符 */\n    id: string\n    /** 文件名 */\n    name: string\n    /** 文件大小（字节） */\n    size: number\n    /** 文件 MIME 类型 */\n    type: string\n    /** 上传状态 */\n    status: 'ready' | 'uploading' | 'success' | 'error' | 'canceled'\n    /** 上传进度，取值范围 0-100 */\n    progress: number\n    /** 文件远程访问 URL 或自定义预览地址 */\n    url?: string\n    /** 原始 File 对象，用于上传请求、重试及本地预览生成 */\n    raw?: File\n    /** 错误信息 */\n    error?: UploadError\n    /** 当前已重试次数 */\n    retryCount?: number\n    /** 上传中止控制器 */\n    abortController?: AbortController\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fupload%2Fupload-types.ts%23UploadFile"
+              }
+            ]
+          },
+          "description": "A synchronous or asynchronous confirmation run before removal. Returning false keeps the file in the list.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/upload/Upload.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-props-httpRequest",
+          "name": "httpRequest",
+          "kind": "props",
+          "type": {
+            "text": "((options: UploadRequestOptions) => Promise<void>) | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "UploadRequestOptions",
+                "text": "export interface UploadRequestOptions {\n    /** 待上传的文件 */\n    file: File\n    /** 中止信号 */\n    signal: AbortSignal\n    /** 进度回调函数，percent 取值范围 0-100 */\n    onProgress: (percent: number) => void\n    /** 成功回调函数 */\n    onSuccess: (response: unknown) => void\n    /** 失败回调函数 */\n    onError: (error: UploadError) => void\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fupload%2Fupload-types.ts%23UploadRequestOptions"
+              }
+            ]
+          },
+          "description": "The asynchronous upload implementation. It receives the file, abort signal, progress callback, and success/error callbacks. Without it, files can still be added to the list but no upload starts.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/upload/Upload.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-props-listType",
+          "name": "listType",
+          "kind": "props",
+          "type": {
+            "text": "\"text\" | \"picture\" | \"picture-card\" | undefined",
+            "literals": [
+              "\"picture-card\"",
+              "\"picture\"",
+              "\"text\""
+            ],
+            "references": []
+          },
+          "description": "Selects the text, picture, or picture-card layout for file entries.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'text'",
+              "source": {
+                "file": "packages/ui/src/components/upload/Upload.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"text\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-props-autoUpload",
+          "name": "autoUpload",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Whether to start uploading as soon as a validated file is added. When false, retryUpload can start the upload explicitly.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/upload/Upload.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-props-drag",
+          "name": "drag",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables or disables file dropping on the trigger area.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/upload/Upload.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-props-onError",
+          "name": "onError",
+          "kind": "props",
+          "type": {
+            "text": "((error: UploadError, file: UploadFile) => void) | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "UploadError",
+                "text": "export interface UploadError {\n    /** 错误消息 */\n    message: string\n    /** 错误代码 */\n    code?: string\n    /** HTTP 状态码 */\n    status?: number\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fupload%2Fupload-types.ts%23UploadError"
+              },
+              {
+                "name": "UploadFile",
+                "text": "export interface UploadFile {\n    /** 文件唯一标识符 */\n    id: string\n    /** 文件名 */\n    name: string\n    /** 文件大小（字节） */\n    size: number\n    /** 文件 MIME 类型 */\n    type: string\n    /** 上传状态 */\n    status: 'ready' | 'uploading' | 'success' | 'error' | 'canceled'\n    /** 上传进度，取值范围 0-100 */\n    progress: number\n    /** 文件远程访问 URL 或自定义预览地址 */\n    url?: string\n    /** 原始 File 对象，用于上传请求、重试及本地预览生成 */\n    raw?: File\n    /** 错误信息 */\n    error?: UploadError\n    /** 当前已重试次数 */\n    retryCount?: number\n    /** 上传中止控制器 */\n    abortController?: AbortController\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fupload%2Fupload-types.ts%23UploadFile"
+              }
+            ]
+          },
+          "description": "Called for file type, size, or count validation failures, upload failures, and retry-limit errors.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/upload/Upload.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the Upload root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/upload/Upload.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-events-update_3AfileList",
+          "name": "update:fileList",
+          "kind": "events",
+          "type": {
+            "text": "[files: UploadFile[]]",
+            "literals": [],
+            "references": [
+              {
+                "name": "UploadFile",
+                "text": "export interface UploadFile {\n    /** 文件唯一标识符 */\n    id: string\n    /** 文件名 */\n    name: string\n    /** 文件大小（字节） */\n    size: number\n    /** 文件 MIME 类型 */\n    type: string\n    /** 上传状态 */\n    status: 'ready' | 'uploading' | 'success' | 'error' | 'canceled'\n    /** 上传进度，取值范围 0-100 */\n    progress: number\n    /** 文件远程访问 URL 或自定义预览地址 */\n    url?: string\n    /** 原始 File 对象，用于上传请求、重试及本地预览生成 */\n    raw?: File\n    /** 错误信息 */\n    error?: UploadError\n    /** 当前已重试次数 */\n    retryCount?: number\n    /** 上传中止控制器 */\n    abortController?: AbortController\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fupload%2Fupload-types.ts%23UploadFile"
+              }
+            ]
+          },
+          "description": "Emits a copy of the file list after a file is added or removed to update v-model:fileList.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-events-file_2Dchange",
+          "name": "file-change",
+          "kind": "events",
+          "type": {
+            "text": "[file: UploadFile]",
+            "literals": [],
+            "references": [
+              {
+                "name": "UploadFile",
+                "text": "export interface UploadFile {\n    /** 文件唯一标识符 */\n    id: string\n    /** 文件名 */\n    name: string\n    /** 文件大小（字节） */\n    size: number\n    /** 文件 MIME 类型 */\n    type: string\n    /** 上传状态 */\n    status: 'ready' | 'uploading' | 'success' | 'error' | 'canceled'\n    /** 上传进度，取值范围 0-100 */\n    progress: number\n    /** 文件远程访问 URL 或自定义预览地址 */\n    url?: string\n    /** 原始 File 对象，用于上传请求、重试及本地预览生成 */\n    raw?: File\n    /** 错误信息 */\n    error?: UploadError\n    /** 当前已重试次数 */\n    retryCount?: number\n    /** 上传中止控制器 */\n    abortController?: AbortController\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fupload%2Fupload-types.ts%23UploadFile"
+              }
+            ]
+          },
+          "description": "Emitted after a validated file is added to the internal list. Its status is ready, and this occurs before upload completion even when autoUpload is true.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-events-file_2Dremove",
+          "name": "file-remove",
+          "kind": "events",
+          "type": {
+            "text": "[file: UploadFile]",
+            "literals": [],
+            "references": [
+              {
+                "name": "UploadFile",
+                "text": "export interface UploadFile {\n    /** 文件唯一标识符 */\n    id: string\n    /** 文件名 */\n    name: string\n    /** 文件大小（字节） */\n    size: number\n    /** 文件 MIME 类型 */\n    type: string\n    /** 上传状态 */\n    status: 'ready' | 'uploading' | 'success' | 'error' | 'canceled'\n    /** 上传进度，取值范围 0-100 */\n    progress: number\n    /** 文件远程访问 URL 或自定义预览地址 */\n    url?: string\n    /** 原始 File 对象，用于上传请求、重试及本地预览生成 */\n    raw?: File\n    /** 错误信息 */\n    error?: UploadError\n    /** 当前已重试次数 */\n    retryCount?: number\n    /** 上传中止控制器 */\n    abortController?: AbortController\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fupload%2Fupload-types.ts%23UploadFile"
+              }
+            ]
+          },
+          "description": "Emitted after removal completes, provided beforeRemove did not reject it and the file was present in the list.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-events-file_2Dsuccess",
+          "name": "file-success",
+          "kind": "events",
+          "type": {
+            "text": "[file: UploadFile]",
+            "literals": [],
+            "references": [
+              {
+                "name": "UploadFile",
+                "text": "export interface UploadFile {\n    /** 文件唯一标识符 */\n    id: string\n    /** 文件名 */\n    name: string\n    /** 文件大小（字节） */\n    size: number\n    /** 文件 MIME 类型 */\n    type: string\n    /** 上传状态 */\n    status: 'ready' | 'uploading' | 'success' | 'error' | 'canceled'\n    /** 上传进度，取值范围 0-100 */\n    progress: number\n    /** 文件远程访问 URL 或自定义预览地址 */\n    url?: string\n    /** 原始 File 对象，用于上传请求、重试及本地预览生成 */\n    raw?: File\n    /** 错误信息 */\n    error?: UploadError\n    /** 当前已重试次数 */\n    retryCount?: number\n    /** 上传中止控制器 */\n    abortController?: AbortController\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fupload%2Fupload-types.ts%23UploadFile"
+              }
+            ]
+          },
+          "description": "Emitted when the custom upload implementation calls onSuccess. Canceled uploads do not emit this event.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-events-file_2Derror",
+          "name": "file-error",
+          "kind": "events",
+          "type": {
+            "text": "[file: UploadFile, error: UploadError]",
+            "literals": [],
+            "references": [
+              {
+                "name": "UploadError",
+                "text": "export interface UploadError {\n    /** 错误消息 */\n    message: string\n    /** 错误代码 */\n    code?: string\n    /** HTTP 状态码 */\n    status?: number\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fupload%2Fupload-types.ts%23UploadError"
+              },
+              {
+                "name": "UploadFile",
+                "text": "export interface UploadFile {\n    /** 文件唯一标识符 */\n    id: string\n    /** 文件名 */\n    name: string\n    /** 文件大小（字节） */\n    size: number\n    /** 文件 MIME 类型 */\n    type: string\n    /** 上传状态 */\n    status: 'ready' | 'uploading' | 'success' | 'error' | 'canceled'\n    /** 上传进度，取值范围 0-100 */\n    progress: number\n    /** 文件远程访问 URL 或自定义预览地址 */\n    url?: string\n    /** 原始 File 对象，用于上传请求、重试及本地预览生成 */\n    raw?: File\n    /** 错误信息 */\n    error?: UploadError\n    /** 当前已重试次数 */\n    retryCount?: number\n    /** 上传中止控制器 */\n    abortController?: AbortController\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fupload%2Fupload-types.ts%23UploadFile"
+              }
+            ]
+          },
+          "description": "Emitted when the upload callback reports an error, the upload Promise rejects, or retries are exhausted. Validation failures call onError without emitting this event.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-slots-trigger",
+          "name": "trigger",
+          "kind": "slots",
+          "type": {
+            "text": "{ selectFiles: (files: FileList | File[]) => Promise<void>; limit: number | undefined; multiple: boolean; accept: string | undefined; drag: boolean; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the file-selection trigger area. Its scope provides selectFiles, limit, multiple, accept, and drag for custom controls.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-slots-file_2Dlist",
+          "name": "file-list",
+          "kind": "slots",
+          "type": {
+            "text": "{ files: { id: string; name: string; size: number; type: string; status: \"success\" | \"error\" | \"ready\" | \"uploading\" | \"canceled\"; progress: number; url?: string | undefined; raw?: { readonly lastModified: number; readonly name: string; readonly webkitRelativePath: string; readonly size: number; readonly type: string; arrayBuffer: () => Promise<ArrayBuffer>; bytes: () => Promise<Uint8Array<ArrayBuffer>>; slice: (start?: number | undefined, end?: number | undefined, contentType?: string | undefined) => Blob; stream: () => ReadableStream<Uint8Array<ArrayBuffer>>; text: () => Promise<string>; } | undefined; error?: { message: string; code?: string | undefined; status?: number | undefined; } | undefined; retryCount?: number | undefined; abortController?: { readonly signal: { readonly aborted: boolean; onabort: ((this: AbortSignal, ev: Event) => any) | null; readonly reason: any; throwIfAborted: () => void; addEventListener: { <K extends keyof AbortSignalEventMap>(type: K, listener: (this: AbortSignal, ev: AbortSignalEventMap[K]) => any, options?: boolean | AddEventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions | undefined): void; }; removeEventListener: { <K extends keyof AbortSignalEventMap>(type: K, listener: (this: AbortSignal, ev: AbortSignalEventMap[K]) => any, options?: boolean | EventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions | undefined): void; }; dispatchEvent: (event: Event) => boolean; }; abort: (reason?: any) => void; } | undefined; }[]; listType: \"text\" | \"picture\" | \"picture-card\"; remove: (file: UploadFile) => Promise<void>; retry: (file: UploadFile) => Promise<void>; }",
+            "literals": [],
+            "references": [
+              {
+                "name": "UploadFile",
+                "text": "export interface UploadFile {\n    /** 文件唯一标识符 */\n    id: string\n    /** 文件名 */\n    name: string\n    /** 文件大小（字节） */\n    size: number\n    /** 文件 MIME 类型 */\n    type: string\n    /** 上传状态 */\n    status: 'ready' | 'uploading' | 'success' | 'error' | 'canceled'\n    /** 上传进度，取值范围 0-100 */\n    progress: number\n    /** 文件远程访问 URL 或自定义预览地址 */\n    url?: string\n    /** 原始 File 对象，用于上传请求、重试及本地预览生成 */\n    raw?: File\n    /** 错误信息 */\n    error?: UploadError\n    /** 当前已重试次数 */\n    retryCount?: number\n    /** 上传中止控制器 */\n    abortController?: AbortController\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fupload%2Fupload-types.ts%23UploadFile"
+              }
+            ]
+          },
+          "description": "Replaces the file list. Its scope provides the current files, listType, and remove(file) and retry(file) actions.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Renders additional content after the trigger and file list; it has no scoped parameters.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-exposes-handleFileSelect",
+          "name": "handleFileSelect",
+          "kind": "exposes",
+          "type": {
+            "text": "(files: FileList | File[]) => Promise<void>",
+            "literals": [],
+            "references": []
+          },
+          "description": "Programmatically submits a FileList or File array through the same validation, beforeUpload, list update, and optional auto-upload flow.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue",
+            "line": 314
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-exposes-handleFileRemove",
+          "name": "handleFileRemove",
+          "kind": "exposes",
+          "type": {
+            "text": "(file: UploadFile) => Promise<void>",
+            "literals": [],
+            "references": [
+              {
+                "name": "UploadFile",
+                "text": "export interface UploadFile {\n    /** 文件唯一标识符 */\n    id: string\n    /** 文件名 */\n    name: string\n    /** 文件大小（字节） */\n    size: number\n    /** 文件 MIME 类型 */\n    type: string\n    /** 上传状态 */\n    status: 'ready' | 'uploading' | 'success' | 'error' | 'canceled'\n    /** 上传进度，取值范围 0-100 */\n    progress: number\n    /** 文件远程访问 URL 或自定义预览地址 */\n    url?: string\n    /** 原始 File 对象，用于上传请求、重试及本地预览生成 */\n    raw?: File\n    /** 错误信息 */\n    error?: UploadError\n    /** 当前已重试次数 */\n    retryCount?: number\n    /** 上传中止控制器 */\n    abortController?: AbortController\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fupload%2Fupload-types.ts%23UploadFile"
+              }
+            ]
+          },
+          "description": "Programmatically removes a file. The operation still honors beforeRemove and aborts an in-progress upload.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue",
+            "line": 315
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Aupload_2FUpload-exposes-retryUpload",
+          "name": "retryUpload",
+          "kind": "exposes",
+          "type": {
+            "text": "(file: UploadFile) => Promise<void>",
+            "literals": [],
+            "references": [
+              {
+                "name": "UploadFile",
+                "text": "export interface UploadFile {\n    /** 文件唯一标识符 */\n    id: string\n    /** 文件名 */\n    name: string\n    /** 文件大小（字节） */\n    size: number\n    /** 文件 MIME 类型 */\n    type: string\n    /** 上传状态 */\n    status: 'ready' | 'uploading' | 'success' | 'error' | 'canceled'\n    /** 上传进度，取值范围 0-100 */\n    progress: number\n    /** 文件远程访问 URL 或自定义预览地址 */\n    url?: string\n    /** 原始 File 对象，用于上传请求、重试及本地预览生成 */\n    raw?: File\n    /** 错误信息 */\n    error?: UploadError\n    /** 当前已重试次数 */\n    retryCount?: number\n    /** 上传中止控制器 */\n    abortController?: AbortController\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fupload%2Fupload-types.ts%23UploadFile"
+              }
+            ]
+          },
+          "description": "Programmatically retries a file. Successful files are not retried, and the attempt is limited by maxRetries.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/Upload.vue",
+            "line": 316
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": "component:upload/UploadFileItem",
+      "name": "UploadFileItem",
+      "source": {
+        "file": "packages/ui/src/components/upload/UploadFileItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aupload_2FUploadFileItem-props-file",
+          "name": "file",
+          "kind": "props",
+          "type": {
+            "text": "UploadFile",
+            "literals": [],
+            "references": [
+              {
+                "name": "UploadFile",
+                "text": "export interface UploadFile {\n    /** 文件唯一标识符 */\n    id: string\n    /** 文件名 */\n    name: string\n    /** 文件大小（字节） */\n    size: number\n    /** 文件 MIME 类型 */\n    type: string\n    /** 上传状态 */\n    status: 'ready' | 'uploading' | 'success' | 'error' | 'canceled'\n    /** 上传进度，取值范围 0-100 */\n    progress: number\n    /** 文件远程访问 URL 或自定义预览地址 */\n    url?: string\n    /** 原始 File 对象，用于上传请求、重试及本地预览生成 */\n    raw?: File\n    /** 错误信息 */\n    error?: UploadError\n    /** 当前已重试次数 */\n    retryCount?: number\n    /** 上传中止控制器 */\n    abortController?: AbortController\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fupload%2Fupload-types.ts%23UploadFile"
+              }
+            ]
+          },
+          "description": "The file to render, including its upload status, progress, and error details.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/UploadFileItem.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUploadFileItem-props-listType",
+          "name": "listType",
+          "kind": "props",
+          "type": {
+            "text": "\"text\" | \"picture\" | \"picture-card\" | undefined",
+            "literals": [
+              "\"picture-card\"",
+              "\"picture\"",
+              "\"text\""
+            ],
+            "references": []
+          },
+          "description": "Selects the text, picture, or picture-card layout for this file item.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/UploadFileItem.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'text'",
+              "source": {
+                "file": "packages/ui/src/components/upload/UploadFileItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"text\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUploadFileItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the file item root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/UploadFileItem.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/upload/UploadFileItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUploadFileItem-events-remove",
+          "name": "remove",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted without a payload when the user activates the remove button; the parent handles removal.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/UploadFileItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aupload_2FUploadFileItem-events-retry",
+          "name": "retry",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted without a payload only when the file is in error state and the user activates the retry button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/UploadFileItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:upload/UploadFileList",
+      "name": "UploadFileList",
+      "source": {
+        "file": "packages/ui/src/components/upload/UploadFileList.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aupload_2FUploadFileList-props-files",
+          "name": "files",
+          "kind": "props",
+          "type": {
+            "text": "UploadFile[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "UploadFile",
+                "text": "export interface UploadFile {\n    /** 文件唯一标识符 */\n    id: string\n    /** 文件名 */\n    name: string\n    /** 文件大小（字节） */\n    size: number\n    /** 文件 MIME 类型 */\n    type: string\n    /** 上传状态 */\n    status: 'ready' | 'uploading' | 'success' | 'error' | 'canceled'\n    /** 上传进度，取值范围 0-100 */\n    progress: number\n    /** 文件远程访问 URL 或自定义预览地址 */\n    url?: string\n    /** 原始 File 对象，用于上传请求、重试及本地预览生成 */\n    raw?: File\n    /** 错误信息 */\n    error?: UploadError\n    /** 当前已重试次数 */\n    retryCount?: number\n    /** 上传中止控制器 */\n    abortController?: AbortController\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fupload%2Fupload-types.ts%23UploadFile"
+              }
+            ]
+          },
+          "description": "The file entries to render. The container is not rendered when the list is empty.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/UploadFileList.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUploadFileList-props-listType",
+          "name": "listType",
+          "kind": "props",
+          "type": {
+            "text": "\"text\" | \"picture\" | \"picture-card\" | undefined",
+            "literals": [
+              "\"picture-card\"",
+              "\"picture\"",
+              "\"text\""
+            ],
+            "references": []
+          },
+          "description": "The text, picture, or picture-card layout applied to each file item.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/UploadFileList.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'text'",
+              "source": {
+                "file": "packages/ui/src/components/upload/UploadFileList.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"text\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUploadFileList-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the file list container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/UploadFileList.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/upload/UploadFileList.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUploadFileList-events-remove",
+          "name": "remove",
+          "kind": "events",
+          "type": {
+            "text": "[file: UploadFile]",
+            "literals": [],
+            "references": [
+              {
+                "name": "UploadFile",
+                "text": "export interface UploadFile {\n    /** 文件唯一标识符 */\n    id: string\n    /** 文件名 */\n    name: string\n    /** 文件大小（字节） */\n    size: number\n    /** 文件 MIME 类型 */\n    type: string\n    /** 上传状态 */\n    status: 'ready' | 'uploading' | 'success' | 'error' | 'canceled'\n    /** 上传进度，取值范围 0-100 */\n    progress: number\n    /** 文件远程访问 URL 或自定义预览地址 */\n    url?: string\n    /** 原始 File 对象，用于上传请求、重试及本地预览生成 */\n    raw?: File\n    /** 错误信息 */\n    error?: UploadError\n    /** 当前已重试次数 */\n    retryCount?: number\n    /** 上传中止控制器 */\n    abortController?: AbortController\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fupload%2Fupload-types.ts%23UploadFile"
+              }
+            ]
+          },
+          "description": "Forwards the corresponding UploadFile when a child item emits remove.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/UploadFileList.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aupload_2FUploadFileList-events-retry",
+          "name": "retry",
+          "kind": "events",
+          "type": {
+            "text": "[file: UploadFile]",
+            "literals": [],
+            "references": [
+              {
+                "name": "UploadFile",
+                "text": "export interface UploadFile {\n    /** 文件唯一标识符 */\n    id: string\n    /** 文件名 */\n    name: string\n    /** 文件大小（字节） */\n    size: number\n    /** 文件 MIME 类型 */\n    type: string\n    /** 上传状态 */\n    status: 'ready' | 'uploading' | 'success' | 'error' | 'canceled'\n    /** 上传进度，取值范围 0-100 */\n    progress: number\n    /** 文件远程访问 URL 或自定义预览地址 */\n    url?: string\n    /** 原始 File 对象，用于上传请求、重试及本地预览生成 */\n    raw?: File\n    /** 错误信息 */\n    error?: UploadError\n    /** 当前已重试次数 */\n    retryCount?: number\n    /** 上传中止控制器 */\n    abortController?: AbortController\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fupload%2Fupload-types.ts%23UploadFile"
+              }
+            ]
+          },
+          "description": "Forwards the corresponding UploadFile when a child item emits retry.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/UploadFileList.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:upload/UploadTrigger",
+      "name": "UploadTrigger",
+      "source": {
+        "file": "packages/ui/src/components/upload/UploadTrigger.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aupload_2FUploadTrigger-props-drag",
+          "name": "drag",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Whether to handle file-drop events. When disabled, drops are ignored and the dragging state is cleared.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/UploadTrigger.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/upload/UploadTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUploadTrigger-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables file selection and dropping, and removes the trigger area from the keyboard tab order.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/UploadTrigger.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/upload/UploadTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUploadTrigger-props-accept",
+          "name": "accept",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The accept type hint passed to the hidden native file input.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/UploadTrigger.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/upload/UploadTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUploadTrigger-props-multiple",
+          "name": "multiple",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "The multiple-selection setting passed to the native input. When false, both browsing and dropping keep only the first file.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/UploadTrigger.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/upload/UploadTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUploadTrigger-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the focusable trigger area.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/UploadTrigger.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/upload/UploadTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aupload_2FUploadTrigger-events-select",
+          "name": "select",
+          "kind": "events",
+          "type": {
+            "text": "[files: File[], source: \"browse\" | \"drop\"]",
+            "literals": [
+              "\"browse\"",
+              "\"drop\""
+            ],
+            "references": []
+          },
+          "description": "Emitted with a non-empty file array after browsing or dropping, along with the browse or drop source. The array contains at most one file when multiple is false.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/UploadTrigger.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aupload_2FUploadTrigger-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{ isDragging: boolean; triggerFileInput: () => void; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the entire trigger area. Its scope provides the live isDragging state and triggerFileInput() to open the file picker programmatically.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/UploadTrigger.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aupload_2FUploadTrigger-slots-text",
+          "name": "text",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the main prompt inside the built-in trigger area and is used when the default slot is absent. Without this slot, the source currently renders a hardcoded Chinese prompt meaning “Click or drop files here to upload”; this text is not locale-aware.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/UploadTrigger.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aupload_2FUploadTrigger-slots-hint",
+          "name": "hint",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the helper text below the main prompt. The area is empty when this slot is not provided.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/upload/UploadTrigger.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

@@ -103,25 +103,9 @@ function onComplete() {
 </template>
 ```
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `text` | `string` | — (required) | Text to display |
-| `speed` | `number` | `50` | Typing speed (ms per character) |
-| `delay` | `number` | `0` | Delay time before typing starts (ms). In loop mode, also used as the interval between each restart |
-| `loop` | `boolean` | `false` | Whether to loop playback |
-| `cursor` | `boolean` | `true` | Whether to show the cursor. The cursor is only visible during typing; in non-loop mode, it automatically hides after typing completes |
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | Text size |
-| `weight` | `'normal' \| 'medium' \| 'bold' \| 'black'` | `'normal'` | Text weight |
-| `class` | `string` | — | Custom class name |
-
-## Events
-
-| Event | Payload | Description |
-|------|------|------|
-| `start` | — | Triggered when typing starts |
-| `complete` | — | Triggered when typing completes |
+<ComponentApi name="typewriter-text" />
 
 ## Accessibility
 

@@ -69,28 +69,12 @@ import { Result } from 'brutx-ui-vue'
 </template>
 ```
 
-## Props
+## API 参考
 
-### Result
+<span id="result"></span>
+<span id="result-1"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `status` | `'success' \| 'error' \| 'info' \| 'warning' \| 'empty'` | `'info'` | 结果状态类型，决定顶部硬边框图标的色彩和图案 |
-| `title` | `string` | `''` | 结果标题文本 |
-| `subTitle` | `string` | `''` | 结果副标题描述文本 |
-| `variant` | `'plain' \| 'card'` | `'card'` | 是否渲染卡片边框和硬投影 |
-| `iconSize` | `IconSize` | — | 状态图标尺寸 |
-
-## Slots
-
-### Result
-
-| 插槽名 | 说明 |
-|--------|------|
-| `icon` | 覆盖顶部的状态图标与硬边框盒 |
-| `title` | 自定义标题结构 |
-| `subTitle` | 自定义副标题描述区 |
-| `extra` | 自定义底部辅助操作控制区域 |
+<ComponentApi name="result" />
 
 ## 可访问性
 

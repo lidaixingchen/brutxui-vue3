@@ -1,0 +1,377 @@
+{
+  "id": "component:popconfirm",
+  "name": "popconfirm",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:popconfirm/Popconfirm",
+      "name": "Popconfirm",
+      "source": {
+        "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "确认弹层中显示的标题文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-props-confirmButtonText",
+          "name": "confirmButtonText",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "确认操作按钮的文字；未提供时使用当前语言的默认文案。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-props-cancelButtonText",
+          "name": "cancelButtonText",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "取消操作按钮的文字；未提供时使用当前语言的默认文案。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-props-confirmButtonType",
+          "name": "confirmButtonType",
+          "kind": "props",
+          "type": {
+            "text": "\"primary\" | \"destructive\" | undefined",
+            "literals": [
+              "\"destructive\"",
+              "\"primary\""
+            ],
+            "references": []
+          },
+          "description": "设置确认按钮使用常规主色或危险操作样式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'primary'",
+              "source": {
+                "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"primary\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-props-icon",
+          "name": "icon",
+          "kind": "props",
+          "type": {
+            "text": "Component | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换默认警告图标的 Vue 图标组件；未提供时显示 TriangleAlert。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-props-cancelable",
+          "name": "cancelable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制是否渲染取消按钮。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到弹层内容容器的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "确认弹层的展开状态，支持 v-model:open 双向绑定。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "弹层展开状态变化时发出新的布尔值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-events-confirm",
+          "name": "confirm",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "用户点击确认按钮后关闭弹层并发出确认事件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-events-cancel",
+          "name": "cancel",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "用户点击取消按钮后关闭弹层并发出取消事件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "提供打开确认弹层的触发元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-slots-icon",
+          "name": "icon",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换默认警告图标区域的内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Apopconfirm_2FPopconfirm-slots-description",
+          "name": "description",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "渲染标题下方的说明内容，并关联为提示框的描述。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popconfirm/Popconfirm.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

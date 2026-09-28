@@ -193,86 +193,22 @@ The alternate layout index is automatically injected by `Timeline` starting from
 | `TimelineConnector` | Connector line between nodes |
 | `TimelineContent` | Node content area |
 
-## Props
+## API Reference
 
-### Timeline
+<span id="timeline-1"></span>
+<span id="timelineitem"></span>
+<span id="timelineseparator"></span>
+<span id="timelinedot"></span>
+<span id="timelineconnector"></span>
+<span id="timelinecontent"></span>
+<span id="timeline-2"></span>
+<span id="timelineitem-1"></span>
+<span id="timelineseparator-1"></span>
+<span id="timelinedot-1"></span>
+<span id="timelineconnector-1"></span>
+<span id="timelinecontent-1"></span>
 
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` | Timeline layout orientation |
-| `alternate` | `boolean` | `false` | Whether to enable alternate layout; only effective when `orientation='vertical'`, even items on left, odd items on right |
-| `class` | `string` | — | Custom CSS class for the outer wrapper |
-
-### TimelineItem
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `index` | `number` | — | Node index, automatically injected by the `Timeline` component, no manual specification needed |
-| `class` | `string` | — | Custom CSS class for the individual time node |
-
-### TimelineSeparator
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `class` | `string` | — | Custom CSS class for the separator area |
-
-### TimelineDot
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'success' \| 'danger'` | `'accent'` | Color variant |
-| `shape` | `'circle' \| 'square' \| 'diamond'` | `'circle'` | Geometric shape variant |
-| `class` | `string` | — | Custom CSS class for the node badge |
-
-### TimelineConnector
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `class` | `string` | — | Custom CSS class for the connector line |
-
-### TimelineContent
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `class` | `string` | — | Custom CSS class for the content area |
-
-## Slots
-
-### Timeline
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | Used to place `TimelineItem` child nodes |
-
-### TimelineItem
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | Used to place `TimelineSeparator` and `TimelineContent` |
-
-### TimelineSeparator
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | Used to place `TimelineDot` and `TimelineConnector` |
-
-### TimelineDot
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | Used to place content displayed inside the node (e.g., numbers, icons) |
-
-### TimelineConnector
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | No default slot; the connector is a display-only component |
-
-### TimelineContent
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | Used to place the specific content of the timeline node |
+<ComponentApi name="timeline" />
 
 ## Accessibility
 

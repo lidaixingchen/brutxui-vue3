@@ -1,0 +1,432 @@
+{
+  "id": "component:descriptions",
+  "name": "descriptions",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:descriptions/Descriptions",
+      "name": "Descriptions",
+      "source": {
+        "file": "packages/ui/src/components/descriptions/Descriptions.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adescriptions_2FDescriptions-props-column",
+          "name": "column",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "描述项网格的逻辑列数；边框横向布局会为标签和值使用双倍网格轨道，非法值归一化为至少一列。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/descriptions/Descriptions.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "3",
+              "source": {
+                "file": "packages/ui/src/components/descriptions/Descriptions.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "3"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adescriptions_2FDescriptions-props-border",
+          "name": "border",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示带边框的描述项布局，并将配置提供给子项。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/descriptions/Descriptions.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/descriptions/Descriptions.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adescriptions_2FDescriptions-props-direction",
+          "name": "direction",
+          "kind": "props",
+          "type": {
+            "text": "\"vertical\" | \"horizontal\" | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "选择横向或纵向标签/值排列，并提供给子项。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/descriptions/Descriptions.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'horizontal'",
+              "source": {
+                "file": "packages/ui/src/components/descriptions/Descriptions.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"horizontal\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adescriptions_2FDescriptions-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"lg\" | \"sm\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "选择 small、default 或 large 尺寸对应的文字大小。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/descriptions/Descriptions.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/descriptions/Descriptions.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adescriptions_2FDescriptions-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "描述列表标题文本；非空时显示标题区，可由 title 插槽替换。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/descriptions/Descriptions.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/descriptions/Descriptions.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adescriptions_2FDescriptions-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到描述列表最外层容器的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/descriptions/Descriptions.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/descriptions/Descriptions.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adescriptions_2FDescriptions-slots-title",
+          "name": "title",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换标题文本及默认 h3 结构；仅当标题文本非空或此插槽渲染了非注释内容时创建标题区。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/descriptions/Descriptions.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adescriptions_2FDescriptions-slots-stamp",
+          "name": "stamp",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "在边框布局右上方渲染印章内容；仅 border 为 true 且提供该插槽时显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/descriptions/Descriptions.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adescriptions_2FDescriptions-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "放置 DescriptionsItem 描述项。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/descriptions/Descriptions.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:descriptions/DescriptionsItem",
+      "name": "DescriptionsItem",
+      "source": {
+        "file": "packages/ui/src/components/descriptions/DescriptionsItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adescriptions_2FDescriptionsItem-props-label",
+          "name": "label",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "描述项标签文本；可由 label 插槽替换。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/descriptions/DescriptionsItem.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adescriptions_2FDescriptionsItem-props-span",
+          "name": "span",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "描述项跨越的逻辑列数，按正整数归一化；横向边框布局中每个逻辑列占两条网格轨道。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/descriptions/DescriptionsItem.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "1",
+              "source": {
+                "file": "packages/ui/src/components/descriptions/DescriptionsItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "1"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adescriptions_2FDescriptionsItem-props-labelWidth",
+          "name": "labelWidth",
+          "kind": "props",
+          "type": {
+            "text": "string | number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置标签单元格宽度；数字按像素处理，空字符串不应用宽度。横向边框布局中该值不会改变父级网格轨道宽度。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/descriptions/DescriptionsItem.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/descriptions/DescriptionsItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adescriptions_2FDescriptionsItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到描述项布局容器的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/descriptions/DescriptionsItem.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/descriptions/DescriptionsItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adescriptions_2FDescriptionsItem-slots-label",
+          "name": "label",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换 label prop 文本，提供自定义标签内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/descriptions/DescriptionsItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adescriptions_2FDescriptionsItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "呈现该描述项的值或说明内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/descriptions/DescriptionsItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

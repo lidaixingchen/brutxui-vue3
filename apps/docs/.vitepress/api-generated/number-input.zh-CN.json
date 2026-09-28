@@ -1,0 +1,738 @@
+{
+  "id": "component:number-input",
+  "name": "number-input",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:number-input/NumberInput",
+      "name": "NumberInput",
+      "source": {
+        "file": "packages/ui/src/components/number-input/NumberInput.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-layout",
+          "name": "layout",
+          "kind": "props",
+          "type": {
+            "text": "\"stacked\" | \"split\" | undefined",
+            "literals": [
+              "\"split\"",
+              "\"stacked\""
+            ],
+            "references": []
+          },
+          "description": "设置加减按钮相对输入框的布局方式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'split'",
+              "source": {
+                "file": "packages/ui/src/components/number-input/NumberInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"split\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"success\" | \"error\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"error\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "设置默认、成功或错误边框状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/number-input/NumberInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-errorMessage",
+          "name": "errorMessage",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "错误变体下显示并关联到输入控件的错误说明。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/number-input/NumberInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "输入值为空时显示的占位文本；未提供时使用当前语言的默认文案。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/number-input/NumberInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到数字输入组件容器的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/number-input/NumberInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "设置加号和减号图标的尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/number-input/NumberInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-sound",
+          "name": "sound",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用步进操作时由 Web Audio 合成的点击音效。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/number-input/NumberInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-defaultValue",
+          "name": "defaultValue",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "非受控模式下组件首次使用的数字值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "number | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "当前受控数值；null 表示空值，可通过 v-model 绑定。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-min",
+          "name": "min",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "允许输入的最小数值，并限制向下调整的范围。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-max",
+          "name": "max",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "允许输入的最大数值，并限制向上调整的范围。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-step",
+          "name": "step",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "每次点击加减按钮时调整的数值幅度。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-stepSnapping",
+          "name": "stepSnapping",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "是否将输入值对齐到 step 的整数倍。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-focusOnChange",
+          "name": "focusOnChange",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "值因步进操作变化后是否自动聚焦输入框。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-formatOptions",
+          "name": "formatOptions",
+          "kind": "props",
+          "type": {
+            "text": "Intl.NumberFormatOptions | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递给 Intl.NumberFormat 的格式选项，用于数值显示与本地化输入解析。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-locale",
+          "name": "locale",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "指定数字格式化和输入解析所用的区域设置。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用输入框和加减按钮。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-readonly",
+          "name": "readonly",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁止直接编辑数值，但不等同于禁用组件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-disableWheelChange",
+          "name": "disableWheelChange",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "阻止鼠标滚轮改变当前数值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-invertWheelChange",
+          "name": "invertWheelChange",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "反转鼠标滚轮方向与数值增减方向的对应关系。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递给内部输入控件的 DOM id。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用组合模式，将组件属性和行为合并到唯一子元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "指定根元素渲染使用的标签或 Vue 组件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "内部表单控件的字段名称，用于表单提交。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-required",
+          "name": "required",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将内部输入控件标记为必填字段。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[val: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "用户输入或步进调整产生新数值时发出，用于更新 v-model。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

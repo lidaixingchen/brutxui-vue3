@@ -1,0 +1,383 @@
+{
+  "id": "component:checkbox",
+  "name": "checkbox",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:checkbox/Checkbox",
+      "name": "Checkbox",
+      "source": {
+        "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the checkbox root interactive element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-checked",
+          "name": "checked",
+          "kind": "props",
+          "type": {
+            "text": "boolean | \"indeterminate\" | undefined",
+            "literals": [
+              "\"indeterminate\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "The controlled checked state: checked, unchecked, or `indeterminate`. When omitted, the component maintains its own state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-defaultValue",
+          "name": "defaultValue",
+          "kind": "props",
+          "type": {
+            "text": "boolean | \"indeterminate\" | undefined",
+            "literals": [
+              "\"indeterminate\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "The initial state in uncontrolled mode; it only applies when `checked` is not set.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables checkbox interaction and passes the disabled state to the underlying Reka UI primitive.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"danger\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "Selects the checkbox color style variant.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Sets the size of the checkbox and its state icon.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The checkbox accessible name; localized default text is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The native form field name. When set, the checkbox value is submitted with its form.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "AcceptableValue | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "The value submitted with the form. It is forwarded to the Reka UI root primitive, whose native default is `on` when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-required",
+          "name": "required",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Sets the native form required state and passes it to the underlying primitive.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-events-update_3Achecked",
+          "name": "update:checked",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean | \"indeterminate\"]",
+            "literals": [
+              "\"indeterminate\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Emits the new boolean or `indeterminate` state when it changes; supports `v-model:checked`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

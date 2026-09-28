@@ -70,41 +70,9 @@ Set different border styles via the `variant` prop for form validation state fee
 </template>
 ```
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `modelValue` | `number \| null` | — | Current input value |
-| `defaultValue` | `number` | — | Default value when uncontrolled |
-| `min` | `number` | — | Minimum allowed value |
-| `max` | `number` | — | Maximum allowed value |
-| `step` | `number` | `1` | Increment/decrement step size |
-| `stepSnapping` | `boolean` | `true` | Whether to enable step snapping; when `false`, value does not auto-align to step multiples |
-| `focusOnChange` | `boolean` | `false` | Whether to auto-focus the input when value changes |
-| `formatOptions` | `Intl.NumberFormatOptions` | — | Number formatting options, affects display and allowed input characters |
-| `locale` | `string` | — | Locale for formatting and currency |
-| `layout` | `'split' \| 'stacked'` | `'split'` | Layout structure for the adjustment buttons |
-| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | Border style variant |
-| `errorMessage` | `string` | — | Error message text, only displayed when `variant="error"` |
-| `placeholder` | `string` | `undefined` | Placeholder; uses internationalized default when not set |
-| `disabled` | `boolean` | `false` | Whether to disable the input and buttons |
-| `readonly` | `boolean` | `false` | Whether readonly |
-| `disableWheelChange` | `boolean` | `false` | Whether to prevent mouse wheel from changing the value |
-| `invertWheelChange` | `boolean` | `false` | Whether to invert the scroll wheel direction |
-| `name` | `string` | — | Form field name, submitted with the form |
-| `required` | `boolean` | `false` | Whether the field is required |
-| `id` | `string` | — | Element id attribute |
-| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | Size of the increment/decrement button icons |
-| `sound` | `boolean` | `false` | Plays a mechanical click sound on step taps (Web Audio synthesis, respects browser autoplay policy) |
-| `as` | `string \| Component` | `'div'` | Tag or component to render the root element as |
-| `asChild` | `boolean` | `false` | Whether to enable composition mode, not rendering its own DOM and passing props to the child element |
-| `class` | `string` | `undefined` | Custom CSS class for the container |
-
-## Events
-
-| Event | Payload | Description |
-| --- | --- | --- |
-| `update:modelValue` | `(val: number)` | Triggered when the input value changes |
+<ComponentApi name="number-input" />
 
 ## Accessibility
 

@@ -17,13 +17,19 @@ type ButtonGlitchSpeed = NonNullable<ButtonVariantProps['glitchSpeed']>
 type ButtonGlitchDirection = NonNullable<ButtonVariantProps['glitchDirection']>
 
 interface ButtonProps {
+    /** 按钮的主视觉变体，控制配色和交互状态样式 */
     variant?: NonNullable<ButtonVariantProps['variant']>
+    /** 按钮的尺寸；`icon` 用于方形图标按钮 */
     size?: NonNullable<ButtonVariantProps['size']>
     /** 装饰形态：多层彩虹投影 / 警戒斜纹 / 票据撕口，与色系变体正交 */
     flair?: ButtonFlair
+    /** 将按钮属性、样式和交互行为合并到唯一子元素上 */
     asChild?: boolean
+    /** 原生按钮类型；不传时由原生 `button` 的默认行为决定 */
     type?: 'button' | 'submit' | 'reset'
+    /** 显示加载图标并将按钮置为禁用状态 */
     loading?: boolean
+    /** 禁止按钮的常规用户交互 */
     disabled?: boolean
     /** 加载中显示的等待文本，作为默认插槽的回退内容；仅在 `type="submit"` 且 `loading` 时生效，未传入时回退到 i18n 默认值；提供插槽内容时优先显示插槽 */
     pendingText?: string
@@ -31,10 +37,15 @@ interface ButtonProps {
     pressed?: boolean
     /** 按钮控制的内容是否展开 */
     expanded?: boolean
+    /** 是否启用故障撕裂视觉效果 */
     effect?: 'none' | 'glitch'
+    /** 故障效果的触发方式；仅在 `effect="glitch"` 时生效 */
     glitchTrigger?: GlitchTrigger
+    /** 自动播放故障效果时的触发间隔，单位为毫秒 */
     glitchInterval?: number
+    /** 故障动画的播放速度 */
     glitchSpeed?: ButtonGlitchSpeed
+    /** 故障动画的撕裂方向 */
     glitchDirection?: ButtonGlitchDirection
     class?: string
 }
@@ -186,10 +197,12 @@ watch(effectEnabled, enabled => {
     }
 })
 
+/** 手动激活故障动画；仅在 `effect="glitch"` 时调用效果控制方法。 */
 function playButtonEffect() {
     if (effectEnabled.value) play()
 }
 
+/** 关闭当前故障动画状态。 */
 function stopButtonEffect() {
     stop()
 }

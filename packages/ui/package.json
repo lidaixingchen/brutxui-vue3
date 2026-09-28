@@ -563,7 +563,10 @@
         "docs:api": "typedoc",
         "docs:api:full": "tsx scripts/generate-api-docs.ts",
         "docs:api:vue": "tsx scripts/generate-api-docs.ts --skip-typedoc",
-        "docs:manifest": "tsx scripts/generate-api-docs.ts --manifest-only --skip-typedoc"
+        "docs:manifest": "tsx scripts/generate-component-api.ts",
+        "docs:manifest:check": "tsx scripts/generate-component-api.ts --check",
+        "docs:catalog": "tsx scripts/generate-api-catalog.ts",
+        "docs:catalog:check": "tsx scripts/generate-api-catalog.ts --check"
     },
     "size-limit": [
         {

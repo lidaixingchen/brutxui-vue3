@@ -211,108 +211,25 @@ const commandRef = ref()
 </template>
 ```
 
-### 暴露的 API
+## API 参考
 
-| 方法/属性 | 类型 | 说明 |
-|-----------|------|------|
-| `filterSearch` | `Ref<string>` | 当前搜索关键词，可读写；写入后会触发内部过滤逻辑（需 `disableFilter` 为 `false`） |
+<span id="暴露的-api"></span>
+<span id="command"></span>
+<span id="commandinput"></span>
+<span id="commanditem"></span>
+<span id="commandgroup"></span>
+<span id="commandlist"></span>
+<span id="commandempty"></span>
+<span id="commandseparator"></span>
+<span id="commandshortcut"></span>
+<span id="commanddialog"></span>
+<span id="事件"></span>
+<span id="commandinput-1"></span>
+<span id="commanditem-1"></span>
+<span id="commanddialog-1"></span>
+<span id="插槽"></span>
 
-## Props
-
-### Command
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `disableFilter` | `boolean` | `false` | 禁用内部搜索过滤，适用于外部自行过滤的场景 |
-| `class` | `ClassValue` | — | 自定义 CSS 类名 |
-
-### CommandInput
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `modelValue` | `string` | — | 输入框的值，支持 `v-model` |
-| `placeholder` | `string` | `t('command.placeholder')` | 占位符文本 |
-| `class` | `ClassValue` | — | 自定义 CSS 类名 |
-
-### CommandItem
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `value` | `string` | — | 项目的唯一标识值 |
-| `disabled` | `boolean` | — | 是否禁用该项目 |
-| `class` | `ClassValue` | — | 自定义 CSS 类名 |
-
-### CommandGroup
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `title` | `string` | — | 分组标题文本 |
-| `class` | `ClassValue` | — | 自定义 CSS 类名 |
-
-### CommandList
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `ClassValue` | — | 自定义 CSS 类名 |
-
-### CommandEmpty
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `ClassValue` | — | 自定义 CSS 类名 |
-
-### CommandSeparator
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `ClassValue` | — | 自定义 CSS 类名 |
-
-### CommandShortcut
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `ClassValue` | — | 自定义 CSS 类名 |
-
-### CommandDialog
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `open` | `boolean` | `false` | 对话框是否打开，支持 `v-model:open` |
-| `title` | `string` | `t('command.dialogTitle')` | 对话框标题（无障碍访问用） |
-| `description` | `string` | `t('command.dialogDescription')` | 对话框描述（无障碍访问用） |
-| `class` | `ClassValue` | — | 自定义 CSS 类名 |
-
-## 事件
-
-### CommandInput
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:modelValue` | `string` | 输入值变化时触发 |
-
-### CommandItem
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `select` | `string` | 选中项目时触发 |
-
-### CommandDialog
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:open` | `boolean` | 对话框开关状态变化时触发 |
-
-## 插槽
-
-| 组件 | 插槽 | 说明 |
-|------|------|------|
-| `Command` | `default` | 用于放置 `CommandInput`、`CommandList` 等子组件 |
-| `CommandDialog` | `default` | 用于放置 `CommandInput`、`CommandList` 等子组件 |
-| `CommandList` | `default` | 用于放置 `CommandEmpty`、`CommandGroup` 等子组件 |
-| `CommandGroup` | `default` | 用于放置 `CommandItem` 子组件 |
-| `CommandItem` | `default` | 用于放置项目内容和 `CommandShortcut` |
-| `CommandEmpty` | `default` | 自定义无匹配结果时的显示内容，默认值为 `t('command.emptyText')` |
-| `CommandShortcut` | `default` | 用于放置快捷键文本 |
+<ComponentApi name="command" />
 
 ## 可访问性
 

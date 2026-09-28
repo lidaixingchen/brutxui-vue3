@@ -205,29 +205,9 @@ import { badgeVariants } from 'brutx-ui-vue'
 const classes = badgeVariants({ variant: 'primary', size: 'sm' })
 ```
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-| ---- | ---- | ------ | ---- |
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success' \| 'outline'` | `'default'` | Color variant |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Size |
-| `dot` | `boolean` | `false` | Whether to show the dot indicator |
-| `pulse` | `boolean` | `false` | Whether to enable pulse animation (implies `dot`) |
-| `closable` | `boolean` | `false` | Whether to show the close button |
-| `class` | `string` | — | Custom style class |
-
-## Events
-
-| Event | Payload | Description |
-| ---- | ---- | ---- |
-| `close` | — | Fired when the close button is clicked (event bubbling is prevented) |
-
-## Slots
-
-| Slot | Scope | Description |
-| ---- | ------ | ---- |
-| `default` | — | Badge text content |
-| `icon` | — | Icon content before the badge |
+<ComponentApi name="badge" />
 
 ## Accessibility
 

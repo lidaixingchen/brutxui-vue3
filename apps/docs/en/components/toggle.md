@@ -100,23 +100,9 @@ const bold = ref(false)
 | `default` | `h-10` | `min-w-10` | `text-sm` |
 | `lg` | `h-12` | `min-w-12` | `text-sm` |
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `modelValue` | `boolean` | — | Binding value, indicates whether pressed |
-| `variant` | `'default' \| 'outline'` | `'default'` | Color variant |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Size |
-| `disabled` | `boolean` | `false` | Whether disabled |
-| `loading` | `boolean` | `false` | Whether to show loading state |
-| `ariaLabel` | `string` | — | Accessibility label text |
-| `class` | `string` | — | Custom style class |
-
-## Events
-
-| Event | Payload | Description |
-| --- | --- | --- |
-| `update:modelValue` | `boolean` | Triggered when toggle state changes |
+<ComponentApi name="toggle" />
 
 ## Accessibility
 

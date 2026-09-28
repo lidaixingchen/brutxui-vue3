@@ -1,0 +1,292 @@
+{
+  "id": "component:progress",
+  "name": "progress",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:progress/Progress",
+      "name": "Progress",
+      "source": {
+        "file": "packages/ui/src/components/progress/Progress.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aprogress_2FProgress-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到进度条根轨道的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/progress/Progress.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/progress/Progress.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aprogress_2FProgress-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前进度数值；超出范围或非有限值会归一化到 `0...max` 内。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/progress/Progress.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0",
+              "source": {
+                "file": "packages/ui/src/components/progress/Progress.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aprogress_2FProgress-props-max",
+          "name": "max",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "进度上限；必须是正的有限数，否则组件回退到 `100`。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/progress/Progress.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "100",
+              "source": {
+                "file": "packages/ui/src/components/progress/Progress.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "100"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aprogress_2FProgress-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "设置进度轨道的高度预设。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/progress/Progress.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/progress/Progress.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aprogress_2FProgress-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"secondary\" | \"success\" | \"danger\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"secondary\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "设置进度指示填充的颜色变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/progress/Progress.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/progress/Progress.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aprogress_2FProgress-props-pattern",
+          "name": "pattern",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"none\" | \"hazard\" | \"segmented\" | null | undefined> | undefined",
+            "literals": [
+              "\"hazard\"",
+              "\"none\"",
+              "\"segmented\""
+            ],
+            "references": []
+          },
+          "description": "在指示填充上叠加无纹理、LED 分段或警戒斜纹效果；不确定状态会优先使用滑轨动画而关闭纹理。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/progress/Progress.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'none'",
+              "source": {
+                "file": "packages/ui/src/components/progress/Progress.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"none\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aprogress_2FProgress-props-indeterminate",
+          "name": "indeterminate",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示循环移动的不确定进度，不使用 `modelValue`。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/progress/Progress.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/progress/Progress.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aprogress_2FProgress-props-showLabel",
+          "name": "showLabel",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "在确定进度时显示居中的百分比标签；不确定状态不显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/progress/Progress.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/progress/Progress.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

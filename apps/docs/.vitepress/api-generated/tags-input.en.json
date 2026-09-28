@@ -1,0 +1,1279 @@
+{
+  "id": "component:tags-input",
+  "name": "tags-input",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:tags-input/TagsInput",
+      "name": "TagsInput",
+      "source": {
+        "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "AcceptableInputValue[] | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "The controlled list of tag values, synchronized with v-model. Each value may be a string, number, bigint, or object.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-defaultValue",
+          "name": "defaultValue",
+          "kind": "props",
+          "type": {
+            "text": "AcceptableInputValue[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The initial tag list for uncontrolled use. Use modelValue when the list must stay synchronized with external state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-addOnPaste",
+          "name": "addOnPaste",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Splits pasted text using delimiter and attempts to add the resulting tags, subject to max and duplicate rules.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-addOnTab",
+          "name": "addOnTab",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Commits the current input as a tag when the Tab key is pressed.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-addOnBlur",
+          "name": "addOnBlur",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Commits the current input as a tag when the input loses focus.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-duplicate",
+          "name": "duplicate",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Allows duplicate tag values in the list. When false, a duplicate value is treated as invalid.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables user interaction with the tags-input group and its child items.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-delimiter",
+          "name": "delimiter",
+          "kind": "props",
+          "type": {
+            "text": "string | RegExp | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The delimiter used to commit typed input and split pasted text. Accepts a string or regular expression.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-dir",
+          "name": "dir",
+          "kind": "props",
+          "type": {
+            "text": "Direction | undefined",
+            "literals": [
+              "\"ltr\"",
+              "\"rtl\""
+            ],
+            "references": []
+          },
+          "description": "Sets the reading direction for the combobox. When omitted, it inherits ConfigProvider or defaults to left-to-right.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-max",
+          "name": "max",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The maximum number of tags. Further additions are rejected and emit invalid at the limit; 0 means unlimited.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The DOM ID passed to the tags-input root primitive to identify this input group.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-convertValue",
+          "name": "convertValue",
+          "kind": "props",
+          "type": {
+            "text": "((value: string) => AcceptableInputValue) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Converts typed strings into tag values. It is required when using object values with TagsInputInput.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-displayValue",
+          "name": "displayValue",
+          "kind": "props",
+          "type": {
+            "text": "((value: AcceptableInputValue) => string) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Converts a tag value to display text, for example when rendering object values or adding a display suffix.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Merges the component props and interaction behavior into its single child, which replaces the default rendered element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "Selects the HTML tag or Vue component rendered for this tags-input part; asChild takes precedence when both are set.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The form field name used when this tags input is submitted with its owning form.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-required",
+          "name": "required",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Marks the tags input as required before its owning form can be submitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes applied to the tags-input root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The accessible name of the tags-input group. When omitted, the localized tagsInput.label text is used.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[payload: AcceptableInputValue[]]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the updated tag array when the list changes so a controlled v-model can be synchronized.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-events-invalid",
+          "name": "invalid",
+          "kind": "events",
+          "type": {
+            "text": "[payload: AcceptableInputValue]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the rejected tag value when an addition is a duplicate or would exceed max.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-events-addTag",
+          "name": "addTag",
+          "kind": "events",
+          "type": {
+            "text": "[payload: AcceptableInputValue]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the newly added value after a tag is successfully added.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-events-removeTag",
+          "name": "removeTag",
+          "kind": "events",
+          "type": {
+            "text": "[payload: AcceptableInputValue]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the removed value after a tag is successfully removed.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Composes the tag items and input field. The slot scope exposes modelValue; it usually contains TagsInputItem and TagsInputInput.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:tags-input/TagsInputInput",
+      "name": "TagsInputInput",
+      "source": {
+        "file": "packages/ui/src/components/tags-input/TagsInputInput.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputInput-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Placeholder text shown while the input is empty.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputInput-props-autoFocus",
+          "name": "autoFocus",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Moves focus to the input when the component mounts.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputInput-props-maxLength",
+          "name": "maxLength",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Limits the number of characters that can be entered in the input.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputInput-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Merges the component props and interaction behavior into its single child, which replaces the default rendered element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputInput-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "Selects the HTML tag or Vue component rendered for this tags-input part; asChild takes precedence when both are set.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputInput-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes applied to the native tags-input field.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputInput.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:tags-input/TagsInputItem",
+      "name": "TagsInputItem",
+      "source": {
+        "file": "packages/ui/src/components/tags-input/TagsInputItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItem-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"success\" | \"danger\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "Sets the color variant for an individual tag.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItem.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'primary'",
+              "source": {
+                "file": "packages/ui/src/components/tags-input/TagsInputItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"primary\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes applied to the individual tag container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItem.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tags-input/TagsInputItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItem-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "AcceptableInputValue",
+            "literals": [],
+            "references": []
+          },
+          "description": "The value represented by this tag, which must match an item in the root tag list.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItem.vue"
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItem-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Prevents interaction with this tag.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItem.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItem-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Merges the component props and interaction behavior into its single child, which replaces the default rendered element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItem.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItem-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "Selects the HTML tag or Vue component rendered for this tags-input part; asChild takes precedence when both are set.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItem.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Renders the tag item content, commonly TagsInputItemText and TagsInputItemDelete.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:tags-input/TagsInputItemDelete",
+      "name": "TagsInputItemDelete",
+      "source": {
+        "file": "packages/ui/src/components/tags-input/TagsInputItemDelete.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItemDelete-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes applied to the tag delete button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItemDelete.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tags-input/TagsInputItemDelete.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItemDelete-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The delete button’s accessible name. When omitted, the localized default delete text is used.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItemDelete.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tags-input/TagsInputItemDelete.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItemDelete-props-type",
+          "name": "type",
+          "kind": "props",
+          "type": {
+            "text": "\"button\" | \"submit\" | \"reset\" | undefined",
+            "literals": [
+              "\"button\"",
+              "\"reset\"",
+              "\"submit\""
+            ],
+            "references": []
+          },
+          "description": "Sets the native button type. The default button value avoids accidental form submission.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItemDelete.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'button'",
+              "source": {
+                "file": "packages/ui/src/components/tags-input/TagsInputItemDelete.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"button\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItemDelete-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Merges the component props and interaction behavior into its single child, which replaces the default rendered element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItemDelete.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItemDelete-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "Selects the HTML tag or Vue component rendered for this tags-input part; asChild takes precedence when both are set.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItemDelete.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItemDelete-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Customizes the delete button content; an X icon is shown when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItemDelete.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:tags-input/TagsInputItemText",
+      "name": "TagsInputItemText",
+      "source": {
+        "file": "packages/ui/src/components/tags-input/TagsInputItemText.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItemText-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Merges the component props and interaction behavior into its single child, which replaces the default rendered element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItemText.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItemText-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "Selects the HTML tag or Vue component rendered for this tags-input part; asChild takes precedence when both are set.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItemText.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItemText-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes applied to the tag text element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItemText.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItemText-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Renders the text content of the tag.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItemText.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

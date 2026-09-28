@@ -102,25 +102,11 @@ function onComplete() {
 </template>
 ```
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `text` | `string` | —（必填） | 要显示的文本 |
-| `speed` | `number` | `50` | 打字速度（毫秒/字符） |
-| `delay` | `number` | `0` | 打字开始前的延迟时间（毫秒）。循环模式下也用作每次重启的间隔时间 |
-| `loop` | `boolean` | `false` | 是否循环播放 |
-| `cursor` | `boolean` | `true` | 是否显示光标。光标仅在打字进行中可见，非循环模式下打字完成后自动隐藏 |
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 文本尺寸 |
-| `weight` | `'normal' \| 'medium' \| 'bold' \| 'black'` | `'normal'` | 文本粗细 |
-| `class` | `string` | — | 自定义类名 |
+<span id="事件"></span>
 
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `start` | — | 打字开始时触发 |
-| `complete` | — | 打字完成时触发 |
+<ComponentApi name="typewriter-text" />
 
 ## 可访问性
 

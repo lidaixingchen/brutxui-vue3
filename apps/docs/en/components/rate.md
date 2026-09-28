@@ -63,7 +63,7 @@ Change the upper limit of the rating scale (default is `5`) using the `max` prop
 
 ### Readonly Mode
 
-Add the `readonly` attribute to make the rating static, removing hover states, transitions, and click handlers.
+Add `readonly` to display a rating while preventing hover previews, pointer selection, and keyboard changes.
 
 ```vue
 <template>
@@ -75,35 +75,20 @@ Add the `readonly` attribute to make the rating static, removing hover states, t
 
 | Size | Description |
 |------|-------------|
-| `sm` | Small size (20px / 5/4 gap) |
-| `md` | Default size (28px / 6 gap) |
-| `lg` | Large size (36px / 8 gap) |
+| `sm` | Small icons with compact spacing |
+| `md` | Default icons and spacing |
+| `lg` | Large icons with wider spacing |
 
-## Props
+## API Reference
 
-### Rate
+<span id="rate-1"></span>
+<span id="rate-2"></span>
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `modelValue` | `number` | `0` | Bound rating value, supports dual-binding |
-| `max` | `number` | `5` | Maximum rating value (total stars) |
-| `allowHalf` | `boolean` | `false` | Whether to allow half-star selection |
-| `readonly` | `boolean` | `false` | Read-only mode |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Component size |
-| `icon` | `string` | `undefined` | BrutalShape totem name for a custom rating icon (e.g. `heart`, `lightning`, `star-5`); defaults to the built-in star when unset. Unknown names fall back to the default star |
-
-## Events
-
-### Rate
-
-| Event | Parameters | Description |
-|-------|------------|-------------|
-| `update:modelValue` | `number` | Triggers when the score changes, supporting v-model |
-| `change` | `number` | Triggers when value is changed on selection |
+<ComponentApi name="rate" />
 
 ## Accessibility
 
-- **Keyboard Interaction**: The component currently interacts mainly via mouse hover and clicks
+- **Keyboard Interaction**: Right or Up increases the rating; Left or Down decreases it. `Home` selects zero and `End` selects the maximum. With `allowHalf`, arrow keys use half-point steps. Read-only mode prevents keyboard changes and removes the component from the Tab order
 - **ARIA Attributes**: The root element has `role="slider"`, `aria-valuenow` representing the current rating score, `aria-valuemin="0"`, `aria-valuemax` mapped to `max`, and `aria-readonly` indicating readonly state
-- **Reduced Motion**: Springy scale animation on hover honors `prefers-reduced-motion` settings and automatically downgrades (if applicable)
+- **Reduced Motion**: The stamp animation after icon selection reads `prefers-reduced-motion` and does not play when reduced motion is requested
 
