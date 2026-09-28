@@ -64,6 +64,20 @@ describe('公开组件文档清单', () => {
         expect(group.pages.every(page => page.presentation === 'component-api' && page.migration === 'complete' && page.pending.length === 0)).toBe(true)
     })
 
+    it('函数式消息页与组件 API 分开分类，且不伪造容器成员', () => {
+        const catalog = collectApiCatalog(ROOT, API_CONTRACT)
+        const group = catalog.groups.find(item => item.id === 'component:message')!
+        expect(group.scope).toBe('functional-page')
+        expect(group.functionalApi).toEqual({
+            groupId: 'composable:useMessage',
+            entry: 'useMessage',
+            members: ['info', 'success', 'warning', 'error', 'show'],
+        })
+        expect(group.members.map(member => member.name)).toEqual(['MessageContainer'])
+        expect(group.pages.every(page => page.presentation === 'functional-api' && page.migration === 'complete')).toBe(true)
+        expect(catalog.diagnostics.filter(item => item.groupId === group.id)).toEqual([])
+    })
+
     it('同一输入重复生成具有相同内容', () => {
         expect(serializeApiCatalog(collectApiCatalog(ROOT, API_CONTRACT))).toBe(serializeApiCatalog(collectApiCatalog(ROOT, API_CONTRACT)))
     })

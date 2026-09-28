@@ -67,6 +67,7 @@ export function checkFile(filePath, requiredList, previewAlts, options = {}) {
   const isZh = !toPosixPath(filePath).includes('/en/')
   const problems = []
   const componentApiPage = options.componentApiPage === true
+  const functionalApiPage = options.functionalApiPage === true
   const missing = requiredList.filter(heading => {
     const cleaned = cleanHeading(heading)
     if (cleaned !== '## Props') return !foundHeadings.has(cleaned)
@@ -74,7 +75,7 @@ export function checkFile(filePath, requiredList, previewAlts, options = {}) {
     const alternatives = isZh
       ? ['## Props', '## API 参考', '## API']
       : ['## Props', '## API Reference', '## API']
-    const acceptedHeadings = componentApiPage ? alternatives.slice(1) : alternatives.slice(0, 1)
+    const acceptedHeadings = componentApiPage || functionalApiPage ? alternatives.slice(1) : alternatives.slice(0, 1)
     return !acceptedHeadings.some(headingAlt => foundHeadings.has(cleanHeading(headingAlt)))
   })
 
@@ -219,7 +220,81 @@ function invocationScope(calls, groupId, normalizeName) {
     }))
 }
 
-function findDuplicateApiMemberTables(content, components, calls, normalizeName) {
+function markdownInlineText(token) {
+  return (token.children ?? []).map(child => {
+    if (child.type === 'text' || child.type === 'code_inline') return child.content
+    if (child.type === 'softbreak' || child.type === 'hardbreak') return ' '
+    return ''
+  }).join('')
+}
+
+function markdownInlineHasHtml(token) {
+  return (token.children ?? []).some(child => child.type === 'html_inline' || child.type === 'html_block')
+}
+
+function collectMarkdownTables(tokens) {
+  const tables = []
+  const headingStack = []
+  let pendingHeadingLevel
+  let currentTable
+  let currentRow
+  let currentCell
+
+  for (const token of tokens) {
+    if (token.type === 'heading_open') {
+      pendingHeadingLevel = Number(token.tag.slice(1))
+      continue
+    }
+    if (token.type === 'heading_close') {
+      pendingHeadingLevel = undefined
+      continue
+    }
+    if (token.type === 'table_open') {
+      currentTable = { headings: [...headingStack], rows: [] }
+      continue
+    }
+    if (token.type === 'table_close') {
+      if (currentTable) tables.push(currentTable)
+      currentTable = undefined
+      currentRow = undefined
+      currentCell = undefined
+      continue
+    }
+    if (token.type === 'tr_open' && currentTable) {
+      currentRow = { line: (token.map?.[0] ?? 0) + 1, cells: [] }
+      continue
+    }
+    if ((token.type === 'th_open' || token.type === 'td_open') && currentRow) {
+      currentCell = { text: '', hasHtml: false }
+      continue
+    }
+    if ((token.type === 'th_close' || token.type === 'td_close') && currentCell && currentRow) {
+      currentRow.cells.push(currentCell)
+      currentCell = undefined
+      continue
+    }
+    if (token.type === 'tr_close' && currentTable && currentRow) {
+      currentTable.rows.push(currentRow)
+      currentRow = undefined
+      continue
+    }
+    if (token.type === 'inline') {
+      if (currentCell) {
+        currentCell.text += markdownInlineText(token)
+        currentCell.hasHtml ||= markdownInlineHasHtml(token)
+      } else if (pendingHeadingLevel) {
+        const text = markdownInlineText(token).replace(/\s*\{#[\w-]+\}\s*$/u, '').trim()
+        while (headingStack.length > 0 && headingStack.at(-1).level >= pendingHeadingLevel) headingStack.pop()
+        headingStack.push({ level: pendingHeadingLevel, text })
+        pendingHeadingLevel = undefined
+      }
+    }
+  }
+
+  return tables
+}
+
+function findDuplicateApiMemberTables(tokens, components, calls, normalizeName) {
   const visibleComponents = new Map()
   const selectedScopes = calls.length > 0 ? calls : [{ subcomponent: undefined, defaultTab: 'all' }]
   for (const call of selectedScopes) {
@@ -238,15 +313,12 @@ function findDuplicateApiMemberTables(content, components, calls, normalizeName)
   }
   const knownComponents = new Map([...visibleComponents.keys()].map(name => [normalizeName(name), name]))
   const duplicates = []
-  let headingStack = []
-  let tableLines = []
 
-  const flushTable = () => {
-    if (tableLines.length < 3) {
-      tableLines = []
-      return
-    }
-    const header = splitTableCells(tableLines[0].raw)
+  for (const table of collectMarkdownTables(tokens)) {
+    if (table.rows.length < 2) continue
+    const headingStack = table.headings
+    const headerCells = table.rows[0].cells
+    const header = headerCells.map(cell => cell.text)
     const kind = tableApiKind(header) ?? headingApiKind(headingStack)
     if (
       !kind ||
@@ -254,8 +326,7 @@ function findDuplicateApiMemberTables(content, components, calls, normalizeName)
       isValueReferenceTable(header, kind) ||
       isExternalPrimitiveTable(headingStack, knownComponents)
     ) {
-      tableLines = []
-      return
+      continue
     }
 
     const slotColumn = kind === 'slots' ? header.findIndex(cell => /^(?:slot|插槽)$/iu.test(cleanTableCell(cell))) : -1
@@ -266,12 +337,13 @@ function findDuplicateApiMemberTables(content, components, calls, normalizeName)
       .find(Boolean)
     const matchedRows = []
 
-    for (const row of tableLines.slice(2)) {
-      const cells = splitTableCells(row.raw)
-      if (cells.length <= memberColumn) continue
-      const memberName = normalizeTableMember(cells[memberColumn])
+    for (const row of table.rows.slice(1)) {
+      const cells = row.cells
+      if (cells.length <= memberColumn || cells[memberColumn].hasHtml) continue
+      const memberName = normalizeTableMember(cells[memberColumn].text)
       if (!memberName || /^:?-{3,}:?$/u.test(memberName)) continue
-      const rowComponent = componentColumn >= 0 ? knownComponents.get(normalizePlainName(cells[componentColumn].replace(/`/gu, '').trim())) : undefined
+      const componentCell = componentColumn >= 0 ? cells[componentColumn] : undefined
+      const rowComponent = componentCell && !componentCell.hasHtml ? knownComponents.get(normalizePlainName(componentCell.text)) : undefined
       const scopedComponent = rowComponent ?? headingComponent
       const matching = [...visibleComponents.entries()].flatMap(([componentName, members]) => {
         if (scopedComponent && scopedComponent !== componentName) return []
@@ -288,42 +360,62 @@ function findDuplicateApiMemberTables(content, components, calls, normalizeName)
         message: `手工 API 表格重复列出 ${row.members.join('、')}；请保留类型说明并使用 ComponentApi 展示组件成员`,
       })
     }
-    tableLines = []
   }
-
-  traverseMarkdownLines(content, context => {
-    if (context.inFence || context.inComment) {
-      flushTable()
-      return
-    }
-    const heading = /^(#{1,6})\s+(.+?)\s*#*\s*$/u.exec(context.raw.trim())
-    if (heading) {
-      flushTable()
-      const level = heading[1].length
-      headingStack = headingStack.filter(item => item.level < level)
-      headingStack.push({ level, text: heading[2].replace(/\s*\{#[\w-]+\}\s*$/u, '').trim() })
-      return
-    }
-    if (context.raw.trim().startsWith('|')) {
-      tableLines.push(context)
-      return
-    }
-    flushTable()
-  })
-  flushTable()
   return duplicates
 }
 
-function splitTableCells(line) {
-  return line.trim().replace(/^\|/u, '').replace(/\|$/u, '').split(/(?<!\\)\|/u).map(cell => cell.trim())
+function hasFunctionalApiDocumentation(tokens, functionalApi) {
+  if (!functionalApi?.entry || !Array.isArray(functionalApi.members) || functionalApi.members.length === 0) return false
+
+  let pendingHeadingLevel
+  let inApiReference = false
+  let apiReferenceText = ''
+  for (const token of tokens) {
+    if (token.type === 'heading_open') {
+      pendingHeadingLevel = Number(token.tag.slice(1))
+      continue
+    }
+    if (token.type === 'heading_close') {
+      pendingHeadingLevel = undefined
+      continue
+    }
+    if (token.type !== 'inline') continue
+    if (pendingHeadingLevel) {
+      const title = markdownInlineText(token).replace(/\s*\{#[\w-]+\}\s*$/u, '').trim()
+      if (pendingHeadingLevel === 2) {
+        if (inApiReference) inApiReference = false
+        if (/^(?:api reference|api 参考|api)$/iu.test(title)) inApiReference = true
+      }
+      pendingHeadingLevel = undefined
+    } else if (inApiReference) {
+      apiReferenceText += ` ${markdownInlineText(token)}`
+    }
+  }
+
+  const hasReference = apiReferenceText.includes(functionalApi.entry)
+  if (!hasReference) return false
+
+  const entry = normalizePlainName(functionalApi.entry)
+  return collectMarkdownTables(tokens).some(table => {
+    const namesEntry = table.headings.some(heading => normalizePlainName(heading.text) === entry)
+    if (!namesEntry || table.rows.length < 2) return false
+
+    const header = table.rows[0].cells.map(cell => cell.text)
+    if (!/^(?:method|function|member|方法|函数|成员)$/iu.test(cleanTableCell(header[0] ?? ''))) return false
+
+    const documentedMembers = new Set(table.rows.slice(1)
+      .filter(row => row.cells[0] && !row.cells[0].hasHtml)
+      .map(row => normalizeTableMember(row.cells[0].text)))
+    return functionalApi.members.every(member => documentedMembers.has(normalizeTableMember(member)))
+  })
 }
 
 function cleanTableCell(value) {
-  return value?.replace(/`/gu, '').replace(/<[^>]*>/gu, '').trim().toLowerCase() ?? ''
+  return value?.trim().toLowerCase() ?? ''
 }
 
 function normalizeTableMember(value) {
-  const normalized = value.replace(/`/gu, '').replace(/<[^>]*>/gu, '').trim()
+  const normalized = value.trim()
     .replace(/^v-model(?:\s*:\s*)?/iu, 'modelValue')
     .replace(/\(.*$/u, '')
     .replace(/\s+/gu, '')
@@ -414,18 +506,24 @@ export async function runDocTemplateCheck(options = {}) {
         const source = readFileSync(absoluteFile, 'utf8')
         let parsed
         let apiCalls = []
+        let markdownTokens = []
 
         try {
           parsed = parseApiPageMarkdown(source, env, renderer)
           apiCalls = parsed.calls
+          markdownTokens = parsed.tokens
         } catch (error) {
           reportApiError(diagnostics, relativeFile, error)
         }
 
-        const semantic = pageGroup ? await loadSemanticResource(contentRoot, pageGroup.slug, semanticCache) : undefined
+        const semantic = pageGroup?.scope === 'component-page' ? await loadSemanticResource(contentRoot, pageGroup.slug, semanticCache) : undefined
         const isComponentPage = pageGroup?.scope === 'component-page'
+        const isFunctionalPage = pageGroup?.scope === 'functional-page'
         const isApplicableApiPage = isComponentPage && (
           pageCatalogEntry?.presentation === 'component-api' || pageCatalogEntry?.migration === 'complete'
+        )
+        const isApplicableFunctionalApiPage = isFunctionalPage && (
+          pageCatalogEntry?.presentation === 'functional-api' || pageCatalogEntry?.migration === 'complete'
         )
         const expectedCalls = pageGroup ? apiCalls.filter(call => call.group.id === pageGroup.id) : []
         const validApiCall = isApplicableApiPage && expectedCalls.length > 0
@@ -499,7 +597,7 @@ export async function runDocTemplateCheck(options = {}) {
             }
           }
           if (pageApiData) {
-            for (const duplicate of findDuplicateApiMemberTables(source, pageApiData.components, expectedCalls, apiTypes.normalizeName)) {
+            for (const duplicate of findDuplicateApiMemberTables(markdownTokens, pageApiData.components, expectedCalls, apiTypes.normalizeName)) {
               addProblem(diagnostics, relativeFile, {
                 ruleId: 'doc-template/api-member-table-duplicate',
                 message: duplicate.message,
@@ -508,7 +606,46 @@ export async function runDocTemplateCheck(options = {}) {
           }
         }
 
-        const problems = checkFile(absoluteFile, documentSet.required, documentSet.preview, { componentApiPage: isApplicableApiPage })
+        if (isApplicableFunctionalApiPage) {
+          if (pageCatalogEntry?.presentation !== 'functional-api') {
+            addProblem(diagnostics, relativeFile, {
+              ruleId: 'doc-template/api-presentation-mismatch',
+              message: `函数式页面 ${pageGroup.slug} 必须使用 functional-api 展示`,
+            })
+          }
+          if (pageCatalogEntry?.migration !== 'complete') {
+            addProblem(diagnostics, relativeFile, {
+              ruleId: 'doc-template/api-migration-incomplete',
+              message: `函数式页面 ${pageGroup.slug} 的 API 迁移状态必须为 complete`,
+            })
+          }
+          if (!hasFunctionalApiDocumentation(markdownTokens, pageGroup.functionalApi)) {
+            addProblem(diagnostics, relativeFile, {
+              ruleId: 'doc-template/missing-functional-api',
+              message: `函数式页面必须在 API 参考中说明 ${pageGroup.functionalApi?.entry ?? '公开函数'}，并列出全部 ${pageGroup.functionalApi?.entry ?? '函数'} 成员`,
+            })
+          }
+          for (const call of apiCalls) {
+            addProblem(diagnostics, relativeFile, {
+              ruleId: 'doc-template/functional-api-component-call',
+              message: `函数式页面 ${pageGroup.slug} 不能展示组件成员组 ${call.group.slug}`,
+            }, call.position.line)
+          }
+
+          const locale = docsRelativeFile.startsWith('en/') ? 'en' : 'zh-CN'
+          const groupScope = apiScopes.get(pageGroup.slug) ?? {}
+          groupScope[locale] = [JSON.stringify({
+            scope: 'functional-api',
+            entry: pageGroup.functionalApi?.entry,
+            members: pageGroup.functionalApi?.members,
+          })]
+          apiScopes.set(pageGroup.slug, groupScope)
+        }
+
+        const problems = checkFile(absoluteFile, documentSet.required, documentSet.preview, {
+          componentApiPage: isApplicableApiPage,
+          functionalApiPage: isApplicableFunctionalApiPage,
+        })
         for (const problem of problems) addProblem(diagnostics, relativeFile, problem)
 
         if (problems.length === 0 && DOC_EXCEPTIONS.has(relativeFile)) {
@@ -527,14 +664,14 @@ export async function runDocTemplateCheck(options = {}) {
     if (!locales['zh-CN'] || !locales.en) {
       addProblem(diagnostics, `apps/docs/components/${slug}.md`, {
         ruleId: 'doc-template/api-bilingual-mirror',
-        message: `已迁移组件 API 页 ${slug} 必须提供中英文组件 API 调用`,
+        message: `已迁移 API 页 ${slug} 必须提供中英文页面`,
       })
       continue
     }
     if (JSON.stringify(locales['zh-CN']) !== JSON.stringify(locales.en)) {
       addProblem(diagnostics, `apps/docs/components/${slug}.md`, {
         ruleId: 'doc-template/api-bilingual-scope',
-        message: `组件 ${slug} 的中英文 API 调用组、固定成员范围、标签页、实例或搜索设置不一致`,
+        message: `页面 ${slug} 的中英文 API 范围或函数式入口与成员不一致`,
       })
     }
   }

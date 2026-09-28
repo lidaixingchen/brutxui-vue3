@@ -4,6 +4,12 @@
 
 **英文镜像强制要求**：每个组件文档必须成对维护——中文 `apps/docs/components/{name}.md` + 英文 `apps/docs/en/components/{name}.md`（同文件名、英文内容），与 [COMPONENT_GUIDE.md](COMPONENT_GUIDE.md)「Workflow Checklist」第 7 步一致；提交前运行 `pnpm check:i18n:strict` 校验镜像对称性。
 
+## 函数式 API 页面
+
+公开组件组若只提供内部挂载容器，而用户实际通过组合式函数操作，应在 `apps/docs/.vitepress/api-content/migrations.json` 的 `functionalGroups` 中声明函数入口与成员。目录将其标记为 `functional-page` / `functional-api`，组件 API 编译器会拒绝对此类页面调用 `<ComponentApi>`。
+
+函数式页面在 API 参考中说明容器与公开入口的职责，在对应组合式函数小节列出声明的入口和全部方法；选项对象与导出类型放在数据类型小节。不要将函数选项写成容器 Props，也不要为没有公开成员的容器合成组件 API。
+
 ---
 
 ## 模板

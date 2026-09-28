@@ -17,10 +17,11 @@ import {
 
 const SEARCH_RENDERING_KEY = '__brutxApiPageSearchRendering'
 const API_CALLS_KEY = '__brutxApiPageCalls'
+const MARKDOWN_TOKENS_KEY = '__brutxApiPageMarkdownTokens'
 const LEGACY_ANCHOR_MARKER = '<!--__brutx-api-legacy-anchor-point-->'
 const LEGACY_ANCHOR_IDS = ['props', 'events', 'slots', 'exposes'] as const
 
-interface MarkdownToken {
+export interface MarkdownToken {
     type: string
     content: string
     map?: [number, number] | null
@@ -44,6 +45,7 @@ interface SfcScriptBlock {
 type MarkdownEnvironment = MarkdownEnv & {
     [SEARCH_RENDERING_KEY]?: boolean
     [API_CALLS_KEY]?: ApiPageInvocation[]
+    [MARKDOWN_TOKENS_KEY]?: MarkdownToken[]
 }
 
 export interface ApiPagePluginOptions {
@@ -101,6 +103,7 @@ export function createApiPagePlugin(options: ApiPagePluginOptions): (md: Markdow
 
             validateRepeatedInvocations(calls)
             env[API_CALLS_KEY] = calls
+            env[MARKDOWN_TOKENS_KEY] = state.tokens
         })
 
         md.render = (source, rawEnvironment) => {
@@ -149,10 +152,10 @@ export function parseApiPageMarkdown(
     source: string,
     env: MarkdownEnv,
     md: MarkdownRenderer,
-): { html: string; environment: MarkdownEnvironment; calls: ApiPageInvocation[] } {
+): { html: string; environment: MarkdownEnvironment; calls: ApiPageInvocation[]; tokens: MarkdownToken[] } {
     const environment = { ...env, [SEARCH_RENDERING_KEY]: true } as MarkdownEnvironment
     const html = md.render(source, environment)
-    return { html, environment, calls: getApiPageInvocations(environment) }
+    return { html, environment, calls: getApiPageInvocations(environment), tokens: environment[MARKDOWN_TOKENS_KEY] ?? [] }
 }
 
 export function getApiPageInvocations(env: MarkdownEnv): ApiPageInvocation[] {
