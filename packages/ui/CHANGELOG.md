@@ -2,6 +2,91 @@
 
 ## 0.11.3
 
+### 0.11.3 升级迁移
+
+本次按 patch 发布，包含以下公开 API 与默认视觉行为调整。
+
+#### ⚠️ Breaking Change: 公开入口 — 测试夹具与内部辅助函数
+
+**影响范围与原因**：测试夹具 DialogTestFixture、NestedDialogTestFixture、SelectTestFixture、VirtualScrollTestFixture，以及 useClearableSelection、useSelectableTrigger、useSelectionDisplayText、useTransferPanelSelection 收敛为内部实现。应用应使用公开组件或自行维护测试夹具和选择逻辑。
+
+Before：
+```ts
+import { DialogTestFixture } from 'brutx-ui-vue'
+```
+After（由应用提供夹具文件）：
+```ts
+import DialogTestFixture from './fixtures/DialogTestFixture.vue'
+```
+**自动迁移可行性**：辅助函数没有一对一替代，需人工审查；组件 Props 改用 `InstanceType<typeof Button>['$props']` 推导。详见[公开 API 迁移指南](https://github.com/lidaixingchen/brutxui-vue3/blob/v0.11.3/docs/guides/API_MIGRATION.md)。
+
+#### ⚠️ Breaking Change: Accordion — 标题与面板位置稳定
+
+**影响范围与原因**：默认及 interactive 变体采用底色、阴影和展开动画反馈，保持标题与边框对齐。
+
+Before / After（调用方式保持一致，接受新的位置稳定行为）：
+```vue
+<AccordionItem value="details"><AccordionTrigger>详情</AccordionTrigger><AccordionContent>内容</AccordionContent></AccordionItem>
+```
+**自动迁移可行性**：无需 API 替换；定制位移样式需人工复核。
+
+#### ⚠️ Breaking Change: Breadcrumb — 实体标签
+
+**影响范围与原因**：默认链接具有完整边框、底色与硬阴影，按压时文字与框整体移动。
+
+Before / After（调用方式保持一致，接受实体标签外观）：
+```vue
+<BreadcrumbLink href="/components">组件</BreadcrumbLink>
+```
+**自动迁移可行性**：无需 API 替换；布局和视觉快照需人工复核。
+
+#### ⚠️ Breaking Change: TableHead — 继承表头配色
+
+**影响范围与原因**：单元格默认继承 TableHeader，确保整行底纹一致。需要保留独立默认配色时显式指定 variant。
+
+Before：
+```vue
+<TableHead>名称</TableHead>
+```
+After：
+```vue
+<TableHead variant="default">名称</TableHead>
+```
+**自动迁移可行性**：仅对需要独立配色的单元格添加属性。
+
+#### ⚠️ Breaking Change: FormItem — 标签布局
+
+**影响范围与原因**：FormItem 遵循 Form.labelPosition；默认 right 为左侧标签右对齐。保留上下布局时指定 top。
+
+Before：
+```vue
+<Form><FormItem><FormLabel>名称</FormLabel><Input /></FormItem></Form>
+```
+After：
+```vue
+<Form label-position="top"><FormItem><FormLabel>名称</FormLabel><Input /></FormItem></Form>
+```
+**自动迁移可行性**：可对需要上下布局的 Form 添加属性。
+
+#### ⚠️ Breaking Change: showDialog — 结构化终态
+
+**影响范围与原因**：ShowDialogOptions 移除 onConfirm，返回句柄的 promise 统一携带 action 与可选 data。
+
+Before：
+```ts
+showDialog({ title: '确认', onConfirm: () => console.log('确认') })
+```
+After：
+```ts
+const dialog = showDialog({ title: '确认' })
+dialog.promise.then(result => {
+    if (result.action === 'confirm') console.log('确认')
+})
+// 自定义确认操作通过句柄或 footer 的 close 回传终态。
+dialog.close({ action: 'confirm' })
+```
+**自动迁移可行性**：需人工检查确认操作与终态分支，不能只重命名回调。
+
 ### Patch Changes
 
 - 553091e: Button 的 effect 开关统一约束 autoplay 与实例 play()；关闭特效时释放媒体监听、定时器和文本同步。完善禁用、loading、减少动态效果及 KeepAlive 生命周期资源管理。
