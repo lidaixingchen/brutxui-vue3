@@ -120,7 +120,7 @@ test('只按 index 快照运行 UI 生成检查，并保持工作树和 index �
     const result = await checkStagedSnapshot({
         repoRoot,
         generatorRunner: createRunner(calls, ({ packageName, candidateRoot }) => {
-            assert.equal(packageName, 'ui')
+            assert.ok(['ui', 'docs'].includes(packageName))
             assert.equal(readFileSync(join(candidateRoot, UI_SOURCE), 'utf8'), '<template>staged</template>\n')
             assert.equal(readFileSync(join(candidateRoot, UI_GENERATOR), 'utf8'), 'export const source = "staged"\n')
             assert.equal(readFileSync(join(candidateRoot, UI_MANIFEST), 'utf8'), '{"source":"staged"}\n')
@@ -131,7 +131,7 @@ test('只按 index 快照运行 UI 生成检查，并保持工作树和 index �
     const statusAfter = runGit(repoRoot, 'status', '--porcelain=v1', '--untracked-files=all')
 
     assert.equal(result.checked, true)
-    assert.deepEqual(calls.map(call => call.packageName), ['ui'])
+    assert.deepEqual(calls.map(call => call.packageName), ['ui', 'docs'])
     assert.deepEqual(indexAfter, indexBefore)
     assert.equal(statusAfter, statusBefore)
 })
@@ -161,7 +161,7 @@ test('即使 Git status 未变化也能检测工作树文件字节被改写', as
     assert.equal(runGit(repoRoot, 'status', '--porcelain=v1', '--untracked-files=all'), statusBefore)
 })
 
-test('根生成输入和快照检查入口会检查两个包，文档仍走快速路径', () => {
+test('根生成输入覆盖 UI、CLI 与 API 文档，快照检查代码仍不触发文档生成', () => {
     assert.deepEqual(
         determineAffectedPackages([
             'package.json',
@@ -172,10 +172,20 @@ test('根生成输入和快照检查入口会检查两个包，文档仍走快�
             'scripts/generation/check-staged-snapshot.mjs',
             'scripts/generation/check-staged-snapshot-support.mjs',
         ]),
+        ['ui', 'cli', 'docs'],
+    )
+    assert.deepEqual(
+        determineAffectedPackages([
+            '.husky/pre-commit',
+            'scripts/generation/check-staged-snapshot.mjs',
+            'scripts/generation/check-staged-snapshot-support.mjs',
+        ]),
         ['ui', 'cli'],
     )
     assert.deepEqual(determineAffectedPackages(['docs/notes.md']), [])
     assert.deepEqual(determineAffectedPackages(['scripts/generation/check-staged-snapshot.test.mjs']), [])
+    assert.deepEqual(determineAffectedPackages(['apps/docs/components/button.md']), ['docs'])
+    assert.deepEqual(determineAffectedPackages(['apps/docs/blog/announcement.md']), [])
 })
 
 test('跨文件未暂存 Shared 输入不会污染候选快照', async t => {
@@ -192,7 +202,7 @@ test('跨文件未暂存 Shared 输入不会污染候选快照', async t => {
             return successfulRun()
         }),
     })
-    assert.deepEqual(calls.map(call => call.packageName), ['ui'])
+    assert.deepEqual(calls.map(call => call.packageName), ['ui', 'docs'])
 })
 
 test('同一快照中的 CLI 生成检查使用候选 Shared 输入', async t => {
@@ -208,7 +218,57 @@ test('同一快照中的 CLI 生成检查使用候选 Shared 输入', async t =>
             return successfulRun()
         }),
     })
-    assert.deepEqual(calls.map(call => call.packageName), ['ui', 'cli'])
+    assert.deepEqual(calls.map(call => call.packageName), ['ui', 'cli', 'docs'])
+})
+
+test('API 文档生成检查读取候选快照并保持工作树与 index 不变', async t => {
+    const repoRoot = createRepo()
+    t.after(() => disposeRepo(repoRoot))
+    const contentPath = 'apps/docs/.vitepress/api-content/button.ts'
+    const generatedPath = 'apps/docs/.vitepress/api-generated/button.en.json'
+    stageFile(repoRoot, contentPath, 'export const content = "staged"\n')
+    stageFile(repoRoot, generatedPath, '{"description":"staged"}\n')
+    modifyWorktree(repoRoot, contentPath, 'export const content = "unstaged"\n')
+    modifyWorktree(repoRoot, generatedPath, '{"description":"unstaged"}\n')
+    const indexPath = join(repoRoot, runGit(repoRoot, 'rev-parse', '--git-path', 'index'))
+    const indexBefore = readFileSync(indexPath)
+    const statusBefore = runGit(repoRoot, 'status', '--porcelain=v1', '--untracked-files=all')
+    const calls = []
+
+    const result = await checkStagedSnapshot({
+        repoRoot,
+        generatorRunner: createRunner(calls, request => {
+            assert.equal(request.packageName, 'docs')
+            assert.equal(request.packageRoot, join(request.candidateRoot, 'packages/ui'))
+            assert.deepEqual(request.command.slice(-2), ['scripts/generate-component-api.ts', '--check'])
+            assert.equal(request.environment.BRUTX_CANDIDATE_ROOT, request.candidateRoot)
+            assert.equal(readFileSync(join(request.candidateRoot, contentPath), 'utf8'), 'export const content = "staged"\n')
+            assert.equal(readFileSync(join(request.candidateRoot, generatedPath), 'utf8'), '{"description":"staged"}\n')
+            return successfulRun()
+        }),
+    })
+
+    assert.equal(result.checked, true)
+    assert.deepEqual(result.packages, ['docs'])
+    assert.deepEqual(calls.map(call => call.packageName), ['docs'])
+    assert.deepEqual(readFileSync(indexPath), indexBefore)
+    assert.equal(runGit(repoRoot, 'status', '--porcelain=v1', '--untracked-files=all'), statusBefore)
+})
+
+test('API 文档生成失败指出只读检查命令', async t => {
+    const repoRoot = createRepo()
+    t.after(() => disposeRepo(repoRoot))
+    stageFile(repoRoot, 'apps/docs/.vitepress/api-content/button.ts', 'export const content = "staged"\n')
+
+    await assert.rejects(
+        checkStagedSnapshot({
+            repoRoot,
+            generatorRunner: createRunner([], () => failedRun('API_OUTPUT_STALE apps/docs/.vitepress/api-generated/button.en.json')),
+        }),
+        error => /apps\/docs\/.vitepress\/api-generated/.test(error.message)
+            && /pnpm --filter brutx-ui-vue docs:manifest`/.test(error.message)
+            && /pnpm --filter brutx-ui-vue docs:manifest:check/.test(error.message),
+    )
 })
 
 test('候选组件引用未跟踪手写依赖时明确失败', async t => {
@@ -233,8 +293,10 @@ test('候选依赖不会通过外部 workspace 符号链接回指工作树源码
     const repoRoot = createRepo()
     t.after(() => disposeRepo(repoRoot))
     mkdirSync(join(repoRoot, 'node_modules'), { recursive: true })
+    mkdirSync(join(repoRoot, 'packages/ui/node_modules'), { recursive: true })
     symlinkSync(join(repoRoot, 'packages/shared'), join(repoRoot, 'node_modules/brutx-shared-vue'))
     symlinkSync(join(repoRoot, 'packages/shared'), join(repoRoot, 'node_modules/legacy-shared'))
+    symlinkSync(join(repoRoot, 'packages/shared'), join(repoRoot, 'packages/ui/node_modules/brutx-shared-vue'))
     stageFile(repoRoot, UI_SOURCE, '<template>staged</template>\n')
 
     await checkStagedSnapshot({
@@ -242,6 +304,10 @@ test('候选依赖不会通过外部 workspace 符号链接回指工作树源码
         generatorRunner: createRunner([], ({ candidateRoot }) => {
             assert.equal(
                 realpathSync(join(candidateRoot, 'node_modules/brutx-shared-vue')),
+                realpathSync(join(candidateRoot, 'packages/shared')),
+            )
+            assert.equal(
+                realpathSync(join(candidateRoot, 'packages/ui/node_modules/brutx-shared-vue')),
                 realpathSync(join(candidateRoot, 'packages/shared')),
             )
             assert.equal(existsSync(join(candidateRoot, 'node_modules/legacy-shared')), false)
@@ -334,4 +400,3 @@ test('parseIndexEntries 正确解析包含制表符的相对路径', () => {
     assert.equal(entries[0].mode, '100755')
     assert.equal(entries[0].relativePath, 'packages/ui/src/components/example/runner\tinput.ts')
 })
-
