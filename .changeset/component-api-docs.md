@@ -1,5 +1,5 @@
 ---
-"brutx-ui-vue": minor
+"brutx-ui-vue": patch
 ---
 
 公开 API 移除 DialogTestFixture、NestedDialogTestFixture、SelectTestFixture 和 VirtualScrollTestFixture；内部测试继续通过源码路径使用夹具。组件 API 文档提供完整双语成员、类型定义、默认值及搜索定位。
