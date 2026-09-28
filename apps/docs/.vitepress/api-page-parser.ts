@@ -9,7 +9,12 @@ export interface ApiPageCatalogMember {
 export interface ApiPageCatalogGroup {
     id: string
     slug: string
-    scope?: string
+    scope?: 'component-page' | 'functional-page' | 'block'
+    functionalApi?: {
+        groupId: string
+        entry: string
+        members: string[]
+    }
     members: ApiPageCatalogMember[]
 }
 
@@ -214,6 +219,9 @@ export function resolveApiPageInvocation(
     const group = resolveGroup(name, catalog, position)
     if (group.scope === 'block') {
         throw diagnostic(position, 'API_CALL_BLOCK_GROUP', `ComponentApi 不能引用区块组 ${name}`)
+    }
+    if (group.scope === 'functional-page') {
+        throw diagnostic(position, 'API_CALL_FUNCTIONAL_GROUP', `函数式页面 ${name} 不能使用 ComponentApi 展示组件成员`)
     }
 
     assertValuePresent(attributes, 'subcomponent', position)

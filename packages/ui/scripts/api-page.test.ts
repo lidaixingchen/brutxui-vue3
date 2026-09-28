@@ -3,7 +3,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { createMarkdownRenderer, disposeMdItInstance } from '../../../apps/docs/node_modules/vitepress/dist/node/index.js'
-import { createApiPagePlugin, createApiPageSearchOptions } from '../../../apps/docs/.vitepress/api-page'
+import { createApiPagePlugin, createApiPageSearchOptions, parseApiPageMarkdown } from '../../../apps/docs/.vitepress/api-page'
 
 interface ApiPageTestEnvironment extends Record<string, unknown> {
     path: string
@@ -26,6 +26,13 @@ const catalog = {
                 { id: 'component:button/Button', name: 'Button' },
                 { id: 'component:button/ButtonGroup', name: 'ButtonGroup' },
             ],
+        },
+        {
+            id: 'component:message',
+            slug: 'message',
+            scope: 'functional-page',
+            functionalApi: { groupId: 'composable:useMessage', entry: 'useMessage', members: ['info', 'success', 'warning', 'error', 'show'] },
+            members: [{ id: 'component:message/MessageContainer', name: 'MessageContainer' }],
         },
     ],
 }
@@ -108,6 +115,32 @@ describe('VitePress 组件 API 页面编译与搜索', () => {
         const fourthMd = await createRenderer()
         expect(() => fourthMd.render('<ComponentApi name="button" :subcomponent="section" />', createEnvironment('components/button.md')))
             .toThrow(/\[API_CALL_DYNAMIC_PARAMETER\]/u)
+    })
+
+    it('函数式页面拒绝空的组件 API 面板', async () => {
+        const md = await createRenderer()
+        expect(() => md.render('<ComponentApi name="message" />', createEnvironment('components/message.md')))
+            .toThrow(/\[API_CALL_FUNCTIONAL_GROUP\]/u)
+    })
+
+    it('在 Markdown token 中忽略嵌套注释和 code/pre 伪调用，保留真实调用', async () => {
+        const md = await createRenderer()
+        const source = [
+            '<div>',
+            '<!-- <ComponentApi name="missing" /> -->',
+            '<Component<!--separator-->Api name="missing" />',
+            '<pre><ComponentApi name="missing" /></pre>',
+            '<code><ComponentApi name="missing" /></code>',
+            '<!-- <section><!-- <ComponentApi name="missing" /> --></section> -->',
+            '</div>',
+            '',
+            '<ComponentApi name="button" />',
+        ].join('\n')
+        const env = createEnvironment('components/button.md')
+
+        const parsed = parseApiPageMarkdown(source, env, md)
+
+        expect(parsed.calls.map(call => call.name)).toEqual(['button'])
     })
 
     it('本页生成数据缺失时使用组件调用位置报告错误', async () => {

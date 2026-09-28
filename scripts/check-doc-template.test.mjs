@@ -130,6 +130,76 @@ test('已迁移页面的中英文静态组件范围必须镜像', async () => {
   }
 })
 
+test('函数式 API 页面要求匹配的真实 API 表并拒绝组件成员面板', async () => {
+  const fixture = createFixture({
+    complete: true,
+    presentation: 'functional-api',
+    scope: 'functional-page',
+    functionalApi: { entry: 'useDemo', members: ['show'] },
+  })
+  try {
+    writePage(fixture, 'components/demo.md', [
+      '## 预览', '<ComponentPreview />', '',
+      '## 安装', '<InstallationTabs componentName="demo" />', '',
+      '## 用法', '示例。', '',
+      '## API 参考', '公开入口为 `useDemo()`。', '',
+      '## 组合式函数', '### useDemo', '| 方法 | 参数 | 说明 |', '| --- | --- | --- |', '| `show` | `options` | 显示提示 |', '',
+      '## 可访问性', '键盘可操作。',
+    ].join('\n'))
+    writePage(fixture, 'en/components/demo.md', [
+      '## Demo', '<ComponentPreview />', '',
+      '## Installation', '<InstallationTabs componentName="demo" />', '',
+      '## Usage', 'Example.', '',
+      '## API Reference', 'The public entry is `useDemo()`. ', '',
+      '## Composables', '### useDemo', '| Method | Parameters | Description |', '| --- | --- | --- |', '| `show` | `options` | Show a notification |', '',
+      '## Accessibility', 'Keyboard accessible.',
+    ].join('\n'))
+
+    const valid = await runDocTemplateCheck({ root: fixture.root })
+    assert.deepEqual(valid.diagnostics, [])
+
+    writePage(fixture, 'components/demo.md', [
+      '## 预览', '<ComponentPreview />', '',
+      '## 安装', '<InstallationTabs componentName="demo" />', '',
+      '## 用法', '示例。', '',
+      '## API 参考', '<ComponentApi name="demo" />', '',
+      '## 组合式函数', '### useDemo', '| 方法 | 参数 | 说明 |', '| --- | --- | --- |', '| `show` | `options` | 显示提示 |', '',
+      '## 可访问性', '键盘可操作。',
+    ].join('\n'))
+    const invalid = await runDocTemplateCheck({ root: fixture.root })
+    assert.ok(invalid.diagnostics.some(item => item.file === 'apps/docs/components/demo.md' && item.ruleId === 'API_CALL_FUNCTIONAL_GROUP'))
+    assert.ok(invalid.diagnostics.some(item => item.file === 'apps/docs/components/demo.md' && item.ruleId === 'doc-template/missing-functional-api'))
+  } finally {
+    rmSync(fixture.root, { recursive: true, force: true })
+  }
+})
+
+test('Markdown token 表格诊断忽略注释与嵌套标签文本并保留真实成员行', async () => {
+  const fixture = createFixture({ complete: true })
+  try {
+    const page = locale => [
+      locale === 'en' ? '## Demo' : '## 预览', '<ComponentPreview />', '',
+      locale === 'en' ? '## Installation' : '## 安装', '<InstallationTabs componentName="demo" />', '',
+      locale === 'en' ? '## Usage' : '## 用法', 'Example.', '',
+      locale === 'en' ? '## API Reference' : '## API 参考', '<!-- <ComponentApi name="missing" /> -->', '<ComponentApi name="demo" />', '',
+      locale === 'en' ? '## Props' : '## Props',
+      '<!--', '| Prop | Type | Description |', '| --- | --- | --- |', '| `value` | `string` | commented row |', '-->',
+      '| Prop | Type | Description |', '| --- | --- | --- |', '| <span><b>val</b></span>ue | `string` | markup text must not become a member name |', '| `value` | `string` | visible duplicate |', '',
+      locale === 'en' ? '## Accessibility' : '## 可访问性', 'Keyboard accessible.',
+    ].join('\n')
+    writePage(fixture, 'components/demo.md', page('zh'))
+    writePage(fixture, 'en/components/demo.md', page('en'))
+
+    const result = await runDocTemplateCheck({ root: fixture.root })
+    const duplicates = result.diagnostics.filter(item => item.ruleId === 'doc-template/api-member-table-duplicate')
+    assert.equal(duplicates.length, 2)
+    assert.deepEqual(duplicates.map(item => item.line), [23, 23])
+    assert.equal(result.diagnostics.some(item => item.ruleId === 'API_CALL_GROUP_UNKNOWN'), false)
+  } finally {
+    rmSync(fixture.root, { recursive: true, force: true })
+  }
+})
+
 test('区块文档继续使用手写 API 章节且不进入组件迁移门禁', async () => {
   const fixture = createFixture({ complete: false, scope: 'block' })
   try {
@@ -143,7 +213,7 @@ test('区块文档继续使用手写 API 章节且不进入组件迁移门禁', 
   }
 })
 
-function createFixture({ complete, presentation = 'component-api', scope = 'component-page' }) {
+function createFixture({ complete, presentation = 'component-api', scope = 'component-page', functionalApi }) {
   const root = mkdtempSync(path.join(os.tmpdir(), 'brutx-doc-template-'))
   const docsRoot = path.join(root, 'apps', 'docs')
   const generatedDir = path.join(docsRoot, '.vitepress', 'api-generated')
@@ -154,20 +224,23 @@ function createFixture({ complete, presentation = 'component-api', scope = 'comp
   mkdirSync(path.join(docsRoot, 'en', 'blocks'), { recursive: true })
   mkdirSync(generatedDir, { recursive: true })
   mkdirSync(contentDir, { recursive: true })
-  writeFileSync(path.join(contentDir, 'demo.ts'), `export default { complete: ${complete} }\n`)
+  if (scope !== 'functional-page') {
+    writeFileSync(path.join(contentDir, 'demo.ts'), `export default { complete: ${complete} }\n`)
+  }
   writeFileSync(path.join(generatedDir, 'catalog.json'), JSON.stringify({
     version: 1,
     groups: [{
       id: 'component:demo',
       slug: 'demo',
       scope,
+      ...(functionalApi ? { functionalApi } : {}),
       members: [
         { id: 'component:demo/Demo', name: 'Demo' },
         { id: 'component:demo/DemoExtra', name: 'DemoExtra' },
       ],
       pages: [
-        { locale: 'zh-CN', file: `apps/docs/${scope === 'block' ? 'blocks' : 'components'}/demo.md`, presentation, migration: presentation === 'component-api' ? 'complete' : 'pending' },
-        { locale: 'en', file: `apps/docs/en/${scope === 'block' ? 'blocks' : 'components'}/demo.md`, presentation, migration: presentation === 'component-api' ? 'complete' : 'pending' },
+        { locale: 'zh-CN', file: `apps/docs/${scope === 'block' ? 'blocks' : 'components'}/demo.md`, presentation, migration: ['component-api', 'functional-api'].includes(presentation) ? 'complete' : 'pending' },
+        { locale: 'en', file: `apps/docs/en/${scope === 'block' ? 'blocks' : 'components'}/demo.md`, presentation, migration: ['component-api', 'functional-api'].includes(presentation) ? 'complete' : 'pending' },
       ],
     }],
   }))

@@ -84,5 +84,17 @@
     "upload",
     "virtual-scroll",
     "watermark"
-  ]
+  ],
+  "functionalGroups": {
+    "message": {
+      "entry": "useMessage",
+      "members": [
+        "info",
+        "success",
+        "warning",
+        "error",
+        "show"
+      ]
+    }
+  }
 }

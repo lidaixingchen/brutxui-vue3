@@ -101,21 +101,11 @@ function close() {
 </template>
 ```
 
+<span id="props"></span>
+
 ## API 参考
 
-<ComponentApi name="message" />
-
-## Props
-
-Message 为函数式调用（`message.success(options)` / `useMessage()` 的 `show(options)`），入参即 `MessageOptions`，核心选项：
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `type` | `'info' \| 'success' \| 'warning' \| 'error'` | `'info'` | 消息类型 |
-| `title` | `string` | `''` | 标题文本 |
-| `description` | `string` | — | 描述文本 |
-| `duration` | `number` | `3000` | 自动关闭时长（毫秒），设为 `0` 不自动关闭 |
-| `closable` | `boolean` | `true` | 是否显示关闭按钮 |
+`MessageContainer` 是公开导出的消息渲染容器，没有可配置的组件属性。消息操作入口是 [`useMessage()`](#usemessage)，其快捷方法、`show(options)` 和完整 `MessageOptions` 定义见下文。
 
 ## 数据类型
 

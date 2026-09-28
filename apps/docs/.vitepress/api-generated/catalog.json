@@ -3527,8 +3527,19 @@
     {
       "id": "component:message",
       "slug": "message",
-      "scope": "component-page",
+      "scope": "functional-page",
       "primaryMemberId": "component:message/MessageContainer",
+      "functionalApi": {
+        "entry": "useMessage",
+        "members": [
+          "info",
+          "success",
+          "warning",
+          "error",
+          "show"
+        ],
+        "groupId": "composable:useMessage"
+      },
       "members": [
         {
           "id": "component:message/MessageContainer",
@@ -3544,7 +3555,7 @@
           "locale": "zh-CN",
           "file": "apps/docs/components/message.md",
           "exists": true,
-          "presentation": "component-api",
+          "presentation": "functional-api",
           "migration": "complete",
           "pending": []
         },
@@ -3552,7 +3563,7 @@
           "locale": "en",
           "file": "apps/docs/en/components/message.md",
           "exists": true,
-          "presentation": "component-api",
+          "presentation": "functional-api",
           "migration": "complete",
           "pending": []
         }

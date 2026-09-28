@@ -1,6 +1,6 @@
 import path from 'node:path'
 import ts from 'typescript'
-import { afterAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { apiAnchorPart, apiMemberId, type ApiComponent, type ApiKind, type ApiMember } from '../../../../apps/docs/.vitepress/api-types.js'
 import type { CatalogMember } from './catalog.js'
 import { collectDefaultExpressions, createApiExtractor } from './extract.js'
@@ -8,15 +8,22 @@ import { isVueRefType } from './type-shape.js'
 import { evaluateFactoryExpression, evaluateStaticExpression, isFactoryExpression } from './default-static-evaluator.js'
 
 const ROOT = path.resolve(__dirname, '../../../..')
-const extractor = createApiExtractor(ROOT)
+const API_EXTRACTOR_INITIALIZATION_TIMEOUT_MS = 90_000
+let extractor: ReturnType<typeof createApiExtractor> | undefined
 
-afterAll(() => extractor.dispose())
+beforeAll(() => {
+    extractor = createApiExtractor(ROOT)
+    extractor.extract(catalogMember('Button', 'packages/ui/src/components/button/Button.vue'))
+}, API_EXTRACTOR_INITIALIZATION_TIMEOUT_MS)
+
+afterAll(() => extractor?.dispose())
 
 function catalogMember(name: string, source: string): CatalogMember {
     return { id: `component:${name.toLowerCase()}/${name}`, name, source, sourceName: 'default', classification: 'component' }
 }
 
 function extract(name: string, source: string): ApiComponent {
+    if (!extractor) throw new Error('API extractor is not initialized')
     return extractor.extract(catalogMember(name, source))
 }
 

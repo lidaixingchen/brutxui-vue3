@@ -102,21 +102,11 @@ function close() {
 </template>
 ```
 
+<span id="props"></span>
+
 ## API Reference
 
-<ComponentApi name="message" />
-
-## Props
-
-Message is invoked as a function (`message.success(options)` / `useMessage()` `show(options)`); the argument is `MessageOptions`. Key options:
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `type` | `'info' \| 'success' \| 'warning' \| 'error'` | `'info'` | Message type |
-| `title` | `string` | `''` | Title text |
-| `description` | `string` | — | Description text |
-| `duration` | `number` | `3000` | Auto-close delay (ms); `0` disables auto-close |
-| `closable` | `boolean` | `true` | Whether to show the close button |
+`MessageContainer` is a publicly exported message host with no configurable component props. The entry for message operations is [`useMessage()`](#usemessage), whose shortcuts, `show(options)`, and full `MessageOptions` definition are documented below.
 
 ## Data Types
 

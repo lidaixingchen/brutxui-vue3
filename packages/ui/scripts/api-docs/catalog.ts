@@ -50,16 +50,29 @@ export interface CatalogPage {
     locale: typeof DOC_LOCALES[number]
     file: string
     exists: boolean
-    presentation: 'component-api' | 'manual' | 'missing'
+    /** 预期展示方式；实际 Markdown 调用由页面编译器验证。 */
+    presentation: 'component-api' | 'functional-api' | 'manual' | 'missing'
     migration: 'pending' | 'complete'
     pending: string[]
+}
+
+export interface CatalogFunctionalApi {
+    groupId: string
+    entry: string
+    members: string[]
+}
+
+interface CatalogFunctionalApiConfig {
+    entry: string
+    members: string[]
 }
 
 export interface CatalogGroup {
     id: string
     slug: string
-    scope: 'component-page' | 'block'
+    scope: 'component-page' | 'functional-page' | 'block'
     primaryMemberId: string | null
+    functionalApi?: CatalogFunctionalApi
     members: CatalogMember[]
     supportingExports: Array<{ name: string; source: string; sourceName: string; kind: string }>
     pages: CatalogPage[]
@@ -77,38 +90,19 @@ function sourcePath(group: string, source: string): string {
         : source
 }
 
-function pageContent(root: string, file: string): string | undefined {
-    const absolute = path.join(root, file)
-    return fs.existsSync(absolute) ? fs.readFileSync(absolute, 'utf8') : undefined
-}
-
-/** 此处仅盘点展示方式；真实调用和成员参数由页面编译器负责校验。 */
-function usesComponentApi(content: string): boolean {
-    const lines = content.split(/\r?\n/u)
-    let fence: { marker: string; length: number } | undefined
-    const prose: string[] = []
-    for (const line of lines) {
-        const match = /^\s*(`{3,}|~{3,})/u.exec(line)
-        if (match) {
-            const marker = match[1][0]
-            const length = match[1].length
-            if (!fence) fence = { marker, length }
-            else if (fence.marker === marker && length >= fence.length) fence = undefined
-            continue
-        }
-        if (!fence) prose.push(line)
-    }
-    return /<ComponentApi\b/u.test(prose.join('\n').replace(/<!--[\s\S]*?-->/gu, ''))
-}
-
 export function collectApiCatalog(root: string, contract: ApiContract): ApiCatalog {
     const diagnostics: CatalogDiagnostic[] = []
     const groups: CatalogGroup[] = []
     const mappedPages = new Set<string>()
     const migrationFile = path.join(root, MIGRATION_PATH)
-    const completedGroups = new Set<string>(fs.existsSync(migrationFile)
-        ? (JSON.parse(fs.readFileSync(migrationFile, 'utf8')) as { completedGroups: string[] }).completedGroups
-        : [])
+    const migration = fs.existsSync(migrationFile)
+        ? JSON.parse(fs.readFileSync(migrationFile, 'utf8')) as {
+            completedGroups: string[]
+            functionalGroups?: Record<string, CatalogFunctionalApiConfig>
+        }
+        : { completedGroups: [] as string[] }
+    const completedGroups = new Set<string>(migration.completedGroups)
+    const functionalGroups = new Map(Object.entries(migration.functionalGroups ?? {}))
     const report = (diagnostic: Omit<CatalogDiagnostic, 'severity'>): void => {
         diagnostics.push({ ...diagnostic, severity: 'error' })
     }
@@ -117,9 +111,21 @@ export function collectApiCatalog(root: string, contract: ApiContract): ApiCatal
         const groupId = entry.id
         const name = entry.subpath.replace(/^\.\//u, '')
         const metadata = COMPONENT_METADATA[name]
-        const scope = metadata?.kind === 'block' ? 'block' : 'component-page'
         const slug = metadata?.docsSlug ?? name
+        const functionalApiConfig = functionalGroups.get(slug)
+        const functionalApiGroup = functionalApiConfig
+            ? contract.entries.find(item => item.kind === 'composable' && item.exports.some(exported => exported.kind === 'value' && exported.publicName === functionalApiConfig.entry))
+            : undefined
+        const functionalApi = functionalApiConfig && functionalApiGroup
+            ? { ...functionalApiConfig, groupId: functionalApiGroup.id }
+            : undefined
+        const scope = metadata?.kind === 'block' ? 'block' : functionalApiConfig ? 'functional-page' : 'component-page'
         if (!metadata) report({ ruleId: 'API_METADATA_MISSING', groupId, file: 'packages/ui/api-contract.ts', message: `公开组件 ${name} 缺少组件元信息` })
+        if (functionalApiConfig && metadata?.kind === 'block') report({ ruleId: 'API_FUNCTIONAL_GROUP_BLOCK', groupId, file: MIGRATION_PATH, message: `区块 ${slug} 不能声明为函数式组件页面` })
+        if (functionalApiConfig && !completedGroups.has(slug)) report({ ruleId: 'API_FUNCTIONAL_GROUP_INCOMPLETE', groupId, file: MIGRATION_PATH, message: `函数式页面 ${slug} 必须登记为已完成迁移` })
+        if (functionalApiConfig && !functionalApiGroup) {
+            report({ ruleId: 'API_FUNCTIONAL_ENTRY_UNKNOWN', groupId, member: functionalApiConfig.entry, file: MIGRATION_PATH, message: `找不到函数式 API 入口 ${functionalApiConfig.entry} 的公开组合式函数导出` })
+        }
 
         const members: CatalogMember[] = []
         const supportingExports: CatalogGroup['supportingExports'] = []
@@ -141,20 +147,27 @@ export function collectApiCatalog(root: string, contract: ApiContract): ApiCatal
         if (!primary) report({ ruleId: 'API_PRIMARY_MEMBER_MISSING', groupId, file: 'packages/ui/api-contract.ts', message: `主成员 ${primaryName} 不在公开组件清单中` })
         const ordered = primary ? [primary, ...members.filter(member => member !== primary)] : members
         const pages: CatalogPage[] = []
-        if (scope === 'component-page') {
+        if (scope !== 'block') {
             for (const locale of DOC_LOCALES) {
                 const file = `apps/docs/${LOCALE_DIRECTORIES[locale]}/${slug}.md`
                 if (mappedPages.has(file)) report({ ruleId: 'API_PAGE_DUPLICATE', groupId, file, message: '页面映射到多个组件组' })
                 mappedPages.add(file)
-                const content = pageContent(root, file)
-                if (content === undefined) report({ ruleId: 'API_PAGE_MISSING', groupId, file, message: '组件缺少对应语言页面' })
-                const presentation = content === undefined ? 'missing' : usesComponentApi(content) ? 'component-api' : 'manual'
+                const exists = fs.existsSync(path.join(root, file))
+                if (!exists) report({ ruleId: 'API_PAGE_MISSING', groupId, file, message: '组件缺少对应语言页面' })
+                const presentation = !exists
+                    ? 'missing'
+                    : scope === 'functional-page'
+                        ? 'functional-api'
+                        : completedGroups.has(slug) ? 'component-api' : 'manual'
                 const complete = completedGroups.has(slug)
-                if (complete && presentation !== 'component-api') report({ ruleId: 'API_MIGRATION_PRESENTATION_MISSING', groupId, file, message: '已完成迁移的页面缺少 ComponentApi 调用' })
-                pages.push({ locale, file, exists: content !== undefined, presentation, migration: complete ? 'complete' : 'pending', pending: complete ? [] : ['公开成员覆盖核对', '结构与双语语义核对', '正文与锚点保真核对'] })
+                const expectedPresentation = scope === 'functional-page' ? 'functional-api' : 'component-api'
+                if (complete && presentation !== expectedPresentation) {
+                    report({ ruleId: 'API_MIGRATION_PRESENTATION_MISSING', groupId, file, message: `已完成迁移的页面必须使用 ${expectedPresentation} 展示` })
+                }
+                pages.push({ locale, file, exists, presentation, migration: complete ? 'complete' : 'pending', pending: complete ? [] : ['公开成员覆盖核对', '结构与双语语义核对', '正文与锚点保真核对'] })
             }
         }
-        groups.push({ id: groupId, slug, scope, primaryMemberId: primary?.id ?? null, members: ordered, supportingExports, pages })
+        groups.push({ id: groupId, slug, scope, primaryMemberId: primary?.id ?? null, ...(functionalApi ? { functionalApi } : {}), members: ordered, supportingExports, pages })
     }
 
     for (const directory of Object.values(LOCALE_DIRECTORIES)) {
@@ -167,7 +180,10 @@ export function collectApiCatalog(root: string, contract: ApiContract): ApiCatal
         }
     }
     for (const slug of completedGroups) {
-        if (!groups.some(group => group.slug === slug && group.scope === 'component-page')) report({ ruleId: 'API_MIGRATION_GROUP_UNKNOWN', file: MIGRATION_PATH, message: `迁移记录中的组件组 ${slug} 不属于组件页面范围` })
+        if (!groups.some(group => group.slug === slug && group.scope !== 'block')) report({ ruleId: 'API_MIGRATION_GROUP_UNKNOWN', file: MIGRATION_PATH, message: `迁移记录中的组件组 ${slug} 不属于组件页面范围` })
+    }
+    for (const slug of functionalGroups.keys()) {
+        if (!groups.some(group => group.slug === slug && group.scope === 'functional-page')) report({ ruleId: 'API_FUNCTIONAL_GROUP_UNKNOWN', file: MIGRATION_PATH, message: `函数式页面 ${slug} 不属于公开组件页面范围` })
     }
     groups.sort((left, right) => left.id.localeCompare(right.id, 'en'))
     diagnostics.sort((left, right) => `${left.file}:${left.ruleId}:${left.member ?? ''}`.localeCompare(`${right.file}:${right.ruleId}:${right.member ?? ''}`, 'en'))
