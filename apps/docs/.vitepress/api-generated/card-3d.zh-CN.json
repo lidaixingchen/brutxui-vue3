@@ -1,0 +1,385 @@
+{
+  "id": "component:card-3d",
+  "name": "card-3d",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:card-3d/Card3D",
+      "name": "Card3D",
+      "source": {
+        "file": "packages/ui/src/components/card-3d/Card3D.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acard_2D3d_2FCard3D-props-maxRotation",
+          "name": "maxRotation",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "限制指针移动产生的最大 3D 偏转角度，单位为度。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-3d/Card3D.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "15",
+              "source": {
+                "file": "packages/ui/src/components/card-3d/Card3D.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "15"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2D3d_2FCard3D-props-perspective",
+          "name": "perspective",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置 3D 透视深度，单位为像素；数值越小透视效果越强。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-3d/Card3D.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "CARD_3D_DEFAULT_PERSPECTIVE_PX",
+              "source": {
+                "file": "packages/ui/src/components/card-3d/Card3D.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "1000"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2D3d_2FCard3D-props-scale",
+          "name": "scale",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "悬停时卡片的缩放比例。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-3d/Card3D.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "1.02",
+              "source": {
+                "file": "packages/ui/src/components/card-3d/Card3D.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "1.02"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2D3d_2FCard3D-props-shadowOffset",
+          "name": "shadowOffset",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "控制随指针移动的投影最大偏移距离，单位为像素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-3d/Card3D.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "10",
+              "source": {
+                "file": "packages/ui/src/components/card-3d/Card3D.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "10"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2D3d_2FCard3D-props-shadow",
+          "name": "shadow",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"xl\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"xl\""
+            ],
+            "references": []
+          },
+          "description": "设置默认、大或超大投影样式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-3d/Card3D.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/card-3d/Card3D.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2D3d_2FCard3D-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"accent\" | \"muted\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"muted\"",
+              "\"primary\""
+            ],
+            "references": []
+          },
+          "description": "设置卡片背景的默认、主色、强调色或柔和色变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-3d/Card3D.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/card-3d/Card3D.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2D3d_2FCard3D-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用指针驱动的 3D 动效，使卡片保持静态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-3d/Card3D.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/card-3d/Card3D.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2D3d_2FCard3D-props-clickable",
+          "name": "clickable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用按钮式点击交互、键盘激活和 click 事件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-3d/Card3D.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/card-3d/Card3D.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2D3d_2FCard3D-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "为可点击卡片指定无障碍名称；省略时由卡片插槽内容提供名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-3d/Card3D.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/card-3d/Card3D.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2D3d_2FCard3D-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到卡片根元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-3d/Card3D.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/card-3d/Card3D.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2D3d_2FCard3D-events-click",
+          "name": "click",
+          "kind": "events",
+          "type": {
+            "text": "[event: MouseEvent | KeyboardEvent]",
+            "literals": [],
+            "references": []
+          },
+          "description": "可点击且未禁用时，在指针点击或 Enter、Space 键激活后发出对应事件对象。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-3d/Card3D.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acard_2D3d_2FCard3D-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "渲染卡片主体内容，可组合任意自定义内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-3d/Card3D.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

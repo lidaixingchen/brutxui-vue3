@@ -1,0 +1,505 @@
+{
+  "id": "component:toast",
+  "name": "toast",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:toast/Toast",
+      "name": "Toast",
+      "source": {
+        "file": "packages/ui/src/components/toast/Toast.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atoast_2FToast-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"success\" | \"warning\" | \"info\" | \"error\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"error\"",
+              "\"info\"",
+              "\"success\"",
+              "\"warning\""
+            ],
+            "references": []
+          },
+          "description": "设置提示的语义和视觉类型，如成功、警告、信息或错误。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/toast/Toast.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToast-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "设置提示容器的尺寸变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/toast/Toast.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToast-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "提示标题文字；省略时不渲染标题区域。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/toast/Toast.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToast-props-description",
+          "name": "description",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "提示正文说明文字；省略时不渲染描述区域。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/toast/Toast.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToast-props-duration",
+          "name": "duration",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "提示自动关闭前的显示时长，单位为毫秒；设为 0 时不自动关闭。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_TOAST_DURATION",
+              "source": {
+                "file": "packages/ui/src/components/toast/Toast.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "5000"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToast-props-pauseOnHover",
+          "name": "pauseOnHover",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "鼠标悬停时暂停自动关闭计时和进度动画，离开后继续剩余计时。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/toast/Toast.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToast-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到提示根容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/toast/Toast.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToast-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "设置类型图标的尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'xl'",
+              "source": {
+                "file": "packages/ui/src/components/toast/Toast.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"xl\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToast-props-count",
+          "name": "count",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "显示同类提示聚合数量；大于 1 时呈现计数标记。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "1",
+              "source": {
+                "file": "packages/ui/src/components/toast/Toast.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "1"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToast-events-close",
+          "name": "close",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "提示离场动画完成后发出，用于通知调用方移除该提示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atoast_2FToast-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "显示在标题和描述之后的自定义补充内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:toast/ToastContainer",
+      "name": "ToastContainer",
+      "source": {
+        "file": "packages/ui/src/components/toast/ToastContainer.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atoast_2FToastContainer-props-position",
+          "name": "position",
+          "kind": "props",
+          "type": {
+            "text": "ToastPosition | undefined",
+            "literals": [
+              "\"bottom-center\"",
+              "\"bottom-left\"",
+              "\"bottom-right\"",
+              "\"top-center\"",
+              "\"top-left\"",
+              "\"top-right\""
+            ],
+            "references": [
+              {
+                "name": "ToastPosition",
+                "text": "export type ToastPosition =\n    | 'top-left'\n    | 'top-center'\n    | 'top-right'\n    | 'bottom-left'\n    | 'bottom-center'\n    | 'bottom-right'\n    | { x: number; y: number; anchor?: 'top-left' | 'bottom-left' | 'top-right' | 'bottom-right' }",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomposables%2FuseToast.ts%23ToastPosition"
+              }
+            ]
+          },
+          "description": "设置提示容器在视口中的预设位置，或通过 x、y 和 anchor 指定偏移位置。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/ToastContainer.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'bottom-right'",
+              "source": {
+                "file": "packages/ui/src/components/toast/ToastContainer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"bottom-right\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToastContainer-props-stack",
+          "name": "stack",
+          "kind": "props",
+          "type": {
+            "text": "ToastStackOptions | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "ToastStackOptions",
+                "text": "export interface ToastStackOptions {\n    maxVisible?: number\n    gap?: number\n    expandDirection?: 'down' | 'up'\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomposables%2FuseToast.ts%23ToastStackOptions"
+              }
+            ]
+          },
+          "description": "设置可见提示数量上限、提示间距以及容器展开方向。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/ToastContainer.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => ({\n        maxVisible: DEFAULT_TOAST_MAX_VISIBLE,\n        gap: DEFAULT_TOAST_GAP_PX,\n        expandDirection: DEFAULT_EXPAND_DIRECTION,\n    })",
+              "source": {
+                "file": "packages/ui/src/components/toast/ToastContainer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "{ \"expandDirection\": \"down\", \"gap\": 12, \"maxVisible\": 5 }"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToastContainer-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到固定定位提示容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/ToastContainer.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/toast/ToastContainer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToastContainer-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "自定义容器内容；提供时由调用方渲染和管理提示列表，未提供时容器自动渲染 useToast 中的提示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/ToastContainer.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

@@ -112,34 +112,13 @@ BlockSpinner、BarsSpinner 和 DotsSpinner 支持以下颜色方案：
 | BarsSpinner | `animate-pulse` | 脉冲动画，5个条形依次延迟 |
 | DotsSpinner | `animate-bounce` | 弹跳动画，3个圆点依次延迟 |
 
-## Props
+## API 参考
 
-### Spinner
+<span id="spinner"></span>
+<span id="blockspinner-barsspinner"></span>
+<span id="dotsspinner-1"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | 尺寸 |
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 颜色变体 |
-| `label` | `string` | `t('spinner.loading')` | 无障碍标签文本 |
-| `class` | `string` | — | 自定义样式类 |
-
-### BlockSpinner / BarsSpinner
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | 尺寸 |
-| `color` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'mixed'` | `'default'` | 颜色方案，`mixed` 会循环使用多种颜色 |
-| `label` | `string` | `t('spinner.loading')` | 无障碍标签文本 |
-| `class` | `string` | — | 自定义样式类 |
-
-### DotsSpinner
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | 尺寸 |
-| `color` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 颜色方案 |
-| `label` | `string` | `t('spinner.loading')` | 无障碍标签文本 |
-| `class` | `string` | — | 自定义样式类 |
+<ComponentApi name="spinner" />
 
 ## 可访问性
 

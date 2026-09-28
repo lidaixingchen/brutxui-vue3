@@ -1,0 +1,657 @@
+{
+  "id": "component:tabs",
+  "name": "tabs",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:tabs/Tabs",
+      "name": "Tabs",
+      "source": {
+        "file": "packages/ui/src/components/tabs/Tabs.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atabs_2FTabs-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The active tab value in controlled mode, supporting v-model. When undefined, the component maintains selection internally.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/Tabs.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tabs/Tabs.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabs-props-defaultValue",
+          "name": "defaultValue",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The initial uncontrolled tab value, also used as a fallback when the current selection disappears from the data list.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/Tabs.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tabs/Tabs.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "When omitted, data-driven mode uses the first tabs item value; composition mode leaves initial state handling to TabsRoot."
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabs-props-tabs",
+          "name": "tabs",
+          "kind": "props",
+          "type": {
+            "text": "TabItem[] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "TabItem",
+                "text": "export interface TabItem {\n    label: string\n    value: string\n    disabled?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Ftabs%2Ftypes.ts%23TabItem"
+              }
+            ]
+          },
+          "description": "The tab data list. A non-empty list renders triggers and default panels, an empty list shows a localized empty state, and omission enables composition through the default slot.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/Tabs.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tabs/Tabs.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabs-props-orientation",
+          "name": "orientation",
+          "kind": "props",
+          "type": {
+            "text": "\"vertical\" | \"horizontal\" | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "The root tab orientation for layout state and keyboard navigation, also providing the default orientation for TabsList.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/Tabs.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'horizontal'",
+              "source": {
+                "file": "packages/ui/src/components/tabs/Tabs.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"horizontal\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabs-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes applied to the outer container when tabs is provided, or to TabsRoot in composition mode.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/Tabs.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tabs/Tabs.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabs-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the new string value when the active tab changes, also updating internal selection in uncontrolled mode.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/Tabs.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atabs_2FTabs-slots-header",
+          "name": "header",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Content above the tabs in data-driven mode, also rendered when tabs is an empty array.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/Tabs.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atabs_2FTabs-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Contains the complete tab structure in composition mode. In data-driven mode, replaces the generated panels and should supply TabsContent components. It is not rendered for an empty tabs array.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/Tabs.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atabs_2FTabs-slots-footer",
+          "name": "footer",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Content below the tabs in data-driven mode, also rendered when tabs is an empty array.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/Tabs.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:tabs/TabsContent",
+      "name": "TabsContent",
+      "source": {
+        "file": "packages/ui/src/components/tabs/TabsContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atabs_2FTabsContent-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The tab value associated with this panel, matching its TabsTrigger value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsContent.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabsContent-props-forceMount",
+          "name": "forceMount",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Keeps the panel mounted for external animation control or to retain the panel instance.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsContent.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tabs/TabsContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabsContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes merged onto the tab panel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsContent.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tabs/TabsContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabsContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The content associated with this tab.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:tabs/TabsList",
+      "name": "TabsList",
+      "source": {
+        "file": "packages/ui/src/components/tabs/TabsList.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atabs_2FTabsList-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "The size variant of the tab list container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsList.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/tabs/TabsList.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabsList-props-orientation",
+          "name": "orientation",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"vertical\" | \"horizontal\" | null | undefined> | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "Overrides the list layout styles and data-orientation without changing the root Tabs keyboard orientation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsList.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tabs/TabsList.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "Resolves from this prop, then the parent Tabs orientation, then horizontal."
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabsList-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes merged onto the tab list container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsList.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tabs/TabsList.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabsList-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The tab trigger list, typically containing TabsTrigger components.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsList.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:tabs/TabsTrigger",
+      "name": "TabsTrigger",
+      "source": {
+        "file": "packages/ui/src/components/tabs/TabsTrigger.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atabs_2FTabsTrigger-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The unique string identifier linking this tab to its TabsContent.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsTrigger.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabsTrigger-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables this tab trigger and prevents user activation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsTrigger.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/tabs/TabsTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabsTrigger-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"success\" | \"accent\" | \"slots\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\"",
+              "\"slots\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "The trigger visual variant, controlling active-state colors and decoration.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsTrigger.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/tabs/TabsTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabsTrigger-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes merged onto the tab trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsTrigger.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tabs/TabsTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabsTrigger-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Text, icons, or other label content inside the tab trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsTrigger.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

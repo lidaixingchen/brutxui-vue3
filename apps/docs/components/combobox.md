@@ -142,32 +142,12 @@ interface ComboboxOption {
 }
 ```
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `options` | `ComboboxOption[]` | —（必填） | 选项列表 |
-| `multiple` | `boolean` | `false` | 是否启用多选模式 |
-| `modelValue` | `string \| string[] \| undefined` | 单选：`undefined`；多选：`[]` | 选中值，支持 v-model。多选模式下为 `string[]` |
-| `open` | `boolean` | `undefined` | 下拉是否展开。传入后为受控模式：关闭动作仅当父组件绑定 `v-model:open` 或监听 `update:open` 并回写时才生效 |
-| `placeholder` | `string` | locale: `combobox.placeholder` / `combobox.multiPlaceholder` | 占位符文本，根据模式自动切换 |
-| `searchPlaceholder` | `string` | locale: `combobox.searchPlaceholder` | 搜索框占位符 |
-| `emptyText` | `string` | locale: `combobox.emptyText` | 无匹配结果时的提示文本 |
-| `disabled` | `boolean` | `false` | 是否禁用 |
-| `loading` | `boolean` | `false` | 是否显示加载状态 |
-| `creative` | `boolean` | `false` | 是否允许创建新选项 |
-| `maxDisplay` | `number` | `3` | 多选模式下最多显示的选中标签数量 |
-| `ariaLabel` | `string` | — | 无障碍标签 |
-| `iconSize` | `IconSize` | `'default'` | 图标尺寸 |
-| `class` | `string` | — | 自定义样式类 |
+<span id="事件"></span>
+<span id="方法-defineexpose"></span>
 
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:modelValue` | `string \| string[] \| undefined` | 选中值变化时触发。单选模式下再次选择相同选项会取消选中（值变为 `undefined`）；多选模式下切换选中/取消选中对应选项 |
-| `update:open` | `boolean` | 下拉展开/关闭状态变化时触发 |
-| `create` | `string` | 点击「创建」选项时触发，参数为去除首尾空格后的搜索文本。组件不更新 `modelValue`——需在回调中把新选项加入 `options` 并同步 `modelValue`（见常见问题） |
+<ComponentApi name="combobox" />
 
 ## 交互
 
@@ -183,16 +163,9 @@ interface ComboboxOption {
 - **键盘操作**：支持 `↑` / `↓` 上下移动焦点，`Enter` 选中当前项，`Escape` 关闭下拉
 - **ARIA 属性**：通过 `ariaLabel` 属性提供无障碍标签
 
-## 方法（defineExpose）
+## 程序化控制
 
-通过 `ref` 访问组件实例后可调用以下方法：
-
-| 属性/方法 | 类型 | 说明 |
-| --- | --- | --- |
-| `open` | `Ref<boolean>` | 下拉面板是否展开 |
-| `searchQuery` | `Ref<string>` | 当前搜索关键词 |
-| `selectedValue` | `ComputedRef<string \| string[] \| undefined>` | 当前选中值（只读） |
-| `focus` | `() => void` | 聚焦触发器 |
+通过 ref 获取组件实例后，可读取 API 参考中列出的状态，并调用焦点方法。
 
 ```vue
 <script setup>

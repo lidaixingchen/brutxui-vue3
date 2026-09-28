@@ -106,24 +106,11 @@ interface StepperStep {
 import type { StepperStep } from 'brutx-ui-vue'
 ```
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `steps` | `StepperStep[]` | — | 步骤数据列表 |
-| `modelValue` | `number` | — | 当前步骤索引（0 开始，v-model） |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 布局方向 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 步骤点尺寸 |
-| `variant` | `'default' \| 'primary' \| 'accent'` | `'default'` | 激活步骤的颜色变体 |
-| `clickable` | `boolean` | `true` | 是否允许点击步骤点跳转 |
-| `class` | `string` | — | 自定义样式类 |
+<span id="事件"></span>
 
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:modelValue` | `number` | 步骤变更（v-model） |
-| `step-click` | `number` | 点击某步骤节点时触发 |
+<ComponentApi name="stepper" />
 
 ## 插槽
 
@@ -151,18 +138,7 @@ import type { StepperStep } from 'brutx-ui-vue'
 | `upcoming` | 默认背景色 + 半透明 | 索引 > 当前步骤 |
 
 ## 方法（defineExpose）
-
-通过 `ref` 访问组件实例后可调用以下方法：
-
-| 属性/方法 | 类型 | 说明 |
-| --- | --- | --- |
-| `currentStep` | `ComputedRef<number>` | 当前步骤索引（只读） |
-| `totalSteps` | `ComputedRef<number>` | 总步骤数（只读） |
-| `isFirstStep` | `ComputedRef<boolean>` | 是否为第一步（只读） |
-| `isLastStep` | `ComputedRef<boolean>` | 是否为最后一步（只读） |
-| `goToStep` | `(index: number) => void` | 跳转到指定步骤 |
-| `nextStep` | `() => void` | 前进一步 |
-| `previousStep` | `() => void` | 后退一步 |
+实例方法和只读状态见上方 API 参考。通过 `ref` 调用实例方法：
 
 ```vue
 <script setup>

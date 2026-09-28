@@ -1,0 +1,266 @@
+{
+  "id": "component:tour",
+  "name": "tour",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:tour/Tour",
+      "name": "Tour",
+      "source": {
+        "file": "packages/ui/src/components/tour/Tour.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atour_2FTour-props-steps",
+          "name": "steps",
+          "kind": "props",
+          "type": {
+            "text": "TourStep[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "TourStep",
+                "text": "export interface TourStep {\n    target: string | HTMLElement\n    title?: string\n    description?: string\n    placement?: 'top' | 'bottom' | 'left' | 'right'\n    mask?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Ftour%2Ftypes.ts%23TourStep"
+              }
+            ]
+          },
+          "description": "按顺序提供导览步骤；每一步通过 CSS 选择器或 HTMLElement 指定目标，并可带标题、说明、显示方向及遮罩设置。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tour/types.ts",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atour_2FTour-props-mask",
+          "name": "mask",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "设置步骤目标之外是否显示遮罩；默认显示，可由当前 TourStep.mask 单独覆盖。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tour/types.ts",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/tour/Tour.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atour_2FTour-props-scrollIntoViewOptions",
+          "name": "scrollIntoViewOptions",
+          "kind": "props",
+          "type": {
+            "text": "ScrollIntoViewOptions | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置切换步骤前滚动目标元素时传给 scrollIntoView 的选项；未指定时使用 block: center、inline: nearest。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tour/types.ts",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tour/Tour.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atour_2FTour-props-current",
+          "name": "current",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前导览步骤的从 0 开始索引，可通过 v-model:current 受控同步，默认从第一步开始。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tour/Tour.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0",
+              "source": {
+                "file": "packages/ui/src/components/tour/Tour.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atour_2FTour-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制导览是否打开，可通过 v-model:open 受控同步；默认打开。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tour/Tour.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/tour/Tour.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atour_2FTour-events-close",
+          "name": "close",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "用户跳过或完成导览并关闭时发出。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tour/Tour.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atour_2FTour-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "导览打开状态变化时发出新布尔值，用于同步 v-model:open。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tour/Tour.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atour_2FTour-events-finish",
+          "name": "finish",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "用户在最后一步选择结束时发出。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tour/Tour.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atour_2FTour-events-update_3Acurrent",
+          "name": "update:current",
+          "kind": "events",
+          "type": {
+            "text": "[value: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前步骤变化时发出新索引，用于同步 v-model:current。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tour/Tour.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atour_2FTour-events-skip",
+          "name": "skip",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "用户选择跳过导览时发出。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tour/Tour.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

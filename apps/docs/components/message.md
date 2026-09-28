@@ -101,6 +101,10 @@ function close() {
 </template>
 ```
 
+## API 参考
+
+<ComponentApi name="message" />
+
 ## Props
 
 Message 为函数式调用（`message.success(options)` / `useMessage()` 的 `show(options)`），入参即 `MessageOptions`，核心选项：

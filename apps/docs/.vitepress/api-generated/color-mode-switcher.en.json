@@ -1,0 +1,121 @@
+{
+  "id": "component:color-mode-switcher",
+  "name": "color-mode-switcher",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:color-mode-switcher/ColorModeSwitcher",
+      "name": "ColorModeSwitcher",
+      "source": {
+        "file": "packages/ui/src/components/color-mode-switcher/ColorModeSwitcher.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acolor_2Dmode_2Dswitcher_2FColorModeSwitcher-props-display",
+          "name": "display",
+          "kind": "props",
+          "type": {
+            "text": "\"button\" | \"icon\" | \"select\" | undefined",
+            "literals": [
+              "\"button\"",
+              "\"icon\"",
+              "\"select\""
+            ],
+            "references": []
+          },
+          "description": "Chooses an icon button, a button labeled with the current mode, or a select. Both button modes cycle through the available modes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-mode-switcher/ColorModeSwitcher.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'icon'",
+              "source": {
+                "file": "packages/ui/src/components/color-mode-switcher/ColorModeSwitcher.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"icon\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dmode_2Dswitcher_2FColorModeSwitcher-props-showSystem",
+          "name": "showSystem",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Includes system mode in the button cycle and select options.",
+          "notes": [
+            "Disabling it does not change existing theme state. If the current mode is system, buttons preserve that state and the select displays the resolved light or dark mode until an available option is selected."
+          ],
+          "source": {
+            "file": "packages/ui/src/components/color-mode-switcher/ColorModeSwitcher.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/color-mode-switcher/ColorModeSwitcher.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dmode_2Dswitcher_2FColorModeSwitcher-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Classes passed to the active mode root: Button in button modes, or SelectRoot in select mode.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-mode-switcher/ColorModeSwitcher.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/color-mode-switcher/ColorModeSwitcher.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

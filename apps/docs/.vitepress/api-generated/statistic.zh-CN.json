@@ -1,0 +1,621 @@
+{
+  "id": "component:statistic",
+  "name": "statistic",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:statistic/Statistic",
+      "name": "Statistic",
+      "source": {
+        "file": "packages/ui/src/components/statistic/Statistic.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "StatisticValue",
+            "literals": [
+              "null"
+            ],
+            "references": [
+              {
+                "name": "StatisticValue",
+                "text": "export type StatisticValue = number | string | bigint | null | undefined",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fstatistic%2Ftypes.ts%23StatisticValue"
+              }
+            ]
+          },
+          "description": "要格式化并展示的数值，支持 number、string、bigint 以及空值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "统计数值上方显示的标题文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-prefix",
+          "name": "prefix",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "显示在格式化数值之前的文本，例如货币符号。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-suffix",
+          "name": "suffix",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "显示在格式化数值之后的文本，例如百分号或单位。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-precision",
+          "name": "precision",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "指定格式化结果保留的小数位数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-decimalSeparator",
+          "name": "decimalSeparator",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "覆盖格式化数值中的小数分隔符。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-groupSeparator",
+          "name": "groupSeparator",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "覆盖格式化数值中的千位分组分隔符。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-formatter",
+          "name": "formatter",
+          "kind": "props",
+          "type": {
+            "text": "((value: StatisticValue) => string) | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "StatisticValue",
+                "text": "export type StatisticValue = number | string | bigint | null | undefined",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fstatistic%2Ftypes.ts%23StatisticValue"
+              }
+            ]
+          },
+          "description": "自定义数值转文本函数；返回的字符串作为格式化结果展示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "value 为空或无法格式化时展示的占位文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-trend",
+          "name": "trend",
+          "kind": "props",
+          "type": {
+            "text": "\"up\" | \"down\" | undefined",
+            "literals": [
+              "\"down\"",
+              "\"up\""
+            ],
+            "references": []
+          },
+          "description": "展示上升或下降趋势标记，并使用相应的状态色。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-trendPlacement",
+          "name": "trendPlacement",
+          "kind": "props",
+          "type": {
+            "text": "\"start\" | \"end\" | undefined",
+            "literals": [
+              "\"end\"",
+              "\"start\""
+            ],
+            "references": []
+          },
+          "description": "将趋势标记放在数值内容的前侧或后侧。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'end'",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"end\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"card\" | \"bordered\" | \"subtle\" | null | undefined> | undefined",
+            "literals": [
+              "\"bordered\"",
+              "\"card\"",
+              "\"default\"",
+              "\"subtle\""
+            ],
+            "references": []
+          },
+          "description": "设置统计容器的默认、卡片、边框或柔和视觉样式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "设置统计内容的默认、小或大尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-locale",
+          "name": "locale",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "指定本地化数值格式化所用的区域设置。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到统计根容器的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-slots-title",
+          "name": "title",
+          "kind": "slots",
+          "type": {
+            "text": "{ title?: string | undefined; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换标题区域内容；作用域提供当前 title。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/Statistic.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-slots-prefix",
+          "name": "prefix",
+          "kind": "slots",
+          "type": {
+            "text": "{ prefix?: string | undefined; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换数值前缀区域内容；作用域提供当前 prefix。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/Statistic.vue",
+            "line": 37
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-slots-suffix",
+          "name": "suffix",
+          "kind": "slots",
+          "type": {
+            "text": "{ suffix?: string | undefined; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换数值后缀区域内容；作用域提供当前 suffix。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/Statistic.vue",
+            "line": 38
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-slots-trend",
+          "name": "trend",
+          "kind": "slots",
+          "type": {
+            "text": "{ trend: \"up\" | \"down\"; label: string; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换趋势指示内容；作用域提供趋势方向和本地化标签。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/Statistic.vue",
+            "line": 39
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{ value: StatisticValue; formattedValue: string; }",
+            "literals": [],
+            "references": [
+              {
+                "name": "StatisticValue",
+                "text": "export type StatisticValue = number | string | bigint | null | undefined",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fstatistic%2Ftypes.ts%23StatisticValue"
+              }
+            ]
+          },
+          "description": "替换格式化数值内容；作用域提供原始 value 与 formattedValue。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/Statistic.vue",
+            "line": 40
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

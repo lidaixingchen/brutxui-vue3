@@ -113,34 +113,13 @@ Each component uses different animation effects:
 | BarsSpinner | `animate-pulse` | Pulse animation with staggered delay across 5 bars |
 | DotsSpinner | `animate-bounce` | Bounce animation with staggered delay across 3 dots |
 
-## Props
+## API Reference
 
-### Spinner
+<span id="spinner-1"></span>
+<span id="blockspinner-barsspinner"></span>
+<span id="dotsspinner-1"></span>
 
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | Size |
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | Color variant |
-| `label` | `string` | `t('spinner.loading')` | Accessibility label text |
-| `class` | `string` | — | Custom style class |
-
-### BlockSpinner / BarsSpinner
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | Size |
-| `color` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'mixed'` | `'default'` | Color scheme; `mixed` cycles through multiple colors |
-| `label` | `string` | `t('spinner.loading')` | Accessibility label text |
-| `class` | `string` | — | Custom style class |
-
-### DotsSpinner
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | Size |
-| `color` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | Color scheme |
-| `label` | `string` | `t('spinner.loading')` | Accessibility label text |
-| `class` | `string` | — | Custom style class |
+<ComponentApi name="spinner" />
 
 ## Accessibility
 

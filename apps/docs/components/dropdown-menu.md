@@ -182,92 +182,22 @@ import { Button } from 'brutx-ui-vue'
 | `DropdownMenuSubContent`   | 子菜单内容                                   |
 | `DropdownMenuGroup`        | 菜单项分组，reka-ui 重新导出                 |
 
-## Props
+## API 参考
 
-### DropdownMenuContent
+<span id="dropdownmenucontent"></span>
+<span id="dropdownmenuitem"></span>
+<span id="dropdownmenucheckboxitem"></span>
+<span id="dropdownmenuradioitem"></span>
+<span id="dropdownmenulabel"></span>
+<span id="dropdownmenuseparator"></span>
+<span id="dropdownmenushortcut"></span>
+<span id="dropdownmenusubtrigger"></span>
+<span id="dropdownmenusubcontent"></span>
+<span id="事件"></span>
+<span id="dropdownmenucheckboxitem-1"></span>
+<span id="插槽"></span>
 
-| 属性         | 类型     | 默认值 | 说明                       |
-| ------------ | -------- | ------ | -------------------------- |
-| `sideOffset` | `number` | `6`    | 菜单内容与触发器之间的间距 |
-| `class`      | `string` | —      | 自定义样式类               |
-
-### DropdownMenuItem
-
-| 属性    | 类型      | 默认值 | 说明                                   |
-| ------- | --------- | ------ | -------------------------------------- |
-| `inset` | `boolean` | —      | 是否缩进显示（用于与子菜单触发器对齐） |
-| `class` | `string`  | —      | 自定义样式类                           |
-
-### DropdownMenuCheckboxItem
-
-| 属性       | 类型                                                         | 默认值      | 说明         |
-| ---------- | ------------------------------------------------------------ | ----------- | ------------ |
-| `v-model`  | `boolean \| 'indeterminate'`                                 | —           | 复选框状态   |
-| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'`       | `'default'` | 勾选图标尺寸 |
-| `class`    | `string`                                                     | —           | 自定义样式类 |
-
-### DropdownMenuRadioItem
-
-| 属性    | 类型     | 默认值    | 说明         |
-| ------- | -------- | --------- | ------------ |
-| `value` | `string` | —（必填） | 单选项的值   |
-| `class` | `string` | —         | 自定义样式类 |
-
-### DropdownMenuLabel
-
-| 属性    | 类型      | 默认值 | 说明         |
-| ------- | --------- | ------ | ------------ |
-| `inset` | `boolean` | —      | 是否缩进显示 |
-| `class` | `string`  | —      | 自定义样式类 |
-
-### DropdownMenuSeparator
-
-| 属性    | 类型     | 默认值 | 说明         |
-| ------- | -------- | ------ | ------------ |
-| `class` | `string` | —      | 自定义样式类 |
-
-### DropdownMenuShortcut
-
-| 属性    | 类型     | 默认值 | 说明         |
-| ------- | -------- | ------ | ------------ |
-| `class` | `string` | —      | 自定义样式类 |
-
-### DropdownMenuSubTrigger
-
-| 属性       | 类型                                                         | 默认值      | 说明         |
-| ---------- | ------------------------------------------------------------ | ----------- | ------------ |
-| `inset`    | `boolean`                                                    | —           | 是否缩进显示 |
-| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'`       | `'default'` | 展开图标尺寸 |
-| `class`    | `string`                                                     | —           | 自定义样式类 |
-
-### DropdownMenuSubContent
-
-| 属性    | 类型     | 默认值 | 说明         |
-| ------- | -------- | ------ | ------------ |
-| `class` | `string` | —      | 自定义样式类 |
-
-## 事件
-
-### DropdownMenuCheckboxItem
-
-| 事件                | 参数                                  | 说明                 |
-| ------------------- | ------------------------------------- | -------------------- |
-| `update:modelValue` | `(value: boolean \| 'indeterminate')` | 复选框状态变化时触发 |
-
-## 插槽
-
-以下自定义包装组件均提供默认插槽（`default`），用于渲染子内容：
-
-| 组件                       | 插槽      | 作用域 | 说明     |
-| -------------------------- | --------- | ------ | -------- |
-| `DropdownMenuContent`      | `default` | —      | 默认插槽 |
-| `DropdownMenuItem`         | `default` | —      | 默认插槽 |
-| `DropdownMenuCheckboxItem` | `default` | —      | 默认插槽 |
-| `DropdownMenuRadioItem`    | `default` | —      | 默认插槽 |
-| `DropdownMenuLabel`        | `default` | —      | 默认插槽 |
-| `DropdownMenuShortcut`     | `default` | —      | 默认插槽 |
-| `DropdownMenuSubTrigger`   | `default` | —      | 默认插槽 |
-| `DropdownMenuSubContent`   | `default` | —      | 默认插槽 |
+<ComponentApi name="dropdown-menu" />
 
 ## 可访问性
 

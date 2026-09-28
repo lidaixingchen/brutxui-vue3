@@ -59,26 +59,9 @@ Switch the divider direction via the `orientation` prop. Default `horizontal` is
 | `horizontal` | Default direction, left-right drag divider |
 | `vertical` | Vertical direction, up-down drag divider, clipping proceeds from bottom to top |
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `before` | `string` | — | URL of the left/bottom original image (required) |
-| `after` | `string` | — | URL of the right/top comparison image (required) |
-| `beforeAlt` | `string` | locale: `beforeAfter.before` | `alt` attribute for the original image |
-| `afterAlt` | `string` | locale: `beforeAfter.after` | `alt` attribute for the comparison image |
-| `modelValue` | `number` | — | Divider position (v-model, 0-100) |
-| `defaultValue` | `number` | `50` | Initial percentage position of the divider (0-100) |
-| `disabled` | `boolean` | `false` | Whether to disable drag interaction |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Divider direction; vertical clips from bottom to top |
-| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | Size of the drag handle icon |
-| `class` | `string` | `""` | Custom CSS class for the container |
-
-## Events
-
-| Event | Payload | Description |
-|------|------|------|
-| `update:modelValue` | `number` | Divider position changed |
+<ComponentApi name="before-after" />
 
 ## Accessibility
 

@@ -1,0 +1,462 @@
+{
+  "id": "component:image",
+  "name": "image",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:image/Image",
+      "name": "Image",
+      "source": {
+        "file": "packages/ui/src/components/image/Image.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aimage_2FImage-props-src",
+          "name": "src",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The required primary image URL. It is also the preview viewer’s only image when previewSrcList is empty.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-props-alt",
+          "name": "alt",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Alternative text passed to the native img element; describe the image for assistive technology.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "''",
+              "source": {
+                "file": "packages/ui/src/components/image/Image.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-props-fit",
+          "name": "fit",
+          "kind": "props",
+          "type": {
+            "text": "\"fill\" | \"none\" | \"cover\" | \"contain\" | \"scale-down\" | undefined",
+            "literals": [
+              "\"contain\"",
+              "\"cover\"",
+              "\"fill\"",
+              "\"none\"",
+              "\"scale-down\""
+            ],
+            "references": []
+          },
+          "description": "Sets the image’s CSS object-fit mode.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'cover'",
+              "source": {
+                "file": "packages/ui/src/components/image/Image.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"cover\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-props-previewSrcList",
+          "name": "previewSrcList",
+          "kind": "props",
+          "type": {
+            "text": "string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides the image URLs navigable in the preview viewer. Previous and next controls appear when the list has multiple entries.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/image/Image.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-props-initialIndex",
+          "name": "initialIndex",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the list index selected when the preview viewer opens.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0",
+              "source": {
+                "file": "packages/ui/src/components/image/Image.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-props-hideOnClickModal",
+          "name": "hideOnClickModal",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "When enabled, clicking the preview backdrop closes the viewer and returns focus to the element that opened it.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/image/Image.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-props-zoomRate",
+          "name": "zoomRate",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the multiplier applied by each zoom-in or zoom-out action.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "1.2",
+              "source": {
+                "file": "packages/ui/src/components/image/Image.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "1.2"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-props-preview",
+          "name": "preview",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables the image preview viewer with zoom, drag, and multi-image navigation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/image/Image.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-props-fallback",
+          "name": "fallback",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "A fallback image URL tried after the primary image fails. The component enters its error state and emits error only if the fallback also fails.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/image/Image.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-props-loading",
+          "name": "loading",
+          "kind": "props",
+          "type": {
+            "text": "\"eager\" | \"lazy\" | undefined",
+            "literals": [
+              "\"eager\"",
+              "\"lazy\""
+            ],
+            "references": []
+          },
+          "description": "Selects eager loading or lazy loading, which uses IntersectionObserver to defer loading until the image approaches the viewport.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'eager'",
+              "source": {
+                "file": "packages/ui/src/components/image/Image.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"eager\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-events-close",
+          "name": "close",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted when the preview viewer closes; the component then attempts to restore focus to the previously active element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-events-error",
+          "name": "error",
+          "kind": "events",
+          "type": {
+            "text": "[event: Event]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted with the final native image error event when both the primary and fallback images fail to load.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-events-load",
+          "name": "load",
+          "kind": "events",
+          "type": {
+            "text": "[event: Event]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted with the native image event when an image loads successfully, including a successful fallback image.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-events-show",
+          "name": "show",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted when the preview viewer opens.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-events-switch",
+          "name": "switch",
+          "kind": "events",
+          "type": {
+            "text": "[index: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted with the new image-list index after the preview viewer switches images.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-slots-placeholder",
+          "name": "placeholder",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Renders custom content while the image is loading; the built-in loading placeholder is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-slots-error",
+          "name": "error",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Renders custom error content after the image and fallback fail; the built-in failure placeholder is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

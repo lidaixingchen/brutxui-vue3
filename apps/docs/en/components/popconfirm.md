@@ -80,32 +80,9 @@ import { Popconfirm, Button } from 'brutx-ui-vue'
 </template>
 ```
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `title` | `string` | — (required) | Confirmation title text |
-| `confirmButtonText` | `string` | locale: `popconfirm.confirm` | Confirm button text |
-| `cancelButtonText` | `string` | locale: `popconfirm.cancel` | Cancel button text |
-| `confirmButtonType` | `'primary' \| 'destructive'` | `'primary'` | Confirm button style |
-| `icon` | `Component` | `TriangleAlert` | Warning icon component |
-| `cancelable` | `boolean` | `true` | Whether to show cancel button |
-| `class` | `string` | — | Custom CSS class |
-
-## Events
-
-| Event | Payload | Description |
-| --- | --- | --- |
-| `confirm` | — | Emitted when confirm button is clicked |
-| `cancel` | — | Emitted when cancel button is clicked |
-
-## Slots
-
-| Slot | Description |
-| --- | --- |
-| `default` | Trigger element |
-| `icon` | Custom icon |
-| `description` | Description text below the title |
+<ComponentApi name="popconfirm" />
 
 ## Accessibility
 

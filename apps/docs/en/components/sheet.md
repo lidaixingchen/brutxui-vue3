@@ -90,81 +90,35 @@ import { SheetContent, Button } from 'brutx-ui-vue'
 
 | Component | Description |
 |-----------|-------------|
-| `Sheet` | Root component (re-exported `DialogRoot` from reka-ui) |
-| `SheetTrigger` | Trigger to open the panel (re-exported `DialogTrigger` from reka-ui) |
-| `SheetPortal` | Portal rendering container (re-exported `DialogPortal` from reka-ui) |
+| `Sheet` | Root primitive (`DialogRoot` imported from reka-ui as Sheet) |
+| `SheetTrigger` | Trigger primitive (`DialogTrigger` imported from reka-ui) |
+| `SheetPortal` | Portal primitive (`DialogPortal` imported from reka-ui) |
 | `SheetContent` | Panel content with direction variants, built-in close button |
 | `SheetHeader` | Header container |
 | `SheetFooter` | Footer container |
-| `SheetTitle` | Panel title (re-exported `DialogTitle` from reka-ui) |
-| `SheetDescription` | Panel description text (re-exported `DialogDescription` from reka-ui) |
-| `SheetClose` | Close button (re-exported `DialogClose` from reka-ui) |
+| `SheetTitle` | Styled panel title wrapping Reka UI DialogTitle |
+| `SheetDescription` | Styled panel description wrapping Reka UI DialogDescription |
+| `SheetClose` | Close primitive (`DialogClose` imported from reka-ui) |
 
-## Props
+## Reka UI Primitives
 
-### Sheet
+`Sheet`, `SheetTrigger`, `SheetPortal`, and `SheetClose` are local aliases for `DialogRoot`, `DialogTrigger`, `DialogPortal`, and `DialogClose`, imported from `reka-ui`. The five styled components listed in the generated API below are imported from BrutxUI.
 
-Root component, inherits all props from reka-ui's `DialogRoot`.
+`Sheet` accepts the boolean `open` value for controlled state with `v-model:open`, and emits `update:open` with the new boolean state. `defaultOpen` initializes uncontrolled state and defaults to false; `modal` defaults to true. Its default slot contains the trigger and panel, and receives the current `open` state and a `close()` function.
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `open` | `boolean` | — | Controlled open state |
-| `defaultOpen` | `boolean` | — | Default open state in uncontrolled mode |
-| `modal` | `boolean` | `true` | Whether the dialog is modal |
+`SheetContent` forwards additional attributes and event listeners to `DialogContent`. Event names such as `openAutoFocus` can be listened to using `@open-auto-focus` in templates. The built-in close button uses localized `sheet.close` text and sits at the top-left for `side="left"`, or at the top-right for other sides.
 
-### SheetContent
+## API Reference
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `side` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'right'` | Panel slide direction |
-| `class` | `string` | — | Custom CSS class |
+<span id="sheet-1"></span>
+<span id="sheetcontent"></span>
+<span id="sheetheader-sheetfooter-sheettitle-sheetdescription"></span>
+<span id="sheet-2"></span>
+<span id="sheetcontent-1"></span>
+<span id="sheetcontent-2"></span>
+<span id="sheetheader-sheetfooter-sheettitle-sheetdescription-1"></span>
 
-> **Note:** `SheetContent` has a built-in close button (X icon in the top-right or top-left corner; when `side="left"`, it appears in the top-left corner), so there is no need to add one manually. The close button's accessible text supports internationalization (`sheet.close`).
-
-### SheetHeader / SheetFooter / SheetTitle / SheetDescription
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `class` | `string` | — | Custom CSS class |
-
-## Events
-
-### Sheet
-
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `update:open` | `boolean` | Emitted when the open state changes, used for `v-model:open` two-way binding |
-| `open-change` | `boolean` | Emitted when the open state changes |
-
-### SheetContent
-
-Inherits all events from reka-ui's `DialogContent`.
-
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `open-auto-focus` | `Event` | Emitted when auto-focused after content opens |
-| `close-auto-focus` | `Event` | Emitted when auto-focused after content closes |
-| `interact-outside` | `InteractOutsideEvent` | Emitted when interacting outside the content |
-| `escape-key-down` | `KeyboardEvent` | Emitted when the Escape key is pressed |
-| `pointer-down-outside` | `PointerDownOutsideEvent` | Emitted when pressing a pointer outside the content |
-
-## Slots
-
-| Slot | Scope | Description |
-|------|-------|-------------|
-| `default` | — | Default slot for placing `SheetTrigger`, `SheetContent`, and other sub-components |
-
-### SheetContent
-
-| Slot | Scope | Description |
-|------|-------|-------------|
-| `default` | — | Default slot for placing panel content (`SheetHeader`, content area, `SheetFooter`, etc.) |
-
-### SheetHeader / SheetFooter / SheetTitle / SheetDescription
-
-| Slot | Scope | Description |
-|------|-------|-------------|
-| `default` | — | Default slot |
+<ComponentApi name="sheet" />
 
 ## Accessibility
 

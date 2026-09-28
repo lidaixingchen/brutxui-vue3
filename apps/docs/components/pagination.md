@@ -61,8 +61,8 @@ const currentPage = ref(1)
 
 ### 自定义布局与快速跳转 (Jumper)
 
-你可以通过配置 `layout` 属性来排列和显示不同的功能模块，包括：总条数（`total`）、每页大小选择（`sizes`）、上一页（`prev`）、页码（`pager`）、下一页（`next`）和快速跳转（`jumper`）。
-默认值为 `'sizes, prev, pager, next, jumper, total'`。在 jumper 快速跳转输入框中，输入目标页码并按回车键（Enter）即可跳转。
+你可以通过 `layout` 属性选择要显示的功能模块，包括：总条数（`total`）、每页大小选择（`sizes`）、上一页（`prev`）、页码（`pager`）、下一页（`next`）和快速跳转（`jumper`）。
+区域按 total、sizes、prev、pager、next、jumper 的固定顺序渲染。在 jumper 快速跳转输入框中，输入目标页码并按回车键（Enter）即可跳转。
 
 ```vue
 <script setup>
@@ -152,33 +152,11 @@ function handleJump() {
 | `default` | `h-10` | `gap-2` | `h-4 w-4` |
 | `lg` | `h-12` | `gap-3` | `h-5 w-5` |
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `modelValue` | `number` | —（必填） | 当前页码，支持 `v-model` 双向绑定 |
-| `totalPages` | `number` | — | 总页数（与 `total` + `pageSize` 二选一） |
-| `total` | `number` | — | 总条数 |
-| `pageSize` | `number` | `10` | 每页条数 |
-| `pageSizes` | `number[]` | `[10, 20, 50, 100]` | 每页条数选项 |
-| `layout` | `string` | `'sizes, prev, pager, next, jumper, total'` | 自定义布局（逗号分隔：`total`、`sizes`、`prev`、`pager`、`next`、`jumper`） |
-| `disabled` | `boolean` | `false` | 是否禁用 |
-| `background` | `boolean` | `false` | 页码按钮是否显示背景色 |
-| `hideOnSinglePage` | `boolean` | `false` | 只有一页时是否隐藏 |
-| `siblingCount` | `number` | `1` | 当前页码两侧显示的兄弟页数 |
-| `showFirstLast` | `boolean` | `true` | 是否显示首页/末页按钮 |
-| `showPageNumbers` | `boolean` | `true` | 是否显示页码按钮，为 `false` 时显示页码计数器 |
-| `variant` | `'default' \| 'rounded' \| 'minimal'` | `'default'` | 组件变体样式 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 组件尺寸 |
-| `class` | `string` | — | 自定义 CSS 类名，会合并到根元素 `<nav>` 上 |
+<span id="事件"></span>
 
-## 事件
-
-| 事件 | 参数 | 说明 |
-| --- | --- | --- |
-| `update:modelValue` | `page: number` | 页码变化时触发，用于 `v-model` 绑定 |
-| `update:pageSize` | `size: number` | 每页条数变化时触发 |
-| `jump` | — | 点击省略号 `...` 按钮时触发，用于自定义跳页交互 |
+<ComponentApi name="pagination" />
 
 ## 可访问性
 

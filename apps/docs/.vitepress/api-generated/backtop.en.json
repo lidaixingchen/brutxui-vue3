@@ -1,0 +1,253 @@
+{
+  "id": "component:backtop",
+  "name": "backtop",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:backtop/Backtop",
+      "name": "Backtop",
+      "source": {
+        "file": "packages/ui/src/components/backtop/Backtop.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abacktop_2FBacktop-props-visibilityHeight",
+          "name": "visibilityHeight",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Shows the button when the scroll container reaches this vertical scroll distance in pixels.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/backtop/Backtop.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "200",
+              "source": {
+                "file": "packages/ui/src/components/backtop/Backtop.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "200"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abacktop_2FBacktop-props-target",
+          "name": "target",
+          "kind": "props",
+          "type": {
+            "text": "string | HTMLElement | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The container to observe and scroll to the top, supplied as a CSS selector or element. Setting it uses absolute button positioning and requires a positioned ancestor.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/backtop/Backtop.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/backtop/Backtop.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "When omitted or an empty string, observes window and fixes the button to the viewport."
+          }
+        },
+        {
+          "id": "api-component_3Abacktop_2FBacktop-props-right",
+          "name": "right",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The distance from the right edge of the positioning area, in pixels.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/backtop/Backtop.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "40",
+              "source": {
+                "file": "packages/ui/src/components/backtop/Backtop.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "40"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abacktop_2FBacktop-props-bottom",
+          "name": "bottom",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The distance from the bottom edge of the positioning area, in pixels.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/backtop/Backtop.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "40",
+              "source": {
+                "file": "packages/ui/src/components/backtop/Backtop.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "40"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abacktop_2FBacktop-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"ghost\" | \"primary\" | \"secondary\" | \"success\" | \"danger\" | \"accent\" | \"outline\" | \"link\" | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"ghost\"",
+              "\"link\"",
+              "\"outline\"",
+              "\"primary\"",
+              "\"secondary\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "The visual variant passed to the inner Button. The primary variant also applies a yellow background and black text.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/backtop/Backtop.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'primary'",
+              "source": {
+                "file": "packages/ui/src/components/backtop/Backtop.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"primary\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abacktop_2FBacktop-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the back-to-top button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/backtop/Backtop.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/backtop/Backtop.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abacktop_2FBacktop-events-click",
+          "name": "click",
+          "kind": "events",
+          "type": {
+            "text": "[event: MouseEvent]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the original mouse event when clicked, then requests a smooth scroll to the top of the target container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/backtop/Backtop.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Abacktop_2FBacktop-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the upward arrow inside the button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/backtop/Backtop.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

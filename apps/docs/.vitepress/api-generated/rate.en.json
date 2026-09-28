@@ -1,0 +1,253 @@
+{
+  "id": "component:rate",
+  "name": "rate",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:rate/Rate",
+      "name": "Rate",
+      "source": {
+        "file": "packages/ui/src/components/rate/Rate.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Arate_2FRate-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The current rating, bound with v-model. Hovering temporarily previews a rating; leaving restores the bound value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/rate/Rate.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0",
+              "source": {
+                "file": "packages/ui/src/components/rate/Rate.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Arate_2FRate-props-max",
+          "name": "max",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The maximum rating, number of rendered icons, and value selected by the End key. Supply a positive integer.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/rate/Rate.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "5",
+              "source": {
+                "file": "packages/ui/src/components/rate/Rate.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "5"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Arate_2FRate-props-allowHalf",
+          "name": "allowHalf",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables half-point selection and half-filled icons. The left half of each icon selects a half point, and arrow keys move in half-point steps.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/rate/Rate.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/rate/Rate.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Arate_2FRate-props-readonly",
+          "name": "readonly",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Displays the rating while preventing hover previews, pointer selection, and keyboard changes, and removes the component from the Tab order.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/rate/Rate.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/rate/Rate.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Arate_2FRate-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "\"lg\" | \"sm\" | \"md\" | undefined",
+            "literals": [
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Controls the rating icon dimensions and spacing between icons.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/rate/Rate.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/rate/Rate.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Arate_2FRate-props-icon",
+          "name": "icon",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The BrutalShape name used for rating icons, such as heart, lightning, or star-5.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/rate/Rate.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/rate/Rate.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "When omitted, empty, or not recognized by the shape library, the component uses the Lucide Star icon."
+          }
+        },
+        {
+          "id": "api-component_3Arate_2FRate-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted when pointer or keyboard selection chooses a rating different from the current value, updating v-model. Hover previews do not emit it.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/rate/Rate.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Arate_2FRate-events-change",
+          "name": "change",
+          "kind": "events",
+          "type": {
+            "text": "[value: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted after update:modelValue when the user selects a different rating, with the same new rating as its payload.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/rate/Rate.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

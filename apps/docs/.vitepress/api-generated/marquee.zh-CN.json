@@ -1,0 +1,275 @@
+{
+  "id": "component:marquee",
+  "name": "marquee",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:marquee/Marquee",
+      "name": "Marquee",
+      "source": {
+        "file": "packages/ui/src/components/marquee/Marquee.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Amarquee_2FMarquee-props-direction",
+          "name": "direction",
+          "kind": "props",
+          "type": {
+            "text": "\"right\" | \"left\" | undefined",
+            "literals": [
+              "\"left\"",
+              "\"right\""
+            ],
+            "references": []
+          },
+          "description": "设置循环滚动方向，left 向左、right 向右。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/marquee/Marquee.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'left'",
+              "source": {
+                "file": "packages/ui/src/components/marquee/Marquee.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"left\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amarquee_2FMarquee-props-speed",
+          "name": "speed",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置一次循环动画的持续秒数，数值越小滚动越快；有效时长不会低于 0.1 秒。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/marquee/Marquee.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_SPEED",
+              "source": {
+                "file": "packages/ui/src/components/marquee/Marquee.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "20"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amarquee_2FMarquee-props-pauseOnHover",
+          "name": "pauseOnHover",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用后，指针悬停在跑马灯上时暂停循环动画。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/marquee/Marquee.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/marquee/Marquee.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amarquee_2FMarquee-props-fade",
+          "name": "fade",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用容器左右边缘的淡出遮罩效果。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/marquee/Marquee.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/marquee/Marquee.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amarquee_2FMarquee-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"accent\" | \"muted\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"muted\"",
+              "\"primary\""
+            ],
+            "references": []
+          },
+          "description": "设置跑马灯容器的背景色与文字颜色变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/marquee/Marquee.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/marquee/Marquee.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amarquee_2FMarquee-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "设置内容文字大小与容器内边距级别。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/marquee/Marquee.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/marquee/Marquee.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amarquee_2FMarquee-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到跑马灯外层容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/marquee/Marquee.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/marquee/Marquee.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amarquee_2FMarquee-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "提供随跑马灯轨道循环滚动的内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/marquee/Marquee.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

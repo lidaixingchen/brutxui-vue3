@@ -105,27 +105,9 @@ const sync = ref(false)
 </template>
 ```
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `modelValue` | `boolean \| null` | — | Current value, supports `v-model` (controlled mode) |
-| `defaultValue` | `boolean` | — | Initial checked state in uncontrolled mode |
-| `defaultChecked` | `boolean` | — | Alias for `defaultValue` (initial checked state in uncontrolled mode) |
-| `disabled` | `boolean` | `false` | Whether disabled |
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger'` | `'default'` | Color variant |
-| `shape` | `'slider' \| 'rocker'` | `'slider'` | Mechanical shape variant |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Size |
-| `showLabels` | `boolean` | `false` | Whether to show industrial I/O markings inside the track |
-| `ariaLabel` | `string` | Locale default (`switch.toggle`) | Accessibility label text |
-| `sound` | `boolean` | `false` | Explicitly enable mechanical relay click sound on toggle |
-| `class` | `string` | `undefined` | Custom style class |
-
-## Events
-
-| Event | Payload | Description |
-| --- | --- | --- |
-| `update:modelValue` | `(value: boolean)` | Triggered when value changes |
+<ComponentApi name="switch" />
 
 ## Accessibility
 

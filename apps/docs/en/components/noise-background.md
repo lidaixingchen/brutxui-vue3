@@ -82,25 +82,9 @@ import { NoiseBackground } from 'brutx-ui-vue'
 </template>
 ```
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `type` | `'fractalNoise' \| 'turbulence'` | `'fractalNoise'` | Noise type |
-| `frequency` | `number` | `0.65` | Noise frequency (0-1) |
-| `octaves` | `number` | `3` | Number of noise octaves (higher = more complex) |
-| `opacity` | `number` | `0.5` | Noise opacity (0-1) |
-| `animated` | `boolean` | `false` | Whether to enable animation effects |
-| `animationDuration` | `number` | `8` | Animation cycle duration (seconds) |
-| `animationRange` | `number` | `0.1` | Animation frequency variation range |
-| `rounded` | `'none' \| 'default' \| 'lg' \| 'full'` | `'none'` | Rounded variant |
-| `class` | `string` | — | Custom CSS class |
-
-## Slots
-
-| Slot | Scope | Description |
-|------|-------|-------------|
-| `default` | — | Nested content displayed above the noise background |
+<ComponentApi name="noise-background" />
 
 ## Noise Type Reference
 

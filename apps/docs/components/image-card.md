@@ -68,23 +68,9 @@ import { ImageCard } from 'brutx-ui-vue'
 </template>
 ```
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `src` | `string` | *(必填)* | 图片地址 |
-| `alt` | `string` | `''` | 图片替代文本，空字符串表示纯装饰图 |
-| `aspect` | `'4/3' \| 'video' \| 'square'` | `undefined` | 图片区宽高比：`video` 为 16:9 |
-| `accent` | `'primary' \| 'secondary' \| 'accent' \| 'destructive' \| 'success' \| 'info' \| 'muted'` | `undefined` | 底栏主题色族 |
-| `title` | `string` | `undefined` | 底栏标题（等宽大写工控排版） |
-| `description` | `string` | `undefined` | 底栏描述文本 |
-| `class` | `ClassValue` | `undefined` | 自定义 CSS 类名 |
-
-## Slots
-
-| 插槽 | 说明 |
-|------|------|
-| `default` | 替换底栏默认的标题/描述结构 |
+<ComponentApi name="image-card" />
 
 ::: tip 无底栏形态
 `title`、`description` 均未提供且无默认插槽内容时不渲染 `<figcaption>`，组件退化为纯图片相框。

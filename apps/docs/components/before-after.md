@@ -58,26 +58,11 @@ const modified = '/images/after.jpg'
 | `horizontal` | 默认方向，左右拖拽分割线 |
 | `vertical` | 垂直方向，上下拖拽分割线，裁剪从下到上进行 |
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `before` | `string` | — | 左侧/底层原始图片的 URL (必填) |
-| `after` | `string` | — | 右侧/表层对比图片的 URL (必填) |
-| `beforeAlt` | `string` | locale: `beforeAfter.before` | 原始图片的 `alt` 属性 |
-| `afterAlt` | `string` | locale: `beforeAfter.after` | 对比图片的 `alt` 属性 |
-| `modelValue` | `number` | — | 分割线位置（v-model，0-100） |
-| `defaultValue` | `number` | `50` | 初始状态下分割线所处的百分比位置 (0-100) |
-| `disabled` | `boolean` | `false` | 是否禁用拖拽交互 |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 分割线方向，vertical 时从下到上裁剪 |
-| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 拖拽手柄图标的尺寸 |
-| `class` | `string` | `""` | 容器的自定义 CSS 类 |
+<span id="事件"></span>
 
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:modelValue` | `number` | 分割线位置变更 |
+<ComponentApi name="before-after" />
 
 ## 可访问性
 

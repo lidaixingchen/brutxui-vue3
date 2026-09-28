@@ -1,0 +1,5280 @@
+{
+  "id": "component:alert-dialog",
+  "name": "alert-dialog",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:alert-dialog/AlertDialogContent",
+      "name": "AlertDialogContent",
+      "source": {
+        "file": "packages/ui/src/components/alert-dialog/AlertDialogContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Additional CSS classes merged into the dialog content panel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogContent.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogContent-props-overlayClass",
+          "name": "overlayClass",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Additional CSS classes merged into the overlay for styling its backdrop.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogContent.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The dialog panel content, usually composing a title, description, and action buttons; it is rendered through the built-in Portal.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:alert-dialog/AlertDialogAction",
+      "name": "AlertDialogAction",
+      "source": {
+        "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"ghost\" | \"primary\" | \"secondary\" | \"success\" | \"danger\" | \"accent\" | \"outline\" | \"link\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"ghost\"",
+              "\"link\"",
+              "\"outline\"",
+              "\"primary\"",
+              "\"secondary\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "The action button’s color, border, and interaction-state style variant.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Additional CSS classes merged into the action button root.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Merges root props, styles, and closure behavior into the single default-slot child, which must retain accessible button interaction.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "When omitted, the underlying Primitive uses false."
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "Selects the root tag or component; asChild uses the child from the default slot instead.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "When omitted, Reka AlertDialogAction renders a button."
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables normal user activation of a native button. A custom root element must implement its own disabled behavior.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-dir",
+          "name": "dir",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the text direction of the root element, such as ltr, rtl, or auto.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-type",
+          "name": "type",
+          "kind": "props",
+          "type": {
+            "text": "\"button\" | \"submit\" | \"reset\" | undefined",
+            "literals": [
+              "\"button\"",
+              "\"reset\"",
+              "\"submit\""
+            ],
+            "references": []
+          },
+          "description": "Selects native button behavior: a regular button, form submission, or form reset.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            },
+            "fallback": "When omitted and the Reka primitive uses as=\"button\", the underlying DialogClose supplies type=\"button\"."
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-form",
+          "name": "form",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Associates the button with a form by its element ID, including a form outside its DOM ancestors.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "string | number | readonly string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The value included with name in form data when this button is the submitter. Visible button text comes from the default slot.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The root element’s DOM ID, used by label references, selectors, and fragment links.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onCopy",
+          "name": "onCopy",
+          "kind": "props",
+          "type": {
+            "text": "((payload: ClipboardEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles copy operations with access to clipboard data through ClipboardEvent.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onCut",
+          "name": "onCut",
+          "kind": "props",
+          "type": {
+            "text": "((payload: ClipboardEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles cut operations and can customize clipboard content through ClipboardEvent.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPaste",
+          "name": "onPaste",
+          "kind": "props",
+          "type": {
+            "text": "((payload: ClipboardEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles paste operations and exposes incoming clipboard content through ClipboardEvent.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onCompositionend",
+          "name": "onCompositionend",
+          "kind": "props",
+          "type": {
+            "text": "((payload: CompositionEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles the end or cancellation of an IME composition session on an editable root.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onCompositionstart",
+          "name": "onCompositionstart",
+          "kind": "props",
+          "type": {
+            "text": "((payload: CompositionEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles the start of an IME composition session on an editable root.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onCompositionupdate",
+          "name": "onCompositionupdate",
+          "kind": "props",
+          "type": {
+            "text": "((payload: CompositionEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles changes to IME composition text on an editable root.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onDrag",
+          "name": "onDrag",
+          "kind": "props",
+          "type": {
+            "text": "((payload: DragEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles repeated drag events on the source during native drag and drop.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onDragend",
+          "name": "onDragend",
+          "kind": "props",
+          "type": {
+            "text": "((payload: DragEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles the end of native dragging, including successful drops and cancellation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onDragenter",
+          "name": "onDragenter",
+          "kind": "props",
+          "type": {
+            "text": "((payload: DragEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a dragged element or text entering the drop target.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onDragexit",
+          "name": "onDragexit",
+          "kind": "props",
+          "type": {
+            "text": "((payload: DragEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles the legacy dragexit event when an element ceases to be the immediate drag target; dispatch depends on browser support.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onDragleave",
+          "name": "onDragleave",
+          "kind": "props",
+          "type": {
+            "text": "((payload: DragEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a dragged element or text leaving the drop target.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onDragover",
+          "name": "onDragover",
+          "kind": "props",
+          "type": {
+            "text": "((payload: DragEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles dragging over a drop target; accepting a drop typically requires preventDefault().",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onDragstart",
+          "name": "onDragstart",
+          "kind": "props",
+          "type": {
+            "text": "((payload: DragEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles the start of native dragging and can populate DragEvent.dataTransfer.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onDrop",
+          "name": "onDrop",
+          "kind": "props",
+          "type": {
+            "text": "((payload: DragEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a drop on a valid target and exposes transferred data through dataTransfer.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onFocus",
+          "name": "onFocus",
+          "kind": "props",
+          "type": {
+            "text": "((payload: FocusEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles the root gaining focus; native focus events do not bubble.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onFocusin",
+          "name": "onFocusin",
+          "kind": "props",
+          "type": {
+            "text": "((payload: FocusEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles bubbling focus-in events from the root or its descendants.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onFocusout",
+          "name": "onFocusout",
+          "kind": "props",
+          "type": {
+            "text": "((payload: FocusEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles bubbling focus-out events from the root or its descendants.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onBlur",
+          "name": "onBlur",
+          "kind": "props",
+          "type": {
+            "text": "((payload: FocusEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles the root losing focus; native blur events do not bubble.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onChange",
+          "name": "onChange",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles committed value changes from an input or selection control; activating a regular button does not produce this event.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onBeforeinput",
+          "name": "onBeforeinput",
+          "kind": "props",
+          "type": {
+            "text": "((payload: InputEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles impending user edits to editable content on a supporting root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onFormdata",
+          "name": "onFormdata",
+          "kind": "props",
+          "type": {
+            "text": "((payload: FormDataEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles completion of form-data construction on a form root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onInput",
+          "name": "onInput",
+          "kind": "props",
+          "type": {
+            "text": "((payload: InputEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles user-driven value changes on an editable root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onReset",
+          "name": "onReset",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a form reset on a form root; the event is dispatched on the form.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onSubmit",
+          "name": "onSubmit",
+          "kind": "props",
+          "type": {
+            "text": "((payload: SubmitEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles submission on a form root; a regular submit button causes its owning form to dispatch this event.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onInvalid",
+          "name": "onInvalid",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles failed constraint validation on a supporting root control; native invalid events do not bubble.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onFullscreenchange",
+          "name": "onFullscreenchange",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles fullscreen-state changes when the root or a descendant enters or leaves fullscreen.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onFullscreenerror",
+          "name": "onFullscreenerror",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a failed fullscreen request from the root or a descendant.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onLoad",
+          "name": "onLoad",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles completed resource loading when the root is an element that supports load events.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onError",
+          "name": "onError",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles root resource failures, such as image or media errors; it is not a handler for arbitrary Vue component exceptions.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onKeydown",
+          "name": "onKeydown",
+          "kind": "props",
+          "type": {
+            "text": "((payload: KeyboardEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles key presses, including browser-generated repeats while a key remains held.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onKeypress",
+          "name": "onKeypress",
+          "kind": "props",
+          "type": {
+            "text": "((payload: KeyboardEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles the deprecated keypress character-key event; use keydown or beforeinput for new keyboard interactions.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onKeyup",
+          "name": "onKeyup",
+          "kind": "props",
+          "type": {
+            "text": "((payload: KeyboardEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles the release of a keyboard key.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onDblclick",
+          "name": "onDblclick",
+          "kind": "props",
+          "type": {
+            "text": "((payload: MouseEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a completed double-click with the primary mouse button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onMousedown",
+          "name": "onMousedown",
+          "kind": "props",
+          "type": {
+            "text": "((payload: MouseEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a mouse button being pressed over the element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onMouseenter",
+          "name": "onMouseenter",
+          "kind": "props",
+          "type": {
+            "text": "((payload: MouseEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles the mouse entering the element’s boundary; unlike mouseover, it does not bubble.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onMouseleave",
+          "name": "onMouseleave",
+          "kind": "props",
+          "type": {
+            "text": "((payload: MouseEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles the mouse leaving the element and its descendants; this event does not bubble.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onMousemove",
+          "name": "onMousemove",
+          "kind": "props",
+          "type": {
+            "text": "((payload: MouseEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles mouse movement over the element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onMouseout",
+          "name": "onMouseout",
+          "kind": "props",
+          "type": {
+            "text": "((payload: MouseEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles bubbling mouse-out events when leaving the current hit target, including movement into a child.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onMouseover",
+          "name": "onMouseover",
+          "kind": "props",
+          "type": {
+            "text": "((payload: MouseEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles bubbling mouse-over events when entering the current hit target.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onMouseup",
+          "name": "onMouseup",
+          "kind": "props",
+          "type": {
+            "text": "((payload: MouseEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a mouse button being released over the element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onAbort",
+          "name": "onAbort",
+          "kind": "props",
+          "type": {
+            "text": "((payload: UIEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles aborted loading on a media root when the interruption is not caused by a loading error.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onCanplay",
+          "name": "onCanplay",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a media root becoming able to start playback without assurance of uninterrupted playback to the end.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onCanplaythrough",
+          "name": "onCanplaythrough",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles the browser estimating that a media root can play through without pausing to buffer.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onDurationchange",
+          "name": "onDurationchange",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a change to the media root’s duration information.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onEmptied",
+          "name": "onEmptied",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a media root returning from a loaded state to an empty state, such as when reloading.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onEncrypted",
+          "name": "onEncrypted",
+          "kind": "props",
+          "type": {
+            "text": "((payload: MediaEncryptedEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles encrypted initialization data encountered by a media root through MediaEncryptedEvent.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onEnded",
+          "name": "onEnded",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a media root reaching the end of playback and stopping.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onLoadeddata",
+          "name": "onLoadeddata",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles the first loading of data at the media root’s current playback position, usually the first frame.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onLoadedmetadata",
+          "name": "onLoadedmetadata",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a media root’s metadata becoming available, such as duration or video dimensions.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onLoadstart",
+          "name": "onLoadstart",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a media root beginning to load its resource.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPause",
+          "name": "onPause",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a media root entering the paused state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPlay",
+          "name": "onPlay",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a media root’s paused state becoming false when playback is requested.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPlaying",
+          "name": "onPlaying",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a media root actually starting or resuming playback.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onProgress",
+          "name": "onProgress",
+          "kind": "props",
+          "type": {
+            "text": "((payload: ProgressEvent<EventTarget>) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles data-loading progress on a root that emits resource progress events, such as a media element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onRatechange",
+          "name": "onRatechange",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a change to the media root’s playback rate.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onSeeked",
+          "name": "onSeeked",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a media root completing a seek to a playback position.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onSeeking",
+          "name": "onSeeking",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a media root beginning to seek to a new playback position.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onStalled",
+          "name": "onStalled",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a media root still attempting to fetch data when delivery unexpectedly stops.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onSuspend",
+          "name": "onSuspend",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles the browser intentionally suspending data fetching for a media root.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onTimeupdate",
+          "name": "onTimeupdate",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles updates to a media root’s currentTime.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onVolumechange",
+          "name": "onVolumechange",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles changes to a media root’s volume or muted state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onWaiting",
+          "name": "onWaiting",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a media root waiting to continue playback because data is temporarily unavailable.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onSelect",
+          "name": "onSelect",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles text selection in an input root that supports text selection.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onScroll",
+          "name": "onScroll",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles changes to the scroll position of a scrollable root.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onScrollend",
+          "name": "onScrollend",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles scrolling finishing on a scrollable root once the associated scrolling gesture has ended.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onTouchcancel",
+          "name": "onTouchcancel",
+          "kind": "props",
+          "type": {
+            "text": "((payload: TouchEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles the browser or device interrupting a sequence of touch contacts.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onTouchend",
+          "name": "onTouchend",
+          "kind": "props",
+          "type": {
+            "text": "((payload: TouchEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles one or more touch contacts leaving the touch surface.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onTouchmove",
+          "name": "onTouchmove",
+          "kind": "props",
+          "type": {
+            "text": "((payload: TouchEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles touch contacts moving across the touch surface.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onTouchstart",
+          "name": "onTouchstart",
+          "kind": "props",
+          "type": {
+            "text": "((payload: TouchEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles one or more touch contacts beginning on the touch surface.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onAuxclick",
+          "name": "onAuxclick",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a completed click with a non-primary pointing-device button, such as the middle mouse button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onClick",
+          "name": "onClick",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles native activation clicks, typically from a mouse, touch, or keyboard; Reka’s click handler also requests dialog closure.",
+          "notes": [
+            "An asynchronous callback does not make AlertDialogAction wait for completion; use controlled open state on AlertDialogRoot when application logic must manage closure."
+          ],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onContextmenu",
+          "name": "onContextmenu",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a request to open a context menu, such as a right-click or the context-menu key.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onGotpointercapture",
+          "name": "onGotpointercapture",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles the element gaining capture of a pointer so subsequent pointer events target it.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onLostpointercapture",
+          "name": "onLostpointercapture",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles the element losing capture of a pointer.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPointerdown",
+          "name": "onPointerdown",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a pointer becoming active, such as touch contact or the first mouse-button press.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPointermove",
+          "name": "onPointermove",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles changes to pointer position or properties such as pressure.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPointerup",
+          "name": "onPointerup",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a pointer leaving its active pressed state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPointercancel",
+          "name": "onPointercancel",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles the browser cancelling pointer interaction, such as when taking over a touch-scrolling gesture.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPointerenter",
+          "name": "onPointerenter",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a pointer entering the hit boundaries of the element or its descendants; it does not bubble.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPointerleave",
+          "name": "onPointerleave",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a pointer leaving the hit boundaries of the element and its descendants; it does not bubble.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPointerover",
+          "name": "onPointerover",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles bubbling pointer-over events when a pointer enters the current hit target.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPointerout",
+          "name": "onPointerout",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles bubbling pointer-out events when leaving the current hit target, including movement into a child.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onBeforetoggle",
+          "name": "onBeforetoggle",
+          "kind": "props",
+          "type": {
+            "text": "((payload: ToggleEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles an impending open or close on a root supporting toggle events, such as a native popover or dialog.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onToggle",
+          "name": "onToggle",
+          "kind": "props",
+          "type": {
+            "text": "((payload: ToggleEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a completed open or close on a supporting root, such as details, a popover, or a native dialog.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onWheel",
+          "name": "onWheel",
+          "kind": "props",
+          "type": {
+            "text": "((payload: WheelEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles wheel-device scrolling or zooming input; it does not necessarily mean the scroll position changed.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onAnimationcancel",
+          "name": "onAnimationcancel",
+          "kind": "props",
+          "type": {
+            "text": "((payload: AnimationEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a CSS animation being cancelled before normal completion.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onAnimationstart",
+          "name": "onAnimationstart",
+          "kind": "props",
+          "type": {
+            "text": "((payload: AnimationEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a CSS animation starting after its delay.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onAnimationend",
+          "name": "onAnimationend",
+          "kind": "props",
+          "type": {
+            "text": "((payload: AnimationEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a CSS animation completing normally.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onAnimationiteration",
+          "name": "onAnimationiteration",
+          "kind": "props",
+          "type": {
+            "text": "((payload: AnimationEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a CSS animation finishing an iteration and beginning another.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onSecuritypolicyviolation",
+          "name": "onSecuritypolicyviolation",
+          "kind": "props",
+          "type": {
+            "text": "((payload: SecurityPolicyViolationEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles content-security-policy violation events reaching the root; browsers normally dispatch these on document, so a button listener does not receive every document-level violation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onTransitioncancel",
+          "name": "onTransitioncancel",
+          "kind": "props",
+          "type": {
+            "text": "((payload: TransitionEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a CSS transition being cancelled before completion.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onTransitionend",
+          "name": "onTransitionend",
+          "kind": "props",
+          "type": {
+            "text": "((payload: TransitionEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a CSS transition completing normally.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onTransitionrun",
+          "name": "onTransitionrun",
+          "kind": "props",
+          "type": {
+            "text": "((payload: TransitionEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a CSS transition being created, before any transition delay.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onTransitionstart",
+          "name": "onTransitionstart",
+          "kind": "props",
+          "type": {
+            "text": "((payload: TransitionEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Handles a CSS transition starting after its delay.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-autofocus",
+          "name": "autofocus",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Requests browser autofocus. Reka still performs its focus management when the dialog opens.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-formaction",
+          "name": "formaction",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The destination URL used when this button submits its form, overriding the form action.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-formenctype",
+          "name": "formenctype",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The data encoding used when this button submits its form, overriding the form enctype.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-formmethod",
+          "name": "formmethod",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The submission method used by this button, overriding the form method.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-formnovalidate",
+          "name": "formnovalidate",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Skips browser constraint validation when this button submits its form.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-formtarget",
+          "name": "formtarget",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Selects the browsing context that displays this button’s form response, overriding the form target.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The field name included in form data with value when this button is the submitter.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-innerHTML",
+          "name": "innerHTML",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Writes an HTML string into the root element, replacing the children rendered by its default slot.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-accesskey",
+          "name": "accesskey",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides an access-key hint for the root element; the browser and operating system determine the key combination.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-contenteditable",
+          "name": "contenteditable",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | \"inherit\" | \"plaintext-only\" | undefined",
+            "literals": [
+              "\"false\"",
+              "\"inherit\"",
+              "\"plaintext-only\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether root content is editable; plaintext-only allows plain-text editing, while inherit inherits the editing state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-contextmenu",
+          "name": "contextmenu",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "A legacy HTML context-menu association containing a menu element ID; it does not create or open a BrutxUI menu.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-draggable",
+          "name": "draggable",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether the root element can be a source for native browser drag and drop.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-enterkeyhint",
+          "name": "enterkeyhint",
+          "kind": "props",
+          "type": {
+            "text": "\"done\" | \"enter\" | \"go\" | \"next\" | \"previous\" | \"search\" | \"send\" | undefined",
+            "literals": [
+              "\"done\"",
+              "\"enter\"",
+              "\"go\"",
+              "\"next\"",
+              "\"previous\"",
+              "\"search\"",
+              "\"send\""
+            ],
+            "references": []
+          },
+          "description": "Suggests the virtual keyboard’s Enter-key label or icon for an editable root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-enterKeyHint",
+          "name": "enterKeyHint",
+          "kind": "props",
+          "type": {
+            "text": "\"done\" | \"enter\" | \"go\" | \"next\" | \"previous\" | \"search\" | \"send\" | undefined",
+            "literals": [
+              "\"done\"",
+              "\"enter\"",
+              "\"go\"",
+              "\"next\"",
+              "\"previous\"",
+              "\"search\"",
+              "\"send\""
+            ],
+            "references": []
+          },
+          "description": "Vue’s deprecated camel-case alias for the virtual keyboard Enter-key hint; use enterkeyhint.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-hidden",
+          "name": "hidden",
+          "kind": "props",
+          "type": {
+            "text": "\"\" | \"hidden\" | Booleanish | \"until-found\" | undefined",
+            "literals": [
+              "\"\"",
+              "\"false\"",
+              "\"hidden\"",
+              "\"true\"",
+              "\"until-found\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls the root element’s HTML hidden state; until-found allows supporting browsers to reveal it through features such as find-in-page.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-inert",
+          "name": "inert",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Makes the root and its flat-tree descendants inert, preventing focus and normal user interaction.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-lang",
+          "name": "lang",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Identifies the language of the root content for screen-reader pronunciation and browser text processing.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Passes an input placeholder to a supporting input root; a regular button does not display placeholder text.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-spellcheck",
+          "name": "spellcheck",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls the browser’s spell-checking hint for editable content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-tabindex",
+          "name": "tabindex",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets root focus order: 0 uses document order, while -1 allows programmatic focus outside sequential keyboard navigation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides supplementary text through the browser’s native title behavior.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-translate",
+          "name": "translate",
+          "kind": "props",
+          "type": {
+            "text": "\"yes\" | \"no\" | undefined",
+            "literals": [
+              "\"no\"",
+              "\"yes\""
+            ],
+            "references": []
+          },
+          "description": "Indicates whether translation tools should translate the root element’s translatable text and attributes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-radiogroup",
+          "name": "radiogroup",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The group name for legacy HTML radio commands; it does not give the action button radio-group behavior.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-role",
+          "name": "role",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the root’s role for assistive technology; it must match the rendered element and its interaction behavior.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-about",
+          "name": "about",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Identifies the subject resource described by RDFa metadata.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-datatype",
+          "name": "datatype",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Specifies the datatype of an RDFa literal value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-inlist",
+          "name": "inlist",
+          "kind": "props",
+          "type": {
+            "text": "any",
+            "literals": [],
+            "references": []
+          },
+          "description": "Adds the RDFa relationship object to its predicate’s list; presence matters and the attribute value is ignored.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-prefix",
+          "name": "prefix",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Declares RDFa prefix-to-IRI mappings for abbreviated metadata identifiers.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-property",
+          "name": "property",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Declares RDFa properties relating a subject to a resource or literal.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-resource",
+          "name": "resource",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Supplies a resource identifier used in an RDFa relationship.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-typeof",
+          "name": "typeof",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Declares the types of the resource described by RDFa.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-vocab",
+          "name": "vocab",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the default vocabulary IRI used for RDFa terms.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-autocapitalize",
+          "name": "autocapitalize",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Suggests automatic capitalization for editable content, such as sentences, words, or all characters.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-autocorrect",
+          "name": "autocorrect",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides an autocorrection hint for an editable root that supports it.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-autosave",
+          "name": "autosave",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "A Safari search-input extension naming stored search history; a regular button does not save searches.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-color",
+          "name": "color",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Passes the legacy HTML color presentation attribute; the action button’s colors are controlled by variant and CSS classes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-itemprop",
+          "name": "itemprop",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Names the properties supplied by the root element in HTML microdata.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-itemscope",
+          "name": "itemscope",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Creates an HTML microdata item scope on the root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-itemtype",
+          "name": "itemtype",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Specifies vocabulary type URLs for the microdata item created by itemscope.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-itemid",
+          "name": "itemid",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides a global identifier for a microdata item, together with itemscope and itemtype.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-itemref",
+          "name": "itemref",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Lists space-separated IDs of elements outside the scope that contribute microdata properties.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-results",
+          "name": "results",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "A Safari search-input extension limiting search-history menu entries; a regular button has no such menu.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-security",
+          "name": "security",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "A legacy Internet Explorer iframe security-zone attribute; the action button does not use it to implement a security policy.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-unselectable",
+          "name": "unselectable",
+          "kind": "props",
+          "type": {
+            "text": "\"on\" | \"off\" | undefined",
+            "literals": [
+              "\"off\"",
+              "\"on\""
+            ],
+            "references": []
+          },
+          "description": "A legacy selection attribute: on prevents starting text selection on the element, while off allows it.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-inputmode",
+          "name": "inputmode",
+          "kind": "props",
+          "type": {
+            "text": "\"none\" | \"search\" | \"text\" | \"tel\" | \"url\" | \"email\" | \"numeric\" | \"decimal\" | undefined",
+            "literals": [
+              "\"decimal\"",
+              "\"email\"",
+              "\"none\"",
+              "\"numeric\"",
+              "\"search\"",
+              "\"tel\"",
+              "\"text\"",
+              "\"url\""
+            ],
+            "references": []
+          },
+          "description": "Suggests a virtual keyboard layout for an editable root, such as numeric or email; it does not validate input.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-is",
+          "name": "is",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Names a registered customized built-in element for the HTML root; support depends on the browser and rendering path.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-exportparts",
+          "name": "exportparts",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Maps and exposes names of internal shadow parts to outer ::part selectors.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-part",
+          "name": "part",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Names the root element’s shadow parts for external styling through ::part.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dactivedescendant",
+          "name": "aria-activedescendant",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "References the active item in a composite widget while DOM focus stays on the widget root.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Datomic",
+          "name": "aria-atomic",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Indicates whether a live-region change is announced as the whole region or only its changed parts.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dautocomplete",
+          "name": "aria-autocomplete",
+          "kind": "props",
+          "type": {
+            "text": "\"none\" | \"both\" | \"inline\" | \"list\" | undefined",
+            "literals": [
+              "\"both\"",
+              "\"inline\"",
+              "\"list\"",
+              "\"none\""
+            ],
+            "references": []
+          },
+          "description": "Describes text-input completion as inline, list-based, both, or absent.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dbusy",
+          "name": "aria-busy",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Marks a region as updating so assistive technology can defer presenting its changes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dchecked",
+          "name": "aria-checked",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | \"mixed\" | undefined",
+            "literals": [
+              "\"false\"",
+              "\"mixed\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Describes the checked state of checkable controls; mixed represents partial selection for roles that support it.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dcolcount",
+          "name": "aria-colcount",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides the total column count of a table, grid, or treegrid, including columns absent from the DOM.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dcolindex",
+          "name": "aria-colindex",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides an element’s one-based column position in a table or grid.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dcolspan",
+          "name": "aria-colspan",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides the number of columns spanned by a table or grid cell.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dcontrols",
+          "name": "aria-controls",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Lists space-separated IDs of elements whose content or presence this control manages.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dcurrent",
+          "name": "aria-current",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | \"page\" | \"step\" | \"location\" | \"date\" | \"time\" | undefined",
+            "literals": [
+              "\"date\"",
+              "\"false\"",
+              "\"location\"",
+              "\"page\"",
+              "\"step\"",
+              "\"time\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Identifies the current item in a related set, optionally as a page, step, location, date, or time.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Ddescribedby",
+          "name": "aria-describedby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Lists space-separated IDs of elements that provide a supplementary description for the root.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Ddetails",
+          "name": "aria-details",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "References an element containing structured details that users can explore further.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Ddisabled",
+          "name": "aria-disabled",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Communicates that the control is unavailable; this attribute alone does not prevent clicks or dialog closure.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Ddropeffect",
+          "name": "aria-dropeffect",
+          "kind": "props",
+          "type": {
+            "text": "\"none\" | \"link\" | \"copy\" | \"execute\" | \"move\" | \"popup\" | undefined",
+            "literals": [
+              "\"copy\"",
+              "\"execute\"",
+              "\"link\"",
+              "\"move\"",
+              "\"none\"",
+              "\"popup\""
+            ],
+            "references": []
+          },
+          "description": "Deprecated drag-and-drop semantics describing operations available when an object is dropped on the target.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Derrormessage",
+          "name": "aria-errormessage",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "References the current error-message element, together with aria-invalid to express an invalid state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dexpanded",
+          "name": "aria-expanded",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Describes whether the control or its controlled content is expanded; application logic manages expansion.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dflowto",
+          "name": "aria-flowto",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "References subsequent elements in an alternative reading order that assistive technology can offer to users.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dgrabbed",
+          "name": "aria-grabbed",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "A deprecated drag-and-drop state indicating whether the element is grabbed for dragging.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dhaspopup",
+          "name": "aria-haspopup",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | \"menu\" | \"listbox\" | \"tree\" | \"grid\" | \"dialog\" | undefined",
+            "literals": [
+              "\"dialog\"",
+              "\"false\"",
+              "\"grid\"",
+              "\"listbox\"",
+              "\"menu\"",
+              "\"tree\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Declares the kind of interactive popup the control can open, such as menu or dialog; it does not create a popup.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dhidden",
+          "name": "aria-hidden",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether the element and descendants are hidden from the accessibility tree, without changing visual display or keyboard focus.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dinvalid",
+          "name": "aria-invalid",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | \"grammar\" | \"spelling\" | undefined",
+            "literals": [
+              "\"false\"",
+              "\"grammar\"",
+              "\"spelling\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Describes invalid input, including grammar or spelling errors.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dkeyshortcuts",
+          "name": "aria-keyshortcuts",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Advertises keyboard shortcuts already implemented by the application; it does not register key handlers.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dlabel",
+          "name": "aria-label",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides the root’s accessible name directly, such as the action name of an icon-only confirmation button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dlabelledby",
+          "name": "aria-labelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Lists space-separated IDs of elements that supply the root’s accessible name.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dlevel",
+          "name": "aria-level",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides the one-based level of a hierarchical item, such as a heading or tree item.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dlive",
+          "name": "aria-live",
+          "kind": "props",
+          "type": {
+            "text": "\"off\" | \"assertive\" | \"polite\" | undefined",
+            "literals": [
+              "\"assertive\"",
+              "\"off\"",
+              "\"polite\""
+            ],
+            "references": []
+          },
+          "description": "Sets live-region announcement priority: off, polite, or assertive.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dmodal",
+          "name": "aria-modal",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Declares a supported dialog role as modal; dialog primitives implement the actual focus containment.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dmultiline",
+          "name": "aria-multiline",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Describes whether a textbox accepts multiple lines of input.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dmultiselectable",
+          "name": "aria-multiselectable",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Describes whether a selectable collection allows multiple selected items.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dorientation",
+          "name": "aria-orientation",
+          "kind": "props",
+          "type": {
+            "text": "\"vertical\" | \"horizontal\" | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "Describes whether a widget uses horizontal or vertical orientation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Downs",
+          "name": "aria-owns",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Uses element IDs to establish accessibility ownership not expressed by the DOM hierarchy.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dplaceholder",
+          "name": "aria-placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides an expected-value or format hint for an empty input control; it does not replace the control’s name.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dposinset",
+          "name": "aria-posinset",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Describes a list or tree item’s one-based position in its set.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dpressed",
+          "name": "aria-pressed",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | \"mixed\" | undefined",
+            "literals": [
+              "\"false\"",
+              "\"mixed\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Describes a toggle button’s pressed state; mixed indicates a mixed state, and application logic manages changes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dreadonly",
+          "name": "aria-readonly",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Declares that a supporting widget remains operable while its value cannot be edited.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Drelevant",
+          "name": "aria-relevant",
+          "kind": "props",
+          "type": {
+            "text": "\"text\" | \"additions\" | \"additions removals\" | \"additions text\" | \"all\" | \"removals\" | \"removals additions\" | \"removals text\" | \"text additions\" | \"text removals\" | undefined",
+            "literals": [
+              "\"additions removals\"",
+              "\"additions text\"",
+              "\"additions\"",
+              "\"all\"",
+              "\"removals additions\"",
+              "\"removals text\"",
+              "\"removals\"",
+              "\"text additions\"",
+              "\"text removals\"",
+              "\"text\""
+            ],
+            "references": []
+          },
+          "description": "Selects which live-region changes warrant announcements, including additions, removals, and text changes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Drequired",
+          "name": "aria-required",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Declares that an input control requires a value; native constraints or application logic perform validation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Droledescription",
+          "name": "aria-roledescription",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides a localized, user-facing description of the element’s existing role.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Drowcount",
+          "name": "aria-rowcount",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides the total row count of a table, grid, or treegrid, including rows absent from the DOM.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Drowindex",
+          "name": "aria-rowindex",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides an element’s one-based row position in a table or grid.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Drowspan",
+          "name": "aria-rowspan",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides the number of rows spanned by a table or grid cell.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dselected",
+          "name": "aria-selected",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Describes selection for supporting roles such as options, tabs, and grid rows.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dsetsize",
+          "name": "aria-setsize",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides the total item count in the set containing a list or tree item.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dsort",
+          "name": "aria-sort",
+          "kind": "props",
+          "type": {
+            "text": "\"none\" | \"ascending\" | \"descending\" | \"other\" | undefined",
+            "literals": [
+              "\"ascending\"",
+              "\"descending\"",
+              "\"none\"",
+              "\"other\""
+            ],
+            "references": []
+          },
+          "description": "Describes the sort direction of data associated with a table or grid header.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dvaluemax",
+          "name": "aria-valuemax",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides the maximum permitted value of a range widget.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dvaluemin",
+          "name": "aria-valuemin",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides the minimum permitted value of a range widget.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dvaluenow",
+          "name": "aria-valuenow",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides the current numeric value of a range widget.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dvaluetext",
+          "name": "aria-valuetext",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Expresses a range widget’s current value as meaningful text, such as a named level.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The action button’s text or icon; with asChild, provide a single child that receives the props and interaction behavior.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:alert-dialog/AlertDialogCancel",
+      "name": "AlertDialogCancel",
+      "source": {
+        "file": "packages/ui/src/components/alert-dialog/AlertDialogCancel.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogCancel-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Additional CSS classes merged into the cancel button root, which uses the outline variant.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogCancel.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogCancel-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The cancel button content; activation requests closure, and Reka attempts to focus this button when the dialog opens.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogCancel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:alert-dialog/AlertDialogDescription",
+      "name": "AlertDialogDescription",
+      "source": {
+        "file": "packages/ui/src/components/alert-dialog/AlertDialogDescription.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogDescription-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Additional CSS classes merged into the dialog description element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogDescription.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogDescription-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Content explaining the operation and its consequences, associated by Reka with the dialog’s accessible description.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogDescription.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:alert-dialog/AlertDialogFooter",
+      "name": "AlertDialogFooter",
+      "source": {
+        "file": "packages/ui/src/components/alert-dialog/AlertDialogFooter.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogFooter-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Additional CSS classes merged into the footer container for action buttons.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogFooter.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogFooter-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Footer actions, usually cancel and confirmation buttons; the footer container is omitted when this slot is not provided.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogFooter.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:alert-dialog/AlertDialogHeader",
+      "name": "AlertDialogHeader",
+      "source": {
+        "file": "packages/ui/src/components/alert-dialog/AlertDialogHeader.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogHeader-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Additional CSS classes merged into the header container for the title and description.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogHeader.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogHeader-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Header content, usually combining AlertDialogTitle and AlertDialogDescription.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogHeader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:alert-dialog/AlertDialogTitle",
+      "name": "AlertDialogTitle",
+      "source": {
+        "file": "packages/ui/src/components/alert-dialog/AlertDialogTitle.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogTitle-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Additional CSS classes merged into the dialog title element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogTitle.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogTitle-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The dialog title, associated by Reka with its accessible name; supply a title describing the operation to confirm.",
+          "notes": [
+            "Without renderable slot content, the fallback is the English text Alert; this fallback is not localized."
+          ],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogTitle.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

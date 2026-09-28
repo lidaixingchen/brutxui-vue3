@@ -99,23 +99,11 @@ const bold = ref(false)
 | `default` | `h-10` | `min-w-10` | `text-sm` |
 | `lg` | `h-12` | `min-w-12` | `text-sm` |
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `modelValue` | `boolean` | — | 绑定值，表示是否按下 |
-| `variant` | `'default' \| 'outline'` | `'default'` | 颜色变体 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 尺寸 |
-| `disabled` | `boolean` | `false` | 是否禁用 |
-| `loading` | `boolean` | `false` | 是否显示加载状态 |
-| `ariaLabel` | `string` | — | 无障碍标签文本 |
-| `class` | `string` | — | 自定义样式类 |
+<span id="事件"></span>
 
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:modelValue` | `boolean` | 切换状态变化时触发 |
+<ComponentApi name="toggle" />
 
 ## 可访问性
 

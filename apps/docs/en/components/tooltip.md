@@ -122,20 +122,13 @@ const isOpen = ref(false)
 | `TooltipTrigger` | Element that triggers the tooltip on hover |
 | `TooltipContent` | Tooltip content panel |
 
-## Props
+## API Composition
+
+This package’s `TooltipProvider` and `TooltipContent` are local wrappers; their complete props are listed in the API reference below. `Tooltip` and `TooltipTrigger` are Reka UI primitives, whose primitive props are retained here.
 
 ### TooltipProvider
 
 Re-exported from reka-ui's `TooltipProvider`. Provides global configuration for all descendant tooltips.
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `delayDuration` | `number` | `400` | Delay from pointer entering the trigger element to tooltip opening (in milliseconds) |
-| `skipDelayDuration` | `number` | `300` | Time window to skip delay when moving between tooltips (in milliseconds) |
-| `disableHoverableContent` | `boolean` | `false` | When `true`, moving the pointer into the content area will close the tooltip |
-| `disableClosingTrigger` | `boolean` | `false` | When `true`, clicking the trigger element will not close the tooltip |
-| `disabled` | `boolean` | `false` | When `true`, disables all tooltips |
-| `ignoreNonKeyboardFocus` | `boolean` | `false` | When `true`, only keyboard focus (`:focus-visible`) triggers the tooltip |
 
 ### Tooltip
 
@@ -164,24 +157,7 @@ Trigger component that opens the tooltip on hover or focus.
 
 Tooltip content panel with neo-brutalist styling. Rendered via Portal to `body` by default.
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `sideOffset` | `number` | `6` | Distance from the trigger (in pixels) |
-| `side` | `'top' \| 'right' \| 'bottom' \| 'left'` | `'top'` | Display direction |
-| `align` | `'start' \| 'center' \| 'end'` | `'center'` | Alignment relative to the trigger |
-| `alignOffset` | `number` | — | Alignment offset (in pixels) |
-| `to` | `string \| HTMLElement` | — | Custom Portal mount target container |
-| `avoidCollisions` | `boolean` | — | Whether to automatically avoid collisions |
-| `collisionBoundary` | `Element \| Element[]` | — | Collision detection boundary |
-| `collisionPadding` | `number \| Record<string, number>` | — | Collision detection padding |
-| `arrowPadding` | `number` | — | Arrow padding |
-| `sticky` | `'partial' \| 'always'` | — | Sticky positioning strategy |
-| `hideWhenDetached` | `boolean` | — | Hide when obscured |
-| `forceMount` | `boolean` | — | Force mount (for custom animation control) |
-| `ariaLabel` | `string` | — | Screen reader label |
-| `class` | `string` | — | Custom CSS class |
-
-## Events
+## Reka UI Primitive Events
 
 ### Tooltip
 
@@ -196,7 +172,7 @@ Tooltip content panel with neo-brutalist styling. Rendered via Portal to `body` 
 | `escapeKeyDown` | `KeyboardEvent` | Emitted when the Escape key is pressed, can prevent default behavior |
 | `pointerDownOutside` | `Event` | Emitted when pressing a pointer outside, can prevent default behavior |
 
-## Slots
+## Reka UI Primitive Slots
 
 ### Tooltip
 
@@ -209,6 +185,10 @@ Tooltip content panel with neo-brutalist styling. Rendered via Portal to `body` 
 | Slot | Scope | Description |
 |------|-------|-------------|
 | `default` | — | Default slot content |
+
+## API Reference
+
+<ComponentApi name="tooltip" />
 
 ## Accessibility
 

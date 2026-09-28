@@ -59,35 +59,13 @@ const scratchCardRef = ref()
 </template>
 ```
 
-### 暴露的 API
+## API 参考
 
-| 方法/属性 | 类型 | 说明 |
-|-----------|------|------|
-| `isRevealed` | `boolean` | 是否已揭开 |
-| `revealAll()` | `() => void` | 立即揭开全部内容 |
+<span id="暴露的-api"></span>
+<span id="事件"></span>
+<span id="插槽"></span>
 
-## Props
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `percentage` | `number` | `50` | 自动刮除全部的面积百分比阈值 (0-100) |
-| `brushRadius` | `number` | `20` | 刮除画笔擦头半径 (px) |
-| `overlayColor` | `string` | — | 覆盖层底色，不设则默认绘制双色条纹图案 |
-| `fadeDuration` | `number` | `300` | 达到阈值后 Canvas 淡出动画时长 (ms) |
-| `class` | `string` | — | 自定义样式类 |
-
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `progress` | `number` | 刮除进度改变回调（已节流） |
-| `completed` | — | 刮开完成（达阈值淡出后）触发 |
-
-## 插槽
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 刮刮卡底稿内容 |
+<ComponentApi name="scratch-card" />
 
 ## 可访问性
 

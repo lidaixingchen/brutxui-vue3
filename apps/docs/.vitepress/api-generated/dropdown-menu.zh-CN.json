@@ -1,0 +1,1053 @@
+{
+  "id": "component:dropdown-menu",
+  "name": "dropdown-menu",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:dropdown-menu/DropdownMenuContent",
+      "name": "DropdownMenuContent",
+      "source": {
+        "file": "packages/ui/src/components/dropdown-menu/DropdownMenuContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuContent-props-sideOffset",
+          "name": "sideOffset",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置内容面板与触发器之间的像素间距。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuContent.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "floatingContentSideOffsets.dropdownMenu",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "6"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuContent-props-align",
+          "name": "align",
+          "kind": "props",
+          "type": {
+            "text": "\"center\" | \"start\" | \"end\" | undefined",
+            "literals": [
+              "\"center\"",
+              "\"end\"",
+              "\"start\""
+            ],
+            "references": []
+          },
+          "description": "设置内容面板相对触发器的水平对齐方式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuContent.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuContent-props-to",
+          "name": "to",
+          "kind": "props",
+          "type": {
+            "text": "string | HTMLElement | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置弹出面板传送到的目标选择器或元素；未设置时挂载到 body。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuContent.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到下拉菜单内容面板的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuContent.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "菜单项、标签、分隔线或子菜单等菜单内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dropdown-menu/DropdownMenuCheckboxItem",
+      "name": "DropdownMenuCheckboxItem",
+      "source": {
+        "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuCheckboxItem-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "boolean | \"indeterminate\" | undefined",
+            "literals": [
+              "\"indeterminate\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "复选框项的受控选中状态，支持 indeterminate；使用 update:modelValue 事件同步。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuCheckboxItem-props-defaultChecked",
+          "name": "defaultChecked",
+          "kind": "props",
+          "type": {
+            "text": "boolean | \"indeterminate\" | undefined",
+            "literals": [
+              "\"indeterminate\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "未传入 modelValue 时使用的初始选中状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuCheckboxItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到复选框菜单项根元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuCheckboxItem-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "设置选中指示图标的尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuCheckboxItem-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean | \"indeterminate\"]",
+            "literals": [
+              "\"indeterminate\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "复选框状态变化时发出新状态，可能为 true、false 或 indeterminate。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuCheckboxItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "复选框菜单项的文字和其他内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dropdown-menu/DropdownMenuItem",
+      "name": "DropdownMenuItem",
+      "source": {
+        "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuItem-props-inset",
+          "name": "inset",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "为菜单项增加缩进，使其与带图标或子菜单触发项对齐。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuItem-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "阻止用户选择此菜单项。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuItem-props-textValue",
+          "name": "textValue",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置用于键盘类型搜索的文本值；适用于项内容无法直接推断文字时。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuItem-props-closeOnSelect",
+          "name": "closeOnSelect",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制选择该项后是否关闭菜单。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到菜单项根元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "菜单项的标签及其可选图标或快捷键说明。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dropdown-menu/DropdownMenuLabel",
+      "name": "DropdownMenuLabel",
+      "source": {
+        "file": "packages/ui/src/components/dropdown-menu/DropdownMenuLabel.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuLabel-props-inset",
+          "name": "inset",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "为菜单标签增加缩进，使其与菜单项内容对齐。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuLabel.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuLabel-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到菜单标签元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuLabel.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuLabel-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "菜单分组或菜单内容的标题。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuLabel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dropdown-menu/DropdownMenuRadioItem",
+      "name": "DropdownMenuRadioItem",
+      "source": {
+        "file": "packages/ui/src/components/dropdown-menu/DropdownMenuRadioItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuRadioItem-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "此单选项在 RadioGroup 中对应的字符串值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuRadioItem.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuRadioItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到单选菜单项根元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuRadioItem.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuRadioItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "单选菜单项的标签和可选内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuRadioItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dropdown-menu/DropdownMenuSeparator",
+      "name": "DropdownMenuSeparator",
+      "source": {
+        "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSeparator.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuSeparator-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到菜单分隔线元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSeparator.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:dropdown-menu/DropdownMenuShortcut",
+      "name": "DropdownMenuShortcut",
+      "source": {
+        "file": "packages/ui/src/components/dropdown-menu/DropdownMenuShortcut.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuShortcut-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到快捷键说明元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuShortcut.vue",
+            "line": 6
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuShortcut-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "显示的快捷键文本或符号。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuShortcut.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dropdown-menu/DropdownMenuSubContent",
+      "name": "DropdownMenuSubContent",
+      "source": {
+        "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuSubContent-props-sideOffset",
+          "name": "sideOffset",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置子菜单面板与触发器之间的像素间距。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubContent.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "floatingContentSideOffsets.dropdownMenu",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "6"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuSubContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到子菜单内容面板的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubContent.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuSubContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "子菜单中的菜单项及其分组内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dropdown-menu/DropdownMenuSubTrigger",
+      "name": "DropdownMenuSubTrigger",
+      "source": {
+        "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubTrigger.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuSubTrigger-props-inset",
+          "name": "inset",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "为子菜单触发项增加缩进，使其与同级菜单项对齐。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubTrigger.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuSubTrigger-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "阻止打开此子菜单。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubTrigger.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuSubTrigger-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到子菜单触发项根元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubTrigger.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuSubTrigger-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "设置表示子菜单展开方向的图标尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubTrigger.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuSubTrigger-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "子菜单触发项显示的标签内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubTrigger.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

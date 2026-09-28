@@ -1,0 +1,428 @@
+{
+  "id": "component:countdown",
+  "name": "countdown",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:countdown/Countdown",
+      "name": "Countdown",
+      "source": {
+        "file": "packages/ui/src/components/countdown/Countdown.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acountdown_2FCountdown-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "CountdownValue",
+            "literals": [
+              "null"
+            ],
+            "references": [
+              {
+                "name": "CountdownValue",
+                "text": "export type CountdownValue = number | string | Date | null | undefined",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcountdown%2Ftypes.ts%23CountdownValue"
+              }
+            ]
+          },
+          "description": "The target deadline, as a millisecond timestamp, Date, numeric timestamp string, or parseable date string. Empty or invalid values show the placeholder.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/types.ts",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/countdown/Countdown.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-props-format",
+          "name": "format",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The remaining-time format, supporting DD, D, HH, H, mm, m, ss, s, SSS, SS, S, and literal text in square brackets. Formats containing S use millisecond-level updates.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/types.ts",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'HH:mm:ss'",
+              "source": {
+                "file": "packages/ui/src/components/countdown/Countdown.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"HH:mm:ss\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The title above the countdown value; the title slot can replace its content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/types.ts",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/countdown/Countdown.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-props-prefix",
+          "name": "prefix",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Text before the countdown value; the prefix slot can replace its content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/types.ts",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/countdown/Countdown.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-props-suffix",
+          "name": "suffix",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Text after the countdown value; the suffix slot can replace its content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/types.ts",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/countdown/Countdown.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The placeholder displayed when the target time is empty or invalid.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/types.ts",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/countdown/Countdown.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "Uses a hyphen when omitted."
+          }
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"card\" | \"bordered\" | \"subtle\" | null | undefined> | undefined",
+            "literals": [
+              "\"bordered\"",
+              "\"card\"",
+              "\"default\"",
+              "\"subtle\""
+            ],
+            "references": []
+          },
+          "description": "The background and border variant of the countdown container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/types.ts",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/countdown/Countdown.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "The size passed to the inner Statistic, controlling the value and accompanying text.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/types.ts",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/countdown/Countdown.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes merged onto the countdown container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/types.ts",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/countdown/Countdown.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-events-change",
+          "name": "change",
+          "kind": "events",
+          "type": {
+            "text": "[remaining: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the remaining milliseconds, clamped at zero, when the timer updates or the target is recalculated.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/Countdown.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-events-finish",
+          "name": "finish",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted when a valid countdown enters its finished state, including an already-expired target at mount. A new future target restarts the countdown and allows it to finish again.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/Countdown.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-slots-title",
+          "name": "title",
+          "kind": "slots",
+          "type": {
+            "text": "{ title?: string | undefined; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "Customizes the title area with the title prop value, which is rendered by default.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/Countdown.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-slots-prefix",
+          "name": "prefix",
+          "kind": "slots",
+          "type": {
+            "text": "{ prefix?: string | undefined; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "Customizes the value prefix area with the prefix prop value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/Countdown.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-slots-suffix",
+          "name": "suffix",
+          "kind": "slots",
+          "type": {
+            "text": "{ suffix?: string | undefined; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "Customizes the value suffix area with the suffix prop value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/Countdown.vue",
+            "line": 28
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{ remaining: number; formatted: string; isFinished: boolean; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "Customizes the value area with the remaining milliseconds, formatted string, and finished state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/Countdown.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

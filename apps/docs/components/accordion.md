@@ -84,60 +84,16 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from 'br
 | `AccordionTrigger` | 面板触发器，点击切换展开/折叠 |
 | `AccordionContent` | 面板内容区域，展开时显示 |
 
-## Props
+## API 参考
 
-### Accordion
+<span id="accordion"></span>
+<span id="accordionitem"></span>
+<span id="accordiontrigger"></span>
+<span id="accordioncontent"></span>
+<span id="事件"></span>
+<span id="插槽"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-| ------ | ------ | ------ | ------ |
-| `type` | `'single' \| 'multiple'` | — | 展开模式，单选或多选 |
-| `collapsible` | `boolean` | `false` | 在 `type="single"` 模式下是否允许关闭全部子项 |
-| `disabled` | `boolean` | `false` | 是否禁用整个折叠面板 |
-| `modelValue` | `string \| string[]` | — | 当前选中的面板值，支持 `v-model` 双向绑定 |
-| `defaultValue` | `string \| string[]` | — | 非受控模式下的默认选中值 |
-| `dir` | `'ltr' \| 'rtl'` | `'ltr'` | 阅读方向 |
-| `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` | 折叠面板排列方向 |
-| `unmountOnHide` | `boolean` | `true` | 关闭时是否卸载内容 DOM |
-| `class` | `string` | — | 自定义类名 |
-
-### AccordionItem
-
-| 属性 | 类型 | 默认值 | 说明 |
-| ------ | ------ | ------ | ------ |
-| `value` | `string` | — | 唯一的标示值（必填） |
-| `variant` | `'default' \| 'flat' \| 'ghost' \| 'interactive'` | `'default'` | 视觉风格变体 |
-| `disabled` | `boolean` | `false` | 是否禁用此子项 |
-| `class` | `string` | — | 自定义类名 |
-
-### AccordionTrigger
-
-| 属性 | 类型 | 默认值 | 说明 |
-| ------ | ------ | ------ | ------ |
-| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'lg'` | 展开/折叠图标的尺寸 |
-| `class` | `string` | — | 自定义类名 |
-
-### AccordionContent
-
-| 属性 | 类型 | 默认值 | 说明 |
-| ------ | ------ | ------ | ------ |
-| `forceMount` | `boolean` | — | 强制挂载内容，用于配合外部动画库控制动画 |
-| `class` | `string` | — | 自定义类名 |
-
-## 事件
-
-| 事件 | 参数 | 说明 |
-| ------ | ------ | ------ |
-| `update:modelValue` | `value: string \| string[] \| undefined` | 展开状态改变时触发，支持 `v-model` |
-
-## 插槽
-
-| 插槽 | 作用域 | 说明 |
-| ------ | ------ | ------ |
-| `Accordion#default` | — | 折叠面板内容，通常包含 `AccordionItem` |
-| `AccordionItem#default` | — | 面板子项内容，通常包含 `AccordionTrigger` 和 `AccordionContent` |
-| `AccordionTrigger#default` | — | 触发器文本内容 |
-| `AccordionTrigger#icon` | — | 自定义展开/折叠图标，默认为 `ChevronDown`；自定义图标也会获得与默认图标一致的外观（边框/背景/阴影），展开旋转动画作用于图标容器，非 svg 图标同样生效 |
-| `AccordionContent#default` | — | 面板展开后显示的内容 |
+<ComponentApi name="accordion" />
 
 ## 可访问性
 

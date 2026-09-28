@@ -1,0 +1,397 @@
+{
+  "id": "component:alert",
+  "name": "alert",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:alert/Alert",
+      "name": "Alert",
+      "source": {
+        "file": "packages/ui/src/components/alert/Alert.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aalert_2FAlert-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"success\" | \"warning\" | \"danger\" | \"info\" | \"primary-subtle\" | \"secondary-subtle\" | \"warning-subtle\" | \"danger-subtle\" | \"success-subtle\" | \"info-subtle\" | null | undefined> | undefined",
+            "literals": [
+              "\"danger-subtle\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"info-subtle\"",
+              "\"info\"",
+              "\"primary-subtle\"",
+              "\"primary\"",
+              "\"secondary-subtle\"",
+              "\"secondary\"",
+              "\"success-subtle\"",
+              "\"success\"",
+              "\"warning-subtle\"",
+              "\"warning\""
+            ],
+            "references": []
+          },
+          "description": "控制提示框的颜色、边框和背景变体",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/Alert.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/alert/Alert.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2FAlert-props-closable",
+          "name": "closable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "是否显示右上角关闭按钮；点击该按钮会发出 `close` 事件",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/Alert.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/alert/Alert.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2FAlert-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到提示框根元素上的补充 CSS 类名。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/Alert.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/alert/Alert.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2FAlert-events-close",
+          "name": "close",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "点击可关闭提示框的关闭按钮时触发，不携带参数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/Alert.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aalert_2FAlert-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "提示框的主体内容，通常包含标题、描述或其他自定义内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/Alert.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aalert_2FAlert-slots-actions",
+          "name": "actions",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "可选操作区域；提供此插槽时，操作内容会显示在主体内容下方。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/Alert.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:alert/AlertDescription",
+      "name": "AlertDescription",
+      "source": {
+        "file": "packages/ui/src/components/alert/AlertDescription.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aalert_2FAlertDescription-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "描述文本的 DOM id；未传入时自动生成，供 Alert 根节点通过 aria-describedby 关联",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/AlertDescription.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2FAlertDescription-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到描述元素上的补充 CSS 类名。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/AlertDescription.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2FAlertDescription-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "提示框的描述内容；嵌套在 `Alert` 中时，其 DOM id 会参与根节点的 `aria-describedby` 关联。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/AlertDescription.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:alert/AlertTitle",
+      "name": "AlertTitle",
+      "source": {
+        "file": "packages/ui/src/components/alert/AlertTitle.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aalert_2FAlertTitle-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "指定标题渲染为哪个 HTML 元素或 Vue 组件；默认使用 `h5`。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/AlertTitle.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'h5'",
+              "source": {
+                "file": "packages/ui/src/components/alert/AlertTitle.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"h5\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2FAlertTitle-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将标题属性、样式和插槽内容合并到唯一子元素上；启用后由子元素决定实际渲染元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/AlertTitle.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/alert/AlertTitle.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2FAlertTitle-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到标题元素上的补充 CSS 类名。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/AlertTitle.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/alert/AlertTitle.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2FAlertTitle-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "标题文本或其他标题内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/AlertTitle.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

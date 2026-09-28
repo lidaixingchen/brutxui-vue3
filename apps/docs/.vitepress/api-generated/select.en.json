@@ -1,0 +1,1654 @@
+{
+  "id": "component:select",
+  "name": "select",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:select/Select",
+      "name": "Select",
+      "source": {
+        "file": "packages/ui/src/components/select/Select.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aselect_2FSelect-props-options",
+          "name": "options",
+          "kind": "props",
+          "type": {
+            "text": "SelectOption[] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "SelectOption",
+                "text": "export interface SelectOption {\n    label: string\n    value: string\n    disabled?: boolean\n    [key: string]: unknown\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fselect%2Ftypes.ts%23SelectOption"
+              }
+            ]
+          },
+          "description": "The unified select option list. Each option has a label and non-empty value, may be disabled, and can include custom fields used for grouping.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "[]",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-groupField",
+          "name": "groupField",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The option field used to group items. When omitted, options are displayed as a flat list.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-groupLabel",
+          "name": "groupLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The field on the first option of each group used as its heading; when omitted or absent, the groupField value is used.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Placeholder text shown before an option is selected; when omitted, the localized select.placeholder message is used.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables the select root state and its built-in trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-required",
+          "name": "required",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Marks the select as required; the unified trigger hides its clear action while required is true.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The form field name passed to SelectRoot.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The DOM ID for the built-in trigger. With a custom trigger slot, the slot content supplies its own ID.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"lg\" | \"sm\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "The size variant of the built-in trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "\"default\"",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"success\" | \"error\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"error\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "The border and state variant of the built-in trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "\"default\"",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-errorMessage",
+          "name": "errorMessage",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The error message passed to the built-in trigger for its error-state semantics.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Allows the built-in trigger to show a clear action when a value is selected; the action is disabled when required is true.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-position",
+          "name": "position",
+          "kind": "props",
+          "type": {
+            "text": "\"popper\" | \"item-aligned\" | undefined",
+            "literals": [
+              "\"item-aligned\"",
+              "\"popper\""
+            ],
+            "references": []
+          },
+          "description": "Sets how the options panel is positioned relative to the trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "\"popper\"",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"popper\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes merged onto the built-in trigger together with triggerClass.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-triggerClass",
+          "name": "triggerClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the built-in trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-contentClass",
+          "name": "contentClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the options panel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-itemVariant",
+          "name": "itemVariant",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"primary\" | \"secondary\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "The variant applied to each SelectItem generated from options.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "\"default\"",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The currently selected string value, controlled with v-model; it may be undefined when nothing is selected.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/Select.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string | undefined]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the new value when the selection changes; the built-in clear action emits undefined.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/Select.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the entire Select content. When provided, the component renders neither its built-in trigger nor the options panel, so the slot must compose the primitives itself.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/Select.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-slots-trigger",
+          "name": "trigger",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the built-in trigger while the options panel is still generated from options. The slot receives no arguments.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/Select.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:select/SelectContent",
+      "name": "SelectContent",
+      "source": {
+        "file": "packages/ui/src/components/select/SelectContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aselect_2FSelectContent-props-position",
+          "name": "position",
+          "kind": "props",
+          "type": {
+            "text": "\"popper\" | \"item-aligned\" | undefined",
+            "literals": [
+              "\"item-aligned\"",
+              "\"popper\""
+            ],
+            "references": []
+          },
+          "description": "Controls how the content panel is positioned relative to its trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectContent.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'popper'",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"popper\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the floating content panel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectContent.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Renders options, groups, and other content-panel children.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:select/SelectItem",
+      "name": "SelectItem",
+      "source": {
+        "file": "packages/ui/src/components/select/SelectItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aselect_2FSelectItem-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The non-empty, unique string value of this option, used as the selection result.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectItem.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectItem-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Prevents the user from selecting this option.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectItem.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectItem-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "The visual variant for this option.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectItem.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the option root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectItem.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectItem-props-indicatorClass",
+          "name": "indicatorClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the selected-state indicator.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectItem.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectItem-props-iconClass",
+          "name": "iconClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the selected check icon.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectItem.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectItem-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "Sets the size of the selected check icon.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectItem.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The content displayed in the option text area.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:select/SelectLabel",
+      "name": "SelectLabel",
+      "source": {
+        "file": "packages/ui/src/components/select/SelectLabel.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aselect_2FSelectLabel-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the group heading element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectLabel.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectLabel-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The group heading text or other heading content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectLabel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:select/SelectScrollDownButton",
+      "name": "SelectScrollDownButton",
+      "source": {
+        "file": "packages/ui/src/components/select/SelectScrollDownButton.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aselect_2FSelectScrollDownButton-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the scroll-down indicator control.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectScrollDownButton.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectScrollDownButton.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectScrollDownButton-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "Sets the size of the scroll-down arrow icon.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectScrollDownButton.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectScrollDownButton.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:select/SelectScrollUpButton",
+      "name": "SelectScrollUpButton",
+      "source": {
+        "file": "packages/ui/src/components/select/SelectScrollUpButton.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aselect_2FSelectScrollUpButton-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the scroll-up indicator control.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectScrollUpButton.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectScrollUpButton.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectScrollUpButton-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "Sets the size of the scroll-up arrow icon.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectScrollUpButton.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectScrollUpButton.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:select/SelectSeparator",
+      "name": "SelectSeparator",
+      "source": {
+        "file": "packages/ui/src/components/select/SelectSeparator.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aselect_2FSelectSeparator-props-decorative",
+          "name": "decorative",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Declares whether the separator is decorative; the primitive hides decorative separators from the accessibility tree.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectSeparator.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectSeparator.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectSeparator-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the separator element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectSeparator.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectSeparator.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:select/SelectTrigger",
+      "name": "SelectTrigger",
+      "source": {
+        "file": "packages/ui/src/components/select/SelectTrigger.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "The trigger size variant, which also determines the mapped dropdown icon size.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"success\" | \"error\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"error\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "The trigger border and state variant.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-props-errorMessage",
+          "name": "errorMessage",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The error-state message associated with the trigger when it is invalid.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables the trigger and its clear action.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The DOM ID of the native trigger button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Allows the clear button to appear when a value is selected and the trigger is enabled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "unknown",
+            "literals": [],
+            "references": []
+          },
+          "description": "The current value, used to determine whether there is a selection to clear.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the trigger button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-props-iconClass",
+          "name": "iconClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the dropdown indicator icon.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-events-clear",
+          "name": "clear",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted when the user activates the clear action; the event carries no payload.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The trigger content, usually including SelectValue.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

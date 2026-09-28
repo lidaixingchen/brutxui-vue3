@@ -106,36 +106,14 @@ const density = ref('comfortable')
 | `RadioGroup` | 根容器，管理选中状态和键盘导航 |
 | `RadioGroupItem` | 单选项，每个选项对应一个可选值 |
 
-## Props
+## API 参考
 
-### RadioGroup
+<span id="radiogroup"></span>
+<span id="radiogroupitem"></span>
+<span id="事件"></span>
+<span id="radiogroup-1"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `modelValue` | `string` | — | 绑定值，当前选中的值 |
-| `name` | `string` | — | 表单字段名称 |
-| `disabled` | `boolean` | — | 是否禁用整个单选组 |
-| `orientation` | `'horizontal' \| 'vertical'` | — | 排列方向 |
-| `ariaLabel` | `string` | — | 无障碍标签，为屏幕阅读器提供分组名称 |
-| `class` | `string` | — | 自定义样式类 |
-
-### RadioGroupItem
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `value` | `string` | —（必填） | 单选项的值 |
-| `disabled` | `boolean` | `false` | 是否禁用该项 |
-| `variant` | `'default' \| 'secondary' \| 'accent' \| 'success' \| 'danger'` | `'default'` | 颜色变体 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 尺寸 |
-| `class` | `string` | — | 自定义样式类 |
-
-## 事件
-
-### RadioGroup
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:modelValue` | `string` | 选中值变化时触发 |
+<ComponentApi name="radio-group" />
 
 ## 可访问性
 

@@ -1,0 +1,599 @@
+{
+  "id": "component:table",
+  "name": "table",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:table/Table",
+      "name": "Table",
+      "source": {
+        "file": "packages/ui/src/components/table/Table.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atable_2FTable-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到原生 table 元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/Table.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTable-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置原生 table 的 aria-label，为表格提供可访问名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/Table.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTable-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "组合 TableHeader、TableBody、TableFooter 等表格结构子组件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/Table.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:table/TableBody",
+      "name": "TableBody",
+      "source": {
+        "file": "packages/ui/src/components/table/TableBody.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atable_2FTableBody-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到原生 tbody 元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableBody.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableBody-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "放置表格行 TableRow。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableBody.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:table/TableCaption",
+      "name": "TableCaption",
+      "source": {
+        "file": "packages/ui/src/components/table/TableCaption.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atable_2FTableCaption-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到原生 caption 元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableCaption.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableCaption-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "呈现表格标题或摘要内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableCaption.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:table/TableCell",
+      "name": "TableCell",
+      "source": {
+        "file": "packages/ui/src/components/table/TableCell.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atable_2FTableCell-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到原生 td 元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableCell.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableCell-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "呈现表格数据单元格内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableCell.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:table/TableFooter",
+      "name": "TableFooter",
+      "source": {
+        "file": "packages/ui/src/components/table/TableFooter.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atable_2FTableFooter-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\""
+            ],
+            "references": []
+          },
+          "description": "选择表格表尾的默认、主色或强调色样式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableFooter.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/table/TableFooter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableFooter-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到原生 tfoot 元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableFooter.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/table/TableFooter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableFooter-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "放置表格汇总或其他表尾行内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableFooter.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:table/TableHead",
+      "name": "TableHead",
+      "source": {
+        "file": "packages/ui/src/components/table/TableHead.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atable_2FTableHead-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "选择表头单元格的默认、主色或次要色样式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableHead.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/table/TableHead.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableHead-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到原生 th 元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableHead.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/table/TableHead.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableHead-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "呈现表头单元格内容；该元素设置 scope=\"col\"。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableHead.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:table/TableHeader",
+      "name": "TableHeader",
+      "source": {
+        "file": "packages/ui/src/components/table/TableHeader.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atable_2FTableHeader-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "选择表格表头的默认、主色或次要色样式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableHeader.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/table/TableHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableHeader-props-texture",
+          "name": "texture",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"none\" | \"dots\" | \"hatch\" | null | undefined> | undefined",
+            "literals": [
+              "\"dots\"",
+              "\"hatch\"",
+              "\"none\""
+            ],
+            "references": []
+          },
+          "description": "选择表头无底纹、斜线或点阵底纹；底纹叠加在所选配色上。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableHeader.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'none'",
+              "source": {
+                "file": "packages/ui/src/components/table/TableHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"none\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableHeader-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到原生 thead 元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableHeader.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/table/TableHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableHeader-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "放置表头行 TableRow。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableHeader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:table/TableRow",
+      "name": "TableRow",
+      "source": {
+        "file": "packages/ui/src/components/table/TableRow.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atable_2FTableRow-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到原生 tr 元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableRow.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableRow-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "放置表头单元格或数据单元格。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableRow.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

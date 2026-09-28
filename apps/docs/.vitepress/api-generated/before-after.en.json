@@ -1,0 +1,358 @@
+{
+  "id": "component:before-after",
+  "name": "before-after",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:before-after/BeforeAfter",
+      "name": "BeforeAfter",
+      "source": {
+        "file": "packages/ui/src/components/before-after/BeforeAfter.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-props-before",
+          "name": "before",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The URL of the underlying before image.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-props-after",
+          "name": "after",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The URL of the overlaid after image.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-props-beforeAlt",
+          "name": "beforeAlt",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Alternative text for the underlying before image. Uses a localized value when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/before-after/BeforeAfter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "Before"
+          }
+        },
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-props-afterAlt",
+          "name": "afterAlt",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Alternative text for the overlaid after image. Uses a localized value when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/before-after/BeforeAfter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "After"
+          }
+        },
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The current divider position as a percentage, available through v-model. Assigned and interactive values are clamped to 0–100.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/before-after/BeforeAfter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-props-defaultValue",
+          "name": "defaultValue",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The initial divider percentage in uncontrolled mode. It is read only during initialization and defaults to 50.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_SLIDER_POSITION",
+              "source": {
+                "file": "packages/ui/src/components/before-after/BeforeAfter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "50"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables dragging the native range slider.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/before-after/BeforeAfter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-props-orientation",
+          "name": "orientation",
+          "kind": "props",
+          "type": {
+            "text": "\"vertical\" | \"horizontal\" | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "Selects the divider orientation. Horizontal displays a vertical divider; vertical displays a horizontal divider.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'horizontal'",
+              "source": {
+                "file": "packages/ui/src/components/before-after/BeforeAfter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"horizontal\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes appended to the comparison container root.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/before-after/BeforeAfter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "Sets the divider handle icon size.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/before-after/BeforeAfter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the new percentage, clamped to 0–100, when slider interaction changes the position.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

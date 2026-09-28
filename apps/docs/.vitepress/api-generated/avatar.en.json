@@ -1,0 +1,530 @@
+{
+  "id": "component:avatar",
+  "name": "avatar",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:avatar/Avatar",
+      "name": "Avatar",
+      "source": {
+        "file": "packages/ui/src/components/avatar/Avatar.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aavatar_2FAvatar-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "Sets the color variant used by the avatar fallback content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/Avatar.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/avatar/Avatar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatar-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | \"xl\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\"",
+              "\"xl\""
+            ],
+            "references": []
+          },
+          "description": "Sets the size of the avatar container and its content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/Avatar.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/avatar/Avatar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatar-props-shape",
+          "name": "shape",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"square\" | \"rounded\" | null | undefined> | undefined",
+            "literals": [
+              "\"rounded\"",
+              "\"square\""
+            ],
+            "references": []
+          },
+          "description": "Sets the avatar container to a square or rounded shape.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/Avatar.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'square'",
+              "source": {
+                "file": "packages/ui/src/components/avatar/Avatar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"square\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatar-props-status",
+          "name": "status",
+          "kind": "props",
+          "type": {
+            "text": "AvatarStatus | undefined",
+            "literals": [
+              "\"busy\"",
+              "\"none\"",
+              "\"offline\"",
+              "\"online\""
+            ],
+            "references": [
+              {
+                "name": "AvatarStatus",
+                "text": "type AvatarStatus = 'online' | 'offline' | 'busy' | 'none'",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Favatar%2FAvatar.vue%23AvatarStatus"
+              }
+            ]
+          },
+          "description": "Sets the status indicator at the avatar’s lower-right corner; none hides the indicator.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/Avatar.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'none'",
+              "source": {
+                "file": "packages/ui/src/components/avatar/Avatar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"none\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatar-props-lanyard",
+          "name": "lanyard",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows a decorative lanyard grommet at the top; the decoration is hidden from the accessibility tree.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/Avatar.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/avatar/Avatar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatar-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the avatar root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/Avatar.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/avatar/Avatar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatar-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Composes the AvatarImage and AvatarFallback subcomponents.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/Avatar.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:avatar/AvatarFallback",
+      "name": "AvatarFallback",
+      "source": {
+        "file": "packages/ui/src/components/avatar/AvatarFallback.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aavatar_2FAvatarFallback-props-delayMs",
+          "name": "delayMs",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the delay before fallback content appears while the image is loading or unavailable; it appears immediately when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/AvatarFallback.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/avatar/AvatarFallback.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatarFallback-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the fallback content root.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/AvatarFallback.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/avatar/AvatarFallback.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatarFallback-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Merges the root element’s semantics and attributes into the single default-slot child; when enabled, as is ignored.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/AvatarFallback.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/avatar/AvatarFallback.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatarFallback-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "Specifies the HTML tag or Vue component rendered as the root; asChild takes precedence.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/AvatarFallback.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'span'",
+              "source": {
+                "file": "packages/ui/src/components/avatar/AvatarFallback.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"span\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatarFallback-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Text, an icon, or other fallback content shown when the image is unavailable.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/AvatarFallback.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:avatar/AvatarImage",
+      "name": "AvatarImage",
+      "source": {
+        "file": "packages/ui/src/components/avatar/AvatarImage.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aavatar_2FAvatarImage-props-src",
+          "name": "src",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The URL of the avatar image.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/AvatarImage.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/avatar/AvatarImage.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatarImage-props-alt",
+          "name": "alt",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Alternative text for the image; the default empty string treats it as decorative content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/AvatarImage.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "''",
+              "source": {
+                "file": "packages/ui/src/components/avatar/AvatarImage.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatarImage-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the avatar image element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/AvatarImage.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/avatar/AvatarImage.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

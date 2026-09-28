@@ -223,41 +223,12 @@ async function handleSave() {
 </script>
 ```
 
-## Props
+## API Reference
 
-### Toast
+<span id="toast-1"></span>
+<span id="toastcontainer"></span>
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `variant` | `'default' \| 'success' \| 'error' \| 'warning' \| 'info'` | `'default'` | Toast type |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Size |
-| `title` | `string` | — | Title text |
-| `description` | `string` | — | Description text |
-| `count` | `number` | `1` | Aggregated count, displayed as (N) when > 1 |
-| `duration` | `number` | `5000` | Display duration (in milliseconds); set to `0` to disable auto-close |
-| `pauseOnHover` | `boolean` | `true` | Pause the countdown timer and progress bar animation on hover; resume from remaining time when the mouse leaves |
-| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'xl'` | Main icon size |
-| `class` | `string` | — | Custom CSS class |
-
-### ToastContainer
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `position` | `'top-left' \| 'top-center' \| 'top-right' \| 'bottom-left' \| 'bottom-center' \| 'bottom-right' \| { x: number; y: number; anchor?: string }` | `'bottom-right'` | Display position |
-| `stack` | `{ maxVisible?: number; gap?: number; expandDirection?: 'up' \| 'down' }` | `{ maxVisible: 5, gap: 12, expandDirection: 'down' }` | Stack configuration |
-| `class` | `string` | — | Custom CSS class |
-
-## Events
-
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `close` | — | Emitted when the toast closes (after animation completes) |
-
-## Slots
-
-| Slot | Scope | Description |
-|------|-------|-------------|
-| `default` | — | Custom content, rendered below the title and description |
+<ComponentApi name="toast" />
 
 ## Accessibility
 

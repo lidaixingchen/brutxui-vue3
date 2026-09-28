@@ -1,0 +1,356 @@
+{
+  "id": "component:transfer",
+  "name": "transfer",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:transfer/Transfer",
+      "name": "Transfer",
+      "source": {
+        "file": "packages/ui/src/components/transfer/Transfer.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atransfer_2FTransfer-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到穿梭框根容器的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/transfer/Transfer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atransfer_2FTransfer-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "(string | number)[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "右侧目标面板中已选项目的 key 列表，通过 v-model 双向绑定。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/transfer/Transfer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atransfer_2FTransfer-props-data",
+          "name": "data",
+          "kind": "props",
+          "type": {
+            "text": "TransferDataItem[] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "TransferDataItem",
+                "text": "export interface TransferDataItem {\n    key: string | number\n    label: string\n    disabled?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Ftransfer%2Ftypes.ts%23TransferDataItem"
+              }
+            ]
+          },
+          "description": "穿梭框数据源；每项提供 key 和 label，并可用 disabled 禁止移动。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/transfer/Transfer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atransfer_2FTransfer-props-filterable",
+          "name": "filterable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "在左右面板显示过滤输入框。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/transfer/Transfer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atransfer_2FTransfer-props-filterMethod",
+          "name": "filterMethod",
+          "kind": "props",
+          "type": {
+            "text": "((query: string, item: TransferDataItem) => boolean) | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "TransferDataItem",
+                "text": "export interface TransferDataItem {\n    key: string | number\n    label: string\n    disabled?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Ftransfer%2Ftypes.ts%23TransferDataItem"
+              }
+            ]
+          },
+          "description": "自定义查询与项目匹配函数；返回 true 的项目保留在过滤结果中。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/transfer/Transfer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atransfer_2FTransfer-props-titles",
+          "name": "titles",
+          "kind": "props",
+          "type": {
+            "text": "string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "按源面板、目标面板顺序指定两侧标题；未提供完整标题时使用本地化默认文案。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/transfer/Transfer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atransfer_2FTransfer-props-buttonTexts",
+          "name": "buttonTexts",
+          "kind": "props",
+          "type": {
+            "text": "string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "按左移、右移顺序设置两个穿梭按钮的文字；未提供时按钮仅显示方向图标。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/transfer/Transfer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atransfer_2FTransfer-props-panelWidth",
+          "name": "panelWidth",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置左右面板各自的宽度，单位为像素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "260",
+              "source": {
+                "file": "packages/ui/src/components/transfer/Transfer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "260"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atransfer_2FTransfer-props-panelHeight",
+          "name": "panelHeight",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置左右面板的高度，单位为像素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "400",
+              "source": {
+                "file": "packages/ui/src/components/transfer/Transfer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "400"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atransfer_2FTransfer-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: (string | number)[]]",
+            "literals": [],
+            "references": []
+          },
+          "description": "右侧目标列表的 key 集合变化时发出新数组，用于更新 v-model。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atransfer_2FTransfer-events-change",
+          "name": "change",
+          "kind": "events",
+          "type": {
+            "text": "[value: (string | number)[], direction: \"right\" | \"left\", movedKeys: (string | number)[]]",
+            "literals": [
+              "\"left\"",
+              "\"right\""
+            ],
+            "references": []
+          },
+          "description": "项目在左右面板之间移动时发出更新后的目标 key 列表、移动方向和本次移动的 key。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/transfer/Transfer.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

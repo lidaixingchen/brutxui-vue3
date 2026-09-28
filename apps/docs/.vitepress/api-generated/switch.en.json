@@ -1,0 +1,420 @@
+{
+  "id": "component:switch",
+  "name": "switch",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:switch/Switch",
+      "name": "Switch",
+      "source": {
+        "file": "packages/ui/src/components/switch/Switch.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the Switch primitive root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "boolean | null | undefined",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "The controlled switch state, bound with v-model; null is treated as off.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-defaultValue",
+          "name": "defaultValue",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "The initial state used when modelValue is omitted; it takes precedence over defaultChecked when both are provided.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-defaultChecked",
+          "name": "defaultChecked",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "An alias for the initial state in uncontrolled mode; overridden when defaultValue is also provided.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables switch interaction.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"danger\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "Sets the switch color and state style variant.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-shape",
+          "name": "shape",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"slider\" | \"rocker\" | null | undefined> | undefined",
+            "literals": [
+              "\"rocker\"",
+              "\"slider\""
+            ],
+            "references": []
+          },
+          "description": "Sets the mechanical appearance to a sliding or rocker-style switch.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'slider'",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"slider\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Sets the size of the switch track and thumb.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-showLabels",
+          "name": "showLabels",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows O/I markings for off and on inside the track; the markings are decorative and hidden from the accessibility tree.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the switch’s accessible name; the current locale’s default text is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-sound",
+          "name": "sound",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Explicitly enables the relay sound when the state changes; sound is off by default.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Emits the new boolean after the user toggles the switch to synchronize v-model.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

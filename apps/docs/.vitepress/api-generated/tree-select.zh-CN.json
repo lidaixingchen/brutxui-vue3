@@ -1,0 +1,1088 @@
+{
+  "id": "component:tree-select",
+  "name": "tree-select",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:tree-select/TreeSelect",
+      "name": "TreeSelect",
+      "source": {
+        "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-nodes",
+          "name": "nodes",
+          "kind": "props",
+          "type": {
+            "text": "TreeNode<unknown>[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "树形选项数据；节点通过 id、label 与可选 children 描述，并可携带 disabled 等状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前选中的节点 ID；单选为字符串，多选为字符串数组，通过 v-model 受控。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "受控的下拉面板展开状态；与 update:open 事件配合使用 v-model:open。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-multiple",
+          "name": "multiple",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用后允许同时选择多个节点，modelValue 与 select 事件返回数组。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-searchable",
+          "name": "searchable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制面板中是否显示用于过滤节点的搜索框。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "未选择节点时触发器显示的文字；未设置时使用当前语言的默认文案。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-searchPlaceholder",
+          "name": "searchPlaceholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "搜索框的占位文字；未设置时使用当前语言的默认文案。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-emptyText",
+          "name": "emptyText",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "过滤结果为空时显示的提示；未设置时使用当前语言的默认文案。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 37
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "允许通过触发器中的清除操作移除当前选择。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 39
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用触发器和面板交互，并阻止打开下拉面板。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 41
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "设置触发器的尺寸变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 43
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置触发器的无障碍标签。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 45
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-maxDisplay",
+          "name": "maxDisplay",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "多选时触发器最多直接显示的已选标签数；其余选择合并为计数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 47
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "3",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "3"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-maxHeight",
+          "name": "maxHeight",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置树形下拉列表的 CSS 最大高度。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 49
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'15rem'",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"15rem\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-dropdownClass",
+          "name": "dropdownClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到下拉面板的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 51
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到选择器触发器根元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 53
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "设置触发器主图标尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 55
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-itemVariant",
+          "name": "itemVariant",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"primary\" | \"secondary\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "设置树节点选中高亮使用的视觉变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 57
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string | string[] | undefined]",
+            "literals": [],
+            "references": []
+          },
+          "description": "选择变化时发出新的节点 ID；清除或无有效选择时可发出 undefined。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "下拉展开状态变化时发出新布尔值，可用于 v-model:open。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-events-open_2Dchange",
+          "name": "open-change",
+          "kind": "events",
+          "type": {
+            "text": "[open: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "下拉面板打开或关闭后发出当前展开状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-events-select",
+          "name": "select",
+          "kind": "events",
+          "type": {
+            "text": "[node: TreeNode<unknown> | TreeNode<unknown>[] | undefined]",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "用户选择或清除节点时发出节点对象；多选模式返回节点数组。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-exposes-searchQuery",
+          "name": "searchQuery",
+          "kind": "exposes",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前搜索关键词的响应式状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 355
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-exposes-selectedNodes",
+          "name": "selectedNodes",
+          "kind": "exposes",
+          "type": {
+            "text": "TreeNode<unknown>[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "根据 modelValue 解析出的已选节点列表；该计算状态只读。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 356
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-exposes-expandedIds",
+          "name": "expandedIds",
+          "kind": "exposes",
+          "type": {
+            "text": "Set<string>",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前展开节点的 ID 集合；可通过组件实例读取或替换。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 357
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-exposes-focus",
+          "name": "focus",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "将键盘焦点移至选择器触发器。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 358
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-exposes-open",
+          "name": "open",
+          "kind": "exposes",
+          "type": {
+            "text": "WritableComputedRef<boolean, boolean>",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "下拉面板的可写展开状态；写入会更新内部或受控状态并发出 update:open。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": "component:tree-select/TreeSelectNode",
+      "name": "TreeSelectNode",
+      "source": {
+        "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-props-node",
+          "name": "node",
+          "kind": "props",
+          "type": {
+            "text": "TreeNode<unknown>",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "当前渲染的树节点及其数据、层级关系和禁用状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-props-selectedIds",
+          "name": "selectedIds",
+          "kind": "props",
+          "type": {
+            "text": "Set<string>",
+            "literals": [],
+            "references": []
+          },
+          "description": "已选节点 ID 集合，用于确定当前节点是否选中。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-props-expandedIds",
+          "name": "expandedIds",
+          "kind": "props",
+          "type": {
+            "text": "Set<string>",
+            "literals": [],
+            "references": []
+          },
+          "description": "已展开节点 ID 集合，用于确定当前节点的展开状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-props-depth",
+          "name": "depth",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前节点在树中的层级深度，用于计算缩进。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-props-multiple",
+          "name": "multiple",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "指示父选择器是否处于多选模式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-props-focusedId",
+          "name": "focusedId",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前键盘焦点节点的 ID，用于呈现焦点状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"primary\" | \"secondary\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "设置节点选中状态的视觉变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-events-select",
+          "name": "select",
+          "kind": "events",
+          "type": {
+            "text": "[node: TreeNode<unknown>]",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "叶子节点被选择时发出该节点对象。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-events-focus",
+          "name": "focus",
+          "kind": "events",
+          "type": {
+            "text": "[id: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前节点获得焦点时发出节点 ID。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-events-toggle",
+          "name": "toggle",
+          "kind": "events",
+          "type": {
+            "text": "[id: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "非叶子节点被展开或折叠时发出节点 ID。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

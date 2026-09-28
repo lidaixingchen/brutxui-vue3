@@ -1,0 +1,1248 @@
+{
+  "id": "component:dialog",
+  "name": "dialog",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:dialog/DialogContent",
+      "name": "DialogContent",
+      "source": {
+        "file": "packages/ui/src/components/dialog/DialogContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adialog_2FDialogContent-props-showCloseButton",
+          "name": "showCloseButton",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether the built-in close button is rendered in the top-right corner of the content panel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogContent.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogContent-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | \"xl\" | \"full\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"full\"",
+              "\"lg\"",
+              "\"sm\"",
+              "\"xl\""
+            ],
+            "references": []
+          },
+          "description": "Sets the width variant of the dialog content panel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogContent.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogContent-props-entrance",
+          "name": "entrance",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"fade-zoom\" | \"shutter\" | null | undefined> | undefined",
+            "literals": [
+              "\"fade-zoom\"",
+              "\"shutter\""
+            ],
+            "references": []
+          },
+          "description": "Selects the entrance animation variant for the content panel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogContent.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'fade-zoom'",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"fade-zoom\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogContent-props-forceMount",
+          "name": "forceMount",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Passes the mount-preservation setting to the overlay and content primitives so they can remain mounted while closed.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogContent.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the dialog content panel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogContent.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Renders the dialog body; the built-in close button is placed after the slot content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dialog/DialogDescription",
+      "name": "DialogDescription",
+      "source": {
+        "file": "packages/ui/src/components/dialog/DialogDescription.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adialog_2FDialogDescription-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the description element; other attributes such as id fall through to the Reka UI primitive.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogDescription.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogDescription-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The supporting description content for the dialog.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogDescription.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dialog/DialogEnhanced",
+      "name": "DialogEnhanced",
+      "source": {
+        "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-draggable",
+          "name": "draggable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables pointer dragging of the content panel; dragging styles are not applied in fullscreen mode.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-dragHandle",
+          "name": "dragHandle",
+          "kind": "props",
+          "type": {
+            "text": "string | HTMLElement | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Restricts drag start to a descendant matched by the CSS selector or to the specified HTMLElement.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-bounds",
+          "name": "bounds",
+          "kind": "props",
+          "type": {
+            "text": "\"viewport\" | \"parent\" | { top: number; left: number; right: number; bottom: number; } | undefined",
+            "literals": [
+              "\"parent\"",
+              "\"viewport\""
+            ],
+            "references": []
+          },
+          "description": "Constrains dragging to the parent, viewport, or the supplied top, left, right, and bottom boundaries.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'viewport'",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"viewport\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-initialPosition",
+          "name": "initialPosition",
+          "kind": "props",
+          "type": {
+            "text": "{ x: number; y: number; } | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides the initial x and y coordinates to the geometry controller.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-resizable",
+          "name": "resizable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables pointer resizing from the dialog edges.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-minWidth",
+          "name": "minWidth",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the minimum width allowed during resizing, in pixels.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DIALOG_MIN_WIDTH_PX",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "200"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-minHeight",
+          "name": "minHeight",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the minimum height allowed during resizing, in pixels.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DIALOG_MIN_HEIGHT_PX",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "150"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-maxWidth",
+          "name": "maxWidth",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets an optional maximum width during resizing, in pixels.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-maxHeight",
+          "name": "maxHeight",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets an optional maximum height during resizing, in pixels.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-aspectRatio",
+          "name": "aspectRatio",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides a locked width-to-height ratio for resizing through the geometry controller.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-showCloseButton",
+          "name": "showCloseButton",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether the built-in close button is rendered in the enhanced dialog content panel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-forceMount",
+          "name": "forceMount",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Keeps the overlay and content mounted while closed; this takes precedence over destroyOnClose.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 30
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-fullscreen",
+          "name": "fullscreen",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Places the content panel in a viewport-filling fullscreen layout and bypasses drag geometry styling.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-beforeClose",
+          "name": "beforeClose",
+          "kind": "props",
+          "type": {
+            "text": "(() => boolean | Promise<boolean>) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "A synchronous or asynchronous check run before closing; returning false or throwing/rejecting prevents close events.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-destroyOnClose",
+          "name": "destroyOnClose",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Unloads default-slot content after closing and the configured delay; content is retained when forceMount is true.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-destroyDelay",
+          "name": "destroyDelay",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The number of milliseconds to wait after closing before unloading slot content when destroyOnClose is enabled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 38
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_DIALOG_TRANSITION_MS",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "300"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-zIndex",
+          "name": "zIndex",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Explicitly sets the CSS z-index of the dialog content panel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 40
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the dialog content panel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 41
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-events-open",
+          "name": "open",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted when the component mounts, indicating that the DialogEnhanced instance mounted rather than tracking each controlled open-state change.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-events-close",
+          "name": "close",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted when a close request is not rejected by beforeClose; without a hook, the request is accepted directly.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Emits false for an accepted close request so the controlled DialogRoot open state can be set to closed.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The dialog content; it may be unloaded after the close delay when destroyOnClose is enabled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dialog/DialogFooter",
+      "name": "DialogFooter",
+      "source": {
+        "file": "packages/ui/src/components/dialog/DialogFooter.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adialog_2FDialogFooter-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the footer action area.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogFooter.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogFooter-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Footer actions; the footer container is not rendered when the default slot is empty.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogFooter.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dialog/DialogHeader",
+      "name": "DialogHeader",
+      "source": {
+        "file": "packages/ui/src/components/dialog/DialogHeader.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adialog_2FDialogHeader-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the title-area container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogHeader.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogHeader-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The title, description, or other header content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogHeader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dialog/DialogOverlay",
+      "name": "DialogOverlay",
+      "source": {
+        "file": "packages/ui/src/components/dialog/DialogOverlay.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adialog_2FDialogOverlay-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the backdrop primitive.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogOverlay.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogOverlay.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogOverlay-props-forceMount",
+          "name": "forceMount",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Passes the force-mount setting to the Reka UI overlay primitive.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogOverlay.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogOverlay.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogOverlay-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Delegates the overlay primitive element rendering to the child in the default slot.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogOverlay.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogOverlay.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogOverlay-props-pattern",
+          "name": "pattern",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Adds a dotted halftone background pattern to the overlay.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogOverlay.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogOverlay.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogOverlay-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides the overlay child element when using asChild.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogOverlay.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dialog/DialogTitle",
+      "name": "DialogTitle",
+      "source": {
+        "file": "packages/ui/src/components/dialog/DialogTitle.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adialog_2FDialogTitle-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the dialog title primitive.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogTitle.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogTitle-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The dialog title text or content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogTitle.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

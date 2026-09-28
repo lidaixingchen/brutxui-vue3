@@ -1,0 +1,362 @@
+{
+  "id": "component:watermark",
+  "name": "watermark",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:watermark/Watermark",
+      "name": "Watermark",
+      "source": {
+        "file": "packages/ui/src/components/watermark/Watermark.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Awatermark_2FWatermark-props-width",
+          "name": "width",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the width in pixels of a single watermark tile.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/watermark/Watermark.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "120",
+              "source": {
+                "file": "packages/ui/src/components/watermark/Watermark.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "120"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Awatermark_2FWatermark-props-height",
+          "name": "height",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the height in pixels of a single watermark tile.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/watermark/Watermark.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "64",
+              "source": {
+                "file": "packages/ui/src/components/watermark/Watermark.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "64"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Awatermark_2FWatermark-props-rotate",
+          "name": "rotate",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the watermark rotation in degrees; the default -22 tilts it counterclockwise.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/watermark/Watermark.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "-22",
+              "source": {
+                "file": "packages/ui/src/components/watermark/Watermark.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "-22"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Awatermark_2FWatermark-props-zIndex",
+          "name": "zIndex",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the CSS z-index of the watermark overlay.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/watermark/Watermark.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "9999",
+              "source": {
+                "file": "packages/ui/src/components/watermark/Watermark.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "9999"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Awatermark_2FWatermark-props-image",
+          "name": "image",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets a watermark image URL or Data URL. When provided, the image is used instead of text content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/watermark/Watermark.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/watermark/Watermark.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Awatermark_2FWatermark-props-content",
+          "name": "content",
+          "kind": "props",
+          "type": {
+            "text": "string | string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the watermark text. A string array lays out multiple lines in a tile.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/watermark/Watermark.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "''",
+              "source": {
+                "file": "packages/ui/src/components/watermark/Watermark.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Awatermark_2FWatermark-props-font",
+          "name": "font",
+          "kind": "props",
+          "type": {
+            "text": "WatermarkFont | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "WatermarkFont",
+                "text": "interface WatermarkFont {\n    color?: string\n    fontSize?: number | string\n    fontWeight?: 'normal' | 'light' | 'weight' | 'bold' | number\n    fontStyle?: 'normal' | 'italic' | 'oblique'\n    fontFamily?: string\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fwatermark%2FWatermark.vue%23WatermarkFont"
+              }
+            ]
+          },
+          "description": "Configures text watermark color, size, weight, style, and family. By default it uses 14px sans-serif with normal weight and draws --brutal-fg at 15% opacity.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/watermark/Watermark.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => ({\n        fontSize: 14,\n        fontWeight: 'normal',\n        fontStyle: 'normal',\n        fontFamily: 'sans-serif'\n    })",
+              "source": {
+                "file": "packages/ui/src/components/watermark/Watermark.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "{ \"fontFamily\": \"sans-serif\", \"fontSize\": 14, \"fontStyle\": \"normal\", \"fontWeight\": \"normal\" }"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Awatermark_2FWatermark-props-gap",
+          "name": "gap",
+          "kind": "props",
+          "type": {
+            "text": "[number, number] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets horizontal and vertical spacing between watermark tiles as [gapX, gapY].",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/watermark/Watermark.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => [100, 100]",
+              "source": {
+                "file": "packages/ui/src/components/watermark/Watermark.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[100, 100]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Awatermark_2FWatermark-props-offset",
+          "name": "offset",
+          "kind": "props",
+          "type": {
+            "text": "[number, number] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Offsets the starting point of the watermark tiling horizontally and vertically as [offsetX, offsetY].",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/watermark/Watermark.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => [0, 0]",
+              "source": {
+                "file": "packages/ui/src/components/watermark/Watermark.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[0, 0]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Awatermark_2FWatermark-props-seal",
+          "name": "seal",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Adds a vintage seal treatment with two circular rings and a centered five-point star in each tile.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/watermark/Watermark.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/watermark/Watermark.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Awatermark_2FWatermark-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The host content covered by the watermark; the component tiles the decorative watermark over it.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/watermark/Watermark.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

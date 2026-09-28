@@ -1,0 +1,139 @@
+{
+  "id": "component:kbd",
+  "name": "kbd",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:kbd/Kbd",
+      "name": "Kbd",
+      "source": {
+        "file": "packages/ui/src/components/kbd/Kbd.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Akbd_2FKbd-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"accent\" | \"backlit\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"backlit\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "控制键帽的配色；backlit 使用黑色背景和 accent 色文字，呈现背光键帽效果。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/kbd/Kbd.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/kbd/Kbd.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Akbd_2FKbd-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"lg\" | \"sm\" | \"md\" | null | undefined> | undefined",
+            "literals": [
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "控制键帽的内边距、字号与最小宽度。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/kbd/Kbd.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/kbd/Kbd.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Akbd_2FKbd-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到原生 kbd 根元素上的补充 CSS 类名。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/kbd/Kbd.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/kbd/Kbd.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Akbd_2FKbd-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "键帽内展示的按键名称、符号或图标；组件本身只负责展示快捷键提示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/kbd/Kbd.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

@@ -128,105 +128,26 @@ import { DialogEnhanced, DialogHeader, DialogTitle } from 'brutx-ui-vue'
 </template>
 ```
 
-## Props
+## API 参考
 
-### Dialog（根组件）
+<span id="dialog-根组件"></span>
+<span id="dialogtrigger"></span>
+<span id="dialogcontent"></span>
+<span id="dialogclose"></span>
+<span id="dialogenhanced"></span>
+<span id="dialogheader-dialogfooter-dialogtitle-dialogdescription-dialogoverlay"></span>
+<span id="事件"></span>
+<span id="dialog"></span>
+<span id="dialogenhanced-事件"></span>
+<span id="插槽"></span>
+<span id="dialog-1"></span>
+<span id="dialogcontent-dialogheader-dialogfooter-dialogtitle-dialogdescription-dialogoverlay-dialogenhanced"></span>
 
-从 reka-ui 的 `DialogRoot` 重新导出，管理对话框的打开/关闭状态。
+<ComponentApi name="dialog" />
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `open` | `boolean` | — | 受控的打开状态 |
-| `defaultOpen` | `boolean` | `false` | 非受控模式下的默认打开状态 |
-| `modal` | `boolean` | `true` | 是否为模态对话框 |
+### Reka UI 原语
 
-### DialogTrigger
-
-从 reka-ui 重新导出的触发按钮。
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `asChild` | `boolean` | — | 是否将渲染委托给子元素 |
-| `as` | `string` | `'button'` | 渲染的 HTML 元素 |
-
-### DialogContent
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `showCloseButton` | `boolean` | `true` | 是否显示关闭按钮 |
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'default'` | 对话框尺寸 |
-| `entrance` | `'fade-zoom' \| 'shutter'` | `'fade-zoom'` | 入场动效形态：流体淡入缩放 / 百叶窗机械展开（reduced-motion 下自动降级为瞬现） |
-| `forceMount` | `boolean` | — | 强制渲染（用于动画控制） |
-| `class` | `string` | — | 自定义样式类 |
-
-### DialogClose
-
-从 reka-ui 重新导出的关闭按钮。
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `asChild` | `boolean` | — | 是否将渲染委托给子元素 |
-| `as` | `string` | `'button'` | 渲染的 HTML 元素 |
-
-### DialogEnhanced
-
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `draggable` | `boolean` | `false` | 是否可拖拽 |
-| `dragHandle` | `string \| HTMLElement` | — | 拖拽手柄（CSS 选择器或元素） |
-| `bounds` | `'parent' \| 'viewport' \| { top, left, right, bottom }` | `'viewport'` | 拖拽边界 |
-| `initialPosition` | `{ x: number; y: number }` | — | 初始位置 |
-| `resizable` | `boolean` | `false` | 是否可调整大小 |
-| `minWidth` | `number` | `200` | 最小宽度 |
-| `minHeight` | `number` | `150` | 最小高度 |
-| `maxWidth` | `number` | — | 最大宽度 |
-| `maxHeight` | `number` | — | 最大高度 |
-| `aspectRatio` | `number` | — | 宽高比锁定 |
-| `showCloseButton` | `boolean` | `true` | 是否显示关闭按钮 |
-| `forceMount` | `boolean` | — | 强制渲染 |
-| `fullscreen` | `boolean` | `false` | 全屏模式（占满整个视口） |
-| `beforeClose` | `((done) => void) \| (() => boolean \| Promise<boolean>)` | — | 关闭前钩子（支持回调模式和 Promise 模式） |
-| `destroyOnClose` | `boolean` | `false` | 关闭后销毁内容 |
-| `zIndex` | `number` | — | 自定义层级 |
-| `class` | `string` | — | 自定义样式类 |
-
-### DialogHeader / DialogFooter / DialogTitle / DialogDescription / DialogOverlay
-
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `class` | `string` | — | 自定义样式类 |
-
-## 事件
-
-### Dialog
-
-| 事件 | 参数 | 说明 |
-| --- | --- | --- |
-| `update:open` | `(value: boolean)` | 对话框打开状态变化时触发 |
-
-### DialogEnhanced 事件
-
-| 事件 | 参数 | 说明 |
-| --- | --- | --- |
-| `update:open` | `(value: boolean)` | 对话框打开状态变化时触发 |
-| `open` | — | 对话框开始打开时触发 |
-| `opened` | — | 对话框打开动画完成时触发 |
-| `close` | — | 对话框开始关闭时触发 |
-| `closed` | — | 对话框关闭动画完成时触发 |
-
-## 插槽
-
-### Dialog
-
-| 插槽 | 作用域 | 说明 |
-| --- | --- | --- |
-| `default` | `{ open: boolean, close: () => void }` | 默认插槽，提供当前打开状态和关闭方法 |
-
-### DialogContent / DialogHeader / DialogFooter / DialogTitle / DialogDescription / DialogOverlay / DialogEnhanced
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 默认插槽 |
+DialogRoot、DialogTrigger、DialogClose 和 DialogPortal 是示例中直接从 reka-ui 导入的原语；DialogContent、DialogHeader、DialogFooter、DialogTitle、DialogDescription、DialogOverlay 和 DialogEnhanced 是 BrutxUI 组件。DialogEnhanced 需要放在 DialogRoot 提供的上下文中使用。
 
 ## 可访问性
 

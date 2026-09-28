@@ -1,0 +1,676 @@
+{
+  "id": "component:button",
+  "name": "button",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:button/Button",
+      "name": "Button",
+      "source": {
+        "file": "packages/ui/src/components/button/Button.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abutton_2FButton-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"ghost\" | \"primary\" | \"secondary\" | \"success\" | \"danger\" | \"accent\" | \"outline\" | \"link\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"ghost\"",
+              "\"link\"",
+              "\"outline\"",
+              "\"primary\"",
+              "\"secondary\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "Controls the button’s visual variant, including its color and interaction-state styles.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | \"xl\" | \"icon\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"icon\"",
+              "\"lg\"",
+              "\"sm\"",
+              "\"xl\""
+            ],
+            "references": []
+          },
+          "description": "Controls the button dimensions and padding. Use `icon` for a square icon button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-flair",
+          "name": "flair",
+          "kind": "props",
+          "type": {
+            "text": "\"none\" | \"stacked\" | \"hazard\" | \"ticket\" | undefined",
+            "literals": [
+              "\"hazard\"",
+              "\"none\"",
+              "\"stacked\"",
+              "\"ticket\""
+            ],
+            "references": []
+          },
+          "description": "Adds a decorative treatment such as stacked shadows, hazard stripes, or a ticket notch. It composes independently with the color variant.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'none'",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"none\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Merges the button props, styles, and interaction behavior into its single child element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-type",
+          "name": "type",
+          "kind": "props",
+          "type": {
+            "text": "\"button\" | \"submit\" | \"reset\" | undefined",
+            "literals": [
+              "\"button\"",
+              "\"reset\"",
+              "\"submit\""
+            ],
+            "references": []
+          },
+          "description": "Sets the native button type. When omitted, the rendered native button uses the browser’s default button behavior.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-loading",
+          "name": "loading",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows a loading icon and places the button in its disabled state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables the button’s normal user interaction.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-pendingText",
+          "name": "pendingText",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Text used as the default slot fallback while a submit button is loading. Explicit slot content takes precedence.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "When `pendingText` is `undefined` or `null`, the component reads `submitButton.submitting`, whose English text is “Submitting...”."
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-pressed",
+          "name": "pressed",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Sets the pressed state for a toggle button and is reflected through `aria-pressed`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 37
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-expanded",
+          "name": "expanded",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Sets whether the content controlled by the button is expanded and is reflected through `aria-expanded`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 39
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-effect",
+          "name": "effect",
+          "kind": "props",
+          "type": {
+            "text": "\"none\" | \"glitch\" | undefined",
+            "literals": [
+              "\"glitch\"",
+              "\"none\""
+            ],
+            "references": []
+          },
+          "description": "Enables or disables the glitch visual effect. The effect is disabled by default.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 41
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'none'",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"none\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-glitchTrigger",
+          "name": "glitchTrigger",
+          "kind": "props",
+          "type": {
+            "text": "GlitchTrigger | undefined",
+            "literals": [
+              "\"autoplay\"",
+              "\"click\"",
+              "\"hover\"",
+              "\"none\""
+            ],
+            "references": [
+              {
+                "name": "GlitchTrigger",
+                "text": "export type GlitchTrigger = 'hover' | 'click' | 'autoplay' | 'none'",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomposables%2FuseGlitchEffect.ts%23GlitchTrigger"
+              }
+            ]
+          },
+          "description": "Selects how the glitch effect starts: on hover, on click, on autoplay, or never. It applies only when `effect=\"glitch\"`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 43
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'hover'",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"hover\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-glitchInterval",
+          "name": "glitchInterval",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the autoplay interval for the glitch effect in milliseconds. It applies only when `glitchTrigger=\"autoplay\"` and is clamped to the effect timing limits.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 45
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_AUTOPLAY_INTERVAL_MS",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "3000"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-glitchSpeed",
+          "name": "glitchSpeed",
+          "kind": "props",
+          "type": {
+            "text": "ButtonGlitchSpeed | undefined",
+            "literals": [
+              "\"fast\"",
+              "\"medium\"",
+              "\"slow\""
+            ],
+            "references": [
+              {
+                "name": "ButtonGlitchSpeed",
+                "text": "type ButtonGlitchSpeed = NonNullable<ButtonVariantProps['glitchSpeed']>",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fbutton%2FButton.vue%23ButtonGlitchSpeed"
+              }
+            ]
+          },
+          "description": "Controls the playback speed of the glitch animation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 47
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'medium'",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"medium\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-glitchDirection",
+          "name": "glitchDirection",
+          "kind": "props",
+          "type": {
+            "text": "ButtonGlitchDirection | undefined",
+            "literals": [
+              "\"both\"",
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": [
+              {
+                "name": "ButtonGlitchDirection",
+                "text": "type ButtonGlitchDirection = NonNullable<ButtonVariantProps['glitchDirection']>",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fbutton%2FButton.vue%23ButtonGlitchDirection"
+              }
+            ]
+          },
+          "description": "Controls the direction of the glitch distortion.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 49
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'horizontal'",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"horizontal\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes merged into the button root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 50
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The button content. If no slot content is provided, pending text is shown only when `type=\"submit\"` and `loading` are both true. Explicit slot content takes precedence.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-exposes-play",
+          "name": "play",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Manually activates the glitch animation. It takes effect only when `effect=\"glitch\"`; it bypasses the trigger and disabled checks, while a reduced-motion preference still hides the animation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 211
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-exposes-stop",
+          "name": "stop",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Immediately clears the active glitch animation state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 212
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-events-click",
+          "name": "click",
+          "kind": "events",
+          "type": {
+            "text": "MouseEvent",
+            "literals": [],
+            "references": []
+          },
+          "description": "The rendered root’s native click event is available to consumers through Vue attribute fallthrough; Button does not declare a custom event with this name.",
+          "notes": [
+            "When `disabled` or `loading` is true, the internal click handler calls `preventDefault()` and `stopPropagation()`. Native button mode also sets `disabled`; `asChild` mode uses `aria-disabled` and `pointer-events-none`."
+          ],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue"
+          },
+          "origin": "fallthrough"
+        }
+      ]
+    }
+  ]
+}

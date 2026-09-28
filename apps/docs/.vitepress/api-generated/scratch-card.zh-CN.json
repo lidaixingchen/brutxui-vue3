@@ -1,0 +1,268 @@
+{
+  "id": "component:scratch-card",
+  "name": "scratch-card",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:scratch-card/ScratchCard",
+      "name": "ScratchCard",
+      "source": {
+        "file": "packages/ui/src/components/scratch-card/ScratchCard.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Ascratch_2Dcard_2FScratchCard-props-percentage",
+          "name": "percentage",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "达到此已刮开面积百分比时自动完成揭示；默认阈值为 50。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scratch-card/ScratchCard.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_PERCENTAGE",
+              "source": {
+                "file": "packages/ui/src/components/scratch-card/ScratchCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "50"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascratch_2Dcard_2FScratchCard-props-brushRadius",
+          "name": "brushRadius",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置指针刮除笔刷的半径，单位为像素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scratch-card/ScratchCard.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_BRUSH_RADIUS",
+              "source": {
+                "file": "packages/ui/src/components/scratch-card/ScratchCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "20"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascratch_2Dcard_2FScratchCard-props-overlayColor",
+          "name": "overlayColor",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置 Canvas 覆盖层的纯色底色；未设置时使用主题双色斜纹。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scratch-card/ScratchCard.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/scratch-card/ScratchCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascratch_2Dcard_2FScratchCard-props-fadeDuration",
+          "name": "fadeDuration",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "达到完成阈值后覆盖层淡出的时长，单位为毫秒；减少动态效果偏好会跳过动画。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scratch-card/ScratchCard.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_FADE_DURATION",
+              "source": {
+                "file": "packages/ui/src/components/scratch-card/ScratchCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "300"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascratch_2Dcard_2FScratchCard-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到刮刮卡根容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scratch-card/ScratchCard.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/scratch-card/ScratchCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascratch_2Dcard_2FScratchCard-events-progress",
+          "name": "progress",
+          "kind": "events",
+          "type": {
+            "text": "[percent: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "刮除进度变化时发出当前已揭示面积百分比；事件经过节流。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scratch-card/ScratchCard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Ascratch_2Dcard_2FScratchCard-events-completed",
+          "name": "completed",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "达到自动揭示阈值或调用 revealAll 后，覆盖层完成移除时发出。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scratch-card/ScratchCard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Ascratch_2Dcard_2FScratchCard-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "被 Canvas 覆盖层遮住并逐步揭示的刮刮卡底层内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scratch-card/ScratchCard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Ascratch_2Dcard_2FScratchCard-exposes-isRevealed",
+          "name": "isRevealed",
+          "kind": "exposes",
+          "type": {
+            "text": "boolean",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "组件实例上暴露的揭示状态；Vue 会自动解包内部 Ref，可通过 `scratchCardRef.value.isRevealed` 读取布尔值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scratch-card/ScratchCard.vue",
+            "line": 108
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Ascratch_2Dcard_2FScratchCard-exposes-revealAll",
+          "name": "revealAll",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "立即揭示全部内容并开始移除覆盖层。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scratch-card/ScratchCard.vue",
+            "line": 109
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    }
+  ]
+}

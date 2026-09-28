@@ -1,0 +1,676 @@
+{
+  "id": "component:button",
+  "name": "button",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:button/Button",
+      "name": "Button",
+      "source": {
+        "file": "packages/ui/src/components/button/Button.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abutton_2FButton-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"ghost\" | \"primary\" | \"secondary\" | \"success\" | \"danger\" | \"accent\" | \"outline\" | \"link\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"ghost\"",
+              "\"link\"",
+              "\"outline\"",
+              "\"primary\"",
+              "\"secondary\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "按钮的主视觉变体，控制配色和交互状态样式",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | \"xl\" | \"icon\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"icon\"",
+              "\"lg\"",
+              "\"sm\"",
+              "\"xl\""
+            ],
+            "references": []
+          },
+          "description": "按钮的尺寸；`icon` 用于方形图标按钮",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-flair",
+          "name": "flair",
+          "kind": "props",
+          "type": {
+            "text": "\"none\" | \"stacked\" | \"hazard\" | \"ticket\" | undefined",
+            "literals": [
+              "\"hazard\"",
+              "\"none\"",
+              "\"stacked\"",
+              "\"ticket\""
+            ],
+            "references": []
+          },
+          "description": "装饰形态：多层彩虹投影 / 警戒斜纹 / 票据撕口，与色系变体正交",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'none'",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"none\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将按钮属性、样式和交互行为合并到唯一子元素上",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-type",
+          "name": "type",
+          "kind": "props",
+          "type": {
+            "text": "\"button\" | \"submit\" | \"reset\" | undefined",
+            "literals": [
+              "\"button\"",
+              "\"reset\"",
+              "\"submit\""
+            ],
+            "references": []
+          },
+          "description": "原生按钮类型；不传时由原生 `button` 的默认行为决定",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-loading",
+          "name": "loading",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示加载图标并将按钮置为禁用状态",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁止按钮的常规用户交互",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-pendingText",
+          "name": "pendingText",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "加载中显示的等待文本，作为默认插槽的回退内容；仅在 `type=\"submit\"` 且 `loading` 时生效，未传入时回退到 i18n 默认值；提供插槽内容时优先显示插槽",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "当 `pendingText` 为 `undefined` 或 `null` 时读取 `submitButton.submitting`，简体中文文案为“提交中...”。"
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-pressed",
+          "name": "pressed",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "按钮是否处于按下状态（切换按钮）",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 37
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-expanded",
+          "name": "expanded",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "按钮控制的内容是否展开",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 39
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-effect",
+          "name": "effect",
+          "kind": "props",
+          "type": {
+            "text": "\"none\" | \"glitch\" | undefined",
+            "literals": [
+              "\"glitch\"",
+              "\"none\""
+            ],
+            "references": []
+          },
+          "description": "是否启用故障撕裂视觉效果",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 41
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'none'",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"none\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-glitchTrigger",
+          "name": "glitchTrigger",
+          "kind": "props",
+          "type": {
+            "text": "GlitchTrigger | undefined",
+            "literals": [
+              "\"autoplay\"",
+              "\"click\"",
+              "\"hover\"",
+              "\"none\""
+            ],
+            "references": [
+              {
+                "name": "GlitchTrigger",
+                "text": "export type GlitchTrigger = 'hover' | 'click' | 'autoplay' | 'none'",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomposables%2FuseGlitchEffect.ts%23GlitchTrigger"
+              }
+            ]
+          },
+          "description": "故障效果的触发方式；仅在 `effect=\"glitch\"` 时生效",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 43
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'hover'",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"hover\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-glitchInterval",
+          "name": "glitchInterval",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "自动播放故障效果时的触发间隔，单位为毫秒",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 45
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_AUTOPLAY_INTERVAL_MS",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "3000"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-glitchSpeed",
+          "name": "glitchSpeed",
+          "kind": "props",
+          "type": {
+            "text": "ButtonGlitchSpeed | undefined",
+            "literals": [
+              "\"fast\"",
+              "\"medium\"",
+              "\"slow\""
+            ],
+            "references": [
+              {
+                "name": "ButtonGlitchSpeed",
+                "text": "type ButtonGlitchSpeed = NonNullable<ButtonVariantProps['glitchSpeed']>",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fbutton%2FButton.vue%23ButtonGlitchSpeed"
+              }
+            ]
+          },
+          "description": "故障动画的播放速度",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 47
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'medium'",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"medium\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-glitchDirection",
+          "name": "glitchDirection",
+          "kind": "props",
+          "type": {
+            "text": "ButtonGlitchDirection | undefined",
+            "literals": [
+              "\"both\"",
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": [
+              {
+                "name": "ButtonGlitchDirection",
+                "text": "type ButtonGlitchDirection = NonNullable<ButtonVariantProps['glitchDirection']>",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fbutton%2FButton.vue%23ButtonGlitchDirection"
+              }
+            ]
+          },
+          "description": "故障动画的撕裂方向",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 49
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'horizontal'",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"horizontal\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到按钮根元素上的补充 CSS 类名。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 50
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/button/Button.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "按钮主体内容。未提供插槽内容时，只有在 `type=\"submit\"` 且 `loading` 为真时才显示等待文本；显式插槽内容优先。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-exposes-play",
+          "name": "play",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "手动激活故障动画。仅在 `effect=\"glitch\"` 时生效；此方法绕过触发方式和禁用状态的检查，但减少动态效果偏好仍会隐藏动画。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 211
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-exposes-stop",
+          "name": "stop",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "立即关闭故障动画状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue",
+            "line": 212
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Abutton_2FButton-events-click",
+          "name": "click",
+          "kind": "events",
+          "type": {
+            "text": "MouseEvent",
+            "literals": [],
+            "references": []
+          },
+          "description": "渲染根元素的原生点击事件通过 Vue 属性透传交给使用方监听；Button 本身不声明同名自定义事件。",
+          "notes": [
+            "当 `disabled` 或 `loading` 为真时，组件内部点击处理器会调用 `preventDefault()` 和 `stopPropagation()`；原生按钮模式同时设置 `disabled`，`asChild` 模式使用 `aria-disabled` 与 `pointer-events-none`。"
+          ],
+          "source": {
+            "file": "packages/ui/src/components/button/Button.vue"
+          },
+          "origin": "fallthrough"
+        }
+      ]
+    }
+  ]
+}

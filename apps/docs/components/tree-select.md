@@ -175,37 +175,12 @@ interface TreeSelectLocale {
 }
 ```
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `nodes` | `TreeNode[]` | —（必填） | 树形数据源 |
-| `modelValue` | `string \| string[]` | `undefined` | 选中值（单选为 string，多选为 string[]） |
-| `open` | `boolean` | `undefined` | 受控展开状态，配合 `update:open` 事件实现 `v-model:open` |
-| `multiple` | `boolean` | `false` | 是否支持多选 |
-| `searchable` | `boolean` | `true` | 是否显示搜索框 |
-| `placeholder` | `string` | locale: `treeSelect.placeholder` | 占位文本 |
-| `searchPlaceholder` | `string` | locale: `treeSelect.searchPlaceholder` | 搜索框占位文本 |
-| `emptyText` | `string` | locale: `treeSelect.emptyText` | 无结果时的提示文本 |
-| `clearable` | `boolean` | `false` | 是否显示清除按钮 |
-| `disabled` | `boolean` | `false` | 是否禁用 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 触发器尺寸 |
-| `ariaLabel` | `string` | `undefined` | ARIA 标签 |
-| `maxDisplay` | `number` | `3` | 多选模式下最多显示的标签数 |
-| `maxHeight` | `string` | `'15rem'` | 下拉列表最大高度 |
-| `dropdownClass` | `string` | `undefined` | 下拉列表自定义类名 |
-| `iconSize` | `IconSize` | `'default'` | 图标尺寸 |
-| `itemVariant` | `'default' \| 'primary' \| 'secondary'` | `'default'` | 下拉项的变体（选中高亮颜色） |
-| `class` | `string` | `undefined` | 触发器自定义类名 |
+<span id="事件"></span>
+<span id="方法-defineexpose"></span>
 
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:modelValue` | `string \| string[] \| undefined` | 选中值变更 |
-| `update:open` | `boolean` | 下拉展开/关闭状态变更，配合 `open` prop 实现 `v-model:open` |
-| `select` | `TreeNode \| TreeNode[] \| undefined` | 选中节点变更 |
-| `open-change` | `boolean` | 下拉框展开/关闭 |
+<ComponentApi name="tree-select" />
 
 ## 可访问性
 
@@ -213,17 +188,9 @@ interface TreeSelectLocale {
 - **ARIA 属性**：触发器使用 `role="combobox"` 和 `aria-expanded`；下拉列表使用 `role="tree"` 和 `role="treeitem"`；多选模式下添加 `aria-multiselectable`；禁用状态下使用 `aria-disabled`
 - **焦点管理**：使用 roving tabindex 管理焦点；禁用节点设置 `tabindex="-1"`
 
-## 方法（defineExpose）
+## 通过 ref 使用组件状态
 
 通过 `ref` 访问组件实例后可调用以下方法：
-
-| 属性/方法 | 类型 | 说明 |
-| --- | --- | --- |
-| `open` | `Ref<boolean>` | 下拉面板是否展开 |
-| `searchQuery` | `Ref<string>` | 当前搜索关键词 |
-| `selectedNodes` | `ComputedRef<TreeNode[]>` | 多选模式下选中的节点列表（只读） |
-| `expandedIds` | `Ref<Set<string>>` | 当前展开的节点 ID 集合 |
-| `focus` | `() => void` | 聚焦触发器 |
 
 ```vue
 <script setup>
@@ -235,7 +202,7 @@ const treeRef = ref(null)
 function expandAll() {
     // 获取所有节点 ID 并展开
     const allIds = getAllNodeIds(nodes)
-    treeRef.value?.expandedIds = new Set(allIds)
+    treeRef.value.expandedIds = new Set(allIds)
 }
 </script>
 

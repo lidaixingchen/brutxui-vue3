@@ -1,0 +1,601 @@
+{
+  "id": "component:menu",
+  "name": "menu",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:menu/Menu",
+      "name": "Menu",
+      "source": {
+        "file": "packages/ui/src/components/menu/Menu.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Amenu_2FMenu-props-mode",
+          "name": "mode",
+          "kind": "props",
+          "type": {
+            "text": "\"vertical\" | \"horizontal\" | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "设置菜单项的排列方向，可选水平或垂直。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/Menu.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'vertical'",
+              "source": {
+                "file": "packages/ui/src/components/menu/Menu.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"vertical\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FMenu-props-defaultActive",
+          "name": "defaultActive",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置初始高亮菜单项的 index；该值也用于初始化当前激活项。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/Menu.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "''",
+              "source": {
+                "file": "packages/ui/src/components/menu/Menu.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FMenu-props-router",
+          "name": "router",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用后，带 route 的菜单项会通过 vue-router 进行导航。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/Menu.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/menu/Menu.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FMenu-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到菜单根元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/Menu.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/menu/Menu.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FMenu-events-select",
+          "name": "select",
+          "kind": "events",
+          "type": {
+            "text": "[index: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "菜单项被选中时发出其 index。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/Menu.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Amenu_2FMenu-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "菜单内容，通常包含 MenuItem 和 SubMenu。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/Menu.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:menu/MenuItem",
+      "name": "MenuItem",
+      "source": {
+        "file": "packages/ui/src/components/menu/MenuItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Amenu_2FMenuItem-props-index",
+          "name": "index",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "菜单项唯一标识，用于激活状态和 select 事件；路由模式下也用于匹配当前路由。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/MenuItem.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FMenuItem-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用该菜单项的选择和导航交互。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/MenuItem.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/menu/MenuItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FMenuItem-props-route",
+          "name": "route",
+          "kind": "props",
+          "type": {
+            "text": "string | Record<string, unknown> | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "路由模式下点击此项要导航到的路径或路由对象。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/MenuItem.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/menu/MenuItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FMenuItem-props-inset",
+          "name": "inset",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "缩进菜单项内容，使其与含图标的项对齐。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/MenuItem.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/menu/MenuItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FMenuItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到菜单项根元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/MenuItem.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/menu/MenuItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FMenuItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "菜单项的标签内容，可包含图标。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/MenuItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:menu/SubMenu",
+      "name": "SubMenu",
+      "source": {
+        "file": "packages/ui/src/components/menu/SubMenu.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Amenu_2FSubMenu-props-index",
+          "name": "index",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "子菜单唯一标识，用于菜单状态和嵌套层级标识。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/SubMenu.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FSubMenu-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "子菜单触发器标题；提供 title 插槽时由插槽内容呈现。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/SubMenu.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "''",
+              "source": {
+                "file": "packages/ui/src/components/menu/SubMenu.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FSubMenu-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用子菜单触发器，阻止展开交互。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/SubMenu.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/menu/SubMenu.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FSubMenu-props-inset",
+          "name": "inset",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "缩进子菜单触发器内容，使其与含图标的菜单项对齐。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/SubMenu.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/menu/SubMenu.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FSubMenu-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到子菜单根容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/SubMenu.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/menu/SubMenu.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FSubMenu-props-triggerClass",
+          "name": "triggerClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到子菜单标题触发器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/SubMenu.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/menu/SubMenu.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amenu_2FSubMenu-slots-title",
+          "name": "title",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "自定义子菜单触发器内容；提供时优先于 title 属性。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/SubMenu.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Amenu_2FSubMenu-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "子菜单内容，可包含 MenuItem 或继续嵌套 SubMenu。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/menu/SubMenu.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

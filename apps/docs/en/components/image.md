@@ -129,37 +129,9 @@ type ImageFit = 'fill' | 'contain' | 'cover' | 'none' | 'scale-down'
 | `'none'` | Preserves the original size |
 | `'scale-down'` | Like `contain`, but never scales up beyond the original size |
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `src` | `string` | — | Image URL (required) |
-| `alt` | `string` | `''` | Alternative text |
-| `fit` | `'fill' \| 'contain' \| 'cover' \| 'none' \| 'scale-down'` | `'cover'` | Image fill mode, maps to CSS `object-fit` |
-| `previewSrcList` | `string[]` | `[]` | List of image URLs for the preview viewer; enables navigation between images |
-| `initialIndex` | `number` | `0` | Initial image index when opening the preview |
-| `hideOnClickModal` | `boolean` | `false` | Whether clicking the backdrop closes the preview |
-| `zoomRate` | `number` | `1.2` | Multiplier applied per zoom step |
-| `preview` | `boolean` | `false` | Whether to enable the full-screen preview viewer |
-| `fallback` | `string` | — | Fallback image URL used when the primary image fails to load |
-| `loading` | `'eager' \| 'lazy'` | `'eager'` | Loading strategy; `lazy` uses IntersectionObserver to defer loading until the element is visible |
-
-## Events
-
-| Event | Parameters | Description |
-| --- | --- | --- |
-| `load` | `event: Event` | Emitted when the image finishes loading successfully |
-| `error` | `event: Event` | Emitted when the image fails to load (also fires if the fallback image fails) |
-| `show` | — | Emitted when the preview modal opens |
-| `close` | — | Emitted when the preview modal closes |
-| `switch` | `index: number` | Emitted when switching images in the preview; the parameter is the new image index |
-
-## Slots
-
-| Slot | Scope | Description |
-| --- | --- | --- |
-| `placeholder` | — | Content displayed while the image is loading. Defaults to a diagonal stripe background with "Loading..." text |
-| `error` | — | Content displayed when the image fails to load. Defaults to a red diagonal stripe background with "Failed to load" text |
+<ComponentApi name="image" />
 
 ## Accessibility
 

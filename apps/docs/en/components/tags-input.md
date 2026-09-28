@@ -77,74 +77,17 @@ You can customize the color scheme of individual tags using the `variant` prop o
 | `TagsInputItemText` | Tag text content |
 | `TagsInputItemDelete` | Tag delete button |
 
-## Props
+## API Reference
 
-### TagsInput
+<span id="tagsinput"></span>
+<span id="tagsinputinput"></span>
+<span id="tagsinputitem"></span>
+<span id="tagsinputitemdelete"></span>
+<span id="tagsinputitemtext"></span>
+<span id="tagsinput-1"></span>
+<span id="tagsinputitemdelete-1"></span>
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `modelValue` | `Array<T>` | `[]` | Tag data list, supports `v-model` two-way binding |
-| `defaultValue` | `Array<T>` | `[]` | Default tag list in uncontrolled mode |
-| `disabled` | `boolean` | `false` | Whether to disable input |
-| `max` | `number` | `0` | Maximum number of tags allowed; `0` means no limit |
-| `addOnPaste` | `boolean` | `false` | Whether to auto-add tags on paste based on delimiter |
-| `addOnTab` | `boolean` | `false` | Whether to add a tag when pressing the Tab key |
-| `addOnBlur` | `boolean` | `false` | Whether to add a tag when the input loses focus |
-| `duplicate` | `boolean` | `false` | Whether to allow adding duplicate tags |
-| `delimiter` | `string \| RegExp` | `','` | Delimiter that triggers tag addition; supports regular expressions |
-| `dir` | `'ltr' \| 'rtl'` | — | Reading direction; inherits global config when not set |
-| `convertValue` | `(value: string) => T` | — | Function to convert the input string to the target type; required when using objects as values |
-| `displayValue` | `(value: T) => string` | `value.toString()` | Function to customize the displayed tag value |
-| `ariaLabel` | `string` | locale default (`tagsInput.label`) | Accessibility label; falls back to the locale default when not provided |
-| `name` | `string` | — | Form field name |
-| `required` | `boolean` | — | Whether the field is required |
-
-### TagsInputInput
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `placeholder` | `string` | — | Input placeholder text |
-| `autoFocus` | `boolean` | — | Whether to auto-focus on mount |
-| `maxLength` | `number` | — | Maximum character limit |
-
-### TagsInputItem
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `value` | `AcceptableInputValue` | — (required) | Tag value, supports `string \| number \| bigint \| Record<string, any>` |
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success'` | `'primary'` | Visual color variant of the tag |
-| `disabled` | `boolean` | `false` | Whether to disable this tag |
-
-### TagsInputItemDelete
-
-Inherits base Primitive attributes, no additional props.
-
-### TagsInputItemText
-
-Inherits base Primitive attributes, no additional props.
-
-## Events
-
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `update:modelValue` | `Array<T>` | Triggered when the tag list changes |
-| `addTag` | `T` | Triggered when a tag is successfully added |
-| `removeTag` | `T` | Triggered when a tag is successfully removed |
-| `invalid` | `T` | Triggered when a tag is invalid (exceeds maximum count or is a duplicate) |
-
-## Slots
-
-### TagsInput
-
-| Slot | Scope | Description |
-|------|-------|-------------|
-| `default` | `{ modelValue: Array<T> }` | Default slot for placing `TagsInputItem` and `TagsInputInput` |
-
-### TagsInputItemDelete
-
-| Slot | Scope | Description |
-|------|-------|-------------|
-| `default` | — | Custom delete button content; defaults to an X icon |
+<ComponentApi name="tags-input" />
 
 ## Accessibility
 

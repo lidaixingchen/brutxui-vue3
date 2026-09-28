@@ -1,0 +1,1248 @@
+{
+  "id": "component:dialog",
+  "name": "dialog",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:dialog/DialogContent",
+      "name": "DialogContent",
+      "source": {
+        "file": "packages/ui/src/components/dialog/DialogContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adialog_2FDialogContent-props-showCloseButton",
+          "name": "showCloseButton",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制内容面板右上角的内置关闭按钮是否渲染。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogContent.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogContent-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | \"xl\" | \"full\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"full\"",
+              "\"lg\"",
+              "\"sm\"",
+              "\"xl\""
+            ],
+            "references": []
+          },
+          "description": "设置对话框内容面板的宽度变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogContent.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogContent-props-entrance",
+          "name": "entrance",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"fade-zoom\" | \"shutter\" | null | undefined> | undefined",
+            "literals": [
+              "\"fade-zoom\"",
+              "\"shutter\""
+            ],
+            "references": []
+          },
+          "description": "选择内容面板的入场动效变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogContent.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'fade-zoom'",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"fade-zoom\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogContent-props-forceMount",
+          "name": "forceMount",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将挂载保持策略传递给遮罩层和内容原语，以便在关闭状态下仍保持挂载。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogContent.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到对话框内容面板的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogContent.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "渲染对话框的主体内容；内置关闭按钮会放在插槽内容之后。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dialog/DialogDescription",
+      "name": "DialogDescription",
+      "source": {
+        "file": "packages/ui/src/components/dialog/DialogDescription.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adialog_2FDialogDescription-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到描述元素的自定义 CSS 类；其余属性（例如 id）通过属性透传交给 Reka UI 原语。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogDescription.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogDescription-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "对话框的辅助说明内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogDescription.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dialog/DialogEnhanced",
+      "name": "DialogEnhanced",
+      "source": {
+        "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-draggable",
+          "name": "draggable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用内容面板的指针拖拽移动；全屏模式下不应用拖拽移动样式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-dragHandle",
+          "name": "dragHandle",
+          "kind": "props",
+          "type": {
+            "text": "string | HTMLElement | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "将拖拽起点限制为 CSS 选择器匹配的后代元素或指定 HTMLElement。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-bounds",
+          "name": "bounds",
+          "kind": "props",
+          "type": {
+            "text": "\"viewport\" | \"parent\" | { top: number; left: number; right: number; bottom: number; } | undefined",
+            "literals": [
+              "\"parent\"",
+              "\"viewport\""
+            ],
+            "references": []
+          },
+          "description": "限制拖拽位置到父容器、视口，或给定的 top、left、right、bottom 边界。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'viewport'",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"viewport\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-initialPosition",
+          "name": "initialPosition",
+          "kind": "props",
+          "type": {
+            "text": "{ x: number; y: number; } | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "为几何状态控制器提供初始 x、y 坐标。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-resizable",
+          "name": "resizable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用对话框边缘的指针缩放交互。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-minWidth",
+          "name": "minWidth",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置缩放时允许的最小宽度，单位为像素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DIALOG_MIN_WIDTH_PX",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "200"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-minHeight",
+          "name": "minHeight",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置缩放时允许的最小高度，单位为像素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DIALOG_MIN_HEIGHT_PX",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "150"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-maxWidth",
+          "name": "maxWidth",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置缩放时可选的最大宽度，单位为像素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-maxHeight",
+          "name": "maxHeight",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置缩放时可选的最大高度，单位为像素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-aspectRatio",
+          "name": "aspectRatio",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "提供锁定的宽高比，由几何状态控制器用于调整尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-showCloseButton",
+          "name": "showCloseButton",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制增强对话框内容面板中的内置关闭按钮是否渲染。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-forceMount",
+          "name": "forceMount",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "要求遮罩层及内容在关闭状态仍保持挂载；此策略优先于 destroyOnClose。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 30
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-fullscreen",
+          "name": "fullscreen",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将内容面板固定为占满视口的全屏布局，并忽略拖动几何样式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-beforeClose",
+          "name": "beforeClose",
+          "kind": "props",
+          "type": {
+            "text": "(() => boolean | Promise<boolean>) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "关闭请求前执行的同步或异步校验；返回 false 或抛出/reject 时不会发出关闭事件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-destroyOnClose",
+          "name": "destroyOnClose",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "关闭后延迟卸载默认插槽内容；forceMount 为真时不会卸载。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-destroyDelay",
+          "name": "destroyDelay",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "destroyOnClose 启用时，关闭后等待卸载插槽内容的毫秒数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 38
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_DIALOG_TRANSITION_MS",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "300"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-zIndex",
+          "name": "zIndex",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "显式设置对话框内容面板的 CSS z-index。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 40
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到对话框内容面板的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+            "line": 41
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-events-open",
+          "name": "open",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "组件挂载时发出，表示 DialogEnhanced 实例已挂载，不表示受控打开状态每次变化。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-events-close",
+          "name": "close",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "关闭请求未被 beforeClose 拒绝时发出；未提供钩子时关闭请求直接通过。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "已接受的关闭请求以 false 发出，用于将 DialogRoot 的受控打开状态设为关闭。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogEnhanced-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "对话框内容；启用 destroyOnClose 后可在关闭延迟结束时卸载。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogEnhanced.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dialog/DialogFooter",
+      "name": "DialogFooter",
+      "source": {
+        "file": "packages/ui/src/components/dialog/DialogFooter.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adialog_2FDialogFooter-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到底部操作区域的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogFooter.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogFooter-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "底部操作内容；没有默认插槽内容时 Footer 容器不渲染。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogFooter.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dialog/DialogHeader",
+      "name": "DialogHeader",
+      "source": {
+        "file": "packages/ui/src/components/dialog/DialogHeader.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adialog_2FDialogHeader-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到标题区域容器的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogHeader.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogHeader-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "标题、描述或其他头部内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogHeader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dialog/DialogOverlay",
+      "name": "DialogOverlay",
+      "source": {
+        "file": "packages/ui/src/components/dialog/DialogOverlay.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adialog_2FDialogOverlay-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到背景遮罩原语的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogOverlay.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogOverlay.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogOverlay-props-forceMount",
+          "name": "forceMount",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将 force-mount 策略传递给 Reka UI 遮罩原语。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogOverlay.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogOverlay.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogOverlay-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将遮罩原语的元素渲染委托给默认插槽中的子元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogOverlay.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogOverlay.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogOverlay-props-pattern",
+          "name": "pattern",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "为遮罩层添加点阵半色调背景纹理。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogOverlay.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dialog/DialogOverlay.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogOverlay-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "为 asChild 模式提供要渲染的遮罩子元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogOverlay.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dialog/DialogTitle",
+      "name": "DialogTitle",
+      "source": {
+        "file": "packages/ui/src/components/dialog/DialogTitle.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adialog_2FDialogTitle-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到对话框标题原语的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogTitle.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adialog_2FDialogTitle-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "对话框的标题文本或内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dialog/DialogTitle.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

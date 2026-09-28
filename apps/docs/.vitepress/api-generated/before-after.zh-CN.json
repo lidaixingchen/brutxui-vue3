@@ -1,0 +1,358 @@
+{
+  "id": "component:before-after",
+  "name": "before-after",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:before-after/BeforeAfter",
+      "name": "BeforeAfter",
+      "source": {
+        "file": "packages/ui/src/components/before-after/BeforeAfter.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-props-before",
+          "name": "before",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "对比底层的 before 图片 URL。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-props-after",
+          "name": "after",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "对比上层的 after 图片 URL。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-props-beforeAlt",
+          "name": "beforeAlt",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "底层 before 图片的替代文本；未设置时使用本地化默认值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/before-after/BeforeAfter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "之前"
+          }
+        },
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-props-afterAlt",
+          "name": "afterAlt",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "上层 after 图片的替代文本；未设置时使用本地化默认值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/before-after/BeforeAfter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "之后"
+          }
+        },
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前分割位置百分比，支持 v-model；写入和交互值都会限制在 0 到 100。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/before-after/BeforeAfter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-props-defaultValue",
+          "name": "defaultValue",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "非受控模式的初始分割位置百分比；仅初始化时读取，默认 50。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_SLIDER_POSITION",
+              "source": {
+                "file": "packages/ui/src/components/before-after/BeforeAfter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "50"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用原生范围滑块的拖动交互。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/before-after/BeforeAfter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-props-orientation",
+          "name": "orientation",
+          "kind": "props",
+          "type": {
+            "text": "\"vertical\" | \"horizontal\" | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "选择分割线方向；horizontal 显示竖直分割线，vertical 显示水平分割线。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'horizontal'",
+              "source": {
+                "file": "packages/ui/src/components/before-after/BeforeAfter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"horizontal\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到对比容器根元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/before-after/BeforeAfter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "设置分割手柄图标尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/before-after/BeforeAfter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abefore_2Dafter_2FBeforeAfter-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "拖动滑块导致位置改变时发出限制在 0 到 100 的新百分比。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/before-after/BeforeAfter.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

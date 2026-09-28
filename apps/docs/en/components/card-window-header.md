@@ -83,34 +83,11 @@ The `actions` slot has highest priority and replaces the default control buttons
 </template>
 ```
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `title` | `string` | *(required)* | Window title rendered in monospace uppercase |
-| `showControls` | `boolean` | `true` | Whether to render decorative ASCII controls (effective when not in interactive mode and no actions slot) |
-| `closable` | `boolean` | `false` | Enable close button `[ X ]` (interactive mode) |
-| `minimizable` | `boolean` | `false` | Enable minimize/fold button `[ _ ]` (interactive mode) |
-| `maximizable` | `boolean` | `false` | Enable maximize/expand button `[ □ ]` (interactive mode) |
-| `interactiveLamps` | `boolean` | `false` | Enable interactive clicks on tri-color status lamps (red=close, yellow=minimize, green=maximize) |
-| `closeAriaLabel` | `string` | `undefined` | Accessible label for close button (falls back to locale translation) |
-| `minimizeAriaLabel` | `string` | `undefined` | Accessible label for minimize button |
-| `maximizeAriaLabel` | `string` | `undefined` | Accessible label for maximize button |
-| `class` | `string` | `undefined` | Custom CSS class name |
+<span id="emits"></span>
 
-## Emits
-
-| Event | Parameters | Description |
-|-------|------------|-------------|
-| `close` | `(event: MouseEvent \| KeyboardEvent)` | Fired when clicking close button or red lamp |
-| `minimize` | `(event: MouseEvent \| KeyboardEvent)` | Fired when clicking minimize button or yellow lamp |
-| `maximize` | `(event: MouseEvent \| KeyboardEvent)` | Fired when clicking maximize button or green lamp |
-
-## Slots
-
-| Slot | Description |
-|------|-------------|
-| `actions` | Custom actions area on the right; highest priority, replaces default controls and interactive buttons |
+<ComponentApi name="card-window-header" />
 
 ## Accessibility
 

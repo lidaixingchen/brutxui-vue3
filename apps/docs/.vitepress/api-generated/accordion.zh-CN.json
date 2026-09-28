@@ -1,0 +1,916 @@
+{
+  "id": "component:accordion",
+  "name": "accordion",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:accordion/Accordion",
+      "name": "Accordion",
+      "source": {
+        "file": "packages/ui/src/components/accordion/Accordion.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-collapsible",
+          "name": "collapsible",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "单选模式下允许再次激活已展开项以关闭全部内容；多选模式不受此属性影响。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            },
+            "fallback": "未提供时使用 Reka UI AccordionRoot 的默认值 false。"
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用整个折叠面板及其所有子项的交互。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            },
+            "fallback": "未提供时使用 Reka UI AccordionRoot 的默认值 false。"
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-dir",
+          "name": "dir",
+          "kind": "props",
+          "type": {
+            "text": "Direction | undefined",
+            "literals": [
+              "\"ltr\"",
+              "\"rtl\""
+            ],
+            "references": []
+          },
+          "description": "折叠面板的阅读方向，影响键盘导航。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            },
+            "fallback": "未提供时使用 Reka UI ConfigProvider 的方向，仍未设置时使用 ltr。"
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-orientation",
+          "name": "orientation",
+          "kind": "props",
+          "type": {
+            "text": "DataOrientation | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "折叠面板的排列与方向键导航方向。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            },
+            "fallback": "未提供时使用 Reka UI AccordionRoot 的 vertical 方向。"
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-unmountOnHide",
+          "name": "unmountOnHide",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制关闭后是否卸载内容，可由子项的同名属性覆盖。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            },
+            "fallback": "未提供时使用 Reka UI AccordionRoot 的 true 值。"
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将根原语的属性和行为合并到其子元素上。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "指定根原语渲染的元素或组件；asChild 启用时由子元素承载。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-type",
+          "name": "type",
+          "kind": "props",
+          "type": {
+            "text": "SingleOrMultipleType | undefined",
+            "literals": [
+              "\"multiple\"",
+              "\"single\""
+            ],
+            "references": []
+          },
+          "description": "指定单项或多项展开模式，优先于根据 modelValue 或 defaultValue 推断的模式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "受控模式下展开项的值，单选使用字符串，多选使用字符串数组，支持 v-model。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-defaultValue",
+          "name": "defaultValue",
+          "kind": "props",
+          "type": {
+            "text": "string | string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "非受控模式下初始展开项的值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到折叠面板根元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue",
+            "line": 6
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string | string[] | undefined]",
+            "literals": [],
+            "references": []
+          },
+          "description": "展开项改变时发出新的值，供 v-model 同步单选或多选状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "折叠面板子项，通常放置 AccordionItem；此包装组件不转发底层原语的插槽参数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:accordion/AccordionContent",
+      "name": "AccordionContent",
+      "source": {
+        "file": "packages/ui/src/components/accordion/AccordionContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aaccordion_2FAccordionContent-props-forceMount",
+          "name": "forceMount",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "强制挂载内容，以便使用外部动画库控制其显示过渡。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionContent-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将内容原语的属性和行为合并到内部内容容器上。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionContent-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "指定可折叠内容原语渲染的元素或组件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到负责折叠动画的外层内容元素；内部容器从 AccordionItem 继承视觉变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionContent.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "面板展开后显示的正文内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:accordion/AccordionItem",
+      "name": "AccordionItem",
+      "source": {
+        "file": "packages/ui/src/components/accordion/AccordionItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aaccordion_2FAccordionItem-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"flat\" | \"default\" | \"ghost\" | \"interactive\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"flat\"",
+              "\"ghost\"",
+              "\"interactive\""
+            ],
+            "references": []
+          },
+          "description": "子项的视觉变体，同时传递给其触发器和内容区域。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionItem.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/accordion/AccordionItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到折叠面板子项根元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionItem.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/accordion/AccordionItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionItem-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用此子项；根 Accordion 禁用时此子项同样不可交互。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionItem.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionItem-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "子项的唯一字符串标识，必须在同一 Accordion 内保持唯一。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionItem.vue"
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionItem-props-unmountOnHide",
+          "name": "unmountOnHide",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制此子项关闭时是否卸载内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionItem.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            },
+            "fallback": "未提供时继承根 Accordion 的 unmountOnHide。"
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionItem-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将子项原语的属性和行为合并到其子元素上。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionItem.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionItem-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "指定子项根原语渲染的元素或组件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionItem.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "子项的触发器及内容，通常组合 AccordionTrigger 和 AccordionContent；不提供作用域参数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:accordion/AccordionTrigger",
+      "name": "AccordionTrigger",
+      "source": {
+        "file": "packages/ui/src/components/accordion/AccordionTrigger.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aaccordion_2FAccordionTrigger-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将触发器原语的属性和行为合并到子元素上，使用时需保留触发器可聚焦语义。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionTrigger.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionTrigger-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "指定触发器原语渲染的元素或组件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionTrigger.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionTrigger-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到触发器元素的自定义 CSS 类，不作用于外层标题元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionTrigger.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/accordion/AccordionTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionTrigger-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "内置 ChevronDown 图标的尺寸；自定义 icon 插槽自行设置图标大小。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionTrigger.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'lg'",
+              "source": {
+                "file": "packages/ui/src/components/accordion/AccordionTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"lg\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionTrigger-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "触发器中的标题文字或内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionTrigger.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionTrigger-slots-icon",
+          "name": "icon",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换展开图标，默认使用 ChevronDown。图标容器继承变体样式并在展开时旋转；显式空插槽会隐藏整个图标容器。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionTrigger.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

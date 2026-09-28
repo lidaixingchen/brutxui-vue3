@@ -1,0 +1,5280 @@
+{
+  "id": "component:alert-dialog",
+  "name": "alert-dialog",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:alert-dialog/AlertDialogContent",
+      "name": "AlertDialogContent",
+      "source": {
+        "file": "packages/ui/src/components/alert-dialog/AlertDialogContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "合并到对话框内容面板的补充 CSS 类名。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogContent.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogContent-props-overlayClass",
+          "name": "overlayClass",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "合并到遮罩层的补充 CSS 类名，用于定制遮罩样式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogContent.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "对话框面板内容，通常组合标题、描述和操作按钮；内容通过内置 Portal 渲染。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:alert-dialog/AlertDialogAction",
+      "name": "AlertDialogAction",
+      "source": {
+        "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"ghost\" | \"primary\" | \"secondary\" | \"success\" | \"danger\" | \"accent\" | \"outline\" | \"link\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"ghost\"",
+              "\"link\"",
+              "\"outline\"",
+              "\"primary\"",
+              "\"secondary\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "确认按钮的颜色、边框和交互状态样式变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "合并到确认按钮根元素的补充 CSS 类名。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将根属性、样式和关闭交互合并到默认插槽中的单个子元素，子元素需保留可访问的按钮交互。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "未提供时，底层 Primitive 使用 false。"
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "选择根元素的标签或组件；asChild 为真时使用默认插槽中的子元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "未提供时由 Reka AlertDialogAction 使用 button。"
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用原生按钮，使其无法通过常规用户交互激活；使用自定义根元素时由该元素实现禁用行为。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-dir",
+          "name": "dir",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置根元素及其文本的书写方向，例如 ltr、rtl 或 auto。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-type",
+          "name": "type",
+          "kind": "props",
+          "type": {
+            "text": "\"button\" | \"submit\" | \"reset\" | undefined",
+            "literals": [
+              "\"button\"",
+              "\"reset\"",
+              "\"submit\""
+            ],
+            "references": []
+          },
+          "description": "设置原生按钮的行为：普通按钮、提交表单或重置表单。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            },
+            "fallback": "未提供且 Reka 原语的 as 为 button 时，底层 DialogClose 使用 type=\"button\"。"
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-form",
+          "name": "form",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "通过表单元素的 ID 指定按钮所属表单，可以关联 DOM 祖先之外的表单。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "string | number | readonly string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "按钮作为提交者时，与 name 一同写入表单数据的值；按钮可见文字由默认插槽提供。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "根元素的 DOM ID，用于标签关联、选择器和页面定位。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onCopy",
+          "name": "onCopy",
+          "kind": "props",
+          "type": {
+            "text": "((payload: ClipboardEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听复制操作，可通过 ClipboardEvent 读取或设置剪贴板数据。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onCut",
+          "name": "onCut",
+          "kind": "props",
+          "type": {
+            "text": "((payload: ClipboardEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听剪切操作，可通过 ClipboardEvent 定制写入剪贴板的内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPaste",
+          "name": "onPaste",
+          "kind": "props",
+          "type": {
+            "text": "((payload: ClipboardEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听粘贴操作，通过 ClipboardEvent 读取将要插入的剪贴板内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onCompositionend",
+          "name": "onCompositionend",
+          "kind": "props",
+          "type": {
+            "text": "((payload: CompositionEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听输入法组合会话完成或取消，适用于可编辑根元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onCompositionstart",
+          "name": "onCompositionstart",
+          "kind": "props",
+          "type": {
+            "text": "((payload: CompositionEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听可编辑根元素开始输入法组合会话。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onCompositionupdate",
+          "name": "onCompositionupdate",
+          "kind": "props",
+          "type": {
+            "text": "((payload: CompositionEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听输入法组合文本变化，适用于可编辑根元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onDrag",
+          "name": "onDrag",
+          "kind": "props",
+          "type": {
+            "text": "((payload: DragEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听拖动源在原生拖放过程中持续发出的 drag 事件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onDragend",
+          "name": "onDragend",
+          "kind": "props",
+          "type": {
+            "text": "((payload: DragEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听原生拖放操作结束，包括成功放下和取消拖动。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onDragenter",
+          "name": "onDragenter",
+          "kind": "props",
+          "type": {
+            "text": "((payload: DragEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听被拖动元素或文本进入当前投放目标。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onDragexit",
+          "name": "onDragexit",
+          "kind": "props",
+          "type": {
+            "text": "((payload: DragEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听旧式 dragexit 事件，表示元素不再是拖放操作的直接目标；是否触发取决于浏览器支持。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onDragleave",
+          "name": "onDragleave",
+          "kind": "props",
+          "type": {
+            "text": "((payload: DragEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听被拖动元素或文本离开当前投放目标。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onDragover",
+          "name": "onDragover",
+          "kind": "props",
+          "type": {
+            "text": "((payload: DragEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听拖动内容经过投放目标；接受投放时通常需调用 preventDefault()。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onDragstart",
+          "name": "onDragstart",
+          "kind": "props",
+          "type": {
+            "text": "((payload: DragEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听原生拖放开始，可设置 DragEvent.dataTransfer 中的拖动数据。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onDrop",
+          "name": "onDrop",
+          "kind": "props",
+          "type": {
+            "text": "((payload: DragEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听拖动内容在有效目标上被放下，通过 dataTransfer 读取数据。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onFocus",
+          "name": "onFocus",
+          "kind": "props",
+          "type": {
+            "text": "((payload: FocusEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听根元素获得焦点；原生 focus 事件不冒泡。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onFocusin",
+          "name": "onFocusin",
+          "kind": "props",
+          "type": {
+            "text": "((payload: FocusEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听根元素或其后代获得焦点的冒泡事件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onFocusout",
+          "name": "onFocusout",
+          "kind": "props",
+          "type": {
+            "text": "((payload: FocusEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听根元素或其后代失去焦点的冒泡事件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onBlur",
+          "name": "onBlur",
+          "kind": "props",
+          "type": {
+            "text": "((payload: FocusEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听根元素失去焦点；原生 blur 事件不冒泡。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onChange",
+          "name": "onChange",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听输入或选择控件提交值变化的 change 事件；普通按钮激活不会产生该事件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onBeforeinput",
+          "name": "onBeforeinput",
+          "kind": "props",
+          "type": {
+            "text": "((payload: InputEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听可编辑内容即将因用户输入而改变的事件，适用于支持输入的根元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onFormdata",
+          "name": "onFormdata",
+          "kind": "props",
+          "type": {
+            "text": "((payload: FormDataEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听表单完成构造表单数据的事件，适用于表单根元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onInput",
+          "name": "onInput",
+          "kind": "props",
+          "type": {
+            "text": "((payload: InputEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听可编辑根元素因用户操作产生的输入值变化。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onReset",
+          "name": "onReset",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听表单重置事件，适用于表单根元素；事件发生在 form 上。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onSubmit",
+          "name": "onSubmit",
+          "kind": "props",
+          "type": {
+            "text": "((payload: SubmitEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听表单提交事件，适用于表单根元素；普通提交按钮通过所属 form 发出该事件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onInvalid",
+          "name": "onInvalid",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听支持约束校验的根控件校验失败；原生 invalid 事件不冒泡。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onFullscreenchange",
+          "name": "onFullscreenchange",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听根元素或其后代进入、退出全屏后产生的状态变化事件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onFullscreenerror",
+          "name": "onFullscreenerror",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听根元素或其后代的全屏请求失败。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onLoad",
+          "name": "onLoad",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听资源根元素完成加载，例如使用支持 load 的元素作为根时。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onError",
+          "name": "onError",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听根元素资源加载或使用失败，例如图片或媒体错误；不处理任意 Vue 组件异常。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onKeydown",
+          "name": "onKeydown",
+          "kind": "props",
+          "type": {
+            "text": "((payload: KeyboardEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听按键按下，包含按住按键时浏览器发出的重复事件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onKeypress",
+          "name": "onKeypress",
+          "kind": "props",
+          "type": {
+            "text": "((payload: KeyboardEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听已弃用的 keypress 字符按键事件；新的键盘交互使用 keydown 或 beforeinput。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onKeyup",
+          "name": "onKeyup",
+          "kind": "props",
+          "type": {
+            "text": "((payload: KeyboardEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听用户松开按键。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onDblclick",
+          "name": "onDblclick",
+          "kind": "props",
+          "type": {
+            "text": "((payload: MouseEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听鼠标主按键完成双击。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onMousedown",
+          "name": "onMousedown",
+          "kind": "props",
+          "type": {
+            "text": "((payload: MouseEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听鼠标按键在元素上按下。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onMouseenter",
+          "name": "onMouseenter",
+          "kind": "props",
+          "type": {
+            "text": "((payload: MouseEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听鼠标进入元素边界；与 mouseover 不同，此事件不冒泡。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onMouseleave",
+          "name": "onMouseleave",
+          "kind": "props",
+          "type": {
+            "text": "((payload: MouseEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听鼠标离开元素及其后代边界；此事件不冒泡。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onMousemove",
+          "name": "onMousemove",
+          "kind": "props",
+          "type": {
+            "text": "((payload: MouseEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听鼠标在元素上移动。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onMouseout",
+          "name": "onMouseout",
+          "kind": "props",
+          "type": {
+            "text": "((payload: MouseEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听鼠标离开当前命中元素，包括移入其子元素时的冒泡事件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onMouseover",
+          "name": "onMouseover",
+          "kind": "props",
+          "type": {
+            "text": "((payload: MouseEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听鼠标进入当前命中元素的冒泡事件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onMouseup",
+          "name": "onMouseup",
+          "kind": "props",
+          "type": {
+            "text": "((payload: MouseEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听鼠标按键在元素上松开。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onAbort",
+          "name": "onAbort",
+          "kind": "props",
+          "type": {
+            "text": "((payload: UIEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听媒体根元素的加载被中止，且中止并非由加载错误导致。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onCanplay",
+          "name": "onCanplay",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听媒体根元素已有足够数据开始播放，但尚不保证可连续播放至结束。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onCanplaythrough",
+          "name": "onCanplaythrough",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听浏览器估计媒体根元素可在无需停顿缓冲的情况下播放至结束。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onDurationchange",
+          "name": "onDurationchange",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听媒体根元素的时长信息发生变化。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onEmptied",
+          "name": "onEmptied",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听媒体根元素从已加载状态恢复为空状态，例如重新加载媒体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onEncrypted",
+          "name": "onEncrypted",
+          "kind": "props",
+          "type": {
+            "text": "((payload: MediaEncryptedEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听媒体根元素遇到加密初始化数据，通过 MediaEncryptedEvent 获取该数据。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onEnded",
+          "name": "onEnded",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听媒体根元素播放到终点并停止。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onLoadeddata",
+          "name": "onLoadeddata",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听媒体根元素当前播放位置的数据首次加载完成，通常为第一帧。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onLoadedmetadata",
+          "name": "onLoadedmetadata",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听媒体根元素的元数据加载完成，例如时长或视频尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onLoadstart",
+          "name": "onLoadstart",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听媒体根元素开始加载资源。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPause",
+          "name": "onPause",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听媒体根元素进入暂停状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPlay",
+          "name": "onPlay",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听媒体根元素的 paused 状态变为 false，表示播放已被请求。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPlaying",
+          "name": "onPlaying",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听媒体根元素实际开始或恢复播放。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onProgress",
+          "name": "onProgress",
+          "kind": "props",
+          "type": {
+            "text": "((payload: ProgressEvent<EventTarget>) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听媒体等支持资源进度事件的根元素加载数据时的进度通知。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onRatechange",
+          "name": "onRatechange",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听媒体根元素的播放速率变化。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onSeeked",
+          "name": "onSeeked",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听媒体根元素完成播放位置跳转。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onSeeking",
+          "name": "onSeeking",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听媒体根元素开始跳转到新的播放位置。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onStalled",
+          "name": "onStalled",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听媒体根元素仍在尝试获取数据但数据意外停止到达。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onSuspend",
+          "name": "onSuspend",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听浏览器主动暂停媒体根元素的数据获取。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onTimeupdate",
+          "name": "onTimeupdate",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听媒体根元素的 currentTime 更新。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onVolumechange",
+          "name": "onVolumechange",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听媒体根元素的音量或静音状态变化。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onWaiting",
+          "name": "onWaiting",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听媒体根元素因暂时缺少数据而暂停继续播放。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onSelect",
+          "name": "onSelect",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听支持文本选择的输入根元素中发生的文本选取。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onScroll",
+          "name": "onScroll",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听可滚动根元素的滚动位置变化。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onScrollend",
+          "name": "onScrollend",
+          "kind": "props",
+          "type": {
+            "text": "((payload: Event) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听可滚动根元素完成滚动，且相关滚动手势已结束。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onTouchcancel",
+          "name": "onTouchcancel",
+          "kind": "props",
+          "type": {
+            "text": "((payload: TouchEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听浏览器或设备中断触摸接触序列。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onTouchend",
+          "name": "onTouchend",
+          "kind": "props",
+          "type": {
+            "text": "((payload: TouchEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听一个或多个触点离开触摸表面。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onTouchmove",
+          "name": "onTouchmove",
+          "kind": "props",
+          "type": {
+            "text": "((payload: TouchEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听触点在触摸表面移动。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onTouchstart",
+          "name": "onTouchstart",
+          "kind": "props",
+          "type": {
+            "text": "((payload: TouchEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听一个或多个触点开始接触触摸表面。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onAuxclick",
+          "name": "onAuxclick",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听主按键之外的指针按键完成点击，例如鼠标中键。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onClick",
+          "name": "onClick",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听确认按钮的原生激活点击，通常由鼠标、触摸或键盘触发；Reka 的点击处理器同时请求关闭对话框。",
+          "notes": [
+            "异步回调不会使 AlertDialogAction 等待操作完成；需要业务控制关闭时，通过 AlertDialogRoot 的受控 open 状态管理。"
+          ],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onContextmenu",
+          "name": "onContextmenu",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听用户请求打开上下文菜单，例如右键点击或上下文菜单键。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onGotpointercapture",
+          "name": "onGotpointercapture",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听元素开始捕获指定指针，后续指针事件将定向到该元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onLostpointercapture",
+          "name": "onLostpointercapture",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听元素失去指定指针的捕获状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPointerdown",
+          "name": "onPointerdown",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听指针进入活动按下状态，例如触摸接触或鼠标首次按键。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPointermove",
+          "name": "onPointermove",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听指针位置或压力等指针属性发生变化。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPointerup",
+          "name": "onPointerup",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听指针结束活动按下状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPointercancel",
+          "name": "onPointercancel",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听浏览器取消指针交互，例如接管触摸滚动手势。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPointerenter",
+          "name": "onPointerenter",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听指针进入元素或其后代的命中边界；此事件不冒泡。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPointerleave",
+          "name": "onPointerleave",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听指针离开元素及其后代的命中边界；此事件不冒泡。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPointerover",
+          "name": "onPointerover",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听指针进入当前命中元素的冒泡事件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onPointerout",
+          "name": "onPointerout",
+          "kind": "props",
+          "type": {
+            "text": "((payload: PointerEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听指针离开当前命中元素的冒泡事件，包括移入子元素的情况。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onBeforetoggle",
+          "name": "onBeforetoggle",
+          "kind": "props",
+          "type": {
+            "text": "((payload: ToggleEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听支持切换事件的根元素在打开或关闭前的状态变化，例如原生 popover 或 dialog。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onToggle",
+          "name": "onToggle",
+          "kind": "props",
+          "type": {
+            "text": "((payload: ToggleEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听支持切换事件的根元素完成打开或关闭，例如 details、popover 或原生 dialog。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onWheel",
+          "name": "onWheel",
+          "kind": "props",
+          "type": {
+            "text": "((payload: WheelEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听滚轮或类似设备的滚动、缩放输入；该事件不等同于实际滚动位置变化。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onAnimationcancel",
+          "name": "onAnimationcancel",
+          "kind": "props",
+          "type": {
+            "text": "((payload: AnimationEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听 CSS 动画在正常结束前被取消。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onAnimationstart",
+          "name": "onAnimationstart",
+          "kind": "props",
+          "type": {
+            "text": "((payload: AnimationEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听 CSS 动画在延迟结束后开始播放。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onAnimationend",
+          "name": "onAnimationend",
+          "kind": "props",
+          "type": {
+            "text": "((payload: AnimationEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听 CSS 动画正常完成全部播放。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onAnimationiteration",
+          "name": "onAnimationiteration",
+          "kind": "props",
+          "type": {
+            "text": "((payload: AnimationEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听 CSS 动画的一次迭代结束并开始下一次迭代。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onSecuritypolicyviolation",
+          "name": "onSecuritypolicyviolation",
+          "kind": "props",
+          "type": {
+            "text": "((payload: SecurityPolicyViolationEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听到达根元素的内容安全策略违规事件；浏览器通常将该事件派发到 document，按钮监听器不会接收所有文档级违规。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onTransitioncancel",
+          "name": "onTransitioncancel",
+          "kind": "props",
+          "type": {
+            "text": "((payload: TransitionEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听 CSS 过渡在完成前被取消。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onTransitionend",
+          "name": "onTransitionend",
+          "kind": "props",
+          "type": {
+            "text": "((payload: TransitionEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听 CSS 过渡正常完成。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onTransitionrun",
+          "name": "onTransitionrun",
+          "kind": "props",
+          "type": {
+            "text": "((payload: TransitionEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听 CSS 过渡创建，发生在可能的过渡延迟之前。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-onTransitionstart",
+          "name": "onTransitionstart",
+          "kind": "props",
+          "type": {
+            "text": "((payload: TransitionEvent) => void) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听 CSS 过渡在延迟结束后开始变化。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-autofocus",
+          "name": "autofocus",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "向浏览器请求自动聚焦；对话框打开时仍会执行 Reka 的焦点管理。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-formaction",
+          "name": "formaction",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "此按钮提交所属表单时使用的目标 URL，覆盖表单的 action。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-formenctype",
+          "name": "formenctype",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "此按钮提交表单时采用的数据编码方式，覆盖表单的 enctype。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-formmethod",
+          "name": "formmethod",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "此按钮提交表单时采用的方法，覆盖表单的 method。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-formnovalidate",
+          "name": "formnovalidate",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "此按钮提交表单时跳过浏览器的表单约束校验。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-formtarget",
+          "name": "formtarget",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "指定此按钮提交表单后用于显示响应的浏览上下文，覆盖表单的 target。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "按钮作为提交者时写入表单数据的字段名，与 value 配合使用。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-innerHTML",
+          "name": "innerHTML",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "将 HTML 字符串写入根元素的内容区域；该内容替代默认插槽渲染的子节点。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-accesskey",
+          "name": "accesskey",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "为根元素提供浏览器访问快捷键提示，实际组合键由浏览器和操作系统决定。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-contenteditable",
+          "name": "contenteditable",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | \"inherit\" | \"plaintext-only\" | undefined",
+            "literals": [
+              "\"false\"",
+              "\"inherit\"",
+              "\"plaintext-only\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "设置根元素内容是否可编辑；plaintext-only 表示仅编辑纯文本，inherit 表示继承编辑状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-contextmenu",
+          "name": "contextmenu",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "旧式 HTML 上下文菜单关联属性，值为 menu 元素 ID；不负责创建或打开 BrutxUI 菜单。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-draggable",
+          "name": "draggable",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "设置根元素是否可作为浏览器原生拖放的拖动源。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-enterkeyhint",
+          "name": "enterkeyhint",
+          "kind": "props",
+          "type": {
+            "text": "\"done\" | \"enter\" | \"go\" | \"next\" | \"previous\" | \"search\" | \"send\" | undefined",
+            "literals": [
+              "\"done\"",
+              "\"enter\"",
+              "\"go\"",
+              "\"next\"",
+              "\"previous\"",
+              "\"search\"",
+              "\"send\""
+            ],
+            "references": []
+          },
+          "description": "为可编辑根元素的虚拟键盘提供回车键标签或图标提示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-enterKeyHint",
+          "name": "enterKeyHint",
+          "kind": "props",
+          "type": {
+            "text": "\"done\" | \"enter\" | \"go\" | \"next\" | \"previous\" | \"search\" | \"send\" | undefined",
+            "literals": [
+              "\"done\"",
+              "\"enter\"",
+              "\"go\"",
+              "\"next\"",
+              "\"previous\"",
+              "\"search\"",
+              "\"send\""
+            ],
+            "references": []
+          },
+          "description": "Vue 保留的 enterkeyhint 驼峰别名，用于虚拟键盘回车键提示；该别名已弃用，使用 enterkeyhint。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-hidden",
+          "name": "hidden",
+          "kind": "props",
+          "type": {
+            "text": "\"\" | \"hidden\" | Booleanish | \"until-found\" | undefined",
+            "literals": [
+              "\"\"",
+              "\"false\"",
+              "\"hidden\"",
+              "\"true\"",
+              "\"until-found\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制根元素的 HTML 隐藏状态；until-found 允许支持该值的浏览器通过页内查找等操作揭示内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-inert",
+          "name": "inert",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "使根元素及其平面树后代进入惰性状态，无法聚焦或进行常规用户交互。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-lang",
+          "name": "lang",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "标记根元素内容的语言，供读屏发音和浏览器文本处理使用。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递输入占位提示；仅对支持该属性的输入根元素生效，普通 button 不显示占位文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-spellcheck",
+          "name": "spellcheck",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "为可编辑内容设置浏览器拼写检查提示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-tabindex",
+          "name": "tabindex",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置根元素的焦点顺序；0 使用文档顺序，-1 允许程序化聚焦并移出顺序键盘导航。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "为根元素提供浏览器原生的补充提示文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-translate",
+          "name": "translate",
+          "kind": "props",
+          "type": {
+            "text": "\"yes\" | \"no\" | undefined",
+            "literals": [
+              "\"no\"",
+              "\"yes\""
+            ],
+            "references": []
+          },
+          "description": "指定浏览器或翻译工具是否应翻译根元素的可翻译文本和属性。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-radiogroup",
+          "name": "radiogroup",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "旧式 HTML radio command 的互斥组名称；不会为确认按钮建立单选组行为。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-role",
+          "name": "role",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置根元素向辅助技术公开的角色，须与实际元素和交互行为相符。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-about",
+          "name": "about",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "RDFa 元数据所描述的主体资源标识。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-datatype",
+          "name": "datatype",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "指定 RDFa 字面量值的数据类型。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-inlist",
+          "name": "inlist",
+          "kind": "props",
+          "type": {
+            "text": "any",
+            "literals": [],
+            "references": []
+          },
+          "description": "将同元素上 RDFa 关系的对象加入对应谓词的列表；由属性是否存在决定，值本身被忽略。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-prefix",
+          "name": "prefix",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "声明 RDFa 前缀与 IRI 的映射，供元数据中的缩写标识使用。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-property",
+          "name": "property",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "声明 RDFa 主体与资源或字面量之间的属性关系。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-resource",
+          "name": "resource",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "指定 RDFa 关系中使用的资源标识。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-typeof",
+          "name": "typeof",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "声明 RDFa 所描述资源所属的类型。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-vocab",
+          "name": "vocab",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "指定 RDFa 术语使用的默认词汇表 IRI。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-autocapitalize",
+          "name": "autocapitalize",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "为可编辑内容提供自动大写策略提示，例如句首、单词首字母或全部字符。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-autocorrect",
+          "name": "autocorrect",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "为支持自动纠错的可编辑根元素提供开关提示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-autosave",
+          "name": "autosave",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Safari 搜索输入框扩展属性，用作保存搜索历史的名称；普通 button 不保存搜索记录。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-color",
+          "name": "color",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递旧式 HTML color 呈现属性；确认按钮的配色由 variant 和 CSS 类控制。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-itemprop",
+          "name": "itemprop",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "声明根元素在 HTML 微数据中提供的属性名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-itemscope",
+          "name": "itemscope",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "为根元素创建 HTML 微数据项目的作用域。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-itemtype",
+          "name": "itemtype",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "为 itemscope 创建的微数据项目指定词汇类型 URL。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-itemid",
+          "name": "itemid",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "为微数据项目提供全局标识，需与 itemscope 和 itemtype 配合。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-itemref",
+          "name": "itemref",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "引用作用域之外提供微数据属性的元素 ID，多个 ID 以空格分隔。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-results",
+          "name": "results",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Safari 搜索输入框扩展属性，设置搜索历史菜单中的最大条目数；普通 button 不显示该菜单。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-security",
+          "name": "security",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "旧式 Internet Explorer iframe 安全区域属性；确认按钮不使用此属性实现安全策略。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-unselectable",
+          "name": "unselectable",
+          "kind": "props",
+          "type": {
+            "text": "\"on\" | \"off\" | undefined",
+            "literals": [
+              "\"off\"",
+              "\"on\""
+            ],
+            "references": []
+          },
+          "description": "旧式浏览器的选择控制属性，on 阻止从该元素开始选择文本，off 允许选择。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-inputmode",
+          "name": "inputmode",
+          "kind": "props",
+          "type": {
+            "text": "\"none\" | \"search\" | \"text\" | \"tel\" | \"url\" | \"email\" | \"numeric\" | \"decimal\" | undefined",
+            "literals": [
+              "\"decimal\"",
+              "\"email\"",
+              "\"none\"",
+              "\"numeric\"",
+              "\"search\"",
+              "\"tel\"",
+              "\"text\"",
+              "\"url\""
+            ],
+            "references": []
+          },
+          "description": "提示可编辑根元素需要的虚拟键盘布局，例如 numeric 或 email；不执行输入校验。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-is",
+          "name": "is",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "声明标准 HTML 根元素对应的已注册定制内置元素名称，实际支持取决于浏览器和渲染方式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-exportparts",
+          "name": "exportparts",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "将 Shadow DOM 内部的 part 名称映射并暴露给外层的 ::part 选择器。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-part",
+          "name": "part",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "声明根元素在 Shadow DOM 中的 part 名称，供外部通过 ::part 定制样式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dactivedescendant",
+          "name": "aria-activedescendant",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "引用复合控件中当前活动子项的 ID；DOM 焦点保留在控件根元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Datomic",
+          "name": "aria-atomic",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "指定实时区域变化时，辅助技术朗读整个区域还是仅朗读变化部分。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dautocomplete",
+          "name": "aria-autocomplete",
+          "kind": "props",
+          "type": {
+            "text": "\"none\" | \"both\" | \"inline\" | \"list\" | undefined",
+            "literals": [
+              "\"both\"",
+              "\"inline\"",
+              "\"list\"",
+              "\"none\""
+            ],
+            "references": []
+          },
+          "description": "描述文本输入控件的自动补全形式：行内、列表、两者兼有或不提供。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dbusy",
+          "name": "aria-busy",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "标记区域正在更新，提示辅助技术等待更新完成再呈现变化。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dchecked",
+          "name": "aria-checked",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | \"mixed\" | undefined",
+            "literals": [
+              "\"false\"",
+              "\"mixed\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "描述复选框、单选项等可勾选控件的状态；mixed 用于支持部分选中的角色。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dcolcount",
+          "name": "aria-colcount",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "提供表格、网格或树形网格的总列数，包括未呈现在 DOM 中的列。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dcolindex",
+          "name": "aria-colindex",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "提供表格或网格中元素从 1 开始的列位置。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dcolspan",
+          "name": "aria-colspan",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "提供表格或网格单元格横跨的列数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dcontrols",
+          "name": "aria-controls",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "引用当前控件所控制内容的元素 ID，多个 ID 以空格分隔。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dcurrent",
+          "name": "aria-current",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | \"page\" | \"step\" | \"location\" | \"date\" | \"time\" | undefined",
+            "literals": [
+              "\"date\"",
+              "\"false\"",
+              "\"location\"",
+              "\"page\"",
+              "\"step\"",
+              "\"time\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "标记关联项目中的当前项，并可说明当前页、步骤、位置、日期或时间。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Ddescribedby",
+          "name": "aria-describedby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "引用为根元素提供补充描述的元素 ID，多个 ID 以空格分隔。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Ddetails",
+          "name": "aria-details",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "引用提供可进一步浏览的结构化详细说明的元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Ddisabled",
+          "name": "aria-disabled",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "向辅助技术声明控件不可操作；此属性本身不阻止点击或关闭对话框。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Ddropeffect",
+          "name": "aria-dropeffect",
+          "kind": "props",
+          "type": {
+            "text": "\"none\" | \"link\" | \"copy\" | \"execute\" | \"move\" | \"popup\" | undefined",
+            "literals": [
+              "\"copy\"",
+              "\"execute\"",
+              "\"link\"",
+              "\"move\"",
+              "\"none\"",
+              "\"popup\""
+            ],
+            "references": []
+          },
+          "description": "已弃用的拖放语义，描述在目标上放下对象后可执行的操作。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Derrormessage",
+          "name": "aria-errormessage",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "引用当前错误消息的元素 ID，配合 aria-invalid 表达无效状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dexpanded",
+          "name": "aria-expanded",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "描述控件自身或其控制的内容是否展开；实际展开行为由业务处理。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dflowto",
+          "name": "aria-flowto",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "引用可选阅读顺序中的后续元素，供辅助技术在用户选择时采用。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dgrabbed",
+          "name": "aria-grabbed",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "已弃用的拖放状态，表示元素是否被抓取用于拖动。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dhaspopup",
+          "name": "aria-haspopup",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | \"menu\" | \"listbox\" | \"tree\" | \"grid\" | \"dialog\" | undefined",
+            "literals": [
+              "\"dialog\"",
+              "\"false\"",
+              "\"grid\"",
+              "\"listbox\"",
+              "\"menu\"",
+              "\"tree\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "声明控件可触发的交互式弹出内容类型，例如 menu 或 dialog；不自动创建弹层。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dhidden",
+          "name": "aria-hidden",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制元素及其后代是否从无障碍树中隐藏；不会改变视觉显示或键盘焦点。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dinvalid",
+          "name": "aria-invalid",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | \"grammar\" | \"spelling\" | undefined",
+            "literals": [
+              "\"false\"",
+              "\"grammar\"",
+              "\"spelling\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "描述输入值是否无效，或存在语法、拼写错误。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dkeyshortcuts",
+          "name": "aria-keyshortcuts",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "公布业务已实现的键盘快捷键；此属性不会注册键盘监听器。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dlabel",
+          "name": "aria-label",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "直接提供根元素的无障碍名称，例如仅图标确认按钮的操作名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dlabelledby",
+          "name": "aria-labelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "引用提供根元素无障碍名称的元素 ID，多个 ID 以空格分隔。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dlevel",
+          "name": "aria-level",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "提供标题、树项等层级结构成员从 1 开始的层级。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dlive",
+          "name": "aria-live",
+          "kind": "props",
+          "type": {
+            "text": "\"off\" | \"assertive\" | \"polite\" | undefined",
+            "literals": [
+              "\"assertive\"",
+              "\"off\"",
+              "\"polite\""
+            ],
+            "references": []
+          },
+          "description": "设置实时区域更新的通知优先级：关闭自动通知、礼貌通知或立即通知。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dmodal",
+          "name": "aria-modal",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "声明适用的对话框角色为模态；仅为语义声明，焦点限制由对话框原语实现。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dmultiline",
+          "name": "aria-multiline",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "描述文本框是否接受多行输入。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dmultiselectable",
+          "name": "aria-multiselectable",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "描述可选择集合是否允许同时选中多个子项。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dorientation",
+          "name": "aria-orientation",
+          "kind": "props",
+          "type": {
+            "text": "\"vertical\" | \"horizontal\" | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "描述控件采用水平还是垂直方向布局。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Downs",
+          "name": "aria-owns",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "通过元素 ID 建立 DOM 层级未表达的无障碍父子关系。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dplaceholder",
+          "name": "aria-placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "为无值的输入控件提供预期内容或格式提示；不替代控件名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dposinset",
+          "name": "aria-posinset",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "描述列表项或树项在当前集合中从 1 开始的位置。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dpressed",
+          "name": "aria-pressed",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | \"mixed\" | undefined",
+            "literals": [
+              "\"false\"",
+              "\"mixed\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "描述切换按钮的按下状态；mixed 表示混合状态，状态切换由业务管理。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dreadonly",
+          "name": "aria-readonly",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "声明支持该状态的控件可操作但其值不能编辑。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Drelevant",
+          "name": "aria-relevant",
+          "kind": "props",
+          "type": {
+            "text": "\"text\" | \"additions\" | \"additions removals\" | \"additions text\" | \"all\" | \"removals\" | \"removals additions\" | \"removals text\" | \"text additions\" | \"text removals\" | undefined",
+            "literals": [
+              "\"additions removals\"",
+              "\"additions text\"",
+              "\"additions\"",
+              "\"all\"",
+              "\"removals additions\"",
+              "\"removals text\"",
+              "\"removals\"",
+              "\"text additions\"",
+              "\"text removals\"",
+              "\"text\""
+            ],
+            "references": []
+          },
+          "description": "指定实时区域中哪些变化需要通知，包括新增、移除和文本变化。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Drequired",
+          "name": "aria-required",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "声明输入控件必须提供值；表单实际校验由原生约束或业务逻辑执行。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Droledescription",
+          "name": "aria-roledescription",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "为现有角色提供面向用户的本地化说明。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Drowcount",
+          "name": "aria-rowcount",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "提供表格、网格或树形网格的总行数，包括未呈现在 DOM 中的行。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Drowindex",
+          "name": "aria-rowindex",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "提供表格或网格中元素从 1 开始的行位置。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Drowspan",
+          "name": "aria-rowspan",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "提供表格或网格单元格纵跨的行数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dselected",
+          "name": "aria-selected",
+          "kind": "props",
+          "type": {
+            "text": "Booleanish | undefined",
+            "literals": [
+              "\"false\"",
+              "\"true\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "描述选项、标签页、网格行等支持角色的选中状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dsetsize",
+          "name": "aria-setsize",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "提供列表项或树项所属集合的总项目数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dsort",
+          "name": "aria-sort",
+          "kind": "props",
+          "type": {
+            "text": "\"none\" | \"ascending\" | \"descending\" | \"other\" | undefined",
+            "literals": [
+              "\"ascending\"",
+              "\"descending\"",
+              "\"none\"",
+              "\"other\""
+            ],
+            "references": []
+          },
+          "description": "描述表格或网格表头对应数据的排序方向。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dvaluemax",
+          "name": "aria-valuemax",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "提供范围控件允许的最大值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dvaluemin",
+          "name": "aria-valuemin",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "提供范围控件允许的最小值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dvaluenow",
+          "name": "aria-valuenow",
+          "kind": "props",
+          "type": {
+            "text": "Numberish | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "提供范围控件当前的数值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-props-aria_2Dvaluetext",
+          "name": "aria-valuetext",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "以用户可理解的文本说明范围控件当前数值，例如等级名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogAction-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "确认按钮的文字或图标；asChild 为真时提供承接属性和交互的单个子元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:alert-dialog/AlertDialogCancel",
+      "name": "AlertDialogCancel",
+      "source": {
+        "file": "packages/ui/src/components/alert-dialog/AlertDialogCancel.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogCancel-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "合并到取消按钮根元素的补充 CSS 类名；按钮使用 outline 变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogCancel.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogCancel-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "取消按钮内容；激活按钮会请求关闭对话框，打开对话框时 Reka 默认尝试聚焦该按钮。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogCancel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:alert-dialog/AlertDialogDescription",
+      "name": "AlertDialogDescription",
+      "source": {
+        "file": "packages/ui/src/components/alert-dialog/AlertDialogDescription.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogDescription-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "合并到对话框描述元素的补充 CSS 类名。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogDescription.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogDescription-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "解释待确认操作及其后果的描述内容，由 Reka 关联为对话框的无障碍描述。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogDescription.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:alert-dialog/AlertDialogFooter",
+      "name": "AlertDialogFooter",
+      "source": {
+        "file": "packages/ui/src/components/alert-dialog/AlertDialogFooter.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogFooter-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "合并到操作按钮底部容器的补充 CSS 类名。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogFooter.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogFooter-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "底部操作内容，通常放置取消和确认按钮；未提供此插槽时不渲染底部容器。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogFooter.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:alert-dialog/AlertDialogHeader",
+      "name": "AlertDialogHeader",
+      "source": {
+        "file": "packages/ui/src/components/alert-dialog/AlertDialogHeader.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogHeader-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "合并到标题和描述头部容器的补充 CSS 类名。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogHeader.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogHeader-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "头部内容，通常组合 AlertDialogTitle 和 AlertDialogDescription。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogHeader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:alert-dialog/AlertDialogTitle",
+      "name": "AlertDialogTitle",
+      "source": {
+        "file": "packages/ui/src/components/alert-dialog/AlertDialogTitle.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogTitle-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "合并到对话框标题元素的补充 CSS 类名。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogTitle.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2Ddialog_2FAlertDialogTitle-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "对话框标题，由 Reka 关联为无障碍名称；应提供说明待确认操作的标题。",
+          "notes": [
+            "未提供可渲染的插槽内容时显示英文占位文本 Alert；该占位文本不随语言切换。"
+          ],
+          "source": {
+            "file": "packages/ui/src/components/alert-dialog/AlertDialogTitle.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

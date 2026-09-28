@@ -149,37 +149,12 @@ async function renameFile() {
 </script>
 ```
 
-## Props
+## API 参考
 
-### MessageBox 组件
+<span id="messagebox-组件"></span>
+<span id="事件"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `open` | `boolean` | `false` | 是否显示对话框（支持 `v-model:open`） |
-| `title` | `string` | `t('messageBox.defaultTitle')` | 对话框标题 |
-| `message` | `string` | — | 消息正文文本 |
-| `type` | `'info' \| 'success' \| 'warning' \| 'error'` | `'info'` | 状态类型变体 |
-| `showCloseButton` | `boolean` | `true` | 是否展示右上角关闭按钮 |
-| `showCancelButton` | `boolean` | `true` | 是否展示取消按钮 |
-| `confirmButtonText` | `string` | `t('messageBox.confirm')` | 确认按钮文本 |
-| `cancelButtonText` | `string` | `t('messageBox.cancel')` | 取消按钮文本 |
-| `confirmButtonClass` | `string` | — | 确认按钮自定义类名 |
-| `cancelButtonClass` | `string` | — | 取消按钮自定义类名 |
-| `showInput` | `boolean` | `false` | 是否展示输入框（Prompt 模式） |
-| `inputPlaceholder` | `string` | — | 输入框占位符 |
-| `inputValue` | `string` | `''` | 输入框初始值 |
-| `inputPattern` | `RegExp` | — | 输入格式校验正则表达式 |
-| `inputErrorMessage` | `string` | `t('messageBox.inputError')` | 校验失败错误提示文案 |
-| `zIndex` | `number` | — | 自定义弹层层级 |
-| `class` | `string` | — | 卡片自定义类名 |
-
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:open` | `(value: boolean)` | 对话框打开/关闭状态变化时触发 |
-| `confirm` | `(value?: string)` | 点击确认按钮并通过校验时触发，携带输入框文本 |
-| `cancel` | — | 点击取消按钮、右上角关闭、遮罩层或按 ESC 时触发 |
+<ComponentApi name="message-box" />
 
 ## 可访问性
 

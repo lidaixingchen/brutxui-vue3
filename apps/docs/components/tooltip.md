@@ -121,20 +121,13 @@ const isOpen = ref(false)
 | `TooltipTrigger` | 悬停时触发工具提示的元素 |
 | `TooltipContent` | 工具提示内容面板 |
 
-## Props
+## API 组成
+
+此包的 `TooltipProvider` 和 `TooltipContent` 是本地封装，完整属性见下方 API 参考；`Tooltip` 与 `TooltipTrigger` 是来自 Reka UI 的原语，以下保留它们的原语属性。
 
 ### TooltipProvider
 
 从 reka-ui 的 `TooltipProvider` 重新导出，为所有后代工具提示提供全局配置。
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `delayDuration` | `number` | `400` | 指针进入触发元素后到工具提示打开的延迟时间（毫秒） |
-| `skipDelayDuration` | `number` | `300` | 从一个工具提示移到另一个时跳过延迟的时间窗口（毫秒） |
-| `disableHoverableContent` | `boolean` | `false` | 为 `true` 时，指针移入内容区域会关闭工具提示 |
-| `disableClosingTrigger` | `boolean` | `false` | 为 `true` 时，点击触发元素不会关闭工具提示 |
-| `disabled` | `boolean` | `false` | 为 `true` 时，禁用所有工具提示 |
-| `ignoreNonKeyboardFocus` | `boolean` | `false` | 为 `true` 时，仅通过键盘聚焦（`:focus-visible`）才触发工具提示 |
 
 ### Tooltip
 
@@ -163,24 +156,7 @@ const isOpen = ref(false)
 
 工具提示内容面板，使用新粗野主义风格。默认通过 Portal 渲染到 `body`。
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `sideOffset` | `number` | `6` | 与触发器的距离（像素） |
-| `side` | `'top' \| 'right' \| 'bottom' \| 'left'` | `'top'` | 显示方向 |
-| `align` | `'start' \| 'center' \| 'end'` | `'center'` | 相对触发器的对齐方式 |
-| `alignOffset` | `number` | — | 对齐偏移量（像素） |
-| `to` | `string \| HTMLElement` | — | 自定义 Portal 挂载目标容器 |
-| `avoidCollisions` | `boolean` | — | 是否自动避开碰撞 |
-| `collisionBoundary` | `Element \| Element[]` | — | 碰撞检测边界 |
-| `collisionPadding` | `number \| Record<string, number>` | — | 碰撞检测内边距 |
-| `arrowPadding` | `number` | — | 箭头内边距 |
-| `sticky` | `'partial' \| 'always'` | — | 粘性定位策略 |
-| `hideWhenDetached` | `boolean` | — | 被遮挡时隐藏 |
-| `forceMount` | `boolean` | — | 强制挂载（用于自定义动画控制） |
-| `ariaLabel` | `string` | — | 屏幕阅读器标签 |
-| `class` | `string` | — | 自定义 CSS 类名 |
-
-## 事件
+## Reka UI 原语事件
 
 ### Tooltip
 
@@ -195,7 +171,7 @@ const isOpen = ref(false)
 | `escapeKeyDown` | `KeyboardEvent` | 按下 Escape 键时触发，可阻止默认行为 |
 | `pointerDownOutside` | `Event` | 在外部按下指针时触发，可阻止默认行为 |
 
-## 插槽
+## Reka UI 原语插槽
 
 ### Tooltip
 
@@ -208,6 +184,13 @@ const isOpen = ref(false)
 | 插槽 | 作用域 | 说明 |
 |------|--------|------|
 | `default` | — | 默认插槽内容 |
+
+## API 参考
+
+<span id="事件"></span>
+<span id="插槽"></span>
+
+<ComponentApi name="tooltip" />
 
 ## 可访问性
 

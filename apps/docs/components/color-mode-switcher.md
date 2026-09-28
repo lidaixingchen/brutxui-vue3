@@ -79,13 +79,9 @@ import { ColorModeSwitcher } from 'brutx-ui-vue'
 
 颜色模式会持久化到 `localStorage`（键名 `brutx-color-mode`）。当选择 `system` 时，将跟随系统偏好设置，并监听 `prefers-color-scheme` 媒体查询的变化。
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `display` | `'icon' \| 'button' \| 'select'` | `'icon'` | 显示模式：图标、按钮或下拉选择 |
-| `showSystem` | `boolean` | `true` | 是否显示 "system" 选项 |
-| `class` | `string` | `undefined` | 自定义样式类 |
+<ComponentApi name="color-mode-switcher" />
 
 ## 可访问性
 

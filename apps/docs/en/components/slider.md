@@ -103,28 +103,9 @@ Enable `showTooltip` to display the current value near the thumb when dragging o
 </template>
 ```
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `modelValue` | `number[]` | — | Current value, supports `v-model` |
-| `min` | `number` | `0` | Minimum value |
-| `max` | `number` | `100` | Maximum value |
-| `step` | `number` | `1` | Step increment |
-| `disabled` | `boolean` | `false` | Whether disabled |
-| `ariaLabel` | `string` | — | Accessibility label |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Size |
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'success'` | `'default'` | Color variant |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Layout direction |
-| `marks` | `number[]` | — | Array of tick mark values |
-| `showTooltip` | `boolean` | `false` | Whether to show tooltip on drag |
-| `class` | `string` | — | Custom CSS class |
-
-## Events
-
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `update:modelValue` | `number[]` | Triggered when the value changes |
+<ComponentApi name="slider" />
 
 ## Accessibility
 
@@ -134,7 +115,23 @@ Enable `showTooltip` to display the current value near the thumb when dragging o
 
 ## Exposed Methods (defineExpose)
 
-| Property/Method | Type | Description |
-| --- | --- | --- |
-| `currentValue` | `ComputedRef<number[]>` | Current slider value (read-only) |
-| `setValue` | `(value: number[]) => void` | Set the slider value |
+Use a component ref to call `setValue` and request a new slider value from the parent:
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Slider } from 'brutx-ui-vue'
+
+const sliderRef = ref(null)
+const value = ref([50])
+
+function resetToCenter() {
+    sliderRef.value?.setValue([50])
+}
+</script>
+
+<template>
+    <Slider ref="sliderRef" v-model="value" />
+    <button @click="resetToCenter">Reset</button>
+</template>
+```

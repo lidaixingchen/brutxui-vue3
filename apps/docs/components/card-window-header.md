@@ -83,34 +83,11 @@ function onMinimize() {
 </template>
 ```
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `title` | `string` | *(必填)* | 窗口标题（等宽大写工控排版） |
-| `showControls` | `boolean` | `true` | 是否渲染右侧静态 ASCII 控制符（仅在无交互模式且无 actions 插槽时生效） |
-| `closable` | `boolean` | `false` | 是否开启关闭按钮 `[ X ]`（交互模式） |
-| `minimizable` | `boolean` | `false` | 是否开启最小化/折叠按钮 `[ _ ]`（交互模式） |
-| `maximizable` | `boolean` | `false` | 是否开启最大化/展开按钮 `[ □ ]`（交互模式） |
-| `interactiveLamps` | `boolean` | `false` | 左侧三色指示灯是否可点击联动对应动作（红=关闭, 黄=最小化, 绿=最大化） |
-| `closeAriaLabel` | `string` | `undefined` | 关闭按钮无障碍标签（未提供时从语言包获取） |
-| `minimizeAriaLabel` | `string` | `undefined` | 最小化按钮无障碍标签 |
-| `maximizeAriaLabel` | `string` | `undefined` | 最大化按钮无障碍标签 |
-| `class` | `string` | `undefined` | 自定义 CSS 类名 |
+<span id="emits"></span>
 
-## Emits
-
-| 事件名 | 参数 | 说明 |
-|--------|------|------|
-| `close` | `(event: MouseEvent \| KeyboardEvent)` | 点击关闭按钮或红色指示灯时触发 |
-| `minimize` | `(event: MouseEvent \| KeyboardEvent)` | 点击最小化按钮或黄色指示灯时触发 |
-| `maximize` | `(event: MouseEvent \| KeyboardEvent)` | 点击最大化按钮或绿色指示灯时触发 |
-
-## Slots
-
-| 插槽 | 说明 |
-|------|------|
-| `actions` | 右侧自定义操作区，优先级最高，存在时替换默认控制符与交互按钮 |
+<ComponentApi name="card-window-header" />
 
 ## 可访问性
 

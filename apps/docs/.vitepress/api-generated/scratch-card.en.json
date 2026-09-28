@@ -1,0 +1,268 @@
+{
+  "id": "component:scratch-card",
+  "name": "scratch-card",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:scratch-card/ScratchCard",
+      "name": "ScratchCard",
+      "source": {
+        "file": "packages/ui/src/components/scratch-card/ScratchCard.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Ascratch_2Dcard_2FScratchCard-props-percentage",
+          "name": "percentage",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Automatically completes the reveal when this percentage of the covered area has been scratched; the default threshold is 50.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scratch-card/ScratchCard.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_PERCENTAGE",
+              "source": {
+                "file": "packages/ui/src/components/scratch-card/ScratchCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "50"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascratch_2Dcard_2FScratchCard-props-brushRadius",
+          "name": "brushRadius",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the radius of the pointer scratch brush in pixels.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scratch-card/ScratchCard.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_BRUSH_RADIUS",
+              "source": {
+                "file": "packages/ui/src/components/scratch-card/ScratchCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "20"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascratch_2Dcard_2FScratchCard-props-overlayColor",
+          "name": "overlayColor",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets a solid background color for the Canvas overlay; when omitted, a two-color theme stripe pattern is used.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scratch-card/ScratchCard.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/scratch-card/ScratchCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascratch_2Dcard_2FScratchCard-props-fadeDuration",
+          "name": "fadeDuration",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The duration of the overlay fade-out after the completion threshold is reached, in milliseconds; reduced-motion preferences skip the animation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scratch-card/ScratchCard.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_FADE_DURATION",
+              "source": {
+                "file": "packages/ui/src/components/scratch-card/ScratchCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "300"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascratch_2Dcard_2FScratchCard-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the scratch-card root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scratch-card/ScratchCard.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/scratch-card/ScratchCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascratch_2Dcard_2FScratchCard-events-progress",
+          "name": "progress",
+          "kind": "events",
+          "type": {
+            "text": "[percent: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the current revealed-area percentage as scratching progresses; emissions are throttled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scratch-card/ScratchCard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Ascratch_2Dcard_2FScratchCard-events-completed",
+          "name": "completed",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted when the overlay is removed after reaching the reveal threshold or calling revealAll.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scratch-card/ScratchCard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Ascratch_2Dcard_2FScratchCard-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The underlying scratch-card content covered by the Canvas overlay and revealed as it is scratched.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scratch-card/ScratchCard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Ascratch_2Dcard_2FScratchCard-exposes-isRevealed",
+          "name": "isRevealed",
+          "kind": "exposes",
+          "type": {
+            "text": "boolean",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "The reveal state exposed on the component instance. Vue automatically unwraps its internal Ref, so read the boolean through `scratchCardRef.value.isRevealed`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scratch-card/ScratchCard.vue",
+            "line": 108
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Ascratch_2Dcard_2FScratchCard-exposes-revealAll",
+          "name": "revealAll",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Immediately reveals all content and starts removing the overlay.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scratch-card/ScratchCard.vue",
+            "line": 109
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    }
+  ]
+}

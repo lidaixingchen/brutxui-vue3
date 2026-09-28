@@ -1,0 +1,562 @@
+{
+  "id": "component:pagination",
+  "name": "pagination",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:pagination/Pagination",
+      "name": "Pagination",
+      "source": {
+        "file": "packages/ui/src/components/pagination/Pagination.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Apagination_2FPagination-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "number",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前页码，从 1 开始并通过 v-model 同步；显示时会约束在可用页码范围内。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-totalPages",
+          "name": "totalPages",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "显式总页数；提供时优先于 total 与 pageSize 的计算结果。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-total",
+          "name": "total",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "数据总条数，用于计算总页数及显示 total 区域。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 30
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-pageSize",
+          "name": "pageSize",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "每页条数，用于页数计算和页大小选择器，支持 v-model:pageSize。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_PAGE_SIZE",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "10"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-pageSizes",
+          "name": "pageSizes",
+          "kind": "props",
+          "type": {
+            "text": "number[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "每页条数选择器中的可选值列表。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => [...DEFAULT_PAGE_SIZE_OPTIONS]",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[10, 20, 50, 100]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-layout",
+          "name": "layout",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "逗号分隔的显示区域名称：total、sizes、prev、pager、next、jumper。用于选择显示区域，渲染顺序按组件布局固定。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'sizes, prev, pager, next, jumper, total'",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"sizes, prev, pager, next, jumper, total\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用页码导航、页大小选择及跳转输入。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 38
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-background",
+          "name": "background",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "为未激活的页码按钮及前后导航按钮添加背景色。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 40
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-hideOnSinglePage",
+          "name": "hideOnSinglePage",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "计算出的总页数不超过一页时隐藏整个分页导航。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 42
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-siblingCount",
+          "name": "siblingCount",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "在当前页两侧显示的相邻页码数量，用于计算省略号区域。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 43
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "1",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "1"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-showFirstLast",
+          "name": "showFirstLast",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示首页与末页按钮；还需分别在 layout 中启用 prev 和 next 区域。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 44
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-showPageNumbers",
+          "name": "showPageNumbers",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "pager 区域显示页码按钮；关闭时改为当前页与总页数的计数文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 45
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"rounded\" | \"minimal\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"minimal\"",
+              "\"rounded\""
+            ],
+            "references": []
+          },
+          "description": "分页导航容器的视觉变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 46
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "分页导航及页码按钮的尺寸变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 47
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到根 nav 元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue",
+            "line": 48
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/pagination/Pagination.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[page: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "点击页码或导航按钮、提交有效跳页值时发出目标页码；改变每页条数导致当前页超出范围时也会发出调整后的页码。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-events-update_3ApageSize",
+          "name": "update:pageSize",
+          "kind": "events",
+          "type": {
+            "text": "[size: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "页大小选择器改变时发出新的每页条数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Apagination_2FPagination-events-jump",
+          "name": "jump",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "点击省略号按钮时发出，供使用方打开自定义跳页交互；该事件本身不改变页码。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/pagination/Pagination.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

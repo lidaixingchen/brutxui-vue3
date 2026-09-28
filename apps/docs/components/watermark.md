@@ -57,21 +57,11 @@ import { Watermark } from 'brutx-ui-vue'
 </template>
 ```
 
-## Props
+## API 参考
 
-### Watermark
+<span id="watermark"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `width` | `number` | `120` | 单个水印图形的宽度 |
-| `height` | `number` | `64` | 单个水印图形的高度 |
-| `rotate` | `number` | `-22` | 水印文本/图片的倾斜角度（逆时针旋转度数） |
-| `zIndex` | `number` | `9999` | 水印图层的 z-index 深度层级 |
-| `image` | `string` | `undefined` | 水印图片的数据源 (DataURL / URL)，图片模式下文本内容不再生效 |
-| `content` | `string \| string[]` | `''` | 水印的文本内容，支持数组形式排布多行文本 |
-| `gap` | `[number, number]` | `[100, 100]` | 水印横纵向平铺的网格空隙间隔 (gapX, gapY) |
-| `offset` | `[number, number]` | `[0, 0]` | 水印平铺在画布起始点的位移偏置量 (offsetX, offsetY) |
-| `font` | `WatermarkFont` | *(见下方)* | 文本水印的字体及颜色样式配置 |
+<ComponentApi name="watermark" />
 
 ### WatermarkFont 类型定义
 

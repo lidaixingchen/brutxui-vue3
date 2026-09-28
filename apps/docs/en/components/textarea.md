@@ -80,6 +80,28 @@ const content = ref('This is readonly content. Users can select and copy text bu
 </template>
 ```
 
+### Error Messages
+
+Use `variant="error"` and `errorMessage` to show an error below the textarea. The message uses `role="alert"` for screen reader announcements.
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Textarea } from 'brutx-ui-vue'
+
+const message = ref('')
+</script>
+
+<template>
+    <Textarea
+        v-model="message"
+        variant="error"
+        error-message="A message is required"
+        placeholder="Enter a message..."
+    />
+</template>
+```
+
 ## Variants
 
 | Variant | Description |
@@ -116,40 +138,33 @@ Set different sizes via the `size` prop:
 </template>
 ```
 
-## Props
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `modelValue` | `string` | — | Binding value, supports v-model |
-| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | Border style variant |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Size |
-| `resize` | `'none' \| 'vertical' \| 'horizontal' \| 'both'` | `'none'` | Resize mode |
-| `disabled` | `boolean` | `false` | Whether disabled |
-| `readonly` | `boolean` | `false` | Whether readonly (not editable but selectable/copyable, cursor is `cursor-default`, opacity not reduced) |
-| `placeholder` | `string` | Internationalized fallback text | Placeholder text |
-| `errorMessage` | `string` | — | Error message text, only displayed when `variant="error"`, uses `role="alert"` for screen reader announcement |
-| `ariaLabel` | `string` | — | Accessibility label |
-| `ariaLabelledby` | `string` | — | Associated label element ID |
-| `ariaDescribedby` | `string` | — | Description element ID |
-| `ariaInvalid` | `boolean` | — | Whether marked as invalid |
-| `ariaRequired` | `boolean` | — | Whether marked as required |
-| `class` | `string` | — | Custom CSS class |
-
-## Events
-
-| Event | Payload | Description |
-| --- | --- | --- |
-| `update:modelValue` | `string` | Triggered when value changes |
-
-## Exposed Methods (defineExpose)
+## Programmatic Control
 
 Access the component instance via `ref` to call the following methods:
 
-| Method | Description |
-|--------|-------------|
-| `focus()` | Focus the textarea |
-| `blur()` | Remove focus |
-| `select()` | Select all text in the textarea |
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Textarea } from 'brutx-ui-vue'
+
+const textareaRef = ref(null)
+
+function handleFocus() {
+    textareaRef.value?.focus()
+}
+</script>
+
+<template>
+    <Textarea ref="textareaRef" placeholder="Click button to focus" />
+    <button @click="handleFocus">Focus Textarea</button>
+</template>
+```
+
+## API Reference
+
+<span id="exposed-methods-defineexpose"></span>
+
+<ComponentApi name="textarea" />
 
 ## Accessibility
 

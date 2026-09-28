@@ -135,44 +135,14 @@ Compose new card templates directly from the `Card` sub-components.
 | `CardContent` | Main content area |
 | `CardFooter` | Footer area with flex layout |
 
-## Props
+## API Reference
 
-### Card
+<span id="card-1"></span>
+<span id="card-events"></span>
+<span id="cardtitle"></span>
+<span id="cardheader-carddescription-cardcontent-cardfooter"></span>
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `variant` | `'default' \| 'elevated' \| 'flat' \| 'interactive' \| 'primary' \| 'secondary'` | `'default'` | Card variant type |
-| `texture` | `'none' \| 'grid' \| 'dots'` | `'none'` | Background texture: blueprint grid / dot matrix |
-| `deco` | `'none' \| 'hud'` | `'none'` | HUD four-corner crosshair decoration layer |
-| `padding` | `'none' \| 'sm' \| 'default' \| 'lg'` | `'default'` | Card padding |
-| `interactive` | `boolean` | `false` | Whether clickable, adds `role="button"`, `tabindex="0"` and keyboard support |
-| `disabled` | `boolean` | `false` | Disables interaction: `tabindex="-1"`, `aria-disabled="true"`, and `activate` is never emitted |
-| `class` | `string` | — | Custom CSS class |
-
-### Card Events
-
-| Event | Description |
-| --- | --- |
-| `activate` | Triggered when `interactive=true` (or `variant="interactive"`), fired on click or Enter/Space key press, returning the native `Event` object |
-
-### CardTitle
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `as` | `'h1' \| 'h2' \| 'h3' \| 'h4' \| 'h5' \| 'h6'` | `'h3'` | Rendered heading element; invalid values fall back to `h3` |
-| `class` | `string` | — | Custom CSS class |
-
-### CardHeader / CardDescription / CardContent / CardFooter
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `class` | `string` | — | Custom CSS class |
-
-## Slots
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | Default slot for all components, used to insert content |
+<ComponentApi name="card" />
 
 ## Accessibility
 

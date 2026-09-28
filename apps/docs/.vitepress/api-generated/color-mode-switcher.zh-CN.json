@@ -1,0 +1,121 @@
+{
+  "id": "component:color-mode-switcher",
+  "name": "color-mode-switcher",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:color-mode-switcher/ColorModeSwitcher",
+      "name": "ColorModeSwitcher",
+      "source": {
+        "file": "packages/ui/src/components/color-mode-switcher/ColorModeSwitcher.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acolor_2Dmode_2Dswitcher_2FColorModeSwitcher-props-display",
+          "name": "display",
+          "kind": "props",
+          "type": {
+            "text": "\"button\" | \"icon\" | \"select\" | undefined",
+            "literals": [
+              "\"button\"",
+              "\"icon\"",
+              "\"select\""
+            ],
+            "references": []
+          },
+          "description": "选择图标按钮、带当前模式文本的按钮或下拉选择器；两种按钮模式按可用模式顺序循环切换。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-mode-switcher/ColorModeSwitcher.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'icon'",
+              "source": {
+                "file": "packages/ui/src/components/color-mode-switcher/ColorModeSwitcher.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"icon\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dmode_2Dswitcher_2FColorModeSwitcher-props-showSystem",
+          "name": "showSystem",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将跟随系统模式包含在循环切换与下拉选项中。",
+          "notes": [
+            "设为假不会修改现有主题状态。若当前模式仍为 system，按钮保留该状态，下拉框显示实际解析的亮暗模式，直到选择一个可用选项。"
+          ],
+          "source": {
+            "file": "packages/ui/src/components/color-mode-switcher/ColorModeSwitcher.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/color-mode-switcher/ColorModeSwitcher.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dmode_2Dswitcher_2FColorModeSwitcher-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传给当前展示模式的根组件：按钮模式为 Button，下拉模式为 SelectRoot。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-mode-switcher/ColorModeSwitcher.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/color-mode-switcher/ColorModeSwitcher.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

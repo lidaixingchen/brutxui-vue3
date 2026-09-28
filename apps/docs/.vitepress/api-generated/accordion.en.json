@@ -1,0 +1,916 @@
+{
+  "id": "component:accordion",
+  "name": "accordion",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:accordion/Accordion",
+      "name": "Accordion",
+      "source": {
+        "file": "packages/ui/src/components/accordion/Accordion.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-collapsible",
+          "name": "collapsible",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "In single mode, allows activating the open item again to close all content. It has no effect in multiple mode.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            },
+            "fallback": "When omitted, uses the Reka UI AccordionRoot default of false."
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables interaction with the entire accordion and all its items.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            },
+            "fallback": "When omitted, uses the Reka UI AccordionRoot default of false."
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-dir",
+          "name": "dir",
+          "kind": "props",
+          "type": {
+            "text": "Direction | undefined",
+            "literals": [
+              "\"ltr\"",
+              "\"rtl\""
+            ],
+            "references": []
+          },
+          "description": "The reading direction of the accordion, used for keyboard navigation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            },
+            "fallback": "When omitted, uses the Reka UI ConfigProvider direction, then falls back to ltr."
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-orientation",
+          "name": "orientation",
+          "kind": "props",
+          "type": {
+            "text": "DataOrientation | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "The accordion orientation used for layout state and arrow-key navigation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            },
+            "fallback": "When omitted, Reka UI AccordionRoot uses vertical orientation."
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-unmountOnHide",
+          "name": "unmountOnHide",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether closed content is unmounted; an item can override it with its own unmountOnHide prop.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            },
+            "fallback": "When omitted, Reka UI AccordionRoot uses true."
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Merges the root primitive props and behavior into its child element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "The element or component rendered by the root primitive; asChild delegates rendering to the child.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-type",
+          "name": "type",
+          "kind": "props",
+          "type": {
+            "text": "SingleOrMultipleType | undefined",
+            "literals": [
+              "\"multiple\"",
+              "\"single\""
+            ],
+            "references": []
+          },
+          "description": "Selects single or multiple expansion, overriding the mode inferred from modelValue or defaultValue.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The controlled expanded value: a string for single mode or a string array for multiple mode. Supports v-model.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-defaultValue",
+          "name": "defaultValue",
+          "kind": "props",
+          "type": {
+            "text": "string | string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The initially expanded value in uncontrolled mode.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes merged onto the accordion root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue",
+            "line": 6
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string | string[] | undefined]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the new expanded value to synchronize single or multiple state through v-model.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordion-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The accordion items, typically AccordionItem components. This wrapper does not forward the underlying primitive slot arguments.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/Accordion.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:accordion/AccordionContent",
+      "name": "AccordionContent",
+      "source": {
+        "file": "packages/ui/src/components/accordion/AccordionContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aaccordion_2FAccordionContent-props-forceMount",
+          "name": "forceMount",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Forces content mounting so an external animation library can control its visibility transitions.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionContent-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Merges the content primitive props and behavior into the inner content container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionContent-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "The element or component rendered by the collapsible content primitive.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Classes merged onto the outer element that handles collapse animation. The inner container inherits its visual variant from AccordionItem.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionContent.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The body content displayed when the panel is expanded.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:accordion/AccordionItem",
+      "name": "AccordionItem",
+      "source": {
+        "file": "packages/ui/src/components/accordion/AccordionItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aaccordion_2FAccordionItem-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"flat\" | \"default\" | \"ghost\" | \"interactive\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"flat\"",
+              "\"ghost\"",
+              "\"interactive\""
+            ],
+            "references": []
+          },
+          "description": "The item visual variant, also provided to its trigger and content area.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionItem.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/accordion/AccordionItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes merged onto the accordion item root.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionItem.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/accordion/AccordionItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionItem-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables this item. It is also disabled whenever the root Accordion is disabled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionItem.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionItem-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The item string identifier, which must be unique within its Accordion.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionItem.vue"
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionItem-props-unmountOnHide",
+          "name": "unmountOnHide",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether this item content is unmounted when closed.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionItem.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            },
+            "fallback": "Inherits unmountOnHide from the root Accordion when omitted."
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionItem-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Merges the item primitive props and behavior into its child element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionItem.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionItem-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "The element or component rendered by the item root primitive.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionItem.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The item trigger and content, typically AccordionTrigger and AccordionContent. No scope arguments are provided.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:accordion/AccordionTrigger",
+      "name": "AccordionTrigger",
+      "source": {
+        "file": "packages/ui/src/components/accordion/AccordionTrigger.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aaccordion_2FAccordionTrigger-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Merges the trigger primitive props and behavior into its child; preserve focusable trigger semantics when composing it.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionTrigger.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionTrigger-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "The element or component rendered by the trigger primitive.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionTrigger.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionTrigger-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes merged onto the trigger element, rather than its surrounding heading.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionTrigger.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/accordion/AccordionTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionTrigger-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "The size of the built-in ChevronDown icon. A custom icon slot controls its own icon size.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionTrigger.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'lg'",
+              "source": {
+                "file": "packages/ui/src/components/accordion/AccordionTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"lg\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionTrigger-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The heading text or content inside the trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionTrigger.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aaccordion_2FAccordionTrigger-slots-icon",
+          "name": "icon",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the expansion icon, which defaults to ChevronDown. Its container inherits variant styles and rotates when expanded. An explicitly empty slot hides the icon container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/accordion/AccordionTrigger.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

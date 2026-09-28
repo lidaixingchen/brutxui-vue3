@@ -64,27 +64,13 @@ const dateRange = ref(null)
 </template>
 ```
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `modelValue` | `Date \| Date[] \| null` | `undefined` | Selected date, supports v-model binding. `Date` for single mode, `[Date, Date]` for range mode |
-| `isRange` | `boolean` | `false` | Whether to enable date range selection mode |
-| `disabled` | `boolean` | `false` | Disables the calendar, making it semi-transparent and non-interactive |
-| `events` | `CalendarEvent[]` | `[]` | Event markers data, displays event indicators on corresponding dates |
-| `eventRenderer` | `(event: CalendarEvent) => VNode \| string` | — | Custom event render function, returns a VNode or string |
-| `mode` | `'default' \| 'card'` | `'default'` | Event display mode: `default` shows dot indicators with Tooltip, `card` shows adaptive-height cards with capsule badges |
-| `class` | `string` | `undefined` | Custom CSS class name |
-
-## Events
-
-| Event | Payload | Description |
-|------|------|------|
-| `update:modelValue` | `Date \| Date[] \| null` | Emitted when the selected date changes |
+<ComponentApi name="calendar" />
 
 ## Slots
 
-The Calendar component exposes the following slots via v-calendar's DatePicker, which can be used to customize the header and date cells:
+These slots are supported by the underlying v-calendar DatePicker and forwarded by Calendar for customizing the header and date cells:
 
 | Slot | Scope | Description |
 |------|--------|------|

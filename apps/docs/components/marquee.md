@@ -66,20 +66,11 @@ import { Marquee } from 'brutx-ui-vue'
 </Marquee>
 ```
 
-## Props
+## API 参考
 
-### Marquee
+<span id="marquee"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `direction` | `'left' \| 'right'` | `'left'` | 跑马灯滚动方向 |
-| `speed` | `number` | `20` | 单次循环所耗费的秒数（数值越小速度越快） |
-| `pauseOnHover` | `boolean` | `false` | 鼠标悬停时是否暂停动画 |
-| `fade` | `boolean` | `false` | 是否开启左右边缘淡入淡出遮罩效果 |
-| `variant` | `'default' \| 'primary' \| 'accent' \| 'muted'` | `'default'` | 背景与文字颜色变体 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 文字大小与内边距 |
-| `class` | `string` | `""` | 容器的自定义 CSS 类 |
-
+<ComponentApi name="marquee" />
 ## 可访问性
 
 - **动效降级**：组件尊重 `prefers-reduced-motion` 系统设置。当用户启用"减少动态效果"时，移除轨道的滚动动画（添加 `[animation:none]`），内容以静态形式展示，同时不再渲染用于无缝衔接的重复轨道副本（`aria-hidden` 的镜像轨道），仅保留单份内容，避免视觉冗余。

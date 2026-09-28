@@ -1,0 +1,573 @@
+{
+  "id": "component:cascader",
+  "name": "cascader",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:cascader/Cascader",
+      "name": "Cascader",
+      "source": {
+        "file": "packages/ui/src/components/cascader/Cascader.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acascader_2FCascader-props-options",
+          "name": "options",
+          "kind": "props",
+          "type": {
+            "text": "CascaderOption<unknown>[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "CascaderOption",
+                "text": "export interface CascaderOption<T = unknown> {\n    value: CascaderValue\n    label: string\n    children?: CascaderOption<T>[]\n    disabled?: boolean\n    data?: T\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcascader%2Fcascader-types.ts%23CascaderOption"
+              }
+            ]
+          },
+          "description": "The nested option tree for cascading selection; each option uses value and label and may include children.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "CascaderValue[] | CascaderValue[][] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "CascaderValue",
+                "text": "export type CascaderValue = string | number",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcascader%2Fcascader-types.ts%23CascaderValue"
+              }
+            ]
+          },
+          "description": "The selected paths, bound with v-model. Single mode uses one CascaderValue path; multiple mode uses an array of paths.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "The controlled open state of the dropdown panel, synchronized with v-model:open.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-multiple",
+          "name": "multiple",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Allows selecting multiple option paths; modelValue is an array of paths when enabled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows a clear action for removing the selected paths.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-checkStrictly",
+          "name": "checkStrictly",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Allows parent nodes with children to be selected without requiring a leaf node.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-separator",
+          "name": "separator",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the separator displayed between labels in a path on the trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "' / '",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\" / \""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-maxDisplay",
+          "name": "maxDisplay",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "In multiple mode, the maximum number of paths shown directly in the trigger; remaining paths are collapsed into a summary.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "2",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "2"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"lg\" | \"sm\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Sets the trigger button size variant.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Text shown in the trigger when no path is selected.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables user interaction with the select trigger and dropdown panel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 37
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-dropdownClass",
+          "name": "dropdownClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the cascader dropdown panel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 39
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the select trigger button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 41
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the accessible label for the select trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 43
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: CascaderValue[] | CascaderValue[][]]",
+            "literals": [],
+            "references": [
+              {
+                "name": "CascaderValue",
+                "text": "export type CascaderValue = string | number",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcascader%2Fcascader-types.ts%23CascaderValue"
+              }
+            ]
+          },
+          "description": "Emits the updated path value when selection changes, for synchronizing the controlled value with v-model.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Emits the new boolean when the dropdown open state changes and can be used with v-model:open.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-events-change",
+          "name": "change",
+          "kind": "events",
+          "type": {
+            "text": "[value: CascaderValue[] | CascaderValue[][]]",
+            "literals": [],
+            "references": [
+              {
+                "name": "CascaderValue",
+                "text": "export type CascaderValue = string | number",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcascader%2Fcascader-types.ts%23CascaderValue"
+              }
+            ]
+          },
+          "description": "Emits the selected single path or set of paths when the user changes the selection.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-events-open_2Dchange",
+          "name": "open-change",
+          "kind": "events",
+          "type": {
+            "text": "[open: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Emits the current open state when the dropdown panel opens or closes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

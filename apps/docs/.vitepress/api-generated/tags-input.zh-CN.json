@@ -1,0 +1,1279 @@
+{
+  "id": "component:tags-input",
+  "name": "tags-input",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:tags-input/TagsInput",
+      "name": "TagsInput",
+      "source": {
+        "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "AcceptableInputValue[] | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "受控的标签值列表，可通过 v-model 同步；每项可以是字符串、数字、bigint 或对象。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-defaultValue",
+          "name": "defaultValue",
+          "kind": "props",
+          "type": {
+            "text": "AcceptableInputValue[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "非受控模式使用的初始标签值列表；需要从外部同步时请改用 modelValue。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-addOnPaste",
+          "name": "addOnPaste",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "粘贴文本时按 delimiter 拆分并尝试添加标签；是否成功仍受 max 和 duplicate 限制。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-addOnTab",
+          "name": "addOnTab",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "按 Tab 键时将当前输入提交为标签。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-addOnBlur",
+          "name": "addOnBlur",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "输入框失焦时将当前输入提交为标签。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-duplicate",
+          "name": "duplicate",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "允许列表中存在重复标签值；关闭时重复值会被视为无效。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用标签输入组及其子项的用户交互。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-delimiter",
+          "name": "delimiter",
+          "kind": "props",
+          "type": {
+            "text": "string | RegExp | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "用于提交输入和拆分粘贴内容的分隔符；可以传入单个字符串或正则表达式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-dir",
+          "name": "dir",
+          "kind": "props",
+          "type": {
+            "text": "Direction | undefined",
+            "literals": [
+              "\"ltr\"",
+              "\"rtl\""
+            ],
+            "references": []
+          },
+          "description": "设置组合框内容的阅读方向；未指定时继承 ConfigProvider 配置，否则按从左到右处理。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-max",
+          "name": "max",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "允许的最大标签数量；达到上限后不再添加标签并发出 invalid，设为 0 表示不限制。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递给标签输入根原语的 DOM ID，用于标识该输入组。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-convertValue",
+          "name": "convertValue",
+          "kind": "props",
+          "type": {
+            "text": "((value: string) => AcceptableInputValue) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "将输入字符串转换为标签值的函数；使用对象标签并通过 TagsInputInput 输入时必须提供。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-displayValue",
+          "name": "displayValue",
+          "kind": "props",
+          "type": {
+            "text": "((value: AcceptableInputValue) => string) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "将标签值转换为显示文本；适用于对象标签或需要添加后缀等展示格式的场景。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将组件的属性与交互行为合并到唯一子元素上，并由该子元素替代默认渲染元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "指定此标签输入子组件使用的 HTML 标签或 Vue 组件；与 asChild 同时设置时由 asChild 决定渲染元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "表单字段名；提交所属表单时，标签值会以此名称参与表单数据提交。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-required",
+          "name": "required",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将标签输入标记为所属表单的必填字段。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到标签输入根容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "标签输入组的无障碍名称；未提供时使用当前语言的 tagsInput.label 文案。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[payload: AcceptableInputValue[]]",
+            "literals": [],
+            "references": []
+          },
+          "description": "标签列表变化时发出新数组，用于同步受控 v-model。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-events-invalid",
+          "name": "invalid",
+          "kind": "events",
+          "type": {
+            "text": "[payload: AcceptableInputValue]",
+            "literals": [],
+            "references": []
+          },
+          "description": "尝试添加重复值或超过 max 上限的标签时发出被拒绝的标签值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-events-addTag",
+          "name": "addTag",
+          "kind": "events",
+          "type": {
+            "text": "[payload: AcceptableInputValue]",
+            "literals": [],
+            "references": []
+          },
+          "description": "成功添加标签后发出新增的标签值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-events-removeTag",
+          "name": "removeTag",
+          "kind": "events",
+          "type": {
+            "text": "[payload: AcceptableInputValue]",
+            "literals": [],
+            "references": []
+          },
+          "description": "成功移除标签后发出被移除的标签值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInput-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "组合标签项和输入框的内容；作用域中提供当前 modelValue，通常放置 TagsInputItem 与 TagsInputInput。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInput.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:tags-input/TagsInputInput",
+      "name": "TagsInputInput",
+      "source": {
+        "file": "packages/ui/src/components/tags-input/TagsInputInput.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputInput-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "输入框为空时显示的占位文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputInput-props-autoFocus",
+          "name": "autoFocus",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "组件挂载后自动将焦点移到输入框。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputInput-props-maxLength",
+          "name": "maxLength",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "限制输入框中可输入的字符数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputInput-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将组件的属性与交互行为合并到唯一子元素上，并由该子元素替代默认渲染元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputInput-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "指定此标签输入子组件使用的 HTML 标签或 Vue 组件；与 asChild 同时设置时由 asChild 决定渲染元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputInput-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到标签输入原生输入元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputInput.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:tags-input/TagsInputItem",
+      "name": "TagsInputItem",
+      "source": {
+        "file": "packages/ui/src/components/tags-input/TagsInputItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItem-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"success\" | \"danger\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "设置单个标签的配色变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItem.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'primary'",
+              "source": {
+                "file": "packages/ui/src/components/tags-input/TagsInputItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"primary\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到单个标签容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItem.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tags-input/TagsInputItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItem-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "AcceptableInputValue",
+            "literals": [],
+            "references": []
+          },
+          "description": "此标签对应的值，必须与根组件标签列表中的一项匹配。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItem.vue"
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItem-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁止对此标签执行交互操作。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItem.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItem-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将组件的属性与交互行为合并到唯一子元素上，并由该子元素替代默认渲染元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItem.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItem-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "指定此标签输入子组件使用的 HTML 标签或 Vue 组件；与 asChild 同时设置时由 asChild 决定渲染元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItem.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "渲染标签项内容，通常包含 TagsInputItemText 和 TagsInputItemDelete。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:tags-input/TagsInputItemDelete",
+      "name": "TagsInputItemDelete",
+      "source": {
+        "file": "packages/ui/src/components/tags-input/TagsInputItemDelete.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItemDelete-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到标签删除按钮的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItemDelete.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tags-input/TagsInputItemDelete.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItemDelete-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "删除按钮的无障碍名称；未提供时使用当前语言的默认删除文案。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItemDelete.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tags-input/TagsInputItemDelete.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItemDelete-props-type",
+          "name": "type",
+          "kind": "props",
+          "type": {
+            "text": "\"button\" | \"submit\" | \"reset\" | undefined",
+            "literals": [
+              "\"button\"",
+              "\"reset\"",
+              "\"submit\""
+            ],
+            "references": []
+          },
+          "description": "设置原生按钮类型，默认 button 可避免在表单中误触发提交。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItemDelete.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'button'",
+              "source": {
+                "file": "packages/ui/src/components/tags-input/TagsInputItemDelete.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"button\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItemDelete-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将组件的属性与交互行为合并到唯一子元素上，并由该子元素替代默认渲染元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItemDelete.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItemDelete-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "指定此标签输入子组件使用的 HTML 标签或 Vue 组件；与 asChild 同时设置时由 asChild 决定渲染元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItemDelete.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItemDelete-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "自定义删除按钮内容；未提供时显示 X 图标。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItemDelete.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:tags-input/TagsInputItemText",
+      "name": "TagsInputItemText",
+      "source": {
+        "file": "packages/ui/src/components/tags-input/TagsInputItemText.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItemText-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将组件的属性与交互行为合并到唯一子元素上，并由该子元素替代默认渲染元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItemText.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItemText-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "指定此标签输入子组件使用的 HTML 标签或 Vue 组件；与 asChild 同时设置时由 asChild 决定渲染元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItemText.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItemText-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到标签文本元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItemText.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atags_2Dinput_2FTagsInputItemText-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "渲染标签的文本内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tags-input/TagsInputItemText.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

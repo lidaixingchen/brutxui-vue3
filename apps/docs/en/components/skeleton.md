@@ -170,57 +170,15 @@ The `effect` variant overlays CRT-style texture on skeleton blocks:
 | `SkeletonCard` | Complete card skeleton with image area, title, text, and button placeholders |
 | `SkeletonTable` | Table skeleton with built-in `role="table"` and `aria-busy="true"` accessibility attributes |
 
-## Props
+## API Reference
 
-### Skeleton
+<span id="skeleton-1"></span>
+<span id="skeletontext-1"></span>
+<span id="skeletonavatar-1"></span>
+<span id="skeletoncard-1"></span>
+<span id="skeletontable-1"></span>
 
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | Color variant |
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | Controls height (also controls width for `circle`) |
-| `shape` | `'rect' \| 'circle'` | `'rect'` | Shape; `circle` uses `rounded-full` with equal width and height |
-| `effect` | `'none' \| 'scanlines' \| 'ascii'` | `'none'` | Loading texture effect: CRT scanlines / ASCII terminal block flicker |
-| `width` | `string \| number` | — | Custom width, supports numeric pixels (e.g. `64`) or strings (e.g. `'100%'`, `'200px'`); also sets height for `circle` |
-| `class` | `string` | — | Custom style class |
-
-### SkeletonText
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | Color variant |
-| `lines` | `number` | `3` | Number of text lines |
-| `lastLineWidth` | `string` | `'60%'` | Width of the last line, supports any CSS width value |
-| `class` | `string` | — | Custom style class |
-
-### SkeletonAvatar
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | Color variant |
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | Avatar size with equal width and height |
-| `class` | `string` | — | Custom style class |
-
-### SkeletonCard
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | Color variant |
-| `class` | `string` | — | Custom style class |
-
-### SkeletonTable
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | Color variant |
-| `rows` | `number` | `5` | Number of data rows |
-| `columns` | `number` | `4` | Number of columns |
-| `class` | `string` | — | Custom style class |
-
-## Slots
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | Content inside the skeleton block, can hold custom loading indicators or other elements |
+<ComponentApi name="skeleton" />
 
 ## Accessibility
 

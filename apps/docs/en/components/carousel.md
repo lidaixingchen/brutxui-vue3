@@ -138,53 +138,18 @@ const carouselRef = ref()
 </template>
 ```
 
-### Exposed API
+## API Reference
 
-| Method/Property | Type | Description |
-|-----------|------|------|
-| `scrollPrev` | `() => void` | Scroll to the previous slide |
-| `scrollNext` | `() => void` | Scroll to the next slide |
-| `scrollTo` | `(index: number) => void` | Scroll to the slide at the specified index |
-| `selectedIndex` | `ComputedRef<number>` | Currently selected slide index (read-only reactive) |
-| `canScrollPrev` | `ComputedRef<boolean>` | Whether scrolling backward is possible; always `true` when `loop` is enabled (read-only reactive) |
-| `canScrollNext` | `ComputedRef<boolean>` | Whether scrolling forward is possible; always `true` when `loop` is enabled (read-only reactive) |
+<span id="exposed-api"></span>
+<span id="carousel-1"></span>
+<span id="carouselitem"></span>
+<span id="carousel-2"></span>
+<span id="carouselitem-1"></span>
+<span id="base-props"></span>
+<span id="exposed-api-1"></span>
+<span id="slots-1"></span>
 
-> Note: `selectedIndex`, `canScrollPrev`, and `canScrollNext` are reactive `ComputedRef` values. They auto-unwrap when used directly in `<template>`; in `<script setup>`, access them via `.value`.
-
-## Props
-
-### Carousel
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `loop` | `boolean` | `false` | Whether to enable loop scrolling |
-| `autoplay` | `boolean` | `false` | Whether to enable autoplay |
-| `autoplayDelay` | `number` | `3000` | Autoplay interval in milliseconds |
-| `showArrows` | `boolean` | `true` | Whether to show left/right navigation arrows |
-| `showDots` | `boolean` | `true` | Whether to show bottom dot navigation |
-| `size` | `'sm' \| 'md' \| 'lg' \| 'full' \| 'default'` | `'default'` | Carousel container height preset |
-| `class` | `string` | — | Root node custom style class |
-
-### CarouselItem
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `class` | `string` | — | Single slide container custom style class |
-| `ariaHidden` | `boolean` | `false` | Marks the slide as hidden (WAI-ARIA Carousel pattern). Slides outside the viewport should be `true` (hidden from screen readers together with their focusable content), synced by the parent on scroll |
-
-## Slots
-
-### Carousel
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | Default slot for placing `CarouselItem` components |
-
-### CarouselItem
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | Default slot for placing slide content |
+<ComponentApi name="carousel" />
 
 ## Carousel Enhanced Features
 
@@ -214,16 +179,6 @@ import { Carousel, CarouselItem } from 'brutx-ui-vue/carousel'
 </template>
 ```
 
-### Base Props
-
-The following enhanced props can be passed directly to `Carousel`:
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `thumbnails` | `CarouselThumbnails` | `{ show: false, position: 'bottom', size: 'sm', gap: 8, highlightCurrent: true }` | Thumbnail navigation config |
-| `autoplayIndicator` | `AutoplayIndicator` | — | Autoplay indicator config |
-| `parallax` | `ParallaxEffect` | — | Parallax animation config |
-
 ### CarouselThumbnails
 
 | Prop | Type | Default | Description |
@@ -251,28 +206,6 @@ The following enhanced props can be passed directly to `Carousel`:
 | `opacity` | `boolean` | `false` | Whether to enable opacity transition |
 | `duration` | `number` | `300` | Animation duration in milliseconds |
 | `easing` | `string` | `'ease-out'` | CSS easing function |
-
-### Exposed API
-
-`Carousel` exposes scroll and autoplay control via `defineExpose`:
-
-| Method/Property | Type | Description |
-|-----------|------|------|
-| `scrollPrev` | `() => void` | Scroll to the previous slide |
-| `scrollNext` | `() => void` | Scroll to the next slide |
-| `scrollTo` | `(index: number) => void` | Scroll to the slide at the specified index |
-| `selectedIndex` | `ComputedRef<number>` | Currently selected slide index (read-only reactive) |
-| `canScrollPrev` | `ComputedRef<boolean>` | Whether scrolling backward is possible |
-| `canScrollNext` | `ComputedRef<boolean>` | Whether scrolling forward is possible |
-| `startAutoplay` | `() => void` | Start autoplay |
-| `stopAutoplay` | `() => void` | Stop autoplay |
-
-### Slots
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | Default slot for placing `CarouselItem` components |
-| `thumbnail` | `{ index: number, scrollTo: (index: number) => void }` | Custom thumbnail rendering; uses default numbered thumbnails when not provided |
 
 ## Accessibility
 

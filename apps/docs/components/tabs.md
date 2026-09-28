@@ -101,10 +101,10 @@ const currentTab = ref('account')
 
 ### 数据驱动模式（tabs prop）
 
-传入 `tabs` 数组即可让 `Tabs` 自动渲染 `TabsList`/`TabsTrigger`/`TabsContent`，适用于简单的标签导航场景。未传 `tabs` 时保持原有 slot 组合用法完全不变。
+传入 `tabs` 数组即可让 `Tabs` 自动渲染 `TabsList`/`TabsTrigger`/`TabsContent`，适用于简单的标签导航场景。未传 `tabs` 时通过默认插槽组合完整结构。
 
 ```vue
-<script setup>
+<script setup lang="ts">
 import { Tabs } from 'brutx-ui-vue/tabs'
 import type { TabItem } from 'brutx-ui-vue/tabs'
 
@@ -116,7 +116,7 @@ const tabs: TabItem[] = [
 </script>
 
 <template>
-    <Tabs :tabs="tabs" model-value="overview" />
+    <Tabs :tabs="tabs" default-value="overview" />
 </template>
 ```
 
@@ -125,7 +125,7 @@ const tabs: TabItem[] = [
 通过 `#default` 插槽可替换默认的 Card 展示。插槽会替代默认内容区域，但 `TabsList` 仍由 `tabs` 自动渲染：
 
 ```vue
-<script setup>
+<script setup lang="ts">
 import { Tabs, TabsContent } from 'brutx-ui-vue/tabs'
 import type { TabItem } from 'brutx-ui-vue/tabs'
 
@@ -153,13 +153,13 @@ const tabs: TabItem[] = [
 
 `tabs` 模式下额外提供 `header` 与 `footer` 两个命名插槽，用于在标签区块上下方插入辅助内容。`tabs` 为空数组时会显示 `Result` fallback，并仍渲染 `header`/`footer` 插槽。
 
-#### 受控/非受控双模式
+#### 受控与自主状态管理
 
 `tabs` 模式内置双模式状态管理：
 
 - 传入 `modelValue`（或使用 `v-model`）时为受控模式，由父组件主导激活值
 - 未传 `modelValue` 时为非受控模式，组件内部维护激活值
-- 当未传 `modelValue` 且无内部状态时，自动回退到首个 tab 的 `value`，避免空激活态
+- 初始选择依次使用 `defaultValue` 和首项的 `value`；选中项被移除后，同样按此顺序回退
 
 ## 变体
 
@@ -204,7 +204,6 @@ const tabs: TabItem[] = [
 ```ts
 import {
     Tabs,
-    TabsRoot, // reka-ui 原始组件
     TabsList,
     TabsTrigger,
     TabsContent,
@@ -213,6 +212,7 @@ import {
     tabsContentVariants,
 } from 'brutx-ui-vue/tabs'
 import type { TabItem } from 'brutx-ui-vue/tabs'
+import { TabsRoot } from 'reka-ui'
 ```
 
 ### TabItem
@@ -251,47 +251,16 @@ import {
 | `tabsTriggerVariants` | `variant`: `'default' \| 'primary' \| 'secondary' \| 'success'` | 触发器样式变体 |
 | `tabsContentVariants` | — | 内容面板基础样式 |
 
-## Props
+## API 参考
 
-### Tabs
+<span id="受控-非受控双模式"></span>
+<span id="tabs"></span>
+<span id="tabslist"></span>
+<span id="tabstrigger"></span>
+<span id="tabscontent"></span>
+<span id="事件"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `modelValue` | `string` | — | 当前激活标签页的值（受控模式） |
-| `defaultValue` | `string` | — | 默认激活的标签页值（非受控模式初始值） |
-| `tabs` | `TabItem[]` | — | 标签数据数组。传入时自动渲染 `TabsList`/`TabsTrigger`/`TabsContent`，未传入时使用默认 slot 组合 |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 标签页排列方向 |
-| `class` | `string` | — | 自定义 CSS 类名。`tabs` 模式下作用于外层包裹容器 |
-
-### TabsList
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 容器尺寸 |
-| `orientation` | `'horizontal' \| 'vertical'` | 继承自 `Tabs`，默认 `'horizontal'` | 排列方向，可覆盖父组件设置 |
-| `class` | `string` | — | 自定义 CSS 类名 |
-
-### TabsTrigger
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `value` | `string` | —（必填） | 标签页唯一标识 |
-| `disabled` | `boolean` | `false` | 是否禁用 |
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'success'` | `'default'` | 激活状态颜色变体 |
-| `class` | `string` | — | 自定义 CSS 类名 |
-
-### TabsContent
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `value` | `string` | —（必填） | 对应标签页的值 |
-| `class` | `string` | — | 自定义 CSS 类名 |
-
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:modelValue` | `string` | 激活标签页变化时触发 |
+<ComponentApi name="tabs" />
 
 ## 可访问性
 

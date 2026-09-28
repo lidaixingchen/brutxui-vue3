@@ -121,31 +121,12 @@ const tags = Array.from({ length: 20 }, (_, i) => `Tag ${i + 1}`)
 | `ScrollArea` | Root scrollable container |
 | `ScrollBar` | Custom scrollbar (vertical by default, supports horizontal) |
 
-## Props
+## API Reference
 
-### ScrollArea
+<span id="scrollarea"></span>
+<span id="scrollbar"></span>
 
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'accent'` | `'default'` | Scrollbar color variant, passed to internal `ScrollBar` |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Scrollbar thickness, passed to internal `ScrollBar` |
-| `class` | `string` | — | Custom style class |
-| `viewportClass` | `string` | — | Custom style class for scroll viewport |
-
-### ScrollBar
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` | Direction |
-| `variant` | `'default' \| 'primary' \| 'accent'` | `'default'` | Scrollbar color variant |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Scrollbar thickness |
-| `class` | `string` | — | Custom style class |
-
-## Slots
-
-| Slot | Scope | Description |
-|-----------|--------|----------|
-| `default` | — | Scrollable content |
+<ComponentApi name="scroll-area" />
 
 ## Accessibility
 

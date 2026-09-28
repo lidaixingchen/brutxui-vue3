@@ -1,0 +1,207 @@
+{
+  "id": "component:separator",
+  "name": "separator",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:separator/Separator",
+      "name": "Separator",
+      "source": {
+        "file": "packages/ui/src/components/separator/Separator.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aseparator_2FSeparator-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"muted\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"muted\"",
+              "\"primary\""
+            ],
+            "references": []
+          },
+          "description": "Selects the separator color style.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/separator/Separator.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/separator/Separator.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aseparator_2FSeparator-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Controls the preset thickness of the separator line.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/separator/Separator.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/separator/Separator.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aseparator_2FSeparator-props-orientation",
+          "name": "orientation",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"vertical\" | \"horizontal\" | null | undefined> | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "Selects horizontal or vertical orientation; text content is centered between line segments only horizontally.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/separator/Separator.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'horizontal'",
+              "source": {
+                "file": "packages/ui/src/components/separator/Separator.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"horizontal\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aseparator_2FSeparator-props-decorative",
+          "name": "decorative",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "When decorative, the element has no separator semantics; when false, it receives `role=\"separator\"` and orientation semantics.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/separator/Separator.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/separator/Separator.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aseparator_2FSeparator-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the native separator or to the text-separator line segments.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/separator/Separator.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/separator/Separator.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aseparator_2FSeparator-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Optional separator content. When horizontal and non-empty, it appears between line segments; otherwise it is passed to the underlying Reka UI separator primitive.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/separator/Separator.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

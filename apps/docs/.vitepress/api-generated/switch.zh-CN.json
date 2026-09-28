@@ -1,0 +1,420 @@
+{
+  "id": "component:switch",
+  "name": "switch",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:switch/Switch",
+      "name": "Switch",
+      "source": {
+        "file": "packages/ui/src/components/switch/Switch.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到 Switch 原语根元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "boolean | null | undefined",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "受控开关状态，通过 v-model 绑定；传入 null 时按关闭状态处理。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-defaultValue",
+          "name": "defaultValue",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "未传入 modelValue 时使用的初始状态；同时传入 defaultChecked 时以 defaultValue 为准。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-defaultChecked",
+          "name": "defaultChecked",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "非受控模式下的初始状态别名；同时提供 defaultValue 时被其覆盖。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用开关交互。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"danger\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "设置开关的颜色和状态样式变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-shape",
+          "name": "shape",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"slider\" | \"rocker\" | null | undefined> | undefined",
+            "literals": [
+              "\"rocker\"",
+              "\"slider\""
+            ],
+            "references": []
+          },
+          "description": "设置滑块的机械外观为常规滑动式或摇杆式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'slider'",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"slider\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "设置开关轨道和滑块的尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-showLabels",
+          "name": "showLabels",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "在轨道内显示表示关闭和开启的 O/I 铭牌；标签仅为装饰并从无障碍树中隐藏。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置开关的无障碍名称；未提供时使用当前语言的默认文案。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-sound",
+          "name": "sound",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显式启用切换状态时的继电器音效；默认不播放。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "用户切换状态后发出新的布尔值，用于同步 v-model。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

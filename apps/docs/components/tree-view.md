@@ -120,41 +120,11 @@ type SelectionMode = 'single' | 'checkbox'
 type CheckState = 'checked' | 'unchecked' | 'indeterminate'
 ```
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `nodes` | `TreeNode[]` | — | 树形数据源 |
-| `modelValue` | `string \| null` | `null` | 当前选中节点的 id（v-model） |
-| `selectionMode` | `'single' \| 'checkbox'` | `'single'` | 选择模式：单选或复选 |
-| `checkedIds` | `string[]` | `[]` | 复选模式下勾选的节点 id 列表（v-model:checkedIds） |
-| `defaultExpanded` | `string[]` | `[]` | 初始展开的节点 id 列表 |
-| `draggable` | `boolean` | `false` | 是否启用拖拽排序 |
-| `allowDrag` | `(node: TreeNode) => boolean` | — | 判断节点是否可拖拽的函数，省略则所有节点均可拖拽 |
-| `allowDrop` | `(node: TreeNode, target: TreeNode, dropType: 'before' \| 'after' \| 'inner') => boolean` | — | 判断是否允许放置到目标位置的函数 |
-| `lazy` | `boolean` | `false` | 是否启用懒加载模式 |
-| `load` | `(node: TreeNode) => Promise<TreeNode[]>` | — | 懒加载函数，展开未加载节点时自动调用 |
-| `retryOnError` | `boolean` | `false` | 懒加载失败时是否允许重试（重置 loaded 状态） |
-| `filterable` | `boolean` | `false` | 是否启用节点过滤 |
-| `filterMethod` | `(query: string, node: TreeNode) => boolean` | — | 自定义过滤方法，省略时使用默认的 label 模糊匹配 |
-| `class` | `string` | — | 根节点自定义样式类 |
+<span id="事件"></span>
 
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:modelValue` | `string \| null` | 选中节点 id 变更 |
-| `update:checkedIds` | `string[]` | 勾选项变更（checkbox 模式） |
-| `update:expanded` | `string[]` | 展开节点列表变更 |
-| `select` | `TreeNode` | 点击任意节点时触发 |
-| `expand` | `[id: string, expanded: boolean]` | 展开 / 折叠节点时触发 |
-| `check` | `[node: TreeNode, checked: boolean]` | 勾选 / 取消勾选节点时触发（checkbox 模式） |
-| `node-drag-start` | `[event: DragEvent, node: TreeNode]` | 拖拽开始时触发 |
-| `node-drag-enter` | `[event: DragEvent, node: TreeNode]` | 拖拽进入节点区域时触发 |
-| `node-drag-leave` | `[event: DragEvent, node: TreeNode]` | 拖拽离开节点区域时触发 |
-| `node-drag-over` | `[event: DragEvent, node: TreeNode]` | 拖拽在节点上方移动时触发 |
-| `node-drag-end` | `[event: DragEvent, node: TreeNode]` | 拖拽结束时触发 |
-| `node-drop` | `[event: DragEvent, node: TreeNode, dropType: 'before' \| 'after' \| 'inner']` | 放置到目标节点时触发 |
+<ComponentApi name="tree-view" />
 
 ## 可访问性
 
@@ -212,25 +182,6 @@ function handleDrop(event: DragEvent, node: TreeNode, dropType: 'before' | 'afte
 </template>
 ```
 
-**拖拽相关 Props：**
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `draggable` | `boolean` | `false` | 是否启用拖拽排序 |
-| `allowDrag` | `(node: TreeNode) => boolean` | — | 判断节点是否可拖拽，省略则所有节点均可拖拽 |
-| `allowDrop` | `(node: TreeNode, target: TreeNode, dropType: 'before' \| 'after' \| 'inner') => boolean` | — | 判断是否允许放置到目标位置 |
-
-**拖拽事件：**
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `node-drag-start` | `[event: DragEvent, node: TreeNode]` | 拖拽开始时触发 |
-| `node-drag-enter` | `[event: DragEvent, node: TreeNode]` | 拖拽进入节点区域时触发 |
-| `node-drag-leave` | `[event: DragEvent, node: TreeNode]` | 拖拽离开节点区域时触发 |
-| `node-drag-over` | `[event: DragEvent, node: TreeNode]` | 拖拽在节点上方移动时触发 |
-| `node-drag-end` | `[event: DragEvent, node: TreeNode]` | 拖拽结束时触发 |
-| `node-drop` | `[event: DragEvent, node: TreeNode, dropType: 'before' \| 'after' \| 'inner']` | 放置到目标节点时触发 |
-
 **工具函数：**
 
 ```ts
@@ -268,14 +219,6 @@ async function loadChildren(node: TreeNode): Promise<TreeNode[]> {
     />
 </template>
 ```
-
-**懒加载相关 Props：**
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `lazy` | `boolean` | `false` | 是否启用懒加载模式 |
-| `load` | `(node: TreeNode) => Promise<TreeNode[]>` | — | 懒加载函数，展开未加载节点时自动调用 |
-| `retryOnError` | `boolean` | `false` | 懒加载失败时是否允许重试 |
 
 **TreeNode 懒加载字段：**
 
@@ -328,19 +271,6 @@ function handleSearch() {
 </template>
 ```
 
-**过滤相关 Props：**
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `filterable` | `boolean` | `false` | 是否启用节点过滤 |
-| `filterMethod` | `(query: string, node: TreeNode) => boolean` | — | 自定义过滤方法，省略时使用默认的 label 模糊匹配 |
-
-**Expose 方法：**
-
-| 方法 | 参数 | 说明 |
-|------|------|------|
-| `filter` | `query: string` | 触发过滤，递归计算匹配状态，匹配节点及祖先显示，其余隐藏，匹配节点的父级自动展开 |
-
 ## 重载节点
 
 通过组件实例的 `reloadNode` 方法可以重置指定节点的 `loaded` 状态并重新触发懒加载，适用于需要刷新子节点数据的场景。
@@ -368,12 +298,6 @@ function refreshNode(nodeKey: string) {
     <button @click="refreshNode('src')">刷新 src 节点</button>
 </template>
 ```
-
-**Expose 方法：**
-
-| 方法 | 参数 | 说明 |
-|------|------|------|
-| `reloadNode` | `nodeKey: string` | 重置指定节点的 `loaded` 状态并重新触发懒加载 |
 
 ## 常见问题
 

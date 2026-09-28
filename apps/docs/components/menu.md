@@ -89,52 +89,17 @@ const active = ref('home')
 | `MenuItem` | 菜单项组件 |
 | `SubMenu` | 子菜单组件，用于嵌套及折叠内容 |
 
-## Props
+## API 参考
 
-### Menu
+<span id="menu"></span>
+<span id="menuitem"></span>
+<span id="submenu"></span>
+<span id="事件"></span>
+<span id="menu-1"></span>
+<span id="插槽"></span>
+<span id="submenu-1"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `mode` | `'horizontal' \| 'vertical'` | `'vertical'` | 菜单的排列模式 |
-| `defaultActive` | `string` | `''` | 默认激活的菜单项 key |
-| `router` | `boolean` | `false` | 是否开启 vue-router 路由跳转模式 |
-| `class` | `string` | — | 自定义样式类 |
-
-### MenuItem
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `index` | `string` | — | 必填，菜单项唯一标识，用于高亮和跳转 |
-| `disabled` | `boolean` | `false` | 是否禁用该项 |
-| `route` | `string \| object` | — | 路由跳转的路线（配合 Menu 的 `router` 模式） |
-| `class` | `string` | — | 自定义样式类 |
-
-### SubMenu
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `index` | `string` | — | 必填，子菜单唯一标识 |
-| `title` | `string` | `''` | 子菜单的显示标题，也可使用 `title` 插槽 |
-| `disabled` | `boolean` | `false` | 是否禁用整个子菜单 |
-| `triggerClass` | `string` | — | 自定义头部触发栏类名 |
-| `class` | `string` | — | 自定义包围盒类名 |
-
-## 事件
-
-### Menu
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `select` | `string` | 菜单项被选中时触发，参数为选中的 `index` |
-
-## 插槽
-
-### SubMenu
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 子菜单内的嵌套内容，可放入 `MenuItem` 或嵌套 `SubMenu` |
-| `title` | — | 自定义子菜单的触发器标题（比 `title` 属性优先级更高） |
+<ComponentApi name="menu" />
 
 ## 可访问性
 

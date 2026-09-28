@@ -61,15 +61,11 @@ const isDataLoading = ref(true)
 </template>
 ```
 
-## Props
+## API 参考
 
-### Loading 组件
+<span id="loading-组件"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `loading` | `boolean` | `false` | 是否开启加载状态遮罩 |
-| `text` | `string` | `''` | 自定义加载文案，为空时不展示文本底盒 |
-
+<ComponentApi name="loading" />
 ## 可访问性
 
 - **交互锁定**：加载遮罩展示时会附带 `pointer-events-none` 限制容器子元素交互，避免二次提交

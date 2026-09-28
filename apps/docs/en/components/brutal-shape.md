@@ -76,16 +76,9 @@ Combine with absolute positioning for a sticker-over-corner effect. The root alr
 
 Unknown names are skipped with a console warning.
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `name` | `string` | *(required)* | Shape name, see the catalog above |
-| `size` | `number \| string` | `32` | Rendered edge length in px; the viewBox is a 100-unit coordinate system scaled uniformly |
-| `color` | `string` | `var(--brutal-accent)` | Fill color, wired to semantic tokens by default |
-| `stroke` | `string` | `var(--brutal-fg)` | Stroke color |
-| `strokeWidth` | `number \| string` | `3` | Stroke width in viewBox units |
-| `decorative` | `boolean` | `true` | Decorative marker: hidden from screen readers (`aria-hidden`) when `true`; supply text alternatives on the parent for semantic use |
+<ComponentApi name="brutal-shape" />
 
 ## Accessibility
 

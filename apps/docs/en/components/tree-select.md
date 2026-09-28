@@ -176,53 +176,17 @@ interface TreeSelectLocale {
 }
 ```
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `nodes` | `TreeNode[]` | — (required) | Tree data source |
-| `modelValue` | `string \| string[]` | `undefined` | Selected value (string for single-select, string[] for multi-select) |
-| `open` | `boolean` | `undefined` | Controlled expansion state, use with `update:open` for `v-model:open` |
-| `multiple` | `boolean` | `false` | Whether to support multi-select |
-| `searchable` | `boolean` | `true` | Whether to show the search box |
-| `placeholder` | `string` | locale: `treeSelect.placeholder` | Placeholder text |
-| `searchPlaceholder` | `string` | locale: `treeSelect.searchPlaceholder` | Search box placeholder text |
-| `emptyText` | `string` | locale: `treeSelect.emptyText` | Text shown when no results found |
-| `clearable` | `boolean` | `false` | Whether to show the clear button |
-| `disabled` | `boolean` | `false` | Whether disabled |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Trigger size |
-| `ariaLabel` | `string` | `undefined` | ARIA label |
-| `maxDisplay` | `number` | `3` | Maximum number of tags to display in multi-select mode |
-| `maxHeight` | `string` | `'15rem'` | Maximum height of the dropdown list |
-| `dropdownClass` | `string` | `undefined` | Custom CSS class for the dropdown list |
-| `iconSize` | `IconSize` | `'default'` | Icon size |
-| `itemVariant` | `'default' \| 'primary' \| 'secondary'` | `'default'` | Dropdown item variant (selection highlight color) |
-| `class` | `string` | `undefined` | Custom CSS class for the trigger |
+<span id="exposed-methods-defineexpose"></span>
 
-## Events
-
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `update:modelValue` | `string \| string[] \| undefined` | Selected value change |
-| `update:open` | `boolean` | Dropdown open/close state change, use with `open` prop for `v-model:open` |
-| `select` | `TreeNode \| TreeNode[] \| undefined` | Selected node change |
-| `open-change` | `boolean` | Dropdown open/close |
+<ComponentApi name="tree-select" />
 
 ## Accessibility
 
 - **Keyboard**: Nodes support `Arrow Up` / `Arrow Down` navigation; non-leaf nodes support `Arrow Right` to expand / `Arrow Left` to collapse; `Home` / `End` keys jump to the first/last node; the clear button supports `Enter` / `Space` activation
 - **ARIA Attributes**: The trigger uses `role="combobox"` and `aria-expanded`; the dropdown list uses `role="tree"` and `role="treeitem"`; multi-select mode adds `aria-multiselectable`; disabled state uses `aria-disabled`
 - **Focus Management**: Uses roving tabindex for focus management; disabled nodes have `tabindex="-1"`
-
-## Exposed Methods (defineExpose)
-
-| Property/Method | Type | Description |
-| --- | --- | --- |
-| `open` | `Ref<boolean>` | Whether the dropdown panel is expanded |
-| `searchQuery` | `Ref<string>` | Current search keyword |
-| `selectedNodes` | `ComputedRef<TreeNode[]>` | Selected nodes in multi-select mode (read-only) |
-| `expandedIds` | `Ref<Set<string>>` | Currently expanded node IDs |
-| `focus` | `() => void` | Focus the trigger |
 
 ## FAQ
 

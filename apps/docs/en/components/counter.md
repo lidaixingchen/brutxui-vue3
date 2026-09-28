@@ -117,43 +117,12 @@ const counterRef = ref()
 </template>
 ```
 
-### Exposed API
 
-| Method/Property | Type | Description |
-|-----------|------|------|
-| `play()` | `() => void` | Restart the animation from `from` |
-| `stop()` | `() => void` | Immediately stop the animation |
+## API Reference
 
-## Props
+<span id="exposed-api"></span>
 
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `to` | `number` | — | Target value (required) |
-| `from` | `number` | `0` | Starting value |
-| `duration` | `number` | `2000` | Animation duration (in milliseconds) |
-| `decimals` | `number` | `0` | Number of decimal places |
-| `decimalSeparator` | `string` | `'.'` | Decimal separator character |
-| `prefix` | `string` | `''` | Number prefix (e.g., `¥` `$`) |
-| `suffix` | `string` | `''` | Number suffix (e.g., `+` `%`) |
-| `prefixComponent` | `Component` | — | Custom prefix component |
-| `suffixComponent` | `Component` | — | Custom suffix component |
-| `animatePrefix` | `boolean` | `true` | Whether to show the custom prefix component (false shows text prefix) |
-| `animateSuffix` | `boolean` | `true` | Whether to show the custom suffix component (false shows text suffix) |
-| `separator` | `string` | `','` | Thousand separator; pass an empty string to disable grouping (the custom `decimalSeparator` still applies) |
-| `easing` | `'linear' \| 'ease-out' \| 'ease-in-out'` | `'ease-out'` | Easing function |
-| `autoStart` | `boolean` | `true` | Whether to auto-play after mount |
-| `size` | `'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | Font size preset |
-| `variant` | `'default' \| 'primary' \| 'accent' \| 'success' \| 'danger'` | `'default'` | Text color variant (only affects text color, does not change background) |
-| `title` | `string` | — | Optional label; enables container mode when provided |
-| `card` | `boolean` | `false` | Whether to enable card container styling |
-| `valueStyle` | `CSSProperties` | — | Inline style for the value area |
-| `class` | `string` | — | Custom CSS class |
-
-## Events
-
-| Event | Payload | Description |
-|------|------|------|
-| `complete` | — | Fired when the animation finishes playing |
+<ComponentApi name="counter" />
 
 ## Accessibility
 

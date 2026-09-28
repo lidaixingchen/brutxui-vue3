@@ -199,57 +199,21 @@ const url = ref('')
 | `default` | `h-11` | `px-4 py-2` | `text-base` |
 | `lg` | `h-14` | `px-5 py-3` | `text-lg` |
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `type` | `HTMLInputType` ¹ | `'text'` | 输入框类型 |
-| `modelValue` | `string` | — | v-model 绑定值 |
-| `variant` | `'default' \| 'error' \| 'success' \| 'inset'` | `'default'` | 输入框变体 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 输入框尺寸 |
-| `disabled` | `boolean` | `false` | 是否禁用 |
-| `readonly` | `boolean` | `false` | 是否只读 |
-| `placeholder` | `string` | — | 占位符文本 |
-| `maxlength` | `number` | — | 最大输入长度 |
-| `autocomplete` | `string` | — | 自动填充提示（浏览器密码管理器识别，如 `email` / `current-password`） |
-| `clearable` | `boolean` | `false` | 悬停时显示清除按钮 |
-| `showPassword` | `boolean` | `false` | 显示密码切换按钮（仅 `type="password"` 有效） |
-| `showWordLimit` | `boolean` | `false` | 显示字数统计（需配合 `maxlength`） |
-| `prefixIcon` | `Component` | — | 前缀图标 |
-| `suffixIcon` | `Component` | — | 后缀图标 |
-| `errorMessage` | `string` | — | 错误消息文本，仅在 `variant="error"` 时显示 |
-| `ariaLabel` | `string` | — | ARIA 标签 |
-| `ariaLabelledby` | `string` | — | ARIA 标签引用 ID |
-| `ariaDescribedby` | `string` | — | ARIA 描述引用 ID |
-| `ariaInvalid` | `boolean` | — | ARIA 无效状态；未显式传入时根据 `variant` 推导（`error` 时为 `true`） |
-| `ariaRequired` | `boolean` | — | ARIA 必填状态 |
-| `class` | `string` | — | 自定义 CSS 类名 |
+<span id="事件"></span>
+<span id="插槽"></span>
+<span id="方法-defineexpose"></span>
 
-> ¹ `HTMLInputType` 为 `HTMLInputElement.type` 支持的所有标准类型联合：`'button' | 'checkbox' | 'color' | 'date' | 'datetime-local' | 'email' | 'file' | 'hidden' | 'image' | 'month' | 'number' | 'password' | 'radio' | 'range' | 'reset' | 'search' | 'submit' | 'tel' | 'text' | 'time' | 'url' | 'week'`
+<ComponentApi name="input" />
 
-## 事件
+## 数据类型
 
-| 事件 | 参数 | 说明 |
-| --- | --- | --- |
-| `update:modelValue` | `string` | 值更新时触发 |
-| `clear` | — | 点击清除按钮时触发 |
+HTMLInputType 与 HTMLInputElement.type 支持的原生类型一致：button、checkbox、color、date、datetime-local、email、file、hidden、image、month、number、password、radio、range、reset、search、submit、tel、text、time、url 和 week。
 
-## 插槽
+## 程序化控制
 
-| 插槽 | 说明 |
-| --- | --- |
-| `prepend` | 输入框前置内容（如 URL 协议） |
-| `append` | 输入框后置内容（如域名） |
-
-## 方法（defineExpose）
-
-通过 `ref` 访问组件实例后可调用以下方法：
-
-| 方法 | 说明 |
-|------|------|
-| `focus()` | 聚焦输入框 |
-| `blur()` | 移除焦点 |
-| `select()` | 选中输入框中的文本 |
+通过组件 ref 可调用下列原生输入操作，完整成员语义见 API 参考。
 
 ```vue
 <script setup>
@@ -268,6 +232,7 @@ function handleFocus() {
     <button @click="handleFocus">Focus Input</button>
 </template>
 ```
+
 
 ## 可访问性
 

@@ -1,0 +1,637 @@
+{
+  "id": "component:message-box",
+  "name": "message-box",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:message-box/MessageBox",
+      "name": "MessageBox",
+      "source": {
+        "file": "packages/ui/src/components/message-box/MessageBox.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls dialog visibility and supports v-model:open. The dialog defaults to open when this prop is omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the dialog title; the localized default title is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-message",
+          "name": "message",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the body message. When empty, the dialog description uses the title as fallback text.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-type",
+          "name": "type",
+          "kind": "props",
+          "type": {
+            "text": "MessageBoxType | undefined",
+            "literals": [
+              "\"error\"",
+              "\"info\"",
+              "\"success\"",
+              "\"warning\""
+            ],
+            "references": [
+              {
+                "name": "MessageBoxType",
+                "text": "export type MessageBoxType = NonNullable<MessageBoxIconVariantProps['type']>",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fmessage-box%2Fmessage-box-variants.ts%23MessageBoxType"
+              }
+            ]
+          },
+          "description": "Selects the info, success, warning, or error state and the status icon shown beside the title.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'info'",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"info\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-showCancelButton",
+          "name": "showCancelButton",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether the cancel button is shown.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-showCloseButton",
+          "name": "showCloseButton",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether the close button is shown at the right of the title bar.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-confirmButtonText",
+          "name": "confirmButtonText",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the confirm button label; the localized default label is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 37
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-cancelButtonText",
+          "name": "cancelButtonText",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the cancel button label; the localized default label is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 38
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-confirmButtonClass",
+          "name": "confirmButtonClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes applied to the confirm button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 39
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-cancelButtonClass",
+          "name": "cancelButtonClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes applied to the cancel button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 40
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-showInput",
+          "name": "showInput",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows an input field for prompt-style interaction; when enabled, the confirm event includes its value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 41
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-inputPlaceholder",
+          "name": "inputPlaceholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the placeholder shown while the prompt input is empty.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 42
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-inputValue",
+          "name": "inputValue",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the initial value of the prompt input; subsequent typing is held in component state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 43
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "''",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-inputPattern",
+          "name": "inputPattern",
+          "kind": "props",
+          "type": {
+            "text": "RegExp | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "A regular expression used to validate the prompt value on confirmation. A mismatch shows the error text and neither emits confirm nor closes the dialog.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 44
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-inputErrorMessage",
+          "name": "inputErrorMessage",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the error text shown when input validation fails; the localized default message is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 45
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-zIndex",
+          "name": "zIndex",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the z-index for both the backdrop and dialog content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 46
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes applied to the dialog card container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 47
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[val: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Emits the updated boolean visibility value so v-model:open can be synchronized.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-events-confirm",
+          "name": "confirm",
+          "kind": "events",
+          "type": {
+            "text": "[val?: string | undefined]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted after confirmation passes validation. It carries the input string when showInput is enabled, otherwise no payload, and then requests the dialog to close.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-events-cancel",
+          "name": "cancel",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted when the user cancels, activates the close button, interacts outside the dialog, or presses Escape. It carries no payload.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

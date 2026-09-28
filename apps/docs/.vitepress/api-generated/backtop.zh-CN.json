@@ -1,0 +1,253 @@
+{
+  "id": "component:backtop",
+  "name": "backtop",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:backtop/Backtop",
+      "name": "Backtop",
+      "source": {
+        "file": "packages/ui/src/components/backtop/Backtop.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abacktop_2FBacktop-props-visibilityHeight",
+          "name": "visibilityHeight",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "滚动容器的垂直滚动距离达到此像素值时显示按钮。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/backtop/Backtop.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "200",
+              "source": {
+                "file": "packages/ui/src/components/backtop/Backtop.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "200"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abacktop_2FBacktop-props-target",
+          "name": "target",
+          "kind": "props",
+          "type": {
+            "text": "string | HTMLElement | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "监听并滚动到顶部的容器，可传入 CSS 选择器或元素。设置后按钮使用 absolute 定位，需放在已定位的祖先容器内。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/backtop/Backtop.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/backtop/Backtop.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "未设置或为空字符串时监听 window，按钮相对视口固定定位。"
+          }
+        },
+        {
+          "id": "api-component_3Abacktop_2FBacktop-props-right",
+          "name": "right",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "按钮到定位参照区域右侧的距离，单位为像素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/backtop/Backtop.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "40",
+              "source": {
+                "file": "packages/ui/src/components/backtop/Backtop.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "40"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abacktop_2FBacktop-props-bottom",
+          "name": "bottom",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "按钮到定位参照区域底部的距离，单位为像素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/backtop/Backtop.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "40",
+              "source": {
+                "file": "packages/ui/src/components/backtop/Backtop.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "40"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abacktop_2FBacktop-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"ghost\" | \"primary\" | \"secondary\" | \"success\" | \"danger\" | \"accent\" | \"outline\" | \"link\" | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"ghost\"",
+              "\"link\"",
+              "\"outline\"",
+              "\"primary\"",
+              "\"secondary\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "传给内部 Button 的视觉变体；primary 额外应用黄色背景和黑色文字。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/backtop/Backtop.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'primary'",
+              "source": {
+                "file": "packages/ui/src/components/backtop/Backtop.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"primary\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abacktop_2FBacktop-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到回到顶部按钮的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/backtop/Backtop.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/backtop/Backtop.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abacktop_2FBacktop-events-click",
+          "name": "click",
+          "kind": "events",
+          "type": {
+            "text": "[event: MouseEvent]",
+            "literals": [],
+            "references": []
+          },
+          "description": "按钮被点击时发出原始鼠标事件，随后对目标容器调用平滑滚动到顶部。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/backtop/Backtop.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Abacktop_2FBacktop-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换按钮内的向上箭头图标。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/backtop/Backtop.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

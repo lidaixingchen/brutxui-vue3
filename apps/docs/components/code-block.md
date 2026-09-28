@@ -147,22 +147,11 @@ import 'prismjs/components/prism-dart'
 }
 ```
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `code` | `string` | — | 需要展示的原始代码文本 (必填) |
-| `language` | `string` | `'plaintext'` | 代码语言，用于语法高亮和顶栏徽章标签。支持的语言见上方列表 |
-| `filename` | `string` | `""` | 文件名或路径名，展示在顶栏左侧 |
-| `showLineNumbers` | `boolean` | `false` | 是否在代码左侧展示行号 |
-| `maxLines` | `number` | `undefined` | 代码区域最大可见行数；超出时裁剪并显示展开/收起按钮，未设置时不限制 |
-| `class` | `string` | `""` | 组件卡片容器的自定义样式类 |
+<ComponentApi name="code-block" />
 
 ## 插槽
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 可选。用于自定义代码内容，使用此插槽时将跳过内置 Prism 语法高亮，直接渲染插槽内容（适用于 Shiki 等其他高亮引擎） |
 
 ::: warning 插槽与 `code` prop 的契约
 使用默认插槽时，**复制按钮复制的文本与行号仍基于 `code` prop**（而非插槽渲染内容）。若插槽内容与 `code` 不一致，行号会与展示内容错位、复制的也是 `code` 的文本。请确保传入的 `code` 与插槽内容保持一致（例如都传入同一份代码文本），或仅在无需行号/复制的场景使用插槽。

@@ -1,0 +1,621 @@
+{
+  "id": "component:statistic",
+  "name": "statistic",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:statistic/Statistic",
+      "name": "Statistic",
+      "source": {
+        "file": "packages/ui/src/components/statistic/Statistic.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "StatisticValue",
+            "literals": [
+              "null"
+            ],
+            "references": [
+              {
+                "name": "StatisticValue",
+                "text": "export type StatisticValue = number | string | bigint | null | undefined",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fstatistic%2Ftypes.ts%23StatisticValue"
+              }
+            ]
+          },
+          "description": "The value to format and display; accepts number, string, bigint, or an empty value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The title displayed above the statistic value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-prefix",
+          "name": "prefix",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Text displayed before the formatted value, such as a currency symbol.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-suffix",
+          "name": "suffix",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Text displayed after the formatted value, such as a percent sign or unit.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-precision",
+          "name": "precision",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the number of decimal places preserved in the formatted result.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-decimalSeparator",
+          "name": "decimalSeparator",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Overrides the decimal separator in the formatted value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-groupSeparator",
+          "name": "groupSeparator",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Overrides the thousands grouping separator in the formatted value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-formatter",
+          "name": "formatter",
+          "kind": "props",
+          "type": {
+            "text": "((value: StatisticValue) => string) | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "StatisticValue",
+                "text": "export type StatisticValue = number | string | bigint | null | undefined",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fstatistic%2Ftypes.ts%23StatisticValue"
+              }
+            ]
+          },
+          "description": "A custom value-to-text function whose returned string is displayed as the formatted result.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Placeholder displayed when value is empty or cannot be formatted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-trend",
+          "name": "trend",
+          "kind": "props",
+          "type": {
+            "text": "\"up\" | \"down\" | undefined",
+            "literals": [
+              "\"down\"",
+              "\"up\""
+            ],
+            "references": []
+          },
+          "description": "Shows an upward or downward trend marker with the corresponding status color.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-trendPlacement",
+          "name": "trendPlacement",
+          "kind": "props",
+          "type": {
+            "text": "\"start\" | \"end\" | undefined",
+            "literals": [
+              "\"end\"",
+              "\"start\""
+            ],
+            "references": []
+          },
+          "description": "Places the trend marker before or after the value content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'end'",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"end\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"card\" | \"bordered\" | \"subtle\" | null | undefined> | undefined",
+            "literals": [
+              "\"bordered\"",
+              "\"card\"",
+              "\"default\"",
+              "\"subtle\""
+            ],
+            "references": []
+          },
+          "description": "Sets the statistic container to the default, card, bordered, or subtle visual style.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Sets the statistic content to the default, small, or large size.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-locale",
+          "name": "locale",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The locale used for localized number formatting.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the statistic root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/types.ts",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/statistic/Statistic.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-slots-title",
+          "name": "title",
+          "kind": "slots",
+          "type": {
+            "text": "{ title?: string | undefined; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the title area content and exposes the current title in its scope.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/Statistic.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-slots-prefix",
+          "name": "prefix",
+          "kind": "slots",
+          "type": {
+            "text": "{ prefix?: string | undefined; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the value prefix area and exposes the current prefix in its scope.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/Statistic.vue",
+            "line": 37
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-slots-suffix",
+          "name": "suffix",
+          "kind": "slots",
+          "type": {
+            "text": "{ suffix?: string | undefined; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the value suffix area and exposes the current suffix in its scope.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/Statistic.vue",
+            "line": 38
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-slots-trend",
+          "name": "trend",
+          "kind": "slots",
+          "type": {
+            "text": "{ trend: \"up\" | \"down\"; label: string; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the trend indicator and exposes the trend direction and localized label.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/Statistic.vue",
+            "line": 39
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Astatistic_2FStatistic-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{ value: StatisticValue; formattedValue: string; }",
+            "literals": [],
+            "references": [
+              {
+                "name": "StatisticValue",
+                "text": "export type StatisticValue = number | string | bigint | null | undefined",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fstatistic%2Ftypes.ts%23StatisticValue"
+              }
+            ]
+          },
+          "description": "Replaces the formatted value content and exposes the raw value and formattedValue.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/statistic/Statistic.vue",
+            "line": 40
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

@@ -50,6 +50,7 @@ import { Kbd } from 'brutx-ui-vue'
 | `primary` | Primary（珊瑚色）背景，高对比前景色 |
 | `secondary` | Secondary（薄荷青）背景 |
 | `accent` | Accent（黄色）背景 |
+| `backlit` | 黑色背景与 accent 色文字，呈现背光键帽效果 |
 
 ```vue
 <script setup>
@@ -75,19 +76,11 @@ import { Kbd } from 'brutx-ui-vue'
 | `md` | 默认尺寸 |
 | `lg` | 大尺寸，适合独立展示 |
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'backlit'` | `'default'` | 按键颜色变体；`backlit` 为黑底黄字背光键帽（机械键盘背光质感） |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 按键尺寸 |
-| `class` | `string \| undefined` | `undefined` | 自定义样式类，会与组件默认样式合并 |
+<span id="插槽"></span>
 
-## 插槽
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 按键内容（文字或符号） |
+<ComponentApi name="kbd" />
 
 ## 可访问性
 

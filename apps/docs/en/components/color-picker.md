@@ -237,45 +237,12 @@ const color = ref(null)
 </template>
 ```
 
-### Exposed API
 
-| Method/Property | Type | Description |
-|-----------------|------|-------------|
-| `open` | `Ref<boolean>` | Panel open/close state; readable and writable; set to `true` to open, `false` to close |
+## API Reference
 
-## Props
+<span id="exposed-api"></span>
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `modelValue` | `string \| null` | `null` | Selected color value, supports v-model |
-| `format` | `'hex' \| 'rgb' \| 'hsl'` | `'hex'` | Color format |
-| `showAlpha` | `boolean` | `false` | Whether to support the alpha channel |
-| `presets` | `string[] \| ColorPreset[]` | — | Preset color list |
-| `showPresets` | `boolean` | `true` | Whether to show preset colors |
-| `presetsLabel` | `string` | — | Preset area label text |
-| `showHistory` | `boolean` | `true` | Whether to show color history |
-| `historyMax` | `number` | `8` | Maximum number of history entries |
-| `historyStorageKey` | `string` | `'brutx-color-history'` | localStorage key for history |
-| `showInput` | `boolean` | `true` | Whether to show the input field |
-| `placeholder` | `string` | — | Placeholder text |
-| `disabled` | `boolean` | `false` | Disabled state |
-| `clearable` | `boolean` | `false` | Whether clearable |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Input size |
-| `name` | `string` | — | Form field name; when provided, renders a hidden `<input type="hidden">` submitted with the owning form carrying the current color value; when `disabled`, the hidden input is disabled too and the color value is not submitted |
-| `id` | `string` | — | Component ID |
-| `ariaLabel` | `string` | — | Accessibility label |
-| `open` | `boolean` | — | Whether the panel is open, supports v-model:open two-way binding |
-| `class` | `ClassValue` | — | Custom CSS class (supports array/object bindings) |
-
-## Events
-
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `update:modelValue` | `string \| null` | Triggered when the color changes |
-| `change` | `string \| null` | Triggered when the panel closes and the value changes; also triggered by confirm/clear operations |
-| `open` | — | Triggered when the panel opens |
-| `close` | — | Triggered when the panel closes |
-| `update:open` | `boolean` | Triggered when the panel open/close state changes; used with v-model:open |
+<ComponentApi name="color-picker" />
 
 ## Accessibility
 

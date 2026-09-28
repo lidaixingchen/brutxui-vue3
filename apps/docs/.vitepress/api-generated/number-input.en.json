@@ -1,0 +1,738 @@
+{
+  "id": "component:number-input",
+  "name": "number-input",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:number-input/NumberInput",
+      "name": "NumberInput",
+      "source": {
+        "file": "packages/ui/src/components/number-input/NumberInput.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-layout",
+          "name": "layout",
+          "kind": "props",
+          "type": {
+            "text": "\"stacked\" | \"split\" | undefined",
+            "literals": [
+              "\"split\"",
+              "\"stacked\""
+            ],
+            "references": []
+          },
+          "description": "Sets how the increment and decrement buttons are arranged around the input.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'split'",
+              "source": {
+                "file": "packages/ui/src/components/number-input/NumberInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"split\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"success\" | \"error\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"error\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "Sets the default, success, or error border state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/number-input/NumberInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-errorMessage",
+          "name": "errorMessage",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Error text shown and associated with the input in the error variant.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/number-input/NumberInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Placeholder shown when the input is empty; the current locale text is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/number-input/NumberInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the number input container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/number-input/NumberInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "Sets the size of the increment and decrement icons.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/number-input/NumberInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-sound",
+          "name": "sound",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables a Web Audio click sound when a step control is activated.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/number-input/NumberInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-defaultValue",
+          "name": "defaultValue",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The initial numeric value used in uncontrolled mode.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "number | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "The current controlled number; null represents an empty value and can be bound with v-model.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-min",
+          "name": "min",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The minimum allowed value and lower bound for decrementing.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-max",
+          "name": "max",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The maximum allowed value and upper bound for incrementing.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-step",
+          "name": "step",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The amount added or subtracted by each step control activation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-stepSnapping",
+          "name": "stepSnapping",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Whether input values are aligned to multiples of step.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-focusOnChange",
+          "name": "focusOnChange",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Whether to focus the input after its value changes through a step action.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-formatOptions",
+          "name": "formatOptions",
+          "kind": "props",
+          "type": {
+            "text": "Intl.NumberFormatOptions | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Intl.NumberFormat options used to format the value and interpret locale-specific input.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-locale",
+          "name": "locale",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The locale used for number formatting and input parsing.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables the input and its increment and decrement controls.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-readonly",
+          "name": "readonly",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Prevents direct value editing without disabling the component.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-disableWheelChange",
+          "name": "disableWheelChange",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Prevents the mouse wheel from changing the current value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-invertWheelChange",
+          "name": "invertWheelChange",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Reverses the mapping between wheel direction and value increment or decrement.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The DOM id passed to the internal input control.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables composition mode, merging the component props and behavior into its single child.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "The tag or Vue component used to render the root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The name of the internal form control for form submission.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-required",
+          "name": "required",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Marks the internal input control as required.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[val: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the new numeric value after typing or stepping so v-model can be updated.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,417 @@
+{
+  "id": "component:stepper",
+  "name": "stepper",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:stepper/Stepper",
+      "name": "Stepper",
+      "source": {
+        "file": "packages/ui/src/components/stepper/Stepper.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Astepper_2FStepper-props-steps",
+          "name": "steps",
+          "kind": "props",
+          "type": {
+            "text": "StepperStep[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "StepperStep",
+                "text": "export interface StepperStep {\n    id: string | number;\n    title: string;\n    description?: string;\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fstepper%2Ftypes.ts%23StepperStep"
+              }
+            ]
+          },
+          "description": "按显示顺序提供步骤数据，每项包含唯一 id、标题和可选描述。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "number",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前步骤的从 0 开始索引；通过 v-model 受控同步，索引越界时展示状态会钳制到有效范围。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-props-orientation",
+          "name": "orientation",
+          "kind": "props",
+          "type": {
+            "text": "\"vertical\" | \"horizontal\" | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "设置步骤条布局方向；默认横向，vertical 模式可为当前步骤提供 step-{id} 内容插槽。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'horizontal'",
+              "source": {
+                "file": "packages/ui/src/components/stepper/Stepper.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"horizontal\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "设置步骤节点及对应连接线的尺寸级别。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/stepper/Stepper.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\""
+            ],
+            "references": []
+          },
+          "description": "设置当前激活步骤节点使用的颜色变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/stepper/Stepper.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-props-clickable",
+          "name": "clickable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "允许通过点击步骤节点跳转到对应步骤。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/stepper/Stepper.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到步骤条根容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/stepper/Stepper.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[step: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前步骤有效索引变化时发出新索引，用于同步 v-model。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-events-step_2Dclick",
+          "name": "step-click",
+          "kind": "events",
+          "type": {
+            "text": "[index: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "用户点击步骤节点时携带该节点的从 0 开始索引发出。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-exposes-currentStep",
+          "name": "currentStep",
+          "kind": "exposes",
+          "type": {
+            "text": "number",
+            "literals": [],
+            "references": []
+          },
+          "description": "只读的当前步骤索引；无步骤时为 -1，其他情况下会限制在有效步骤范围内。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 91
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-exposes-totalSteps",
+          "name": "totalSteps",
+          "kind": "exposes",
+          "type": {
+            "text": "number",
+            "literals": [],
+            "references": []
+          },
+          "description": "只读的步骤总数，等于 steps 数组长度。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 92
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-exposes-goToStep",
+          "name": "goToStep",
+          "kind": "exposes",
+          "type": {
+            "text": "(index: number) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "请求跳转到指定索引；只有索引位于现有步骤范围内时才发出更新。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 93
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-exposes-nextStep",
+          "name": "nextStep",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "请求前进一个步骤；空列表或已到最后一步时不发出更新。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 94
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-exposes-previousStep",
+          "name": "previousStep",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "请求后退一个步骤；空列表或已到第一步时不发出更新。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 95
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-exposes-isFirstStep",
+          "name": "isFirstStep",
+          "kind": "exposes",
+          "type": {
+            "text": "boolean",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "只读布尔值，表示当前步骤是否为第一步；空列表时为 false。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 96
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-exposes-isLastStep",
+          "name": "isLastStep",
+          "kind": "exposes",
+          "type": {
+            "text": "boolean",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "只读布尔值，表示当前步骤是否为最后一步；空列表时为 false。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 97
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    }
+  ]
+}

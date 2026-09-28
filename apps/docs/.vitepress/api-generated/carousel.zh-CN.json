@@ -1,0 +1,657 @@
+{
+  "id": "component:carousel",
+  "name": "carousel",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:carousel/Carousel",
+      "name": "Carousel",
+      "source": {
+        "file": "packages/ui/src/components/carousel/Carousel.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acarousel_2FCarousel-props-loop",
+          "name": "loop",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用首尾循环滚动；启用后上一张和下一张始终可滚动。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/types.ts",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/carousel/Carousel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-props-autoplay",
+          "name": "autoplay",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用轮播自动播放；减少动态效果偏好生效时自动播放会停止。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/types.ts",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/carousel/Carousel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-props-autoplayDelay",
+          "name": "autoplayDelay",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置自动播放切换幻灯片的间隔，单位为毫秒。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/types.ts",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_AUTOPLAY_DELAY",
+              "source": {
+                "file": "packages/ui/src/components/carousel/Carousel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "3000"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-props-showArrows",
+          "name": "showArrows",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制是否显示上一张和下一张导航按钮。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/types.ts",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/carousel/Carousel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-props-showDots",
+          "name": "showDots",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制是否显示底部圆点导航；显示缩略图时圆点导航会隐藏。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/types.ts",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/carousel/Carousel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"lg\" | \"sm\" | \"md\" | \"full\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"full\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "设置轮播视口的高度预设。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/types.ts",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/carousel/Carousel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-props-thumbnails",
+          "name": "thumbnails",
+          "kind": "props",
+          "type": {
+            "text": "CarouselThumbnails | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "CarouselThumbnails",
+                "text": "export interface CarouselThumbnails {\n    show?: boolean\n    position?: 'bottom' | 'left' | 'right'\n    size?: 'sm' | 'md' | 'lg'\n    gap?: number\n    highlightCurrent?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcarousel%2Ftypes.ts%23CarouselThumbnails"
+              }
+            ]
+          },
+          "description": "配置缩略图导航的显示、位置、尺寸、间距和当前项高亮。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/types.ts",
+            "line": 30
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => ({ show: false, position: 'bottom', size: 'sm', gap: 8, highlightCurrent: true })",
+              "source": {
+                "file": "packages/ui/src/components/carousel/Carousel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "{ \"gap\": 8, \"highlightCurrent\": true, \"position\": \"bottom\", \"show\": false, \"size\": \"sm\" }"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-props-autoplayIndicator",
+          "name": "autoplayIndicator",
+          "kind": "props",
+          "type": {
+            "text": "AutoplayIndicator | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "AutoplayIndicator",
+                "text": "export interface AutoplayIndicator {\n    type: 'progress' | 'dots' | 'fraction'\n    position?: 'top' | 'bottom'\n    pauseOnHover?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcarousel%2Ftypes.ts%23AutoplayIndicator"
+              }
+            ]
+          },
+          "description": "配置自动播放指示器的类型、位置和悬停暂停行为。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/types.ts",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/carousel/Carousel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-props-parallax",
+          "name": "parallax",
+          "kind": "props",
+          "type": {
+            "text": "ParallaxEffect | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "ParallaxEffect",
+                "text": "export interface ParallaxEffect {\n    enabled?: boolean\n    scale?: number\n    opacity?: boolean\n    duration?: number\n    easing?: string\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcarousel%2Ftypes.ts%23ParallaxEffect"
+              }
+            ]
+          },
+          "description": "配置幻灯片视差效果及其缩放、透明度和动画时长。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/types.ts",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/carousel/Carousel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到轮播根元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/types.ts",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/carousel/Carousel.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "放置 CarouselItem 幻灯片组件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/Carousel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-slots-thumbnail",
+          "name": "thumbnail",
+          "kind": "slots",
+          "type": {
+            "text": "{ index: number; scrollTo: (index: number) => void; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "自定义缩略图内容；作用域提供当前缩略图 index 和跳转到指定项的 scrollTo 函数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/Carousel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-exposes-scrollPrev",
+          "name": "scrollPrev",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "滚动到上一张幻灯片；循环模式下可从第一张回到最后一张。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/Carousel.vue",
+            "line": 132
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-exposes-scrollNext",
+          "name": "scrollNext",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "滚动到下一张幻灯片；循环模式下可从最后一张回到第一张。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/Carousel.vue",
+            "line": 133
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-exposes-scrollTo",
+          "name": "scrollTo",
+          "kind": "exposes",
+          "type": {
+            "text": "(index: number) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "滚动到指定的从零开始的幻灯片索引。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/Carousel.vue",
+            "line": 134
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-exposes-selectedIndex",
+          "name": "selectedIndex",
+          "kind": "exposes",
+          "type": {
+            "text": "number",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前选中幻灯片的从零开始索引，只读响应式状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/Carousel.vue",
+            "line": 135
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-exposes-canScrollPrev",
+          "name": "canScrollPrev",
+          "kind": "exposes",
+          "type": {
+            "text": "boolean",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "指示当前是否可以向前滚动；循环模式下始终为 true。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/Carousel.vue",
+            "line": 136
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-exposes-canScrollNext",
+          "name": "canScrollNext",
+          "kind": "exposes",
+          "type": {
+            "text": "boolean",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "指示当前是否可以向后滚动；循环模式下始终为 true。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/Carousel.vue",
+            "line": 137
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-exposes-startAutoplay",
+          "name": "startAutoplay",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "开始自动播放；减少动态效果偏好仍会阻止播放。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/Carousel.vue",
+            "line": 138
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarousel-exposes-stopAutoplay",
+          "name": "stopAutoplay",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "停止自动播放。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/Carousel.vue",
+            "line": 139
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": "component:carousel/CarouselItem",
+      "name": "CarouselItem",
+      "source": {
+        "file": "packages/ui/src/components/carousel/CarouselItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acarousel_2FCarouselItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到单张幻灯片容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/CarouselItem.vue",
+            "line": 6
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/carousel/CarouselItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarouselItem-props-ariaHidden",
+          "name": "ariaHidden",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将当前幻灯片及其后代标记为对辅助技术隐藏；视口外幻灯片应设为 true。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/CarouselItem.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/carousel/CarouselItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acarousel_2FCarouselItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "单张幻灯片中展示的自定义内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/carousel/CarouselItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

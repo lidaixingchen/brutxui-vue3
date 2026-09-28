@@ -1,0 +1,901 @@
+{
+  "id": "component:command",
+  "name": "command",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:command/Command",
+      "name": "Command",
+      "source": {
+        "file": "packages/ui/src/components/command/Command.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acommand_2FCommand-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Class values appended to the command root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/Command.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/command/Command.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommand-props-disableFilter",
+          "name": "disableFilter",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables internal filtering of item text, for cases where the list is filtered externally.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/Command.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/command/Command.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommand-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Contains child components such as the command input, list, groups, and items.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/Command.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acommand_2FCommand-exposes-filterSearch",
+          "name": "filterSearch",
+          "kind": "exposes",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The current shared search query. Assigning a new string updates internal matching; when disableFilter is true, unmatched items are not hidden.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/Command.vue",
+            "line": 79
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": "component:command/CommandDialog",
+      "name": "CommandDialog",
+      "source": {
+        "file": "packages/ui/src/components/command/CommandDialog.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acommand_2FCommandDialog-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "The current dialog open state. The component is fully controlled, so update it through v-model:open or by handling update:open.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandDialog.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/command/CommandDialog.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandDialog-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The accessible title for the command dialog. Blank or whitespace-only values fall back to the localized title.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandDialog.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/command/CommandDialog.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "Command Palette"
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandDialog-props-description",
+          "name": "description",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The accessible description for the command dialog. Blank or whitespace-only values fall back to the localized description.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandDialog.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/command/CommandDialog.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "Search for a command to run..."
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandDialog-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Class values appended to the dialog content; structural layout classes are merged after this value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandDialog.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/command/CommandDialog.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandDialog-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Emits the new boolean when the dialog root requests an open-state change; the parent must still update open.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandDialog.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandDialog-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Contains dialog content such as the command input, list, groups, and items.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandDialog.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:command/CommandEmpty",
+      "name": "CommandEmpty",
+      "source": {
+        "file": "packages/ui/src/components/command/CommandEmpty.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acommand_2FCommandEmpty-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Class values appended to the no-results paragraph.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandEmpty.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandEmpty-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom content for the empty search state; rendered only when the internal result count is zero. Localized text is used when no slot content is provided.",
+          "notes": [
+            "The fallback text comes from command.emptyText: “No results found.”."
+          ],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandEmpty.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:command/CommandGroup",
+      "name": "CommandGroup",
+      "source": {
+        "file": "packages/ui/src/components/command/CommandGroup.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acommand_2FCommandGroup-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The group heading, rendered before the group items when a non-empty value is provided.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandGroup.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandGroup-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Class values appended to the command group root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandGroup.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandGroup-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Contains the CommandItem children belonging to this group.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandGroup.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:command/CommandInput",
+      "name": "CommandInput",
+      "source": {
+        "file": "packages/ui/src/components/command/CommandInput.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acommand_2FCommandInput-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The controlled command search value. When omitted, the input initially reads the shared search query from the root Command.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandInput.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/command/CommandInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandInput-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The input placeholder. The localized default is used only for undefined or null; an empty string is kept as an explicit value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandInput.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/command/CommandInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "Type a command or search..."
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandInput-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Class values appended to the native search input.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandInput.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/command/CommandInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandInput-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the new string when the user types. It also emits the synchronized value when the shared query in the root Command changes externally.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandInput.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:command/CommandItem",
+      "name": "CommandItem",
+      "source": {
+        "file": "packages/ui/src/components/command/CommandItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acommand_2FCommandItem-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The unique command item value. It seeds the search index, which is updated to the visible text after the default slot renders.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandItem.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandItem-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables the item and passes the disabled state to the Reka UI listbox item.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandItem.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Class values appended to the command item root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandItem.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandItem-events-select",
+          "name": "select",
+          "kind": "events",
+          "type": {
+            "text": "[value: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted with the item’s value string when the item is selected.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Renders the command item content. Its rendered visible text can be used for search matching.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:command/CommandList",
+      "name": "CommandList",
+      "source": {
+        "file": "packages/ui/src/components/command/CommandList.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acommand_2FCommandList-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Class values appended to the Reka UI listbox content element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandList.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandList-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Merges the listbox content props and behavior into its single child, which becomes the rendered node.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandList.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandList-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "Specifies the element or component used to render the listbox content; asChild can override it.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandList.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandList-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Contains list content such as CommandEmpty and CommandGroup.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandList.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:command/CommandSeparator",
+      "name": "CommandSeparator",
+      "source": {
+        "file": "packages/ui/src/components/command/CommandSeparator.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acommand_2FCommandSeparator-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Class values appended to the command separator root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandSeparator.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:command/CommandShortcut",
+      "name": "CommandShortcut",
+      "source": {
+        "file": "packages/ui/src/components/command/CommandShortcut.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acommand_2FCommandShortcut-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Class values appended to the shortcut hint element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandShortcut.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandShortcut-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Renders the keyboard shortcut hint associated with a command item.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandShortcut.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

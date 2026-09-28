@@ -121,49 +121,14 @@ Variants are set on `ToggleGroup` and distributed to all `ToggleGroupItem` child
 | `ToggleGroup` | Root component, manages selected state and group configuration |
 | `ToggleGroupItem` | Child item button, inherits variant and size from parent |
 
-## Props
+## API Reference
 
-### ToggleGroup
+<span id="togglegroup"></span>
+<span id="togglegroupitem"></span>
+<span id="togglegroup-slots"></span>
+<span id="togglegroupitem-slots"></span>
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `type` | `'single' \| 'multiple'` | `'single'` | Single or multiple selection |
-| `modelValue` | `string \| string[]` | — | v-model value |
-| `variant` | `'default' \| 'outline'` | `'default'` | Variant, distributed to child items |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Size, distributed to child items |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Layout direction; when `vertical`, container uses `flex-col` and passes value to reka-ui primitive |
-| `disabled` | `boolean` | `false` | Whether disabled |
-| `class` | `string` | — | Additional class name |
-
-### ToggleGroupItem
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `value` | `string` | — (required) | Item value |
-| `variant` | `'default' \| 'outline'` | Inherited from ToggleGroup | Variant; uses parent ToggleGroup's variant when not set |
-| `size` | `'sm' \| 'default' \| 'lg'` | Inherited from ToggleGroup | Size; uses parent ToggleGroup's size when not set |
-| `disabled` | `boolean` | `false` | Whether disabled; final state is the logical OR of parent ToggleGroup's disabled and its own disabled |
-| `class` | `string` | — | Additional class name |
-
-## Events
-
-| Event | Payload | Description |
-| --- | --- | --- |
-| `update:modelValue` | `string \| string[]` | Triggered when selected value changes |
-
-## Slots
-
-### ToggleGroup Slots
-
-| Slot | Scope | Description |
-| --- | --- | --- |
-| `default` | — | Default slot for placing ToggleGroupItem children |
-
-### ToggleGroupItem Slots
-
-| Slot | Scope | Description |
-| --- | --- | --- |
-| `default` | — | Default slot for placing button content (icons, text, etc.) |
+<ComponentApi name="toggle-group" />
 
 ## Accessibility
 

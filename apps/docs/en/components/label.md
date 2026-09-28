@@ -81,22 +81,9 @@ import { Label } from 'brutx-ui-vue'
 </template>
 ```
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `variant` | `'default' \| 'error' \| 'success' \| 'muted'` | `'default'` | Label variant style |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Label size |
-| `required` | `boolean` | `false` | Whether to show the required indicator |
-| `disabled` | `boolean` | `false` | Shows the disabled label state and sets `aria-disabled` |
-| `for` | `string` | — | ID of the associated form control |
-| `class` | `string` | — | Custom CSS class name |
-
-## Slots
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | Label content |
+<ComponentApi name="label" />
 
 ## Accessibility
 

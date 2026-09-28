@@ -1,0 +1,508 @@
+{
+  "id": "component:virtual-scroll",
+  "name": "virtual-scroll",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:virtual-scroll/VirtualScroll",
+      "name": "VirtualScroll",
+      "source": {
+        "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes appended to the virtual scroll root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/types.ts",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-props-items",
+          "name": "items",
+          "kind": "props",
+          "type": {
+            "text": "T[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "The data array to virtualize. Its length determines the item count in the virtualizer.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/types.ts",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-props-itemHeight",
+          "name": "itemHeight",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The estimated item height in pixels for fixed-height mode; dynamic-height mode also uses it as the initial estimate.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/types.ts",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "48",
+              "source": {
+                "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "48"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-props-dynamicHeight",
+          "name": "dynamicHeight",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables measurement of mounted items’ actual heights. When false, each item uses the fixed itemHeight.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/types.ts",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"lg\" | \"sm\" | \"xl\" | \"full\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"full\"",
+              "\"lg\"",
+              "\"sm\"",
+              "\"xl\""
+            ],
+            "references": []
+          },
+          "description": "The container size variant. The full variant requires a parent with a definite height.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/types.ts",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"bordered\" | \"striped\" | undefined",
+            "literals": [
+              "\"bordered\"",
+              "\"default\"",
+              "\"striped\""
+            ],
+            "references": []
+          },
+          "description": "Selects the item style. Striped adds an alternating background to odd zero-based indices; bordered adds borders.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/types.ts",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-props-overscan",
+          "name": "overscan",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The number of extra items rendered beyond the visible region, passed to the virtualizer.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/types.ts",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "5",
+              "source": {
+                "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "5"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-props-scrollEndThreshold",
+          "name": "scrollEndThreshold",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The pixel distance from the bottom at which scroll-end is emitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/types.ts",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "50",
+              "source": {
+                "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "50"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-props-role",
+          "name": "role",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the ARIA role on the virtual list scroll container; defaults to list.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/types.ts",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'list'",
+              "source": {
+                "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"list\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-props-itemRole",
+          "name": "itemRole",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the ARIA role on each virtual list item; defaults to listitem.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/types.ts",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'listitem'",
+              "source": {
+                "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"listitem\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-events-scroll_2Dend",
+          "name": "scroll-end",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted when scrolling enters the bottom range set by scrollEndThreshold. It can fire again after leaving and re-entering that range.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-events-scroll",
+          "name": "scroll",
+          "kind": "events",
+          "type": {
+            "text": "[scrollTop: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted with the current scrollTop in pixels when the scroll container scrolls.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-slots-loading",
+          "name": "loading",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides loading content. It renders while the virtualizer dependency loads and at the bottom of a ready, non-empty list.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-slots-empty",
+          "name": "empty",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the empty-state message and is rendered only in the empty-list branch.",
+          "notes": [
+            "Without slot content, the component displays virtualScroll.empty: “No data available”."
+          ],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{ item: T; index: number; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "Renders each visible virtual item. Its scope provides the original item and its zero-based index.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-exposes-scrollToIndex",
+          "name": "scrollToIndex",
+          "kind": "exposes",
+          "type": {
+            "text": "(index: number) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Scrolls to an item index. The index is clamped to the available range; it does nothing for an empty list or before the virtualizer is available.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-exposes-measureElement",
+          "name": "measureElement",
+          "kind": "exposes",
+          "type": {
+            "text": "(el: Element | null) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Passes the specified DOM element to the virtualizer for measurement. It does nothing for null or before the virtualizer is ready.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-exposes-measure",
+          "name": "measure",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Re-measures all mounted item sizes, for use after content heights change.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Avirtual_2Dscroll_2FVirtualScroll-exposes-virtualizer",
+          "name": "virtualizer",
+          "kind": "exposes",
+          "type": {
+            "text": "ShallowRef<VirtualizerInstance | null, VirtualizerInstance | null>",
+            "literals": [
+              "null"
+            ],
+            "references": [
+              {
+                "name": "VirtualizerInstance",
+                "text": "export interface VirtualizerInstance {\n    getVirtualItems: () => VirtualizerVirtualItem[]\n    getTotalSize: () => number\n    scrollToIndex: (index: number) => void\n    measure: () => void\n    measureElement: (el: Element | null) => void\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fvirtual-scroll%2Ftypes.ts%23VirtualizerInstance"
+              }
+            ]
+          },
+          "description": "The shallow reactive reference to the underlying TanStack Virtualizer. Its value is null until the dependency loads, and remains null if loading fails.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    }
+  ]
+}

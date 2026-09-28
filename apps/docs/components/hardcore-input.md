@@ -179,39 +179,14 @@ function onBlur() {
 
 ## 程序化控制
 
-| 名称 | 说明 |
-| --- | --- |
-| `validate()` | 主动触发校验 |
-| `validationState` | 当前校验状态 |
-| `errorMessage` | 当前错误消息 |
+通过组件 ref 可主动调用校验并读取当前校验状态与错误文案；成员类型和行为见 API 参考。
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `modelValue` | `string` | `undefined` | v-model 绑定值 |
-| `sound` | `boolean` | `true` | 是否启用 8-bit 复古电子音效 |
-| `rules` | `Array<(val: string) => boolean \| string>` | `[]` | 校验规则函数列表 |
-| `shakeOnError` | `boolean` | `true` | 输入错误时是否触发输入框抖动 |
-| `type` | `string` | `'text'` | HTML input type 属性 |
-| `placeholder` | `string` | `undefined` | 占位文本 |
-| `disabled` | `boolean` | `false` | 是否禁用 |
-| `readonly` | `boolean` | `false` | 是否只读 |
-| `validateOn` | `'input' \| 'blur' \| 'submit'` | `'blur'` | 校验触发时机 |
-| `class` | `string` | `undefined` | 外部类覆盖 |
+<span id="事件"></span>
+<span id="插槽"></span>
 
-## 事件
-
-| 事件 | 参数 | 说明 |
-| --- | --- | --- |
-| `@update:modelValue` | `(value: string)` | v-model 更新事件 |
-| `@validation-change` | `(state: ValidationState, message?: string)` | 校验状态变化事件，仅在状态实际变化时触发 |
-
-## 插槽
-
-| 插槽 | 作用域 | 说明 |
-| --- | --- | --- |
-| `default` | — | 输入框右侧附加内容（如图标、表情区域覆盖） |
+<ComponentApi name="hardcore-input" />
 
 ## 可访问性
 

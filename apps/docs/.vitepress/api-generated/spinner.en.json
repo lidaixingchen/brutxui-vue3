@@ -1,0 +1,630 @@
+{
+  "id": "component:spinner",
+  "name": "spinner",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:spinner/Spinner",
+      "name": "Spinner",
+      "source": {
+        "file": "packages/ui/src/components/spinner/Spinner.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aspinner_2FSpinner-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | \"xl\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\"",
+              "\"xl\""
+            ],
+            "references": []
+          },
+          "description": "The size of the circular or ASCII spinner.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/spinner/Spinner.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/spinner/Spinner.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aspinner_2FSpinner-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"accent\" | null | undefined> | \"ascii\" | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"ascii\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "Selects a ring color variant or `ascii` for a rotating terminal character. Under reduced-motion preferences, the ASCII spinner stays on its first frame.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/spinner/Spinner.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/spinner/Spinner.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aspinner_2FSpinner-props-label",
+          "name": "label",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The screen-reader name for the loading status; localized loading text is used when omitted or blank.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/spinner/Spinner.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/spinner/Spinner.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aspinner_2FSpinner-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the loading status container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/spinner/Spinner.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/spinner/Spinner.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:spinner/BarsSpinner",
+      "name": "BarsSpinner",
+      "source": {
+        "file": "packages/ui/src/components/spinner/BarsSpinner.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aspinner_2FBarsSpinner-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "BarsSpinnerSize | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\"",
+              "\"xl\""
+            ],
+            "references": [
+              {
+                "name": "BarsSpinnerSize",
+                "text": "type BarsSpinnerSize = NonNullable<VariantProps<typeof barsSpinnerVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fspinner%2FBarsSpinner.vue%23BarsSpinnerSize"
+              }
+            ]
+          },
+          "description": "The height of the bar group and the width of each bar.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/spinner/BarsSpinner.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/spinner/BarsSpinner.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aspinner_2FBarsSpinner-props-color",
+          "name": "color",
+          "kind": "props",
+          "type": {
+            "text": "SpinnerColor | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"info\"",
+              "\"mixed\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": [
+              {
+                "name": "SpinnerColor",
+                "text": "export type SpinnerColor = keyof typeof SPINNER_COLOR_CLASSES | 'mixed'",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fspinner%2Fspinner-variants.ts%23SpinnerColor"
+              }
+            ]
+          },
+          "description": "The bar color; `mixed` cycles through primary, secondary, accent, and info colors.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/spinner/BarsSpinner.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/spinner/BarsSpinner.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aspinner_2FBarsSpinner-props-label",
+          "name": "label",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The screen-reader name for the loading status; defaults to localized loading text.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/spinner/BarsSpinner.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/spinner/BarsSpinner.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aspinner_2FBarsSpinner-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the bar-group container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/spinner/BarsSpinner.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/spinner/BarsSpinner.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:spinner/BlockSpinner",
+      "name": "BlockSpinner",
+      "source": {
+        "file": "packages/ui/src/components/spinner/BlockSpinner.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aspinner_2FBlockSpinner-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "BlockSpinnerSize | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\"",
+              "\"xl\""
+            ],
+            "references": [
+              {
+                "name": "BlockSpinnerSize",
+                "text": "type BlockSpinnerSize = NonNullable<VariantProps<typeof blockSpinnerVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fspinner%2FBlockSpinner.vue%23BlockSpinnerSize"
+              }
+            ]
+          },
+          "description": "The overall size of the four-block indicator.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/spinner/BlockSpinner.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/spinner/BlockSpinner.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aspinner_2FBlockSpinner-props-color",
+          "name": "color",
+          "kind": "props",
+          "type": {
+            "text": "SpinnerColor | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"info\"",
+              "\"mixed\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": [
+              {
+                "name": "SpinnerColor",
+                "text": "export type SpinnerColor = keyof typeof SPINNER_COLOR_CLASSES | 'mixed'",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fspinner%2Fspinner-variants.ts%23SpinnerColor"
+              }
+            ]
+          },
+          "description": "The block color; `mixed` cycles through primary, secondary, accent, and info colors.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/spinner/BlockSpinner.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/spinner/BlockSpinner.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aspinner_2FBlockSpinner-props-label",
+          "name": "label",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The screen-reader name for the loading status; defaults to localized loading text.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/spinner/BlockSpinner.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/spinner/BlockSpinner.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aspinner_2FBlockSpinner-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the block-group container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/spinner/BlockSpinner.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/spinner/BlockSpinner.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:spinner/DotsSpinner",
+      "name": "DotsSpinner",
+      "source": {
+        "file": "packages/ui/src/components/spinner/DotsSpinner.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aspinner_2FDotsSpinner-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "DotsSpinnerSize | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\"",
+              "\"xl\""
+            ],
+            "references": [
+              {
+                "name": "DotsSpinnerSize",
+                "text": "type DotsSpinnerSize = NonNullable<VariantProps<typeof dotsSpinnerVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fspinner%2FDotsSpinner.vue%23DotsSpinnerSize"
+              }
+            ]
+          },
+          "description": "The size of the three dots and their spacing.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/spinner/DotsSpinner.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/spinner/DotsSpinner.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aspinner_2FDotsSpinner-props-color",
+          "name": "color",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"primary\" | \"secondary\" | \"accent\" | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "The color variant shared by all three dots.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/spinner/DotsSpinner.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/spinner/DotsSpinner.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aspinner_2FDotsSpinner-props-label",
+          "name": "label",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The screen-reader name for the loading status; defaults to localized loading text.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/spinner/DotsSpinner.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/spinner/DotsSpinner.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aspinner_2FDotsSpinner-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the dot-group container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/spinner/DotsSpinner.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/spinner/DotsSpinner.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

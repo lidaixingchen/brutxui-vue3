@@ -1,0 +1,747 @@
+{
+  "id": "component:counter",
+  "name": "counter",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:counter/Counter",
+      "name": "Counter",
+      "source": {
+        "file": "packages/ui/src/components/counter/Counter.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acounter_2FCounter-props-to",
+          "name": "to",
+          "kind": "props",
+          "type": {
+            "text": "number",
+            "literals": [],
+            "references": []
+          },
+          "description": "动画的目标数值，必填。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-from",
+          "name": "from",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "动画起始数值；`play()` 也从该值重新开始。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-duration",
+          "name": "duration",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "动画时长，单位为毫秒；非正数使用组件默认时长。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_COUNTER_DURATION",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "2000"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-decimals",
+          "name": "decimals",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "显示的小数位数，结果按该位数格式化。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-decimalSeparator",
+          "name": "decimalSeparator",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "数字整数和小数部分之间显示的分隔符。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'.'",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\".\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-prefix",
+          "name": "prefix",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "显示在数值前面的文本，例如货币符号。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "''",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-suffix",
+          "name": "suffix",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "显示在数值后面的文本，例如百分号或加号。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "''",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-prefixComponent",
+          "name": "prefixComponent",
+          "kind": "props",
+          "type": {
+            "text": "Component | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "替代文本前缀的展示型组件；测量布局时会额外挂载一份，因此应避免内部状态和副作用。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-suffixComponent",
+          "name": "suffixComponent",
+          "kind": "props",
+          "type": {
+            "text": "Component | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "替代文本后缀的展示型组件；测量布局时会额外挂载一份，因此应避免内部状态和副作用。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-animatePrefix",
+          "name": "animatePrefix",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "存在 `prefixComponent` 时是否渲染该组件；关闭后显示 `prefix` 文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-animateSuffix",
+          "name": "animateSuffix",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "存在 `suffixComponent` 时是否渲染该组件；关闭后显示 `suffix` 文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-separator",
+          "name": "separator",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "千位分隔符；设为空字符串可关闭千分位分组，但仍应用 `decimalSeparator`。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "','",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\",\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-easing",
+          "name": "easing",
+          "kind": "props",
+          "type": {
+            "text": "\"ease-out\" | \"linear\" | \"ease-in-out\" | undefined",
+            "literals": [
+              "\"ease-in-out\"",
+              "\"ease-out\"",
+              "\"linear\""
+            ],
+            "references": []
+          },
+          "description": "动画进度使用的缓动函数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 30
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'ease-out'",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"ease-out\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-autoStart",
+          "name": "autoStart",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "挂载后自动开始动画；为 false 时数值停留在 `from`，也不会随 `to/from` 更新自动播放。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"success\" | \"danger\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "数值文本的颜色变体，不改变卡片背景。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"lg\" | \"sm\" | \"md\" | \"xl\" | null | undefined> | undefined",
+            "literals": [
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\""
+            ],
+            "references": []
+          },
+          "description": "数值文字的字号预设。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "可选标题；提供后进入容器布局，标题插槽内容优先于该文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-card",
+          "name": "card",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "为数值启用带边框、内边距和阴影的卡片容器。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-valueStyle",
+          "name": "valueStyle",
+          "kind": "props",
+          "type": {
+            "text": "CSSProperties | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "应用到数值区域外层元素的内联样式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到容器模式的外层容器；未启用容器模式时追加到数值文本元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 37
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-events-complete",
+          "name": "complete",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "动画到达 `to` 时发出；减少动态效果偏好下直接显示目标值也会发出。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-slots-title",
+          "name": "title",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换 `title` 属性的标题内容；提供插槽也会启用容器布局。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-exposes-play",
+          "name": "play",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "取消当前动画并从 `from` 重新播放；减少动态效果偏好下直接显示目标值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 137
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-exposes-stop",
+          "name": "stop",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "取消当前动画并停止继续更新数值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 137
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,462 @@
+{
+  "id": "component:image",
+  "name": "image",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:image/Image",
+      "name": "Image",
+      "source": {
+        "file": "packages/ui/src/components/image/Image.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aimage_2FImage-props-src",
+          "name": "src",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "必填的主图片 URL；预览列表为空时也作为预览器的唯一图片。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-props-alt",
+          "name": "alt",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递给原生 img 的替代文本；应说明图片内容以供辅助技术读取。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "''",
+              "source": {
+                "file": "packages/ui/src/components/image/Image.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-props-fit",
+          "name": "fit",
+          "kind": "props",
+          "type": {
+            "text": "\"fill\" | \"none\" | \"cover\" | \"contain\" | \"scale-down\" | undefined",
+            "literals": [
+              "\"contain\"",
+              "\"cover\"",
+              "\"fill\"",
+              "\"none\"",
+              "\"scale-down\""
+            ],
+            "references": []
+          },
+          "description": "设置图片的 CSS object-fit 填充模式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'cover'",
+              "source": {
+                "file": "packages/ui/src/components/image/Image.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"cover\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-props-previewSrcList",
+          "name": "previewSrcList",
+          "kind": "props",
+          "type": {
+            "text": "string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置预览器可切换的图片 URL 列表；包含多个地址时会显示上一张和下一张操作。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/image/Image.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-props-initialIndex",
+          "name": "initialIndex",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置打开预览器时选中的列表索引。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0",
+              "source": {
+                "file": "packages/ui/src/components/image/Image.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-props-hideOnClickModal",
+          "name": "hideOnClickModal",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用后，点击预览遮罩关闭预览；关闭时焦点会归还到打开预览前的元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/image/Image.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-props-zoomRate",
+          "name": "zoomRate",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置每次放大或缩小操作所用的缩放倍率。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "1.2",
+              "source": {
+                "file": "packages/ui/src/components/image/Image.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "1.2"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-props-preview",
+          "name": "preview",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用图片预览器及其缩放、拖拽和多图切换交互。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/image/Image.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-props-fallback",
+          "name": "fallback",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "主图片加载失败后尝试加载的备用图片 URL；备用图片也失败时才进入错误状态并发出 error。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/image/Image.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-props-loading",
+          "name": "loading",
+          "kind": "props",
+          "type": {
+            "text": "\"eager\" | \"lazy\" | undefined",
+            "literals": [
+              "\"eager\"",
+              "\"lazy\""
+            ],
+            "references": []
+          },
+          "description": "选择 eager 立即加载或 lazy 在元素接近视口时通过 IntersectionObserver 延迟加载。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'eager'",
+              "source": {
+                "file": "packages/ui/src/components/image/Image.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"eager\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-events-close",
+          "name": "close",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "预览器关闭时发出；关闭时组件会尝试将焦点恢复到打开预览前的活动元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-events-error",
+          "name": "error",
+          "kind": "events",
+          "type": {
+            "text": "[event: Event]",
+            "literals": [],
+            "references": []
+          },
+          "description": "主图片加载失败且备用图片也未能加载时，携带最后一次原生图片错误事件发出。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-events-load",
+          "name": "load",
+          "kind": "events",
+          "type": {
+            "text": "[event: Event]",
+            "literals": [],
+            "references": []
+          },
+          "description": "图片成功加载时携带原生图片事件发出；备用图片加载成功也会触发。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-events-show",
+          "name": "show",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "预览器打开时发出。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-events-switch",
+          "name": "switch",
+          "kind": "events",
+          "type": {
+            "text": "[index: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "预览器切换到另一张图片后，携带新的图片列表索引发出。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-slots-placeholder",
+          "name": "placeholder",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "图片加载期间渲染自定义占位内容；未提供时显示组件内置的加载占位。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aimage_2FImage-slots-error",
+          "name": "error",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "图片及备用图片加载失败后渲染自定义错误内容；未提供时显示组件内置的失败占位。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image/Image.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

@@ -104,27 +104,11 @@ const sync = ref(false)
 </template>
 ```
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `modelValue` | `boolean \| null` | — | 当前值，支持 `v-model`（受控模式） |
-| `defaultValue` | `boolean` | — | 非受控模式下的初始选中状态 |
-| `defaultChecked` | `boolean` | — | `defaultValue` 的别名（非受控模式初始选中状态） |
-| `disabled` | `boolean` | `false` | 是否禁用 |
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger'` | `'default'` | 颜色变体 |
-| `shape` | `'slider' \| 'rocker'` | `'slider'` | 机械外观形态变体 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 尺寸 |
-| `showLabels` | `boolean` | `false` | 是否在导轨内呈现工控 I/O 通断铭牌刻印 |
-| `ariaLabel` | `string` | locale 默认值（`switch.toggle`） | 无障碍标签文本 |
-| `sound` | `boolean` | `false` | 显式开启切换时的继电器吸合音效 |
-| `class` | `string` | `undefined` | 自定义样式类 |
+<span id="事件"></span>
 
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:modelValue` | `(value: boolean)` | 值变化时触发 |
+<ComponentApi name="switch" />
 
 ## 可访问性
 

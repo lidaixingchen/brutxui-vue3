@@ -97,44 +97,15 @@ import { Descriptions, DescriptionsItem } from 'brutx-ui-vue'
 | `Descriptions` | 根容器组件 |
 | `DescriptionsItem` | 单个描述项（标签 + 内容） |
 
-## Props
+## API 参考
 
-### Descriptions
+<span id="descriptions"></span>
+<span id="descriptionsitem"></span>
+<span id="插槽"></span>
+<span id="descriptions-1"></span>
+<span id="descriptionsitem-1"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `column` | `number` | `3` | 列数 |
-| `border` | `boolean` | `false` | 是否显示边框 |
-| `direction` | `'horizontal' \| 'vertical'` | `'horizontal'` | 排列方向 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 组件尺寸 |
-| `title` | `string` | — | 标题文本 |
-| `class` | `string` | — | 自定义 CSS 类 |
-
-### DescriptionsItem
-
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `label` | `string` | —（必填） | 标签文本 |
-| `span` | `number` | `1` | 跨列数 |
-| `labelWidth` | `string \| number` | — | 标签宽度。**仅无边框/垂直方向生效**；水平有边框模式下标签位于 1fr 网格轨道内，固定宽度无法缩小轨道，如需控制列宽请调整父级 `column` |
-| `class` | `string` | — | 自定义 CSS 类 |
-
-## 插槽
-
-### Descriptions
-
-| 插槽 | 说明 |
-| --- | --- |
-| `default` | DescriptionsItem 组件 |
-| `title` | 自定义标题内容 |
-| `stamp` | 技术档案印章：右上角悬浮层（容器 overflow-hidden，内容不越界） |
-
-### DescriptionsItem
-
-| 插槽 | 说明 |
-| --- | --- |
-| `default` | 内容值 |
-| `label` | 自定义标签内容 |
+<ComponentApi name="descriptions" />
 
 ## 可访问性
 

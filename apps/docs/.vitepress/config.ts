@@ -2,7 +2,15 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { defineConfig } from 'vitepress'
 import tailwindcss from '@tailwindcss/vite'
+import { createApiPagePlugin, createApiPageSearchOptions } from './api-page'
 import { generateComponentsSidebar, generateBlocksSidebar } from './theme/lib/sidebar-generator'
+
+const apiPageOptions = {
+    catalogPath: path.resolve(import.meta.dirname, 'api-generated/catalog.json'),
+    generatedDir: path.resolve(import.meta.dirname, 'api-generated'),
+    docsRoot: path.resolve(import.meta.dirname, '..'),
+}
+const apiPageSearchOptions = createApiPageSearchOptions(apiPageOptions)
 
 /**
  * 扫描 apps/docs/changelog/ 目录，按 major 版本分组生成侧边栏。
@@ -55,6 +63,9 @@ function generateChangelogSidebar(): any[] {
 
 export default defineConfig({
     lang: 'zh-CN',
+    markdown: {
+        config: createApiPagePlugin(apiPageOptions),
+    },
     title: 'BrutxUI',
     locales: {
         root: {
@@ -137,6 +148,7 @@ export default defineConfig({
                 search: {
                     provider: 'local',
                     options: {
+                        ...apiPageSearchOptions,
                         translations: {
                             button: { buttonText: 'Search docs', buttonAriaLabel: 'Search docs' },
                             modal: {
@@ -305,6 +317,7 @@ export default defineConfig({
         search: {
             provider: 'local',
             options: {
+                ...apiPageSearchOptions,
                 translations: {
                     button: {
                         buttonText: '搜索文档',

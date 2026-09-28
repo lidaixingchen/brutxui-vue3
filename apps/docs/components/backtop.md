@@ -65,28 +65,16 @@ import { Backtop } from 'brutx-ui-vue'
 </template>
 ```
 
-## Props
+## API 参考
 
-### Backtop
+<span id="backtop"></span>
+<span id="事件"></span>
+<span id="backtop-1"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `visibilityHeight` | `number` | `200` | 滚动高度达到该数值（像素）后才展示回到顶部按钮 |
-| `target` | `string \| HTMLElement` | `undefined` | 监听滚动高度并执行返回滚动的目标容器。为空时默认监听全局 `window`。传入 `target` 时按钮 `absolute` 定位，须置于已定位容器（如 `position: relative`）内，否则相对初始包含块定位会错位 |
-| `right` | `number` | `40` | 按钮距离视口/容器右侧的偏置距离（像素） |
-| `bottom` | `number` | `40` | 按钮距离视口/容器底部的偏置距离（像素） |
-| `variant` | `'primary' \| 'secondary' \| 'accent'` | `'primary'` | 配色变体款式（其中 primary 默认渲染粗野高亮黄） |
-| `class` | `string` | `undefined` | 自定义传递给回到顶部按钮的额外 CSS 类名 |
-
-## 事件
-
-### Backtop
-
-| 事件名 | 参数 | 说明 |
-|--------|------|------|
-| `click` | `event: MouseEvent` | 点击按钮执行滚动回顶部时派发的点击事件事件，可通过绑定该事件加入自定义动作 |
+<ComponentApi name="backtop" />
 
 ## 可访问性
 
-- **ARIA 属性**：按钮节点默认附带 `aria-label="Back to top"`，保证盲人读屏软件可以清晰解析其用途，交互响应良好。
-- **平滑滚动**：在支持的客户端上使用平滑过渡动作 `{ top: 0, behavior: 'smooth' }` 回到顶部，若环境开启了“减弱动态效果”，滚动将自动回退为瞬间置顶，消除眩晕风险。
+- **键盘操作**：按钮支持 Tab 聚焦及 Enter、Space 激活。
+- **ARIA 属性**：按钮使用 `backtop.backToTop` 本地化文案作为无障碍名称。
+- **滚动行为**：激活后调用原生滚动 `{ top: 0, behavior: 'smooth' }`，实际滚动表现由浏览器处理。

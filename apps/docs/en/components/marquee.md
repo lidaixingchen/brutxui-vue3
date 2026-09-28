@@ -67,20 +67,11 @@ Control text size and padding via the `size` property.
 </Marquee>
 ```
 
-## Props
+## API Reference
 
-### Marquee
+<span id="marquee-1"></span>
 
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `direction` | `'left' \| 'right'` | `'left'` | Marquee scroll direction |
-| `speed` | `number` | `20` | Duration in seconds for a single cycle (smaller value = faster speed) |
-| `pauseOnHover` | `boolean` | `false` | Whether to pause animation on mouse hover |
-| `fade` | `boolean` | `false` | Whether to enable left/right edge fade-in/fade-out mask effect |
-| `variant` | `'default' \| 'primary' \| 'accent' \| 'muted'` | `'default'` | Background and text color variant |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Text size and padding |
-| `class` | `string` | `""` | Custom CSS class for the container |
-
+<ComponentApi name="marquee" />
 ## Accessibility
 
 - **Motion Reduction**: The component respects the `prefers-reduced-motion` system setting. When the user enables "Reduce Motion", the scroll animation is removed from the track (adds `[animation:none]`), content is displayed statically, and the repeated track copies used for seamless looping (mirror tracks with `aria-hidden`) are no longer rendered, keeping only a single copy to avoid visual redundancy.

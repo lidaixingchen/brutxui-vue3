@@ -111,21 +111,11 @@ import { Separator } from 'brutx-ui-vue'
 </template>
 ```
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'muted'` | `'default'` | 颜色变体 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 控制粗细 |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 方向 |
-| `decorative` | `boolean` | `true` | 是否为装饰性（无语义角色） |
-| `class` | `string` | — | 自定义样式类 |
+<span id="插槽"></span>
 
-## 插槽
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 文字分隔线内容；仅在 `orientation="horizontal"` 且插槽有内容时渲染为居中文字分隔线 |
+<ComponentApi name="separator" />
 
 ## 可访问性
 

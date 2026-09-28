@@ -1,0 +1,478 @@
+{
+  "id": "component:toggle-group",
+  "name": "toggle-group",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:toggle-group/ToggleGroup",
+      "name": "ToggleGroup",
+      "source": {
+        "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atoggle_2Dgroup_2FToggleGroup-props-type",
+          "name": "type",
+          "kind": "props",
+          "type": {
+            "text": "\"single\" | \"multiple\" | undefined",
+            "literals": [
+              "\"multiple\"",
+              "\"single\""
+            ],
+            "references": []
+          },
+          "description": "Selects single- or multiple-selection mode. A single value is a string; multiple values are a string array.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'single'",
+              "source": {
+                "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"single\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2Dgroup_2FToggleGroup-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The current selected value, available through v-model. Its shape is determined by type.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2Dgroup_2FToggleGroup-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"outline\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"outline\""
+            ],
+            "references": []
+          },
+          "description": "Selects the default visual variant passed to items that do not override it.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2Dgroup_2FToggleGroup-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Selects the default size passed to items that do not override it.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2Dgroup_2FToggleGroup-props-orientation",
+          "name": "orientation",
+          "kind": "props",
+          "type": {
+            "text": "\"vertical\" | \"horizontal\" | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "Selects horizontal or vertical layout. Vertical mode uses a column flex container and is passed to the Reka UI primitive.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'horizontal'",
+              "source": {
+                "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"horizontal\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2Dgroup_2FToggleGroup-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables the entire toggle group and provides the disabled state to its items.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2Dgroup_2FToggleGroup-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes appended to the ToggleGroup root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2Dgroup_2FToggleGroup-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string | string[]]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted when the underlying toggle group updates its value. An empty single selection is normalized to an empty string and an empty multiple selection to an empty array.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atoggle_2Dgroup_2FToggleGroup-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Contains ToggleGroupItem children.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:toggle-group/ToggleGroupItem",
+      "name": "ToggleGroupItem",
+      "source": {
+        "file": "packages/ui/src/components/toggle-group/ToggleGroupItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atoggle_2Dgroup_2FToggleGroupItem-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The unique string value represented by this toggle item.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle-group/ToggleGroupItem.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2Dgroup_2FToggleGroupItem-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"outline\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"outline\""
+            ],
+            "references": []
+          },
+          "description": "Overrides the parent ToggleGroup variant. When omitted, it inherits the parent value and then falls back to default.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle-group/ToggleGroupItem.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/toggle-group/ToggleGroupItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2Dgroup_2FToggleGroupItem-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Overrides the parent ToggleGroup size. When omitted, it inherits the parent value and then falls back to default.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle-group/ToggleGroupItem.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/toggle-group/ToggleGroupItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2Dgroup_2FToggleGroupItem-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables this item. The final disabled state is the logical OR of this value and the parent ToggleGroup disabled state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle-group/ToggleGroupItem.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/toggle-group/ToggleGroupItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2Dgroup_2FToggleGroupItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes appended to the ToggleGroupItem button element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle-group/ToggleGroupItem.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/toggle-group/ToggleGroupItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2Dgroup_2FToggleGroupItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Renders the toggle button item’s icon, text, or other content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle-group/ToggleGroupItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

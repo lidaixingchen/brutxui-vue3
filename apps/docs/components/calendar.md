@@ -63,27 +63,15 @@ const dateRange = ref(null)
 </template>
 ```
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `modelValue` | `Date \| Date[] \| null` | `undefined` | 选中的日期，支持 v-model 绑定。单日期模式为 `Date`，范围模式为 `[Date, Date]` |
-| `isRange` | `boolean` | `false` | 是否启用日期范围选择模式 |
-| `disabled` | `boolean` | `false` | 禁用日历，整体变半透明且不可交互 |
-| `events` | `CalendarEvent[]` | `[]` | 事件标记数据，在对应日期上显示事件指示器 |
-| `eventRenderer` | `(event: CalendarEvent) => VNode \| string` | — | 自定义事件渲染函数，返回 VNode 或字符串 |
-| `mode` | `'default' \| 'card'` | `'default'` | 事件显示模式：`default` 为圆点指示器 + Tooltip，`card` 为自适应高度卡片 + 胶囊徽章 |
-| `class` | `string` | `undefined` | 自定义 CSS 类名 |
+<span id="事件"></span>
 
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:modelValue` | `Date \| Date[] \| null` | 选中日期变化时触发 |
+<ComponentApi name="calendar" />
 
 ## 插槽
 
-Calendar 组件通过 v-calendar 的 DatePicker 提供以下插槽，可用于自定义头部和日期单元格：
+以下插槽由底层 v-calendar DatePicker 支持，并经 Calendar 透传，可用于自定义头部和日期单元格：
 
 | 插槽 | 作用域 | 说明 |
 |------|--------|------|

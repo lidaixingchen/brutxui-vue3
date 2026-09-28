@@ -1,0 +1,1309 @@
+{
+  "id": "component:tree-view",
+  "name": "tree-view",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:tree-view/TreeView",
+      "name": "TreeView",
+      "source": {
+        "file": "packages/ui/src/components/tree-view/TreeView.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-props-nodes",
+          "name": "nodes",
+          "kind": "props",
+          "type": {
+            "text": "TreeNode<unknown>[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "The tree data source. Each node is described by an id, label, and optional fields such as children and disabled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "The id of the selected node, controlled with v-model; null means no node is selected.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "null",
+              "source": {
+                "file": "packages/ui/src/components/tree-view/TreeView.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "null"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-props-checkedIds",
+          "name": "checkedIds",
+          "kind": "props",
+          "type": {
+            "text": "string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The ids of checked nodes in checkbox mode, controlled with v-model:checkedIds.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/tree-view/TreeView.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-props-selectionMode",
+          "name": "selectionMode",
+          "kind": "props",
+          "type": {
+            "text": "SelectionMode | undefined",
+            "literals": [
+              "\"checkbox\"",
+              "\"single\""
+            ],
+            "references": [
+              {
+                "name": "SelectionMode",
+                "text": "export type SelectionMode = 'single' | 'checkbox'",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23SelectionMode"
+              }
+            ]
+          },
+          "description": "The selection mode: single selects one node, while checkbox allows multiple checked nodes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'single'",
+              "source": {
+                "file": "packages/ui/src/components/tree-view/TreeView.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"single\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-props-defaultExpanded",
+          "name": "defaultExpanded",
+          "kind": "props",
+          "type": {
+            "text": "string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Node ids expanded on initial render; subsequent expansion state is maintained internally.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/tree-view/TreeView.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the tree root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-view/TreeView.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-props-draggable",
+          "name": "draggable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables node drag-and-drop sorting and updates the node data after a drop.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/tree-view/TreeView.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-props-allowDrag",
+          "name": "allowDrag",
+          "kind": "props",
+          "type": {
+            "text": "((node: TreeNode<unknown>) => boolean) | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "Decides whether dragging may start for a node; all nodes are draggable when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-view/TreeView.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-props-allowDrop",
+          "name": "allowDrop",
+          "kind": "props",
+          "type": {
+            "text": "((dragNode: TreeNode<unknown>, dropNode: TreeNode<unknown>, dropType: \"before\" | \"after\" | \"inner\") => boolean) | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "Decides whether a dragged node may be placed before, after, or inside a target node.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-view/TreeView.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-props-lazy",
+          "name": "lazy",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables lazy node loading and calls load when an unloaded node is expanded.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/tree-view/TreeView.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-props-load",
+          "name": "load",
+          "kind": "props",
+          "type": {
+            "text": "((node: TreeNode<unknown>) => Promise<TreeNode<unknown>[]>) | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "Asynchronously loads children for a node; the returned nodes are written into the tree data.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-view/TreeView.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-props-retryOnError",
+          "name": "retryOnError",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows a retry action after a load failure and requests that node again when activated.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/tree-view/TreeView.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-props-filterable",
+          "name": "filterable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables node filtering; provide a query through the exposed filter method.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/tree-view/TreeView.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-props-filterMethod",
+          "name": "filterMethod",
+          "kind": "props",
+          "type": {
+            "text": "((query: string, node: TreeNode<unknown>) => boolean) | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "Custom node matching rule. Return true to keep a node; when omitted, the query is matched against its label.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-view/TreeView.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[id: string | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "Emits the new selected node id when selection changes, or null when selection is cleared.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-events-select",
+          "name": "select",
+          "kind": "events",
+          "type": {
+            "text": "[node: TreeNode<unknown>]",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "Emits the selected node as a TreeNode when the user selects it.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-events-expand",
+          "name": "expand",
+          "kind": "events",
+          "type": {
+            "text": "[id: string, expanded: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Emits a node id and its new expanded state when the node is expanded or collapsed.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-events-update_3AcheckedIds",
+          "name": "update:checkedIds",
+          "kind": "events",
+          "type": {
+            "text": "[ids: string[]]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the updated list of checked node ids when the checked set changes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-events-update_3Aexpanded",
+          "name": "update:expanded",
+          "kind": "events",
+          "type": {
+            "text": "[ids: string[]]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the updated list of expanded node ids when the expanded set changes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-events-update_3Anodes",
+          "name": "update:nodes",
+          "kind": "events",
+          "type": {
+            "text": "[nodes: TreeNode<unknown>[]]",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "Emits the updated tree data after drag-and-drop changes the node order or parent.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-events-check",
+          "name": "check",
+          "kind": "events",
+          "type": {
+            "text": "[node: TreeNode<unknown>, checked: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "Emits the node and its new checked state when its checkbox changes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-events-node_2Ddrag_2Dstart",
+          "name": "node-drag-start",
+          "kind": "events",
+          "type": {
+            "text": "[event: DragEvent, node: TreeNode<unknown>]",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "Emits the native DragEvent and dragged node when dragging starts.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-events-node_2Ddrag_2Denter",
+          "name": "node-drag-enter",
+          "kind": "events",
+          "type": {
+            "text": "[event: DragEvent, node: TreeNode<unknown>]",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "Emits the DragEvent and node when the pointer enters that node during a drag.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-events-node_2Ddrag_2Dleave",
+          "name": "node-drag-leave",
+          "kind": "events",
+          "type": {
+            "text": "[event: DragEvent, node: TreeNode<unknown>]",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "Emits the DragEvent and node when the pointer leaves that node during a drag.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-events-node_2Ddrag_2Dover",
+          "name": "node-drag-over",
+          "kind": "events",
+          "type": {
+            "text": "[event: DragEvent, node: TreeNode<unknown>]",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "Emits the DragEvent and node while the pointer moves over that node during a drag.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-events-node_2Ddrag_2Dend",
+          "name": "node-drag-end",
+          "kind": "events",
+          "type": {
+            "text": "[event: DragEvent, node: TreeNode<unknown>]",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "Emits the DragEvent and dragged node when dragging ends.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-events-node_2Ddrop",
+          "name": "node-drop",
+          "kind": "events",
+          "type": {
+            "text": "[event: DragEvent, node: TreeNode<unknown>, dropType: \"before\" | \"after\" | \"inner\"]",
+            "literals": [
+              "\"after\"",
+              "\"before\"",
+              "\"inner\""
+            ],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "Emits the DragEvent, target node, and before, after, or inner drop position after a successful drop.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-exposes-filter",
+          "name": "filter",
+          "kind": "exposes",
+          "type": {
+            "text": "(query: string) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Filters nodes by query text; pass an empty string to restore all nodes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue",
+            "line": 447
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeView-exposes-reloadNode",
+          "name": "reloadNode",
+          "kind": "exposes",
+          "type": {
+            "text": "(nodeKey: string) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Reloads the children of the specified node to refresh its lazy-loaded data.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeView.vue",
+            "line": 448
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": "component:tree-view/TreeViewNode",
+      "name": "TreeViewNode",
+      "source": {
+        "file": "packages/ui/src/components/tree-view/TreeViewNode.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-props-node",
+          "name": "node",
+          "kind": "props",
+          "type": {
+            "text": "TreeNode<unknown>",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "The tree node represented by this row.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-props-selectedId",
+          "name": "selectedId",
+          "kind": "props",
+          "type": {
+            "text": "string | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "The currently selected node id, used to determine whether this row is selected.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "null",
+              "source": {
+                "file": "packages/ui/src/components/tree-view/TreeViewNode.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "null"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-props-expandedIds",
+          "name": "expandedIds",
+          "kind": "props",
+          "type": {
+            "text": "Set<string>",
+            "literals": [],
+            "references": []
+          },
+          "description": "The set of expanded node ids, used to determine this node’s expanded state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-props-depth",
+          "name": "depth",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The node’s depth in the tree, used to calculate row indentation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0",
+              "source": {
+                "file": "packages/ui/src/components/tree-view/TreeViewNode.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-props-isFirstRoot",
+          "name": "isFirstRoot",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Marks whether this is the first root node for root-row layout.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/tree-view/TreeViewNode.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-props-selectionMode",
+          "name": "selectionMode",
+          "kind": "props",
+          "type": {
+            "text": "SelectionMode | undefined",
+            "literals": [
+              "\"checkbox\"",
+              "\"single\""
+            ],
+            "references": [
+              {
+                "name": "SelectionMode",
+                "text": "export type SelectionMode = 'single' | 'checkbox'",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23SelectionMode"
+              }
+            ]
+          },
+          "description": "The selection mode for this row, determining single selection or checkbox interaction.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'single'",
+              "source": {
+                "file": "packages/ui/src/components/tree-view/TreeViewNode.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"single\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-props-checkedIds",
+          "name": "checkedIds",
+          "kind": "props",
+          "type": {
+            "text": "Set<string> | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The set of checked node ids, used to render checkbox state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => new Set()",
+              "source": {
+                "file": "packages/ui/src/components/tree-view/TreeViewNode.vue"
+              }
+            },
+            "resolution": {
+              "kind": "expression",
+              "text": "() => new Set()"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables selection, checking, and keyboard activation for this node.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/tree-view/TreeViewNode.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-events-select",
+          "name": "select",
+          "kind": "events",
+          "type": {
+            "text": "[node: TreeNode<unknown>]",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "Emits the full node data when this node is activated or selected.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-events-toggle",
+          "name": "toggle",
+          "kind": "events",
+          "type": {
+            "text": "[id: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits this node id when its expanded state should toggle.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-events-check",
+          "name": "check",
+          "kind": "events",
+          "type": {
+            "text": "[node: TreeNode<unknown>]",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "Emits this node when its checkbox state should toggle.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-events-focus_2Dprev",
+          "name": "focus-prev",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Requests moving focus to the previous visible tree node.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-events-focus_2Dnext",
+          "name": "focus-next",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Requests moving focus to the next visible tree node.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-events-focus_2Dparent",
+          "name": "focus-parent",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Requests moving focus to the parent node.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-events-focus_2Dfirst_2Dchild",
+          "name": "focus-first-child",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Requests moving focus to the first child when the node is expanded.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-events-focus_2Dfirst",
+          "name": "focus-first",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Requests moving focus to the first visible node in the tree.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-events-focus_2Dlast",
+          "name": "focus-last",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Requests moving focus to the last visible node in the tree.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-exposes-focus",
+          "name": "focus",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Moves focus to the tree item element for this node.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
+            "line": 267
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-exposes-nodeId",
+          "name": "nodeId",
+          "kind": "exposes",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The id of the node represented by this row.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
+            "line": 267
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    }
+  ]
+}

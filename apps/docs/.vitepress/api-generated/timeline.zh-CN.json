@@ -1,0 +1,539 @@
+{
+  "id": "component:timeline",
+  "name": "timeline",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:timeline/Timeline",
+      "name": "Timeline",
+      "source": {
+        "file": "packages/ui/src/components/timeline/Timeline.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atimeline_2FTimeline-props-orientation",
+          "name": "orientation",
+          "kind": "props",
+          "type": {
+            "text": "TimelineOrientation | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": [
+              {
+                "name": "TimelineOrientation",
+                "text": "export type TimelineOrientation = 'vertical' | 'horizontal'",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Ftimeline%2Ftimeline-key.ts%23TimelineOrientation"
+              }
+            ]
+          },
+          "description": "设置时间线为垂直或水平排列；水平布局可横向滚动。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/timeline/Timeline.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'vertical'",
+              "source": {
+                "file": "packages/ui/src/components/timeline/Timeline.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"vertical\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atimeline_2FTimeline-props-alternate",
+          "name": "alternate",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "垂直方向下将相邻节点内容交替排列在轴线两侧。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/timeline/Timeline.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/timeline/Timeline.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atimeline_2FTimeline-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到时间线外层列表容器的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/timeline/Timeline.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/timeline/Timeline.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:timeline/TimelineConnector",
+      "name": "TimelineConnector",
+      "source": {
+        "file": "packages/ui/src/components/timeline/TimelineConnector.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atimeline_2FTimelineConnector-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到时间线连接线元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/timeline/TimelineConnector.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/timeline/TimelineConnector.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:timeline/TimelineContent",
+      "name": "TimelineContent",
+      "source": {
+        "file": "packages/ui/src/components/timeline/TimelineContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atimeline_2FTimelineContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到时间线节点内容区域的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/timeline/TimelineContent.vue",
+            "line": 6
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/timeline/TimelineContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atimeline_2FTimelineContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "渲染当前时间线节点的主要内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/timeline/TimelineContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:timeline/TimelineDot",
+      "name": "TimelineDot",
+      "source": {
+        "file": "packages/ui/src/components/timeline/TimelineDot.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atimeline_2FTimelineDot-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"success\" | \"danger\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "设置节点标记的配色变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/timeline/TimelineDot.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'accent'",
+              "source": {
+                "file": "packages/ui/src/components/timeline/TimelineDot.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"accent\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atimeline_2FTimelineDot-props-shape",
+          "name": "shape",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"square\" | \"circle\" | \"diamond\" | null | undefined> | undefined",
+            "literals": [
+              "\"circle\"",
+              "\"diamond\"",
+              "\"square\""
+            ],
+            "references": []
+          },
+          "description": "设置节点标记为圆形、方形或菱形。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/timeline/TimelineDot.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'circle'",
+              "source": {
+                "file": "packages/ui/src/components/timeline/TimelineDot.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"circle\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atimeline_2FTimelineDot-props-led",
+          "name": "led",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用装饰性 LED 脉冲光晕；动画遵循减少动态效果偏好。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/timeline/TimelineDot.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/timeline/TimelineDot.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atimeline_2FTimelineDot-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到节点标记元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/timeline/TimelineDot.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/timeline/TimelineDot.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atimeline_2FTimelineDot-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "在节点标记内部展示数字、图标等内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/timeline/TimelineDot.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:timeline/TimelineItem",
+      "name": "TimelineItem",
+      "source": {
+        "file": "packages/ui/src/components/timeline/TimelineItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atimeline_2FTimelineItem-props-index",
+          "name": "index",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "时间线中的节点索引；作为 Timeline 直接子项时会自动按顺序注入，可显式传入覆盖。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/timeline/TimelineItem.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/timeline/TimelineItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atimeline_2FTimelineItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到单个时间线节点容器的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/timeline/TimelineItem.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/timeline/TimelineItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atimeline_2FTimelineItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "组合放置 TimelineSeparator 与 TimelineContent。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/timeline/TimelineItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:timeline/TimelineSeparator",
+      "name": "TimelineSeparator",
+      "source": {
+        "file": "packages/ui/src/components/timeline/TimelineSeparator.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atimeline_2FTimelineSeparator-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到时间线轴线和标记所在分隔区域的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/timeline/TimelineSeparator.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/timeline/TimelineSeparator.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atimeline_2FTimelineSeparator-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "放置 TimelineDot 与 TimelineConnector。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/timeline/TimelineSeparator.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

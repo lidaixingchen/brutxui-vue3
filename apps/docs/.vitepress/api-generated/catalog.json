@@ -1,0 +1,6101 @@
+{
+  "version": 1,
+  "groups": [
+    {
+      "id": "component:accordion",
+      "slug": "accordion",
+      "scope": "component-page",
+      "primaryMemberId": "component:accordion/Accordion",
+      "members": [
+        {
+          "id": "component:accordion/Accordion",
+          "name": "Accordion",
+          "source": "packages/ui/src/components/accordion/Accordion.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:accordion/AccordionContent",
+          "name": "AccordionContent",
+          "source": "packages/ui/src/components/accordion/AccordionContent.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:accordion/AccordionItem",
+          "name": "AccordionItem",
+          "source": "packages/ui/src/components/accordion/AccordionItem.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:accordion/AccordionTrigger",
+          "name": "AccordionTrigger",
+          "source": "packages/ui/src/components/accordion/AccordionTrigger.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "AccordionItemVariantContext",
+          "source": "packages/ui/src/components/accordion/accordion-key",
+          "sourceName": "AccordionItemVariantContext",
+          "kind": "type"
+        },
+        {
+          "name": "accordionItemKey",
+          "source": "packages/ui/src/components/accordion/accordion-key",
+          "sourceName": "accordionItemKey",
+          "kind": "value"
+        },
+        {
+          "name": "accordionItemVariants",
+          "source": "packages/ui/src/components/accordion/accordion-variants",
+          "sourceName": "accordionItemVariants",
+          "kind": "value"
+        },
+        {
+          "name": "accordionTriggerVariants",
+          "source": "packages/ui/src/components/accordion/accordion-variants",
+          "sourceName": "accordionTriggerVariants",
+          "kind": "value"
+        },
+        {
+          "name": "accordionTriggerIconClasses",
+          "source": "packages/ui/src/components/accordion/accordion-variants",
+          "sourceName": "accordionTriggerIconClasses",
+          "kind": "value"
+        },
+        {
+          "name": "accordionContentVariants",
+          "source": "packages/ui/src/components/accordion/accordion-variants",
+          "sourceName": "accordionContentVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/accordion.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/accordion.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:alert",
+      "slug": "alert",
+      "scope": "component-page",
+      "primaryMemberId": "component:alert/Alert",
+      "members": [
+        {
+          "id": "component:alert/Alert",
+          "name": "Alert",
+          "source": "packages/ui/src/components/alert/Alert.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:alert/AlertDescription",
+          "name": "AlertDescription",
+          "source": "packages/ui/src/components/alert/AlertDescription.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:alert/AlertTitle",
+          "name": "AlertTitle",
+          "source": "packages/ui/src/components/alert/AlertTitle.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "alertDescriptionIdsKey",
+          "source": "packages/ui/src/components/alert/alert-context",
+          "sourceName": "alertDescriptionIdsKey",
+          "kind": "value"
+        },
+        {
+          "name": "alertVariants",
+          "source": "packages/ui/src/components/alert/alert-variants",
+          "sourceName": "alertVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/alert.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/alert.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:alert-dialog",
+      "slug": "alert-dialog",
+      "scope": "component-page",
+      "primaryMemberId": "component:alert-dialog/AlertDialogContent",
+      "members": [
+        {
+          "id": "component:alert-dialog/AlertDialogContent",
+          "name": "AlertDialogContent",
+          "source": "packages/ui/src/components/alert-dialog/AlertDialogContent.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:alert-dialog/AlertDialogAction",
+          "name": "AlertDialogAction",
+          "source": "packages/ui/src/components/alert-dialog/AlertDialogAction.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:alert-dialog/AlertDialogCancel",
+          "name": "AlertDialogCancel",
+          "source": "packages/ui/src/components/alert-dialog/AlertDialogCancel.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:alert-dialog/AlertDialogDescription",
+          "name": "AlertDialogDescription",
+          "source": "packages/ui/src/components/alert-dialog/AlertDialogDescription.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:alert-dialog/AlertDialogFooter",
+          "name": "AlertDialogFooter",
+          "source": "packages/ui/src/components/alert-dialog/AlertDialogFooter.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:alert-dialog/AlertDialogHeader",
+          "name": "AlertDialogHeader",
+          "source": "packages/ui/src/components/alert-dialog/AlertDialogHeader.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:alert-dialog/AlertDialogTitle",
+          "name": "AlertDialogTitle",
+          "source": "packages/ui/src/components/alert-dialog/AlertDialogTitle.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "alertDialogContentVariants",
+          "source": "packages/ui/src/components/alert-dialog/alert-dialog-variants",
+          "sourceName": "alertDialogContentVariants",
+          "kind": "value"
+        },
+        {
+          "name": "alertDialogTitleVariants",
+          "source": "packages/ui/src/components/alert-dialog/alert-dialog-variants",
+          "sourceName": "alertDialogTitleVariants",
+          "kind": "value"
+        },
+        {
+          "name": "alertDialogDescriptionVariants",
+          "source": "packages/ui/src/components/alert-dialog/alert-dialog-variants",
+          "sourceName": "alertDialogDescriptionVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/alert-dialog.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/alert-dialog.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:auth-card",
+      "slug": "auth-card",
+      "scope": "block",
+      "primaryMemberId": "component:auth-card/AuthCard",
+      "members": [
+        {
+          "id": "component:auth-card/AuthCard",
+          "name": "AuthCard",
+          "source": "packages/ui/src/components/auth-card/AuthCard.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [],
+      "pages": []
+    },
+    {
+      "id": "component:avatar",
+      "slug": "avatar",
+      "scope": "component-page",
+      "primaryMemberId": "component:avatar/Avatar",
+      "members": [
+        {
+          "id": "component:avatar/Avatar",
+          "name": "Avatar",
+          "source": "packages/ui/src/components/avatar/Avatar.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:avatar/AvatarFallback",
+          "name": "AvatarFallback",
+          "source": "packages/ui/src/components/avatar/AvatarFallback.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:avatar/AvatarImage",
+          "name": "AvatarImage",
+          "source": "packages/ui/src/components/avatar/AvatarImage.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "avatarKey",
+          "source": "packages/ui/src/components/avatar/avatar-key",
+          "sourceName": "avatarKey",
+          "kind": "value"
+        },
+        {
+          "name": "avatarVariants",
+          "source": "packages/ui/src/components/avatar/avatar-variants",
+          "sourceName": "avatarVariants",
+          "kind": "value"
+        },
+        {
+          "name": "avatarFallbackVariants",
+          "source": "packages/ui/src/components/avatar/avatar-variants",
+          "sourceName": "avatarFallbackVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/avatar.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/avatar.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:backtop",
+      "slug": "backtop",
+      "scope": "component-page",
+      "primaryMemberId": "component:backtop/Backtop",
+      "members": [
+        {
+          "id": "component:backtop/Backtop",
+          "name": "Backtop",
+          "source": "packages/ui/src/components/backtop/Backtop.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/backtop.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/backtop.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:badge",
+      "slug": "badge",
+      "scope": "component-page",
+      "primaryMemberId": "component:badge/Badge",
+      "members": [
+        {
+          "id": "component:badge/Badge",
+          "name": "Badge",
+          "source": "packages/ui/src/components/badge/Badge.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "badgeVariants",
+          "source": "packages/ui/src/components/badge/badge-variants",
+          "sourceName": "badgeVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/badge.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/badge.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:before-after",
+      "slug": "before-after",
+      "scope": "component-page",
+      "primaryMemberId": "component:before-after/BeforeAfter",
+      "members": [
+        {
+          "id": "component:before-after/BeforeAfter",
+          "name": "BeforeAfter",
+          "source": "packages/ui/src/components/before-after/BeforeAfter.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "beforeAfterHandleVariants",
+          "source": "packages/ui/src/components/before-after/before-after-variants",
+          "sourceName": "beforeAfterHandleVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/before-after.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/before-after.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:breadcrumb",
+      "slug": "breadcrumb",
+      "scope": "component-page",
+      "primaryMemberId": "component:breadcrumb/Breadcrumb",
+      "members": [
+        {
+          "id": "component:breadcrumb/Breadcrumb",
+          "name": "Breadcrumb",
+          "source": "packages/ui/src/components/breadcrumb/Breadcrumb.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:breadcrumb/BreadcrumbEllipsis",
+          "name": "BreadcrumbEllipsis",
+          "source": "packages/ui/src/components/breadcrumb/BreadcrumbEllipsis.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:breadcrumb/BreadcrumbItem",
+          "name": "BreadcrumbItem",
+          "source": "packages/ui/src/components/breadcrumb/BreadcrumbItem.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:breadcrumb/BreadcrumbLink",
+          "name": "BreadcrumbLink",
+          "source": "packages/ui/src/components/breadcrumb/BreadcrumbLink.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:breadcrumb/BreadcrumbList",
+          "name": "BreadcrumbList",
+          "source": "packages/ui/src/components/breadcrumb/BreadcrumbList.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:breadcrumb/BreadcrumbPage",
+          "name": "BreadcrumbPage",
+          "source": "packages/ui/src/components/breadcrumb/BreadcrumbPage.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:breadcrumb/BreadcrumbSeparator",
+          "name": "BreadcrumbSeparator",
+          "source": "packages/ui/src/components/breadcrumb/BreadcrumbSeparator.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "breadcrumbListVariants",
+          "source": "packages/ui/src/components/breadcrumb/breadcrumb-variants",
+          "sourceName": "breadcrumbListVariants",
+          "kind": "value"
+        },
+        {
+          "name": "breadcrumbItemVariants",
+          "source": "packages/ui/src/components/breadcrumb/breadcrumb-variants",
+          "sourceName": "breadcrumbItemVariants",
+          "kind": "value"
+        },
+        {
+          "name": "breadcrumbLinkVariants",
+          "source": "packages/ui/src/components/breadcrumb/breadcrumb-variants",
+          "sourceName": "breadcrumbLinkVariants",
+          "kind": "value"
+        },
+        {
+          "name": "breadcrumbPageVariants",
+          "source": "packages/ui/src/components/breadcrumb/breadcrumb-variants",
+          "sourceName": "breadcrumbPageVariants",
+          "kind": "value"
+        },
+        {
+          "name": "breadcrumbSeparatorVariants",
+          "source": "packages/ui/src/components/breadcrumb/breadcrumb-variants",
+          "sourceName": "breadcrumbSeparatorVariants",
+          "kind": "value"
+        },
+        {
+          "name": "breadcrumbEllipsisVariants",
+          "source": "packages/ui/src/components/breadcrumb/breadcrumb-variants",
+          "sourceName": "breadcrumbEllipsisVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/breadcrumb.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/breadcrumb.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:brutal-shape",
+      "slug": "brutal-shape",
+      "scope": "component-page",
+      "primaryMemberId": "component:brutal-shape/BrutalShape",
+      "members": [
+        {
+          "id": "component:brutal-shape/BrutalShape",
+          "name": "BrutalShape",
+          "source": "packages/ui/src/components/brutal-shape/BrutalShape.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "brutalShapeVariants",
+          "source": "packages/ui/src/components/brutal-shape/brutal-shape-variants",
+          "sourceName": "brutalShapeVariants",
+          "kind": "value"
+        },
+        {
+          "name": "ShapeCategory",
+          "source": "packages/ui/src/components/brutal-shape/shapes",
+          "sourceName": "ShapeCategory",
+          "kind": "type"
+        },
+        {
+          "name": "ShapeDefinition",
+          "source": "packages/ui/src/components/brutal-shape/shapes",
+          "sourceName": "ShapeDefinition",
+          "kind": "type"
+        },
+        {
+          "name": "SHAPE_MIN_COUNT",
+          "source": "packages/ui/src/components/brutal-shape/shapes",
+          "sourceName": "SHAPE_MIN_COUNT",
+          "kind": "value"
+        },
+        {
+          "name": "SHAPE_NAMES",
+          "source": "packages/ui/src/components/brutal-shape/shapes",
+          "sourceName": "SHAPE_NAMES",
+          "kind": "value"
+        },
+        {
+          "name": "SHAPE_COUNT",
+          "source": "packages/ui/src/components/brutal-shape/shapes",
+          "sourceName": "SHAPE_COUNT",
+          "kind": "value"
+        },
+        {
+          "name": "isBrutalShapeName",
+          "source": "packages/ui/src/components/brutal-shape/shapes",
+          "sourceName": "isBrutalShapeName",
+          "kind": "value"
+        },
+        {
+          "name": "getShapeCategory",
+          "source": "packages/ui/src/components/brutal-shape/shapes",
+          "sourceName": "getShapeCategory",
+          "kind": "value"
+        },
+        {
+          "name": "renderShapeSvg",
+          "source": "packages/ui/src/components/brutal-shape/shapes",
+          "sourceName": "renderShapeSvg",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/brutal-shape.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/brutal-shape.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:brutalist-hero",
+      "slug": "brutalist-hero",
+      "scope": "block",
+      "primaryMemberId": "component:brutalist-hero/BrutalistHero",
+      "members": [
+        {
+          "id": "component:brutalist-hero/BrutalistHero",
+          "name": "BrutalistHero",
+          "source": "packages/ui/src/components/brutalist-hero/BrutalistHero.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [],
+      "pages": []
+    },
+    {
+      "id": "component:button",
+      "slug": "button",
+      "scope": "component-page",
+      "primaryMemberId": "component:button/Button",
+      "members": [
+        {
+          "id": "component:button/Button",
+          "name": "Button",
+          "source": "packages/ui/src/components/button/Button.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "buttonVariants",
+          "source": "packages/ui/src/components/button/button-variants",
+          "sourceName": "buttonVariants",
+          "kind": "value"
+        },
+        {
+          "name": "buttonVariantOptions",
+          "source": "packages/ui/src/components/button/shared-button-variants",
+          "sourceName": "buttonVariantOptions",
+          "kind": "value"
+        },
+        {
+          "name": "buttonFlairOptions",
+          "source": "packages/ui/src/components/button/shared-button-variants",
+          "sourceName": "buttonFlairOptions",
+          "kind": "value"
+        },
+        {
+          "name": "buttonSizeOptions",
+          "source": "packages/ui/src/components/button/shared-button-variants",
+          "sourceName": "buttonSizeOptions",
+          "kind": "value"
+        },
+        {
+          "name": "ButtonVariant",
+          "source": "packages/ui/src/components/button/shared-button-variants",
+          "sourceName": "ButtonVariant",
+          "kind": "type"
+        },
+        {
+          "name": "ButtonSize",
+          "source": "packages/ui/src/components/button/shared-button-variants",
+          "sourceName": "ButtonSize",
+          "kind": "type"
+        },
+        {
+          "name": "ButtonFlair",
+          "source": "packages/ui/src/components/button/shared-button-variants",
+          "sourceName": "ButtonFlair",
+          "kind": "type"
+        },
+        {
+          "name": "baseButtonVariants",
+          "source": "packages/ui/src/components/button/shared-button-variants",
+          "sourceName": "baseButtonVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/button.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/button.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:calendar",
+      "slug": "calendar",
+      "scope": "component-page",
+      "primaryMemberId": "component:calendar/Calendar",
+      "members": [
+        {
+          "id": "component:calendar/Calendar",
+          "name": "Calendar",
+          "source": "packages/ui/src/components/calendar/Calendar.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/calendar.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/calendar.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:card",
+      "slug": "card",
+      "scope": "component-page",
+      "primaryMemberId": "component:card/Card",
+      "members": [
+        {
+          "id": "component:card/Card",
+          "name": "Card",
+          "source": "packages/ui/src/components/card/Card.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:card/CardContent",
+          "name": "CardContent",
+          "source": "packages/ui/src/components/card/CardContent.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:card/CardDescription",
+          "name": "CardDescription",
+          "source": "packages/ui/src/components/card/CardDescription.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:card/CardFooter",
+          "name": "CardFooter",
+          "source": "packages/ui/src/components/card/CardFooter.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:card/CardHeader",
+          "name": "CardHeader",
+          "source": "packages/ui/src/components/card/CardHeader.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:card/CardTitle",
+          "name": "CardTitle",
+          "source": "packages/ui/src/components/card/CardTitle.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "cardVariants",
+          "source": "packages/ui/src/components/card/card-variants",
+          "sourceName": "cardVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/card.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/card.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:card-3d",
+      "slug": "card-3d",
+      "scope": "component-page",
+      "primaryMemberId": "component:card-3d/Card3D",
+      "members": [
+        {
+          "id": "component:card-3d/Card3D",
+          "name": "Card3D",
+          "source": "packages/ui/src/components/card-3d/Card3D.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "CARD3D_SHADOW_OFFSETS",
+          "source": "packages/ui/src/components/card-3d/card-3d-variants",
+          "sourceName": "CARD3D_SHADOW_OFFSETS",
+          "kind": "value"
+        },
+        {
+          "name": "DEFAULT_CARD3D_OFFSET_PX",
+          "source": "packages/ui/src/components/card-3d/card-3d-variants",
+          "sourceName": "DEFAULT_CARD3D_OFFSET_PX",
+          "kind": "value"
+        },
+        {
+          "name": "card3dVariants",
+          "source": "packages/ui/src/components/card-3d/card-3d-variants",
+          "sourceName": "card3dVariants",
+          "kind": "value"
+        },
+        {
+          "name": "card3dShadowClasses",
+          "source": "packages/ui/src/components/card-3d/card-3d-variants",
+          "sourceName": "card3dShadowClasses",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/card-3d.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/card-3d.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:card-window-header",
+      "slug": "card-window-header",
+      "scope": "component-page",
+      "primaryMemberId": "component:card-window-header/CardWindowHeader",
+      "members": [
+        {
+          "id": "component:card-window-header/CardWindowHeader",
+          "name": "CardWindowHeader",
+          "source": "packages/ui/src/components/card-window-header/CardWindowHeader.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "cardWindowHeaderVariants",
+          "source": "packages/ui/src/components/card-window-header/card-window-header-variants",
+          "sourceName": "cardWindowHeaderVariants",
+          "kind": "value"
+        },
+        {
+          "name": "cardWindowHeaderButtonVariants",
+          "source": "packages/ui/src/components/card-window-header/card-window-header-variants",
+          "sourceName": "cardWindowHeaderButtonVariants",
+          "kind": "value"
+        },
+        {
+          "name": "cardWindowHeaderLampVariants",
+          "source": "packages/ui/src/components/card-window-header/card-window-header-variants",
+          "sourceName": "cardWindowHeaderLampVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/card-window-header.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/card-window-header.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:carousel",
+      "slug": "carousel",
+      "scope": "component-page",
+      "primaryMemberId": "component:carousel/Carousel",
+      "members": [
+        {
+          "id": "component:carousel/Carousel",
+          "name": "Carousel",
+          "source": "packages/ui/src/components/carousel/Carousel.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:carousel/CarouselItem",
+          "name": "CarouselItem",
+          "source": "packages/ui/src/components/carousel/CarouselItem.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "dotActiveClasses",
+          "source": "packages/ui/src/components/carousel/carousel-shared",
+          "sourceName": "dotActiveClasses",
+          "kind": "value"
+        },
+        {
+          "name": "dotInactiveClasses",
+          "source": "packages/ui/src/components/carousel/carousel-shared",
+          "sourceName": "dotInactiveClasses",
+          "kind": "value"
+        },
+        {
+          "name": "prevButtonClasses",
+          "source": "packages/ui/src/components/carousel/carousel-shared",
+          "sourceName": "prevButtonClasses",
+          "kind": "value"
+        },
+        {
+          "name": "nextButtonClasses",
+          "source": "packages/ui/src/components/carousel/carousel-shared",
+          "sourceName": "nextButtonClasses",
+          "kind": "value"
+        },
+        {
+          "name": "carouselRootVariants",
+          "source": "packages/ui/src/components/carousel/carousel-variants",
+          "sourceName": "carouselRootVariants",
+          "kind": "value"
+        },
+        {
+          "name": "carouselButtonVariants",
+          "source": "packages/ui/src/components/carousel/carousel-variants",
+          "sourceName": "carouselButtonVariants",
+          "kind": "value"
+        },
+        {
+          "name": "CarouselThumbnails",
+          "source": "packages/ui/src/components/carousel/types",
+          "sourceName": "CarouselThumbnails",
+          "kind": "type"
+        },
+        {
+          "name": "AutoplayIndicator",
+          "source": "packages/ui/src/components/carousel/types",
+          "sourceName": "AutoplayIndicator",
+          "kind": "type"
+        },
+        {
+          "name": "ParallaxEffect",
+          "source": "packages/ui/src/components/carousel/types",
+          "sourceName": "ParallaxEffect",
+          "kind": "type"
+        },
+        {
+          "name": "CarouselProps",
+          "source": "packages/ui/src/components/carousel/types",
+          "sourceName": "CarouselProps",
+          "kind": "type"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/carousel.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/carousel.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:cascader",
+      "slug": "cascader",
+      "scope": "component-page",
+      "primaryMemberId": "component:cascader/Cascader",
+      "members": [
+        {
+          "id": "component:cascader/Cascader",
+          "name": "Cascader",
+          "source": "packages/ui/src/components/cascader/Cascader.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "CascaderValue",
+          "source": "packages/ui/src/components/cascader/cascader-types",
+          "sourceName": "CascaderValue",
+          "kind": "type"
+        },
+        {
+          "name": "CascaderOption",
+          "source": "packages/ui/src/components/cascader/cascader-types",
+          "sourceName": "CascaderOption",
+          "kind": "type"
+        },
+        {
+          "name": "cascaderTriggerVariants",
+          "source": "packages/ui/src/components/cascader/cascader-variants",
+          "sourceName": "cascaderTriggerVariants",
+          "kind": "value"
+        },
+        {
+          "name": "cascaderContentVariants",
+          "source": "packages/ui/src/components/cascader/cascader-variants",
+          "sourceName": "cascaderContentVariants",
+          "kind": "value"
+        },
+        {
+          "name": "cascaderItemVariants",
+          "source": "packages/ui/src/components/cascader/cascader-variants",
+          "sourceName": "cascaderItemVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/cascader.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/cascader.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:chat-bubble",
+      "slug": "chat-bubble",
+      "scope": "component-page",
+      "primaryMemberId": "component:chat-bubble/ChatBubble",
+      "members": [
+        {
+          "id": "component:chat-bubble/ChatBubble",
+          "name": "ChatBubble",
+          "source": "packages/ui/src/components/chat-bubble/ChatBubble.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:chat-bubble/ChatContainer",
+          "name": "ChatContainer",
+          "source": "packages/ui/src/components/chat-bubble/ChatContainer.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "chatBubbleVariants",
+          "source": "packages/ui/src/components/chat-bubble/chat-bubble-variants",
+          "sourceName": "chatBubbleVariants",
+          "kind": "value"
+        },
+        {
+          "name": "chatAvatarVariants",
+          "source": "packages/ui/src/components/chat-bubble/chat-bubble-variants",
+          "sourceName": "chatAvatarVariants",
+          "kind": "value"
+        },
+        {
+          "name": "MessageStatus",
+          "source": "packages/ui/src/components/chat-bubble/types",
+          "sourceName": "MessageStatus",
+          "kind": "type"
+        },
+        {
+          "name": "ChatMessage",
+          "source": "packages/ui/src/components/chat-bubble/types",
+          "sourceName": "ChatMessage",
+          "kind": "type"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/chat-bubble.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/chat-bubble.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:checkbox",
+      "slug": "checkbox",
+      "scope": "component-page",
+      "primaryMemberId": "component:checkbox/Checkbox",
+      "members": [
+        {
+          "id": "component:checkbox/Checkbox",
+          "name": "Checkbox",
+          "source": "packages/ui/src/components/checkbox/Checkbox.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "checkboxVariants",
+          "source": "packages/ui/src/components/checkbox/checkbox-variants",
+          "sourceName": "checkboxVariants",
+          "kind": "value"
+        },
+        {
+          "name": "checkboxIndicatorVariants",
+          "source": "packages/ui/src/components/checkbox/checkbox-variants",
+          "sourceName": "checkboxIndicatorVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/checkbox.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/checkbox.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:code-block",
+      "slug": "code-block",
+      "scope": "component-page",
+      "primaryMemberId": "component:code-block/CodeBlock",
+      "members": [
+        {
+          "id": "component:code-block/CodeBlock",
+          "name": "CodeBlock",
+          "source": "packages/ui/src/components/code-block/CodeBlock.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "CODE_BLOCK_LINE_HEIGHT_REM",
+          "source": "packages/ui/src/components/code-block/code-block-variants",
+          "sourceName": "CODE_BLOCK_LINE_HEIGHT_REM",
+          "kind": "value"
+        },
+        {
+          "name": "codeBlockRootVariants",
+          "source": "packages/ui/src/components/code-block/code-block-variants",
+          "sourceName": "codeBlockRootVariants",
+          "kind": "value"
+        },
+        {
+          "name": "codeBlockHeaderVariants",
+          "source": "packages/ui/src/components/code-block/code-block-variants",
+          "sourceName": "codeBlockHeaderVariants",
+          "kind": "value"
+        },
+        {
+          "name": "codeBlockLanguageVariants",
+          "source": "packages/ui/src/components/code-block/code-block-variants",
+          "sourceName": "codeBlockLanguageVariants",
+          "kind": "value"
+        },
+        {
+          "name": "codeBlockBodyVariants",
+          "source": "packages/ui/src/components/code-block/code-block-variants",
+          "sourceName": "codeBlockBodyVariants",
+          "kind": "value"
+        },
+        {
+          "name": "codeBlockLineNumbersVariants",
+          "source": "packages/ui/src/components/code-block/code-block-variants",
+          "sourceName": "codeBlockLineNumbersVariants",
+          "kind": "value"
+        },
+        {
+          "name": "codeBlockCopyButtonVariants",
+          "source": "packages/ui/src/components/code-block/code-block-variants",
+          "sourceName": "codeBlockCopyButtonVariants",
+          "kind": "value"
+        },
+        {
+          "name": "resolveLanguage",
+          "source": "packages/ui/src/components/code-block/prism-languages",
+          "sourceName": "resolveLanguage",
+          "kind": "value"
+        },
+        {
+          "name": "loadLanguage",
+          "source": "packages/ui/src/components/code-block/prism-languages",
+          "sourceName": "loadLanguage",
+          "kind": "value"
+        },
+        {
+          "name": "isLanguageLoaded",
+          "source": "packages/ui/src/components/code-block/prism-languages",
+          "sourceName": "isLanguageLoaded",
+          "kind": "value"
+        },
+        {
+          "name": "getGrammar",
+          "source": "packages/ui/src/components/code-block/prism-languages",
+          "sourceName": "getGrammar",
+          "kind": "value"
+        },
+        {
+          "name": "Prism",
+          "source": "packages/ui/src/components/code-block/prism-languages",
+          "sourceName": "Prism",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/code-block.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/code-block.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:color-mode-switcher",
+      "slug": "color-mode-switcher",
+      "scope": "component-page",
+      "primaryMemberId": "component:color-mode-switcher/ColorModeSwitcher",
+      "members": [
+        {
+          "id": "component:color-mode-switcher/ColorModeSwitcher",
+          "name": "ColorModeSwitcher",
+          "source": "packages/ui/src/components/color-mode-switcher/ColorModeSwitcher.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/color-mode-switcher.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/color-mode-switcher.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:color-picker",
+      "slug": "color-picker",
+      "scope": "component-page",
+      "primaryMemberId": "component:color-picker/ColorPicker",
+      "members": [
+        {
+          "id": "component:color-picker/ColorPicker",
+          "name": "ColorPicker",
+          "source": "packages/ui/src/components/color-picker/ColorPicker.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:color-picker/ColorPickerHistory",
+          "name": "ColorPickerHistory",
+          "source": "packages/ui/src/components/color-picker/ColorPickerHistory.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:color-picker/ColorPickerInput",
+          "name": "ColorPickerInput",
+          "source": "packages/ui/src/components/color-picker/ColorPickerInput.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:color-picker/ColorPickerPanel",
+          "name": "ColorPickerPanel",
+          "source": "packages/ui/src/components/color-picker/ColorPickerPanel.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:color-picker/ColorPickerSwatch",
+          "name": "ColorPickerSwatch",
+          "source": "packages/ui/src/components/color-picker/ColorPickerSwatch.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "colorPickerTriggerVariants",
+          "source": "packages/ui/src/components/color-picker/color-picker-variants",
+          "sourceName": "colorPickerTriggerVariants",
+          "kind": "value"
+        },
+        {
+          "name": "colorPickerSwatchVariants",
+          "source": "packages/ui/src/components/color-picker/color-picker-variants",
+          "sourceName": "colorPickerSwatchVariants",
+          "kind": "value"
+        },
+        {
+          "name": "colorPickerPanelVariants",
+          "source": "packages/ui/src/components/color-picker/color-picker-variants",
+          "sourceName": "colorPickerPanelVariants",
+          "kind": "value"
+        },
+        {
+          "name": "colorPickerInputVariants",
+          "source": "packages/ui/src/components/color-picker/color-picker-variants",
+          "sourceName": "colorPickerInputVariants",
+          "kind": "value"
+        },
+        {
+          "name": "ColorPickerSize",
+          "source": "packages/ui/src/components/color-picker/types",
+          "sourceName": "ColorPickerSize",
+          "kind": "type"
+        },
+        {
+          "name": "ColorPickerFormat",
+          "source": "packages/ui/src/components/color-picker/types",
+          "sourceName": "ColorPickerFormat",
+          "kind": "type"
+        },
+        {
+          "name": "ColorPickerProps",
+          "source": "packages/ui/src/components/color-picker/types",
+          "sourceName": "ColorPickerProps",
+          "kind": "type"
+        },
+        {
+          "name": "ColorPickerEmits",
+          "source": "packages/ui/src/components/color-picker/types",
+          "sourceName": "ColorPickerEmits",
+          "kind": "type"
+        },
+        {
+          "name": "normalizePresets",
+          "source": "packages/ui/src/components/color-picker/types",
+          "sourceName": "normalizePresets",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/color-picker.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/color-picker.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:combobox",
+      "slug": "combobox",
+      "scope": "component-page",
+      "primaryMemberId": "component:combobox/Combobox",
+      "members": [
+        {
+          "id": "component:combobox/Combobox",
+          "name": "Combobox",
+          "source": "packages/ui/src/components/combobox/Combobox.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "ComboboxOption",
+          "source": "packages/ui/src/components/combobox/combobox-types",
+          "sourceName": "ComboboxOption",
+          "kind": "type"
+        },
+        {
+          "name": "comboboxTriggerVariants",
+          "source": "packages/ui/src/components/combobox/combobox-variants",
+          "sourceName": "comboboxTriggerVariants",
+          "kind": "value"
+        },
+        {
+          "name": "comboboxContentVariants",
+          "source": "packages/ui/src/components/combobox/combobox-variants",
+          "sourceName": "comboboxContentVariants",
+          "kind": "value"
+        },
+        {
+          "name": "comboboxCheckboxVariants",
+          "source": "packages/ui/src/components/combobox/combobox-variants",
+          "sourceName": "comboboxCheckboxVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/combobox.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/combobox.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:command",
+      "slug": "command",
+      "scope": "component-page",
+      "primaryMemberId": "component:command/Command",
+      "members": [
+        {
+          "id": "component:command/Command",
+          "name": "Command",
+          "source": "packages/ui/src/components/command/Command.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:command/CommandDialog",
+          "name": "CommandDialog",
+          "source": "packages/ui/src/components/command/CommandDialog.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:command/CommandEmpty",
+          "name": "CommandEmpty",
+          "source": "packages/ui/src/components/command/CommandEmpty.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:command/CommandGroup",
+          "name": "CommandGroup",
+          "source": "packages/ui/src/components/command/CommandGroup.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:command/CommandInput",
+          "name": "CommandInput",
+          "source": "packages/ui/src/components/command/CommandInput.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:command/CommandItem",
+          "name": "CommandItem",
+          "source": "packages/ui/src/components/command/CommandItem.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:command/CommandList",
+          "name": "CommandList",
+          "source": "packages/ui/src/components/command/CommandList.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:command/CommandSeparator",
+          "name": "CommandSeparator",
+          "source": "packages/ui/src/components/command/CommandSeparator.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:command/CommandShortcut",
+          "name": "CommandShortcut",
+          "source": "packages/ui/src/components/command/CommandShortcut.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "CommandRootContext",
+          "source": "packages/ui/src/components/command/command-context",
+          "sourceName": "CommandRootContext",
+          "kind": "type"
+        },
+        {
+          "name": "CommandGroupContext",
+          "source": "packages/ui/src/components/command/command-context",
+          "sourceName": "CommandGroupContext",
+          "kind": "type"
+        },
+        {
+          "name": "commandInputWrapperVariants",
+          "source": "packages/ui/src/components/command/command-variants",
+          "sourceName": "commandInputWrapperVariants",
+          "kind": "value"
+        },
+        {
+          "name": "commandItemVariants",
+          "source": "packages/ui/src/components/command/command-variants",
+          "sourceName": "commandItemVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/command.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/command.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:cookie-consent",
+      "slug": "cookie-consent",
+      "scope": "block",
+      "primaryMemberId": "component:cookie-consent/CookieConsent",
+      "members": [
+        {
+          "id": "component:cookie-consent/CookieConsent",
+          "name": "CookieConsent",
+          "source": "packages/ui/src/components/cookie-consent/CookieConsent.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [],
+      "pages": []
+    },
+    {
+      "id": "component:copy-to-clipboard",
+      "slug": "copy-to-clipboard",
+      "scope": "component-page",
+      "primaryMemberId": "component:copy-to-clipboard/CopyToClipboard",
+      "members": [
+        {
+          "id": "component:copy-to-clipboard/CopyToClipboard",
+          "name": "CopyToClipboard",
+          "source": "packages/ui/src/components/copy-to-clipboard/CopyToClipboard.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "copyToClipboardVariants",
+          "source": "packages/ui/src/components/copy-to-clipboard/copy-to-clipboard-variants",
+          "sourceName": "copyToClipboardVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/copy-to-clipboard.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/copy-to-clipboard.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:countdown",
+      "slug": "countdown",
+      "scope": "component-page",
+      "primaryMemberId": "component:countdown/Countdown",
+      "members": [
+        {
+          "id": "component:countdown/Countdown",
+          "name": "Countdown",
+          "source": "packages/ui/src/components/countdown/Countdown.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "parseCountdownTarget",
+          "source": "packages/ui/src/components/countdown/countdown-format",
+          "sourceName": "parseCountdownTarget",
+          "kind": "value"
+        },
+        {
+          "name": "formatCountdown",
+          "source": "packages/ui/src/components/countdown/countdown-format",
+          "sourceName": "formatCountdown",
+          "kind": "value"
+        },
+        {
+          "name": "countdownVariants",
+          "source": "packages/ui/src/components/countdown/countdown-variants",
+          "sourceName": "countdownVariants",
+          "kind": "value"
+        },
+        {
+          "name": "CountdownVariantProps",
+          "source": "packages/ui/src/components/countdown/types",
+          "sourceName": "CountdownVariantProps",
+          "kind": "type"
+        },
+        {
+          "name": "CountdownValue",
+          "source": "packages/ui/src/components/countdown/types",
+          "sourceName": "CountdownValue",
+          "kind": "type"
+        },
+        {
+          "name": "CountdownProps",
+          "source": "packages/ui/src/components/countdown/types",
+          "sourceName": "CountdownProps",
+          "kind": "type"
+        },
+        {
+          "name": "CountdownEmits",
+          "source": "packages/ui/src/components/countdown/types",
+          "sourceName": "CountdownEmits",
+          "kind": "type"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/countdown.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/countdown.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:counter",
+      "slug": "counter",
+      "scope": "component-page",
+      "primaryMemberId": "component:counter/Counter",
+      "members": [
+        {
+          "id": "component:counter/Counter",
+          "name": "Counter",
+          "source": "packages/ui/src/components/counter/Counter.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "counterVariants",
+          "source": "packages/ui/src/components/counter/counter-variants",
+          "sourceName": "counterVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/counter.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/counter.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:dashboard-shell",
+      "slug": "dashboard-shell",
+      "scope": "block",
+      "primaryMemberId": "component:dashboard-shell/DashboardShell",
+      "members": [
+        {
+          "id": "component:dashboard-shell/DashboardShell",
+          "name": "DashboardShell",
+          "source": "packages/ui/src/components/dashboard-shell/DashboardShell.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "dashboardShellVariants",
+          "source": "packages/ui/src/components/dashboard-shell/dashboard-shell-variants",
+          "sourceName": "dashboardShellVariants",
+          "kind": "value"
+        },
+        {
+          "name": "dashboardSidebarVariants",
+          "source": "packages/ui/src/components/dashboard-shell/dashboard-shell-variants",
+          "sourceName": "dashboardSidebarVariants",
+          "kind": "value"
+        },
+        {
+          "name": "dashboardHeaderVariants",
+          "source": "packages/ui/src/components/dashboard-shell/dashboard-shell-variants",
+          "sourceName": "dashboardHeaderVariants",
+          "kind": "value"
+        },
+        {
+          "name": "dashboardMainVariants",
+          "source": "packages/ui/src/components/dashboard-shell/dashboard-shell-variants",
+          "sourceName": "dashboardMainVariants",
+          "kind": "value"
+        },
+        {
+          "name": "DashboardSidebarVariants",
+          "source": "packages/ui/src/components/dashboard-shell/dashboard-shell-variants",
+          "sourceName": "DashboardSidebarVariants",
+          "kind": "type"
+        },
+        {
+          "name": "DashboardSidebarVariantProps",
+          "source": "packages/ui/src/components/dashboard-shell/dashboard-shell-variants",
+          "sourceName": "DashboardSidebarVariantProps",
+          "kind": "type"
+        },
+        {
+          "name": "DashboardShellVariants",
+          "source": "packages/ui/src/components/dashboard-shell/dashboard-shell-variants",
+          "sourceName": "DashboardShellVariants",
+          "kind": "type"
+        }
+      ],
+      "pages": []
+    },
+    {
+      "id": "component:data-table",
+      "slug": "data-table",
+      "scope": "component-page",
+      "primaryMemberId": "component:data-table/DataTable",
+      "members": [
+        {
+          "id": "component:data-table/DataTable",
+          "name": "DataTable",
+          "source": "packages/ui/src/components/data-table/DataTable.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:data-table/DataTableColumnFilter",
+          "name": "DataTableColumnFilter",
+          "source": "packages/ui/src/components/data-table/DataTableColumnFilter.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "dataTableRootVariants",
+          "source": "packages/ui/src/components/data-table/data-table-variants",
+          "sourceName": "dataTableRootVariants",
+          "kind": "value"
+        },
+        {
+          "name": "dataTableHeaderVariants",
+          "source": "packages/ui/src/components/data-table/data-table-variants",
+          "sourceName": "dataTableHeaderVariants",
+          "kind": "value"
+        },
+        {
+          "name": "dataTableHeadVariants",
+          "source": "packages/ui/src/components/data-table/data-table-variants",
+          "sourceName": "dataTableHeadVariants",
+          "kind": "value"
+        },
+        {
+          "name": "dataTableRowVariants",
+          "source": "packages/ui/src/components/data-table/data-table-variants",
+          "sourceName": "dataTableRowVariants",
+          "kind": "value"
+        },
+        {
+          "name": "dataTableCellVariants",
+          "source": "packages/ui/src/components/data-table/data-table-variants",
+          "sourceName": "dataTableCellVariants",
+          "kind": "value"
+        },
+        {
+          "name": "dataTableFixedCellVariants",
+          "source": "packages/ui/src/components/data-table/data-table-variants",
+          "sourceName": "dataTableFixedCellVariants",
+          "kind": "value"
+        },
+        {
+          "name": "dataTableToolbarVariants",
+          "source": "packages/ui/src/components/data-table/data-table-variants",
+          "sourceName": "dataTableToolbarVariants",
+          "kind": "value"
+        },
+        {
+          "name": "dataTablePaginationVariants",
+          "source": "packages/ui/src/components/data-table/data-table-variants",
+          "sourceName": "dataTablePaginationVariants",
+          "kind": "value"
+        },
+        {
+          "name": "dataTableEmptyVariants",
+          "source": "packages/ui/src/components/data-table/data-table-variants",
+          "sourceName": "dataTableEmptyVariants",
+          "kind": "value"
+        },
+        {
+          "name": "dataTableLoadingVariants",
+          "source": "packages/ui/src/components/data-table/data-table-variants",
+          "sourceName": "dataTableLoadingVariants",
+          "kind": "value"
+        },
+        {
+          "name": "DataTableColumnHeaderContext",
+          "source": "packages/ui/src/components/data-table/types",
+          "sourceName": "DataTableColumnHeaderContext",
+          "kind": "type"
+        },
+        {
+          "name": "DataTableVirtualScroll",
+          "source": "packages/ui/src/components/data-table/types",
+          "sourceName": "DataTableVirtualScroll",
+          "kind": "type"
+        },
+        {
+          "name": "DataTableColumn",
+          "source": "packages/ui/src/components/data-table/types",
+          "sourceName": "DataTableColumn",
+          "kind": "type"
+        },
+        {
+          "name": "DataTableSpanMethodParams",
+          "source": "packages/ui/src/components/data-table/types",
+          "sourceName": "DataTableSpanMethodParams",
+          "kind": "type"
+        },
+        {
+          "name": "DataTableProps",
+          "source": "packages/ui/src/components/data-table/types",
+          "sourceName": "DataTableProps",
+          "kind": "type"
+        },
+        {
+          "name": "DataTableSortState",
+          "source": "packages/ui/src/components/data-table/types",
+          "sourceName": "DataTableSortState",
+          "kind": "type"
+        },
+        {
+          "name": "DataTableFilterValue",
+          "source": "packages/ui/src/components/data-table/types",
+          "sourceName": "DataTableFilterValue",
+          "kind": "type"
+        },
+        {
+          "name": "DataTableFilterState",
+          "source": "packages/ui/src/components/data-table/types",
+          "sourceName": "DataTableFilterState",
+          "kind": "type"
+        },
+        {
+          "name": "DataTablePaginationState",
+          "source": "packages/ui/src/components/data-table/types",
+          "sourceName": "DataTablePaginationState",
+          "kind": "type"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/data-table.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/data-table.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:date-picker",
+      "slug": "date-picker",
+      "scope": "component-page",
+      "primaryMemberId": "component:date-picker/DatePicker",
+      "members": [
+        {
+          "id": "component:date-picker/DatePicker",
+          "name": "DatePicker",
+          "source": "packages/ui/src/components/date-picker/DatePicker.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:date-picker/DatePickerPanel",
+          "name": "DatePickerPanel",
+          "source": "packages/ui/src/components/date-picker/DatePickerPanel.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:date-picker/DatePickerPanelFooter",
+          "name": "DatePickerPanelFooter",
+          "source": "packages/ui/src/components/date-picker/DatePickerPanelFooter.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:date-picker/DatePickerRange",
+          "name": "DatePickerRange",
+          "source": "packages/ui/src/components/date-picker/DatePickerRange.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:date-picker/DatePickerRangePanel",
+          "name": "DatePickerRangePanel",
+          "source": "packages/ui/src/components/date-picker/DatePickerRangePanel.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:date-picker/DateTimePicker",
+          "name": "DateTimePicker",
+          "source": "packages/ui/src/components/date-picker/DateTimePicker.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:date-picker/DateTimePickerPanel",
+          "name": "DateTimePickerPanel",
+          "source": "packages/ui/src/components/date-picker/DateTimePickerPanel.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:date-picker/MonthPicker",
+          "name": "MonthPicker",
+          "source": "packages/ui/src/components/date-picker/MonthPicker.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:date-picker/MonthPickerPanel",
+          "name": "MonthPickerPanel",
+          "source": "packages/ui/src/components/date-picker/MonthPickerPanel.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:date-picker/TimePicker",
+          "name": "TimePicker",
+          "source": "packages/ui/src/components/date-picker/TimePicker.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:date-picker/WeekPicker",
+          "name": "WeekPicker",
+          "source": "packages/ui/src/components/date-picker/WeekPicker.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:date-picker/WeekPickerPanel",
+          "name": "WeekPickerPanel",
+          "source": "packages/ui/src/components/date-picker/WeekPickerPanel.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:date-picker/YearPicker",
+          "name": "YearPicker",
+          "source": "packages/ui/src/components/date-picker/YearPicker.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:date-picker/YearPickerPanel",
+          "name": "YearPickerPanel",
+          "source": "packages/ui/src/components/date-picker/YearPickerPanel.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "resolveShortcutValue",
+          "source": "packages/ui/src/components/date-picker/date-picker-utils",
+          "sourceName": "resolveShortcutValue",
+          "kind": "value"
+        },
+        {
+          "name": "resolveRangeShortcutValue",
+          "source": "packages/ui/src/components/date-picker/date-picker-utils",
+          "sourceName": "resolveRangeShortcutValue",
+          "kind": "value"
+        },
+        {
+          "name": "datePickerTriggerVariants",
+          "source": "packages/ui/src/components/date-picker/date-picker-variants",
+          "sourceName": "datePickerTriggerVariants",
+          "kind": "value"
+        },
+        {
+          "name": "datePickerPanelVariants",
+          "source": "packages/ui/src/components/date-picker/date-picker-variants",
+          "sourceName": "datePickerPanelVariants",
+          "kind": "value"
+        },
+        {
+          "name": "datePickerShortcutVariants",
+          "source": "packages/ui/src/components/date-picker/date-picker-variants",
+          "sourceName": "datePickerShortcutVariants",
+          "kind": "value"
+        },
+        {
+          "name": "datePickerFooterVariants",
+          "source": "packages/ui/src/components/date-picker/date-picker-variants",
+          "sourceName": "datePickerFooterVariants",
+          "kind": "value"
+        },
+        {
+          "name": "timePickerPanelVariants",
+          "source": "packages/ui/src/components/date-picker/date-picker-variants",
+          "sourceName": "timePickerPanelVariants",
+          "kind": "value"
+        },
+        {
+          "name": "timePickerTriggerVariants",
+          "source": "packages/ui/src/components/date-picker/date-picker-variants",
+          "sourceName": "timePickerTriggerVariants",
+          "kind": "value"
+        },
+        {
+          "name": "DatePickerSize",
+          "source": "packages/ui/src/components/date-picker/types",
+          "sourceName": "DatePickerSize",
+          "kind": "type"
+        },
+        {
+          "name": "DatePickerVariant",
+          "source": "packages/ui/src/components/date-picker/types",
+          "sourceName": "DatePickerVariant",
+          "kind": "type"
+        },
+        {
+          "name": "DatePickerBaseProps",
+          "source": "packages/ui/src/components/date-picker/types",
+          "sourceName": "DatePickerBaseProps",
+          "kind": "type"
+        },
+        {
+          "name": "DatePickerShortcut",
+          "source": "packages/ui/src/components/date-picker/types",
+          "sourceName": "DatePickerShortcut",
+          "kind": "type"
+        },
+        {
+          "name": "DatePickerProps",
+          "source": "packages/ui/src/components/date-picker/types",
+          "sourceName": "DatePickerProps",
+          "kind": "type"
+        },
+        {
+          "name": "DatePickerEmits",
+          "source": "packages/ui/src/components/date-picker/types",
+          "sourceName": "DatePickerEmits",
+          "kind": "type"
+        },
+        {
+          "name": "DateRange",
+          "source": "packages/ui/src/components/date-picker/types",
+          "sourceName": "DateRange",
+          "kind": "type"
+        },
+        {
+          "name": "DatePickerRangeShortcut",
+          "source": "packages/ui/src/components/date-picker/types",
+          "sourceName": "DatePickerRangeShortcut",
+          "kind": "type"
+        },
+        {
+          "name": "DatePickerRangeProps",
+          "source": "packages/ui/src/components/date-picker/types",
+          "sourceName": "DatePickerRangeProps",
+          "kind": "type"
+        },
+        {
+          "name": "DatePickerRangeEmits",
+          "source": "packages/ui/src/components/date-picker/types",
+          "sourceName": "DatePickerRangeEmits",
+          "kind": "type"
+        },
+        {
+          "name": "DateTimePickerProps",
+          "source": "packages/ui/src/components/date-picker/types",
+          "sourceName": "DateTimePickerProps",
+          "kind": "type"
+        },
+        {
+          "name": "DateTimePickerEmits",
+          "source": "packages/ui/src/components/date-picker/types",
+          "sourceName": "DateTimePickerEmits",
+          "kind": "type"
+        },
+        {
+          "name": "WeekPickerProps",
+          "source": "packages/ui/src/components/date-picker/types",
+          "sourceName": "WeekPickerProps",
+          "kind": "type"
+        },
+        {
+          "name": "WeekPickerEmits",
+          "source": "packages/ui/src/components/date-picker/types",
+          "sourceName": "WeekPickerEmits",
+          "kind": "type"
+        },
+        {
+          "name": "MonthPickerProps",
+          "source": "packages/ui/src/components/date-picker/types",
+          "sourceName": "MonthPickerProps",
+          "kind": "type"
+        },
+        {
+          "name": "MonthPickerEmits",
+          "source": "packages/ui/src/components/date-picker/types",
+          "sourceName": "MonthPickerEmits",
+          "kind": "type"
+        },
+        {
+          "name": "YearPickerProps",
+          "source": "packages/ui/src/components/date-picker/types",
+          "sourceName": "YearPickerProps",
+          "kind": "type"
+        },
+        {
+          "name": "YearPickerEmits",
+          "source": "packages/ui/src/components/date-picker/types",
+          "sourceName": "YearPickerEmits",
+          "kind": "type"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/date-picker.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/date-picker.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:descriptions",
+      "slug": "descriptions",
+      "scope": "component-page",
+      "primaryMemberId": "component:descriptions/Descriptions",
+      "members": [
+        {
+          "id": "component:descriptions/Descriptions",
+          "name": "Descriptions",
+          "source": "packages/ui/src/components/descriptions/Descriptions.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:descriptions/DescriptionsItem",
+          "name": "DescriptionsItem",
+          "source": "packages/ui/src/components/descriptions/DescriptionsItem.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "descriptionsBorderKey",
+          "source": "packages/ui/src/components/descriptions/descriptions-key",
+          "sourceName": "descriptionsBorderKey",
+          "kind": "value"
+        },
+        {
+          "name": "descriptionsDirectionKey",
+          "source": "packages/ui/src/components/descriptions/descriptions-key",
+          "sourceName": "descriptionsDirectionKey",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/descriptions.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/descriptions.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:dialog",
+      "slug": "dialog",
+      "scope": "component-page",
+      "primaryMemberId": "component:dialog/DialogContent",
+      "members": [
+        {
+          "id": "component:dialog/DialogContent",
+          "name": "DialogContent",
+          "source": "packages/ui/src/components/dialog/DialogContent.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:dialog/DialogDescription",
+          "name": "DialogDescription",
+          "source": "packages/ui/src/components/dialog/DialogDescription.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:dialog/DialogEnhanced",
+          "name": "DialogEnhanced",
+          "source": "packages/ui/src/components/dialog/DialogEnhanced.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:dialog/DialogFooter",
+          "name": "DialogFooter",
+          "source": "packages/ui/src/components/dialog/DialogFooter.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:dialog/DialogHeader",
+          "name": "DialogHeader",
+          "source": "packages/ui/src/components/dialog/DialogHeader.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:dialog/DialogOverlay",
+          "name": "DialogOverlay",
+          "source": "packages/ui/src/components/dialog/DialogOverlay.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:dialog/DialogTitle",
+          "name": "DialogTitle",
+          "source": "packages/ui/src/components/dialog/DialogTitle.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "dialogContentVariants",
+          "source": "packages/ui/src/components/dialog/dialog-variants",
+          "sourceName": "dialogContentVariants",
+          "kind": "value"
+        },
+        {
+          "name": "dialogCloseVariants",
+          "source": "packages/ui/src/components/dialog/dialog-variants",
+          "sourceName": "dialogCloseVariants",
+          "kind": "value"
+        },
+        {
+          "name": "dialogViewportClasses",
+          "source": "packages/ui/src/components/dialog/dialog-variants",
+          "sourceName": "dialogViewportClasses",
+          "kind": "value"
+        },
+        {
+          "name": "RenderableContent",
+          "source": "packages/ui/src/components/dialog/functional",
+          "sourceName": "RenderableContent",
+          "kind": "type"
+        },
+        {
+          "name": "DialogSize",
+          "source": "packages/ui/src/components/dialog/functional",
+          "sourceName": "DialogSize",
+          "kind": "type"
+        },
+        {
+          "name": "DialogAction",
+          "source": "packages/ui/src/components/dialog/functional",
+          "sourceName": "DialogAction",
+          "kind": "type"
+        },
+        {
+          "name": "DialogResult",
+          "source": "packages/ui/src/components/dialog/functional",
+          "sourceName": "DialogResult",
+          "kind": "type"
+        },
+        {
+          "name": "ShowDialogOptions",
+          "source": "packages/ui/src/components/dialog/functional",
+          "sourceName": "ShowDialogOptions",
+          "kind": "type"
+        },
+        {
+          "name": "DialogInstance",
+          "source": "packages/ui/src/components/dialog/functional",
+          "sourceName": "DialogInstance",
+          "kind": "type"
+        },
+        {
+          "name": "showDialog",
+          "source": "packages/ui/src/components/dialog/functional",
+          "sourceName": "showDialog",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/dialog.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/dialog.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:dropdown-menu",
+      "slug": "dropdown-menu",
+      "scope": "component-page",
+      "primaryMemberId": "component:dropdown-menu/DropdownMenuContent",
+      "members": [
+        {
+          "id": "component:dropdown-menu/DropdownMenuContent",
+          "name": "DropdownMenuContent",
+          "source": "packages/ui/src/components/dropdown-menu/DropdownMenuContent.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:dropdown-menu/DropdownMenuCheckboxItem",
+          "name": "DropdownMenuCheckboxItem",
+          "source": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:dropdown-menu/DropdownMenuItem",
+          "name": "DropdownMenuItem",
+          "source": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:dropdown-menu/DropdownMenuLabel",
+          "name": "DropdownMenuLabel",
+          "source": "packages/ui/src/components/dropdown-menu/DropdownMenuLabel.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:dropdown-menu/DropdownMenuRadioItem",
+          "name": "DropdownMenuRadioItem",
+          "source": "packages/ui/src/components/dropdown-menu/DropdownMenuRadioItem.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:dropdown-menu/DropdownMenuSeparator",
+          "name": "DropdownMenuSeparator",
+          "source": "packages/ui/src/components/dropdown-menu/DropdownMenuSeparator.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:dropdown-menu/DropdownMenuShortcut",
+          "name": "DropdownMenuShortcut",
+          "source": "packages/ui/src/components/dropdown-menu/DropdownMenuShortcut.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:dropdown-menu/DropdownMenuSubContent",
+          "name": "DropdownMenuSubContent",
+          "source": "packages/ui/src/components/dropdown-menu/DropdownMenuSubContent.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:dropdown-menu/DropdownMenuSubTrigger",
+          "name": "DropdownMenuSubTrigger",
+          "source": "packages/ui/src/components/dropdown-menu/DropdownMenuSubTrigger.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "dropdownMenuContentVariants",
+          "source": "packages/ui/src/components/dropdown-menu/dropdown-menu-variants",
+          "sourceName": "dropdownMenuContentVariants",
+          "kind": "value"
+        },
+        {
+          "name": "dropdownMenuSubContentVariants",
+          "source": "packages/ui/src/components/dropdown-menu/dropdown-menu-variants",
+          "sourceName": "dropdownMenuSubContentVariants",
+          "kind": "value"
+        },
+        {
+          "name": "dropdownMenuItemVariants",
+          "source": "packages/ui/src/components/dropdown-menu/dropdown-menu-variants",
+          "sourceName": "dropdownMenuItemVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/dropdown-menu.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/dropdown-menu.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:feedback-form",
+      "slug": "feedback-form",
+      "scope": "block",
+      "primaryMemberId": "component:feedback-form/FeedbackForm",
+      "members": [
+        {
+          "id": "component:feedback-form/FeedbackForm",
+          "name": "FeedbackForm",
+          "source": "packages/ui/src/components/feedback-form/FeedbackForm.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [],
+      "pages": []
+    },
+    {
+      "id": "component:footer-section",
+      "slug": "footer-section",
+      "scope": "block",
+      "primaryMemberId": "component:footer-section/FooterSection",
+      "members": [
+        {
+          "id": "component:footer-section/FooterSection",
+          "name": "FooterSection",
+          "source": "packages/ui/src/components/footer-section/FooterSection.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "FooterLink",
+          "source": "packages/ui/src/components/footer-section/types",
+          "sourceName": "FooterLink",
+          "kind": "type"
+        },
+        {
+          "name": "FooterLinkGroup",
+          "source": "packages/ui/src/components/footer-section/types",
+          "sourceName": "FooterLinkGroup",
+          "kind": "type"
+        }
+      ],
+      "pages": []
+    },
+    {
+      "id": "component:form",
+      "slug": "form",
+      "scope": "component-page",
+      "primaryMemberId": "component:form/Form",
+      "members": [
+        {
+          "id": "component:form/Form",
+          "name": "Form",
+          "source": "packages/ui/src/components/form/Form.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:form/FormConditional",
+          "name": "FormConditional",
+          "source": "packages/ui/src/components/form/FormConditional.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:form/FormControl",
+          "name": "FormControl",
+          "source": "packages/ui/src/components/form/FormControl.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:form/FormDescription",
+          "name": "FormDescription",
+          "source": "packages/ui/src/components/form/FormDescription.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:form/FormField",
+          "name": "FormField",
+          "source": "packages/ui/src/components/form/FormField.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:form/FormItem",
+          "name": "FormItem",
+          "source": "packages/ui/src/components/form/FormItem.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:form/FormLabel",
+          "name": "FormLabel",
+          "source": "packages/ui/src/components/form/FormLabel.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:form/FormMessage",
+          "name": "FormMessage",
+          "source": "packages/ui/src/components/form/FormMessage.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:form/FormWizard",
+          "name": "FormWizard",
+          "source": "packages/ui/src/components/form/FormWizard.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "FormFieldContext",
+          "source": "packages/ui/src/components/form/form-context",
+          "sourceName": "FormFieldContext",
+          "kind": "type"
+        },
+        {
+          "name": "FormItemContext",
+          "source": "packages/ui/src/components/form/form-context",
+          "sourceName": "FormItemContext",
+          "kind": "type"
+        },
+        {
+          "name": "FormLayoutContext",
+          "source": "packages/ui/src/components/form/form-context",
+          "sourceName": "FormLayoutContext",
+          "kind": "type"
+        },
+        {
+          "name": "formContextKey",
+          "source": "packages/ui/src/components/form/form-context",
+          "sourceName": "formContextKey",
+          "kind": "value"
+        },
+        {
+          "name": "formFieldKey",
+          "source": "packages/ui/src/components/form/form-context",
+          "sourceName": "formFieldKey",
+          "kind": "value"
+        },
+        {
+          "name": "formItemKey",
+          "source": "packages/ui/src/components/form/form-context",
+          "sourceName": "formItemKey",
+          "kind": "value"
+        },
+        {
+          "name": "formWizardContextKey",
+          "source": "packages/ui/src/components/form/form-context",
+          "sourceName": "formWizardContextKey",
+          "kind": "value"
+        },
+        {
+          "name": "FormStep",
+          "source": "packages/ui/src/components/form/form-wizard-types",
+          "sourceName": "FormStep",
+          "kind": "type"
+        },
+        {
+          "name": "ValidationResult",
+          "source": "packages/ui/src/components/form/form-wizard-types",
+          "sourceName": "ValidationResult",
+          "kind": "type"
+        },
+        {
+          "name": "FormWizardProps",
+          "source": "packages/ui/src/components/form/form-wizard-types",
+          "sourceName": "FormWizardProps",
+          "kind": "type"
+        },
+        {
+          "name": "FormWizardContext",
+          "source": "packages/ui/src/components/form/form-wizard-types",
+          "sourceName": "FormWizardContext",
+          "kind": "type"
+        },
+        {
+          "name": "useFormWizard",
+          "source": "packages/ui/src/components/form/form-wizard-utils",
+          "sourceName": "useFormWizard",
+          "kind": "value"
+        },
+        {
+          "name": "formWizardRootVariants",
+          "source": "packages/ui/src/components/form/form-wizard-variants",
+          "sourceName": "formWizardRootVariants",
+          "kind": "value"
+        },
+        {
+          "name": "formWizardNavigationVariants",
+          "source": "packages/ui/src/components/form/form-wizard-variants",
+          "sourceName": "formWizardNavigationVariants",
+          "kind": "value"
+        },
+        {
+          "name": "formWizardStepInfoVariants",
+          "source": "packages/ui/src/components/form/form-wizard-variants",
+          "sourceName": "formWizardStepInfoVariants",
+          "kind": "value"
+        },
+        {
+          "name": "formWizardStepCounterVariants",
+          "source": "packages/ui/src/components/form/form-wizard-variants",
+          "sourceName": "formWizardStepCounterVariants",
+          "kind": "value"
+        },
+        {
+          "name": "formWizardErrorPanelVariants",
+          "source": "packages/ui/src/components/form/form-wizard-variants",
+          "sourceName": "formWizardErrorPanelVariants",
+          "kind": "value"
+        },
+        {
+          "name": "formWizardErrorTitleVariants",
+          "source": "packages/ui/src/components/form/form-wizard-variants",
+          "sourceName": "formWizardErrorTitleVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/form.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/form.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:glitch-text",
+      "slug": "glitch-text",
+      "scope": "component-page",
+      "primaryMemberId": "component:glitch-text/GlitchText",
+      "members": [
+        {
+          "id": "component:glitch-text/GlitchText",
+          "name": "GlitchText",
+          "source": "packages/ui/src/components/glitch-text/GlitchText.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "glitchTextVariants",
+          "source": "packages/ui/src/components/glitch-text/glitch-text-variants",
+          "sourceName": "glitchTextVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/glitch-text.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/glitch-text.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:hardcore-input",
+      "slug": "hardcore-input",
+      "scope": "component-page",
+      "primaryMemberId": "component:hardcore-input/HardcoreInput",
+      "members": [
+        {
+          "id": "component:hardcore-input/HardcoreInput",
+          "name": "HardcoreInput",
+          "source": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "hardcoreInputVariants",
+          "source": "packages/ui/src/components/hardcore-input/hardcore-input-variants",
+          "sourceName": "hardcoreInputVariants",
+          "kind": "value"
+        },
+        {
+          "name": "hardcoreInputFaceVariants",
+          "source": "packages/ui/src/components/hardcore-input/hardcore-input-variants",
+          "sourceName": "hardcoreInputFaceVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/hardcore-input.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/hardcore-input.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:header-section",
+      "slug": "header-section",
+      "scope": "block",
+      "primaryMemberId": "component:header-section/HeaderSection",
+      "members": [
+        {
+          "id": "component:header-section/HeaderSection",
+          "name": "HeaderSection",
+          "source": "packages/ui/src/components/header-section/HeaderSection.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "NavItem",
+          "source": "packages/ui/src/components/header-section/types",
+          "sourceName": "NavItem",
+          "kind": "type"
+        }
+      ],
+      "pages": []
+    },
+    {
+      "id": "component:image",
+      "slug": "image",
+      "scope": "component-page",
+      "primaryMemberId": "component:image/Image",
+      "members": [
+        {
+          "id": "component:image/Image",
+          "name": "Image",
+          "source": "packages/ui/src/components/image/Image.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/image.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/image.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:image-card",
+      "slug": "image-card",
+      "scope": "component-page",
+      "primaryMemberId": "component:image-card/ImageCard",
+      "members": [
+        {
+          "id": "component:image-card/ImageCard",
+          "name": "ImageCard",
+          "source": "packages/ui/src/components/image-card/ImageCard.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "imageCardVariants",
+          "source": "packages/ui/src/components/image-card/image-card-variants",
+          "sourceName": "imageCardVariants",
+          "kind": "value"
+        },
+        {
+          "name": "imageCardImageVariants",
+          "source": "packages/ui/src/components/image-card/image-card-variants",
+          "sourceName": "imageCardImageVariants",
+          "kind": "value"
+        },
+        {
+          "name": "imageCardFooterVariants",
+          "source": "packages/ui/src/components/image-card/image-card-variants",
+          "sourceName": "imageCardFooterVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/image-card.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/image-card.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:infinite-scroll",
+      "slug": "infinite-scroll",
+      "scope": "component-page",
+      "primaryMemberId": "component:infinite-scroll/InfiniteScroll",
+      "members": [
+        {
+          "id": "component:infinite-scroll/InfiniteScroll",
+          "name": "InfiniteScroll",
+          "source": "packages/ui/src/components/infinite-scroll/InfiniteScroll.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "UseInfiniteScrollOptions",
+          "source": "packages/ui/src/components/infinite-scroll/useInfiniteScroll",
+          "sourceName": "UseInfiniteScrollOptions",
+          "kind": "type"
+        },
+        {
+          "name": "useInfiniteScroll",
+          "source": "packages/ui/src/components/infinite-scroll/useInfiniteScroll",
+          "sourceName": "useInfiniteScroll",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/infinite-scroll.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/infinite-scroll.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:input",
+      "slug": "input",
+      "scope": "component-page",
+      "primaryMemberId": "component:input/Input",
+      "members": [
+        {
+          "id": "component:input/Input",
+          "name": "Input",
+          "source": "packages/ui/src/components/input/Input.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "inputContainerVariants",
+          "source": "packages/ui/src/components/input/input-variants",
+          "sourceName": "inputContainerVariants",
+          "kind": "value"
+        },
+        {
+          "name": "inputVariants",
+          "source": "packages/ui/src/components/input/input-variants",
+          "sourceName": "inputVariants",
+          "kind": "value"
+        },
+        {
+          "name": "inputVariantOptions",
+          "source": "packages/ui/src/components/input/shared-input-variants",
+          "sourceName": "inputVariantOptions",
+          "kind": "value"
+        },
+        {
+          "name": "InputVariant",
+          "source": "packages/ui/src/components/input/shared-input-variants",
+          "sourceName": "InputVariant",
+          "kind": "type"
+        },
+        {
+          "name": "validationBorderColors",
+          "source": "packages/ui/src/components/input/shared-input-variants",
+          "sourceName": "validationBorderColors",
+          "kind": "value"
+        },
+        {
+          "name": "inputVariantClasses",
+          "source": "packages/ui/src/components/input/shared-input-variants",
+          "sourceName": "inputVariantClasses",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/input.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/input.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:kanban",
+      "slug": "kanban-board",
+      "scope": "component-page",
+      "primaryMemberId": "component:kanban/KanbanBoard",
+      "members": [
+        {
+          "id": "component:kanban/KanbanBoard",
+          "name": "KanbanBoard",
+          "source": "packages/ui/src/components/kanban/KanbanBoard.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "kanbanColumnVariants",
+          "source": "packages/ui/src/components/kanban/kanban-variants",
+          "sourceName": "kanbanColumnVariants",
+          "kind": "value"
+        },
+        {
+          "name": "kanbanColumnHeaderVariants",
+          "source": "packages/ui/src/components/kanban/kanban-variants",
+          "sourceName": "kanbanColumnHeaderVariants",
+          "kind": "value"
+        },
+        {
+          "name": "kanbanCardVariants",
+          "source": "packages/ui/src/components/kanban/kanban-variants",
+          "sourceName": "kanbanCardVariants",
+          "kind": "value"
+        },
+        {
+          "name": "KanbanCard",
+          "source": "packages/ui/src/components/kanban/types",
+          "sourceName": "KanbanCard",
+          "kind": "type"
+        },
+        {
+          "name": "KanbanColumn",
+          "source": "packages/ui/src/components/kanban/types",
+          "sourceName": "KanbanColumn",
+          "kind": "type"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/kanban-board.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/kanban-board.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:kbd",
+      "slug": "kbd",
+      "scope": "component-page",
+      "primaryMemberId": "component:kbd/Kbd",
+      "members": [
+        {
+          "id": "component:kbd/Kbd",
+          "name": "Kbd",
+          "source": "packages/ui/src/components/kbd/Kbd.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "kbdVariants",
+          "source": "packages/ui/src/components/kbd/kbd-variants",
+          "sourceName": "kbdVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/kbd.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/kbd.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:label",
+      "slug": "label",
+      "scope": "component-page",
+      "primaryMemberId": "component:label/Label",
+      "members": [
+        {
+          "id": "component:label/Label",
+          "name": "Label",
+          "source": "packages/ui/src/components/label/Label.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "labelVariants",
+          "source": "packages/ui/src/components/label/label-variants",
+          "sourceName": "labelVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/label.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/label.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:loading",
+      "slug": "loading",
+      "scope": "component-page",
+      "primaryMemberId": "component:loading/Loading",
+      "members": [
+        {
+          "id": "component:loading/Loading",
+          "name": "Loading",
+          "source": "packages/ui/src/components/loading/Loading.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "vLoading",
+          "source": "packages/ui/src/directives/loading",
+          "sourceName": "vLoading",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/loading.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/loading.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:marquee",
+      "slug": "marquee",
+      "scope": "component-page",
+      "primaryMemberId": "component:marquee/Marquee",
+      "members": [
+        {
+          "id": "component:marquee/Marquee",
+          "name": "Marquee",
+          "source": "packages/ui/src/components/marquee/Marquee.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "marqueeContainerVariants",
+          "source": "packages/ui/src/components/marquee/marquee-variants",
+          "sourceName": "marqueeContainerVariants",
+          "kind": "value"
+        },
+        {
+          "name": "marqueeTrackVariants",
+          "source": "packages/ui/src/components/marquee/marquee-variants",
+          "sourceName": "marqueeTrackVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/marquee.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/marquee.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:menu",
+      "slug": "menu",
+      "scope": "component-page",
+      "primaryMemberId": "component:menu/Menu",
+      "members": [
+        {
+          "id": "component:menu/Menu",
+          "name": "Menu",
+          "source": "packages/ui/src/components/menu/Menu.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:menu/MenuItem",
+          "name": "MenuItem",
+          "source": "packages/ui/src/components/menu/MenuItem.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:menu/SubMenu",
+          "name": "SubMenu",
+          "source": "packages/ui/src/components/menu/SubMenu.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "MenuItemEntry",
+          "source": "packages/ui/src/components/menu/menu-types",
+          "sourceName": "MenuItemEntry",
+          "kind": "type"
+        },
+        {
+          "name": "MenuContext",
+          "source": "packages/ui/src/components/menu/menu-types",
+          "sourceName": "MenuContext",
+          "kind": "type"
+        },
+        {
+          "name": "MENU_KEY",
+          "source": "packages/ui/src/components/menu/menu-types",
+          "sourceName": "MENU_KEY",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/menu.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/menu.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:message",
+      "slug": "message",
+      "scope": "component-page",
+      "primaryMemberId": "component:message/MessageContainer",
+      "members": [
+        {
+          "id": "component:message/MessageContainer",
+          "name": "MessageContainer",
+          "source": "packages/ui/src/components/message/MessageContainer.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/message.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/message.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:message-box",
+      "slug": "message-box",
+      "scope": "component-page",
+      "primaryMemberId": "component:message-box/MessageBox",
+      "members": [
+        {
+          "id": "component:message-box/MessageBox",
+          "name": "MessageBox",
+          "source": "packages/ui/src/components/message-box/MessageBox.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "MessageBoxType",
+          "source": "packages/ui/src/components/message-box/message-box-variants",
+          "sourceName": "MessageBoxType",
+          "kind": "type"
+        },
+        {
+          "name": "MessageBoxAction",
+          "source": "packages/ui/src/components/message-box/functional",
+          "sourceName": "MessageBoxAction",
+          "kind": "type"
+        },
+        {
+          "name": "MessageBoxResult",
+          "source": "packages/ui/src/components/message-box/functional",
+          "sourceName": "MessageBoxResult",
+          "kind": "type"
+        },
+        {
+          "name": "MessageBoxOptions",
+          "source": "packages/ui/src/components/message-box/functional",
+          "sourceName": "MessageBoxOptions",
+          "kind": "type"
+        },
+        {
+          "name": "MessageBoxInstance",
+          "source": "packages/ui/src/components/message-box/functional",
+          "sourceName": "MessageBoxInstance",
+          "kind": "type"
+        },
+        {
+          "name": "showMessageBox",
+          "source": "packages/ui/src/components/message-box/functional",
+          "sourceName": "showMessageBox",
+          "kind": "value"
+        },
+        {
+          "name": "showConfirm",
+          "source": "packages/ui/src/components/message-box/functional",
+          "sourceName": "showConfirm",
+          "kind": "value"
+        },
+        {
+          "name": "showAlert",
+          "source": "packages/ui/src/components/message-box/functional",
+          "sourceName": "showAlert",
+          "kind": "value"
+        },
+        {
+          "name": "showPrompt",
+          "source": "packages/ui/src/components/message-box/functional",
+          "sourceName": "showPrompt",
+          "kind": "value"
+        },
+        {
+          "name": "messageBoxCardVariants",
+          "source": "packages/ui/src/components/message-box/message-box-variants",
+          "sourceName": "messageBoxCardVariants",
+          "kind": "value"
+        },
+        {
+          "name": "messageBoxIconVariants",
+          "source": "packages/ui/src/components/message-box/message-box-variants",
+          "sourceName": "messageBoxIconVariants",
+          "kind": "value"
+        },
+        {
+          "name": "MessageBoxCardVariantProps",
+          "source": "packages/ui/src/components/message-box/message-box-variants",
+          "sourceName": "MessageBoxCardVariantProps",
+          "kind": "type"
+        },
+        {
+          "name": "MessageBoxIconVariantProps",
+          "source": "packages/ui/src/components/message-box/message-box-variants",
+          "sourceName": "MessageBoxIconVariantProps",
+          "kind": "type"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/message-box.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/message-box.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:noise-background",
+      "slug": "noise-background",
+      "scope": "component-page",
+      "primaryMemberId": "component:noise-background/NoiseBackground",
+      "members": [
+        {
+          "id": "component:noise-background/NoiseBackground",
+          "name": "NoiseBackground",
+          "source": "packages/ui/src/components/noise-background/NoiseBackground.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "noiseBackgroundVariants",
+          "source": "packages/ui/src/components/noise-background/noise-background-variants",
+          "sourceName": "noiseBackgroundVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/noise-background.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/noise-background.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:number-input",
+      "slug": "number-input",
+      "scope": "component-page",
+      "primaryMemberId": "component:number-input/NumberInput",
+      "members": [
+        {
+          "id": "component:number-input/NumberInput",
+          "name": "NumberInput",
+          "source": "packages/ui/src/components/number-input/NumberInput.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "numberInputRootVariants",
+          "source": "packages/ui/src/components/number-input/number-input-variants",
+          "sourceName": "numberInputRootVariants",
+          "kind": "value"
+        },
+        {
+          "name": "numberInputButtonVariants",
+          "source": "packages/ui/src/components/number-input/number-input-variants",
+          "sourceName": "numberInputButtonVariants",
+          "kind": "value"
+        },
+        {
+          "name": "numberInputFieldVariants",
+          "source": "packages/ui/src/components/number-input/number-input-variants",
+          "sourceName": "numberInputFieldVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/number-input.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/number-input.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:pagination",
+      "slug": "pagination",
+      "scope": "component-page",
+      "primaryMemberId": "component:pagination/Pagination",
+      "members": [
+        {
+          "id": "component:pagination/Pagination",
+          "name": "Pagination",
+          "source": "packages/ui/src/components/pagination/Pagination.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "paginationVariants",
+          "source": "packages/ui/src/components/pagination/pagination-variants",
+          "sourceName": "paginationVariants",
+          "kind": "value"
+        },
+        {
+          "name": "paginationButtonVariants",
+          "source": "packages/ui/src/components/pagination/pagination-variants",
+          "sourceName": "paginationButtonVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/pagination.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/pagination.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:popconfirm",
+      "slug": "popconfirm",
+      "scope": "component-page",
+      "primaryMemberId": "component:popconfirm/Popconfirm",
+      "members": [
+        {
+          "id": "component:popconfirm/Popconfirm",
+          "name": "Popconfirm",
+          "source": "packages/ui/src/components/popconfirm/Popconfirm.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/popconfirm.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/popconfirm.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:popover",
+      "slug": "popover",
+      "scope": "component-page",
+      "primaryMemberId": "component:popover/Popover",
+      "members": [
+        {
+          "id": "component:popover/Popover",
+          "name": "Popover",
+          "source": "packages/ui/src/components/popover/Popover.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:popover/PopoverContent",
+          "name": "PopoverContent",
+          "source": "packages/ui/src/components/popover/PopoverContent.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:popover/PopoverTrigger",
+          "name": "PopoverTrigger",
+          "source": "packages/ui/src/components/popover/PopoverTrigger.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "popoverContentVariants",
+          "source": "packages/ui/src/components/popover/popover-variants",
+          "sourceName": "popoverContentVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/popover.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/popover.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:pricing-section",
+      "slug": "pricing-section",
+      "scope": "block",
+      "primaryMemberId": "component:pricing-section/PricingSection",
+      "members": [
+        {
+          "id": "component:pricing-section/PricingSection",
+          "name": "PricingSection",
+          "source": "packages/ui/src/components/pricing-section/PricingSection.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "PricingFeature",
+          "source": "packages/ui/src/components/pricing-section/types",
+          "sourceName": "PricingFeature",
+          "kind": "type"
+        },
+        {
+          "name": "BrutalistPricingPlan",
+          "source": "packages/ui/src/components/pricing-section/types",
+          "sourceName": "BrutalistPricingPlan",
+          "kind": "type"
+        },
+        {
+          "name": "PricingPlan",
+          "source": "packages/ui/src/components/pricing-section/types",
+          "sourceName": "PricingPlan",
+          "kind": "type"
+        }
+      ],
+      "pages": []
+    },
+    {
+      "id": "component:progress",
+      "slug": "progress",
+      "scope": "component-page",
+      "primaryMemberId": "component:progress/Progress",
+      "members": [
+        {
+          "id": "component:progress/Progress",
+          "name": "Progress",
+          "source": "packages/ui/src/components/progress/Progress.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "progressRootVariants",
+          "source": "packages/ui/src/components/progress/progress-variants",
+          "sourceName": "progressRootVariants",
+          "kind": "value"
+        },
+        {
+          "name": "progressIndicatorVariants",
+          "source": "packages/ui/src/components/progress/progress-variants",
+          "sourceName": "progressIndicatorVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/progress.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/progress.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:radio-group",
+      "slug": "radio-group",
+      "scope": "component-page",
+      "primaryMemberId": "component:radio-group/RadioGroup",
+      "members": [
+        {
+          "id": "component:radio-group/RadioGroup",
+          "name": "RadioGroup",
+          "source": "packages/ui/src/components/radio-group/RadioGroup.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:radio-group/RadioGroupItem",
+          "name": "RadioGroupItem",
+          "source": "packages/ui/src/components/radio-group/RadioGroupItem.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "radioGroupItemVariants",
+          "source": "packages/ui/src/components/radio-group/radio-group-variants",
+          "sourceName": "radioGroupItemVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/radio-group.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/radio-group.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:rate",
+      "slug": "rate",
+      "scope": "component-page",
+      "primaryMemberId": "component:rate/Rate",
+      "members": [
+        {
+          "id": "component:rate/Rate",
+          "name": "Rate",
+          "source": "packages/ui/src/components/rate/Rate.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/rate.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/rate.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:result",
+      "slug": "result",
+      "scope": "component-page",
+      "primaryMemberId": "component:result/Result",
+      "members": [
+        {
+          "id": "component:result/Result",
+          "name": "Result",
+          "source": "packages/ui/src/components/result/Result.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/result.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/result.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:scratch-card",
+      "slug": "scratch-card",
+      "scope": "component-page",
+      "primaryMemberId": "component:scratch-card/ScratchCard",
+      "members": [
+        {
+          "id": "component:scratch-card/ScratchCard",
+          "name": "ScratchCard",
+          "source": "packages/ui/src/components/scratch-card/ScratchCard.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "scratchCardVariants",
+          "source": "packages/ui/src/components/scratch-card/scratch-card-variants",
+          "sourceName": "scratchCardVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/scratch-card.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/scratch-card.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:scroll-area",
+      "slug": "scroll-area",
+      "scope": "component-page",
+      "primaryMemberId": "component:scroll-area/ScrollArea",
+      "members": [
+        {
+          "id": "component:scroll-area/ScrollArea",
+          "name": "ScrollArea",
+          "source": "packages/ui/src/components/scroll-area/ScrollArea.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:scroll-area/ScrollBar",
+          "name": "ScrollBar",
+          "source": "packages/ui/src/components/scroll-area/ScrollBar.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "scrollAreaRootVariants",
+          "source": "packages/ui/src/components/scroll-area/scroll-area-variants",
+          "sourceName": "scrollAreaRootVariants",
+          "kind": "value"
+        },
+        {
+          "name": "SCROLL_THICKNESS",
+          "source": "packages/ui/src/components/scroll-area/scroll-area-variants",
+          "sourceName": "SCROLL_THICKNESS",
+          "kind": "value"
+        },
+        {
+          "name": "scrollAreaScrollbarVariants",
+          "source": "packages/ui/src/components/scroll-area/scroll-area-variants",
+          "sourceName": "scrollAreaScrollbarVariants",
+          "kind": "value"
+        },
+        {
+          "name": "scrollAreaThumbVariants",
+          "source": "packages/ui/src/components/scroll-area/scroll-area-variants",
+          "sourceName": "scrollAreaThumbVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/scroll-area.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/scroll-area.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:select",
+      "slug": "select",
+      "scope": "component-page",
+      "primaryMemberId": "component:select/Select",
+      "members": [
+        {
+          "id": "component:select/Select",
+          "name": "Select",
+          "source": "packages/ui/src/components/select/Select.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:select/SelectContent",
+          "name": "SelectContent",
+          "source": "packages/ui/src/components/select/SelectContent.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:select/SelectItem",
+          "name": "SelectItem",
+          "source": "packages/ui/src/components/select/SelectItem.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:select/SelectLabel",
+          "name": "SelectLabel",
+          "source": "packages/ui/src/components/select/SelectLabel.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:select/SelectScrollDownButton",
+          "name": "SelectScrollDownButton",
+          "source": "packages/ui/src/components/select/SelectScrollDownButton.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:select/SelectScrollUpButton",
+          "name": "SelectScrollUpButton",
+          "source": "packages/ui/src/components/select/SelectScrollUpButton.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:select/SelectSeparator",
+          "name": "SelectSeparator",
+          "source": "packages/ui/src/components/select/SelectSeparator.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:select/SelectTrigger",
+          "name": "SelectTrigger",
+          "source": "packages/ui/src/components/select/SelectTrigger.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "selectTriggerVariants",
+          "source": "packages/ui/src/components/select/select-variants",
+          "sourceName": "selectTriggerVariants",
+          "kind": "value"
+        },
+        {
+          "name": "selectContentVariants",
+          "source": "packages/ui/src/components/select/select-variants",
+          "sourceName": "selectContentVariants",
+          "kind": "value"
+        },
+        {
+          "name": "selectItemVariants",
+          "source": "packages/ui/src/components/select/select-variants",
+          "sourceName": "selectItemVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/select.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/select.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:separator",
+      "slug": "separator",
+      "scope": "component-page",
+      "primaryMemberId": "component:separator/Separator",
+      "members": [
+        {
+          "id": "component:separator/Separator",
+          "name": "Separator",
+          "source": "packages/ui/src/components/separator/Separator.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "DEFAULT_THICKNESS",
+          "source": "packages/ui/src/components/separator/separator-variants",
+          "sourceName": "DEFAULT_THICKNESS",
+          "kind": "value"
+        },
+        {
+          "name": "separatorVariants",
+          "source": "packages/ui/src/components/separator/separator-variants",
+          "sourceName": "separatorVariants",
+          "kind": "value"
+        },
+        {
+          "name": "separatorLineVariants",
+          "source": "packages/ui/src/components/separator/separator-variants",
+          "sourceName": "separatorLineVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/separator.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/separator.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:sheet",
+      "slug": "sheet",
+      "scope": "component-page",
+      "primaryMemberId": "component:sheet/SheetContent",
+      "members": [
+        {
+          "id": "component:sheet/SheetContent",
+          "name": "SheetContent",
+          "source": "packages/ui/src/components/sheet/SheetContent.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:sheet/SheetDescription",
+          "name": "SheetDescription",
+          "source": "packages/ui/src/components/sheet/SheetDescription.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:sheet/SheetFooter",
+          "name": "SheetFooter",
+          "source": "packages/ui/src/components/sheet/SheetFooter.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:sheet/SheetHeader",
+          "name": "SheetHeader",
+          "source": "packages/ui/src/components/sheet/SheetHeader.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:sheet/SheetTitle",
+          "name": "SheetTitle",
+          "source": "packages/ui/src/components/sheet/SheetTitle.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "sheetVariants",
+          "source": "packages/ui/src/components/sheet/sheet-variants",
+          "sourceName": "sheetVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/sheet.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/sheet.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:skeleton",
+      "slug": "skeleton",
+      "scope": "component-page",
+      "primaryMemberId": "component:skeleton/Skeleton",
+      "members": [
+        {
+          "id": "component:skeleton/Skeleton",
+          "name": "Skeleton",
+          "source": "packages/ui/src/components/skeleton/Skeleton.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:skeleton/SkeletonAvatar",
+          "name": "SkeletonAvatar",
+          "source": "packages/ui/src/components/skeleton/SkeletonAvatar.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:skeleton/SkeletonCard",
+          "name": "SkeletonCard",
+          "source": "packages/ui/src/components/skeleton/SkeletonCard.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:skeleton/SkeletonTable",
+          "name": "SkeletonTable",
+          "source": "packages/ui/src/components/skeleton/SkeletonTable.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:skeleton/SkeletonText",
+          "name": "SkeletonText",
+          "source": "packages/ui/src/components/skeleton/SkeletonText.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "skeletonVariants",
+          "source": "packages/ui/src/components/skeleton/skeleton-variants",
+          "sourceName": "skeletonVariants",
+          "kind": "value"
+        },
+        {
+          "name": "skeletonCircleWidthVariants",
+          "source": "packages/ui/src/components/skeleton/skeleton-variants",
+          "sourceName": "skeletonCircleWidthVariants",
+          "kind": "value"
+        },
+        {
+          "name": "SkeletonVariantProps",
+          "source": "packages/ui/src/components/skeleton/skeleton-variants",
+          "sourceName": "SkeletonVariantProps",
+          "kind": "type"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/skeleton.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/skeleton.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:sketchy-chart",
+      "slug": "sketchy-chart",
+      "scope": "component-page",
+      "primaryMemberId": "component:sketchy-chart/SketchyChart",
+      "members": [
+        {
+          "id": "component:sketchy-chart/SketchyChart",
+          "name": "SketchyChart",
+          "source": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "sketchyChartVariants",
+          "source": "packages/ui/src/components/sketchy-chart/sketchy-chart-variants",
+          "sourceName": "sketchyChartVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/sketchy-chart.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/sketchy-chart.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:slider",
+      "slug": "slider",
+      "scope": "component-page",
+      "primaryMemberId": "component:slider/Slider",
+      "members": [
+        {
+          "id": "component:slider/Slider",
+          "name": "Slider",
+          "source": "packages/ui/src/components/slider/Slider.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "sliderRootVariants",
+          "source": "packages/ui/src/components/slider/slider-variants",
+          "sourceName": "sliderRootVariants",
+          "kind": "value"
+        },
+        {
+          "name": "sliderTrackVariants",
+          "source": "packages/ui/src/components/slider/slider-variants",
+          "sourceName": "sliderTrackVariants",
+          "kind": "value"
+        },
+        {
+          "name": "sliderThumbVariants",
+          "source": "packages/ui/src/components/slider/slider-variants",
+          "sourceName": "sliderThumbVariants",
+          "kind": "value"
+        },
+        {
+          "name": "sliderThumbNotchVariants",
+          "source": "packages/ui/src/components/slider/slider-variants",
+          "sourceName": "sliderThumbNotchVariants",
+          "kind": "value"
+        },
+        {
+          "name": "SliderThumbNotchVariantProps",
+          "source": "packages/ui/src/components/slider/slider-variants",
+          "sourceName": "SliderThumbNotchVariantProps",
+          "kind": "type"
+        },
+        {
+          "name": "sliderRangeVariants",
+          "source": "packages/ui/src/components/slider/slider-variants",
+          "sourceName": "sliderRangeVariants",
+          "kind": "value"
+        },
+        {
+          "name": "sliderMarkVariants",
+          "source": "packages/ui/src/components/slider/slider-variants",
+          "sourceName": "sliderMarkVariants",
+          "kind": "value"
+        },
+        {
+          "name": "sliderTooltipVariants",
+          "source": "packages/ui/src/components/slider/slider-variants",
+          "sourceName": "sliderTooltipVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/slider.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/slider.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:spinner",
+      "slug": "spinner",
+      "scope": "component-page",
+      "primaryMemberId": "component:spinner/Spinner",
+      "members": [
+        {
+          "id": "component:spinner/Spinner",
+          "name": "Spinner",
+          "source": "packages/ui/src/components/spinner/Spinner.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:spinner/BarsSpinner",
+          "name": "BarsSpinner",
+          "source": "packages/ui/src/components/spinner/BarsSpinner.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:spinner/BlockSpinner",
+          "name": "BlockSpinner",
+          "source": "packages/ui/src/components/spinner/BlockSpinner.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:spinner/DotsSpinner",
+          "name": "DotsSpinner",
+          "source": "packages/ui/src/components/spinner/DotsSpinner.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "spinnerVariants",
+          "source": "packages/ui/src/components/spinner/spinner-variants",
+          "sourceName": "spinnerVariants",
+          "kind": "value"
+        },
+        {
+          "name": "blockSpinnerVariants",
+          "source": "packages/ui/src/components/spinner/spinner-variants",
+          "sourceName": "blockSpinnerVariants",
+          "kind": "value"
+        },
+        {
+          "name": "barsSpinnerVariants",
+          "source": "packages/ui/src/components/spinner/spinner-variants",
+          "sourceName": "barsSpinnerVariants",
+          "kind": "value"
+        },
+        {
+          "name": "dotsSpinnerVariants",
+          "source": "packages/ui/src/components/spinner/spinner-variants",
+          "sourceName": "dotsSpinnerVariants",
+          "kind": "value"
+        },
+        {
+          "name": "SPINNER_COLOR_CLASSES",
+          "source": "packages/ui/src/components/spinner/spinner-variants",
+          "sourceName": "SPINNER_COLOR_CLASSES",
+          "kind": "value"
+        },
+        {
+          "name": "spinnerAsciiVariants",
+          "source": "packages/ui/src/components/spinner/spinner-variants",
+          "sourceName": "spinnerAsciiVariants",
+          "kind": "value"
+        },
+        {
+          "name": "SPINNER_ASCII_FRAMES",
+          "source": "packages/ui/src/components/spinner/spinner-variants",
+          "sourceName": "SPINNER_ASCII_FRAMES",
+          "kind": "value"
+        },
+        {
+          "name": "SpinnerColor",
+          "source": "packages/ui/src/components/spinner/spinner-variants",
+          "sourceName": "SpinnerColor",
+          "kind": "type"
+        },
+        {
+          "name": "getSpinnerColorClasses",
+          "source": "packages/ui/src/components/spinner/spinner-variants",
+          "sourceName": "getSpinnerColorClasses",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/spinner.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/spinner.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:statistic",
+      "slug": "statistic",
+      "scope": "component-page",
+      "primaryMemberId": "component:statistic/Statistic",
+      "members": [
+        {
+          "id": "component:statistic/Statistic",
+          "name": "Statistic",
+          "source": "packages/ui/src/components/statistic/Statistic.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "ParseResult",
+          "source": "packages/ui/src/components/statistic/statistic-format",
+          "sourceName": "ParseResult",
+          "kind": "type"
+        },
+        {
+          "name": "parseNumericString",
+          "source": "packages/ui/src/components/statistic/statistic-format",
+          "sourceName": "parseNumericString",
+          "kind": "value"
+        },
+        {
+          "name": "parseNumeric",
+          "source": "packages/ui/src/components/statistic/statistic-format",
+          "sourceName": "parseNumeric",
+          "kind": "value"
+        },
+        {
+          "name": "roundFraction",
+          "source": "packages/ui/src/components/statistic/statistic-format",
+          "sourceName": "roundFraction",
+          "kind": "value"
+        },
+        {
+          "name": "formatStatisticValue",
+          "source": "packages/ui/src/components/statistic/statistic-format",
+          "sourceName": "formatStatisticValue",
+          "kind": "value"
+        },
+        {
+          "name": "statisticVariants",
+          "source": "packages/ui/src/components/statistic/statistic-variants",
+          "sourceName": "statisticVariants",
+          "kind": "value"
+        },
+        {
+          "name": "statisticTitleVariants",
+          "source": "packages/ui/src/components/statistic/statistic-variants",
+          "sourceName": "statisticTitleVariants",
+          "kind": "value"
+        },
+        {
+          "name": "statisticContentVariants",
+          "source": "packages/ui/src/components/statistic/statistic-variants",
+          "sourceName": "statisticContentVariants",
+          "kind": "value"
+        },
+        {
+          "name": "statisticValueVariants",
+          "source": "packages/ui/src/components/statistic/statistic-variants",
+          "sourceName": "statisticValueVariants",
+          "kind": "value"
+        },
+        {
+          "name": "statisticTrendVariants",
+          "source": "packages/ui/src/components/statistic/statistic-variants",
+          "sourceName": "statisticTrendVariants",
+          "kind": "value"
+        },
+        {
+          "name": "StatisticVariantProps",
+          "source": "packages/ui/src/components/statistic/types",
+          "sourceName": "StatisticVariantProps",
+          "kind": "type"
+        },
+        {
+          "name": "StatisticContentVariantProps",
+          "source": "packages/ui/src/components/statistic/types",
+          "sourceName": "StatisticContentVariantProps",
+          "kind": "type"
+        },
+        {
+          "name": "StatisticValue",
+          "source": "packages/ui/src/components/statistic/types",
+          "sourceName": "StatisticValue",
+          "kind": "type"
+        },
+        {
+          "name": "StatisticProps",
+          "source": "packages/ui/src/components/statistic/types",
+          "sourceName": "StatisticProps",
+          "kind": "type"
+        },
+        {
+          "name": "FormatNumberOptions",
+          "source": "packages/ui/src/components/statistic/types",
+          "sourceName": "FormatNumberOptions",
+          "kind": "type"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/statistic.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/statistic.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:stepper",
+      "slug": "stepper",
+      "scope": "component-page",
+      "primaryMemberId": "component:stepper/Stepper",
+      "members": [
+        {
+          "id": "component:stepper/Stepper",
+          "name": "Stepper",
+          "source": "packages/ui/src/components/stepper/Stepper.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "StepperStepStatus",
+          "source": "packages/ui/src/components/stepper/stepper-variants",
+          "sourceName": "StepperStepStatus",
+          "kind": "type"
+        },
+        {
+          "name": "stepperDotVariants",
+          "source": "packages/ui/src/components/stepper/stepper-variants",
+          "sourceName": "stepperDotVariants",
+          "kind": "value"
+        },
+        {
+          "name": "stepperConnectorVariants",
+          "source": "packages/ui/src/components/stepper/stepper-variants",
+          "sourceName": "stepperConnectorVariants",
+          "kind": "value"
+        },
+        {
+          "name": "stepperStepLabelVariants",
+          "source": "packages/ui/src/components/stepper/stepper-variants",
+          "sourceName": "stepperStepLabelVariants",
+          "kind": "value"
+        },
+        {
+          "name": "stepperNavButtonIconVariants",
+          "source": "packages/ui/src/components/stepper/stepper-variants",
+          "sourceName": "stepperNavButtonIconVariants",
+          "kind": "value"
+        },
+        {
+          "name": "StepperDotVariantProps",
+          "source": "packages/ui/src/components/stepper/stepper-variants",
+          "sourceName": "StepperDotVariantProps",
+          "kind": "type"
+        },
+        {
+          "name": "StepperConnectorVariantProps",
+          "source": "packages/ui/src/components/stepper/stepper-variants",
+          "sourceName": "StepperConnectorVariantProps",
+          "kind": "type"
+        },
+        {
+          "name": "StepperStepLabelVariantProps",
+          "source": "packages/ui/src/components/stepper/stepper-variants",
+          "sourceName": "StepperStepLabelVariantProps",
+          "kind": "type"
+        },
+        {
+          "name": "StepperNavButtonIconVariantProps",
+          "source": "packages/ui/src/components/stepper/stepper-variants",
+          "sourceName": "StepperNavButtonIconVariantProps",
+          "kind": "type"
+        },
+        {
+          "name": "StepperStep",
+          "source": "packages/ui/src/components/stepper/types",
+          "sourceName": "StepperStep",
+          "kind": "type"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/stepper.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/stepper.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:switch",
+      "slug": "switch",
+      "scope": "component-page",
+      "primaryMemberId": "component:switch/Switch",
+      "members": [
+        {
+          "id": "component:switch/Switch",
+          "name": "Switch",
+          "source": "packages/ui/src/components/switch/Switch.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "switchRootVariants",
+          "source": "packages/ui/src/components/switch/switch-variants",
+          "sourceName": "switchRootVariants",
+          "kind": "value"
+        },
+        {
+          "name": "switchThumbVariants",
+          "source": "packages/ui/src/components/switch/switch-variants",
+          "sourceName": "switchThumbVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/switch.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/switch.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:table",
+      "slug": "table",
+      "scope": "component-page",
+      "primaryMemberId": "component:table/Table",
+      "members": [
+        {
+          "id": "component:table/Table",
+          "name": "Table",
+          "source": "packages/ui/src/components/table/Table.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:table/TableBody",
+          "name": "TableBody",
+          "source": "packages/ui/src/components/table/TableBody.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:table/TableCaption",
+          "name": "TableCaption",
+          "source": "packages/ui/src/components/table/TableCaption.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:table/TableCell",
+          "name": "TableCell",
+          "source": "packages/ui/src/components/table/TableCell.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:table/TableFooter",
+          "name": "TableFooter",
+          "source": "packages/ui/src/components/table/TableFooter.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:table/TableHead",
+          "name": "TableHead",
+          "source": "packages/ui/src/components/table/TableHead.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:table/TableHeader",
+          "name": "TableHeader",
+          "source": "packages/ui/src/components/table/TableHeader.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:table/TableRow",
+          "name": "TableRow",
+          "source": "packages/ui/src/components/table/TableRow.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "tableVariants",
+          "source": "packages/ui/src/components/table/table-variants",
+          "sourceName": "tableVariants",
+          "kind": "value"
+        },
+        {
+          "name": "tableHeaderVariants",
+          "source": "packages/ui/src/components/table/table-variants",
+          "sourceName": "tableHeaderVariants",
+          "kind": "value"
+        },
+        {
+          "name": "tableHeadVariants",
+          "source": "packages/ui/src/components/table/table-variants",
+          "sourceName": "tableHeadVariants",
+          "kind": "value"
+        },
+        {
+          "name": "tableBodyVariants",
+          "source": "packages/ui/src/components/table/table-variants",
+          "sourceName": "tableBodyVariants",
+          "kind": "value"
+        },
+        {
+          "name": "tableFooterVariants",
+          "source": "packages/ui/src/components/table/table-variants",
+          "sourceName": "tableFooterVariants",
+          "kind": "value"
+        },
+        {
+          "name": "tableRowVariants",
+          "source": "packages/ui/src/components/table/table-variants",
+          "sourceName": "tableRowVariants",
+          "kind": "value"
+        },
+        {
+          "name": "tableCellVariants",
+          "source": "packages/ui/src/components/table/table-variants",
+          "sourceName": "tableCellVariants",
+          "kind": "value"
+        },
+        {
+          "name": "tableCaptionVariants",
+          "source": "packages/ui/src/components/table/table-variants",
+          "sourceName": "tableCaptionVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/table.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/table.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:tabs",
+      "slug": "tabs",
+      "scope": "component-page",
+      "primaryMemberId": "component:tabs/Tabs",
+      "members": [
+        {
+          "id": "component:tabs/Tabs",
+          "name": "Tabs",
+          "source": "packages/ui/src/components/tabs/Tabs.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:tabs/TabsContent",
+          "name": "TabsContent",
+          "source": "packages/ui/src/components/tabs/TabsContent.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:tabs/TabsList",
+          "name": "TabsList",
+          "source": "packages/ui/src/components/tabs/TabsList.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:tabs/TabsTrigger",
+          "name": "TabsTrigger",
+          "source": "packages/ui/src/components/tabs/TabsTrigger.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "tabsListVariants",
+          "source": "packages/ui/src/components/tabs/tabs-variants",
+          "sourceName": "tabsListVariants",
+          "kind": "value"
+        },
+        {
+          "name": "tabsTriggerVariants",
+          "source": "packages/ui/src/components/tabs/tabs-variants",
+          "sourceName": "tabsTriggerVariants",
+          "kind": "value"
+        },
+        {
+          "name": "tabsContentVariants",
+          "source": "packages/ui/src/components/tabs/tabs-variants",
+          "sourceName": "tabsContentVariants",
+          "kind": "value"
+        },
+        {
+          "name": "TabItem",
+          "source": "packages/ui/src/components/tabs/types",
+          "sourceName": "TabItem",
+          "kind": "type"
+        },
+        {
+          "name": "TABS_ORIENTATION_KEY",
+          "source": "packages/ui/src/components/tabs/types",
+          "sourceName": "TABS_ORIENTATION_KEY",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/tabs.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/tabs.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:tags-input",
+      "slug": "tags-input",
+      "scope": "component-page",
+      "primaryMemberId": "component:tags-input/TagsInput",
+      "members": [
+        {
+          "id": "component:tags-input/TagsInput",
+          "name": "TagsInput",
+          "source": "packages/ui/src/components/tags-input/TagsInput.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:tags-input/TagsInputInput",
+          "name": "TagsInputInput",
+          "source": "packages/ui/src/components/tags-input/TagsInputInput.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:tags-input/TagsInputItem",
+          "name": "TagsInputItem",
+          "source": "packages/ui/src/components/tags-input/TagsInputItem.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:tags-input/TagsInputItemDelete",
+          "name": "TagsInputItemDelete",
+          "source": "packages/ui/src/components/tags-input/TagsInputItemDelete.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:tags-input/TagsInputItemText",
+          "name": "TagsInputItemText",
+          "source": "packages/ui/src/components/tags-input/TagsInputItemText.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "tagsInputItemVariants",
+          "source": "packages/ui/src/components/tags-input/tags-input-variants",
+          "sourceName": "tagsInputItemVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/tags-input.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/tags-input.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:textarea",
+      "slug": "textarea",
+      "scope": "component-page",
+      "primaryMemberId": "component:textarea/Textarea",
+      "members": [
+        {
+          "id": "component:textarea/Textarea",
+          "name": "Textarea",
+          "source": "packages/ui/src/components/textarea/Textarea.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "textareaVariants",
+          "source": "packages/ui/src/components/textarea/textarea-variants",
+          "sourceName": "textareaVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/textarea.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/textarea.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:timeline",
+      "slug": "timeline",
+      "scope": "component-page",
+      "primaryMemberId": "component:timeline/Timeline",
+      "members": [
+        {
+          "id": "component:timeline/Timeline",
+          "name": "Timeline",
+          "source": "packages/ui/src/components/timeline/Timeline.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:timeline/TimelineConnector",
+          "name": "TimelineConnector",
+          "source": "packages/ui/src/components/timeline/TimelineConnector.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:timeline/TimelineContent",
+          "name": "TimelineContent",
+          "source": "packages/ui/src/components/timeline/TimelineContent.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:timeline/TimelineDot",
+          "name": "TimelineDot",
+          "source": "packages/ui/src/components/timeline/TimelineDot.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:timeline/TimelineItem",
+          "name": "TimelineItem",
+          "source": "packages/ui/src/components/timeline/TimelineItem.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:timeline/TimelineSeparator",
+          "name": "TimelineSeparator",
+          "source": "packages/ui/src/components/timeline/TimelineSeparator.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "TimelineOrientation",
+          "source": "packages/ui/src/components/timeline/timeline-key",
+          "sourceName": "TimelineOrientation",
+          "kind": "type"
+        },
+        {
+          "name": "timelineOrientationKey",
+          "source": "packages/ui/src/components/timeline/timeline-key",
+          "sourceName": "timelineOrientationKey",
+          "kind": "value"
+        },
+        {
+          "name": "timelineAlternateKey",
+          "source": "packages/ui/src/components/timeline/timeline-key",
+          "sourceName": "timelineAlternateKey",
+          "kind": "value"
+        },
+        {
+          "name": "timelineDotVariants",
+          "source": "packages/ui/src/components/timeline/timeline-variants",
+          "sourceName": "timelineDotVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/timeline.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/timeline.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:toast",
+      "slug": "toast",
+      "scope": "component-page",
+      "primaryMemberId": "component:toast/Toast",
+      "members": [
+        {
+          "id": "component:toast/Toast",
+          "name": "Toast",
+          "source": "packages/ui/src/components/toast/Toast.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:toast/ToastContainer",
+          "name": "ToastContainer",
+          "source": "packages/ui/src/components/toast/ToastContainer.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "toastVariants",
+          "source": "packages/ui/src/components/toast/toast-variants",
+          "sourceName": "toastVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/toast.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/toast.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:toggle",
+      "slug": "toggle",
+      "scope": "component-page",
+      "primaryMemberId": "component:toggle/Toggle",
+      "members": [
+        {
+          "id": "component:toggle/Toggle",
+          "name": "Toggle",
+          "source": "packages/ui/src/components/toggle/Toggle.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "toggleVariants",
+          "source": "packages/ui/src/components/toggle/toggle-variants",
+          "sourceName": "toggleVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/toggle.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/toggle.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:toggle-group",
+      "slug": "toggle-group",
+      "scope": "component-page",
+      "primaryMemberId": "component:toggle-group/ToggleGroup",
+      "members": [
+        {
+          "id": "component:toggle-group/ToggleGroup",
+          "name": "ToggleGroup",
+          "source": "packages/ui/src/components/toggle-group/ToggleGroup.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:toggle-group/ToggleGroupItem",
+          "name": "ToggleGroupItem",
+          "source": "packages/ui/src/components/toggle-group/ToggleGroupItem.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "ToggleGroupContext",
+          "source": "packages/ui/src/components/toggle-group/toggle-group-key",
+          "sourceName": "ToggleGroupContext",
+          "kind": "type"
+        },
+        {
+          "name": "toggleGroupKey",
+          "source": "packages/ui/src/components/toggle-group/toggle-group-key",
+          "sourceName": "toggleGroupKey",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/toggle-group.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/toggle-group.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:tooltip",
+      "slug": "tooltip",
+      "scope": "component-page",
+      "primaryMemberId": "component:tooltip/TooltipContent",
+      "members": [
+        {
+          "id": "component:tooltip/TooltipContent",
+          "name": "TooltipContent",
+          "source": "packages/ui/src/components/tooltip/TooltipContent.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:tooltip/TooltipProvider",
+          "name": "TooltipProvider",
+          "source": "packages/ui/src/components/tooltip/TooltipProvider.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "tooltipContentVariants",
+          "source": "packages/ui/src/components/tooltip/tooltip-variants",
+          "sourceName": "tooltipContentVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/tooltip.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/tooltip.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:tour",
+      "slug": "tour",
+      "scope": "component-page",
+      "primaryMemberId": "component:tour/Tour",
+      "members": [
+        {
+          "id": "component:tour/Tour",
+          "name": "Tour",
+          "source": "packages/ui/src/components/tour/Tour.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "TourStep",
+          "source": "packages/ui/src/components/tour/types",
+          "sourceName": "TourStep",
+          "kind": "type"
+        },
+        {
+          "name": "TourProps",
+          "source": "packages/ui/src/components/tour/types",
+          "sourceName": "TourProps",
+          "kind": "type"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/tour.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/tour.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:transfer",
+      "slug": "transfer",
+      "scope": "component-page",
+      "primaryMemberId": "component:transfer/Transfer",
+      "members": [
+        {
+          "id": "component:transfer/Transfer",
+          "name": "Transfer",
+          "source": "packages/ui/src/components/transfer/Transfer.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "TransferDataItem",
+          "source": "packages/ui/src/components/transfer/types",
+          "sourceName": "TransferDataItem",
+          "kind": "type"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/transfer.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/transfer.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:tree-select",
+      "slug": "tree-select",
+      "scope": "component-page",
+      "primaryMemberId": "component:tree-select/TreeSelect",
+      "members": [
+        {
+          "id": "component:tree-select/TreeSelect",
+          "name": "TreeSelect",
+          "source": "packages/ui/src/components/tree-select/TreeSelect.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:tree-select/TreeSelectNode",
+          "name": "TreeSelectNode",
+          "source": "packages/ui/src/components/tree-select/TreeSelectNode.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "SelectionMode",
+          "source": "packages/ui/src/types/tree",
+          "sourceName": "SelectionMode",
+          "kind": "type"
+        },
+        {
+          "name": "TreeNode",
+          "source": "packages/ui/src/types/tree",
+          "sourceName": "TreeNode",
+          "kind": "type"
+        },
+        {
+          "name": "treeSelectTriggerVariants",
+          "source": "packages/ui/src/components/tree-select/tree-select-variants",
+          "sourceName": "treeSelectTriggerVariants",
+          "kind": "value"
+        },
+        {
+          "name": "treeSelectNodeVariants",
+          "source": "packages/ui/src/components/tree-select/tree-select-variants",
+          "sourceName": "treeSelectNodeVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/tree-select.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/tree-select.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:tree-view",
+      "slug": "tree-view",
+      "scope": "component-page",
+      "primaryMemberId": "component:tree-view/TreeView",
+      "members": [
+        {
+          "id": "component:tree-view/TreeView",
+          "name": "TreeView",
+          "source": "packages/ui/src/components/tree-view/TreeView.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:tree-view/TreeViewNode",
+          "name": "TreeViewNode",
+          "source": "packages/ui/src/components/tree-view/TreeViewNode.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "CheckState",
+          "source": "packages/ui/src/components/tree-view/tree-view-utils",
+          "sourceName": "CheckState",
+          "kind": "type"
+        },
+        {
+          "name": "getAllDescendantIds",
+          "source": "packages/ui/src/components/tree-view/tree-view-utils",
+          "sourceName": "getAllDescendantIds",
+          "kind": "value"
+        },
+        {
+          "name": "getCheckState",
+          "source": "packages/ui/src/components/tree-view/tree-view-utils",
+          "sourceName": "getCheckState",
+          "kind": "value"
+        },
+        {
+          "name": "cloneTree",
+          "source": "packages/ui/src/components/tree-view/tree-view-utils",
+          "sourceName": "cloneTree",
+          "kind": "value"
+        },
+        {
+          "name": "moveNode",
+          "source": "packages/ui/src/components/tree-view/tree-view-utils",
+          "sourceName": "moveNode",
+          "kind": "value"
+        },
+        {
+          "name": "treeItemVariants",
+          "source": "packages/ui/src/components/tree-view/tree-view-variants",
+          "sourceName": "treeItemVariants",
+          "kind": "value"
+        },
+        {
+          "name": "SelectionMode",
+          "source": "packages/ui/src/types/tree",
+          "sourceName": "SelectionMode",
+          "kind": "type"
+        },
+        {
+          "name": "TreeNode",
+          "source": "packages/ui/src/types/tree",
+          "sourceName": "TreeNode",
+          "kind": "type"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/tree-view.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/tree-view.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:typewriter-text",
+      "slug": "typewriter-text",
+      "scope": "component-page",
+      "primaryMemberId": "component:typewriter-text/TypewriterText",
+      "members": [
+        {
+          "id": "component:typewriter-text/TypewriterText",
+          "name": "TypewriterText",
+          "source": "packages/ui/src/components/typewriter-text/TypewriterText.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "typewriterTextVariants",
+          "source": "packages/ui/src/components/typewriter-text/typewriter-text-variants",
+          "sourceName": "typewriterTextVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/typewriter-text.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/typewriter-text.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:upload",
+      "slug": "upload",
+      "scope": "component-page",
+      "primaryMemberId": "component:upload/Upload",
+      "members": [
+        {
+          "id": "component:upload/Upload",
+          "name": "Upload",
+          "source": "packages/ui/src/components/upload/Upload.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:upload/UploadFileItem",
+          "name": "UploadFileItem",
+          "source": "packages/ui/src/components/upload/UploadFileItem.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:upload/UploadFileList",
+          "name": "UploadFileList",
+          "source": "packages/ui/src/components/upload/UploadFileList.vue",
+          "sourceName": "default",
+          "classification": "component"
+        },
+        {
+          "id": "component:upload/UploadTrigger",
+          "name": "UploadTrigger",
+          "source": "packages/ui/src/components/upload/UploadTrigger.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "UploadFile",
+          "source": "packages/ui/src/components/upload/upload-types",
+          "sourceName": "UploadFile",
+          "kind": "type"
+        },
+        {
+          "name": "UploadError",
+          "source": "packages/ui/src/components/upload/upload-types",
+          "sourceName": "UploadError",
+          "kind": "type"
+        },
+        {
+          "name": "UploadRequestOptions",
+          "source": "packages/ui/src/components/upload/upload-types",
+          "sourceName": "UploadRequestOptions",
+          "kind": "type"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/upload.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/upload.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:virtual-scroll",
+      "slug": "virtual-scroll",
+      "scope": "component-page",
+      "primaryMemberId": "component:virtual-scroll/VirtualScroll",
+      "members": [
+        {
+          "id": "component:virtual-scroll/VirtualScroll",
+          "name": "VirtualScroll",
+          "source": "packages/ui/src/components/virtual-scroll/VirtualScroll.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [
+        {
+          "name": "VirtualScrollItem",
+          "source": "packages/ui/src/components/virtual-scroll/types",
+          "sourceName": "VirtualScrollItem",
+          "kind": "type"
+        },
+        {
+          "name": "VirtualScrollProps",
+          "source": "packages/ui/src/components/virtual-scroll/types",
+          "sourceName": "VirtualScrollProps",
+          "kind": "type"
+        },
+        {
+          "name": "VirtualScrollEmits",
+          "source": "packages/ui/src/components/virtual-scroll/types",
+          "sourceName": "VirtualScrollEmits",
+          "kind": "type"
+        },
+        {
+          "name": "VirtualizerVirtualItem",
+          "source": "packages/ui/src/components/virtual-scroll/types",
+          "sourceName": "VirtualizerVirtualItem",
+          "kind": "type"
+        },
+        {
+          "name": "VirtualizerInstance",
+          "source": "packages/ui/src/components/virtual-scroll/types",
+          "sourceName": "VirtualizerInstance",
+          "kind": "type"
+        },
+        {
+          "name": "virtualScrollRootVariants",
+          "source": "packages/ui/src/components/virtual-scroll/virtual-scroll-variants",
+          "sourceName": "virtualScrollRootVariants",
+          "kind": "value"
+        },
+        {
+          "name": "virtualScrollItemVariants",
+          "source": "packages/ui/src/components/virtual-scroll/virtual-scroll-variants",
+          "sourceName": "virtualScrollItemVariants",
+          "kind": "value"
+        }
+      ],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/virtual-scroll.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/virtual-scroll.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    },
+    {
+      "id": "component:watermark",
+      "slug": "watermark",
+      "scope": "component-page",
+      "primaryMemberId": "component:watermark/Watermark",
+      "members": [
+        {
+          "id": "component:watermark/Watermark",
+          "name": "Watermark",
+          "source": "packages/ui/src/components/watermark/Watermark.vue",
+          "sourceName": "default",
+          "classification": "component"
+        }
+      ],
+      "supportingExports": [],
+      "pages": [
+        {
+          "locale": "zh-CN",
+          "file": "apps/docs/components/watermark.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        },
+        {
+          "locale": "en",
+          "file": "apps/docs/en/components/watermark.md",
+          "exists": true,
+          "presentation": "component-api",
+          "migration": "complete",
+          "pending": []
+        }
+      ]
+    }
+  ],
+  "diagnostics": []
+}

@@ -1,0 +1,252 @@
+{
+  "id": "component:infinite-scroll",
+  "name": "infinite-scroll",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:infinite-scroll/InfiniteScroll",
+      "name": "InfiniteScroll",
+      "source": {
+        "file": "packages/ui/src/components/infinite-scroll/InfiniteScroll.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Ainfinite_2Dscroll_2FInfiniteScroll-props-distance",
+          "name": "distance",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The number of pixels by which the intersection observer trigger area expands beyond the viewport.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/infinite-scroll/InfiniteScroll.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "100",
+              "source": {
+                "file": "packages/ui/src/components/infinite-scroll/InfiniteScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "100"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainfinite_2Dscroll_2FInfiniteScroll-props-delay",
+          "name": "delay",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The debounce delay in milliseconds after the loading sentinel enters the trigger area.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/infinite-scroll/InfiniteScroll.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "200",
+              "source": {
+                "file": "packages/ui/src/components/infinite-scroll/InfiniteScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "200"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainfinite_2Dscroll_2FInfiniteScroll-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables load detection and disconnects the observer; loading is not triggered while disabled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/infinite-scroll/InfiniteScroll.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/infinite-scroll/InfiniteScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainfinite_2Dscroll_2FInfiniteScroll-props-immediate",
+          "name": "immediate",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Requests a load on mount and after re-enabling when true; when false, loading is triggered only by the sentinel entering the expanded viewport.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/infinite-scroll/InfiniteScroll.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/infinite-scroll/InfiniteScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainfinite_2Dscroll_2FInfiniteScroll-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the outer container for the list, loading state, and observer sentinel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/infinite-scroll/InfiniteScroll.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/infinite-scroll/InfiniteScroll.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainfinite_2Dscroll_2FInfiniteScroll-events-load",
+          "name": "load",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted without a payload when more data should load after the debounce delay. Call `resetLoading()` after the parent finishes loading.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/infinite-scroll/InfiniteScroll.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Ainfinite_2Dscroll_2FInfiniteScroll-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The list or scrolling content to extend as more data is loaded.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/infinite-scroll/InfiniteScroll.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Ainfinite_2Dscroll_2FInfiniteScroll-slots-loading",
+          "name": "loading",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "A custom indicator shown while a load is in progress; pulsing dots are shown when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/infinite-scroll/InfiniteScroll.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Ainfinite_2Dscroll_2FInfiniteScroll-exposes-resetLoading",
+          "name": "resetLoading",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Marks loading as complete and checks the sentinel again. If it remains inside the expanded viewport, another `load` may fire immediately; set `disabled` to true when no more data is available.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/infinite-scroll/InfiniteScroll.vue",
+            "line": 184
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    }
+  ]
+}

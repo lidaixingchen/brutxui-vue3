@@ -63,7 +63,7 @@ const value = ref(3.5)
 
 ### 只读模式
 
-添加 `readonly` 属性使组件处于只读状态，移除所有的悬浮动画和点击交互。
+添加 `readonly` 展示已有评分，停止悬停预览、点击选择和键盘修改。
 
 ```vue
 <template>
@@ -75,35 +75,21 @@ const value = ref(3.5)
 
 | 尺寸 | 说明 |
 |------|------|
-| `sm` | 小尺寸（20px / 5/4 gap） |
-| `md` | 默认尺寸（28px / 6 gap） |
-| `lg` | 大尺寸（36px / 8 gap） |
+| `sm` | 小图标，紧凑间距 |
+| `md` | 默认图标和间距 |
+| `lg` | 大图标，宽松间距 |
 
-## Props
+## API 参考
 
-### Rate
+<span id="rate"></span>
+<span id="rate-1"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `modelValue` | `number` | `0` | 当前绑定的评分值，支持双向绑定 |
-| `max` | `number` | `5` | 最大分值（星星总数） |
-| `allowHalf` | `boolean` | `false` | 是否允许半星选择 |
-| `readonly` | `boolean` | `false` | 是否只读（禁用所有交互） |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 尺寸大小 |
-| `icon` | `string` | `undefined` | 自定义评分图标的 BrutalShape 图腾名（如 `heart`、`lightning`、`star-5`）；未设置时使用默认星星。传入未知图腾名时回退为默认星星 |
+<span id="事件"></span>
 
-## 事件
-
-### Rate
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:modelValue` | `number` | 评分值变化时触发，支持双向绑定 |
-| `change` | `number` | 选择评分且值发生变化时触发 |
+<ComponentApi name="rate" />
 
 ## 可访问性
 
-- **键盘操作**：当前组件主要基于鼠标悬停和点击进行交互
+- **键盘操作**：方向右键或上键增加评分，左键或下键减少评分；`Home` 归零，`End` 选取最高分。启用 `allowHalf` 时方向键按半分调整；只读时停止键盘修改并移出 Tab 焦点顺序
 - **ARIA 属性**：组件根元素设置了 `role="slider"` 角色，同时声明 `aria-valuenow` 对应当前评分值，`aria-valuemin="0"`，`aria-valuemax` 对应 `max`，且有 `aria-readonly` 属性标记只读状态
-- **动效降级**：星星的 hover 微动效支持 `prefers-reduced-motion` 自动降级，在开启“减弱动态效果”的设备上将不再有悬浮缩放效果
-
+- **动效降级**：敲选图标后的敲印回弹会读取 `prefers-reduced-motion`，开启“减弱动态效果”时不播放该动画

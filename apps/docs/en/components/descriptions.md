@@ -97,44 +97,14 @@ import { Descriptions, DescriptionsItem } from 'brutx-ui-vue'
 | `Descriptions` | Root container component |
 | `DescriptionsItem` | Single description item (label + content) |
 
-## Props
+## API Reference
 
-### Descriptions
+<span id="descriptions-1"></span>
+<span id="descriptionsitem"></span>
+<span id="descriptions-2"></span>
+<span id="descriptionsitem-1"></span>
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `column` | `number` | `3` | Number of columns |
-| `border` | `boolean` | `false` | Whether to show borders |
-| `direction` | `'horizontal' \| 'vertical'` | `'horizontal'` | Layout direction |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Component size |
-| `title` | `string` | — | Title text |
-| `class` | `string` | — | Custom CSS class |
-
-### DescriptionsItem
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `label` | `string` | — (required) | Label text |
-| `span` | `number` | `1` | Number of columns to span |
-| `labelWidth` | `string \| number` | — | Label width. **Only effective in borderless/vertical modes**; in horizontal border mode the label sits inside a `1fr` grid track and a fixed width cannot shrink the track — adjust the parent `column` instead |
-| `class` | `string` | — | Custom CSS class |
-
-## Slots
-
-### Descriptions
-
-| Slot | Description |
-| --- | --- |
-| `default` | DescriptionsItem components |
-| `title` | Custom title content |
-| `stamp` | Technical archive stamp: floating layer at the top-right (container is overflow-hidden, content stays inside) |
-
-### DescriptionsItem
-
-| Slot | Description |
-| --- | --- |
-| `default` | Content value |
-| `label` | Custom label content |
+<ComponentApi name="descriptions" />
 
 ## Accessibility
 
