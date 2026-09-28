@@ -9,6 +9,12 @@
  * 仅依赖 @commitlint/cli。
  */
 export default {
+    parserPreset: {
+        parserOpts: {
+            headerPattern: /^(\w+)(?:\(([^)]+)\))?!?: (.+)$/,
+            headerCorrespondence: ['type', 'scope', 'subject'],
+        },
+    },
     plugins: [
         {
             rules: {
