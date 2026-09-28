@@ -18,21 +18,38 @@ import {
 import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { isDocsApiGenerationInput } from './watch-docs-api.mjs'
 
 const SCRIPT_DIRECTORY = path.dirname(fileURLToPath(import.meta.url))
 const DEFAULT_REPOSITORY_ROOT = path.resolve(SCRIPT_DIRECTORY, '..', '..')
 const TEMPORARY_DIRECTORY_PREFIX = 'brutx-staged-snapshot-'
 const UI_PACKAGE = 'ui'
 const CLI_PACKAGE = 'cli'
-const PACKAGE_DIRECTORY = Object.freeze({
+const DOCS_PACKAGE = 'docs'
+const WORKSPACE_PACKAGE_DIRECTORY = Object.freeze({
     [UI_PACKAGE]: path.join('packages', 'ui'),
     [CLI_PACKAGE]: path.join('packages', 'cli'),
+})
+const GENERATOR_WORKING_DIRECTORY = Object.freeze({
+    [UI_PACKAGE]: WORKSPACE_PACKAGE_DIRECTORY[UI_PACKAGE],
+    [CLI_PACKAGE]: WORKSPACE_PACKAGE_DIRECTORY[CLI_PACKAGE],
+    [DOCS_PACKAGE]: path.join('packages', 'ui'),
 })
 const PACKAGE_COMMAND = Object.freeze({
     [UI_PACKAGE]: 'pnpm --filter brutx-ui-vue generate',
     [CLI_PACKAGE]: 'pnpm --filter brutx-vue generate',
+    [DOCS_PACKAGE]: 'pnpm --filter brutx-ui-vue docs:manifest',
 })
-const GENERATOR_ARGUMENTS = Object.freeze(['--import', 'tsx', 'scripts/generate.ts', '--check'])
+const GENERATOR_CHECK_ENTRY = Object.freeze({
+    [UI_PACKAGE]: 'node --import tsx scripts/generate.ts --check（工作目录：packages/ui）',
+    [CLI_PACKAGE]: 'node --import tsx scripts/generate.ts --check（工作目录：packages/cli）',
+    [DOCS_PACKAGE]: 'pnpm --filter brutx-ui-vue docs:manifest:check',
+})
+const GENERATOR_ARGUMENTS = Object.freeze({
+    [UI_PACKAGE]: ['--import', 'tsx', 'scripts/generate.ts', '--check'],
+    [CLI_PACKAGE]: ['--import', 'tsx', 'scripts/generate.ts', '--check'],
+    [DOCS_PACKAGE]: ['--import', 'tsx', 'scripts/generate-component-api.ts', '--check'],
+})
 const MAX_CHILD_OUTPUT_BYTES = 32 * 1024 * 1024
 const MAX_GENERATOR_OUTPUT_CHARACTERS = 12 * 1024
 const INDEX_PATH_SEPARATOR = 0
@@ -311,6 +328,7 @@ function isRootGenerationInput(relativePath) {
 export function determineAffectedPackages(stagedPaths) {
     const affected = new Set()
     for (const relativePath of stagedPaths) {
+        if (isDocsApiGenerationInput(relativePath)) affected.add(DOCS_PACKAGE)
         if (
             isRootGenerationInput(relativePath) ||
             SHARED_GENERATION_CHECK_FILES.has(relativePath) ||
@@ -323,7 +341,7 @@ export function determineAffectedPackages(stagedPaths) {
         if (isUiGenerationInput(relativePath) || isSharedGenerationInput(relativePath)) affected.add(UI_PACKAGE)
         if (isCliGenerationInput(relativePath) || isSharedGenerationInput(relativePath)) affected.add(CLI_PACKAGE)
     }
-    return [UI_PACKAGE, CLI_PACKAGE].filter(packageName => affected.has(packageName))
+    return [UI_PACKAGE, CLI_PACKAGE, DOCS_PACKAGE].filter(packageName => affected.has(packageName))
 }
 
 function ensureCandidatePath(rootPath, relativePath) {
@@ -520,7 +538,7 @@ function prepareCandidateDependencies(repositoryRoot, candidateRoot) {
         repositoryRoot,
     )
     for (const packageName of [UI_PACKAGE, CLI_PACKAGE]) {
-        const packageRelativePath = PACKAGE_DIRECTORY[packageName]
+        const packageRelativePath = WORKSPACE_PACKAGE_DIRECTORY[packageName]
         const candidatePackageRoot = path.join(candidateRoot, packageRelativePath)
         if (!existsSync(candidatePackageRoot)) continue
         const sourcePackageNodeModules = path.join(repositoryRoot, packageRelativePath, 'node_modules')
@@ -563,7 +581,8 @@ function normalizeGeneratorResult(result) {
 }
 
 export function runGenerator(request) {
-    const child = spawnSync(process.execPath, [...GENERATOR_ARGUMENTS], {
+    const [command, ...argumentsList] = request.command
+    const child = spawnSync(command, argumentsList, {
         cwd: request.packageRoot,
         env: request.environment,
         encoding: 'utf8',
@@ -586,6 +605,7 @@ function trimGeneratorOutput(value) {
 }
 
 function findGeneratedFileHint(output, packageName) {
+    if (packageName === DOCS_PACKAGE) return 'apps/docs/.vitepress/api-generated 组件 API 文档数据'
     const candidates = packageName === UI_PACKAGE ? UI_GENERATED_FILES : CLI_GENERATED_FILES
     for (const relativePath of candidates) {
         if (output.includes(path.posix.basename(relativePath)) || output.includes(relativePath)) return relativePath
@@ -606,17 +626,17 @@ function formatGeneratorFailure(packageName, result) {
         `✗ ${dependencyHint}：${fileHint}`,
         output || `生成器退出码：${result.exitCode}`,
         `请运行 \`${PACKAGE_COMMAND[packageName]}\` 后重新选择要暂存的文件。`,
-        `检查入口：\`node --import tsx scripts/generate.ts --check\`（工作目录：packages/${packageName}）`,
+        `检查入口：\`${GENERATOR_CHECK_ENTRY[packageName]}\``,
     ].join('\n')
 }
 
 function createGeneratorRequest(candidateRoot, packageName) {
-    const packageRoot = path.join(candidateRoot, PACKAGE_DIRECTORY[packageName])
+    const packageRoot = path.join(candidateRoot, GENERATOR_WORKING_DIRECTORY[packageName])
     return {
         packageName,
         candidateRoot,
         packageRoot,
-        command: [process.execPath, ...GENERATOR_ARGUMENTS],
+        command: [process.execPath, ...GENERATOR_ARGUMENTS[packageName]],
         environment: {
             ...process.env,
             BRUTX_CANDIDATE_ROOT: candidateRoot,
