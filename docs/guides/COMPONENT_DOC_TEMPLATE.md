@@ -154,50 +154,11 @@ const componentRef = ref()
 
 ### 暴露的 API
 
-| 方法/属性 | 类型 | 说明 |
-|-----------|------|------|
-| `someMethod` | `() => void` | 说明 |
-| `state` | `ComputedRef<T>` | 说明 |
+通过上方的 `<ComponentApi>` 展示实例暴露的成员。本节保留调用示例与使用说明，不另维护重复的成员表格。
 
-## Props
+## API 参考
 
-### {主组件名}
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'secondary'` | `'default'` | 颜色变体 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 尺寸 |
-| `disabled` | `boolean` | `false` | 是否禁用 |
-| `class` | `string` | — | 自定义样式类 |
-
-### {子组件名}
-
-<!-- 如有子组件且有独立 Props，在此列出；无则删除 -->
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 自定义样式类 |
-
-## 事件
-
-<!-- 如组件有自定义事件，在此列出；无则删除此章节 -->
-<!-- 参数格式：简单类型直接写（如 MouseEvent、string），复合参数用元组带参数名（如 [column: string, direction: 'asc' | 'desc']） -->
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `click` | `MouseEvent` | 点击时触发 |
-| `change` | `string` | 值变化时触发 |
-| `sort` | `[column: string, direction: 'asc' \| 'desc']` | 排序变化时触发 |
-
-## 插槽
-
-<!-- 如组件有插槽，在此列出；无则删除此章节 -->
-<!-- 如有作用域插槽，增加"作用域"列 -->
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 默认内容 |
-| `cell-{id}` | `{ row: T; value: unknown }` | 自定义单元格渲染 |
+<ComponentApi name="{component-name}" />
 
 ## 可访问性
 
@@ -250,14 +211,52 @@ A: 使用 `v-model` 绑定值，或通过 `@change` 事件手动更新表单状�
 | 8 | 导出类型 | 按需 | 从 index.ts 导出独立类型时必须 |
 | 9 | 组合式函数 | 按需 | 提供 composable 时必须 |
 | 10 | 程序化控制 | 按需 | 通过 defineExpose 暴露 API 时必须 |
-| 11 | Props | ✅ | 统一 4 列格式 |
-| 12 | 事件 | 按需 | 有自定义事件时必须 |
-| 13 | 插槽 | 按需 | 有插槽时必须 |
-| 14 | 可访问性 | ✅ | 统一使用此名称 |
-| 15 | 样式定制 | 按需 | 支持 CSS 变量自定义时必须 |
-| 16 | 常见问题 | 推荐 | 复杂组件建议添加 |
+| 11 | API 参考 | ✅ | 使用 `<ComponentApi>` 展示属性、事件、插槽与暴露成员 |
+| 12 | 可访问性 | ✅ | 统一使用此名称 |
+| 13 | 样式定制 | 按需 | 支持 CSS 变量自定义时必须 |
+| 14 | 常见问题 | 推荐 | 复杂组件建议添加 |
 
-> **CI 强制说明**：本章节规范（必须章节、`<ComponentPreview>`、`<InstallationTabs>`）由 `pnpm check:doc-template` 强制校验，缺必章节或组件缺失即 CI 失败。
+> **CI 强制说明**：本章节规范、`<ComponentPreview>`、`<InstallationTabs>` 和已迁移页面的真实 `<ComponentApi>` 调用由章节检查器校验。未迁移页面可在完成数据语义与中英文复核前保留原 API 表格。
+
+## API 数据注入与双语维护
+
+文档页只写稳定的组件组名称和可选范围。VitePress 编译器会从组件目录解析页面对应的 API 组和站点语言，为本页静态导入 `api-generated/{slug}.{zh-CN|en}.json`，再传给 `<ComponentApi>`。不要在 Markdown 中手动导入生成 JSON，也不要用变量绑定组件名、子组件名或分类；名称和范围必须可静态校验。
+
+`name` 接受目录中的组件组 slug，`subcomponent` 固定展示一个公开子组件，`defaultTab` 设置初始分类，`instance` 为同页重复调用提供唯一前缀，`search="false"` 可将单次 API 调用排除在本地搜索之外。搜索内容取当前页面实际展示范围内的成员名称、类型和说明，搜索结果链接到页面上对应成员的锚点。
+
+中文与英文镜像必须使用相同的组件组和成员范围；成员说明分别写入中文、英文语义资源。完成迁移的页面应只保留生成的 API 清单，不重复维护同一成员的手写属性、事件或插槽表格。API 成员锚点由生成数据提供；旧的 `#props`、`#events`、`#slots`、`#exposes` 链接在页面缺少对应锚点时由编译器补齐。
+
+### 单体组件
+
+```markdown
+## API 参考
+
+<ComponentApi name="button" />
+```
+
+### 复合组件
+
+完整复合组件页面默认展示组内全部公开成员。仅在正文分节展示特定子组件时，固定范围并为重复调用加上不同的实例名：
+
+```markdown
+## 内容容器 API
+
+<ComponentApi name="dialog" subcomponent="DialogContent" instance="content" />
+
+## 触发器 API
+
+<ComponentApi name="dialog" subcomponent="DialogTrigger" instance="trigger" />
+```
+
+### 复杂组件
+
+复杂组件同样使用静态生成数据展示完整 API；数据类型、组合式函数、程序化操作和可访问性说明仍写在正文，避免 API 清单替代使用指南：
+
+```markdown
+## API 参考
+
+<ComponentApi name="data-table" defaultTab="props" />
+```
 
 ---
 
@@ -270,6 +269,8 @@ A: 使用 `v-model` 绑定值，或通过 `@change` 事件手动更新表单状�
 ---
 
 ## 格式规范
+
+以下手写 API 表格格式用于尚在迁移的旧页面。页面使用 `<ComponentApi>` 后，应以双语语义资源维护 API 说明，并删除重复的成员表格。
 
 ### Props 表格
 
