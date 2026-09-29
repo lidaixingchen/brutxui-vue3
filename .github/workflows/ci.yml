@@ -191,6 +191,9 @@ jobs:
                       ${{ runner.os }}-turbo-coverage-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
                       ${{ runner.os }}-turbo-coverage-
 
+            - name: Generate component index and styles
+              run: pnpm --filter brutx-ui-vue generate
+
             - name: UI coverage
               id: ui-coverage
               run: pnpm --filter brutx-ui-vue test:coverage
