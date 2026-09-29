@@ -2,7 +2,7 @@
 import { computed, inject, onMounted, onUnmounted, provide, ref, watch } from 'vue'
 import { ChevronDown } from '@lucide/vue'
 import { MENU_KEY, SUB_MENU_HOVER_DELAY_MS } from './menu-types'
-import { hasDocument, getDocument } from '@/lib/env'
+import { hasDocument, getDocument, matchMedia } from '@/lib/env'
 import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 
 interface SubMenuProps {
@@ -354,8 +354,7 @@ function handleDocumentKeydown(event: KeyboardEvent) {
 }
 
 function prefersReducedMotion(): boolean {
-    if (typeof window === 'undefined' || !window.matchMedia) return false
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    return matchMedia('(prefers-reduced-motion: reduce)')?.matches ?? false
 }
 
 function onEnter(el: Element) {
