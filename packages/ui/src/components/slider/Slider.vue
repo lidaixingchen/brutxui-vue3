@@ -29,6 +29,9 @@ interface SliderProps {
     step?: number
     disabled?: boolean
     ariaLabel?: string
+    ariaLabelledby?: string
+    ariaDescribedby?: string
+    getValueText?: (value: number, index: number) => string
     size?: NonNullable<SliderTrackVariantProps['size']>
     variant?: NonNullable<SliderThumbVariantProps['variant']>
     orientation?: NonNullable<SliderRootVariantProps['orientation']>
@@ -44,6 +47,9 @@ const props = withDefaults(defineProps<SliderProps>(), {
     step: 1,
     disabled: false,
     ariaLabel: undefined,
+    ariaLabelledby: undefined,
+    ariaDescribedby: undefined,
+    getValueText: undefined,
     size: 'default',
     variant: 'default',
     orientation: 'horizontal',
@@ -184,6 +190,18 @@ function handleThumbPointerLeave(index: number) {
         hoveredThumb.value = -1
     }
 }
+
+function thumbDescription(index: number): string | undefined {
+    const descriptionIds: string[] = []
+    if (props.ariaDescribedby) descriptionIds.push(props.ariaDescribedby)
+    if (props.showTooltip && activeThumb.value === index) descriptionIds.push(tooltipId)
+    return descriptionIds.join(' ') || undefined
+}
+
+function thumbValueText(index: number): string | undefined {
+    const value: number | undefined = effectiveModelValue.value[index]
+    return value === undefined ? undefined : props.getValueText?.(value, index)
+}
 </script>
 
 <template>
@@ -215,7 +233,9 @@ function handleThumbPointerLeave(index: number) {
                 :key="index"
                 :class="thumbClasses"
                 :aria-label="ariaLabel ? (thumbCount > 1 ? `${ariaLabel} ${index + 1}` : ariaLabel) : undefined"
-                :aria-describedby="showTooltip && activeThumb === index ? tooltipId : undefined"
+                :aria-labelledby="ariaLabelledby"
+                :aria-describedby="thumbDescription(index)"
+                :aria-valuetext="thumbValueText(index)"
                 @focus="handleThumbFocus(index)"
                 @blur="handleThumbBlur(index)"
                 @pointerenter="handleThumbPointerEnter(index)"

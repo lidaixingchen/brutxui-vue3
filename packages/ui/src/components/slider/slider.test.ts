@@ -63,6 +63,29 @@ describe('Slider 调音台推子与工控指示刻槽', () => {
 })
 
 describe('Slider', () => {
+    it('将外部名称、说明及动态读数绑定到实际焦点 thumb', async (): Promise<void> => {
+        const wrapper = mount(Slider, {
+            props: {
+                modelValue: [1], min: 1, max: 3,
+                ariaLabelledby: 'chart-title', ariaDescribedby: 'chart-help',
+                getValueText: (value: number): string => `第 ${value} 项`,
+                showTooltip: true,
+            },
+            attachTo: document.body,
+        })
+        const thumb = wrapper.get('[role="slider"]')
+        expect(thumb.attributes('aria-labelledby')).toBe('chart-title')
+        expect(thumb.attributes('aria-describedby')).toBe('chart-help')
+        expect(thumb.attributes('aria-valuetext')).toBe('第 1 项')
+        await thumb.trigger('focus')
+        expect(thumb.attributes('aria-describedby')).toContain('chart-help ')
+        await wrapper.setProps({ modelValue: [3] })
+        expect(thumb.attributes('aria-valuetext')).toBe('第 3 项')
+        await thumb.trigger('blur')
+        expect(thumb.attributes('aria-describedby')).toBe('chart-help')
+        wrapper.unmount()
+    })
+
     it('renders with slider role', () => {
         const wrapper = mount(Slider, {
             attachTo: document.body,

@@ -206,6 +206,102 @@
           }
         },
         {
+          "id": "api-component_3Aslider_2FSlider-props-ariaLabelledby",
+          "name": "ariaLabelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "External element IDs that name the focusable thumb.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-ariaDescribedby",
+          "name": "ariaDescribedby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Thumb description IDs, combined with the built-in tooltip description.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-getValueText",
+          "name": "getValueText",
+          "kind": "props",
+          "type": {
+            "text": "((value: number, index: number) => string) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Callback function that generates `aria-valuetext` for each thumb.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
           "id": "api-component_3Aslider_2FSlider-props-size",
           "name": "size",
           "kind": "props",
@@ -222,7 +318,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/slider/Slider.vue",
-            "line": 32
+            "line": 35
           },
           "origin": "declared",
           "required": false,
@@ -260,7 +356,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/slider/Slider.vue",
-            "line": 33
+            "line": 36
           },
           "origin": "declared",
           "required": false,
@@ -295,7 +391,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/slider/Slider.vue",
-            "line": 34
+            "line": 37
           },
           "origin": "declared",
           "required": false,
@@ -327,7 +423,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/slider/Slider.vue",
-            "line": 35
+            "line": 38
           },
           "origin": "declared",
           "required": false,
@@ -362,7 +458,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/slider/Slider.vue",
-            "line": 36
+            "line": 39
           },
           "origin": "declared",
           "required": false,
@@ -394,7 +490,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/slider/Slider.vue",
-            "line": 37
+            "line": 40
           },
           "origin": "declared",
           "required": false,
@@ -443,7 +539,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/slider/Slider.vue",
-            "line": 65
+            "line": 71
           },
           "origin": "declared",
           "nullable": false,
@@ -462,7 +558,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/slider/Slider.vue",
-            "line": 66
+            "line": 72
           },
           "origin": "declared",
           "nullable": false,
