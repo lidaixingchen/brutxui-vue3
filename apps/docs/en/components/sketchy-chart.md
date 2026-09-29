@@ -1,12 +1,12 @@
 ---
 title: SketchyChart
-description: SVG + fractal noise filter driven hand-drawn line/bar/pie charts with zero external dependencies.
+description: Hand-drawn SVG charts with complete data, signed values, consistent formatting, and an equivalent data table.
 translated: true
 ---
 
 # SketchyChart
 
-A Neo-Brutalist hand-drawn style chart component, rendered purely with Vue `<svg>`. Uses SVG fractal noise filters to add wobble to axes, lines, and bar edges, perfectly mimicking a handwritten sketch aesthetic. Zero external dependencies.
+A Neo-Brutalist chart rendered with Vue and SVG, using fractal noise and hatch textures for a hand-drawn appearance. The table disclosure uses Reka UI and the library's semantic table components.
 
 ## Demo
 
@@ -32,7 +32,7 @@ const data = [
 </script>
 
 <template>
-    <SketchyChart type="line" :data="data" />
+    <SketchyChart title="Monthly sales" description="Unit: USD" type="line" :data="data" />
 </template>
 ```
 
@@ -60,9 +60,36 @@ The sketchiness prop controls the hand-drawn jitter amplitude. Higher values pro
 
 ## Data Handling
 
-- **Empty array**: Line/bar charts render an empty chart frame (axes only); pie charts render blank
-- **Negative values**: Absolute value is used
-- **Large datasets** (>30 items): Automatic downsampling
+- **Lines and bars**: Accept finite positive, negative, and zero values. The domain includes zero and the actual extrema; bars and line areas use a zero baseline.
+- **Pie charts**: Accept finite nonnegative values and calculate proportions from the complete dataset. Zero values remain in the legend and table without creating slices.
+- **Invalid values**: Any `NaN`, infinity, or negative pie value invalidates the entire graphic. The table identifies invalid cells while preserving every label.
+- **Empty and zero data**: Empty arrays show an empty state. All-zero lines and bars still render zero values. All-zero pies show a zero-total state with unavailable percentages.
+- **Complete categories**: Datasets above 30 items retain all data and endpoints; only visible category ticks are thinned. Use the complete table for dense data.
+- **Formatting**: `valueFormatter` consistently formats ticks, legends, and table values, receives only valid finite numbers, and should be deterministic and side-effect-free. Percentages use locale formatting independently; rounded values may not total 100%.
+
+## Data Semantics Migration
+
+Negative values now retain their sign, and negative pie values invalidate the chart. Datasets above 30 items are rendered in full. If your application needs absolute values, aggregation, or sampling, explicitly transform the input and explain that transformation. Use `title` to distinguish charts and `description` for units, methodology, and important trends.
+
+## Reading Interaction
+
+Hover the nearest horizontal line position, a bar category area, or a pie slice to read an item. The pie legend also exposes zero values. Move into the tooltip to keep it open. Escape dismisses it and small movements within the same item keep it closed. Touch selects an item; tapping it again or tapping outside dismisses it. Swiping preserves page scrolling.
+
+The visible data-item slider includes every category in input order. Arrow keys move between items, Home/End reach the endpoints, and Tab leaves normally. Single, empty, and invalid datasets use a read-only focus region. Pointer activity is independent of the slider position. Array replacement, insertion, deletion, reordering, label/value edits, or chart-type changes clear the tooltip and reset the explorer. Scrolling and resizing preserve the active item; locale and formatter changes refresh its text.
+
+Set `:interactive="false"` for a static chart with the complete table disclosure still available. Read dense data through the slider or table; visual distinguishability depends on available space.
+
+## Tooltip Slot
+
+```vue
+<SketchyChart title="Device share" type="pie" :data="data">
+    <template #tooltip="{ label, formattedValue, formattedPercentage }">
+        {{ label }}: {{ formattedValue }} ({{ formattedPercentage }})
+    </template>
+</SketchyChart>
+```
+
+The slot exposes `index`, `label`, raw `value`, `formattedValue`, and pie-specific `percentage` (0 to 1) and `formattedPercentage`. Both percentage fields are `undefined` for other chart types or unavailable proportions. Use display content only; links, buttons, and inputs belong in a separate interactive overlay. The slider and table provide equivalent readings.
 
 ## API Reference
 
@@ -70,5 +97,7 @@ The sketchiness prop controls the hand-drawn jitter amplitude. Higher values pro
 
 ## Accessibility
 
-- **ARIA attributes**: SVG sets `role="img"` and `aria-label`
-- **Screen readers**: Includes a `<title>` element for screen reader narration
+- **Graphic semantics**: SVG uses `role="img"` and instance-unique IDs to associate its visible title, description, and data state.
+- **Keyboard readings**: The slider has one focusable thumb. Its `aria-valuetext` includes category, formatted value, position, count, and pie percentage. The visual tooltip does not repeat announcements. Inside a dialog, the first Escape dismisses the tooltip and the next closes the dialog.
+- **Equivalent readings**: A keyboard-operable data-table disclosure retains focus on its button. The complete semantic table includes a caption, column headers, and percentages for pie charts.
+- **Context**: Supply meaningful titles and necessary trend descriptions to distinguish charts and convey their purpose.

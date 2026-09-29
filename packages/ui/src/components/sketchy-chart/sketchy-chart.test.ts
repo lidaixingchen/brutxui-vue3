@@ -146,11 +146,15 @@ describe('SketchyChart', () => {
         expect(slices[1].attributes('fill')).toContain('var(--brutal-secondary')
     })
 
-    it('renders empty state for line chart when all data values are 0', () => {
+    it('renders zero-valued line points on the zero baseline', () => {
         const wrapper = mount(SketchyChart, {
             props: { type: 'line', data: [{ label: 'A', value: 0 }, { label: 'B', value: 0 }] }
         })
         const emptyState = wrapper.find('.chart-empty-state')
-        expect(emptyState.exists()).toBe(true)
+        expect(emptyState.exists()).toBe(false)
+        const points = wrapper.findAll('.chart-data circle')
+        const baseline = wrapper.findAll('.chart-axes line')[1]
+        expect(points).toHaveLength(2)
+        expect(points[0].attributes('cy')).toBe(baseline.attributes('y1'))
     })
 })

@@ -1,234 +1,246 @@
 <script setup lang="ts">
-import { computed, useId } from 'vue'
-import { cn } from '@/lib/utils'
+import { computed, onMounted, ref, useId, type ComputedRef, type Ref, type CSSProperties, type VNode } from 'vue'
+import { CollapsibleRoot, CollapsibleTrigger, CollapsibleContent, TooltipRoot, TooltipProvider, TooltipTrigger } from 'reka-ui'
+import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
+import Button from '../button/Button.vue'
+import Slider from '../slider/Slider.vue'
+import TooltipContent from '../tooltip/TooltipContent.vue'
+import { useChartInteraction } from './useChartInteraction'
+import Table from '../table/Table.vue'
+import TableCaption from '../table/TableCaption.vue'
+import TableHeader from '../table/TableHeader.vue'
+import TableHead from '../table/TableHead.vue'
+import TableBody from '../table/TableBody.vue'
+import TableRow from '../table/TableRow.vue'
+import TableCell from '../table/TableCell.vue'
 import { sketchyChartVariants } from './sketchy-chart-variants'
 import { SKETCHY_CHART_DEFAULT_WIDTH_PX, SKETCHY_CHART_DEFAULT_HEIGHT_PX } from '@/lib/defaults'
-
-interface ChartDataItem {
-    label: string
-    value: number
-}
+import {
+    createChartModel, createChartTicks, chartYPosition, createPieGeometry,
+    CHART_PADDING, PIE_RADIUS_RATIO, PERCENTAGE_DECIMAL_PLACES, PERCENTAGE_MULTIPLIER,
+    type ChartDataItem, type ChartDatum, type ChartModel, type ChartTick, type ChartType, type PieGeometry,
+} from './sketchy-chart-data'
 
 interface SketchyChartProps {
-    type?: 'line' | 'bar' | 'pie'
+    type?: ChartType
     data?: ChartDataItem[]
+    title?: string
+    description?: string
+    valueFormatter?: (value: number) => string
+    interactive?: boolean
     sketchiness?: number
     grid?: boolean
     width?: number
     height?: number
     class?: string
 }
+interface ChartReading extends ChartDatum {
+    formattedValue: string
+    formattedPercentage: string
+    color: string
+}
+interface PositionedTick extends ChartTick { y: number }
+interface TooltipReading {
+    index: number
+    label: string
+    value: number
+    formattedValue: string
+    percentage: number | undefined
+    formattedPercentage: string | undefined
+}
+interface ChartPoint { x: number; y: number }
+defineSlots<{ tooltip?: (reading: TooltipReading) => VNode[] }>()
 
+const DEFAULT_SKETCHINESS: number = 2
+const BASE_FREQUENCY_FACTOR: number = 0.015
+const CHART_STROKE_WIDTH: number = 3
+const POINT_RADIUS: number = 6
+const DASH_PATTERN: string = '4 4'
+const LABEL_OFFSET: number = 4
+const BAR_GAP_RATIO: number = 0.25
+const MINIMUM_PLOT_SIZE: number = 1
+const CATEGORY_LABEL_SPACING: number = 70
+const NUMBER_SIGNIFICANT_DIGITS: number = 12
+const HATCH_TILE_SIZE: number = 10
+const PIE_COLORS: readonly string[] = [
+    'var(--brutal-primary, #FF6B6B)', 'var(--brutal-secondary, #4ECDC4)',
+    'var(--brutal-accent, #FFE66D)', 'var(--brutal-info, #4A90D9)',
+    'var(--brutal-success, #7FB069)', 'var(--brutal-destructive, #EF476F)',
+]
 const props = withDefaults(defineProps<SketchyChartProps>(), {
-    type: 'line',
-    data: () => [],
-    sketchiness: 2,
-    grid: true,
-    width: SKETCHY_CHART_DEFAULT_WIDTH_PX,
-    height: SKETCHY_CHART_DEFAULT_HEIGHT_PX,
-    class: undefined,
+    type: 'line', data: () => [], title: undefined, description: undefined, valueFormatter: undefined,
+    sketchiness: DEFAULT_SKETCHINESS, grid: true, interactive: true,
+    width: SKETCHY_CHART_DEFAULT_WIDTH_PX, height: SKETCHY_CHART_DEFAULT_HEIGHT_PX, class: undefined,
 })
-
-// Vue 3.5+ 始终可用 useId
-const uid = useId().replace(/:/g, '-')
-const filterId = `brutal-sketch-filter-${uid}`
-const hatchId = `hatch-pattern-${uid}`
-const { t } = useLocale()
-
-const chartAriaLabel = computed(() => {
+const uid: string = useId().replace(/:/g, '-')
+const filterId: string = `brutal-sketch-filter-${uid}`
+const hatchId: string = `hatch-pattern-${uid}`
+const titleId: string = `chart-title-${uid}`
+const descriptionId: string = `chart-description-${uid}`
+const { t, locale } = useLocale()
+const chartAriaLabel: ComputedRef<string> = computed((): string => {
     if (props.type === 'line') return t('sketchyChart.lineAriaLabel')
     if (props.type === 'bar') return t('sketchyChart.barAriaLabel')
     return t('sketchyChart.pieAriaLabel')
 })
-
-// 手绘抖动强度对应的基准频率
-const BASE_FREQUENCY_FACTOR = 0.015
-const baseFrequency = computed(() => props.sketchiness * BASE_FREQUENCY_FACTOR)
-
-// 数据预处理（空数组、大容量降采样、负数取绝对值）
-const processedData = computed(() => {
-    if (!props.data || props.data.length === 0) return []
-
-    // 负数取绝对值
-    let items = props.data.map(d => ({
-        label: d.label,
-        value: Math.abs(d.value)
-    }))
-
-    // 大容量降采样（超过 30 项，隔项采样以防重叠）
-    if (items.length > 30) {
-        const step = Math.ceil(items.length / 30)
-        items = items.filter((_, idx) => idx % step === 0)
-    }
-
-    return items
+const chartTitle: ComputedRef<string> = computed((): string => props.title ?? chartAriaLabel.value)
+const model: ComputedRef<ChartModel> = computed((): ChartModel => createChartModel(props.data, props.type))
+const stateText: ComputedRef<string> = computed((): string => {
+    if (model.value.state === 'invalid') return t('sketchyChart.invalidDataText')
+    if (model.value.state === 'empty') return t('sketchyChart.emptyText')
+    if (model.value.state === 'zero-total') return t('sketchyChart.zeroTotalText')
+    return t('sketchyChart.dataCount', { count: model.value.items.length })
 })
-
-const CHART_PADDING = { top: 30, right: 30, bottom: 40, left: 60 }
-
-// SVG 样式常量
-const CHART_STROKE_WIDTH = 3
-const POINT_RADIUS = 6
-const DASH_PATTERN = '4 4'
-
-// 饼图布局比例
-const WIDTH_RATIO = 0.7
-const HEIGHT_RATIO = 0.55
-
-// 柱状图阴影偏移 & 标签偏移量
-const LABEL_OFFSET = 4
-
-const plotWidth = computed(() => props.width - CHART_PADDING.left - CHART_PADDING.right)
-const plotHeight = computed(() => props.height - CHART_PADDING.top - CHART_PADDING.bottom)
-
-const maxValue = computed(() => {
-    if (processedData.value.length === 0) return 100
-    const max = Math.max(...processedData.value.map(d => d.value))
-    return max === 0 ? 100 : max
-})
-
-// 坐标映射
-const dataToSvgX = (index: number) => {
-    if (processedData.value.length <= 1) return CHART_PADDING.left + plotWidth.value / 2
-    return CHART_PADDING.left + (index / (processedData.value.length - 1)) * plotWidth.value
+const chartDescription: ComputedRef<string> = computed((): string =>
+    [props.description, chartAriaLabel.value, stateText.value].filter(Boolean).join(' · '))
+const numberFormat: ComputedRef<Intl.NumberFormat> = computed((): Intl.NumberFormat =>
+    new Intl.NumberFormat(locale.value.code ?? 'zh-CN', { maximumSignificantDigits: NUMBER_SIGNIFICANT_DIGITS }))
+const percentageFormat: ComputedRef<Intl.NumberFormat> = computed((): Intl.NumberFormat =>
+    new Intl.NumberFormat(locale.value.code ?? 'zh-CN', { style: 'percent', maximumFractionDigits: PERCENTAGE_DECIMAL_PLACES }))
+function formatValue(value: number): string {
+    return props.valueFormatter ? props.valueFormatter(value) : numberFormat.value.format(value)
 }
-
-const dataToSvgY = (value: number) => {
-    return CHART_PADDING.top + plotHeight.value - (value / maxValue.value) * plotHeight.value
+const readings: ComputedRef<ChartReading[]> = computed((): ChartReading[] => model.value.items.map((item: ChartDatum): ChartReading => ({
+    ...item,
+    formattedValue: item.valid ? formatValue(item.value) : t('sketchyChart.invalidValueText'),
+    formattedPercentage: item.percentage === undefined ? t('sketchyChart.unavailablePercentage') : percentageFormat.value.format(item.percentage),
+    color: PIE_COLORS[item.index % PIE_COLORS.length]!,
+})))
+const hasRoundingDifference: ComputedRef<boolean> = computed((): boolean => {
+    if (props.type !== 'pie' || model.value.state !== 'ready') return false
+    const precision: number = PERCENTAGE_MULTIPLIER * 10 ** PERCENTAGE_DECIMAL_PLACES
+    const total: number = readings.value.reduce((sum: number, item: ChartReading): number => sum + Math.round((item.percentage ?? 0) * precision), 0)
+    return total !== precision
+})
+const processedData: ComputedRef<ChartDatum[]> = computed((): ChartDatum[] => model.value.state === 'ready' ? model.value.items : [])
+const baseFrequency: ComputedRef<number> = computed((): number => props.sketchiness * BASE_FREQUENCY_FACTOR)
+function safeDimension(value: number, fallback: number, padding: number): number {
+    return Number.isFinite(value) && value > padding ? value : fallback
 }
-
-// 折线图 Paths
-const linePath = computed(() => {
-    if (processedData.value.length === 0) return ''
-    return processedData.value
-        .map((d, i) => `${i === 0 ? 'M' : 'L'} ${dataToSvgX(i)} ${dataToSvgY(d.value)}`)
-        .join(' ')
-})
-
-// 折线图填充区域（Neobrutalist 阴影面效果）
-const lineAreaPath = computed(() => {
-    if (processedData.value.length === 0) return ''
-    const startX = dataToSvgX(0)
-    const endX = dataToSvgX(processedData.value.length - 1)
-    const bottomY = CHART_PADDING.top + plotHeight.value
-    return `${linePath.value} L ${endX} ${bottomY} L ${startX} ${bottomY} Z`
-})
-
-// 柱状图各 Column 算定
-const BAR_GAP_RATIO = 0.25
-const barWidth = computed(() => {
-    const totalBars = processedData.value.length
-    if (totalBars === 0) return 0
-    return (plotWidth.value / totalBars) * (1 - BAR_GAP_RATIO)
-})
-
-const getBarX = (index: number) => {
-    const totalBars = processedData.value.length
-    const slotWidth = plotWidth.value / totalBars
+const chartWidth: ComputedRef<number> = computed((): number => safeDimension(props.width, SKETCHY_CHART_DEFAULT_WIDTH_PX, CHART_PADDING.left + CHART_PADDING.right))
+const chartHeight: ComputedRef<number> = computed((): number => safeDimension(props.height, SKETCHY_CHART_DEFAULT_HEIGHT_PX, CHART_PADDING.top + CHART_PADDING.bottom))
+const plotWidth: ComputedRef<number> = computed((): number => Math.max(MINIMUM_PLOT_SIZE, chartWidth.value - CHART_PADDING.left - CHART_PADDING.right))
+const plotHeight: ComputedRef<number> = computed((): number => Math.max(MINIMUM_PLOT_SIZE, chartHeight.value - CHART_PADDING.top - CHART_PADDING.bottom))
+function dataToSvgX(index: number): number {
+    return CHART_PADDING.left + (processedData.value.length <= 1 ? plotWidth.value / 2 : index / (processedData.value.length - 1) * plotWidth.value)
+}
+function dataToSvgY(value: number): number {
+    return CHART_PADDING.top + chartYPosition(value, model.value) * plotHeight.value
+}
+const zeroY: ComputedRef<number> = computed((): number => dataToSvgY(0))
+const linePath: ComputedRef<string> = computed((): string => processedData.value
+    .map((item: ChartDatum, index: number): string => `${index === 0 ? 'M' : 'L'} ${dataToSvgX(index)} ${dataToSvgY(item.value)}`).join(' '))
+const lineAreaPath: ComputedRef<string> = computed((): string => processedData.value.length === 0 ? '' :
+    `${linePath.value} L ${dataToSvgX(processedData.value.length - 1)} ${zeroY.value} L ${dataToSvgX(0)} ${zeroY.value} Z`)
+const barWidth: ComputedRef<number> = computed((): number => processedData.value.length === 0 ? 0 : plotWidth.value / processedData.value.length * (1 - BAR_GAP_RATIO))
+function getBarX(index: number): number {
+    const slotWidth: number = plotWidth.value / processedData.value.length
     return CHART_PADDING.left + index * slotWidth + (slotWidth - barWidth.value) / 2
 }
-
-// 饼图计算
-const PIE_COLORS = [
-    'var(--brutal-primary, #FF6B6B)',
-    'var(--brutal-secondary, #4ECDC4)',
-    'var(--brutal-accent, #FFE66D)',
-    'var(--brutal-info, #4A90D9)',
-    'var(--brutal-success, #7FB069)',
-    'var(--brutal-destructive, #EF476F)',
-]
-const PERCENTAGE_MULTIPLIER = 100
-const PIE_PERCENTAGE_DECIMAL_PLACES = 1
-
-const pieSlices = computed(() => {
-    if (processedData.value.length === 0) return []
-    const total = processedData.value.reduce((sum, d) => sum + Math.max(0, d.value), 0)
-    if (total === 0) return []
-    const cx = props.width / 2
-    const cy = props.height / 2
-    const radius = Math.min(cx, cy) * WIDTH_RATIO
-    let currentAngle = -Math.PI / 2
-    return processedData.value.map((d, i) => {
-        const positiveVal = Math.max(0, d.value)
-        const sliceAngle = (positiveVal / total) * Math.PI * 2
-        const startAngle = currentAngle
-        const endAngle = currentAngle + sliceAngle
-        const x1 = cx + radius * Math.cos(startAngle)
-        const y1 = cy + radius * Math.sin(startAngle)
-        const x2 = cx + radius * Math.cos(endAngle)
-        const y2 = cy + radius * Math.sin(endAngle)
-        let path: string
-        if (sliceAngle >= Math.PI * 2 - 1e-6) {
-            // 完整圆需拆为两段半圆：A 命令在起止点重合时不渲染
-            const midX = cx + radius * Math.cos(startAngle + Math.PI)
-            const midY = cy + radius * Math.sin(startAngle + Math.PI)
-            path = [
-                `M ${cx} ${cy}`,
-                `L ${x1} ${y1}`,
-                `A ${radius} ${radius} 0 0 1 ${midX} ${midY}`,
-                `A ${radius} ${radius} 0 0 1 ${x1} ${y1}`,
-                'Z',
-            ].join(' ')
-        } else {
-            const largeArc = sliceAngle > Math.PI ? 1 : 0
-            path = [
-                `M ${cx} ${cy}`,
-                `L ${x1} ${y1}`,
-                `A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`,
-                'Z',
-            ].join(' ')
-        }
-        currentAngle = endAngle
-        return {
-            path,
-            color: PIE_COLORS[i % PIE_COLORS.length],
-            label: d.label,
-            value: positiveVal,
-            percentage: ((positiveVal / total) * PERCENTAGE_MULTIPLIER).toFixed(PIE_PERCENTAGE_DECIMAL_PLACES),
-            midAngle: (startAngle + endAngle) / 2,
-            cx,
-            cy,
-            labelRadius: radius * HEIGHT_RATIO,
-        }
-    })
+const pieSlices: ComputedRef<Array<PieGeometry & { color: string }>> = computed((): Array<PieGeometry & { color: string }> =>
+    createPieGeometry(model.value, chartWidth.value, chartHeight.value).map((slice: PieGeometry): PieGeometry & { color: string } => ({ ...slice, color: PIE_COLORS[slice.index % PIE_COLORS.length]! })))
+const yTicks: ComputedRef<PositionedTick[]> = computed((): PositionedTick[] => model.value.state === 'invalid' || model.value.state === 'empty' ? [] :
+    createChartTicks(model.value, formatValue).map((tick: ChartTick): PositionedTick => ({ ...tick, y: CHART_PADDING.top + tick.position * plotHeight.value })))
+const categoryLabels: ComputedRef<ChartDatum[]> = computed((): ChartDatum[] => {
+    const capacity: number = Math.max(1, Math.floor(plotWidth.value / CATEGORY_LABEL_SPACING))
+    const step: number = Math.max(1, Math.ceil(processedData.value.length / capacity))
+    return processedData.value.filter((item: ChartDatum): boolean => item.index % step === 0 || item.index === processedData.value.length - 1)
 })
-
-// 自动生成 Y 轴 5 等分刻度（使用 index 作为唯一标识，y 坐标使用未取整的精确值）
-const yTicks = computed(() => {
-    const ticks = []
-    const step = maxValue.value / 4
-    for (let i = 0; i <= 4; i++) {
-        const rawVal = step * i
-        ticks.push({
-            index: i,
-            value: Math.round(rawVal),
-            y: dataToSvgY(rawVal),
-        })
+const isEmpty: ComputedRef<boolean> = computed((): boolean => model.value.state !== 'ready')
+const containerClasses: ComputedRef<string> = computed((): string => cn(sketchyChartVariants(), props.class))
+const statusClasses: ComputedRef<string> = computed((): string => cn('rounded-brutal border-2 border-brutal p-3', FOCUS_RING_CLASSES))
+const root: Ref<HTMLElement | null> = ref(null)
+const graph: Ref<SVGSVGElement | null> = ref(null)
+const explorer: Ref<HTMLElement | null> = ref(null)
+const portalTarget: Ref<HTMLElement | undefined> = ref(undefined)
+const explorerId: string = `chart-explorer-${uid}`
+const instructionsId: string = `chart-instructions-${uid}`
+const tooltipId: string = `chart-reading-${uid}`
+const statusId: string = `chart-status-${uid}`
+const FIRST_INDEX: number = 0
+const INDEX_STEP: number = 1
+const FULL_TURN: number = Math.PI * 2
+const ANCHOR_RADIUS_RATIO: number = 0.75
+const validReadings: ComputedRef<boolean> = computed((): boolean => model.value.state === 'ready' || model.value.state === 'zero-total')
+function hit(event: PointerEvent): number | null {
+    const matrix: DOMMatrix | null | undefined = graph.value?.getScreenCTM()
+    if (!matrix || !validReadings.value) return null
+    const point: DOMPoint = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse())
+    if (props.type === 'pie') {
+        const dx: number = point.x - chartWidth.value / 2
+        const dy: number = point.y - chartHeight.value / 2
+        const radius: number = Math.min(chartWidth.value, chartHeight.value) / 2 * PIE_RADIUS_RATIO
+        if (Math.hypot(dx, dy) > radius) return null
+        const fraction: number = ((Math.atan2(dy, dx) + Math.PI / 2 + FULL_TURN) % FULL_TURN) / FULL_TURN
+        let end: number = 0
+        for (const item of readings.value) {
+            end += item.percentage ?? 0
+            if ((item.percentage ?? 0) > 0 && fraction < end) return item.index
+        }
+        return null
     }
-    return ticks
+    if (point.x < CHART_PADDING.left || point.x > chartWidth.value - CHART_PADDING.right || point.y < CHART_PADDING.top || point.y > chartHeight.value - CHART_PADDING.bottom) return null
+    const position: number = (point.x - CHART_PADDING.left) / plotWidth.value
+    return props.type === 'line' ? Math.round(position * (readings.value.length - 1)) : Math.min(readings.value.length - 1, Math.floor(position * readings.value.length))
+}
+const interaction: ReturnType<typeof useChartInteraction> = useChartInteraction({
+    data: (): ChartDataItem[] => props.data, type: (): ChartType => props.type,
+    enabled: (): boolean => props.interactive, valid: (): boolean => validReadings.value,
+    root, explorer, hit, tooltip: (): HTMLElement | null => root.value?.ownerDocument.getElementById(tooltipId) ?? null,
 })
-
-const isEmpty = computed(() => {
-    if (processedData.value.length === 0) return true
-    if (props.type === 'pie') return pieSlices.value.length === 0
-    return processedData.value.every(d => d.value === 0)
+const { activeIndex, explorerIndex, open: tooltipOpen } = interaction
+const activeReading: ComputedRef<ChartReading | undefined> = computed((): ChartReading | undefined => activeIndex.value === null ? undefined : readings.value[activeIndex.value])
+const tooltipReading: ComputedRef<TooltipReading | undefined> = computed((): TooltipReading | undefined => {
+    const item: ChartReading | undefined = activeReading.value
+    return item ? { index: item.index, label: item.label, value: item.value, formattedValue: item.formattedValue,
+        percentage: item.percentage, formattedPercentage: item.percentage === undefined ? undefined : item.formattedPercentage } : undefined
 })
-
-const containerClasses = computed(() =>
-    cn(sketchyChartVariants(), props.class)
-)
+const activeSlice: ComputedRef<PieGeometry | undefined> = computed((): PieGeometry | undefined => pieSlices.value.find((slice: PieGeometry): boolean => slice.index === activeIndex.value))
+const anchorInGraph: ComputedRef<boolean> = computed((): boolean => activeReading.value !== undefined && (props.type !== 'pie' || activeSlice.value !== undefined))
+const activePoint: ComputedRef<ChartPoint> = computed((): ChartPoint => {
+    const item: ChartReading | undefined = activeReading.value
+    if (!item) return { x: 0, y: 0 }
+    if (props.type !== 'pie') return { x: props.type === 'line' ? dataToSvgX(item.index) : getBarX(item.index) + barWidth.value / 2, y: dataToSvgY(item.value) }
+    const before: number = readings.value.slice(0, item.index).reduce((sum: number, reading: ChartReading): number => sum + (reading.percentage ?? 0), 0)
+    const angle: number = (before + (item.percentage ?? 0) / 2) * FULL_TURN - Math.PI / 2
+    const radius: number = Math.min(chartWidth.value, chartHeight.value) / 2 * PIE_RADIUS_RATIO * ANCHOR_RADIUS_RATIO
+    return { x: chartWidth.value / 2 + Math.cos(angle) * radius, y: chartHeight.value / 2 + Math.sin(angle) * radius }
+})
+const anchorStyle: ComputedRef<CSSProperties> = computed((): CSSProperties => ({ left: `${activePoint.value.x / chartWidth.value * PERCENTAGE_MULTIPLIER}%`, top: `${activePoint.value.y / chartHeight.value * PERCENTAGE_MULTIPLIER}%` }))
+function readingText(index: number): string {
+    const item: ChartReading | undefined = readings.value[index]
+    if (!item || !validReadings.value) return stateText.value
+    return [item.label, item.formattedValue, props.type === 'pie' ? item.formattedPercentage : undefined,
+        t('sketchyChart.positionText', { position: index + INDEX_STEP, count: readings.value.length })].filter(Boolean).join(' · ')
+}
+onMounted((): void => {
+    portalTarget.value = root.value?.closest<HTMLElement>('[role="dialog"], [role="alertdialog"]') ?? root.value?.ownerDocument.body
+})
 </script>
 
 <template>
-    <div :class="containerClasses">
+    <div ref="root" :class="containerClasses" :data-chart-state="model.state" :data-active-index="activeIndex">
+        <TooltipProvider :delay-duration="0">
+        <TooltipRoot :open="tooltipOpen">
+        <p :id="titleId" class="font-bold tracking-tight leading-snug">{{ chartTitle }}</p>
+        <p :id="descriptionId" class="text-sm font-medium text-brutal-muted-foreground leading-relaxed">{{ chartDescription }}</p>
+        <div class="relative">
         <svg
+            ref="graph"
+            data-chart-hit
             role="img"
-            :aria-label="chartAriaLabel"
-            :viewBox="`0 0 ${width} ${height}`"
+            :aria-labelledby="titleId"
+            :aria-describedby="descriptionId"
+            :viewBox="`0 0 ${chartWidth} ${chartHeight}`"
             class="w-full h-auto overflow-visible select-none"
+            @pointerenter="interaction.pointerEnter"
+            @pointermove="interaction.pointerMove($event)"
+            @pointerdown="interaction.pointerDown($event)"
+            @pointerup="interaction.pointerUp($event)"
+            @pointercancel="interaction.pointerCancel"
         >
-            <title>{{ chartAriaLabel }}</title>
+            <title>{{ chartTitle }}</title>
 
             <defs>
                 <!-- 手绘波动滤镜 -->
@@ -252,15 +264,16 @@ const containerClasses = computed(() =>
                 <pattern
                     :id="hatchId"
                     patternUnits="userSpaceOnUse"
-                    width="10"
-                    height="10"
+                    :width="HATCH_TILE_SIZE"
+                    :height="HATCH_TILE_SIZE"
                     patternTransform="rotate(45)"
                 >
+                    <rect :width="HATCH_TILE_SIZE" :height="HATCH_TILE_SIZE" fill="var(--brutal-secondary, #4ECDC4)" />
                     <line
                         x1="0"
                         y1="0"
                         x2="0"
-                        y2="10"
+                        :y2="HATCH_TILE_SIZE"
                         stroke="var(--brutal-border-color, #000000)"
                         stroke-width="2"
                     />
@@ -274,7 +287,7 @@ const containerClasses = computed(() =>
                     :key="'grid-' + tick.index"
                     :x1="CHART_PADDING.left"
                     :y1="tick.y"
-                    :x2="width - CHART_PADDING.right"
+                    :x2="chartWidth - CHART_PADDING.right"
                     :y2="tick.y"
                     stroke="var(--brutal-muted, #f3f4f6)"
                     stroke-width="1.5"
@@ -289,16 +302,16 @@ const containerClasses = computed(() =>
                     :x1="CHART_PADDING.left"
                     :y1="CHART_PADDING.top"
                     :x2="CHART_PADDING.left"
-                    :y2="height - CHART_PADDING.bottom"
+                    :y2="chartHeight - CHART_PADDING.bottom"
                     stroke="var(--brutal-border-color, #000000)"
                     :stroke-width="CHART_STROKE_WIDTH"
                 />
                 <!-- X 轴 -->
                 <line
                     :x1="CHART_PADDING.left"
-                    :y1="height - CHART_PADDING.bottom"
-                    :x2="width - CHART_PADDING.right"
-                    :y2="height - CHART_PADDING.bottom"
+                    :y1="zeroY"
+                    :x2="chartWidth - CHART_PADDING.right"
+                    :y2="zeroY"
                     stroke="var(--brutal-border-color, #000000)"
                     :stroke-width="CHART_STROKE_WIDTH"
                 />
@@ -340,17 +353,17 @@ const containerClasses = computed(() =>
                         <!-- 柱体硬影子（Neobrutalist 偏移底色块） -->
                         <rect
                             :x="getBarX(i) + LABEL_OFFSET"
-                            :y="dataToSvgY(d.value) + LABEL_OFFSET"
+                            :y="Math.min(zeroY, dataToSvgY(d.value)) + LABEL_OFFSET"
                             :width="barWidth"
-                            :height="height - CHART_PADDING.bottom - dataToSvgY(d.value)"
+                            :height="Math.abs(zeroY - dataToSvgY(d.value))"
                             fill="var(--brutal-border-color, #000000)"
                         />
                         <!-- 柱体本体（Hatch 填充 + 粗黑边框） -->
                         <rect
                             :x="getBarX(i)"
-                            :y="dataToSvgY(d.value)"
+                            :y="Math.min(zeroY, dataToSvgY(d.value))"
                             :width="barWidth"
-                            :height="height - CHART_PADDING.bottom - dataToSvgY(d.value)"
+                            :height="Math.abs(zeroY - dataToSvgY(d.value))"
                             :fill="`url(#${hatchId})`"
                             stroke="var(--brutal-border-color, #000000)"
                             :stroke-width="CHART_STROKE_WIDTH"
@@ -381,15 +394,15 @@ const containerClasses = computed(() =>
                     :y="tick.y + LABEL_OFFSET"
                     text-anchor="end"
                 >
-                    {{ tick.value }}
+                    {{ tick.text }}
                 </text>
 
                 <!-- X 轴刻度标签 -->
                 <text
-                    v-for="(d, i) in processedData"
-                    :key="'lbl-x-' + i"
-                    :x="type === 'line' ? dataToSvgX(i) : getBarX(i) + barWidth / 2"
-                    :y="height - CHART_PADDING.bottom + 20"
+                    v-for="d in categoryLabels"
+                    :key="'lbl-x-' + d.index"
+                    :x="type === 'line' ? dataToSvgX(d.index) : getBarX(d.index) + barWidth / 2"
+                    :y="chartHeight - CHART_PADDING.bottom + 20"
                     text-anchor="middle"
                 >
                     {{ d.label }}
@@ -400,35 +413,86 @@ const containerClasses = computed(() =>
             <g v-if="isEmpty" :filter="`url(#${filterId})`" class="chart-empty-state">
                 <circle
                     v-if="type === 'pie'"
-                    :cx="width / 2"
-                    :cy="height / 2"
-                    :r="Math.min(width, height) / 2 * WIDTH_RATIO"
+                    :cx="chartWidth / 2"
+                    :cy="chartHeight / 2"
+                    :r="Math.min(chartWidth, chartHeight) / 2 * PIE_RADIUS_RATIO"
                     fill="var(--brutal-muted, #f3f4f6)"
                     stroke="var(--brutal-border-color, #000000)"
                     :stroke-width="CHART_STROKE_WIDTH"
                 />
                 <text
-                    :x="width / 2"
-                    :y="height / 2"
+                    :x="chartWidth / 2"
+                    :y="chartHeight / 2"
                     text-anchor="middle"
                     dominant-baseline="central"
                     fill="var(--brutal-fg, #000000)"
                     font-size="14"
                     font-weight="900"
                 >
-                    {{ t('sketchyChart.emptyText') }}
+                    {{ stateText }}
                 </text>
             </g>
+            <g v-if="activeReading && anchorInGraph" aria-hidden="true" class="pointer-events-none" fill="none" stroke="currentColor" :stroke-width="CHART_STROKE_WIDTH">
+                <circle v-if="type === 'line'" :cx="activePoint.x" :cy="activePoint.y" :r="POINT_RADIUS + CHART_STROKE_WIDTH" />
+                <rect v-else-if="type === 'bar'" :x="getBarX(activeReading.index) - CHART_STROKE_WIDTH" :y="Math.min(zeroY, activePoint.y) - CHART_STROKE_WIDTH" :width="barWidth + CHART_STROKE_WIDTH * 2" :height="Math.abs(zeroY - activePoint.y) + CHART_STROKE_WIDTH * 2" />
+                <path v-else-if="activeSlice" :d="activeSlice.path" :stroke-width="CHART_STROKE_WIDTH * 2" :stroke-dasharray="DASH_PATTERN" />
+                <line v-if="type === 'bar' && activeReading.value === 0" :x1="getBarX(activeReading.index)" :x2="getBarX(activeReading.index) + barWidth" :y1="zeroY" :y2="zeroY" />
+            </g>
         </svg>
+        <TooltipTrigger v-if="anchorInGraph" as-child>
+            <span aria-hidden="true" tabindex="-1" class="absolute pointer-events-none" :style="anchorStyle" />
+        </TooltipTrigger>
+        </div>
+        <div
+v-if="interactive" ref="explorer" class="relative mt-4 space-y-3" data-chart-hit
+            @focusin="interaction.explorerFocus" @focusout="interaction.explorerBlur"
+            @keydown.capture="interaction.explorerKeydown" @pointerdown.capture="interaction.explorerPointerDown"
+>
+            <p :id="explorerId" class="text-sm font-bold">{{ t('sketchyChart.browseData') }}</p>
+            <p :id="instructionsId" class="text-sm text-brutal-muted-foreground">{{ t('sketchyChart.readingInstructions') }}</p>
+            <Slider
+v-if="validReadings && readings.length > INDEX_STEP"
+                :model-value="[explorerIndex]" :min="FIRST_INDEX" :max="readings.length - INDEX_STEP" :step="INDEX_STEP"
+                :aria-labelledby="`${titleId} ${explorerId}`" :aria-describedby="instructionsId" :get-value-text="readingText"
+                @update:model-value="interaction.explorerUpdate"
+/>
+            <div
+v-else tabindex="0" role="group" data-chart-status :aria-labelledby="`${titleId} ${explorerId}`" :aria-describedby="statusId"
+                :class="statusClasses"
+>
+                <span :id="statusId">{{ readingText(FIRST_INDEX) }}</span>
+            </div>
+            <p v-if="validReadings && readings.length > INDEX_STEP" class="text-sm font-mono">{{ readingText(explorerIndex) }}</p>
+            <TooltipTrigger v-if="!anchorInGraph" as-child>
+                <span aria-hidden="true" tabindex="-1" class="absolute left-1/2 top-0 pointer-events-none" />
+            </TooltipTrigger>
+        </div>
+        <TooltipContent
+v-if="tooltipOpen && tooltipReading" :id="tooltipId" :to="portalTarget" aria-hidden="true"
+            update-position-strategy="always" class="max-w-[min(24rem,calc(100vw-2rem))] break-words motion-reduce:animate-none motion-reduce:transition-none"
+            @escape-key-down="interaction.escape" @pointer-down-outside="interaction.outside"
+>
+            <slot name="tooltip" v-bind="tooltipReading">
+                <p class="font-bold">{{ tooltipReading.label }}</p>
+                <p>{{ tooltipReading.formattedValue }}<template v-if="type === 'pie'"> · {{ activeReading?.formattedPercentage }}</template></p>
+            </slot>
+        </TooltipContent>
         <ul
-            v-if="type === 'pie' && pieSlices.length > 0"
+            v-if="type === 'pie' && readings.length > 0"
             data-slot="pie-legend"
             class="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2"
         >
             <li
-                v-for="(slice, i) in pieSlices"
-                :key="`pie-legend-${i}`"
-                class="flex min-w-0 items-center gap-2 text-sm font-bold"
+                v-for="slice in readings"
+                :key="`pie-legend-${slice.index}`"
+                data-chart-hit
+                :data-active="activeIndex === slice.index ? '' : undefined"
+                class="flex min-w-0 items-center gap-2 text-sm font-bold data-active:underline data-active:decoration-2"
+                @pointerenter="interaction.pointerEnter"
+                @pointermove="interaction.pointerMove($event, slice.index)"
+                @pointerdown="interaction.pointerDown($event, slice.index)"
+                @pointerup="interaction.pointerUp($event, slice.index)"
+                @pointercancel="interaction.pointerCancel"
             >
                 <span
                     data-slot="pie-legend-swatch"
@@ -437,8 +501,63 @@ const containerClasses = computed(() =>
                     :style="{ backgroundColor: slice.color }"
                 />
                 <span class="min-w-0 flex-1 break-words">{{ slice.label }}</span>
-                <span class="shrink-0 font-mono">{{ slice.value }} ({{ slice.percentage }}%)</span>
+                <span class="shrink-0 font-mono">{{ slice.formattedValue }} ({{ slice.formattedPercentage }})</span>
             </li>
         </ul>
+        <p v-if="hasRoundingDifference" class="mt-2 text-sm text-brutal-muted-foreground">{{ t('sketchyChart.roundingText') }}</p>
+        <CollapsibleRoot v-slot="{ open }" class="mt-4">
+            <CollapsibleTrigger as-child>
+                <Button data-chart-table-trigger variant="outline" type="button">{{ open ? t('sketchyChart.hideTable') : t('sketchyChart.showTable') }}</Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent class="mt-4">
+                <Table>
+                    <TableCaption>{{ t('sketchyChart.tableCaption', { title: chartTitle }) }}</TableCaption>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead scope="col">{{ t('sketchyChart.categoryHeader') }}</TableHead>
+                            <TableHead scope="col">{{ t('sketchyChart.valueHeader') }}</TableHead>
+                            <TableHead v-if="type === 'pie'" scope="col">{{ t('sketchyChart.percentageHeader') }}</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        <TableRow v-for="item in readings" :key="item.index" :data-active="activeIndex === item.index ? '' : undefined" class="data-active:underline data-active:decoration-2">
+                            <TableCell>{{ item.label }}</TableCell>
+                            <TableCell>{{ item.formattedValue }}</TableCell>
+                            <TableCell v-if="type === 'pie'">{{ item.formattedPercentage }}</TableCell>
+                        </TableRow>
+                        <TableRow v-if="readings.length === 0">
+                            <TableCell :colspan="type === 'pie' ? 3 : 2">{{ stateText }}</TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </CollapsibleContent>
+        </CollapsibleRoot>
+        </TooltipRoot>
+        </TooltipProvider>
     </div>
 </template>
+
+<style scoped>
+@media (forced-colors: active) {
+    svg {
+        forced-color-adjust: none;
+        color: CanvasText;
+    }
+    .chart-data, .chart-axes, .chart-empty-state {
+        filter: none;
+    }
+    .chart-data path, .chart-data rect, .chart-data circle, .chart-empty-state circle {
+        fill: Canvas;
+        stroke: CanvasText;
+    }
+    .chart-axes line {
+        stroke: CanvasText;
+    }
+    .chart-labels, .chart-empty-state text {
+        fill: CanvasText;
+    }
+    .chart-grid line {
+        stroke: GrayText;
+    }
+}
+</style>

@@ -15,19 +15,25 @@
           "name": "type",
           "kind": "props",
           "type": {
-            "text": "\"line\" | \"bar\" | \"pie\" | undefined",
+            "text": "ChartType | undefined",
             "literals": [
               "\"bar\"",
               "\"line\"",
               "\"pie\""
             ],
-            "references": []
+            "references": [
+              {
+                "name": "ChartType",
+                "text": "export type ChartType = 'line' | 'bar' | 'pie'",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fsketchy-chart%2Fsketchy-chart-data.ts%23ChartType"
+              }
+            ]
           },
           "description": "Selects a sketchy line, bar, or pie chart.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
-            "line": 14
+            "line": 26
           },
           "origin": "declared",
           "required": false,
@@ -56,16 +62,16 @@
             "references": [
               {
                 "name": "ChartDataItem",
-                "text": "interface ChartDataItem {\n    label: string\n    value: number\n}",
-                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fsketchy-chart%2FSketchyChart.vue%23ChartDataItem"
+                "text": "export interface ChartDataItem {\n    label: string\n    value: number\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fsketchy-chart%2Fsketchy-chart-data.ts%23ChartDataItem"
               }
             ]
           },
-          "description": "Array of chart items, each with a label and value. Negative values are converted to absolute values; datasets over 30 items are sampled by step to limit rendered items.",
+          "description": "Array of chart items, each with a label and value. Line and bar charts support positive, negative, and zero values; pie charts support non-negative values.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
-            "line": 15
+            "line": 27
           },
           "origin": "declared",
           "required": false,
@@ -85,6 +91,137 @@
           }
         },
         {
+          "id": "api-component_3Asketchy_2Dchart_2FSketchyChart-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Business title of the chart, associated with graphic accessibility name and table caption.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Asketchy_2Dchart_2FSketchyChart-props-description",
+          "name": "description",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Units, statistical methodology, and important trend description.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Asketchy_2Dchart_2FSketchyChart-props-valueFormatter",
+          "name": "valueFormatter",
+          "kind": "props",
+          "type": {
+            "text": "((value: number) => string) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Numeric formatting function that standardizes scales, legends, and table values.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
+            "line": 30
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Asketchy_2Dchart_2FSketchyChart-props-interactive",
+          "name": "interactive",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables interactive tooltips and the data-item slider.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
           "id": "api-component_3Asketchy_2Dchart_2FSketchyChart-props-sketchiness",
           "name": "sketchiness",
           "kind": "props",
@@ -97,15 +234,15 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
-            "line": 16
+            "line": 32
           },
           "origin": "declared",
           "required": false,
           "nullable": false,
           "default": {
             "declaration": {
-              "kind": "value",
-              "text": "2",
+              "kind": "expression",
+              "text": "DEFAULT_SKETCHINESS",
               "source": {
                 "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue"
               }
@@ -132,7 +269,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
-            "line": 17
+            "line": 33
           },
           "origin": "declared",
           "required": false,
@@ -164,7 +301,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
-            "line": 18
+            "line": 34
           },
           "origin": "declared",
           "required": false,
@@ -196,7 +333,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
-            "line": 19
+            "line": 35
           },
           "origin": "declared",
           "required": false,
@@ -228,7 +365,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
-            "line": 20
+            "line": 36
           },
           "origin": "declared",
           "required": false,
@@ -246,6 +383,30 @@
               "text": "undefined"
             }
           }
+        },
+        {
+          "id": "api-component_3Asketchy_2Dchart_2FSketchyChart-slots-tooltip",
+          "name": "tooltip",
+          "kind": "slots",
+          "type": {
+            "text": "TooltipReading",
+            "literals": [],
+            "references": [
+              {
+                "name": "TooltipReading",
+                "text": "interface TooltipReading {\n    index: number\n    label: string\n    value: number\n    formattedValue: string\n    percentage: number | undefined\n    formattedPercentage: string | undefined\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fsketchy-chart%2FSketchyChart.vue%23TooltipReading"
+              }
+            ]
+          },
+          "description": "Custom content for the chart reading tooltip.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
+            "line": 53
+          },
+          "origin": "declared",
+          "nullable": false
         }
       ]
     }

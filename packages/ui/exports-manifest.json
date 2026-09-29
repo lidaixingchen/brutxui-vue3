@@ -502,7 +502,7 @@
       "id": "component:sketchy-chart",
       "source": "src/components/sketchy-chart",
       "owner": "component:sketchy-chart",
-      "layer": "effect",
+      "layer": "composite",
       "public": true
     },
     {

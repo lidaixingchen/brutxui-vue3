@@ -87,7 +87,7 @@ export const API_CONTRACT: ApiContract = {
         { id: 'component:separator', source: 'src/components/separator', owner: 'component:separator', layer: 'foundation', public: true },
         { id: 'component:sheet', source: 'src/components/sheet', owner: 'component:sheet', layer: 'composite', public: true },
         { id: 'component:skeleton', source: 'src/components/skeleton', owner: 'component:skeleton', layer: 'foundation', public: true },
-        { id: 'component:sketchy-chart', source: 'src/components/sketchy-chart', owner: 'component:sketchy-chart', layer: 'effect', public: true },
+        { id: 'component:sketchy-chart', source: 'src/components/sketchy-chart', owner: 'component:sketchy-chart', layer: 'composite', public: true },
         { id: 'component:slider', source: 'src/components/slider', owner: 'component:slider', layer: 'foundation', public: true },
         { id: 'component:spinner', source: 'src/components/spinner', owner: 'component:spinner', layer: 'foundation', public: true },
         { id: 'component:statistic', source: 'src/components/statistic', owner: 'component:statistic', layer: 'foundation', public: true },

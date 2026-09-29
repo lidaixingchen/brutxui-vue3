@@ -270,6 +270,21 @@ export interface SketchyChartLocale {
     barAriaLabel: string
     pieAriaLabel: string
     emptyText: string
+    invalidDataText: string
+    invalidValueText: string
+    zeroTotalText: string
+    unavailablePercentage: string
+    dataCount: string
+    roundingText: string
+    showTable: string
+    hideTable: string
+    tableCaption: string
+    categoryHeader: string
+    valueHeader: string
+    percentageHeader: string
+    browseData: string
+    readingInstructions: string
+    positionText: string
 }
 
 export interface Card3dLocale {

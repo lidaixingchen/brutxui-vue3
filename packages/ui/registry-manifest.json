@@ -1023,7 +1023,9 @@
   "sketchy-chart": {
     "files": [
       "SketchyChart.vue",
-      "sketchy-chart-variants.ts"
+      "sketchy-chart-data.ts",
+      "sketchy-chart-variants.ts",
+      "useChartInteraction.ts"
     ],
     "composables": [
       "useLocale.ts"
