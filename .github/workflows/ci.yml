@@ -158,21 +158,45 @@ jobs:
                       ${{ runner.os }}-turbo-test-node${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
                       ${{ runner.os }}-turbo-test-node${{ matrix.node-version }}-
 
-            - name: Unit tests for non-UI packages (Node 22)
-              if: matrix.node-version == 22
-              run: pnpm exec turbo run test --filter=!brutx-ui-vue
+            # test 与 test:ssr 都依赖 build:artifact，Turbo 会先生成并构建，再并行跑两个测试任务。
+            - name: Build + test + SSR (turbo)
+              run: pnpm exec turbo run build:artifact test test:ssr
 
-            - name: UI coverage (Node 22)
-              if: matrix.node-version == 22
+    coverage:
+        name: UI coverage
+        runs-on: ubuntu-latest
+        env:
+            TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+            TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 1
+
+            - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+            - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+              with:
+                  node-version: 22
+                  cache: pnpm
+
+            - run: pnpm install --frozen-lockfile --prefer-offline
+
+            - name: Cache turbo local build cache
+              uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+              with:
+                  path: node_modules/.cache/turbo
+                  key: ${{ runner.os }}-turbo-coverage-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
+                  restore-keys: |
+                      ${{ runner.os }}-turbo-coverage-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
+                      ${{ runner.os }}-turbo-coverage-
+
+            - name: UI coverage
               id: ui-coverage
               run: pnpm --filter brutx-ui-vue test:coverage
 
-            - name: SSR tests (Node 22)
-              if: matrix.node-version == 22
-              run: pnpm exec turbo run test:ssr
-
             - name: Record UI coverage environment
-              if: always() && matrix.node-version == 22 && steps.ui-coverage.outcome != 'skipped'
+              if: always() && steps.ui-coverage.outcome != 'skipped'
               env:
                   COVERAGE_OUTCOME: ${{ steps.ui-coverage.outcome }}
               run: |
@@ -199,16 +223,12 @@ jobs:
                   NODE
 
             - name: Upload UI coverage evidence
-              if: always() && matrix.node-version == 22 && steps.ui-coverage.outcome != 'skipped'
+              if: always() && steps.ui-coverage.outcome != 'skipped'
               uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
               with:
                   name: ui-coverage-${{ github.sha }}
                   path: packages/ui/coverage/full
                   if-no-files-found: error
-
-            - name: Test + SSR (Node 24, turbo)
-              if: matrix.node-version == 24
-              run: pnpm exec turbo run test test:ssr
 
     browser:
         name: Browser tests (Vitest + Playwright)
@@ -372,7 +392,7 @@ jobs:
     ci-gate:
         name: CI Gate (all checks passed)
         if: always()
-        needs: [quality, test, browser, integration, consumers]
+        needs: [quality, test, coverage, browser, integration, consumers]
         runs-on: ubuntu-latest
         steps:
             - name: Evaluate upstream jobs

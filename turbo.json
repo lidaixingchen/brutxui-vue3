@@ -102,7 +102,9 @@
             ]
         },
         "test": {
-            "dependsOn": [],
+            "dependsOn": [
+                "build:artifact"
+            ],
             "inputs": [
                 "src/**",
                 "tests/**",
@@ -119,7 +121,9 @@
             ]
         },
         "test:ssr": {
-            "dependsOn": [],
+            "dependsOn": [
+                "build:artifact"
+            ],
             "inputs": [
                 "src/**",
                 "vitest.ssr.config.ts",
