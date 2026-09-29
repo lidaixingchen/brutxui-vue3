@@ -17,7 +17,7 @@ export default defineConfig({
         include: ['src/**/*.{test,spec}.{ts,tsx}', 'scripts/**/*.{test,spec}.{ts,tsx}'],
         exclude: ['src/**/*.browser.test.ts', 'src/ssr/**/*.test.ts', ...defaultExclude],
         pool: 'threads',
-        maxWorkers: 4,
+        maxWorkers: process.env.CI ? 2 : undefined,
         deps: {
             optimizer: {
                 web: {
