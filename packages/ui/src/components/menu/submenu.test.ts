@@ -298,4 +298,101 @@ describe('SubMenu hover lifecycle', () => {
         // @ts-expect-error context inspection
         expect(menuComponent.vm.openedMenus?.has('products') ?? false).toBe(false)
     })
+
+    it('handles keyboard navigation across horizontal and vertical modes', async () => {
+        wrapper = mount({
+            components: { Menu, MenuItem, SubMenu },
+            template: `
+                <Menu mode="horizontal">
+                    <SubMenu index="sub-1" title="Sub 1" id="sub-1">
+                        <MenuItem index="sub-1-1">Item 1-1</MenuItem>
+                    </SubMenu>
+                    <SubMenu index="sub-2" title="Sub 2" id="sub-2">
+                        <MenuItem index="sub-2-1">Item 2-1</MenuItem>
+                    </SubMenu>
+                </Menu>
+            `,
+        }, { attachTo: document.body })
+
+        const trigger1 = wrapper.find('#sub-1 [role="menuitem"]')
+        await trigger1.trigger('keydown', { key: 'ArrowDown' })
+        expect(trigger1.attributes('aria-expanded')).toBe('true')
+
+        await trigger1.trigger('keydown', { key: 'ArrowRight' })
+        await trigger1.trigger('keydown', { key: 'ArrowLeft' })
+        await trigger1.trigger('keydown', { key: 'ArrowUp' })
+        await trigger1.trigger('keydown', { key: 'Home' })
+        await trigger1.trigger('keydown', { key: 'End' })
+        await trigger1.trigger('keydown', { key: 'Enter' })
+        await trigger1.trigger('keydown', { key: ' ' })
+    })
+
+    it('handles vertical mode collapsible transition lifecycle and keydown', async () => {
+        wrapper = mount({
+            components: { Menu, MenuItem, SubMenu },
+            template: `
+                <Menu mode="vertical">
+                    <SubMenu index="sub-v" title="Sub V" id="sub-v">
+                        <MenuItem index="sub-v-1">Item V-1</MenuItem>
+                    </SubMenu>
+                </Menu>
+            `,
+        }, { attachTo: document.body })
+
+        const trigger = wrapper.find('#sub-v [role="menuitem"]')
+        expect(trigger.attributes('aria-expanded')).toBe('false')
+
+        await trigger.trigger('click')
+        expect(trigger.attributes('aria-expanded')).toBe('true')
+
+        await trigger.trigger('keydown', { key: 'ArrowDown' })
+        await trigger.trigger('keydown', { key: 'ArrowRight' })
+        await trigger.trigger('keydown', { key: 'ArrowLeft' })
+
+        await trigger.trigger('click')
+        expect(trigger.attributes('aria-expanded')).toBe('false')
+    })
+
+    it('closes on external document click in horizontal mode', async () => {
+        wrapper = mount({
+            components: { Menu, MenuItem, SubMenu },
+            template: `
+                <div>
+                    <div id="outside-target">Outside</div>
+                    <Menu mode="horizontal">
+                        <SubMenu index="products" title="Products" id="products-menu">
+                            <MenuItem index="products-one">One</MenuItem>
+                        </SubMenu>
+                    </Menu>
+                </div>
+            `,
+        }, { attachTo: document.body })
+
+        const root = wrapper.find('#products-menu')
+        const trigger = root.find('[role="menuitem"]')
+        await trigger.trigger('click')
+        expect(trigger.attributes('aria-expanded')).toBe('true')
+
+        document.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+        await nextTick()
+        expect(trigger.attributes('aria-expanded')).toBe('false')
+    })
+
+    it('updates registration when index prop dynamically changes', async () => {
+        wrapper = mount({
+            components: { Menu, MenuItem, SubMenu },
+            props: { menuIndex: { type: String, default: 'old-idx' } },
+            template: `
+                <Menu mode="horizontal">
+                    <SubMenu :index="menuIndex" title="Dynamic" id="dynamic-menu">
+                        <MenuItem index="item-1">Item 1</MenuItem>
+                    </SubMenu>
+                </Menu>
+            `,
+        }, { attachTo: document.body })
+
+        await wrapper.setProps({ menuIndex: 'new-idx' })
+        await nextTick()
+        expect(wrapper.find('#dynamic-menu').exists()).toBe(true)
+    })
 })

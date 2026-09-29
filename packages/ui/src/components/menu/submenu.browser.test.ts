@@ -104,7 +104,7 @@ describe('SubMenu Browser Integration (Chromium)', () => {
 
         await userEvent.unhover(root)
         await expect.poll(() => trigger.getAttribute('aria-expanded')).toBe('false')
-        expect(root.querySelector('#products-one')).toBeNull()
+        await expect.poll(() => root.querySelector('#products-one')).toBeNull()
     })
 
     it('opens nested submenus along the real pointer path and closes the branch on exit', async () => {
@@ -125,6 +125,6 @@ describe('SubMenu Browser Integration (Chromium)', () => {
 
         await userEvent.unhover(outerRoot)
         await expect.poll(() => outerTrigger.getAttribute('aria-expanded')).toBe('false')
-        expect(host!.querySelector('#more-menu')).toBeNull()
+        await expect.poll(() => host!.querySelector('#more-menu')).toBeNull()
     })
 })

@@ -2,9 +2,9 @@ name: CI
 
 on:
     push:
-        branches: [main, vue]
+        branches: [main]
     pull_request:
-        branches: [main, vue]
+        branches: [main]
 
 concurrency:
     group: ci-${{ github.ref }}
@@ -161,9 +161,8 @@ jobs:
                     echo "$subject" | pnpm exec commitlint || { echo "::error::提交信息不符合规范（描述≤50字符/type 合规）：$subject"; exit 1; }
                   done
 
-            - name: i18n mirror check (report)
-              run: pnpm check:i18n
-              continue-on-error: true
+            - name: i18n mirror check
+              run: pnpm check:i18n:strict
 
     test:
         name: Test (Node ${{ matrix.node-version }})
@@ -360,3 +359,17 @@ jobs:
               with:
                   name: consumers-${{ github.sha }}
                   path: ${{ runner.temp }}/brutx-consumers
+
+    ci-gate:
+        name: CI Gate (all checks passed)
+        if: always()
+        needs: [quality, test, browser, integration, consumers]
+        runs-on: ubuntu-latest
+        steps:
+            - name: Evaluate upstream jobs
+              run: |
+                  if [[ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
+                    echo "::error::One or more upstream CI jobs failed or were cancelled."
+                    exit 1
+                  fi
+                  echo "✓ All upstream CI jobs completed successfully."

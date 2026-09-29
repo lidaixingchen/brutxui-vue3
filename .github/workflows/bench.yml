@@ -3,8 +3,24 @@ name: Bench
 on:
     push:
         branches: [main]
+        paths:
+            - 'packages/ui/**'
+            - 'packages/shared/**'
+            - 'scripts/bench*/**'
+            - 'scripts/bench*.mjs'
+            - '.github/workflows/bench.yml'
+            - 'turbo.json'
+            - 'pnpm-lock.yaml'
     pull_request:
-        branches: [main, vue]
+        branches: [main]
+        paths:
+            - 'packages/ui/**'
+            - 'packages/shared/**'
+            - 'scripts/bench*/**'
+            - 'scripts/bench*.mjs'
+            - '.github/workflows/bench.yml'
+            - 'turbo.json'
+            - 'pnpm-lock.yaml'
 
 concurrency:
     group: bench-${{ github.ref }}
