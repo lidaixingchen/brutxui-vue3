@@ -120,31 +120,13 @@ const tags = Array.from({ length: 20 }, (_, i) => `标签 ${i + 1}`)
 | `ScrollArea` | 根可滚动容器 |
 | `ScrollBar` | 自定义滚动条（默认垂直，支持水平） |
 
-## Props
+## API 参考
 
-### ScrollArea
+<span id="scrollarea"></span>
+<span id="scrollbar"></span>
+<span id="插槽"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'accent'` | `'default'` | 滚动条颜色变体，下发给内部 `ScrollBar` |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 滚动条粗细，下发给内部 `ScrollBar` |
-| `class` | `string` | — | 自定义样式类 |
-| `viewportClass` | `string` | — | 滚动视口（Viewport）自定义样式类 |
-
-### ScrollBar
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` | 方向 |
-| `variant` | `'default' \| 'primary' \| 'accent'` | `'default'` | 滚动条颜色变体 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 滚动条粗细 |
-| `class` | `string` | — | 自定义样式类 |
-
-## 插槽
-
-| 插槽      | 作用域 | 说明     |
-|-----------|--------|----------|
-| `default` | —      | 滚动内容 |
+<ComponentApi name="scroll-area" />
 
 ## 可访问性
 

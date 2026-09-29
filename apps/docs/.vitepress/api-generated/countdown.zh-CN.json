@@ -1,0 +1,428 @@
+{
+  "id": "component:countdown",
+  "name": "countdown",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:countdown/Countdown",
+      "name": "Countdown",
+      "source": {
+        "file": "packages/ui/src/components/countdown/Countdown.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acountdown_2FCountdown-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "CountdownValue",
+            "literals": [
+              "null"
+            ],
+            "references": [
+              {
+                "name": "CountdownValue",
+                "text": "export type CountdownValue = number | string | Date | null | undefined",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcountdown%2Ftypes.ts%23CountdownValue"
+              }
+            ]
+          },
+          "description": "倒计时的目标时间点，支持毫秒时间戳、Date、纯数字时间戳字符串及可解析的日期字符串；空值或无效日期显示占位文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/types.ts",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/countdown/Countdown.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-props-format",
+          "name": "format",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "剩余时间格式，支持 DD、D、HH、H、mm、m、ss、s、SSS、SS、S 和方括号转义文本。包含 S 时使用毫秒级刷新。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/types.ts",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'HH:mm:ss'",
+              "source": {
+                "file": "packages/ui/src/components/countdown/Countdown.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"HH:mm:ss\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "显示在倒计时数值上方的标题文本，title 插槽可替换其内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/types.ts",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/countdown/Countdown.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-props-prefix",
+          "name": "prefix",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "显示在倒计时数值前的文本，prefix 插槽可替换其内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/types.ts",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/countdown/Countdown.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-props-suffix",
+          "name": "suffix",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "显示在倒计时数值后的文本，suffix 插槽可替换其内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/types.ts",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/countdown/Countdown.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "目标时间为空或无效时显示的占位文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/types.ts",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/countdown/Countdown.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "未提供时使用短横线“-”。"
+          }
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"card\" | \"bordered\" | \"subtle\" | null | undefined> | undefined",
+            "literals": [
+              "\"bordered\"",
+              "\"card\"",
+              "\"default\"",
+              "\"subtle\""
+            ],
+            "references": []
+          },
+          "description": "倒计时外层容器的背景和边框变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/types.ts",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/countdown/Countdown.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "传给内部 Statistic 的尺寸，控制数值与配套文字的大小。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/types.ts",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/countdown/Countdown.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到倒计时外层容器的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/types.ts",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/countdown/Countdown.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-events-change",
+          "name": "change",
+          "kind": "events",
+          "type": {
+            "text": "[remaining: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "计时刷新或目标时间重新计算时发出剩余毫秒数，最小为零。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/Countdown.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-events-finish",
+          "name": "finish",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "有效倒计时进入完成状态时发出；挂载时目标已到期也会发出。新的未来目标会重新开始计时并允许再次完成。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/Countdown.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-slots-title",
+          "name": "title",
+          "kind": "slots",
+          "type": {
+            "text": "{ title?: string | undefined; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "自定义标题区域，接收 title 属性值；默认显示该文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/Countdown.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-slots-prefix",
+          "name": "prefix",
+          "kind": "slots",
+          "type": {
+            "text": "{ prefix?: string | undefined; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "自定义数值前缀区域，接收 prefix 属性值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/Countdown.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-slots-suffix",
+          "name": "suffix",
+          "kind": "slots",
+          "type": {
+            "text": "{ suffix?: string | undefined; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "自定义数值后缀区域，接收 suffix 属性值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/Countdown.vue",
+            "line": 28
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acountdown_2FCountdown-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{ remaining: number; formatted: string; isFinished: boolean; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "自定义数值区域，接收剩余毫秒数、格式化字符串及是否完成的状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/countdown/Countdown.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,317 @@
+{
+  "id": "component:calendar",
+  "name": "calendar",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:calendar/Calendar",
+      "name": "Calendar",
+      "source": {
+        "file": "packages/ui/src/components/calendar/Calendar.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acalendar_2FCalendar-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "Date | Date[] | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "当前选中的日期，通过 v-model 更新；单日模式为 Date，范围模式为包含起止日期的 Date 数组，未选择时为 null。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/calendar/Calendar.vue",
+            "line": 30
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/calendar/Calendar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acalendar_2FCalendar-props-isRange",
+          "name": "isRange",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用日期范围选择；modelValue 应表示起止日期范围。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/calendar/Calendar.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/calendar/Calendar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acalendar_2FCalendar-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用日历日期选择交互。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/calendar/Calendar.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/calendar/Calendar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acalendar_2FCalendar-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到日历根容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/calendar/Calendar.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/calendar/Calendar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acalendar_2FCalendar-props-events",
+          "name": "events",
+          "kind": "props",
+          "type": {
+            "text": "CalendarEvent[] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "CalendarEvent",
+                "text": "export interface CalendarEvent {\n    date: Date | string\n    title: string\n    [key: string]: unknown\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcalendar%2FCalendar.vue%23CalendarEvent"
+              }
+            ]
+          },
+          "description": "提供需要标记的日历事件；每项包含日期和标题，并可携带自定义字段。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/calendar/Calendar.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/calendar/Calendar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acalendar_2FCalendar-props-eventRenderer",
+          "name": "eventRenderer",
+          "kind": "props",
+          "type": {
+            "text": "((event: CalendarEvent) => unknown) | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "CalendarEvent",
+                "text": "export interface CalendarEvent {\n    date: Date | string\n    title: string\n    [key: string]: unknown\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcalendar%2FCalendar.vue%23CalendarEvent"
+              }
+            ]
+          },
+          "description": "自定义事件展示文本的回调；接收一个 CalendarEvent 并返回可渲染内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/calendar/Calendar.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/calendar/Calendar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acalendar_2FCalendar-props-mode",
+          "name": "mode",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"card\" | undefined",
+            "literals": [
+              "\"card\"",
+              "\"default\""
+            ],
+            "references": []
+          },
+          "description": "设置事件标记呈现方式：default 使用圆点和提示框，card 使用日历卡片和徽章。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/calendar/Calendar.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/calendar/Calendar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acalendar_2FCalendar-props-retroHeader",
+          "name": "retroHeader",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示复古挂历头部装饰；装饰内容不参与无障碍语义。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/calendar/Calendar.vue",
+            "line": 38
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/calendar/Calendar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acalendar_2FCalendar-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | Date[] | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "用户选择日期或范围变化时发出新的日期值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/calendar/Calendar.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

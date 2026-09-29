@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { accordionContentVariants, accordionTriggerVariants } from './accordion-variants'
+import { accordionContentVariants } from './accordion-variants'
 import { defineComponent, ref } from 'vue'
 import { vi } from 'vitest'
 import Accordion from './Accordion.vue'
@@ -75,9 +75,8 @@ describe('AccordionItem', () => {
         expect(classes).toContain('border-brutal')
         expect(classes).toContain('bg-brutal-bg')
         expect(classes).toContain('text-brutal-fg')
-        expect(classes).toContain('rounded-brutal')
-        expect(classes).toContain('overflow-hidden')
-        expect(classes).toContain('shadow-brutal-sm')
+        expect(classes).toContain('data-[state=closed]:shadow-brutal-sm')
+        expect(classes).toContain('data-[state=open]:shadow-brutal')
         expect(classes).toContain('mb-4')
     })
 
@@ -108,11 +107,12 @@ describe('AccordionItem', () => {
             global: { stubs: { AccordionItem: primitiveStub } },
         })
         const classes = wrapper.classes()
-        expect(classes).toContain('shadow-brutal-sm')
+        expect(classes).toContain('data-[state=closed]:shadow-brutal-sm')
+        expect(classes).toContain('data-[state=open]:shadow-brutal')
         expect(classes).toContain('mb-4')
         expect(classes).toContain('hover:shadow-brutal')
-        expect(classes).toContain('hover:-translate-x-0.5')
-        expect(classes).toContain('hover:-translate-y-0.5')
+        expect(classes).not.toContain('hover:-translate-x-0.5')
+        expect(classes).not.toContain('hover:-translate-y-0.5')
     })
 
     it('applies custom class', () => {
@@ -128,9 +128,9 @@ describe('AccordionItem', () => {
             props: { value: 'item-1' },
             global: { stubs: { AccordionItem: primitiveStub } },
         })
-        expect(wrapper.classes()).toContain('shadow-brutal-sm')
+        expect(wrapper.classes()).toContain('data-[state=closed]:shadow-brutal-sm')
         await wrapper.setProps({ variant: 'flat' })
-        expect(wrapper.classes()).not.toContain('shadow-brutal-sm')
+        expect(wrapper.classes()).not.toContain('data-[state=closed]:shadow-brutal-sm')
         expect(wrapper.classes()).toContain('shadow-none')
     })
 
@@ -196,7 +196,9 @@ describe('AccordionTrigger', () => {
         })
         const container = wrapper.find('[data-accordion-icon]')
         expect(container.classes()).toContain('shrink-0')
-        expect(container.classes()).toContain('transition-transform')
+        expect(container.classes()).toContain('border-3')
+        expect(container.classes()).toContain('border-brutal')
+        expect(container.classes()).toContain('shadow-brutal-sm')
     })
 
     it('applies rotation selector targeting the icon container', () => {
@@ -224,22 +226,17 @@ describe('AccordionTrigger', () => {
         expect(wrapper.find('[data-accordion-icon]').exists()).toBe(false)
     })
 
-    it('applies default variant state feedback via context', () => {
+    it('applies default variant color feedback via context', () => {
         const wrapper = mount(AccordionTrigger, {
             global: { stubs: triggerStubs },
         })
         const trigger = wrapper.find('[data-testid="accordion-trigger"]')
-        expect(trigger.classes()).toContain('bg-brutal-bg')
-        expect(trigger.classes()).toContain('hover:bg-brutal-muted')
-        expect(trigger.classes()).toContain('data-[state=open]:bg-brutal-primary')
-        expect(trigger.classes()).toContain('border-b-3')
-        expect(trigger.classes()).toContain('border-transparent')
-        expect(trigger.classes()).toContain('data-[state=open]:border-brutal')
         expect(trigger.classes()).not.toContain('hover:shadow-brutal-sm')
         expect(trigger.classes()).not.toContain('hover:-translate-y-0.5')
+        expect(trigger.classes()).toContain('hover:bg-brutal-muted')
     })
 
-    it('applies interactive variant with stable position and state feedback via context', () => {
+    it('applies interactive variant without hover lift via context', () => {
         const wrapper = mount(AccordionTrigger, {
             global: {
                 stubs: triggerStubs,
@@ -250,7 +247,6 @@ describe('AccordionTrigger', () => {
         expect(trigger.classes()).not.toContain('hover:shadow-brutal-sm')
         expect(trigger.classes()).not.toContain('hover:-translate-y-0.5')
         expect(trigger.classes()).toContain('hover:bg-brutal-muted')
-        expect(trigger.classes()).toContain('data-[state=open]:bg-brutal-primary')
     })
 
     it('applies flat variant without hover lift via context', () => {
@@ -263,7 +259,7 @@ describe('AccordionTrigger', () => {
         const trigger = wrapper.find('[data-testid="accordion-trigger"]')
         expect(trigger.classes()).not.toContain('hover:shadow-brutal-sm')
         expect(trigger.classes()).not.toContain('hover:-translate-y-0.5')
-        expect(trigger.classes()).toContain('data-[state=open]:bg-brutal-muted')
+        expect(trigger.classes()).toContain('hover:bg-brutal-muted')
     })
 
     it('applies ghost variant without hover lift via context', () => {
@@ -276,7 +272,7 @@ describe('AccordionTrigger', () => {
         const trigger = wrapper.find('[data-testid="accordion-trigger"]')
         expect(trigger.classes()).not.toContain('hover:shadow-brutal-sm')
         expect(trigger.classes()).not.toContain('hover:-translate-y-0.5')
-        expect(trigger.classes()).toContain('data-[state=open]:bg-brutal-muted')
+        expect(trigger.classes()).toContain('hover:bg-brutal-muted')
     })
 
     it('forwards asChild prop to reka trigger', () => {
@@ -311,7 +307,7 @@ describe('AccordionContent', () => {
             global: { stubs: { AccordionContent: primitiveStub } },
         })
         expect(wrapper.classes()).toContain('custom-content')
-        const innerDiv = wrapper.find('.p-6')
+        const innerDiv = wrapper.find('.border-t-3')
         expect(innerDiv.classes()).not.toContain('custom-content')
     })
 
@@ -322,19 +318,19 @@ describe('AccordionContent', () => {
                 provide: { [accordionItemKey]: { variant: ref('flat') } },
             },
         })
-        const innerDiv = wrapper.find('.p-6')
+        const innerDiv = wrapper.find('.border-t-3')
         expect(innerDiv.classes()).toContain('bg-brutal-muted/30')
     })
 
-    it('applies ghost variant with clean background', () => {
+    it('applies ghost variant with transparent border', () => {
         const wrapper = mount(AccordionContent, {
             global: {
                 stubs: { AccordionContent: primitiveStub },
                 provide: { [accordionItemKey]: { variant: ref('ghost') } },
             },
         })
-        const innerDiv = wrapper.find('.p-6')
-        expect(innerDiv.classes()).not.toContain('bg-brutal-muted')
+        const innerDiv = wrapper.find('.border-t-3')
+        expect(innerDiv.classes()).toContain('border-transparent')
     })
 
     it('applies interactive variant hover class', () => {
@@ -344,31 +340,22 @@ describe('AccordionContent', () => {
                 provide: { [accordionItemKey]: { variant: ref('interactive') } },
             },
         })
-        const innerDiv = wrapper.find('.p-6')
+        const innerDiv = wrapper.find('.border-t-3')
         expect(innerDiv.classes()).toContain('hover:bg-brutal-muted/20')
     })
 
-    it('default variant has standard content classes', () => {
+    it('default variant has no extra content classes beyond base', () => {
         const wrapper = mount(AccordionContent, {
             global: {
                 stubs: { AccordionContent: primitiveStub },
                 provide: { [accordionItemKey]: { variant: ref('default') } },
             },
         })
-        const innerDiv = wrapper.find('.p-6')
+        const innerDiv = wrapper.find('.border-t-3')
         expect(innerDiv.classes()).not.toContain('bg-brutal-muted/30')
-        expect(innerDiv.classes()).toContain('bg-brutal-muted')
-    })
-
-    it('applies overflow and accordion animation classes with motion reduction on root element', () => {
-        const wrapper = mount(AccordionContent, {
-            global: { stubs: { AccordionContent: primitiveStub } },
-        })
-        const classes = wrapper.classes()
-        expect(classes).toContain('overflow-hidden')
-        expect(classes).toContain('data-[state=open]:animate-accordion-down')
-        expect(classes).toContain('data-[state=closed]:animate-accordion-up')
-        expect(classes).toContain('motion-reduce:animate-none')
+        expect(innerDiv.classes()).not.toContain('border-transparent')
+        expect(innerDiv.classes()).toContain('border-t-3')
+        expect(innerDiv.classes()).toContain('border-brutal')
     })
 })
 
@@ -379,10 +366,7 @@ describe('Accordion 展开态分层换色', () => {
         expect(classes).not.toContain('bg-brutal-bg')
     })
 
-    it('展开态由 Trigger 保留实体分隔线且基准常驻透明底边消除布局跳动', () => {
-        const triggerClasses = accordionTriggerVariants({ variant: 'default' }).split(/\s+/)
-        expect(triggerClasses).toContain('border-b-3')
-        expect(triggerClasses).toContain('border-transparent')
-        expect(triggerClasses).toContain('data-[state=open]:border-brutal')
+    it('展开态保留实体分隔线（content border-t-3）', () => {
+        expect(accordionContentVariants().split(/\s+/)).toContain('border-t-3')
     })
 })

@@ -149,37 +149,11 @@ async function renameFile() {
 </script>
 ```
 
-## Props
+## API Reference
 
-### MessageBox Component
+<span id="messagebox-component"></span>
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `open` | `boolean` | `false` | Dialog visibility (supports `v-model:open`) |
-| `title` | `string` | `t('messageBox.defaultTitle')` | Dialog title |
-| `message` | `string` | — | Message content text |
-| `type` | `'info' \| 'success' \| 'warning' \| 'error'` | `'info'` | Status variant |
-| `showCloseButton` | `boolean` | `true` | Show top-right close button |
-| `showCancelButton` | `boolean` | `true` | Show cancel button |
-| `confirmButtonText` | `string` | `t('messageBox.confirm')` | Confirm button label |
-| `cancelButtonText` | `string` | `t('messageBox.cancel')` | Cancel button label |
-| `confirmButtonClass` | `string` | — | Custom class for confirm button |
-| `cancelButtonClass` | `string` | — | Custom class for cancel button |
-| `showInput` | `boolean` | `false` | Show input field (Prompt mode) |
-| `inputPlaceholder` | `string` | — | Input field placeholder |
-| `inputValue` | `string` | `''` | Initial input value |
-| `inputPattern` | `RegExp` | — | Regular expression for validation |
-| `inputErrorMessage` | `string` | `t('messageBox.inputError')` | Error message on validation failure |
-| `zIndex` | `number` | — | Custom layer z-index |
-| `class` | `string` | — | Custom card class |
-
-## Events
-
-| Event | Parameters | Description |
-|-------|------------|-------------|
-| `update:open` | `(value: boolean)` | Triggered on open/close state transitions |
-| `confirm` | `(value?: string)` | Triggered on successful confirmation with input value |
-| `cancel` | — | Triggered on cancel, close button, backdrop click, or ESC |
+<ComponentApi name="message-box" />
 
 ## Accessibility
 

@@ -1,0 +1,738 @@
+{
+  "id": "component:tooltip",
+  "name": "tooltip",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:tooltip/TooltipContent",
+      "name": "TooltipContent",
+      "source": {
+        "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes applied to the tooltip content panel rendered through the portal.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-to",
+          "name": "to",
+          "kind": "props",
+          "type": {
+            "text": "string | HTMLElement | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Selects the portal target using a CSS selector or HTMLElement. When omitted, the content is portaled to body.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-forceMount",
+          "name": "forceMount",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Keeps the content mounted while the tooltip is closed so a Vue animation library can control its transition.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides an accessible name for the content panel when its contents do not adequately describe it.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Merges the content panel props and behavior into its single child, which replaces the default panel element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "Selects the HTML tag or Vue component for the content panel; asChild takes precedence when both are set.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-sideOffset",
+          "name": "sideOffset",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the pixel distance between the content panel and its trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "floatingContentSideOffsets.tooltip",
+              "source": {
+                "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "6"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-align",
+          "name": "align",
+          "kind": "props",
+          "type": {
+            "text": "\"center\" | \"start\" | \"end\" | undefined",
+            "literals": [
+              "\"center\"",
+              "\"end\"",
+              "\"start\""
+            ],
+            "references": []
+          },
+          "description": "Sets the preferred alignment of the content against its trigger; collision handling may adjust it.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-collisionPadding",
+          "name": "collisionPadding",
+          "kind": "props",
+          "type": {
+            "text": "number | Partial<Record<\"right\" | \"bottom\" | \"left\" | \"top\", number>> | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets padding from the collision boundary. A number applies to every edge; an object can set each edge in pixels.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "floatingContentSideOffsets.tooltip",
+              "source": {
+                "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "6"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-side",
+          "name": "side",
+          "kind": "props",
+          "type": {
+            "text": "\"right\" | \"bottom\" | \"left\" | \"top\" | undefined",
+            "literals": [
+              "\"bottom\"",
+              "\"left\"",
+              "\"right\"",
+              "\"top\""
+            ],
+            "references": []
+          },
+          "description": "Sets the preferred side of the trigger for the content; collision handling may flip it to another side.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-alignOffset",
+          "name": "alignOffset",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Adds a pixel offset along the start or end alignment axis.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-avoidCollisions",
+          "name": "avoidCollisions",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Adjusts the preferred side and alignment to keep content inside the collision boundary.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-collisionBoundary",
+          "name": "collisionBoundary",
+          "kind": "props",
+          "type": {
+            "text": "Element | (Element | null)[] | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "The element or elements used as collision boundaries. The viewport is used by default.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-arrowPadding",
+          "name": "arrowPadding",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets padding between the arrow and content edges so the arrow does not overlap rounded corners.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-sticky",
+          "name": "sticky",
+          "kind": "props",
+          "type": {
+            "text": "\"partial\" | \"always\" | undefined",
+            "literals": [
+              "\"always\"",
+              "\"partial\""
+            ],
+            "references": []
+          },
+          "description": "Sets stickiness on the alignment axis. partial keeps content inside while the trigger remains partly visible; always keeps it inside throughout.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-hideWhenDetached",
+          "name": "hideWhenDetached",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Hides the content when its trigger becomes fully detached from the viewport or boundary.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-positionStrategy",
+          "name": "positionStrategy",
+          "kind": "props",
+          "type": {
+            "text": "\"fixed\" | \"absolute\" | undefined",
+            "literals": [
+              "\"absolute\"",
+              "\"fixed\""
+            ],
+            "references": []
+          },
+          "description": "Selects the floating panel’s fixed or absolute CSS positioning strategy.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-props-updatePositionStrategy",
+          "name": "updatePositionStrategy",
+          "kind": "props",
+          "type": {
+            "text": "\"always\" | \"optimized\" | undefined",
+            "literals": [
+              "\"always\"",
+              "\"optimized\""
+            ],
+            "references": []
+          },
+          "description": "Selects how the floating position is updated: always updates each animation frame, while optimized uses scheduled updates.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Renders the explanatory content inside the tooltip panel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:tooltip/TooltipProvider",
+      "name": "TooltipProvider",
+      "source": {
+        "file": "packages/ui/src/components/tooltip/TooltipProvider.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atooltip_2FTooltipProvider-props-delayDuration",
+          "name": "delayDuration",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The delay in milliseconds between pointer entry and opening a tooltip; defaults to 400.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipProvider.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_DELAY_DURATION",
+              "source": {
+                "file": "packages/ui/src/components/tooltip/TooltipProvider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "400"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipProvider-props-skipDelayDuration",
+          "name": "skipDelayDuration",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The number of milliseconds after closing a tooltip during which entering another trigger skips its delay.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipProvider.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipProvider-props-disableHoverableContent",
+          "name": "disableHoverableContent",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "When enabled, the tooltip closes as the pointer leaves its trigger instead of remaining open while the pointer enters its content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipProvider.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipProvider-props-disableClosingTrigger",
+          "name": "disableClosingTrigger",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "When enabled, clicking a trigger does not close an open tooltip.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipProvider.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipProvider-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables all tooltips managed by this provider.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipProvider.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipProvider-props-ignoreNonKeyboardFocus",
+          "name": "ignoreNonKeyboardFocus",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Ignores focus not produced by keyboard navigation; only focus matching :focus-visible can open a tooltip.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipProvider.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipProvider-props-content",
+          "name": "content",
+          "kind": "props",
+          "type": {
+            "text": "TooltipContentProps | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Provides default positioning and mounting options for TooltipContent instances under this provider; an individual content component can override them.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipProvider.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atooltip_2FTooltipProvider-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Contains Tooltip components managed by this provider’s settings.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tooltip/TooltipProvider.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

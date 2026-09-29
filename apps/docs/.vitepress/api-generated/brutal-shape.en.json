@@ -1,0 +1,235 @@
+{
+  "id": "component:brutal-shape",
+  "name": "brutal-shape",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:brutal-shape/BrutalShape",
+      "name": "BrutalShape",
+      "source": {
+        "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abrutal_2Dshape_2FBrutalShape-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The shape name from the catalog in this guide. Unknown names skip SVG rendering and produce a warning.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abrutal_2Dshape_2FBrutalShape-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "string | number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets both SVG width and height. Numbers are interpreted as pixels; strings are passed directly to the SVG dimensions.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "32",
+              "source": {
+                "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "32"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abrutal_2Dshape_2FBrutalShape-props-color",
+          "name": "color",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The SVG fill color. By default it uses the accent semantic token and follows the theme.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'var(--brutal-accent, #FFE66D)'",
+              "source": {
+                "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"var(--brutal-accent, #FFE66D)\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abrutal_2Dshape_2FBrutalShape-props-stroke",
+          "name": "stroke",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The SVG stroke color, using the foreground semantic token by default.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'var(--brutal-fg, #000000)'",
+              "source": {
+                "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"var(--brutal-fg, #000000)\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abrutal_2Dshape_2FBrutalShape-props-strokeWidth",
+          "name": "strokeWidth",
+          "kind": "props",
+          "type": {
+            "text": "string | number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The SVG stroke width in the 100-unit viewBox coordinate system.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "3",
+              "source": {
+                "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "3"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abrutal_2Dshape_2FBrutalShape-props-decorative",
+          "name": "decorative",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Hides the shape from assistive technology through aria-hidden when true. Set it to false for semantic use and provide a text alternative on the parent.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abrutal_2Dshape_2FBrutalShape-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes merged onto the SVG root, for example for rotation or positioning.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

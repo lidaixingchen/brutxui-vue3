@@ -1,0 +1,330 @@
+{
+  "id": "component:glitch-text",
+  "name": "glitch-text",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:glitch-text/GlitchText",
+      "name": "GlitchText",
+      "source": {
+        "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-props-text",
+          "name": "text",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "用于毛刺伪元素的数据文本；非空时优先于插槽文本用于动画图层。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "''",
+              "source": {
+                "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-props-trigger",
+          "name": "trigger",
+          "kind": "props",
+          "type": {
+            "text": "\"none\" | \"click\" | \"hover\" | \"autoplay\" | undefined",
+            "literals": [
+              "\"autoplay\"",
+              "\"click\"",
+              "\"hover\"",
+              "\"none\""
+            ],
+            "references": []
+          },
+          "description": "选择 hover、click、autoplay 或 none 动画触发方式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'hover'",
+              "source": {
+                "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"hover\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-props-interval",
+          "name": "interval",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "autoplay 模式的播放间隔，单位为毫秒；组件会按动画时长和最小间隔限制实际周期。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_AUTOPLAY_INTERVAL_MS",
+              "source": {
+                "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "3000"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-props-speed",
+          "name": "speed",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"slow\" | \"medium\" | \"fast\" | null | undefined> | undefined",
+            "literals": [
+              "\"fast\"",
+              "\"medium\"",
+              "\"slow\""
+            ],
+            "references": []
+          },
+          "description": "选择毛刺动画的慢速、中速或快速视觉节奏。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'medium'",
+              "source": {
+                "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"medium\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-props-direction",
+          "name": "direction",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"vertical\" | \"horizontal\" | \"both\" | null | undefined> | undefined",
+            "literals": [
+              "\"both\"",
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "选择水平、垂直或双向毛刺位移。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'horizontal'",
+              "source": {
+                "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"horizontal\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到文本根 span 元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "呈现文本内容并支持内联样式。实际渲染文本优先采用插槽；未提供插槽时显示 text。毛刺伪元素则优先采用非空 text，否则从插槽节点提取文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-exposes-play",
+          "name": "play",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "手动开启毛刺激活状态，不受 trigger 方式或禁用状态限制；减少动态效果偏好仍会隐藏实际动画。autoplay 定时器继续独立运行。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue",
+            "line": 91
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-exposes-stop",
+          "name": "stop",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "手动关闭毛刺激活状态；autoplay 定时器仍会按自身周期运行。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue",
+            "line": 92
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-events-mouseenter",
+          "name": "mouseenter",
+          "kind": "events",
+          "type": {
+            "text": "MouseEvent",
+            "literals": [],
+            "references": []
+          },
+          "description": "根 span 的原生鼠标进入事件通过 Vue 属性透传给使用方监听；组件不声明同名自定义事件。",
+          "notes": [
+            "hover 模式激活毛刺效果；autoplay 模式暂停定时播放；其他模式不改变内部状态。"
+          ],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+          },
+          "origin": "fallthrough"
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-events-mouseleave",
+          "name": "mouseleave",
+          "kind": "events",
+          "type": {
+            "text": "MouseEvent",
+            "literals": [],
+            "references": []
+          },
+          "description": "根 span 的原生鼠标离开事件通过 Vue 属性透传给使用方监听；组件不声明同名自定义事件。",
+          "notes": [
+            "hover 模式关闭毛刺效果；autoplay 模式恢复定时播放；其他模式不改变内部状态。"
+          ],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+          },
+          "origin": "fallthrough"
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-events-click",
+          "name": "click",
+          "kind": "events",
+          "type": {
+            "text": "MouseEvent",
+            "literals": [],
+            "references": []
+          },
+          "description": "根 span 的原生点击事件通过 Vue 属性透传给使用方监听；组件不声明同名自定义事件。",
+          "notes": [
+            "仅 click 模式下点击会切换毛刺激活状态；其他触发模式不因点击改变内部状态。"
+          ],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+          },
+          "origin": "fallthrough"
+        }
+      ]
+    }
+  ]
+}

@@ -80,22 +80,11 @@ import { Label } from 'brutx-ui-vue'
 </template>
 ```
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `variant` | `'default' \| 'error' \| 'success' \| 'muted'` | `'default'` | 标签变体样式 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 标签尺寸 |
-| `required` | `boolean` | `false` | 是否显示必填标记 |
-| `disabled` | `boolean` | `false` | 显示禁用标签状态并设置 `aria-disabled` |
-| `for` | `string` | — | 关联的表单控件 ID |
-| `class` | `string` | — | 自定义 CSS 类名 |
+<span id="插槽"></span>
 
-## 插槽
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 标签内容 |
+<ComponentApi name="label" />
 
 ## 可访问性
 

@@ -1,0 +1,698 @@
+{
+  "id": "component:tabs",
+  "name": "tabs",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:tabs/Tabs",
+      "name": "Tabs",
+      "source": {
+        "file": "packages/ui/src/components/tabs/Tabs.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atabs_2FTabs-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "受控模式下当前激活的标签页值，支持 v-model；为 undefined 时由组件维护选择状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/Tabs.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tabs/Tabs.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabs-props-defaultValue",
+          "name": "defaultValue",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "非受控模式的初始标签页值，也用于数据列表中当前选择失效后的回退。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/Tabs.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tabs/Tabs.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "未提供时，数据驱动模式使用 tabs 首项的 value；组合模式交由底层 TabsRoot 处理初始状态。"
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabs-props-tabs",
+          "name": "tabs",
+          "kind": "props",
+          "type": {
+            "text": "TabItem[] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "TabItem",
+                "text": "export interface TabItem {\n    label: string\n    value: string\n    disabled?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Ftabs%2Ftypes.ts%23TabItem"
+              }
+            ]
+          },
+          "description": "标签页数据列表。非空时自动渲染触发器与默认内容面板；空数组显示本地化空状态；未提供时通过默认插槽自行组合。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/Tabs.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tabs/Tabs.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabs-props-orientation",
+          "name": "orientation",
+          "kind": "props",
+          "type": {
+            "text": "\"vertical\" | \"horizontal\" | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "标签页根状态的排列方向和键盘导航方向，也为 TabsList 提供默认方向。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/Tabs.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'horizontal'",
+              "source": {
+                "file": "packages/ui/src/components/tabs/Tabs.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"horizontal\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabs-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "自定义 CSS 类；提供 tabs 时作用于外层容器，组合模式下作用于 TabsRoot。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/Tabs.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tabs/Tabs.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabs-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "激活标签页改变时发出新的字符串值；非受控模式同时更新内部选择。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/Tabs.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atabs_2FTabs-slots-header",
+          "name": "header",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "数据驱动模式下位于标签页区域上方的内容；tabs 为空数组时仍显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/Tabs.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atabs_2FTabs-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "组合模式下放置完整标签页结构；数据驱动模式下替换自动生成的内容面板，需自行放置 TabsContent。tabs 为空数组时不渲染此插槽。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/Tabs.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atabs_2FTabs-slots-footer",
+          "name": "footer",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "数据驱动模式下位于标签页区域下方的内容；tabs 为空数组时仍显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/Tabs.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:tabs/TabsContent",
+      "name": "TabsContent",
+      "source": {
+        "file": "packages/ui/src/components/tabs/TabsContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atabs_2FTabsContent-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "此内容面板对应的标签页值，应与 TabsTrigger 的 value 一致。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsContent.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabsContent-props-surface",
+          "name": "surface",
+          "kind": "props",
+          "type": {
+            "text": "TabsContentSurface | undefined",
+            "literals": [
+              "\"panel\"",
+              "\"plain\""
+            ],
+            "references": [
+              {
+                "name": "TabsContentSurface",
+                "text": "export type TabsContentSurface = NonNullable<TabsContentVariantProps['surface']>",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Ftabs%2Ftabs-variants.ts%23TabsContentSurface"
+              }
+            ]
+          },
+          "description": "外壳渲染模式：plain 为零边距贴合（适合内嵌 Card），panel 为带实体边框与阴影的独立卡片面板。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsContent.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'plain'",
+              "source": {
+                "file": "packages/ui/src/components/tabs/TabsContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"plain\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabsContent-props-forceMount",
+          "name": "forceMount",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "保持内容面板挂载，以便控制外部动画或保留面板实例。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsContent.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tabs/TabsContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabsContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到标签页内容面板的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsContent.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tabs/TabsContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabsContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "此标签页对应的内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:tabs/TabsList",
+      "name": "TabsList",
+      "source": {
+        "file": "packages/ui/src/components/tabs/TabsList.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atabs_2FTabsList-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "标签列表容器的尺寸变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsList.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/tabs/TabsList.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabsList-props-orientation",
+          "name": "orientation",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"vertical\" | \"horizontal\" | null | undefined> | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "覆盖标签列表自身的布局样式与 data-orientation，不改变根 Tabs 的键盘方向设置。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsList.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tabs/TabsList.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "依次使用此属性、父 Tabs 注入的方向、horizontal。"
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabsList-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到标签列表容器的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsList.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tabs/TabsList.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabsList-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "标签触发器列表，通常放置 TabsTrigger。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsList.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:tabs/TabsTrigger",
+      "name": "TabsTrigger",
+      "source": {
+        "file": "packages/ui/src/components/tabs/TabsTrigger.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atabs_2FTabsTrigger-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "标签页的唯一字符串标识，用于关联对应的 TabsContent。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsTrigger.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabsTrigger-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用此标签页触发器，阻止用户激活。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsTrigger.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/tabs/TabsTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabsTrigger-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"success\" | \"accent\" | \"slots\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\"",
+              "\"slots\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "触发器的视觉变体，控制激活状态的配色及装饰。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsTrigger.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/tabs/TabsTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabsTrigger-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到标签页触发器的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsTrigger.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tabs/TabsTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atabs_2FTabsTrigger-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "标签页触发器的文字、图标或其他标签内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tabs/TabsTrigger.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

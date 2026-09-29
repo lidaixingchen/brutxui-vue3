@@ -52,13 +52,13 @@ Use the `variant` prop on `AccordionItem` to set different neo-brutalist styles:
 | `default` | Default with thick black border and solid shadow offset at the bottom-right |
 | `flat` | Thick black border only, no shadow effects |
 | `ghost` | Transparent background, no border or shadow, minimal presentation |
-| `interactive` | Shadow scale-up and shift on hover for a stronger interactive feel |
+| `interactive` | Enhanced shadow and highlight on hover while the header and panel stay in place |
 
 ```vue
 <template>
     <AccordionItem value="item" variant="interactive">
         <AccordionTrigger>Interactive Accordion Item</AccordionTrigger>
-        <AccordionContent>Hover to see! There's a hover offset effect.</AccordionContent>
+        <AccordionContent>Hover enhances the shadow; the header stays in place when expanded.</AccordionContent>
     </AccordionItem>
 </template>
 ```
@@ -85,60 +85,14 @@ Use the `variant` prop on `AccordionItem` to set different neo-brutalist styles:
 | `AccordionTrigger` | Panel trigger, click to toggle expand/collapse |
 | `AccordionContent` | Panel content area, shown when expanded |
 
-## Props
+## API Reference
 
-### Accordion
+<span id="accordion-1"></span>
+<span id="accordionitem"></span>
+<span id="accordiontrigger"></span>
+<span id="accordioncontent"></span>
 
-| Prop | Type | Default | Description |
-| ------ | ------ | ------ | ------ |
-| `type` | `'single' \| 'multiple'` | — | Expand mode, single or multiple selection |
-| `collapsible` | `boolean` | `false` | Whether all items can be closed in `type="single"` mode |
-| `disabled` | `boolean` | `false` | Whether to disable the entire accordion |
-| `modelValue` | `string \| string[]` | — | Currently selected panel value, supports `v-model` two-way binding |
-| `defaultValue` | `string \| string[]` | — | Default selected value in uncontrolled mode |
-| `dir` | `'ltr' \| 'rtl'` | `'ltr'` | Reading direction |
-| `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` | Accordion layout direction |
-| `unmountOnHide` | `boolean` | `true` | Whether to unmount content DOM when closed |
-| `class` | `string` | — | Custom class name |
-
-### AccordionItem
-
-| Prop | Type | Default | Description |
-| ------ | ------ | ------ | ------ |
-| `value` | `string` | — | Unique identifier value (required) |
-| `variant` | `'default' \| 'flat' \| 'ghost' \| 'interactive'` | `'default'` | Visual style variant |
-| `disabled` | `boolean` | `false` | Whether to disable this item |
-| `class` | `string` | — | Custom class name |
-
-### AccordionTrigger
-
-| Prop | Type | Default | Description |
-| ------ | ------ | ------ | ------ |
-| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'lg'` | Size of the expand/collapse icon |
-| `class` | `string` | — | Custom class name |
-
-### AccordionContent
-
-| Prop | Type | Default | Description |
-| ------ | ------ | ------ | ------ |
-| `forceMount` | `boolean` | — | Force mount content, used with external animation libraries to control animations |
-| `class` | `string` | — | Custom class name |
-
-## Events
-
-| Event | Payload | Description |
-| ------ | ------ | ------ |
-| `update:modelValue` | `value: string \| string[] \| undefined` | Triggered when expand state changes, supports `v-model` |
-
-## Slots
-
-| Slot | Scope | Description |
-| ------ | ------ | ------ |
-| `Accordion#default` | — | Accordion content, typically contains `AccordionItem` |
-| `AccordionItem#default` | — | Panel item content, typically contains `AccordionTrigger` and `AccordionContent` |
-| `AccordionTrigger#default` | — | Trigger text content |
-| `AccordionTrigger#icon` | — | Custom expand/collapse icon, defaults to `ChevronDown`; custom icons get the same appearance as the default one (border/background/shadow), and the expand rotation animation applies to the icon container, so non-SVG icons work too |
-| `AccordionContent#default` | — | Content displayed when the panel is expanded |
+<ComponentApi name="accordion" />
 
 ## Accessibility
 

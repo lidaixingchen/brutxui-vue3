@@ -1,0 +1,383 @@
+{
+  "id": "component:checkbox",
+  "name": "checkbox",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:checkbox/Checkbox",
+      "name": "Checkbox",
+      "source": {
+        "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到复选框根交互元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-checked",
+          "name": "checked",
+          "kind": "props",
+          "type": {
+            "text": "boolean | \"indeterminate\" | undefined",
+            "literals": [
+              "\"indeterminate\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "受控选中状态，可为选中、未选中或 `indeterminate`；省略时组件使用内部状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-defaultValue",
+          "name": "defaultValue",
+          "kind": "props",
+          "type": {
+            "text": "boolean | \"indeterminate\" | undefined",
+            "literals": [
+              "\"indeterminate\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "非受控模式的初始状态，仅在 `checked` 未设置时生效。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用复选框交互并传递禁用状态给底层 Reka UI 原语。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"danger\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "选择复选框的颜色样式变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "设置复选框及内部状态图标的尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "复选框的无障碍名称；未提供时使用本地化默认文案。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "原生表单字段名；设置后随所属表单提交复选框值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "AcceptableValue | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "随表单提交的值；传递给 Reka UI 根原语，未设置时使用其原生默认值 `on`。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-required",
+          "name": "required",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "设置原生表单必填状态并传递给底层原语。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-events-update_3Achecked",
+          "name": "update:checked",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean | \"indeterminate\"]",
+            "literals": [
+              "\"indeterminate\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "选中状态变化时发出新的布尔值或 `indeterminate`，可与 `v-model:checked` 配合。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

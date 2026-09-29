@@ -4,6 +4,10 @@ import { Primitive, type PrimitiveProps } from 'reka-ui'
 import { cn } from '@/lib/utils'
 
 interface AlertTitleProps extends PrimitiveProps {
+    /** 指定标题渲染为哪个 HTML 元素或 Vue 组件；默认渲染为 `h5` */
+    as?: PrimitiveProps['as']
+    /** 将标题属性、样式和插槽内容合并到唯一子元素上 */
+    asChild?: PrimitiveProps['asChild']
     class?: string
 }
 

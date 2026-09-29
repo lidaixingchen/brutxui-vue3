@@ -1,0 +1,238 @@
+{
+  "id": "component:copy-to-clipboard",
+  "name": "copy-to-clipboard",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:copy-to-clipboard/CopyToClipboard",
+      "name": "CopyToClipboard",
+      "source": {
+        "file": "packages/ui/src/components/copy-to-clipboard/CopyToClipboard.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acopy_2Dto_2Dclipboard_2FCopyToClipboard-props-text",
+          "name": "text",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The text written to the clipboard when the user activates the copy action.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/copy-to-clipboard/CopyToClipboard.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acopy_2Dto_2Dclipboard_2FCopyToClipboard-props-duration",
+          "name": "duration",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "How long success or failure feedback remains visible, in milliseconds.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/copy-to-clipboard/CopyToClipboard.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_COPIED_DURATION",
+              "source": {
+                "file": "packages/ui/src/components/copy-to-clipboard/CopyToClipboard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "2000"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acopy_2Dto_2Dclipboard_2FCopyToClipboard-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"outline\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"outline\"",
+              "\"primary\""
+            ],
+            "references": []
+          },
+          "description": "Sets the copy button to the default, primary, or outline visual style.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/copy-to-clipboard/CopyToClipboard.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/copy-to-clipboard/CopyToClipboard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acopy_2Dto_2Dclipboard_2FCopyToClipboard-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Sets the preset size of the copy button.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/copy-to-clipboard/CopyToClipboard.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/copy-to-clipboard/CopyToClipboard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acopy_2Dto_2Dclipboard_2FCopyToClipboard-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the copy button container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/copy-to-clipboard/CopyToClipboard.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/copy-to-clipboard/CopyToClipboard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acopy_2Dto_2Dclipboard_2FCopyToClipboard-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "Sets the size of the copy and status icons.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/copy-to-clipboard/CopyToClipboard.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/copy-to-clipboard/CopyToClipboard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acopy_2Dto_2Dclipboard_2FCopyToClipboard-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{ copied: boolean; failed: boolean; }",
+            "literals": [],
+            "references": []
+          },
+          "description": "Customizes the copy button content; its scope exposes the copied success state and failed state of the most recent copy.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/copy-to-clipboard/CopyToClipboard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

@@ -128,37 +128,12 @@ type ImageFit = 'fill' | 'contain' | 'cover' | 'none' | 'scale-down'
 | `'none'` | 保持原始尺寸 |
 | `'scale-down'` | 类似 `contain`，但不会放大超过原始尺寸 |
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `src` | `string` | — | 图片地址（必填） |
-| `alt` | `string` | `''` | 替代文本 |
-| `fit` | `'fill' \| 'contain' \| 'cover' \| 'none' \| 'scale-down'` | `'cover'` | 图片填充模式，对应 CSS `object-fit` |
-| `previewSrcList` | `string[]` | `[]` | 预览图片列表，传入后支持在预览模态框中切换图片 |
-| `initialIndex` | `number` | `0` | 预览时初始显示的图片索引 |
-| `hideOnClickModal` | `boolean` | `false` | 是否点击遮罩层关闭预览 |
-| `zoomRate` | `number` | `1.2` | 每次放大/缩小的倍率 |
-| `preview` | `boolean` | `false` | 是否启用大图预览功能 |
-| `fallback` | `string` | — | 加载失败时的备用图片地址 |
-| `loading` | `'eager' \| 'lazy'` | `'eager'` | 加载模式，`lazy` 使用 IntersectionObserver 实现懒加载 |
+<span id="事件"></span>
+<span id="插槽"></span>
 
-## 事件
-
-| 事件 | 参数 | 说明 |
-| --- | --- | --- |
-| `load` | `event: Event` | 图片加载完成时触发 |
-| `error` | `event: Event` | 图片加载失败时触发（备用图也失败时才触发） |
-| `show` | — | 预览模态框打开时触发 |
-| `close` | — | 预览模态框关闭时触发 |
-| `switch` | `index: number` | 预览中切换图片时触发，参数为当前图片索引 |
-
-## 插槽
-
-| 插槽 | 作用域 | 说明 |
-| --- | --- | --- |
-| `placeholder` | — | 图片加载中显示的占位内容，不提供时使用默认斜线噪点背景 + "加载中..." 文字 |
-| `error` | — | 图片加载失败时显示的内容，不提供时使用默认红色斜线背景 + "加载失败" 文字 |
+<ComponentApi name="image" />
 
 ## 可访问性
 

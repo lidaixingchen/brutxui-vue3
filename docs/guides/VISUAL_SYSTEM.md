@@ -78,6 +78,7 @@
 - **代码复用**：完整类名串复用 `@/lib/brutal-interaction-variants` 的 `brutalPress`（遵循完整字面量契约）。
 - **stacked 档位按压**：承载 `shadow-brutal-stacked` 的元素必须复用同文件的 `brutalPressStacked`——位移以 calc 同源派生最外层 1.5x 偏移（`active:translate-x-[calc(var(--brutal-shadow-offset-x,4px)*1.5)]`）并去影；严禁内联手抄像素字面量造成位移与阴影脱同步。
 - **合法例外**：
+  - *折叠面板标题*：Accordion 标题栏与外框保持对齐，按压通过颜色和焦点提示反馈；内容展开动画独立控制高度，标题与面板不附加平移。
   - *低强调变体*：`ghost` / `link` 变体豁免位移与阴影（`shadow-none` + 仅背景或下划线悬浮反馈）。
   - *分段选择与嵌入式触发器*：分段选择控件（`TabsTrigger`）以及外壳由父级 Item/容器承担的触发器（`AccordionTrigger`）豁免瞬态按压物理位移与去影，使用稳定几何位置的成对背景色/前景色与边框反馈，避免容器内相对晃动或与展开动效冲突。
   - *私有与紧凑设计*：无阴影组件、整宽单元格等小尺度私有设计允许使用轻量字面量（如 `active:translate-y-[2px]`）。
@@ -86,6 +87,8 @@
 ### R5 悬停反馈 (Hover Feedback)
 - **核心动作**：`hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5`（微上浮并放大硬阴影）。
 - **合法例外**：嵌在列表或卡片内部的次级触发器（如 `TabsTrigger`、`AccordionTrigger`）悬停保持位置与阴影稳定，通过背景叠色提供交互提示，悬浮反馈归属于外层卡片整体（如 `AccordionItem` 的 `interactive` 变体）。
+
+- **结构稳定性**：Accordion 与 Breadcrumb 悬停时保持布局位置，通过底色或阴影变化反馈。Breadcrumb 实体标签按压时文字、底色和边框作为整体移动。
 
 ### R6 颜色体系 (Colors)
 - **核心规则**：一律使用 `--brutal-*` CSS 变量（语义色及其 `*-foreground` 前景家族、`--brutal-status-*` 状态色家族）。

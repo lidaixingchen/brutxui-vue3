@@ -123,35 +123,41 @@ interface KanbanColumn {
 }
 ```
 
-## Props
+## Programmatic Control
 
-### KanbanBoard Props
+```vue
+<script setup>
+import { ref } from 'vue'
+import { KanbanBoard } from 'brutx-ui-vue'
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `modelValue` | `KanbanColumn[]` | — | Kanban data (v-model) |
-| `class` | `string` | — | Custom CSS class for the root element |
+const kanbanRef = ref(null)
+const columns = ref([
+    { id: 'todo', title: 'Todo', cards: [{ id: 'card-1', title: 'Task 1' }] },
+    { id: 'done', title: 'Done', cards: [] },
+])
 
-## Events
+function moveCardRight() {
+    kanbanRef.value?.moveCard('card-1', 'todo', 1)
+}
+</script>
 
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `update:modelValue` | `KanbanColumn[]` | Emitted when column data is updated (after card move or column reorder) |
-| `card-move` | `(cardId: string, fromColumn: string, toColumn: string)` | Emitted when a card is moved (both mouse drag and keyboard actions) |
-| `card-click` | `(card: KanbanCard, columnId: string)` | Emitted when a card is clicked (not triggered during drag) |
-| `column-move` | `(columnId: string, fromIndex: number, toIndex: number)` | Emitted when a column header drag reorder is completed |
-| `add-card` | `columnId: string` | Emitted when the default "Add card" button is clicked |
+<template>
+    <KanbanBoard ref="kanbanRef" v-model="columns" />
+    <button @click="moveCardRight">Move Card Right</button>
+</template>
+```
 
-## Slots
+## API Reference
 
-| Slot | Scope | Description |
-|------|-------|-------------|
-| `add-{columnId}` | `columnId: string` | Custom "Add card" entry at the bottom of the specified column; when not provided, renders a default `Button` (`variant="outline"` `size="sm"`) that triggers the `add-card` event |
+<span id="kanbanboard-props"></span>
+<span id="exposed-methods-defineexpose"></span>
+
+<ComponentApi name="kanban-board" />
 
 ## Accessibility
 
 - Cards support keyboard navigation and can be focused via the `Tab` key
-- Pressing `Enter` or `Space` after focusing triggers the `card-click` event
+- Pressing `Enter` after focusing triggers `card-click`; `Space` grabs or releases the card
 - Empty columns display a localized prompt text to guide users to drag and drop cards
 - **Keyboard drag**: Focus a card and press `Space` to grab, use arrow keys to move, press `Space` again to drop, `Escape` to cancel
   - `↑/↓`: Move card up/down within the current column
@@ -184,35 +190,6 @@ const columns = ref([
          5. Press Escape to cancel
     -->
     <KanbanBoard v-model="columns" />
-</template>
-```
-
-## Exposed Methods (defineExpose)
-
-| Method | Parameters | Description |
-|--------|------------|-------------|
-| `moveCard` | `(cardId, columnId, direction)` | Move card to adjacent column |
-| `moveColumn` | `(fromId, toId)` | Swap two columns |
-| `addCard` | `(columnId)` | Trigger add card event |
-| `getColumn` | `(columnId)` | Get specific column data |
-| `getAllColumns` | `() => KanbanColumn[]` | Get all column data (returns an array) |
-
-```vue
-<script setup>
-import { ref } from 'vue'
-import { KanbanBoard } from 'brutx-ui-vue'
-
-const kanbanRef = ref(null)
-const columns = ref([...])
-
-function moveCardRight() {
-    kanbanRef.value?.moveCard('card-1', 'todo', 1)
-}
-</script>
-
-<template>
-    <KanbanBoard ref="kanbanRef" v-model="columns" />
-    <button @click="moveCardRight">Move Card Right</button>
 </template>
 ```
 

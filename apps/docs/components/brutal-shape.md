@@ -76,16 +76,9 @@ import { BrutalShape } from 'brutx-ui-vue'
 
 传入未知名称时组件跳过渲染并在控制台输出警告。
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `name` | `string` | *(必填)* | 图腾名称，见上方图腾清单 |
-| `size` | `number \| string` | `32` | 渲染边长（px），viewBox 为 100 坐标系等比缩放 |
-| `color` | `string` | `var(--brutal-accent)` | 填充色，默认联动语义令牌 |
-| `stroke` | `string` | `var(--brutal-fg)` | 描边色 |
-| `strokeWidth` | `number \| string` | `3` | 描边宽度（viewBox 100 坐标系单位） |
-| `decorative` | `boolean` | `true` | 纯装饰标记：`true` 时对读屏隐藏（aria-hidden）；语义场景由父级提供文本替代 |
+<ComponentApi name="brutal-shape" />
 
 ## 可访问性
 

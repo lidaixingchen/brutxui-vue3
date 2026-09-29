@@ -1,0 +1,235 @@
+{
+  "id": "component:brutal-shape",
+  "name": "brutal-shape",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:brutal-shape/BrutalShape",
+      "name": "BrutalShape",
+      "source": {
+        "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abrutal_2Dshape_2FBrutalShape-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "图腾库中的图形名称，见正文图腾清单；未知名称会跳过 SVG 渲染并输出警告。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abrutal_2Dshape_2FBrutalShape-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "string | number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "同时设置 SVG 的宽度和高度；数值按像素解释，字符串直接传给 SVG 尺寸属性。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "32",
+              "source": {
+                "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "32"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abrutal_2Dshape_2FBrutalShape-props-color",
+          "name": "color",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "SVG 填充色；默认使用强调色语义令牌，随主题变化。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'var(--brutal-accent, #FFE66D)'",
+              "source": {
+                "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"var(--brutal-accent, #FFE66D)\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abrutal_2Dshape_2FBrutalShape-props-stroke",
+          "name": "stroke",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "SVG 描边色；默认使用前景色语义令牌。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'var(--brutal-fg, #000000)'",
+              "source": {
+                "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"var(--brutal-fg, #000000)\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abrutal_2Dshape_2FBrutalShape-props-strokeWidth",
+          "name": "strokeWidth",
+          "kind": "props",
+          "type": {
+            "text": "string | number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "SVG 描边宽度，以 viewBox 的 100 单位坐标系计量。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "3",
+              "source": {
+                "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "3"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abrutal_2Dshape_2FBrutalShape-props-decorative",
+          "name": "decorative",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "为真时通过 aria-hidden 对辅助技术隐藏图形；作为语义图形使用时设为假并由父级提供文本替代。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abrutal_2Dshape_2FBrutalShape-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到 SVG 根元素的自定义 CSS 类，可用于旋转或定位。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/brutal-shape/BrutalShape.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

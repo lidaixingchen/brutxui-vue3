@@ -105,35 +105,11 @@ By default, only leaf nodes can be selected. Set `checkStrictly` to `true` to al
 </template>
 ```
 
-## Props
+## API Reference
 
-### Cascader
+<span id="cascader-1"></span>
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `options` | `CascaderOption[]` | `[]` | Hierarchical options list |
-| `modelValue` | `CascaderValue[] \| CascaderValue[][]` | `[]` | Selected value path(s) |
-| `open` | `boolean` | — | Controlled dropdown open state |
-| `multiple` | `boolean` | `false` | Enable multiple path selections |
-| `clearable` | `boolean` | `false` | Display clear selection button |
-| `checkStrictly` | `boolean` | `false` | Enable selecting parent nodes (uncorrelated parent-child) |
-| `separator` | `string` | `' / '` | Custom character separating paths |
-| `maxDisplay` | `number` | `2` | Max selected paths displayed in trigger before collapsing |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Size of the trigger button |
-| `placeholder` | `string` | — | Trigger placeholder text |
-| `disabled` | `boolean` | `false` | Disable component interaction |
-| `dropdownClass` | `string` | — | Custom CSS class for dropdown wrapper |
-| `ariaLabel` | `string` | — | ARIA label |
-| `class` | `string` | — | Custom CSS class for trigger button |
-
-## Events
-
-| Event | Parameters | Description |
-|-------|------------|-------------|
-| `update:modelValue` | `CascaderValue[] \| CascaderValue[][]` | Emitted when value selection changes |
-| `update:open` | `boolean` | Emitted when open state changes, supporting `v-model:open` |
-| `change` | `CascaderValue[] \| CascaderValue[][]` | Selection change event |
-| `open-change` | `boolean` | Emitted when dropdown state toggles |
+<ComponentApi name="cascader" />
 
 ## Data Types
 

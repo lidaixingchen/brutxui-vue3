@@ -183,92 +183,20 @@ import { Button } from 'brutx-ui-vue'
 | `DropdownMenuSubContent` | Submenu content |
 | `DropdownMenuGroup` | Menu item group, re-export of reka-ui |
 
-## Props
+## API Reference
 
-### DropdownMenuContent
+<span id="dropdownmenucontent"></span>
+<span id="dropdownmenuitem"></span>
+<span id="dropdownmenucheckboxitem"></span>
+<span id="dropdownmenuradioitem"></span>
+<span id="dropdownmenulabel"></span>
+<span id="dropdownmenuseparator"></span>
+<span id="dropdownmenushortcut"></span>
+<span id="dropdownmenusubtrigger"></span>
+<span id="dropdownmenusubcontent"></span>
+<span id="dropdownmenucheckboxitem-1"></span>
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `sideOffset` | `number` | `6` | Spacing between menu content and trigger |
-| `class` | `string` | — | Custom style class |
-
-### DropdownMenuItem
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `inset` | `boolean` | — | Whether to display with indentation (for alignment with submenu triggers) |
-| `class` | `string` | — | Custom style class |
-
-### DropdownMenuCheckboxItem
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `v-model` | `boolean \| 'indeterminate'` | — | Checkbox state |
-| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | Checkmark icon size |
-| `class` | `string` | — | Custom style class |
-
-### DropdownMenuRadioItem
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `value` | `string` | — (required) | Radio item value |
-| `class` | `string` | — | Custom style class |
-
-### DropdownMenuLabel
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `inset` | `boolean` | — | Whether to display with indentation |
-| `class` | `string` | — | Custom style class |
-
-### DropdownMenuSeparator
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `class` | `string` | — | Custom style class |
-
-### DropdownMenuShortcut
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `class` | `string` | — | Custom style class |
-
-### DropdownMenuSubTrigger
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `inset` | `boolean` | — | Whether to display with indentation |
-| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | Expand icon size |
-| `class` | `string` | — | Custom style class |
-
-### DropdownMenuSubContent
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `class` | `string` | — | Custom style class |
-
-## Events
-
-### DropdownMenuCheckboxItem
-
-| Event | Payload | Description |
-| --- | --- | --- |
-| `update:modelValue` | `(value: boolean \| 'indeterminate')` | Triggered when the checkbox state changes |
-
-## Slots
-
-All custom wrapper components listed below provide a default slot (`default`) for rendering child content:
-
-| Component | Slot | Scope | Description |
-| --- | --- | --- | --- |
-| `DropdownMenuContent` | `default` | — | Default slot |
-| `DropdownMenuItem` | `default` | — | Default slot |
-| `DropdownMenuCheckboxItem` | `default` | — | Default slot |
-| `DropdownMenuRadioItem` | `default` | — | Default slot |
-| `DropdownMenuLabel` | `default` | — | Default slot |
-| `DropdownMenuShortcut` | `default` | — | Default slot |
-| `DropdownMenuSubTrigger` | `default` | — | Default slot |
-| `DropdownMenuSubContent` | `default` | — | Default slot |
+<ComponentApi name="dropdown-menu" />
 
 ## Accessibility
 

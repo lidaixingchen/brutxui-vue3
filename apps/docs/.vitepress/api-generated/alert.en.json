@@ -1,0 +1,397 @@
+{
+  "id": "component:alert",
+  "name": "alert",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:alert/Alert",
+      "name": "Alert",
+      "source": {
+        "file": "packages/ui/src/components/alert/Alert.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aalert_2FAlert-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"success\" | \"warning\" | \"danger\" | \"info\" | \"primary-subtle\" | \"secondary-subtle\" | \"warning-subtle\" | \"danger-subtle\" | \"success-subtle\" | \"info-subtle\" | null | undefined> | undefined",
+            "literals": [
+              "\"danger-subtle\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"info-subtle\"",
+              "\"info\"",
+              "\"primary-subtle\"",
+              "\"primary\"",
+              "\"secondary-subtle\"",
+              "\"secondary\"",
+              "\"success-subtle\"",
+              "\"success\"",
+              "\"warning-subtle\"",
+              "\"warning\""
+            ],
+            "references": []
+          },
+          "description": "Controls the alert’s visual variant, including its border, foreground, and background colors.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/Alert.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/alert/Alert.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2FAlert-props-closable",
+          "name": "closable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows a close button in the top-right corner. Clicking it emits `close`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/Alert.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/alert/Alert.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2FAlert-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes merged into the alert root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/Alert.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/alert/Alert.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2FAlert-events-close",
+          "name": "close",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted without a payload when the close button of a closable alert is clicked.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/Alert.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aalert_2FAlert-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The main alert content, typically a title, description, or other custom content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/Alert.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aalert_2FAlert-slots-actions",
+          "name": "actions",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "An optional action area. When provided, its content appears below the main alert content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/Alert.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:alert/AlertDescription",
+      "name": "AlertDescription",
+      "source": {
+        "file": "packages/ui/src/components/alert/AlertDescription.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aalert_2FAlertDescription-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the description element’s DOM id. If omitted, the component generates an id; when nested in `Alert`, that id is registered for `aria-describedby`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/AlertDescription.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2FAlertDescription-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes merged into the description element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/AlertDescription.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2FAlertDescription-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The alert description. When nested in `Alert`, its DOM id is included in the root’s `aria-describedby` relationship.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/AlertDescription.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:alert/AlertTitle",
+      "name": "AlertTitle",
+      "source": {
+        "file": "packages/ui/src/components/alert/AlertTitle.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aalert_2FAlertTitle-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "Selects the HTML element or Vue component used to render the title. The default is `h5`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/AlertTitle.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'h5'",
+              "source": {
+                "file": "packages/ui/src/components/alert/AlertTitle.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"h5\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2FAlertTitle-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Merges the title props, styles, and slot content into its single child; the child determines the rendered element when enabled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/AlertTitle.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/alert/AlertTitle.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2FAlertTitle-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes merged into the title element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/AlertTitle.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/alert/AlertTitle.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aalert_2FAlertTitle-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The title text or other title content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/alert/AlertTitle.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,901 @@
+{
+  "id": "component:command",
+  "name": "command",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:command/Command",
+      "name": "Command",
+      "source": {
+        "file": "packages/ui/src/components/command/Command.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acommand_2FCommand-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "追加到命令列表根容器的 class 值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/Command.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/command/Command.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommand-props-disableFilter",
+          "name": "disableFilter",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "关闭组件内部的条目文本过滤；适用于外部自行过滤列表的场景。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/Command.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/command/Command.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommand-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "放置命令输入框、列表、分组和条目等子组件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/Command.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acommand_2FCommand-exposes-filterSearch",
+          "name": "filterSearch",
+          "kind": "exposes",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前共享搜索关键词。写入新字符串会更新内部匹配状态；disableFilter 为 true 时不隐藏不匹配条目。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/Command.vue",
+            "line": 79
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": "component:command/CommandDialog",
+      "name": "CommandDialog",
+      "source": {
+        "file": "packages/ui/src/components/command/CommandDialog.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acommand_2FCommandDialog-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "对话框当前开合状态。组件完全受控，需通过 v-model:open 或监听 update:open 更新该值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandDialog.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/command/CommandDialog.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandDialog-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "命令对话框的无障碍标题；空白或仅空格时回退到本地化标题。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandDialog.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/command/CommandDialog.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "命令面板"
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandDialog-props-description",
+          "name": "description",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "命令对话框的无障碍描述；空白或仅空格时回退到本地化描述。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandDialog.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/command/CommandDialog.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "搜索要运行的命令..."
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandDialog-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "追加到对话框内容的 class 值；内部布局类在该值之后合并。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandDialog.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/command/CommandDialog.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandDialog-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "根对话框请求开合状态变化时发出新布尔值；父级仍需更新 open。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandDialog.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandDialog-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "放置命令输入框、列表、分组和条目等对话框内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandDialog.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:command/CommandEmpty",
+      "name": "CommandEmpty",
+      "source": {
+        "file": "packages/ui/src/components/command/CommandEmpty.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acommand_2FCommandEmpty-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "追加到无匹配结果提示段落的 class 值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandEmpty.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandEmpty-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "自定义搜索结果为空时的提示内容；仅当内部过滤结果数量为零时渲染。未提供内容时使用本地化文本。",
+          "notes": [
+            "默认文案来自 command.emptyText：“未找到结果。”。"
+          ],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandEmpty.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:command/CommandGroup",
+      "name": "CommandGroup",
+      "source": {
+        "file": "packages/ui/src/components/command/CommandGroup.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acommand_2FCommandGroup-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "分组标题；提供非空文本时在分组条目之前呈现标题。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandGroup.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandGroup-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "追加到命令分组根元素的 class 值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandGroup.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandGroup-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "放置属于当前命令分组的 CommandItem 子项。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandGroup.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:command/CommandInput",
+      "name": "CommandInput",
+      "source": {
+        "file": "packages/ui/src/components/command/CommandInput.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acommand_2FCommandInput-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "命令搜索输入的受控值；未提供时初始读取根 Command 的共享搜索词。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandInput.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/command/CommandInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandInput-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "输入框占位文本；仅 undefined 或 null 时使用本地化默认值，空字符串会按显式值保留。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandInput.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/command/CommandInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "输入命令或搜索..."
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandInput-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "追加到原生搜索输入框的 class 值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandInput.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/command/CommandInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandInput-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "用户输入变化时发出新字符串；根 Command 的共享搜索词由外部更改时，也会同步并发出对应值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandInput.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:command/CommandItem",
+      "name": "CommandItem",
+      "source": {
+        "file": "packages/ui/src/components/command/CommandItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acommand_2FCommandItem-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "命令项的唯一值；初始用于搜索索引，默认插槽渲染后索引会同步为可见文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandItem.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandItem-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将条目禁用并传递给 Reka UI 列表框条目。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandItem.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "追加到命令条目根元素的 class 值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandItem.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandItem-events-select",
+          "name": "select",
+          "kind": "events",
+          "type": {
+            "text": "[value: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "条目被选中时发出其 value 字符串。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "呈现命令项内容；渲染后的可见文本可作为搜索匹配文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:command/CommandList",
+      "name": "CommandList",
+      "source": {
+        "file": "packages/ui/src/components/command/CommandList.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acommand_2FCommandList-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "追加到 Reka UI 列表框内容元素的 class 值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandList.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandList-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "让列表框内容与唯一子元素合并，由子元素作为最终渲染节点。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandList.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandList-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "指定列表框内容渲染为的元素或组件；asChild 可覆盖该选择。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandList.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandList-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "放置 CommandEmpty、CommandGroup 等列表内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandList.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:command/CommandSeparator",
+      "name": "CommandSeparator",
+      "source": {
+        "file": "packages/ui/src/components/command/CommandSeparator.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acommand_2FCommandSeparator-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "追加到命令分隔线根元素的 class 值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandSeparator.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:command/CommandShortcut",
+      "name": "CommandShortcut",
+      "source": {
+        "file": "packages/ui/src/components/command/CommandShortcut.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acommand_2FCommandShortcut-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "追加到快捷键提示元素的 class 值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandShortcut.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acommand_2FCommandShortcut-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "呈现与命令项关联的快捷键提示文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/command/CommandShortcut.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

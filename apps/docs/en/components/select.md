@@ -22,15 +22,8 @@ A neo-brutalist style dropdown select built on top of reka-ui's Select primitive
 
 ```vue
 <script setup>
-import {
-    Select,
-    SelectTrigger,
-    SelectContent,
-    SelectItem,
-    SelectValue,
-    SelectGroup,
-    SelectLabel,
-} from 'brutx-ui-vue'
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectLabel } from 'brutx-ui-vue'
+import { SelectGroup, SelectValue } from 'reka-ui'
 </script>
 
 <template>
@@ -46,6 +39,31 @@ import {
                 <SelectItem value="orange">Orange</SelectItem>
                 <SelectItem value="grape">Grape</SelectItem>
             </SelectGroup>
+        </SelectContent>
+    </Select>
+</template>
+```
+
+### Custom Slot Composition and Attribute Binding
+
+The default slot replaces the full selector and does not provide scoped slot arguments. When composing atomic controls, pass form name, required, and disabled to Select; bind the trigger id and disabled state directly in the slot content.
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Select, SelectTrigger, SelectContent, SelectItem } from 'brutx-ui-vue'
+import { SelectValue } from 'reka-ui'
+const isDisabled = ref(false)
+</script>
+
+<template>
+    <Select name="fruit" required :disabled="isDisabled">
+        <SelectTrigger id="fruit-select" :disabled="isDisabled" class="w-[280px]">
+            <SelectValue placeholder="Select a fruit" />
+        </SelectTrigger>
+        <SelectContent>
+            <SelectItem value="apple">Apple</SelectItem>
+            <SelectItem value="banana">Banana</SelectItem>
         </SelectContent>
     </Select>
 </template>
@@ -102,8 +120,8 @@ import {
     SelectTrigger,
     SelectContent,
     SelectItem,
-    SelectValue,
 } from 'brutx-ui-vue'
+import { SelectValue } from 'reka-ui'
 
 const selectedFruit = ref('')
 </script>
@@ -126,126 +144,37 @@ const selectedFruit = ref('')
 
 | Component | Description |
 |-----------|-------------|
-| `Select` | Root component (re-exported as `SelectRoot` from reka-ui) |
+| `Select` | Unified selector with an options data source and slot composition, built on Reka UI primitives |
+| `SelectRoot` | Reka UI root primitive that provides context for atomic composition (import from reka-ui) |
+| `SelectValue` | Reka UI primitive that displays the selected value or placeholder (import from reka-ui) |
+| `SelectGroup` | Reka UI primitive that groups options (import from reka-ui) |
 | `SelectTrigger` | Button that opens the dropdown |
 | `SelectContent` | Dropdown content panel |
 | `SelectItem` | Selectable option |
-| `SelectValue` | Displays the selected value |
-| `SelectGroup` | Groups options together |
 | `SelectLabel` | Group label |
 | `SelectSeparator` | Visual separator |
 | `SelectScrollUpButton` | Scroll up indicator |
 | `SelectScrollDownButton` | Scroll down indicator |
 
-## Props
+## API Reference
 
-### Select (Unified Component)
+<span id="select-unified-component"></span>
+<span id="select-atomic-component"></span>
+<span id="selecttrigger"></span>
+<span id="selectcontent"></span>
+<span id="selectitem"></span>
+<span id="selectvalue"></span>
+<span id="selectlabel"></span>
+<span id="selectseparator"></span>
+<span id="selectscrollupbutton"></span>
+<span id="selectscrolldownbutton"></span>
+<span id="selecttrigger-events"></span>
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `options` | `SelectOption[]` | `[]` | Options data source, where each item contains `label`, `value`, `disabled`, etc. |
-| `groupField` | `string` | — | The key to group options by (e.g., `category`) |
-| `groupLabel` | `string` | — | The key containing the group display label in options (e.g., `categoryName`), defaults to the value of `groupField` |
-| `placeholder` | `string` | `'Select an option'` | Placeholder text |
-| `disabled` | `boolean` | `false` | Whether disabled |
-| `required` | `boolean` | `false` | Whether required |
-| `name` | `string` | — | Form field name |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Trigger size |
-| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | Border style variant |
-| `errorMessage` | `string` | — | Error message text |
-| `clearable` | `boolean` | `false` | Whether clearable |
-| `position` | `'popper' \| 'item-aligned'` | `'popper'` | Dropdown menu positioning strategy |
-| `class` | `string` | — | Root component (trigger) CSS class |
-| `triggerClass` | `string` | — | Custom trigger CSS class |
-| `contentClass` | `string` | — | Custom dropdown content panel CSS class |
-| `itemVariant` | `'default' \| 'primary' \| 'secondary'` | `'default'` | Option selection variant |
+<ComponentApi name="select" />
 
-### Select (Atomic Component)
+### Reka UI Primitives
 
-Root component that inherits all props from reka-ui `SelectRoot`. Common props are listed below:
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `modelValue` | `string` | — | Selected value, supports `v-model` |
-| `defaultValue` | `string` | — | Default selected value |
-| `open` | `boolean` | — | Whether the dropdown is expanded, supports `v-model:open` |
-| `defaultOpen` | `boolean` | `false` | Whether expanded by default |
-| `disabled` | `boolean` | `false` | Whether disabled |
-| `required` | `boolean` | `false` | Whether required |
-| `name` | `string` | — | Form field name |
-
-### SelectTrigger
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Trigger size |
-| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | Border style variant |
-| `errorMessage` | `string` | — | Error message text, only displayed when `variant="error"` |
-| `disabled` | `boolean` | `false` | Whether disabled |
-| `clearable` | `boolean` | `false` | Show clear button on hover |
-| `modelValue` | `string \| number \| null` | — | Current selected value (for clearable) |
-| `class` | `string` | — | Custom CSS class |
-| `iconClass` | `string` | — | Custom icon CSS class |
-
-### SelectContent
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `position` | `'popper' \| 'item-aligned'` | `'popper'` | Positioning strategy |
-| `class` | `string` | — | Custom CSS class |
-
-### SelectItem
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `value` | `string` | — (required) | Option value |
-| `disabled` | `boolean` | `false` | Whether disabled |
-| `variant` | `'default' \| 'primary' \| 'secondary'` | `'default'` | Option style variant |
-| `class` | `string` | — | Custom CSS class |
-| `indicatorClass` | `string` | — | Custom selected indicator CSS class |
-| `iconClass` | `string` | — | Custom check icon CSS class |
-| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | Check icon size |
-
-### SelectValue
-
-Displays the selected value, inherits all props from reka-ui `SelectValue`.
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `placeholder` | `string` | — | Placeholder text |
-
-### SelectLabel
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `class` | `string` | — | Custom CSS class |
-
-### SelectSeparator
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `decorative` | `boolean` | `true` | Whether it is purely decorative (hidden from accessibility tree when true) |
-| `class` | `string` | — | Custom CSS class |
-
-### SelectScrollUpButton
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `class` | `string` | — | Custom CSS class |
-| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | Up arrow icon size |
-
-### SelectScrollDownButton
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `class` | `string` | — | Custom CSS class |
-| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | Down arrow icon size |
-
-## SelectTrigger Events
-
-| Event | Payload | Description |
-| --- | --- | --- |
-| `clear` | — | Triggered when clear button is clicked |
+The unified Select props, events, and slots are listed above. When composing atomic controls, headless primitives such as SelectRoot and SelectValue come from reka-ui and should be imported from reka-ui; their remaining prop and slot contracts are defined by Reka UI.
 
 ## Accessibility
 

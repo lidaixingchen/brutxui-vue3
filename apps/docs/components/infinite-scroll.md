@@ -106,34 +106,13 @@ async function loadMore() {
 </template>
 ```
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `distance` | `number` | `100` | 触发距离阈值（像素） |
-| `delay` | `number` | `200` | 防抖延迟（毫秒） |
-| `disabled` | `boolean` | `false` | 是否禁用 |
-| `immediate` | `boolean` | `true` | 挂载时是否立即检查 |
-| `class` | `string` | — | 自定义 CSS 类 |
+<span id="事件"></span>
+<span id="插槽"></span>
+<span id="暴露的方法"></span>
 
-## 事件
-
-| 事件 | 参数 | 说明 |
-| --- | --- | --- |
-| `load` | — | 需要加载更多数据时触发 |
-
-## 插槽
-
-| 插槽 | 说明 |
-| --- | --- |
-| `default` | 内容列表 |
-| `loading` | 自定义加载指示器 |
-
-## 暴露的方法
-
-| 方法 | 说明 |
-| --- | --- |
-| `resetLoading()` | 重置加载状态（数据加载完成后调用） |
+<ComponentApi name="infinite-scroll" />
 
 ## 组合式函数
 

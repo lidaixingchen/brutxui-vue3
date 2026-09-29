@@ -1,0 +1,286 @@
+{
+  "id": "component:badge",
+  "name": "badge",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:badge/Badge",
+      "name": "Badge",
+      "source": {
+        "file": "packages/ui/src/components/badge/Badge.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abadge_2FBadge-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"success\" | \"danger\" | \"primary-subtle\" | \"secondary-subtle\" | \"danger-subtle\" | \"success-subtle\" | \"info-subtle\" | \"accent\" | \"outline\" | \"accent-subtle\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent-subtle\"",
+              "\"accent\"",
+              "\"danger-subtle\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"info-subtle\"",
+              "\"outline\"",
+              "\"primary-subtle\"",
+              "\"primary\"",
+              "\"secondary-subtle\"",
+              "\"secondary\"",
+              "\"success-subtle\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "徽标的配色及边框变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/badge/Badge.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/badge/Badge.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abadge_2FBadge-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "设置徽标尺寸，同时调整圆点、图标间距和关闭图标大小。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/badge/Badge.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/badge/Badge.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abadge_2FBadge-props-closable",
+          "name": "closable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示关闭按钮；关闭后是否移除徽标由使用方处理。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/badge/Badge.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/badge/Badge.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abadge_2FBadge-props-dot",
+          "name": "dot",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "在徽标内容前显示装饰性圆点。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/badge/Badge.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/badge/Badge.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abadge_2FBadge-props-pulse",
+          "name": "pulse",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示圆点并启用圆点脉冲动画，即使 dot 未开启也会显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/badge/Badge.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/badge/Badge.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abadge_2FBadge-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到徽标根 span 元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/badge/Badge.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/badge/Badge.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abadge_2FBadge-events-close",
+          "name": "close",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "点击关闭按钮时发出；组件会先阻止该点击事件冒泡。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/badge/Badge.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Abadge_2FBadge-slots-icon",
+          "name": "icon",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "显示在主体内容前的图标；存在插槽时才创建图标容器。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/badge/Badge.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Abadge_2FBadge-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "徽标的文字或主体内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/badge/Badge.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

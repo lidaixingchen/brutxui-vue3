@@ -1,0 +1,1088 @@
+{
+  "id": "component:tree-select",
+  "name": "tree-select",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:tree-select/TreeSelect",
+      "name": "TreeSelect",
+      "source": {
+        "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-nodes",
+          "name": "nodes",
+          "kind": "props",
+          "type": {
+            "text": "TreeNode<unknown>[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "Hierarchical options. Each node uses an id and label, may contain children, and can carry states such as disabled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The selected node IDs, controlled with v-model. A single selection is a string; multiple selections use a string array.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "The controlled open state of the dropdown panel; pair it with update:open for v-model:open.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-multiple",
+          "name": "multiple",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Allows selecting multiple nodes; modelValue and the select event then use arrays.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-searchable",
+          "name": "searchable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether the panel shows a search box for filtering nodes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Text shown by the trigger when no node is selected; the current locale’s default text is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-searchPlaceholder",
+          "name": "searchPlaceholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Placeholder for the search field; the current locale’s default text is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-emptyText",
+          "name": "emptyText",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Message shown when filtering returns no nodes; the current locale’s default text is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 37
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Allows the current selection to be cleared from the trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 39
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables trigger and panel interaction and prevents the dropdown from opening.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 41
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Sets the trigger size variant.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 43
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the trigger’s accessible label.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 45
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-maxDisplay",
+          "name": "maxDisplay",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "In multiple mode, the maximum number of selected tags shown directly in the trigger; remaining selections are summarized as a count.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 47
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "3",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "3"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-maxHeight",
+          "name": "maxHeight",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the CSS max-height of the tree dropdown.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 49
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'15rem'",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"15rem\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-dropdownClass",
+          "name": "dropdownClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the dropdown panel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 51
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the select trigger root.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 53
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "Sets the size of the trigger’s main icon.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 55
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-itemVariant",
+          "name": "itemVariant",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"primary\" | \"secondary\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "Sets the visual variant used to highlight selected tree nodes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 57
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string | string[] | undefined]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the updated node ID or IDs when the selection changes; clearing or having no valid selection may emit undefined.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Emits the new boolean when the dropdown open state changes and can be used with v-model:open.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-events-open_2Dchange",
+          "name": "open-change",
+          "kind": "events",
+          "type": {
+            "text": "[open: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Emits the current open state when the dropdown panel opens or closes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-events-select",
+          "name": "select",
+          "kind": "events",
+          "type": {
+            "text": "[node: TreeNode<unknown> | TreeNode<unknown>[] | undefined]",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "Emits the selected node when the user selects or clears a node; multiple mode returns an array of nodes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-exposes-searchQuery",
+          "name": "searchQuery",
+          "kind": "exposes",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The reactive state containing the current search query.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 355
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-exposes-selectedNodes",
+          "name": "selectedNodes",
+          "kind": "exposes",
+          "type": {
+            "text": "TreeNode<unknown>[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "The selected node objects resolved from modelValue; this computed state is read-only.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 356
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-exposes-expandedIds",
+          "name": "expandedIds",
+          "kind": "exposes",
+          "type": {
+            "text": "Set<string>",
+            "literals": [],
+            "references": []
+          },
+          "description": "The set of IDs for currently expanded nodes; it can be read or replaced through the component instance.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 357
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-exposes-focus",
+          "name": "focus",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Moves keyboard focus to the select trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 358
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-exposes-open",
+          "name": "open",
+          "kind": "exposes",
+          "type": {
+            "text": "WritableComputedRef<boolean, boolean>",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "The writable open state of the dropdown; setting it updates internal or controlled state and emits update:open.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": "component:tree-select/TreeSelectNode",
+      "name": "TreeSelectNode",
+      "source": {
+        "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-props-node",
+          "name": "node",
+          "kind": "props",
+          "type": {
+            "text": "TreeNode<unknown>",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "The tree node currently rendered, including its data, hierarchy, and disabled state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-props-selectedIds",
+          "name": "selectedIds",
+          "kind": "props",
+          "type": {
+            "text": "Set<string>",
+            "literals": [],
+            "references": []
+          },
+          "description": "The set of selected node IDs used to determine whether this node is selected.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-props-expandedIds",
+          "name": "expandedIds",
+          "kind": "props",
+          "type": {
+            "text": "Set<string>",
+            "literals": [],
+            "references": []
+          },
+          "description": "The set of expanded node IDs used to determine this node’s expanded state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-props-depth",
+          "name": "depth",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The node’s depth in the tree, used to calculate indentation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-props-multiple",
+          "name": "multiple",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Indicates whether the parent select is in multiple-selection mode.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-props-focusedId",
+          "name": "focusedId",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The ID of the node currently holding keyboard focus, used to render its focus state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"primary\" | \"secondary\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "Sets the visual variant for the node’s selected state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-events-select",
+          "name": "select",
+          "kind": "events",
+          "type": {
+            "text": "[node: TreeNode<unknown>]",
+            "literals": [],
+            "references": [
+              {
+                "name": "TreeNode",
+                "text": "export interface TreeNode<T = unknown> {\n    /** 节点唯一标识 */\n    id: string\n    /** 节点显示文本 */\n    label: string\n    /** 节点图标名称或自定义图标类名 */\n    icon?: string\n    /** 子节点列表 */\n    children?: TreeNode<T>[]\n    /** 自定义业务数据 */\n    data?: T\n    /** 是否禁用交互 */\n    disabled?: boolean\n    /** 是否叶子节点（懒加载时若为 true 则不展示展开图标） */\n    isLeaf?: boolean\n    /** 懒加载子节点是否已加载 */\n    loaded?: boolean\n    /** 懒加载是否处于请求中 */\n    loading?: boolean\n    /** 过滤搜索时是否隐藏 */\n    hidden?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Ftypes%2Ftree.ts%23TreeNode"
+              }
+            ]
+          },
+          "description": "Emits the node object when a leaf node is selected.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-events-focus",
+          "name": "focus",
+          "kind": "events",
+          "type": {
+            "text": "[id: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the node ID when this node receives focus.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-events-toggle",
+          "name": "toggle",
+          "kind": "events",
+          "type": {
+            "text": "[id: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the node ID when a non-leaf node is expanded or collapsed.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

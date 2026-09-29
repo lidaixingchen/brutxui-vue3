@@ -1,0 +1,599 @@
+{
+  "id": "component:table",
+  "name": "table",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:table/Table",
+      "name": "Table",
+      "source": {
+        "file": "packages/ui/src/components/table/Table.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atable_2FTable-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes appended to the native table element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/Table.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTable-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets aria-label on the native table element to provide an accessible name.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/Table.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTable-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Composes table structure children such as TableHeader, TableBody, and TableFooter.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/Table.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:table/TableBody",
+      "name": "TableBody",
+      "source": {
+        "file": "packages/ui/src/components/table/TableBody.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atable_2FTableBody-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes appended to the native tbody element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableBody.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableBody-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Contains table rows rendered with TableRow.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableBody.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:table/TableCaption",
+      "name": "TableCaption",
+      "source": {
+        "file": "packages/ui/src/components/table/TableCaption.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atable_2FTableCaption-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes appended to the native caption element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableCaption.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableCaption-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Renders a table caption or summary.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableCaption.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:table/TableCell",
+      "name": "TableCell",
+      "source": {
+        "file": "packages/ui/src/components/table/TableCell.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atable_2FTableCell-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes appended to the native td element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableCell.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableCell-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Renders table data cell content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableCell.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:table/TableFooter",
+      "name": "TableFooter",
+      "source": {
+        "file": "packages/ui/src/components/table/TableFooter.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atable_2FTableFooter-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\""
+            ],
+            "references": []
+          },
+          "description": "Selects the default, primary, or accent style for the table footer.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableFooter.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/table/TableFooter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableFooter-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes appended to the native tfoot element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableFooter.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/table/TableFooter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableFooter-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Contains summary or other footer row content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableFooter.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:table/TableHead",
+      "name": "TableHead",
+      "source": {
+        "file": "packages/ui/src/components/table/TableHead.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atable_2FTableHead-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "Selects the default, primary, or secondary style for a header cell.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableHead.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/table/TableHead.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableHead-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes appended to the native th element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableHead.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/table/TableHead.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableHead-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Renders header cell content. The element sets scope=\"col\".",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableHead.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:table/TableHeader",
+      "name": "TableHeader",
+      "source": {
+        "file": "packages/ui/src/components/table/TableHeader.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atable_2FTableHeader-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "Selects the default, primary, or secondary style for the table header.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableHeader.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/table/TableHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableHeader-props-texture",
+          "name": "texture",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"none\" | \"dots\" | \"hatch\" | null | undefined> | undefined",
+            "literals": [
+              "\"dots\"",
+              "\"hatch\"",
+              "\"none\""
+            ],
+            "references": []
+          },
+          "description": "Selects no texture, hatch lines, or dots for the table header. The texture is layered over the selected color variant.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableHeader.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'none'",
+              "source": {
+                "file": "packages/ui/src/components/table/TableHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"none\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableHeader-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes appended to the native thead element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableHeader.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/table/TableHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableHeader-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Contains header rows rendered with TableRow.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableHeader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:table/TableRow",
+      "name": "TableRow",
+      "source": {
+        "file": "packages/ui/src/components/table/TableRow.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atable_2FTableRow-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes appended to the native tr element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableRow.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atable_2FTableRow-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Contains header cells or data cells.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/table/TableRow.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

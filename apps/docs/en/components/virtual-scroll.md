@@ -160,42 +160,11 @@ function jumpToMiddle() {
 </template>
 ```
 
-### Exposed API
+## API Reference
 
-| Method | Parameter | Description |
-|------|------|------|
-| `scrollToIndex` | `index: number` | Scroll to the list item at the specified index |
-| `measure` | — | Re-measure all mounted items' sizes |
-| `measureElement` | `el: Element \| null` | Measure the actual size of the given DOM element |
+<span id="exposed-api"></span>
 
-## Props
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `items` | `T[]` | — | Data array (required) |
-| `itemHeight` | `number` | `48` | Estimated height of each item (in pixels) |
-| `dynamicHeight` | `boolean` | `false` | Whether to enable dynamic height measurement for variable item heights |
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'default'` | Container size variant |
-| `variant` | `'default' \| 'striped' \| 'bordered'` | `'default'` | List item style variant |
-| `overscan` | `number` | `5` | Number of items to pre-render outside the visible area |
-| `scrollEndThreshold` | `number` | `50` | Scroll-to-bottom detection threshold (in pixels) |
-| `class` | `string` | — | External CSS class override |
-
-
-## Events
-
-| Event | Payload | Description |
-|------|------|------|
-| `scroll` | `scrollTop: number` | Fired on scroll |
-| `scroll-end` | — | Fired when scrolled to the bottom |
-
-## Slots
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | `{ item: VirtualScrollItem, index: number }` | List item rendering |
-| `empty` | — | Empty state display (shown when `items` is an empty array) |
-| `loading` | — | Load more display (only rendered when this slot is provided) |
+<ComponentApi name="virtual-scroll" />
 
 ## Accessibility
 

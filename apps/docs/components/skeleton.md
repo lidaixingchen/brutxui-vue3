@@ -169,57 +169,16 @@ import { SkeletonTable } from 'brutx-ui-vue'
 | `SkeletonCard` | 完整卡片骨架，包含图片区、标题、文本和按钮占位 |
 | `SkeletonTable` | 表格骨架，内置 `role="table"` 和 `aria-busy="true"` 无障碍属性 |
 
-## Props
+## API 参考
 
-### Skeleton
+<span id="skeleton"></span>
+<span id="skeletontext-1"></span>
+<span id="skeletonavatar-1"></span>
+<span id="skeletoncard-1"></span>
+<span id="skeletontable-1"></span>
+<span id="插槽"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 颜色变体 |
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | 控制高度（`circle` 时同步控制宽度） |
-| `shape` | `'rect' \| 'circle'` | `'rect'` | 形状；`circle` 时 `rounded-full` 且宽高相等 |
-| `effect` | `'none' \| 'scanlines' \| 'ascii'` | `'none'` | 加载质感效果：CRT 扫描线 / ASCII 终端块闪烁 |
-| `width` | `string \| number` | — | 自定义宽度，支持数字像素（如 `64`）或字符串（如 `'100%'`、`'200px'`）；`circle` 时同时设置高度 |
-| `class` | `string` | — | 自定义样式类 |
-
-### SkeletonText
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 颜色变体 |
-| `lines` | `number` | `3` | 文本行数 |
-| `lastLineWidth` | `string` | `'60%'` | 最后一行的宽度，支持任意 CSS 宽度值 |
-| `class` | `string` | — | 自定义样式类 |
-
-### SkeletonAvatar
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 颜色变体 |
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | 头像尺寸，宽高相等 |
-| `class` | `string` | — | 自定义样式类 |
-
-### SkeletonCard
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 颜色变体 |
-| `class` | `string` | — | 自定义样式类 |
-
-### SkeletonTable
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 颜色变体 |
-| `rows` | `number` | `5` | 数据行数 |
-| `columns` | `number` | `4` | 列数 |
-| `class` | `string` | — | 自定义样式类 |
-
-## 插槽
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 骨架块内部内容，可放置自定义加载指示器或其他元素 |
+<ComponentApi name="skeleton" />
 
 ## 可访问性
 

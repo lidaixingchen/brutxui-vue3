@@ -1,0 +1,404 @@
+{
+  "id": "component:sheet",
+  "name": "sheet",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:sheet/SheetContent",
+      "name": "SheetContent",
+      "source": {
+        "file": "packages/ui/src/components/sheet/SheetContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Asheet_2FSheetContent-props-side",
+          "name": "side",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"right\" | \"bottom\" | \"left\" | \"top\" | null | undefined> | undefined",
+            "literals": [
+              "\"bottom\"",
+              "\"left\"",
+              "\"right\"",
+              "\"top\""
+            ],
+            "references": []
+          },
+          "description": "The viewport edge from which the panel enters, controlling position, border, and transition direction. The close button is top-left for left and top-right otherwise.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetContent.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'right'",
+              "source": {
+                "file": "packages/ui/src/components/sheet/SheetContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"right\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes merged onto the floating content panel. Other attributes and listeners are forwarded through $attrs to Reka UI DialogContent.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetContent.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/sheet/SheetContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The panel body, typically composing SheetHeader, content, and SheetFooter. A localized built-in close button follows the content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetContent-events-openAutoFocus",
+          "name": "openAutoFocus",
+          "kind": "events",
+          "type": {
+            "text": "[event: Event]",
+            "literals": [],
+            "references": []
+          },
+          "description": "A Reka UI event forwarded through $attrs before automatic focus on opening. Call preventDefault() to handle focus yourself.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetContent.vue",
+            "line": 61
+          },
+          "origin": "fallthrough"
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetContent-events-closeAutoFocus",
+          "name": "closeAutoFocus",
+          "kind": "events",
+          "type": {
+            "text": "[event: Event]",
+            "literals": [],
+            "references": []
+          },
+          "description": "A Reka UI event forwarded through $attrs before restoring focus on closing. Its default focus behavior can be prevented.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetContent.vue",
+            "line": 61
+          },
+          "origin": "fallthrough"
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetContent-events-interactOutside",
+          "name": "interactOutside",
+          "kind": "events",
+          "type": {
+            "text": "[event: PointerDownOutsideEvent | FocusOutsideEvent]",
+            "literals": [],
+            "references": []
+          },
+          "description": "A Reka UI event forwarded through $attrs for a pointer press or focus interaction outside the panel. It can prevent dismissal caused by that interaction.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetContent.vue",
+            "line": 61
+          },
+          "origin": "fallthrough"
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetContent-events-escapeKeyDown",
+          "name": "escapeKeyDown",
+          "kind": "events",
+          "type": {
+            "text": "[event: KeyboardEvent]",
+            "literals": [],
+            "references": []
+          },
+          "description": "A Reka UI event forwarded through $attrs when the topmost panel receives Escape. It can prevent the default dismissal.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetContent.vue",
+            "line": 61
+          },
+          "origin": "fallthrough"
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetContent-events-pointerDownOutside",
+          "name": "pointerDownOutside",
+          "kind": "events",
+          "type": {
+            "text": "[event: PointerDownOutsideEvent]",
+            "literals": [],
+            "references": []
+          },
+          "description": "A Reka UI event forwarded through $attrs when the pointer is pressed outside the panel. It can prevent the default dismissal.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetContent.vue",
+            "line": 61
+          },
+          "origin": "fallthrough"
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetContent-events-focusOutside",
+          "name": "focusOutside",
+          "kind": "events",
+          "type": {
+            "text": "[event: FocusOutsideEvent]",
+            "literals": [],
+            "references": []
+          },
+          "description": "A Reka UI event forwarded through $attrs when focus moves outside the panel. It can prevent the default handling of that outside interaction.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetContent.vue",
+            "line": 61
+          },
+          "origin": "fallthrough"
+        }
+      ]
+    },
+    {
+      "id": "component:sheet/SheetDescription",
+      "name": "SheetDescription",
+      "source": {
+        "file": "packages/ui/src/components/sheet/SheetDescription.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Asheet_2FSheetDescription-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes merged onto the Reka UI description primitive, styled as supporting text by default.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetDescription.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetDescription-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Supporting panel text used for its accessible description. The description element is omitted when the slot has no meaningful content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetDescription.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:sheet/SheetFooter",
+      "name": "SheetFooter",
+      "source": {
+        "file": "packages/ui/src/components/sheet/SheetFooter.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Asheet_2FSheetFooter-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes merged onto the panel footer action area.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetFooter.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetFooter-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Footer buttons or other actions.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetFooter.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:sheet/SheetHeader",
+      "name": "SheetHeader",
+      "source": {
+        "file": "packages/ui/src/components/sheet/SheetHeader.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Asheet_2FSheetHeader-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes merged onto the panel header container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetHeader.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetHeader-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The panel title, description, and other header content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetHeader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:sheet/SheetTitle",
+      "name": "SheetTitle",
+      "source": {
+        "file": "packages/ui/src/components/sheet/SheetTitle.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Asheet_2FSheetTitle-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes merged onto the Reka UI title primitive, styled as a bold heading by default.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetTitle.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetTitle-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The panel title used for its accessible name. The title element is omitted when the slot has no meaningful content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetTitle.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

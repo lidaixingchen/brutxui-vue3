@@ -105,28 +105,11 @@ import { Checkbox } from 'brutx-ui-vue'
 </template>
 ```
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `checked` | `boolean \| 'indeterminate'` | — | 选中状态；不传时组件处于非受控模式 |
-| `defaultValue` | `boolean \| 'indeterminate'` | — | 非受控模式下的初始选中状态；仅在 `checked` 为 undefined 时生效 |
-| `disabled` | `boolean` | `false` | 是否禁用 |
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger'` | `'default'` | 颜色变体 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 尺寸 |
-| `ariaLabel` | `string` | locale 默认值（`checkbox.check`） | 无障碍标签 |
-| `name` | `string` | — | 表单字段名；提供时渲染隐藏 input，随所属 `<form>` 以 name/value 提交 |
-| `value` | `string \| number \| bigint \| object \| null` | `'on'` | 随 form 提交的值 |
-| `required` | `boolean` | `false` | 原生表单必填标记，透传到隐藏 input |
-| `class` | `string` | — | 自定义样式类 |
+<span id="事件"></span>
 
-> **受控与非受控：** 不传 `checked`（或为 undefined）时组件由内部状态维护选中值，点击后通过 `update:checked` 通知外部，可用 `defaultValue` 声明初始态；一旦显式传入 `checked`，组件进入受控模式，选中值以 prop 为准。
-
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:checked` | `boolean \| 'indeterminate'` | 选中状态变化时触发，支持 `v-model:checked` 双向绑定 |
+<ComponentApi name="checkbox" />
 
 ## 可访问性
 

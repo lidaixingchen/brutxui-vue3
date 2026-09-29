@@ -1,0 +1,374 @@
+{
+  "id": "component:radio-group",
+  "name": "radio-group",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:radio-group/RadioGroup",
+      "name": "RadioGroup",
+      "source": {
+        "file": "packages/ui/src/components/radio-group/RadioGroup.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroup-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前选中的字符串值，可通过 v-model 受控同步。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroup.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroup-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递给单选组原语的表单字段名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroup.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroup-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用组内所有单选项。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroup.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroup-props-orientation",
+          "name": "orientation",
+          "kind": "props",
+          "type": {
+            "text": "\"vertical\" | \"horizontal\" | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "设置选项排列方向；vertical 为纵向，horizontal 为可换行的横向排列，默认纵向。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroup.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroup-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到单选组根容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroup.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroup-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "为整个单选组提供屏幕阅读器可读的无障碍名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroup.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroup-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "所选值变化时发出新字符串值，用于同步 v-model。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroup.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroup-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "放置属于此组的 RadioGroupItem 子项。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroup.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:radio-group/RadioGroupItem",
+      "name": "RadioGroupItem",
+      "source": {
+        "file": "packages/ui/src/components/radio-group/RadioGroupItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroupItem-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "此选项对应的字符串值；被选中时作为 RadioGroup 的 modelValue。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroupItem.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroupItem-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用此选项；未禁用的其他组内选项仍可交互。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroupItem.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/radio-group/RadioGroupItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroupItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到单选项按钮根元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroupItem.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/radio-group/RadioGroupItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroupItem-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"secondary\" | \"success\" | \"danger\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"secondary\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "设置单选项及其选中指示器的颜色变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroupItem.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/radio-group/RadioGroupItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aradio_2Dgroup_2FRadioGroupItem-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "设置单选按钮和选中指示图标的尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/radio-group/RadioGroupItem.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/radio-group/RadioGroupItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

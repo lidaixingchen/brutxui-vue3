@@ -1,0 +1,330 @@
+{
+  "id": "component:glitch-text",
+  "name": "glitch-text",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:glitch-text/GlitchText",
+      "name": "GlitchText",
+      "source": {
+        "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-props-text",
+          "name": "text",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Text data for the glitch pseudo-elements. A non-empty value takes precedence over slot text for the animation layers.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "''",
+              "source": {
+                "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-props-trigger",
+          "name": "trigger",
+          "kind": "props",
+          "type": {
+            "text": "\"none\" | \"click\" | \"hover\" | \"autoplay\" | undefined",
+            "literals": [
+              "\"autoplay\"",
+              "\"click\"",
+              "\"hover\"",
+              "\"none\""
+            ],
+            "references": []
+          },
+          "description": "Selects the hover, click, autoplay, or none animation trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'hover'",
+              "source": {
+                "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"hover\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-props-interval",
+          "name": "interval",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The autoplay interval in milliseconds. The actual interval is clamped to the animation duration and minimum interval.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_AUTOPLAY_INTERVAL_MS",
+              "source": {
+                "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "3000"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-props-speed",
+          "name": "speed",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"slow\" | \"medium\" | \"fast\" | null | undefined> | undefined",
+            "literals": [
+              "\"fast\"",
+              "\"medium\"",
+              "\"slow\""
+            ],
+            "references": []
+          },
+          "description": "Selects the slow, medium, or fast visual pace of the glitch animation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'medium'",
+              "source": {
+                "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"medium\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-props-direction",
+          "name": "direction",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"vertical\" | \"horizontal\" | \"both\" | null | undefined> | undefined",
+            "literals": [
+              "\"both\"",
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "Selects horizontal, vertical, or bidirectional glitch displacement.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'horizontal'",
+              "source": {
+                "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"horizontal\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes appended to the root text span.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Renders text content and supports inline styling. The visible content prefers this slot and falls back to text; the glitch pseudo-elements prefer non-empty text and otherwise extract text from the slot.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-exposes-play",
+          "name": "play",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Manually activates the glitch state regardless of trigger mode; reduced-motion preference still hides the visual animation. The autoplay timer continues independently.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue",
+            "line": 91
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-exposes-stop",
+          "name": "stop",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Manually clears the active glitch state; the autoplay timer continues on its own schedule.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue",
+            "line": 92
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-events-mouseenter",
+          "name": "mouseenter",
+          "kind": "events",
+          "type": {
+            "text": "MouseEvent",
+            "literals": [],
+            "references": []
+          },
+          "description": "The root span’s native mouseenter event is available to consumers through Vue attribute fallthrough; the component does not declare a custom event with this name.",
+          "notes": [
+            "In hover mode, activates the glitch effect; in autoplay mode, pauses the timer. Other modes do not change internal state."
+          ],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+          },
+          "origin": "fallthrough"
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-events-mouseleave",
+          "name": "mouseleave",
+          "kind": "events",
+          "type": {
+            "text": "MouseEvent",
+            "literals": [],
+            "references": []
+          },
+          "description": "The root span’s native mouseleave event is available to consumers through Vue attribute fallthrough; the component does not declare a custom event with this name.",
+          "notes": [
+            "In hover mode, clears the glitch effect; in autoplay mode, resumes the timer. Other modes do not change internal state."
+          ],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+          },
+          "origin": "fallthrough"
+        },
+        {
+          "id": "api-component_3Aglitch_2Dtext_2FGlitchText-events-click",
+          "name": "click",
+          "kind": "events",
+          "type": {
+            "text": "MouseEvent",
+            "literals": [],
+            "references": []
+          },
+          "description": "The root span’s native click event is available to consumers through Vue attribute fallthrough; the component does not declare a custom event with this name.",
+          "notes": [
+            "A click toggles the glitch state only in click mode; clicks do not change internal state in other trigger modes."
+          ],
+          "source": {
+            "file": "packages/ui/src/components/glitch-text/GlitchText.vue"
+          },
+          "origin": "fallthrough"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,240 @@
+{
+  "id": "component:label",
+  "name": "label",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:label/Label",
+      "name": "Label",
+      "source": {
+        "file": "packages/ui/src/components/label/Label.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Alabel_2FLabel-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"success\" | \"muted\" | \"error\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"error\"",
+              "\"muted\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "设置标签的语义颜色变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/label/Label.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/label/Label.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Alabel_2FLabel-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "设置标签文字和间距尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/label/Label.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/label/Label.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Alabel_2FLabel-props-required",
+          "name": "required",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "在标签文字后显示必填星号装饰；需同时在表单控件上声明 required 语义。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/label/Label.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/label/Label.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Alabel_2FLabel-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "呈现禁用状态样式并设置 aria-disabled；不会自动禁用关联的表单控件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/label/Label.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/label/Label.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Alabel_2FLabel-props-for",
+          "name": "for",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置原生 label 的 for 属性，以关联具有相同 ID 的表单控件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/label/Label.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/label/Label.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Alabel_2FLabel-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到 label 根元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/label/Label.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/label/Label.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Alabel_2FLabel-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "标签显示的文本、表单字段名或其他内联内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/label/Label.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

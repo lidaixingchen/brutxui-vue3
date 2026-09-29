@@ -1,0 +1,220 @@
+{
+  "id": "component:code-block",
+  "name": "code-block",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:code-block/CodeBlock",
+      "name": "CodeBlock",
+      "source": {
+        "file": "packages/ui/src/components/code-block/CodeBlock.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acode_2Dblock_2FCodeBlock-props-code",
+          "name": "code",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The required raw source text used for built-in highlighting, line numbers, and copying.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/code-block/CodeBlock.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acode_2Dblock_2FCodeBlock-props-language",
+          "name": "language",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the syntax-highlighting language and header badge. It defaults to plaintext; see the page language list for supported languages and aliases.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/code-block/CodeBlock.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/code-block/CodeBlock.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acode_2Dblock_2FCodeBlock-props-filename",
+          "name": "filename",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Displays a file name or path in the code block header.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/code-block/CodeBlock.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/code-block/CodeBlock.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acode_2Dblock_2FCodeBlock-props-showLineNumbers",
+          "name": "showLineNumbers",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Displays line numbers beside the lines in the code text.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/code-block/CodeBlock.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/code-block/CodeBlock.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acode_2Dblock_2FCodeBlock-props-maxLines",
+          "name": "maxLines",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Limits the visible code lines while collapsed. Expand and collapse controls appear when the code exceeds the limit; no limit is applied when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/code-block/CodeBlock.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/code-block/CodeBlock.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acode_2Dblock_2FCodeBlock-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes applied to the code card root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/code-block/CodeBlock.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/code-block/CodeBlock.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acode_2Dblock_2FCodeBlock-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Optional custom code rendering. When provided, built-in Prism highlighting is skipped and the slot is rendered directly; copied text and line numbers still come from the code prop.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/code-block/CodeBlock.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

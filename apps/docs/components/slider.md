@@ -102,28 +102,11 @@ const value = ref([500])
 </template>
 ```
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `modelValue` | `number[]` | — | 当前值，支持 `v-model` |
-| `min` | `number` | `0` | 最小值 |
-| `max` | `number` | `100` | 最大值 |
-| `step` | `number` | `1` | 步长 |
-| `disabled` | `boolean` | `false` | 是否禁用 |
-| `ariaLabel` | `string` | — | 无障碍标签 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 尺寸 |
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'success'` | `'default'` | 颜色变体 |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 布局方向 |
-| `marks` | `number[]` | — | 刻度标记数值数组 |
-| `showTooltip` | `boolean` | `false` | 是否显示拖拽提示 |
-| `class` | `string` | — | 自定义样式类 |
+<span id="事件"></span>
 
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:modelValue` | `number[]` | 值变化时触发 |
+<ComponentApi name="slider" />
 
 ## 可访问性
 
@@ -133,12 +116,7 @@ const value = ref([500])
 
 ## 方法（defineExpose）
 
-通过 `ref` 访问组件实例后可调用以下方法：
-
-| 属性/方法 | 类型 | 说明 |
-| --- | --- | --- |
-| `currentValue` | `ComputedRef<number[]>` | 当前滑块值（只读） |
-| `setValue` | `(value: number[]) => void` | 设置滑块值 |
+通过 `ref` 访问组件实例后可调用 `setValue`，请求父组件更新滑块值：
 
 ```vue
 <script setup>

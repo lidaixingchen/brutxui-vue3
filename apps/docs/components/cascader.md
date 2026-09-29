@@ -105,35 +105,12 @@ const selected = ref([]) // 二维数组，如 [['zh', 'bj', 'hd'], ['us', 'ny']
 </template>
 ```
 
-## Props
+## API 参考
 
-### Cascader
+<span id="cascader"></span>
+<span id="事件"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `options` | `CascaderOption[]` | `[]` | 级联数据列表 |
-| `modelValue` | `CascaderValue[] \| CascaderValue[][]` | `[]` | 选中值，单选时为一维路径值数组，多选时为二维路径值数组 |
-| `open` | `boolean` | — | 受控的展开状态 |
-| `multiple` | `boolean` | `false` | 是否开启多选 |
-| `clearable` | `boolean` | `false` | 是否可清空选择 |
-| `checkStrictly` | `boolean` | `false` | 是否允许选择任意级别的节点（父子不关联） |
-| `separator` | `string` | `' / '` | 选中项的路径分隔符 |
-| `maxDisplay` | `number` | `2` | 多选模式下最多显示的标签数 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 触发器按钮的尺寸 |
-| `placeholder` | `string` | — | 占位文本 |
-| `disabled` | `boolean` | `false` | 是否禁用组件 |
-| `dropdownClass` | `string` | — | 下拉菜单的自定义类名 |
-| `ariaLabel` | `string` | — | ARIA 无障碍标签 |
-| `class` | `string` | — | 自定义样式类 |
-
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:modelValue` | `CascaderValue[] \| CascaderValue[][]` | 绑定值更新 |
-| `update:open` | `boolean` | 展开/关闭状态更新，配合 `open` 属性实现 `v-model:open` |
-| `change` | `CascaderValue[] \| CascaderValue[][]` | 选中值变更事件 |
-| `open-change` | `boolean` | 面板展开/收起事件 |
+<ComponentApi name="cascader" />
 
 ## 数据类型
 

@@ -80,32 +80,12 @@ import { Popconfirm, Button } from 'brutx-ui-vue'
 </template>
 ```
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `title` | `string` | —（必填） | 确认标题文本 |
-| `confirmButtonText` | `string` | locale: `popconfirm.confirm` | 确认按钮文字 |
-| `cancelButtonText` | `string` | locale: `popconfirm.cancel` | 取消按钮文字 |
-| `confirmButtonType` | `'primary' \| 'destructive'` | `'primary'` | 确认按钮样式 |
-| `icon` | `Component` | `TriangleAlert` | 警告图标组件 |
-| `cancelable` | `boolean` | `true` | 是否显示取消按钮 |
-| `class` | `string` | — | 自定义 CSS 类 |
+<span id="事件"></span>
+<span id="插槽"></span>
 
-## 事件
-
-| 事件 | 参数 | 说明 |
-| --- | --- | --- |
-| `confirm` | — | 点击确认按钮时触发 |
-| `cancel` | — | 点击取消按钮时触发 |
-
-## 插槽
-
-| 插槽 | 说明 |
-| --- | --- |
-| `default` | 触发元素 |
-| `icon` | 自定义图标 |
-| `description` | 标题下方的描述文本 |
+<ComponentApi name="popconfirm" />
 
 ## 可访问性
 

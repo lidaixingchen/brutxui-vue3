@@ -1,0 +1,382 @@
+{
+  "id": "component:popover",
+  "name": "popover",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:popover/Popover",
+      "name": "Popover",
+      "source": {
+        "file": "packages/ui/src/components/popover/Popover.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Apopover_2FPopover-props-defaultOpen",
+          "name": "defaultOpen",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "The initial open state in uncontrolled mode; when omitted, the Reka UI primitive starts closed.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/Popover.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopover_2FPopover-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "The controlled open state. Listen for `update:open` and update this prop to keep it in sync.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/Popover.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopover_2FPopover-props-modal",
+          "name": "modal",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables modal behavior, disabling interaction with outside elements and limiting screen-reader focus to the popover content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/Popover.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopover_2FPopover-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Emits the new boolean open state for controlled usage.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/Popover.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Apopover_2FPopover-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The trigger, content panel, and other Reka UI primitives inside the popover.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/Popover.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:popover/PopoverContent",
+      "name": "PopoverContent",
+      "source": {
+        "file": "packages/ui/src/components/popover/PopoverContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Apopover_2FPopoverContent-props-align",
+          "name": "align",
+          "kind": "props",
+          "type": {
+            "text": "\"center\" | \"start\" | \"end\" | undefined",
+            "literals": [
+              "\"center\"",
+              "\"end\"",
+              "\"start\""
+            ],
+            "references": []
+          },
+          "description": "The content panel alignment relative to its trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/PopoverContent.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'center'",
+              "source": {
+                "file": "packages/ui/src/components/popover/PopoverContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"center\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopover_2FPopoverContent-props-sideOffset",
+          "name": "sideOffset",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The pixel gap between the content panel and its trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/PopoverContent.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "floatingContentSideOffsets.popover",
+              "source": {
+                "file": "packages/ui/src/components/popover/PopoverContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "8"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopover_2FPopoverContent-props-collisionPadding",
+          "name": "collisionPadding",
+          "kind": "props",
+          "type": {
+            "text": "number | Partial<Record<\"right\" | \"bottom\" | \"left\" | \"top\", number>> | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The inset used for floating-content collision handling; accepts one number or per-side top/right/bottom/left values.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/PopoverContent.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "floatingContentSideOffsets.popover",
+              "source": {
+                "file": "packages/ui/src/components/popover/PopoverContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "8"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopover_2FPopoverContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the Reka UI floating content element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/PopoverContent.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/popover/PopoverContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopover_2FPopoverContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The content rendered inside the popover panel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/PopoverContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:popover/PopoverTrigger",
+      "name": "PopoverTrigger",
+      "source": {
+        "file": "packages/ui/src/components/popover/PopoverTrigger.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Apopover_2FPopoverTrigger-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Merges the trigger props and interaction behavior into its single child element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/PopoverTrigger.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopover_2FPopoverTrigger-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "Selects the HTML tag or component rendered as the trigger; the child determines the target when `asChild` is enabled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/PopoverTrigger.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Apopover_2FPopoverTrigger-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The trigger content, usually a button or link.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/popover/PopoverTrigger.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

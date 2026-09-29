@@ -120,49 +120,16 @@ const styles = ref([])
 | `ToggleGroup` | 根组件，管理选中状态和组配置 |
 | `ToggleGroupItem` | 子项按钮，继承父组件的变体和尺寸 |
 
-## Props
+## API 参考
 
-### ToggleGroup
+<span id="togglegroup"></span>
+<span id="togglegroupitem"></span>
+<span id="事件"></span>
+<span id="插槽"></span>
+<span id="togglegroup-插槽"></span>
+<span id="togglegroupitem-插槽"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `type` | `'single' \| 'multiple'` | `'single'` | 单选或多选 |
-| `modelValue` | `string \| string[]` | — | v-model 值 |
-| `variant` | `'default' \| 'outline'` | `'default'` | 变体，下发给子项 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 尺寸，下发给子项 |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 排列方向；`vertical` 时容器 `flex-col` 并透传给 reka-ui 原语 |
-| `disabled` | `boolean` | `false` | 是否禁用 |
-| `class` | `string` | — | 附加类名 |
-
-### ToggleGroupItem
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `value` | `string` | —（必填） | 子项值 |
-| `variant` | `'default' \| 'outline'` | 继承 ToggleGroup | 变体，未设置时取父级 ToggleGroup 的 variant |
-| `size` | `'sm' \| 'default' \| 'lg'` | 继承 ToggleGroup | 尺寸，未设置时取父级 ToggleGroup 的 size |
-| `disabled` | `boolean` | `false` | 是否禁用；最终状态为父级 ToggleGroup 的 disabled 与自身 disabled 的逻辑或 |
-| `class` | `string` | — | 附加类名 |
-
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:modelValue` | `string \| string[]` | 选中值变化时触发 |
-
-## 插槽
-
-### ToggleGroup 插槽
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 默认插槽，用于放置 ToggleGroupItem 子项 |
-
-### ToggleGroupItem 插槽
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 默认插槽，用于放置按钮内容（图标、文字等） |
+<ComponentApi name="toggle-group" />
 
 ## 可访问性
 

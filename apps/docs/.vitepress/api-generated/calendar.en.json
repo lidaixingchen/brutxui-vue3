@@ -1,0 +1,317 @@
+{
+  "id": "component:calendar",
+  "name": "calendar",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:calendar/Calendar",
+      "name": "Calendar",
+      "source": {
+        "file": "packages/ui/src/components/calendar/Calendar.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acalendar_2FCalendar-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "Date | Date[] | null | undefined",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "The selected date, updated with v-model; single mode uses a Date, range mode uses an array containing the start and end dates, and an empty selection is null.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/calendar/Calendar.vue",
+            "line": 30
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/calendar/Calendar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acalendar_2FCalendar-props-isRange",
+          "name": "isRange",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Enables date-range selection; modelValue should represent the start and end dates.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/calendar/Calendar.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/calendar/Calendar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acalendar_2FCalendar-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables date selection interaction in the calendar.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/calendar/Calendar.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/calendar/Calendar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acalendar_2FCalendar-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the calendar root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/calendar/Calendar.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/calendar/Calendar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acalendar_2FCalendar-props-events",
+          "name": "events",
+          "kind": "props",
+          "type": {
+            "text": "CalendarEvent[] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "CalendarEvent",
+                "text": "export interface CalendarEvent {\n    date: Date | string\n    title: string\n    [key: string]: unknown\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcalendar%2FCalendar.vue%23CalendarEvent"
+              }
+            ]
+          },
+          "description": "Provides calendar events to mark; each item has a date and title and may include custom fields.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/calendar/Calendar.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/calendar/Calendar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acalendar_2FCalendar-props-eventRenderer",
+          "name": "eventRenderer",
+          "kind": "props",
+          "type": {
+            "text": "((event: CalendarEvent) => unknown) | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "CalendarEvent",
+                "text": "export interface CalendarEvent {\n    date: Date | string\n    title: string\n    [key: string]: unknown\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcalendar%2FCalendar.vue%23CalendarEvent"
+              }
+            ]
+          },
+          "description": "Callback for customizing event display content; receives a CalendarEvent and returns renderable content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/calendar/Calendar.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/calendar/Calendar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acalendar_2FCalendar-props-mode",
+          "name": "mode",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"card\" | undefined",
+            "literals": [
+              "\"card\"",
+              "\"default\""
+            ],
+            "references": []
+          },
+          "description": "Sets how event markers are rendered: default uses dots and tooltips, while card uses calendar cards and badges.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/calendar/Calendar.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/calendar/Calendar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acalendar_2FCalendar-props-retroHeader",
+          "name": "retroHeader",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Shows a retro wall-calendar header decoration; the decorative elements carry no accessibility semantics.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/calendar/Calendar.vue",
+            "line": 38
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/calendar/Calendar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acalendar_2FCalendar-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: Date | Date[] | null]",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "Emits the updated date value when the user changes the selected date or range.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/calendar/Calendar.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

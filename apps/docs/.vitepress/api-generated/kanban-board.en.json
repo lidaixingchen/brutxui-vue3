@@ -1,0 +1,291 @@
+{
+  "id": "component:kanban",
+  "name": "kanban-board",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:kanban/KanbanBoard",
+      "name": "KanbanBoard",
+      "source": {
+        "file": "packages/ui/src/components/kanban/KanbanBoard.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Akanban_2FKanbanBoard-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "KanbanColumn[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "KanbanColumn",
+                "text": "export interface KanbanColumn {\n    id: string\n    title: string\n    color?: string\n    cards: KanbanCard[]\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Fkanban-types.ts%23KanbanColumn"
+              }
+            ]
+          },
+          "description": "The board columns and cards. Bind with v-model to receive updated data after moves, and keep column and card IDs unique.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/kanban/KanbanBoard.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Akanban_2FKanbanBoard-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes merged onto the board container that arranges columns horizontally.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/kanban/KanbanBoard.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Akanban_2FKanbanBoard-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[columns: KanbanColumn[]]",
+            "literals": [],
+            "references": [
+              {
+                "name": "KanbanColumn",
+                "text": "export interface KanbanColumn {\n    id: string\n    title: string\n    color?: string\n    cards: KanbanCard[]\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Fkanban-types.ts%23KanbanColumn"
+              }
+            ]
+          },
+          "description": "Emits a new column array after a successful card move or column reorder, before the corresponding move event.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/kanban/KanbanBoard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Akanban_2FKanbanBoard-events-card_2Dmove",
+          "name": "card-move",
+          "kind": "events",
+          "type": {
+            "text": "[cardId: string, fromColumn: string, toColumn: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the card ID, source column ID, and target column ID after a successful mouse, keyboard, or instance-method move. Both column IDs are equal for reordering within one column.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/kanban/KanbanBoard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Akanban_2FKanbanBoard-events-card_2Dclick",
+          "name": "card-click",
+          "kind": "events",
+          "type": {
+            "text": "[card: KanbanCard, columnId: string]",
+            "literals": [],
+            "references": [
+              {
+                "name": "KanbanCard",
+                "text": "export interface KanbanCard {\n    id: string\n    title: string\n    description?: string\n    tags?: string[]\n    color?: string\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Fkanban-types.ts%23KanbanCard"
+              }
+            ]
+          },
+          "description": "Emits the card and column ID on a click or Enter while focused. It is suppressed during card dragging; Space grabs or releases the card.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/kanban/KanbanBoard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Akanban_2FKanbanBoard-events-column_2Dmove",
+          "name": "column-move",
+          "kind": "events",
+          "type": {
+            "text": "[columnId: string, fromIndex: number, toIndex: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the column ID and old/new zero-based indices after a successful header drag reorder or moveColumn call.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/kanban/KanbanBoard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Akanban_2FKanbanBoard-events-add_2Dcard",
+          "name": "add-card",
+          "kind": "events",
+          "type": {
+            "text": "[columnId: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the column ID when the built-in add button is clicked or instance addCard is called. The consumer creates the card and updates the data.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/kanban/KanbanBoard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Akanban_2FKanbanBoard-exposes-moveCard",
+          "name": "moveCard",
+          "kind": "exposes",
+          "type": {
+            "text": "(cardId: string, columnId: string, direction: number, mode?: \"in-column\" | \"adjacent\") => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Moves a card by direction and handles focus and announcements. adjacent moves between columns; in-column reorders within the current column. A direction of 1 means right or down; other values mean left or up. The mode defaults to adjacent.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/kanban/KanbanBoard.vue",
+            "line": 267
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Akanban_2FKanbanBoard-exposes-moveColumn",
+          "name": "moveColumn",
+          "kind": "exposes",
+          "type": {
+            "text": "(fromId: string, toId: string) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Moves the fromId column to the current index of toId, shifting intervening columns. A successful move emits data-update and column-move events.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/kanban/KanbanBoard.vue",
+            "line": 270
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Akanban_2FKanbanBoard-exposes-addCard",
+          "name": "addCard",
+          "kind": "exposes",
+          "type": {
+            "text": "(columnId: string) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits an add-card request for the given column. The method itself does not create a card.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/kanban/KanbanBoard.vue",
+            "line": 273
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Akanban_2FKanbanBoard-exposes-getColumn",
+          "name": "getColumn",
+          "kind": "exposes",
+          "type": {
+            "text": "(columnId: string) => KanbanColumn | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "KanbanColumn",
+                "text": "export interface KanbanColumn {\n    id: string\n    title: string\n    color?: string\n    cards: KanbanCard[]\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Fkanban-types.ts%23KanbanColumn"
+              }
+            ]
+          },
+          "description": "Returns the column object from the current modelValue by ID, or undefined when absent. It preserves the original object reference.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/kanban/KanbanBoard.vue",
+            "line": 274
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Akanban_2FKanbanBoard-exposes-getAllColumns",
+          "name": "getAllColumns",
+          "kind": "exposes",
+          "type": {
+            "text": "() => KanbanColumn[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "KanbanColumn",
+                "text": "export interface KanbanColumn {\n    id: string\n    title: string\n    color?: string\n    cards: KanbanCard[]\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Fkanban-types.ts%23KanbanColumn"
+              }
+            ]
+          },
+          "description": "Returns the current modelValue column-array reference. To edit it, construct new data and update the bound value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/kanban/KanbanBoard.vue",
+            "line": 275
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Akanban_2FKanbanBoard-slots-add_2D_7BcolumnId_7D",
+          "name": "add-{columnId}",
+          "kind": "slots",
+          "type": {
+            "text": "{ columnId: string }",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the add-card entry at the bottom of the named column and receives its ID. By default, an outline, sm Button emits add-card when clicked.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/kanban/KanbanBoard.vue",
+            "line": 360
+          },
+          "origin": "supplement"
+        }
+      ]
+    }
+  ]
+}

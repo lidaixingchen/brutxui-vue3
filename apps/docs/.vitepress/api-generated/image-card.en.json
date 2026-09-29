@@ -1,0 +1,277 @@
+{
+  "id": "component:image-card",
+  "name": "image-card",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:image-card/ImageCard",
+      "name": "ImageCard",
+      "source": {
+        "file": "packages/ui/src/components/image-card/ImageCard.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aimage_2Dcard_2FImageCard-props-src",
+          "name": "src",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The resource URL used by the image element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image-card/ImageCard.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2Dcard_2FImageCard-props-alt",
+          "name": "alt",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Alternative text for the image; an empty string marks it as decorative.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image-card/ImageCard.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "''",
+              "source": {
+                "file": "packages/ui/src/components/image-card/ImageCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2Dcard_2FImageCard-props-aspect",
+          "name": "aspect",
+          "kind": "props",
+          "type": {
+            "text": "ImageCardAspect | undefined",
+            "literals": [
+              "\"4/3\"",
+              "\"square\"",
+              "\"video\""
+            ],
+            "references": [
+              {
+                "name": "ImageCardAspect",
+                "text": "type ImageCardAspect = '4/3' | 'video' | 'square'",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fimage-card%2FImageCard.vue%23ImageCardAspect"
+              }
+            ]
+          },
+          "description": "Sets the image area ratio: video is 16:9, square is 1:1, and 4/3 is 4:3.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image-card/ImageCard.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/image-card/ImageCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2Dcard_2FImageCard-props-accent",
+          "name": "accent",
+          "kind": "props",
+          "type": {
+            "text": "ImageCardAccent | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"destructive\"",
+              "\"info\"",
+              "\"muted\"",
+              "\"primary\"",
+              "\"secondary\"",
+              "\"success\""
+            ],
+            "references": [
+              {
+                "name": "ImageCardAccent",
+                "text": "type ImageCardAccent = 'primary' | 'secondary' | 'accent' | 'destructive' | 'success' | 'info' | 'muted'",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fimage-card%2FImageCard.vue%23ImageCardAccent"
+              }
+            ]
+          },
+          "description": "Sets the theme color family used by the footer.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image-card/ImageCard.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/image-card/ImageCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2Dcard_2FImageCard-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The title text displayed in the footer.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image-card/ImageCard.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/image-card/ImageCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2Dcard_2FImageCard-props-description",
+          "name": "description",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The description text displayed alongside the footer title.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image-card/ImageCard.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/image-card/ImageCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2Dcard_2FImageCard-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "ClassValue",
+            "literals": [
+              "false",
+              "null",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Custom CSS class values added to the image card root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image-card/ImageCard.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": true,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/image-card/ImageCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aimage_2Dcard_2FImageCard-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the default footer content. When title, description, and slot content are all absent, the footer is omitted and only the image is shown.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/image-card/ImageCard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

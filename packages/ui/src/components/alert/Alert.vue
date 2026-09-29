@@ -13,7 +13,9 @@ const slots = useSlots()
 type AlertVariantProps = VariantProps<typeof alertVariants>
 
 interface AlertProps {
+    /** 控制提示框的颜色、边框和背景变体 */
     variant?: NonNullable<AlertVariantProps['variant']>
+    /** 是否显示右上角关闭按钮；点击该按钮会发出 `close` 事件 */
     closable?: boolean
     class?: string
 }
@@ -24,7 +26,10 @@ const props = withDefaults(defineProps<AlertProps>(), {
     class: undefined,
 })
 
-const emit = defineEmits<{ close: [] }>()
+const emit = defineEmits<{
+    /** 点击 `closable` 按钮时发出，不附带参数 */
+    close: []
+}>()
 
 const { t } = useLocale()
 

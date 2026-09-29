@@ -1,0 +1,622 @@
+{
+  "id": "component:combobox",
+  "name": "combobox",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:combobox/Combobox",
+      "name": "Combobox",
+      "source": {
+        "file": "packages/ui/src/components/combobox/Combobox.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-options",
+          "name": "options",
+          "kind": "props",
+          "type": {
+            "text": "ComboboxOption[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "ComboboxOption",
+                "text": "export interface ComboboxOption {\n    value: string\n    label: string\n    disabled?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcombobox%2Fcombobox-types.ts%23ComboboxOption"
+              }
+            ]
+          },
+          "description": "可供选择的选项列表；每项含字符串 value、显示 label 和可选 disabled。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前选中的字符串值或值数组，通过 v-model 绑定；多选时使用字符串数组。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-multiple",
+          "name": "multiple",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用多选模式后，用户可同时选择多个选项。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "下拉面板展开状态；传入后组件处于受控模式，父组件需回写 update:open 才能应用切换。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "触发器未选择内容时的占位文本；未提供时按单选或多选模式读取本地化文案。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-searchPlaceholder",
+          "name": "searchPlaceholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "下拉面板内搜索输入框的占位文本；未提供时读取本地化文案。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-emptyText",
+          "name": "emptyText",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "搜索没有匹配选项时显示的文本；未提供时读取本地化文案。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 30
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用触发器以及选项交互。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-loading",
+          "name": "loading",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示加载状态，用于异步准备或刷新选项时反馈等待。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-creative",
+          "name": "creative",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "没有匹配项且搜索文本非空时显示创建选项；组件仅发出 create，不会自行写入 modelValue。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-maxDisplay",
+          "name": "maxDisplay",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "多选时触发器最多展示的选中标签数；超出部分汇总为数量提示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "3",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "3"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置组合框触发器的无障碍名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到组合框根容器的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "设置触发器下拉指示图标的尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 37
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string | string[] | undefined]",
+            "literals": [],
+            "references": []
+          },
+          "description": "选择值变化时发出新值；多选模式发出字符串数组，单选再次选择当前项时发出 undefined。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "下拉面板请求展开或关闭时发出目标布尔状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-events-create",
+          "name": "create",
+          "kind": "events",
+          "type": {
+            "text": "[value: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "用户选择创建操作时发出去除首尾空白的搜索文本；新选项和值由调用方写入。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-exposes-searchQuery",
+          "name": "searchQuery",
+          "kind": "exposes",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前搜索输入文本；面板关闭或单选完成后会清空。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 190
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-exposes-selectedValue",
+          "name": "selectedValue",
+          "kind": "exposes",
+          "type": {
+            "text": "string | string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前 modelValue 的只读计算值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 191
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-exposes-focus",
+          "name": "focus",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "将键盘焦点移动到组合框触发器。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 192
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-exposes-open",
+          "name": "open",
+          "kind": "exposes",
+          "type": {
+            "text": "WritableComputedRef<boolean, boolean>",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "可读写的下拉展开状态；设置为 true 可打开面板，受控模式仍需父组件回写更新。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    }
+  ]
+}

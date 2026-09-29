@@ -1,0 +1,576 @@
+{
+  "id": "component:breadcrumb",
+  "name": "breadcrumb",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:breadcrumb/Breadcrumb",
+      "name": "Breadcrumb",
+      "source": {
+        "file": "packages/ui/src/components/breadcrumb/Breadcrumb.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumb-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the breadcrumb navigation `<nav>` root.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/Breadcrumb.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/Breadcrumb.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumb-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Breadcrumb navigation children, usually containing `BreadcrumbList`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/Breadcrumb.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:breadcrumb/BreadcrumbEllipsis",
+      "name": "BreadcrumbEllipsis",
+      "source": {
+        "file": "packages/ui/src/components/breadcrumb/BreadcrumbEllipsis.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbEllipsis-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the ellipsis presentation element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbEllipsis.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/BreadcrumbEllipsis.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbEllipsis-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "The size of the default ellipsis icon, using the project `IconSize` presets.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbEllipsis.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/BreadcrumbEllipsis.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbEllipsis-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the default `MoreHorizontal` icon; custom content should provide an appropriate accessible name.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbEllipsis.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:breadcrumb/BreadcrumbItem",
+      "name": "BreadcrumbItem",
+      "source": {
+        "file": "packages/ui/src/components/breadcrumb/BreadcrumbItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the `<li>` element for one breadcrumb item.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbItem.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/BreadcrumbItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "One breadcrumb item, usually a link or the current page.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:breadcrumb/BreadcrumbLink",
+      "name": "BreadcrumbLink",
+      "source": {
+        "file": "packages/ui/src/components/breadcrumb/BreadcrumbLink.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbLink-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the link or to the child element composed through `asChild`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbLink.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/BreadcrumbLink.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbLink-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Uses the Reka UI Primitive child-composition pattern to merge this component’s props and behavior into its single child.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbLink.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/BreadcrumbLink.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbLink-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "Selects the HTML tag or component used for the link; the child determines the rendered target when `asChild` is enabled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbLink.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'a'",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/BreadcrumbLink.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"a\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbLink-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The visible link text or content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbLink.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:breadcrumb/BreadcrumbList",
+      "name": "BreadcrumbList",
+      "source": {
+        "file": "packages/ui/src/components/breadcrumb/BreadcrumbList.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbList-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the ordered list `<ol>`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbList.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/BreadcrumbList.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbList-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"folder\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"folder\""
+            ],
+            "references": []
+          },
+          "description": "`default` uses the regular list style; `folder` renders links as folder-tab labels.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbList.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/BreadcrumbList.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbList-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Breadcrumb items and separators; children should use list-item components valid inside an ordered list.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbList.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:breadcrumb/BreadcrumbPage",
+      "name": "BreadcrumbPage",
+      "source": {
+        "file": "packages/ui/src/components/breadcrumb/BreadcrumbPage.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbPage-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the current-page `<span>`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbPage.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/BreadcrumbPage.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbPage-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The current page label. The component marks it with `aria-current=\"page\"` and does not render it as a link.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbPage.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:breadcrumb/BreadcrumbSeparator",
+      "name": "BreadcrumbSeparator",
+      "source": {
+        "file": "packages/ui/src/components/breadcrumb/BreadcrumbSeparator.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbSeparator-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the separator list item.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbSeparator.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/breadcrumb/BreadcrumbSeparator.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Abreadcrumb_2FBreadcrumbSeparator-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom separator content; a forward slash `/` is shown when omitted. The separator is hidden from the accessibility tree.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/breadcrumb/BreadcrumbSeparator.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

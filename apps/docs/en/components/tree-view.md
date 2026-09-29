@@ -121,41 +121,9 @@ type SelectionMode = 'single' | 'checkbox'
 type CheckState = 'checked' | 'unchecked' | 'indeterminate'
 ```
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `nodes` | `TreeNode[]` | — | Tree data source |
-| `modelValue` | `string \| null` | `null` | Currently selected node id (v-model) |
-| `selectionMode` | `'single' \| 'checkbox'` | `'single'` | Selection mode: single or checkbox |
-| `checkedIds` | `string[]` | `[]` | List of checked node ids in checkbox mode (v-model:checkedIds) |
-| `defaultExpanded` | `string[]` | `[]` | List of initially expanded node ids |
-| `draggable` | `boolean` | `false` | Whether to enable drag-and-drop sorting |
-| `allowDrag` | `(node: TreeNode) => boolean` | — | Function to determine if a node is draggable; all nodes are draggable if omitted |
-| `allowDrop` | `(node: TreeNode, target: TreeNode, dropType: 'before' \| 'after' \| 'inner') => boolean` | — | Function to determine if a drop is allowed at the target position |
-| `lazy` | `boolean` | `false` | Whether to enable lazy loading mode |
-| `load` | `(node: TreeNode) => Promise<TreeNode[]>` | — | Lazy load function, called automatically when expanding an unloaded node |
-| `retryOnError` | `boolean` | `false` | Whether to allow retry on lazy load failure (resets loaded state) |
-| `filterable` | `boolean` | `false` | Whether to enable node filtering |
-| `filterMethod` | `(query: string, node: TreeNode) => boolean` | — | Custom filter method; defaults to label fuzzy matching if omitted |
-| `class` | `string` | — | Custom CSS class for the root node |
-
-## Events
-
-| Event | Payload | Description |
-|------|------|------|
-| `update:modelValue` | `string \| null` | Fired when the selected node id changes |
-| `update:checkedIds` | `string[]` | Fired when checked items change (checkbox mode) |
-| `update:expanded` | `string[]` | Fired when the expanded node list changes |
-| `select` | `TreeNode` | Fired when any node is clicked |
-| `expand` | `[id: string, expanded: boolean]` | Fired when a node is expanded/collapsed |
-| `check` | `[node: TreeNode, checked: boolean]` | Fired when a node is checked/unchecked (checkbox mode) |
-| `node-drag-start` | `[event: DragEvent, node: TreeNode]` | Fired when drag starts |
-| `node-drag-enter` | `[event: DragEvent, node: TreeNode]` | Fired when drag enters a node area |
-| `node-drag-leave` | `[event: DragEvent, node: TreeNode]` | Fired when drag leaves a node area |
-| `node-drag-over` | `[event: DragEvent, node: TreeNode]` | Fired when drag moves over a node |
-| `node-drag-end` | `[event: DragEvent, node: TreeNode]` | Fired when drag ends |
-| `node-drop` | `[event: DragEvent, node: TreeNode, dropType: 'before' \| 'after' \| 'inner']` | Fired when dropped onto a target node |
+<ComponentApi name="tree-view" />
 
 ## Accessibility
 
@@ -213,25 +181,6 @@ function handleDrop(event: DragEvent, node: TreeNode, dropType: 'before' | 'afte
 </template>
 ```
 
-**Drag and Drop Props:**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `draggable` | `boolean` | `false` | Whether to enable drag-and-drop sorting |
-| `allowDrag` | `(node: TreeNode) => boolean` | — | Function to determine if a node is draggable; all nodes are draggable if omitted |
-| `allowDrop` | `(node: TreeNode, target: TreeNode, dropType: 'before' \| 'after' \| 'inner') => boolean` | — | Function to determine if a drop is allowed at the target position |
-
-**Drag Events:**
-
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `node-drag-start` | `[event: DragEvent, node: TreeNode]` | Fired when drag starts |
-| `node-drag-enter` | `[event: DragEvent, node: TreeNode]` | Fired when drag enters a node area |
-| `node-drag-leave` | `[event: DragEvent, node: TreeNode]` | Fired when drag leaves a node area |
-| `node-drag-over` | `[event: DragEvent, node: TreeNode]` | Fired when drag moves over a node |
-| `node-drag-end` | `[event: DragEvent, node: TreeNode]` | Fired when drag ends |
-| `node-drop` | `[event: DragEvent, node: TreeNode, dropType: 'before' \| 'after' \| 'inner']` | Fired when dropped onto a target node |
-
 **Utility Function:**
 
 ```ts
@@ -269,14 +218,6 @@ async function loadChildren(node: TreeNode): Promise<TreeNode[]> {
     />
 </template>
 ```
-
-**Lazy Loading Props:**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `lazy` | `boolean` | `false` | Whether to enable lazy loading mode |
-| `load` | `(node: TreeNode) => Promise<TreeNode[]>` | — | Lazy load function, called automatically when expanding an unloaded node |
-| `retryOnError` | `boolean` | `false` | Whether to allow retry on lazy load failure |
 
 **TreeNode Lazy Loading Fields:**
 
@@ -329,19 +270,6 @@ function handleSearch() {
 </template>
 ```
 
-**Filtering Props:**
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `filterable` | `boolean` | `false` | Whether to enable node filtering |
-| `filterMethod` | `(query: string, node: TreeNode) => boolean` | — | Custom filter method; defaults to label fuzzy matching if omitted |
-
-**Exposed Methods:**
-
-| Method | Parameters | Description |
-|--------|------------|-------------|
-| `filter` | `query: string` | Triggers filtering; recursively computes match state, shows matched nodes and ancestors, hides the rest, auto-expands parent nodes of matches |
-
 ## Reload Node
 
 Use the component instance's `reloadNode` method to reset a node's `loaded` state and re-trigger lazy loading. Useful for refreshing child node data.
@@ -369,12 +297,6 @@ function refreshNode(nodeKey: string) {
     <button @click="refreshNode('src')">Reload src Node</button>
 </template>
 ```
-
-**Exposed Methods:**
-
-| Method | Parameters | Description |
-|--------|------------|-------------|
-| `reloadNode` | `nodeKey: string` | Resets the specified node's `loaded` state and re-triggers lazy loading |
 
 ## FAQ
 

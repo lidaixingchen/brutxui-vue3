@@ -1,0 +1,582 @@
+{
+  "id": "component:chat-bubble",
+  "name": "chat-bubble",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:chat-bubble/ChatBubble",
+      "name": "ChatBubble",
+      "source": {
+        "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatBubble-props-message",
+          "name": "message",
+          "kind": "props",
+          "type": {
+            "text": "ChatMessage",
+            "literals": [],
+            "references": [
+              {
+                "name": "ChatMessage",
+                "text": "export interface ChatMessage {\n    id: string\n    content: string\n    /** 消息角色，默认 'received' */\n    variant?: 'sent' | 'received' | 'system'\n    /** 头像图片 URL；加载失败时回退为首字母缩写 */\n    avatar?: string\n    /** 发送者姓名，用于展示名称与生成首字母缩写 */\n    name?: string\n    /**\n     * 时间戳。\n     * - `string`：按原样直接展示（不做格式化，传入方负责提供展示格式）；\n     * - `Date`：按 `dateFormat` 或 `toLocaleString` 格式化。\n     */\n    timestamp?: string | Date\n    /**\n     * 消息状态，**仅对 `variant === 'sent'` 生效**；received/system 携带时会被静默忽略。\n     */\n    status?: MessageStatus\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fchat-bubble%2Ftypes.ts%23ChatMessage"
+              }
+            ]
+          },
+          "description": "The chat message to display, including its id, content, role, timestamp, and optional avatar and status data.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatBubble-props-color",
+          "name": "color",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\""
+            ],
+            "references": []
+          },
+          "description": "Sets the color of sent-role bubbles; received and system roles are unaffected.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatBubble-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Sets bubble padding and text size and adjusts the avatar size to match.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatBubble-props-showAvatar",
+          "name": "showAvatar",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls the avatar area; system-role messages never display an avatar.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatBubble-props-showStatus",
+          "name": "showStatus",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls the send-status icon; the status icon is used only for sent-role messages.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatBubble-props-showTimestamp",
+          "name": "showTimestamp",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether the message timestamp is displayed.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatBubble-props-dateFormat",
+          "name": "dateFormat",
+          "kind": "props",
+          "type": {
+            "text": "((date: Date) => string) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom formatter for the message date and time; Date.toLocaleString is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatBubble-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the message bubble root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatBubble-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the message body; message.content is shown when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatBubble.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:chat-bubble/ChatContainer",
+      "name": "ChatContainer",
+      "source": {
+        "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatContainer-props-messages",
+          "name": "messages",
+          "kind": "props",
+          "type": {
+            "text": "ChatMessage[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "ChatMessage",
+                "text": "export interface ChatMessage {\n    id: string\n    content: string\n    /** 消息角色，默认 'received' */\n    variant?: 'sent' | 'received' | 'system'\n    /** 头像图片 URL；加载失败时回退为首字母缩写 */\n    avatar?: string\n    /** 发送者姓名，用于展示名称与生成首字母缩写 */\n    name?: string\n    /**\n     * 时间戳。\n     * - `string`：按原样直接展示（不做格式化，传入方负责提供展示格式）；\n     * - `Date`：按 `dateFormat` 或 `toLocaleString` 格式化。\n     */\n    timestamp?: string | Date\n    /**\n     * 消息状态，**仅对 `variant === 'sent'` 生效**；received/system 携带时会被静默忽略。\n     */\n    status?: MessageStatus\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fchat-bubble%2Ftypes.ts%23ChatMessage"
+              }
+            ]
+          },
+          "description": "The ordered array of chat messages to display.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatContainer-props-groupByTime",
+          "name": "groupByTime",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Groups messages by calendar date and time interval and displays date or time separators.",
+          "notes": [
+            "Messages with valid timestamps are sorted in ascending order; messages with missing or unparseable timestamps remain anchored to their input positions and keep their relative order.",
+            "Date boundaries use the actual year, month, and day rather than dateFormat output. Within one date, adjacent messages more than groupInterval minutes apart start a separate time group."
+          ],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatContainer-props-groupInterval",
+          "name": "groupInterval",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The maximum gap between adjacent messages in one time group, in minutes; values below 1 are clamped to 1.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "5",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "5"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatContainer-props-showAvatar",
+          "name": "showAvatar",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether message avatar areas are displayed.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatContainer-props-showStatus",
+          "name": "showStatus",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether status icons are displayed for sent messages.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatContainer-props-showTimestamp",
+          "name": "showTimestamp",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether message timestamps are displayed.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatContainer-props-dateFormat",
+          "name": "dateFormat",
+          "kind": "props",
+          "type": {
+            "text": "((date: Date) => string) | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Formats message times and grouping labels; local date and time formatting is used when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Achat_2Dbubble_2FChatContainer-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes added to the chat container root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/chat-bubble/ChatContainer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

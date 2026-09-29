@@ -1,0 +1,317 @@
+{
+  "id": "component:scroll-area",
+  "name": "scroll-area",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:scroll-area/ScrollArea",
+      "name": "ScrollArea",
+      "source": {
+        "file": "packages/ui/src/components/scroll-area/ScrollArea.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Ascroll_2Darea_2FScrollArea-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\""
+            ],
+            "references": []
+          },
+          "description": "Selects the default, primary, or accent color variant for the scrollbar and thumb, passed to the internal ScrollBar.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scroll-area/ScrollArea.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/scroll-area/ScrollArea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascroll_2Darea_2FScrollArea-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Selects the thickness of the internal scrollbar and passes it to ScrollBar.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scroll-area/ScrollArea.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/scroll-area/ScrollArea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascroll_2Darea_2FScrollArea-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes appended to the Reka UI scroll-area root element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scroll-area/ScrollArea.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/scroll-area/ScrollArea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascroll_2Darea_2FScrollArea-props-viewportClass",
+          "name": "viewportClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes appended to the scrollable viewport element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scroll-area/ScrollArea.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/scroll-area/ScrollArea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascroll_2Darea_2FScrollArea-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Contains the content rendered in the scrollable viewport.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scroll-area/ScrollArea.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:scroll-area/ScrollBar",
+      "name": "ScrollBar",
+      "source": {
+        "file": "packages/ui/src/components/scroll-area/ScrollBar.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Ascroll_2Darea_2FScrollBar-props-orientation",
+          "name": "orientation",
+          "kind": "props",
+          "type": {
+            "text": "\"vertical\" | \"horizontal\" | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "Selects a vertical or horizontal scrollbar orientation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scroll-area/ScrollBar.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'vertical'",
+              "source": {
+                "file": "packages/ui/src/components/scroll-area/ScrollBar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"vertical\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascroll_2Darea_2FScrollBar-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\""
+            ],
+            "references": []
+          },
+          "description": "Selects the default, primary, or accent color variant for the scrollbar and thumb.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scroll-area/ScrollBar.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/scroll-area/ScrollBar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascroll_2Darea_2FScrollBar-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Selects the scrollbar thickness.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scroll-area/ScrollBar.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/scroll-area/ScrollBar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ascroll_2Darea_2FScrollBar-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes appended to the Reka UI scrollbar element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/scroll-area/ScrollBar.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/scroll-area/ScrollBar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

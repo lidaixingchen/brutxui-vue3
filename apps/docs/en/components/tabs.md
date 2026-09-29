@@ -100,6 +100,66 @@ const currentTab = ref('account')
 </template>
 ```
 
+### Data-driven Mode (tabs Prop)
+
+Pass a `tabs` array to render `TabsList`, `TabsTrigger`, and default `TabsContent` panels automatically. Omit `tabs` to compose the complete structure through the default slot.
+
+```vue
+<script setup lang="ts">
+import { Tabs } from 'brutx-ui-vue/tabs'
+import type { TabItem } from 'brutx-ui-vue/tabs'
+
+const tabs: TabItem[] = [
+    { label: 'Overview', value: 'overview' },
+    { label: 'Analytics', value: 'analytics' },
+    { label: 'Settings', value: 'settings' },
+]
+</script>
+
+<template>
+    <Tabs :tabs="tabs" default-value="overview" />
+</template>
+```
+
+#### Custom Content Panels
+
+The default slot replaces the generated Card panels while `TabsList` continues to be generated from `tabs`:
+
+```vue
+<script setup lang="ts">
+import { Tabs, TabsContent } from 'brutx-ui-vue/tabs'
+import type { TabItem } from 'brutx-ui-vue/tabs'
+
+const tabs: TabItem[] = [
+    { label: 'Tab A', value: 'a' },
+    { label: 'Tab B', value: 'b' },
+]
+</script>
+
+<template>
+    <Tabs :tabs="tabs">
+        <template #default>
+            <TabsContent value="a">
+                <p class="text-sm">Custom content for A</p>
+            </TabsContent>
+            <TabsContent value="b">
+                <p class="text-sm">Custom content for B</p>
+            </TabsContent>
+        </template>
+    </Tabs>
+</template>
+```
+
+#### header / footer Slots
+
+In data-driven mode, the `header` and `footer` slots add content above and below the tab region. An empty `tabs` array displays a localized Result empty state while retaining these slots.
+
+#### Controlled and Uncontrolled State
+
+- Providing `modelValue` or using `v-model` makes the parent control the active value.
+- Omitting `modelValue` lets the component maintain its active value internally.
+- The initial selection uses `defaultValue`, then the first item value. If the selected item is removed, the same fallback order applies.
+
 ## Variants
 
 `TabsTrigger` supports the following active state color variants:
@@ -143,7 +203,6 @@ Import from the `brutx-ui-vue/tabs` sub-path:
 ```ts
 import {
     Tabs,
-    TabsRoot, // reka-ui raw component
     TabsList,
     TabsTrigger,
     TabsContent,
@@ -151,7 +210,27 @@ import {
     tabsTriggerVariants,
     tabsContentVariants,
 } from 'brutx-ui-vue/tabs'
+import type { TabItem } from 'brutx-ui-vue/tabs'
+import { TabsRoot } from 'reka-ui'
 ```
+
+### TabItem
+
+The data item accepted by the `tabs` prop:
+
+```ts
+interface TabItem {
+    label: string
+    value: string
+    disabled?: boolean
+}
+```
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `label` | `string` | Visible tab label |
+| `value` | `string` | Unique tab identifier |
+| `disabled` | `boolean` | Whether this tab is disabled (optional) |
 
 ## Composables
 
@@ -171,49 +250,14 @@ import {
 | `tabsTriggerVariants` | `variant`: `'default' \| 'primary' \| 'secondary' \| 'success'` | Trigger style variants |
 | `tabsContentVariants` | — | Content panel base style |
 
-## Props
+## API Reference
 
-### Tabs
+<span id="tabs-1"></span>
+<span id="tabslist"></span>
+<span id="tabstrigger"></span>
+<span id="tabscontent"></span>
 
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `modelValue` | `string` | — | Value of the currently active tab (controlled mode) |
-| `defaultValue` | `string` | — | Default active tab value (uncontrolled initial value) |
-| `tabs` | `TabItem[]` | — | Tab data array for auto rendering TabsList/TabsTrigger/TabsContent |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Tab arrangement direction |
-| `class` | `string` | — | Custom CSS class name |
-
-### TabsList
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Container size |
-| `orientation` | `'horizontal' \| 'vertical'` | Inherited from `Tabs`, defaults to `'horizontal'` | Arrangement direction, can override parent setting |
-| `class` | `string` | — | Custom CSS class name |
-
-### TabsTrigger
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `value` | `string` | — (required) | Unique identifier for the tab |
-| `disabled` | `boolean` | `false` | Whether the tab is disabled |
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'success'` | `'default'` | Active state color variant |
-| `class` | `string` | — | Custom CSS class name |
-
-### TabsContent
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `value` | `string` | — (required) | Corresponding tab value |
-| `surface` | `'plain' \| 'panel'` | `'plain'` | Surface shell mode: `plain` for zero-padding fitting (ideal for nested Card), `panel` for standalone card shell with borders and shadow |
-| `forceMount` | `boolean` | `false` | Force mount content for custom transition control |
-| `class` | `string` | — | Custom CSS class name |
-
-## Events
-
-| Event | Payload | Description |
-|------|------|------|
-| `update:modelValue` | `string` | Triggered when the active tab changes |
+<ComponentApi name="tabs" />
 
 ## Accessibility
 

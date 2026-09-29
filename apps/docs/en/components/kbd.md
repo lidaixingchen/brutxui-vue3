@@ -51,6 +51,7 @@ import { Kbd } from 'brutx-ui-vue'
 | `primary` | Primary (coral) background with high-contrast foreground |
 | `secondary` | Secondary (mint) background |
 | `accent` | Accent (yellow) background |
+| `backlit` | Black background with accent-colored text for a backlit keycap |
 
 ```vue
 <script setup>
@@ -76,19 +77,9 @@ import { Kbd } from 'brutx-ui-vue'
 | `md` | Default size |
 | `lg` | Large size, suitable for standalone display |
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'backlit'` | `'default'` | Key color variant; `backlit` is a black-on-yellow backlit keycap (mechanical keyboard backlight feel) |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Key size |
-| `class` | `string \| undefined` | `undefined` | Custom style class, merged with the component's default styles |
-
-## Slots
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | Key content (text or symbol) |
+<ComponentApi name="kbd" />
 
 ## Accessibility
 

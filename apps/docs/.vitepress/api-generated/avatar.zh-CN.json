@@ -1,0 +1,530 @@
+{
+  "id": "component:avatar",
+  "name": "avatar",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:avatar/Avatar",
+      "name": "Avatar",
+      "source": {
+        "file": "packages/ui/src/components/avatar/Avatar.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aavatar_2FAvatar-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "设置头像回退内容的颜色变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/Avatar.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/avatar/Avatar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatar-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | \"xl\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\"",
+              "\"xl\""
+            ],
+            "references": []
+          },
+          "description": "设置头像容器及其内容的尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/Avatar.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/avatar/Avatar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatar-props-shape",
+          "name": "shape",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"square\" | \"rounded\" | null | undefined> | undefined",
+            "literals": [
+              "\"rounded\"",
+              "\"square\""
+            ],
+            "references": []
+          },
+          "description": "设置头像容器为方形或圆角形状。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/Avatar.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'square'",
+              "source": {
+                "file": "packages/ui/src/components/avatar/Avatar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"square\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatar-props-status",
+          "name": "status",
+          "kind": "props",
+          "type": {
+            "text": "AvatarStatus | undefined",
+            "literals": [
+              "\"busy\"",
+              "\"none\"",
+              "\"offline\"",
+              "\"online\""
+            ],
+            "references": [
+              {
+                "name": "AvatarStatus",
+                "text": "type AvatarStatus = 'online' | 'offline' | 'busy' | 'none'",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Favatar%2FAvatar.vue%23AvatarStatus"
+              }
+            ]
+          },
+          "description": "设置头像右下角的状态指示点；none 时不显示状态点。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/Avatar.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'none'",
+              "source": {
+                "file": "packages/ui/src/components/avatar/Avatar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"none\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatar-props-lanyard",
+          "name": "lanyard",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示顶部吊孔装饰；该装饰层从无障碍树中隐藏。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/Avatar.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/avatar/Avatar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatar-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到头像根容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/Avatar.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/avatar/Avatar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatar-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "组合 AvatarImage 与 AvatarFallback 子组件。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/Avatar.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:avatar/AvatarFallback",
+      "name": "AvatarFallback",
+      "source": {
+        "file": "packages/ui/src/components/avatar/AvatarFallback.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aavatar_2FAvatarFallback-props-delayMs",
+          "name": "delayMs",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置图片加载失败或仍在加载时，回退内容出现前的延迟；省略时立即显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/AvatarFallback.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/avatar/AvatarFallback.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatarFallback-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到回退内容根元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/AvatarFallback.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/avatar/AvatarFallback.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatarFallback-props-asChild",
+          "name": "asChild",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将根元素语义和属性合并到唯一的默认插槽子元素上；启用时 as 不生效。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/AvatarFallback.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/avatar/AvatarFallback.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatarFallback-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "AsTag | Component | undefined",
+            "literals": [
+              "\"a\"",
+              "\"button\"",
+              "\"div\"",
+              "\"form\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"img\"",
+              "\"input\"",
+              "\"label\"",
+              "\"li\"",
+              "\"nav\"",
+              "\"ol\"",
+              "\"p\"",
+              "\"span\"",
+              "\"svg\"",
+              "\"template\"",
+              "\"ul\""
+            ],
+            "references": []
+          },
+          "description": "指定根节点渲染成的 HTML 标签或 Vue 组件；asChild 优先。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/AvatarFallback.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'span'",
+              "source": {
+                "file": "packages/ui/src/components/avatar/AvatarFallback.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"span\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatarFallback-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "图片不可用时显示的文字、图标或其他回退内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/AvatarFallback.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:avatar/AvatarImage",
+      "name": "AvatarImage",
+      "source": {
+        "file": "packages/ui/src/components/avatar/AvatarImage.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aavatar_2FAvatarImage-props-src",
+          "name": "src",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "头像图片的 URL。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/AvatarImage.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/avatar/AvatarImage.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatarImage-props-alt",
+          "name": "alt",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "图片的替代文本；默认空字符串将图片作为装饰内容处理。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/AvatarImage.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "''",
+              "source": {
+                "file": "packages/ui/src/components/avatar/AvatarImage.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aavatar_2FAvatarImage-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到头像图片元素的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/avatar/AvatarImage.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/avatar/AvatarImage.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

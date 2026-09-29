@@ -159,42 +159,13 @@ function jumpToMiddle() {
 </template>
 ```
 
-### 暴露的 API
+## API 参考
 
-| 方法 | 参数 | 说明 |
-|------|------|------|
-| `scrollToIndex` | `index: number` | 滚动到指定索引位置的列表项 |
-| `measure` | — | 重新测量全部已挂载项的尺寸 |
-| `measureElement` | `el: Element \| null` | 测量指定 DOM 元素的真实尺寸 |
+<span id="暴露的-api"></span>
+<span id="事件"></span>
+<span id="插槽"></span>
 
-## Props
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `items` | `T[]` | — | 数据数组（必填） |
-| `itemHeight` | `number` | `48` | 每项估算高度（像素） |
-| `dynamicHeight` | `boolean` | `false` | 是否启用动态高度测量（高度不固定时使用） |
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'default'` | 容器尺寸变体 |
-| `variant` | `'default' \| 'striped' \| 'bordered'` | `'default'` | 列表项样式变体 |
-| `overscan` | `number` | `5` | 可视区域外预渲染的项目数量 |
-| `scrollEndThreshold` | `number` | `50` | 滚动到底部检测阈值（像素） |
-| `class` | `string` | — | 外部类覆盖 |
-
-
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `scroll` | `scrollTop: number` | 滚动时触发 |
-| `scroll-end` | — | 滚动到底部时触发 |
-
-## 插槽
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | `{ item: VirtualScrollItem, index: number }` | 列表项渲染 |
-| `empty` | — | 空状态展示（当 `items` 为空数组时显示） |
-| `loading` | — | 加载更多展示（仅在提供该插槽时渲染） |
+<ComponentApi name="virtual-scroll" />
 
 ## 可访问性
 

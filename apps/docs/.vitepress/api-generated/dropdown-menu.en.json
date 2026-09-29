@@ -1,0 +1,1053 @@
+{
+  "id": "component:dropdown-menu",
+  "name": "dropdown-menu",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:dropdown-menu/DropdownMenuContent",
+      "name": "DropdownMenuContent",
+      "source": {
+        "file": "packages/ui/src/components/dropdown-menu/DropdownMenuContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuContent-props-sideOffset",
+          "name": "sideOffset",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the pixel offset between the content panel and its trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuContent.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "floatingContentSideOffsets.dropdownMenu",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "6"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuContent-props-align",
+          "name": "align",
+          "kind": "props",
+          "type": {
+            "text": "\"center\" | \"start\" | \"end\" | undefined",
+            "literals": [
+              "\"center\"",
+              "\"end\"",
+              "\"start\""
+            ],
+            "references": []
+          },
+          "description": "Sets the horizontal alignment of the content panel relative to its trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuContent.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuContent-props-to",
+          "name": "to",
+          "kind": "props",
+          "type": {
+            "text": "string | HTMLElement | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the selector or element used as the teleport target for the popup; it defaults to body.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuContent.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the dropdown menu content panel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuContent.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Menu content such as items, labels, separators, or submenus.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dropdown-menu/DropdownMenuCheckboxItem",
+      "name": "DropdownMenuCheckboxItem",
+      "source": {
+        "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuCheckboxItem-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "boolean | \"indeterminate\" | undefined",
+            "literals": [
+              "\"indeterminate\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "The controlled checked state of the checkbox item, including indeterminate; synchronize it with update:modelValue.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuCheckboxItem-props-defaultChecked",
+          "name": "defaultChecked",
+          "kind": "props",
+          "type": {
+            "text": "boolean | \"indeterminate\" | undefined",
+            "literals": [
+              "\"indeterminate\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "The initial checked state used when modelValue is not provided.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuCheckboxItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the checkbox menu item root.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuCheckboxItem-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "Sets the size of the checked-state indicator icon.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuCheckboxItem-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean | \"indeterminate\"]",
+            "literals": [
+              "\"indeterminate\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Emits the new checkbox state when it changes: true, false, or indeterminate.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuCheckboxItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The checkbox menu item’s label and other content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuCheckboxItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dropdown-menu/DropdownMenuItem",
+      "name": "DropdownMenuItem",
+      "source": {
+        "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuItem-props-inset",
+          "name": "inset",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Adds indentation to align the item with icon-bearing items or submenu triggers.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuItem-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Prevents the user from selecting this menu item.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuItem-props-textValue",
+          "name": "textValue",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the text used for keyboard typeahead, especially when the item’s text cannot be inferred from its content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuItem-props-closeOnSelect",
+          "name": "closeOnSelect",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether selecting this item closes the menu.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the menu item root.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The menu item label and any optional icon or shortcut hint.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dropdown-menu/DropdownMenuLabel",
+      "name": "DropdownMenuLabel",
+      "source": {
+        "file": "packages/ui/src/components/dropdown-menu/DropdownMenuLabel.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuLabel-props-inset",
+          "name": "inset",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Adds indentation to align the menu label with menu item content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuLabel.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuLabel-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the menu label element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuLabel.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuLabel-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The heading for a menu group or menu content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuLabel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dropdown-menu/DropdownMenuRadioItem",
+      "name": "DropdownMenuRadioItem",
+      "source": {
+        "file": "packages/ui/src/components/dropdown-menu/DropdownMenuRadioItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuRadioItem-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "The string value represented by this radio item in its RadioGroup.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuRadioItem.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuRadioItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the radio menu item root.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuRadioItem.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuRadioItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The radio menu item’s label and optional content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuRadioItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dropdown-menu/DropdownMenuSeparator",
+      "name": "DropdownMenuSeparator",
+      "source": {
+        "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSeparator.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuSeparator-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the menu separator element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSeparator.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:dropdown-menu/DropdownMenuShortcut",
+      "name": "DropdownMenuShortcut",
+      "source": {
+        "file": "packages/ui/src/components/dropdown-menu/DropdownMenuShortcut.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuShortcut-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the keyboard shortcut hint element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuShortcut.vue",
+            "line": 6
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuShortcut-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The keyboard shortcut text or symbols to display.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuShortcut.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dropdown-menu/DropdownMenuSubContent",
+      "name": "DropdownMenuSubContent",
+      "source": {
+        "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuSubContent-props-sideOffset",
+          "name": "sideOffset",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the pixel offset between the submenu panel and its trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubContent.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "floatingContentSideOffsets.dropdownMenu",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "6"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuSubContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the submenu content panel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubContent.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuSubContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Menu items and grouped content inside the submenu.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:dropdown-menu/DropdownMenuSubTrigger",
+      "name": "DropdownMenuSubTrigger",
+      "source": {
+        "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubTrigger.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuSubTrigger-props-inset",
+          "name": "inset",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Adds indentation to align the submenu trigger with sibling menu items.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubTrigger.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuSubTrigger-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Prevents this submenu from opening.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubTrigger.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuSubTrigger-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the submenu trigger root.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubTrigger.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuSubTrigger-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "Sets the size of the icon indicating the submenu direction.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubTrigger.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adropdown_2Dmenu_2FDropdownMenuSubTrigger-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "The label content displayed by the submenu trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/dropdown-menu/DropdownMenuSubTrigger.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

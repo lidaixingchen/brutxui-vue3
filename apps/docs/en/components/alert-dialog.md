@@ -63,61 +63,31 @@ import { Button } from 'brutx-ui-vue'
 | `AlertDialogAction` | Confirm action button |
 | `AlertDialogCancel` | Cancel button that closes the dialog |
 
-## Props
+## API Reference
 
-### AlertDialogContent
+<span id="alertdialogcontent"></span>
+<span id="alertdialogheader"></span>
+<span id="alertdialogfooter"></span>
+<span id="alertdialogtitle"></span>
+<span id="alertdialogdescription"></span>
+<span id="alertdialogaction"></span>
+<span id="alertdialogcancel"></span>
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `class` | `string` | — | Custom CSS class |
-| `overlayClass` | `string` | — | Custom CSS class for the overlay (merged into overlay for wrapper customization) |
+<ComponentApi name="alert-dialog" />
 
-### AlertDialogHeader
+### Reka UI Primitives
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `class` | `string` | — | Custom CSS class |
+Import `AlertDialogRoot` (named `AlertDialog` in the example), `AlertDialogTrigger`, and `AlertDialogPortal` from `reka-ui`. The API list above covers the seven public BrutxUI sub-components. `AlertDialogContent` already composes a Portal and overlay internally, and forwards additional attributes and listeners to its content primitive, including `aria-*`, `data-*`, `style`, and `@escape-key-down`.
 
-### AlertDialogFooter
+`AlertDialogCancel` uses the `outline` button variant. Provide the title through the default slot of `AlertDialogTitle`; without renderable content it displays the English fallback `Alert`, so applications should supply a meaningful localized title.
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `class` | `string` | — | Custom CSS class |
+### Native Attributes and Events
 
-### AlertDialogTitle
+`AlertDialogAction` explicitly inherits Reka `PrimitiveProps` and Vue `ButtonHTMLAttributes`. The API list retains these inherited members, including HTML attributes, ARIA attributes, and `on*` event listeners. The root defaults to `button`, with a button type fallback of `button`. When using `as` or `asChild`, actual behavior depends on the rendered element: media events require a media root, form events occur on forms, and ARIA states must suit the element’s role.
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `class` | `string` | — | Custom CSS class |
+Listeners such as `onClick` can be written as `@click` in templates. Activating `AlertDialogAction` requests dialog closure; an asynchronous handler does not delay that request. Use controlled `open` state on `AlertDialogRoot` when application logic must determine when to close.
 
-### AlertDialogDescription
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `class` | `string` | — | Custom CSS class |
-
-### AlertDialogAction
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success' \| 'outline' \| 'ghost' \| 'link'` | `'default'` | Button variant |
-| `class` | `string` | — | Custom CSS class |
-| `as` | `string \| Component` | — | Render as a specified element or component |
-| `asChild` | `boolean` | — | Whether to render as child element |
-
-### AlertDialogCancel
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `class` | `string` | — | Custom CSS class |
-
-> `AlertDialogCancel` uses a hardcoded `variant: 'outline'`.
-
-## Slots
-
-| Slot | Scope | Description |
-|------|-------|-------------|
-| `default` | — | All sub-components support the default slot for inserting custom content |
+See the [HTML button attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button) and [RDFa attribute definitions](https://www.w3.org/TR/rdfa-core/#s_syntax) for inherited attribute semantics. The [Safari HTML attribute reference](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/Attributes.html) describes browser extensions such as `autosave` and `results`.
 
 ## Accessibility
 

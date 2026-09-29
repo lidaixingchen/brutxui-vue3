@@ -54,77 +54,22 @@ import { PopoverContent, Button } from 'brutx-ui-vue'
 | `PopoverContent` | Popover content panel |
 | `PopoverAnchor` | Anchor element for positioning |
 
-## Props
+## API Reference
 
-### Popover (Root Component)
+<span id="popover-root-component"></span>
+<span id="popovertrigger"></span>
+<span id="popovercontent"></span>
+<span id="popoveranchor"></span>
+<span id="popover-root-component-1"></span>
+<span id="popovercontent-1"></span>
+<span id="popover-root-component-2"></span>
+<span id="popovertrigger-popovercontent-popoveranchor"></span>
 
-Re-exported from reka-ui's `PopoverRoot`. Manages the open/close state of the popover.
+<ComponentApi name="popover" />
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `open` | `boolean` | — | Controlled open state |
-| `defaultOpen` | `boolean` | `false` | Initial open state in uncontrolled mode |
-| `modal` | `boolean` | `false` | Modal mode; when enabled, disables interaction with external elements |
+### Reka UI Primitive Features
 
-### PopoverTrigger
-
-Trigger component, renders as a `button` element by default.
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `as` | `string \| Component` | `'button'` | Element type to render |
-| `asChild` | `boolean` | — | Render styles onto the child element |
-
-### PopoverContent
-
-Popover content panel with neo-brutalist styling.
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `align` | `'start' \| 'center' \| 'end'` | `'center'` | Alignment relative to the trigger |
-| `sideOffset` | `number` | `8` | Distance from the trigger (in pixels) |
-| `class` | `string` | — | Custom CSS class |
-
-### PopoverAnchor
-
-Custom anchor element for precise popover positioning.
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `reference` | `ReferenceElement` | — | Custom positioning reference element |
-
-## Events
-
-### Popover (Root Component)
-
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `update:open` | `value: boolean` | Emitted when the open state changes |
-
-### PopoverContent
-
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `openAutoFocus` | `Event` | Emitted on auto-focus when opening, can be prevented |
-| `closeAutoFocus` | `Event` | Emitted on auto-focus when closing, can be prevented |
-| `pointerDownOutside` | `Event` | Emitted when pressing a pointer outside |
-| `interactOutside` | `Event` | Emitted when interacting outside |
-| `escapeKeyDown` | `Event` | Emitted when the Escape key is pressed |
-| `focusOutside` | `Event` | Emitted when focus moves outside |
-
-## Slots
-
-### Popover (Root Component)
-
-| Slot | Scope | Description |
-|------|-------|-------------|
-| `default` | `{ open: boolean, close: () => void }` | Scoped slot, provides current state and close method |
-
-### PopoverTrigger / PopoverContent / PopoverAnchor
-
-| Slot | Scope | Description |
-|------|-------|-------------|
-| `default` | — | Default slot content |
+`Popover` wraps Reka UI’s `PopoverRoot`, while `PopoverTrigger` and `PopoverContent` wrap their corresponding primitives. Import `PopoverAnchor` from `reka-ui`. The API above lists members declared by the local components. `PopoverContent` forwards undeclared Vue attributes and event listeners to the Reka UI primitive, including `openAutoFocus`, `closeAutoFocus`, `pointerDownOutside`, `interactOutside`, `escapeKeyDown`, and `focusOutside`.
 
 ## Accessibility
 

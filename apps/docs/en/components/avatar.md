@@ -151,49 +151,15 @@ import { Avatar, AvatarFallback } from 'brutx-ui-vue'
 | `AvatarImage` | Avatar image that automatically hides on load failure |
 | `AvatarFallback` | Fallback content that automatically shows when the image is not visible |
 
-## Props
+## API Reference
 
-### Avatar
+<span id="avatar-1"></span>
+<span id="avatarimage"></span>
+<span id="avatarfallback"></span>
+<span id="avatar-slots"></span>
+<span id="avatarfallback-slots"></span>
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | Color variant, passed down to `AvatarFallback` |
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | Size |
-| `shape` | `'square' \| 'rounded'` | `'square'` | Shape |
-| `status` | `'online' \| 'offline' \| 'busy' \| 'none'` | `'none'` | Status dot at the bottom-right corner |
-| `lanyard` | `boolean` | `false` | Badge grommet: renders a metal ring hole at the top (purely decorative, aria-hidden) |
-| `class` | `string` | — | Additional class name |
-
-### AvatarImage
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `src` | `string` | — | Image URL |
-| `alt` | `string` | `''` | Alternative text; defaults to an empty string, which marks the image as decorative (skipped by screen readers) — pass it explicitly for meaningful images |
-| `class` | `string` | — | Additional class name |
-
-### AvatarFallback
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `delayMs` | `number` | — | Delay in milliseconds before the fallback appears while the image loads; renders immediately when omitted |
-| `as` | `string \| Component` | `'span'` | Render as a specified element |
-| `asChild` | `boolean` | `false` | Whether to render the default slot content as the child element (`as` is ignored when `true`) |
-| `class` | `string` | — | Additional class name |
-
-## Slots
-
-### Avatar Slots
-
-| Slot | Scope | Description |
-| --- | --- | --- |
-| `default` | — | Default slot for placing `AvatarImage` and `AvatarFallback` sub-components |
-
-### AvatarFallback Slots
-
-| Slot | Scope | Description |
-| --- | --- | --- |
-| `default` | — | Default slot for placing fallback content (text or icon) |
+<ComponentApi name="avatar" />
 
 ## Accessibility
 

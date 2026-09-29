@@ -1,0 +1,616 @@
+{
+  "id": "component:textarea",
+  "name": "textarea",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:textarea/Textarea",
+      "name": "Textarea",
+      "source": {
+        "file": "packages/ui/src/components/textarea/Textarea.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The textarea string value, synchronized through v-model.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"success\" | \"error\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"error\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "The textarea border and state style. The error variant displays an error message when errorMessage is non-empty.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "The textarea size variant, controlling its height, padding, and text size.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-resize",
+          "name": "resize",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"vertical\" | \"horizontal\" | \"none\" | \"both\" | null | undefined> | undefined",
+            "literals": [
+              "\"both\"",
+              "\"horizontal\"",
+              "\"none\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "The directions in which the browser allows the user to resize the textarea.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'none'",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"none\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables the native textarea, preventing focus and editing.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-readonly",
+          "name": "readonly",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Prevents editing while retaining focus, text selection, and copying.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Hint text displayed when the textarea is empty.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "Uses the localized textarea.placeholder message when omitted."
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-errorMessage",
+          "name": "errorMessage",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The error message displayed below the textarea with role=\"alert\" when variant is error and the text is non-empty.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The accessible name passed to the native textarea.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-ariaLabelledby",
+          "name": "ariaLabelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The ID of the element labeling the native textarea.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-ariaDescribedby",
+          "name": "ariaDescribedby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The description element ID; when omitted and an error is shown, automatically references the error message.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-ariaInvalid",
+          "name": "ariaInvalid",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Explicitly sets the invalid state. When omitted, it is true while an error message is displayed.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-ariaErrormessage",
+          "name": "ariaErrormessage",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The error message element ID, also used for the built-in error message. When omitted, the built-in message uses an automatically generated ID.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-ariaRequired",
+          "name": "ariaRequired",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Declares the required state of the textarea to assistive technology.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom CSS classes merged onto the native textarea element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the new string value on user input. Intermediate IME composition values are suppressed, and the final value is committed when composition ends.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-exposes-focus",
+          "name": "focus",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Moves focus to the native textarea.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 84
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-exposes-blur",
+          "name": "blur",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Removes focus from the native textarea.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 85
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-exposes-select",
+          "name": "select",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Selects the text in the native textarea.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 86
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-exposes-ref",
+          "name": "ref",
+          "kind": "exposes",
+          "type": {
+            "text": "Ref<HTMLTextAreaElement | null, HTMLTextAreaElement | null>",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "The internal native textarea reference. Vue unwraps top-level refs on public component instances, so the instance ref property provides the HTMLTextAreaElement.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    }
+  ]
+}

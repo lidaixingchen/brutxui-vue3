@@ -137,53 +137,19 @@ const carouselRef = ref()
 </template>
 ```
 
-### 暴露的 API
+## API 参考
 
-| 方法/属性 | 类型 | 说明 |
-|-----------|------|------|
-| `scrollPrev` | `() => void` | 滚动到上一张幻灯片 |
-| `scrollNext` | `() => void` | 滚动到下一张幻灯片 |
-| `scrollTo` | `(index: number) => void` | 滚动到指定索引的幻灯片 |
-| `selectedIndex` | `ComputedRef<number>` | 当前选中幻灯片的索引（只读响应式） |
-| `canScrollPrev` | `ComputedRef<boolean>` | 是否还可向前滚动；开启 `loop` 时恒为 `true`（只读响应式） |
-| `canScrollNext` | `ComputedRef<boolean>` | 是否还可向后滚动；开启 `loop` 时恒为 `true`（只读响应式） |
+<span id="暴露的-api"></span>
+<span id="carousel"></span>
+<span id="carouselitem"></span>
+<span id="插槽"></span>
+<span id="carousel-1"></span>
+<span id="carouselitem-1"></span>
+<span id="基础-props"></span>
+<span id="暴露的-api-1"></span>
+<span id="插槽-1"></span>
 
-> 注意：`selectedIndex`、`canScrollPrev`、`canScrollNext` 是响应式 `ComputedRef`，在 `<template>` 中直接使用时会自动解包；在 `<script setup>` 中读取需通过 `.value`。
-
-## Props
-
-### Carousel
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `loop` | `boolean` | `false` | 是否开启首尾循环滚动 |
-| `autoplay` | `boolean` | `false` | 是否自动播放 |
-| `autoplayDelay` | `number` | `3000` | 自动播放间隔（毫秒） |
-| `showArrows` | `boolean` | `true` | 是否显示左右切换箭头 |
-| `showDots` | `boolean` | `true` | 是否显示底部导航圆点 |
-| `size` | `'sm' \| 'md' \| 'lg' \| 'full' \| 'default'` | `'default'` | 轮播容器高度预设 |
-| `class` | `string` | — | 根节点自定义样式类 |
-
-### CarouselItem
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 单张幻灯片容器自定义样式类 |
-| `ariaHidden` | `boolean` | `false` | 标记当前幻灯片不可见（WAI-ARIA Carousel 模式）。视口外的 slide 应设为 `true`（连同内部可聚焦内容一起对屏幕阅读器隐藏），由父级在滚动切换时同步传入 |
-
-## 插槽
-
-### Carousel
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 默认插槽，用于放置 `CarouselItem` 组件 |
-
-### CarouselItem
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 默认插槽，用于放置幻灯片内容 |
+<ComponentApi name="carousel" />
 
 ## Carousel 增强能力
 
@@ -213,16 +179,6 @@ import { Carousel, CarouselItem } from 'brutx-ui-vue/carousel'
 </template>
 ```
 
-### 基础 Props
-
-以下增强 Props 可直接传给 `Carousel`：
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `thumbnails` | `CarouselThumbnails` | `{ show: false, position: 'bottom', size: 'sm', gap: 8, highlightCurrent: true }` | 缩略图导航配置 |
-| `autoplayIndicator` | `AutoplayIndicator` | — | 自动播放指示器配置 |
-| `parallax` | `ParallaxEffect` | — | 视差动画配置 |
-
 ### CarouselThumbnails
 
 | 属性 | 类型 | 默认值 | 说明 |
@@ -250,28 +206,6 @@ import { Carousel, CarouselItem } from 'brutx-ui-vue/carousel'
 | `opacity` | `boolean` | `false` | 是否启用透明度过渡 |
 | `duration` | `number` | `300` | 动画时长（毫秒） |
 | `easing` | `string` | `'ease-out'` | CSS 缓动函数 |
-
-### 暴露的 API
-
-`Carousel` 通过 `defineExpose` 暴露滚动与自动播放控制：
-
-| 方法/属性 | 类型 | 说明 |
-|-----------|------|------|
-| `scrollPrev` | `() => void` | 滚动到上一张幻灯片 |
-| `scrollNext` | `() => void` | 滚动到下一张幻灯片 |
-| `scrollTo` | `(index: number) => void` | 滚动到指定索引的幻灯片 |
-| `selectedIndex` | `ComputedRef<number>` | 当前选中幻灯片的索引（只读响应式） |
-| `canScrollPrev` | `ComputedRef<boolean>` | 是否还可向前滚动 |
-| `canScrollNext` | `ComputedRef<boolean>` | 是否还可向后滚动 |
-| `startAutoplay` | `() => void` | 启动自动播放 |
-| `stopAutoplay` | `() => void` | 停止自动播放 |
-
-### 插槽
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 默认插槽，用于放置 `CarouselItem` 组件 |
-| `thumbnail` | `{ index: number, scrollTo: (index: number) => void }` | 自定义缩略图渲染；不提供时使用默认数字缩略图 |
 
 ## 可访问性
 

@@ -121,34 +121,11 @@ import {
 } from 'brutx-ui-vue'
 ```
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-| ---- | ---- | ------ | ---- |
-| `value` | `number \| string \| bigint \| null` | `undefined` | 要展示的数值，支持数字、字符串、BigInt |
-| `title` | `string` | `undefined` | 统计项标题 |
-| `prefix` | `string` | `undefined` | 数值前缀文本（如 `¥` 或 `$`） |
-| `suffix` | `string` | `undefined` | 数值后缀文本（如 `%` 或单位） |
-| `precision` | `number` | `undefined` | 小数精度（保留小数位数） |
-| `decimalSeparator` | `string` | `'.'` | 小数点分隔符 |
-| `groupSeparator` | `string` | `','` | 千分位分组分隔符 |
-| `formatter` | `(val: StatisticValue) => string` | `undefined` | 自定义格式化函数 |
-| `placeholder` | `string` | `'-'` | 无效或空数值时的占位符 |
-| `trend` | `'up' \| 'down'` | `undefined` | 趋势方向，展示上升或下降箭头图标与状态色 |
-| `trendPlacement` | `'prefix' \| 'suffix'` | `'suffix'` | 趋势图标位置 |
-| `variant` | `'default' \| 'card' \| 'bordered' \| 'subtle'` | `'default'` | 容器视觉变体 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 尺寸规格 |
-| `class` | `string` | `undefined` | 自定义样式类 |
+<span id="插槽"></span>
 
-## 插槽
-
-| 插槽 | 作用域 | 说明 |
-| ---- | ------ | ---- |
-| `default` | `{ value: StatisticValue; formatted: string }` | 自定义数值内容展示 |
-| `title` | `{ title?: string }` | 自定义标题区域内容 |
-| `prefix` | `{ prefix?: string }` | 自定义前缀区域内容（如图标） |
-| `suffix` | `{ suffix?: string }` | 自定义后缀区域内容（如徽标标签） |
-| `trend` | `{ trend: 'up' \| 'down' }` | 自定义趋势指示器内容 |
+<ComponentApi name="statistic" />
 
 ## 可访问性
 

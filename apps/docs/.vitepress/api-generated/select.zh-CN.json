@@ -1,0 +1,1654 @@
+{
+  "id": "component:select",
+  "name": "select",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:select/Select",
+      "name": "Select",
+      "source": {
+        "file": "packages/ui/src/components/select/Select.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aselect_2FSelect-props-options",
+          "name": "options",
+          "kind": "props",
+          "type": {
+            "text": "SelectOption[] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "SelectOption",
+                "text": "export interface SelectOption {\n    label: string\n    value: string\n    disabled?: boolean\n    [key: string]: unknown\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fselect%2Ftypes.ts%23SelectOption"
+              }
+            ]
+          },
+          "description": "一体化选择器的选项列表；每项提供 label 和非空 value，可选 disabled，并可带用于分组的自定义字段。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "[]",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-groupField",
+          "name": "groupField",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "选项对象中用于分组的字段名；未设置时按原列表逐项显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-groupLabel",
+          "name": "groupLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "从每组首个选项读取分组标题的字段名；未设置或该字段缺失时使用 groupField 对应的分组值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "尚未选择选项时显示的占位文字；未提供时使用当前语言的 select.placeholder 文案。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用选择器根状态以及默认触发器。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-required",
+          "name": "required",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "将选择器标记为必填；一体化触发器在 required 为真时不显示清除操作。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递给 SelectRoot 的表单字段名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "默认触发器的 DOM ID；自定义 trigger 插槽时由插槽内容自行提供 ID。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"lg\" | \"sm\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "默认触发器的尺寸变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "\"default\"",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"success\" | \"error\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"error\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "默认触发器的边框及状态变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "\"default\"",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-errorMessage",
+          "name": "errorMessage",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递给默认触发器的错误消息，用于错误提示语义。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "允许默认触发器在有选中值时显示清除操作；required 为真时该操作被关闭。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-position",
+          "name": "position",
+          "kind": "props",
+          "type": {
+            "text": "\"popper\" | \"item-aligned\" | undefined",
+            "literals": [
+              "\"item-aligned\"",
+              "\"popper\""
+            ],
+            "references": []
+          },
+          "description": "设置选项浮层相对触发器的定位模式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "\"popper\"",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"popper\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "与 triggerClass 一起合并到默认触发器上的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-triggerClass",
+          "name": "triggerClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到默认触发器的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-contentClass",
+          "name": "contentClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到选项浮层的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-itemVariant",
+          "name": "itemVariant",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"primary\" | \"secondary\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "应用到 options 自动生成的每个 SelectItem 的变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "\"default\"",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前选中的字符串值，通过 v-model 受控绑定；未选择时可为 undefined。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/Select.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string | undefined]",
+            "literals": [],
+            "references": []
+          },
+          "description": "选择值变化时发出新值；在默认清除操作中发出 undefined。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/Select.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "接管整个 Select 内容。提供时组件不渲染默认触发器或由 options 生成的浮层，插槽需自行组合原语。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/Select.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-slots-trigger",
+          "name": "trigger",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换默认触发器；选项浮层仍由 options 自动生成，插槽没有参数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/Select.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:select/SelectContent",
+      "name": "SelectContent",
+      "source": {
+        "file": "packages/ui/src/components/select/SelectContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aselect_2FSelectContent-props-position",
+          "name": "position",
+          "kind": "props",
+          "type": {
+            "text": "\"popper\" | \"item-aligned\" | undefined",
+            "literals": [
+              "\"item-aligned\"",
+              "\"popper\""
+            ],
+            "references": []
+          },
+          "description": "控制内容浮层相对触发器的定位方式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectContent.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'popper'",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"popper\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到浮动内容面板的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectContent.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "渲染选项、分组和其他内容面板子项。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:select/SelectItem",
+      "name": "SelectItem",
+      "source": {
+        "file": "packages/ui/src/components/select/SelectItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aselect_2FSelectItem-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "此选项的非空唯一字符串值，用作选择结果。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectItem.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectItem-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "阻止用户选择此选项。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectItem.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectItem-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "此选项的视觉变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectItem.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到选项根元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectItem.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectItem-props-indicatorClass",
+          "name": "indicatorClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到选中状态指示器的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectItem.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectItem-props-iconClass",
+          "name": "iconClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到选中勾选图标的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectItem.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectItem-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "设置选中勾选图标的尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectItem.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectItem.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "显示在选项文字区域中的内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:select/SelectLabel",
+      "name": "SelectLabel",
+      "source": {
+        "file": "packages/ui/src/components/select/SelectLabel.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aselect_2FSelectLabel-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到分组标题元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectLabel.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectLabel-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "分组标题文本或其他标题内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectLabel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:select/SelectScrollDownButton",
+      "name": "SelectScrollDownButton",
+      "source": {
+        "file": "packages/ui/src/components/select/SelectScrollDownButton.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aselect_2FSelectScrollDownButton-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到向下滚动提示控件的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectScrollDownButton.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectScrollDownButton.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectScrollDownButton-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "设置向下滚动箭头图标的尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectScrollDownButton.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectScrollDownButton.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:select/SelectScrollUpButton",
+      "name": "SelectScrollUpButton",
+      "source": {
+        "file": "packages/ui/src/components/select/SelectScrollUpButton.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aselect_2FSelectScrollUpButton-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到向上滚动提示控件的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectScrollUpButton.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectScrollUpButton.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectScrollUpButton-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "设置向上滚动箭头图标的尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectScrollUpButton.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectScrollUpButton.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:select/SelectSeparator",
+      "name": "SelectSeparator",
+      "source": {
+        "file": "packages/ui/src/components/select/SelectSeparator.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aselect_2FSelectSeparator-props-decorative",
+          "name": "decorative",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "声明分隔线是否仅用于装饰；装饰模式下由原语从无障碍树中隐藏。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectSeparator.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectSeparator.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectSeparator-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到分隔线元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectSeparator.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectSeparator.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:select/SelectTrigger",
+      "name": "SelectTrigger",
+      "source": {
+        "file": "packages/ui/src/components/select/SelectTrigger.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "触发器的尺寸变体，同时决定下拉图标的尺寸映射。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"success\" | \"error\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"error\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "触发器的边框及状态变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-props-errorMessage",
+          "name": "errorMessage",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "错误态消息，错误状态下用于关联触发器的错误提示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用触发器和清除操作。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "原生触发按钮的 DOM ID。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "有选中值且未禁用时允许显示清除按钮。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "unknown",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前值，仅用于判断是否存在可清除的选中内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到触发按钮的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-props-iconClass",
+          "name": "iconClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到下拉指示图标的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-events-clear",
+          "name": "clear",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "用户执行清除操作时发出；该事件本身不承载参数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "触发器显示内容，通常包含 SelectValue。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

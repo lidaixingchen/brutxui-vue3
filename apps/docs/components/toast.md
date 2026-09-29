@@ -222,41 +222,14 @@ async function handleSave() {
 </script>
 ```
 
-## Props
+## API 参考
 
-### Toast
+<span id="toast"></span>
+<span id="toastcontainer"></span>
+<span id="事件"></span>
+<span id="插槽"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `variant` | `'default' \| 'success' \| 'error' \| 'warning' \| 'info'` | `'default'` | 提示类型 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 尺寸 |
-| `title` | `string` | — | 标题文本 |
-| `description` | `string` | — | 描述文本 |
-| `count` | `number` | `1` | 聚合计数，大于 1 时显示为 (N) |
-| `duration` | `number` | `5000` | 显示时长（毫秒），设为 `0` 则不自动关闭 |
-| `pauseOnHover` | `boolean` | `true` | 鼠标悬停时暂停倒计时与进度条动画，移出后从剩余时间继续 |
-| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'xl'` | 主图标尺寸 |
-| `class` | `string` | — | 自定义样式类 |
-
-### ToastContainer
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `position` | `'top-left' \| 'top-center' \| 'top-right' \| 'bottom-left' \| 'bottom-center' \| 'bottom-right' \| { x: number; y: number; anchor?: string }` | `'bottom-right'` | 显示位置 |
-| `stack` | `{ maxVisible?: number; gap?: number; expandDirection?: 'up' \| 'down' }` | `{ maxVisible: 5, gap: 12, expandDirection: 'down' }` | 堆叠配置 |
-| `class` | `string` | — | 自定义样式类 |
-
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `close` | — | 提示关闭时触发（动画完成后） |
-
-## 插槽
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 自定义内容，渲染在标题和描述下方 |
+<ComponentApi name="toast" />
 
 ## 可访问性
 

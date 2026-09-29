@@ -106,34 +106,11 @@ async function loadMore() {
 </template>
 ```
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `distance` | `number` | `100` | Trigger distance threshold in pixels |
-| `delay` | `number` | `200` | Debounce delay in milliseconds |
-| `disabled` | `boolean` | `false` | Whether disabled |
-| `immediate` | `boolean` | `true` | Whether to check immediately on mount |
-| `class` | `string` | — | Custom CSS class |
+<span id="exposed-methods"></span>
 
-## Events
-
-| Event | Payload | Description |
-| --- | --- | --- |
-| `load` | — | Emitted when more data should be loaded |
-
-## Slots
-
-| Slot | Description |
-| --- | --- |
-| `default` | Content list |
-| `loading` | Custom loading indicator |
-
-## Exposed Methods
-
-| Method | Description |
-| --- | --- |
-| `resetLoading()` | Reset loading state (call after data is loaded) |
+<ComponentApi name="infinite-scroll" />
 
 ## Composable
 

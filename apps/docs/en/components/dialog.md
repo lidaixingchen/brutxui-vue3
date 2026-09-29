@@ -129,105 +129,24 @@ import { DialogEnhanced, DialogHeader, DialogTitle } from 'brutx-ui-vue'
 </template>
 ```
 
-## Props
+## API Reference
 
-### Dialog (Root Component)
+<span id="dialog-root-component"></span>
+<span id="dialogtrigger"></span>
+<span id="dialogcontent"></span>
+<span id="dialogclose"></span>
+<span id="dialogenhanced"></span>
+<span id="dialogheader-dialogfooter-dialogtitle-dialogdescription-dialogoverlay"></span>
+<span id="dialogroot"></span>
+<span id="dialogenhanced-events"></span>
+<span id="dialog-1"></span>
+<span id="dialogcontent-dialogheader-dialogfooter-dialogtitle-dialogdescription-dialogoverlay-dialogenhanced-slots"></span>
 
-Re-exported from reka-ui's `DialogRoot`. Manages the open/close state of the dialog.
+<ComponentApi name="dialog" />
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `open` | `boolean` | — | Controlled open state |
-| `defaultOpen` | `boolean` | `false` | Default open state in uncontrolled mode |
-| `modal` | `boolean` | `true` | Whether the dialog is modal |
+### Reka UI Primitives
 
-### DialogTrigger
-
-Trigger button re-exported from reka-ui.
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `asChild` | `boolean` | — | Whether to delegate rendering to child element |
-| `as` | `string` | `'button'` | HTML element to render |
-
-### DialogContent
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `showCloseButton` | `boolean` | `true` | Whether to show the close button |
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'default'` | Dialog size |
-| `entrance` | `'fade-zoom' \| 'shutter'` | `'fade-zoom'` | Entrance animation: fluid fade-zoom / mechanical shutter expansion (auto-degrades to instant show under reduced-motion) |
-| `forceMount` | `boolean` | — | Force mount (for animation control) |
-| `class` | `string` | — | Custom CSS class |
-
-### DialogClose
-
-Close button re-exported from reka-ui.
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `asChild` | `boolean` | — | Whether to delegate rendering to child element |
-| `as` | `string` | `'button'` | HTML element to render |
-
-### DialogEnhanced
-
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `draggable` | `boolean` | `false` | Whether the dialog is draggable |
-| `dragHandle` | `string \| HTMLElement` | — | Drag handle (CSS selector or element) |
-| `bounds` | `'parent' \| 'viewport' \| { top, left, right, bottom }` | `'viewport'` | Drag boundaries |
-| `initialPosition` | `{ x: number; y: number }` | — | Initial position |
-| `resizable` | `boolean` | `false` | Whether the dialog is resizable |
-| `minWidth` | `number` | `200` | Minimum width |
-| `minHeight` | `number` | `150` | Minimum height |
-| `maxWidth` | `number` | — | Maximum width |
-| `maxHeight` | `number` | — | Maximum height |
-| `aspectRatio` | `number` | — | Lock aspect ratio |
-| `showCloseButton` | `boolean` | `true` | Whether to show the close button |
-| `forceMount` | `boolean` | — | Force mount |
-| `fullscreen` | `boolean` | `false` | Fullscreen mode (occupies entire viewport) |
-| `beforeClose` | `((done) => void) \| (() => boolean \| Promise<boolean>)` | — | Close hook (supports callback and Promise mode) |
-| `destroyOnClose` | `boolean` | `false` | Destroy content after closing |
-| `zIndex` | `number` | — | Custom z-index |
-| `class` | `string` | — | Custom CSS class |
-
-### DialogHeader / DialogFooter / DialogTitle / DialogDescription / DialogOverlay
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `class` | `string` | — | Custom CSS class |
-
-## Events
-
-### DialogRoot
-
-| Event | Payload | Description |
-| --- | --- | --- |
-| `update:open` | `(value: boolean)` | Emitted when the dialog open state changes |
-
-### DialogEnhanced Events
-
-| Event | Payload | Description |
-| --- | --- | --- |
-| `update:open` | `(value: boolean)` | Emitted when the dialog open state changes |
-| `open` | — | Emitted when the dialog starts opening |
-| `opened` | — | Emitted when the dialog open animation completes |
-| `close` | — | Emitted when the dialog starts closing |
-| `closed` | — | Emitted when the dialog close animation completes |
-
-## Slots
-
-### Dialog
-
-| Slot | Scope | Description |
-| --- | --- | --- |
-| `default` | `{ open: boolean, close: () => void }` | Default slot, provides current open state and close method |
-
-### DialogContent / DialogHeader / DialogFooter / DialogTitle / DialogDescription / DialogOverlay / DialogEnhanced Slots
-
-| Slot | Scope | Description |
-| --- | --- | --- |
-| `default` | — | Default slot |
+DialogRoot, DialogTrigger, DialogClose, and DialogPortal are primitives imported directly from reka-ui in the examples. DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription, DialogOverlay, and DialogEnhanced are BrutxUI components. DialogEnhanced must be used within the context provided by DialogRoot.
 
 ## Accessibility
 

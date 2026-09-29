@@ -152,20 +152,11 @@ const value = ref(50)
 </template>
 ```
 
-## Props
+## API Reference
 
-### Progress
+<span id="progress-1"></span>
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `modelValue` | `number` | `0` | Current progress value |
-| `max` | `number` | `100` | Maximum value |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Progress bar height preset |
-| `variant` | `'default' \| 'secondary' \| 'accent' \| 'success' \| 'danger'` | `'default'` | Indicator color variant |
-| `pattern` | `'none' \| 'hazard'` | `'none'` | Indicator texture: `hazard` adds yellow-black warning stripes with flow animation (yields to the slide animation in indeterminate mode) |
-| `indeterminate` | `boolean` | `false` | Whether in indeterminate state (indicator cycles, ignores `modelValue`) |
-| `showLabel` | `boolean` | `false` | Whether to show a percentage label in the center of the progress bar (not shown in indeterminate state) |
-| `class` | `string` | — | Custom CSS class |
+<ComponentApi name="progress" />
 
 ## Accessibility
 

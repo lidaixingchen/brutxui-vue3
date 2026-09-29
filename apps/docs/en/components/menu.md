@@ -89,52 +89,15 @@ Set `router` to `true` to auto-push routes on click. If `route` prop is not expl
 | `MenuItem` | Menu item component |
 | `SubMenu` | Submenu component for nested and collapsible contents |
 
-## Props
+## API Reference
 
-### Menu
+<span id="menu-1"></span>
+<span id="menuitem"></span>
+<span id="submenu"></span>
+<span id="menu-2"></span>
+<span id="submenu-1"></span>
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `mode` | `'horizontal' \| 'vertical'` | `'vertical'` | Alignment mode |
-| `defaultActive` | `string` | `''` | Key of the default active menu item |
-| `router` | `boolean` | `false` | Enable vue-router redirection modes |
-| `class` | `string` | — | Custom class list |
-
-### MenuItem
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `index` | `string` | — | Required, unique key identifying the menu item |
-| `disabled` | `boolean` | `false` | Disable item interaction |
-| `route` | `string \| object` | — | Target route path or object |
-| `class` | `string` | — | Custom class list |
-
-### SubMenu
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `index` | `string` | — | Required, unique key identifying the sub-menu |
-| `title` | `string` | `''` | Title label (prioritized below `title` slot) |
-| `disabled` | `boolean` | `false` | Disable entire sub-menu interaction |
-| `triggerClass` | `string` | — | Custom header trigger class list |
-| `class` | `string` | — | Custom wrapper class list |
-
-## Events
-
-### Menu
-
-| Event | Parameters | Description |
-|-------|------------|-------------|
-| `select` | `string` | Emitted when a menu item is clicked and selected, parameter is the active `index` |
-
-## Slots
-
-### SubMenu
-
-| Slot | Scope | Description |
-|------|-------|-------------|
-| `default` | — | Nested submenu items (e.g. `MenuItem` or nested `SubMenu`) |
-| `title` | — | Custom header title trigger elements |
+<ComponentApi name="menu" />
 
 ## Accessibility
 

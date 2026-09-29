@@ -53,77 +53,24 @@ import { PopoverContent, Button } from 'brutx-ui-vue'
 | `PopoverContent` | 弹出层内容面板 |
 | `PopoverAnchor` | 用于定位的锚点元素 |
 
-## Props
+## API 参考
 
-### Popover 根组件
+<span id="popover-根组件"></span>
+<span id="popovertrigger-触发器"></span>
+<span id="popovercontent-内容面板"></span>
+<span id="popoveranchor-锚点"></span>
+<span id="事件"></span>
+<span id="popover-根组件事件"></span>
+<span id="popovercontent-事件"></span>
+<span id="插槽"></span>
+<span id="popover-根组件插槽"></span>
+<span id="popovertrigger-popovercontent-popoveranchor-插槽"></span>
 
-从 reka-ui 的 `PopoverRoot` 重新导出，管理弹出层的打开/关闭状态。
+<ComponentApi name="popover" />
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `open` | `boolean` | — | 受控的打开状态 |
-| `defaultOpen` | `boolean` | `false` | 非受控模式下的初始打开状态 |
-| `modal` | `boolean` | `false` | 模态模式，启用时禁用与外部元素的交互 |
+### Reka UI 原语的扩展能力
 
-### PopoverTrigger 触发器
-
-触发器组件，默认渲染为 `button` 元素。
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `as` | `string \| Component` | `'button'` | 渲染的元素类型 |
-| `asChild` | `boolean` | — | 将样式渲染到子元素上 |
-
-### PopoverContent 内容面板
-
-弹出层内容面板，使用新粗野主义风格。
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `align` | `'start' \| 'center' \| 'end'` | `'center'` | 相对于触发器的对齐方式 |
-| `sideOffset` | `number` | `8` | 与触发器的距离（像素） |
-| `class` | `string` | — | 自定义 CSS 类名 |
-
-### PopoverAnchor 锚点
-
-自定义锚点元素，用于精确定位弹出层位置。
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `reference` | `ReferenceElement` | — | 自定义定位参考元素 |
-
-## 事件
-
-### Popover 根组件事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:open` | `value: boolean` | 打开状态变化时触发 |
-
-### PopoverContent 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `openAutoFocus` | `Event` | 打开时自动聚焦触发，可阻止 |
-| `closeAutoFocus` | `Event` | 关闭时自动聚焦触发，可阻止 |
-| `pointerDownOutside` | `Event` | 在外部按下指针时触发 |
-| `interactOutside` | `Event` | 在外部交互时触发 |
-| `escapeKeyDown` | `Event` | 按下 Escape 键时触发 |
-| `focusOutside` | `Event` | 焦点移出时触发 |
-
-## 插槽
-
-### Popover 根组件插槽
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | `{ open: boolean, close: () => void }` | 作用域插槽，提供当前状态和关闭方法 |
-
-### PopoverTrigger / PopoverContent / PopoverAnchor 插槽
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 默认插槽内容 |
+`Popover` 包装 Reka UI 的 `PopoverRoot`；`PopoverTrigger` 和 `PopoverContent` 包装对应原语。`PopoverAnchor` 仍从 `reka-ui` 导入。上方 API 展示本地组件声明的成员；`PopoverContent` 将未声明的 Vue 属性和事件监听器透传给 Reka UI 原语，包括 `openAutoFocus`、`closeAutoFocus`、`pointerDownOutside`、`interactOutside`、`escapeKeyDown` 和 `focusOutside`。
 
 ## 可访问性
 

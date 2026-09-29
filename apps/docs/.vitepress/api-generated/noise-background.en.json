@@ -1,0 +1,332 @@
+{
+  "id": "component:noise-background",
+  "name": "noise-background",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:noise-background/NoiseBackground",
+      "name": "NoiseBackground",
+      "source": {
+        "file": "packages/ui/src/components/noise-background/NoiseBackground.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Anoise_2Dbackground_2FNoiseBackground-props-type",
+          "name": "type",
+          "kind": "props",
+          "type": {
+            "text": "\"fractalNoise\" | \"turbulence\" | undefined",
+            "literals": [
+              "\"fractalNoise\"",
+              "\"turbulence\""
+            ],
+            "references": []
+          },
+          "description": "Selects the SVG `feTurbulence` algorithm: `fractalNoise` or `turbulence`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/noise-background/NoiseBackground.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'fractalNoise'",
+              "source": {
+                "file": "packages/ui/src/components/noise-background/NoiseBackground.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"fractalNoise\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anoise_2Dbackground_2FNoiseBackground-props-frequency",
+          "name": "frequency",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The base noise frequency; animation varies around this value when enabled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/noise-background/NoiseBackground.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0.65",
+              "source": {
+                "file": "packages/ui/src/components/noise-background/NoiseBackground.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0.65"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anoise_2Dbackground_2FNoiseBackground-props-octaves",
+          "name": "octaves",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The number of SVG noise octaves; more octaves produce more complex texture.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/noise-background/NoiseBackground.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "3",
+              "source": {
+                "file": "packages/ui/src/components/noise-background/NoiseBackground.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "3"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anoise_2Dbackground_2FNoiseBackground-props-opacity",
+          "name": "opacity",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The opacity of the rendered noise rectangle.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/noise-background/NoiseBackground.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0.5",
+              "source": {
+                "file": "packages/ui/src/components/noise-background/NoiseBackground.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0.5"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anoise_2Dbackground_2FNoiseBackground-props-animated",
+          "name": "animated",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Animates the base frequency periodically. With reduced-motion enabled, animation stops while the static texture remains.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/noise-background/NoiseBackground.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/noise-background/NoiseBackground.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anoise_2Dbackground_2FNoiseBackground-props-animationDuration",
+          "name": "animationDuration",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The animation cycle duration in seconds; non-positive values prevent animation from starting.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/noise-background/NoiseBackground.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "8",
+              "source": {
+                "file": "packages/ui/src/components/noise-background/NoiseBackground.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "8"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anoise_2Dbackground_2FNoiseBackground-props-animationRange",
+          "name": "animationRange",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The range over which the base frequency varies during animation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/noise-background/NoiseBackground.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0.1",
+              "source": {
+                "file": "packages/ui/src/components/noise-background/NoiseBackground.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0.1"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anoise_2Dbackground_2FNoiseBackground-props-rounded",
+          "name": "rounded",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"none\" | \"full\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"full\"",
+              "\"lg\"",
+              "\"none\""
+            ],
+            "references": []
+          },
+          "description": "The background container corner style: none, default, large, or fully rounded.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/noise-background/NoiseBackground.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'none'",
+              "source": {
+                "file": "packages/ui/src/components/noise-background/NoiseBackground.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"none\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anoise_2Dbackground_2FNoiseBackground-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the background root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/noise-background/NoiseBackground.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/noise-background/NoiseBackground.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anoise_2Dbackground_2FNoiseBackground-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Background content rendered above the noise SVG layer.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/noise-background/NoiseBackground.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

@@ -52,7 +52,7 @@ const data = [
 
 ## Sketchy Jitter
 
-The `sketchiness` prop controls the hand-drawn jitter amplitude (0-10). Higher values produce more pronounced wobble:
+The sketchiness prop controls the hand-drawn jitter amplitude. Higher values produce more pronounced wobble. Use 0-10 as a practical range; the component does not clamp the supplied value:
 
 ```vue
 <SketchyChart type="line" :data="data" :sketchiness="8" />
@@ -64,17 +64,9 @@ The `sketchiness` prop controls the hand-drawn jitter amplitude (0-10). Higher v
 - **Negative values**: Absolute value is used
 - **Large datasets** (>30 items): Automatic downsampling
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `type` | `'line' \| 'bar' \| 'pie'` | `'line'` | Chart type |
-| `data` | `Array<{ label: string, value: number }>` | `[]` | Chart data source |
-| `sketchiness` | `number` | `2` | Hand-drawn jitter amplitude (0-10) |
-| `grid` | `boolean` | `true` | Whether to draw background grid (ignored for pie charts) |
-| `width` | `number` | `600` | Chart width (px) |
-| `height` | `number` | `400` | Chart height (px) |
-| `class` | `string` | — | External class override |
+<ComponentApi name="sketchy-chart" />
 
 ## Accessibility
 

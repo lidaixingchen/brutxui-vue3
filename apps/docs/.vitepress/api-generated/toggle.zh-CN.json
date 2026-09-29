@@ -1,0 +1,285 @@
+{
+  "id": "component:toggle",
+  "name": "toggle",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:toggle/Toggle",
+      "name": "Toggle",
+      "source": {
+        "file": "packages/ui/src/components/toggle/Toggle.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atoggle_2FToggle-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "当前按下状态，通过 v-model 受控绑定。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle/Toggle.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2FToggle-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"outline\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"outline\""
+            ],
+            "references": []
+          },
+          "description": "设置 Toggle 的视觉变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle/Toggle.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/toggle/Toggle.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2FToggle-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "设置 Toggle 按钮的尺寸。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle/Toggle.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/toggle/Toggle.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2FToggle-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用按钮交互。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle/Toggle.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/toggle/Toggle.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2FToggle-props-loading",
+          "name": "loading",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示加载指示器并禁用交互；加载时默认插槽内容被加载状态替代。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle/Toggle.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/toggle/Toggle.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2FToggle-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到 Toggle 根按钮的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle/Toggle.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/toggle/Toggle.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2FToggle-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置 Toggle 的无障碍名称；图标按钮应提供此标签。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle/Toggle.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/toggle/Toggle.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2FToggle-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "用户切换按下状态时发出新的布尔值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle/Toggle.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atoggle_2FToggle-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "按钮中显示的文本、图标或其他内容；loading 为真时由加载指示器替代。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle/Toggle.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

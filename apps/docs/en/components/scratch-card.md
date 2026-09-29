@@ -60,35 +60,11 @@ const scratchCardRef = ref()
 </template>
 ```
 
-### Exposed API
+## API Reference
 
-| Method/Property | Type | Description |
-|-----------|------|------|
-| `isRevealed` | `boolean` | Whether it has been revealed |
-| `revealAll()` | `() => void` | Immediately reveal all content |
+<span id="exposed-api"></span>
 
-## Props
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `percentage` | `number` | `50` | Area percentage threshold for automatic full reveal (0-100) |
-| `brushRadius` | `number` | `20` | Eraser brush radius (px) |
-| `overlayColor` | `string` | — | Overlay base color; if not set, a two-color stripe pattern is drawn by default |
-| `fadeDuration` | `number` | `300` | Canvas fade-out animation duration after threshold is reached (ms) |
-| `class` | `string` | — | Custom style class |
-
-## Events
-
-| Event | Payload | Description |
-|------|------|------|
-| `progress` | `number` | Scratch progress change callback (throttled) |
-| `completed` | — | Triggered after scratch completion (after fade-out upon reaching threshold) |
-
-## Slots
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | Scratch card content underneath |
+<ComponentApi name="scratch-card" />
 
 ## Accessibility
 

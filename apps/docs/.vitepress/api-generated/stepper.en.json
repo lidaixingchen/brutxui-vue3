@@ -1,0 +1,417 @@
+{
+  "id": "component:stepper",
+  "name": "stepper",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:stepper/Stepper",
+      "name": "Stepper",
+      "source": {
+        "file": "packages/ui/src/components/stepper/Stepper.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Astepper_2FStepper-props-steps",
+          "name": "steps",
+          "kind": "props",
+          "type": {
+            "text": "StepperStep[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "StepperStep",
+                "text": "export interface StepperStep {\n    id: string | number;\n    title: string;\n    description?: string;\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fstepper%2Ftypes.ts%23StepperStep"
+              }
+            ]
+          },
+          "description": "Provides ordered step data. Each item has a unique id and title, with an optional description.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "number",
+            "literals": [],
+            "references": []
+          },
+          "description": "The zero-based current step index, synchronized through v-model. An out-of-range value is clamped for display state.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-props-orientation",
+          "name": "orientation",
+          "kind": "props",
+          "type": {
+            "text": "\"vertical\" | \"horizontal\" | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "Sets the stepper layout direction. It defaults to horizontal; vertical mode supports step-{id} content slots for the current step.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'horizontal'",
+              "source": {
+                "file": "packages/ui/src/components/stepper/Stepper.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"horizontal\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Sets the size scale for step nodes and their connectors.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/stepper/Stepper.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\""
+            ],
+            "references": []
+          },
+          "description": "Sets the color variant used by the active step node.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/stepper/Stepper.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-props-clickable",
+          "name": "clickable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Allows a step node to be clicked to navigate to that step.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/stepper/Stepper.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes applied to the stepper root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/stepper/Stepper.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[step: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the new valid step index when the current step changes so v-model can be synchronized.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-events-step_2Dclick",
+          "name": "step-click",
+          "kind": "events",
+          "type": {
+            "text": "[index: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted with the clicked node’s zero-based index when a step node is clicked.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-exposes-currentStep",
+          "name": "currentStep",
+          "kind": "exposes",
+          "type": {
+            "text": "number",
+            "literals": [],
+            "references": []
+          },
+          "description": "The read-only current step index. It is -1 when there are no steps and otherwise stays within the valid step range.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 91
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-exposes-totalSteps",
+          "name": "totalSteps",
+          "kind": "exposes",
+          "type": {
+            "text": "number",
+            "literals": [],
+            "references": []
+          },
+          "description": "The read-only total number of steps, equal to the length of steps.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 92
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-exposes-goToStep",
+          "name": "goToStep",
+          "kind": "exposes",
+          "type": {
+            "text": "(index: number) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Requests navigation to an index and emits an update only when the index is within the existing step range.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 93
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-exposes-nextStep",
+          "name": "nextStep",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Requests the next step; it emits no update when the list is empty or the current step is already last.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 94
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-exposes-previousStep",
+          "name": "previousStep",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Requests the previous step; it emits no update when the list is empty or the current step is already first.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 95
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-exposes-isFirstStep",
+          "name": "isFirstStep",
+          "kind": "exposes",
+          "type": {
+            "text": "boolean",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "A read-only boolean indicating whether the current step is first; it is false for an empty list.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 96
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Astepper_2FStepper-exposes-isLastStep",
+          "name": "isLastStep",
+          "kind": "exposes",
+          "type": {
+            "text": "boolean",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "A read-only boolean indicating whether the current step is last; it is false for an empty list.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/stepper/Stepper.vue",
+            "line": 97
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    }
+  ]
+}

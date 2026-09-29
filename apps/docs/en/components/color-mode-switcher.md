@@ -80,13 +80,9 @@ Control whether the "system" option is displayed via the `showSystem` prop. When
 
 The color mode is persisted to `localStorage` (key: `brutx-color-mode`). When `system` is selected, it follows the system preference and listens for changes to the `prefers-color-scheme` media query.
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `display` | `'icon' \| 'button' \| 'select'` | `'icon'` | Display mode: icon, button, or select |
-| `showSystem` | `boolean` | `true` | Whether to show the "system" option |
-| `class` | `string` | `undefined` | Custom CSS class |
+<ComponentApi name="color-mode-switcher" />
 
 ## Accessibility
 

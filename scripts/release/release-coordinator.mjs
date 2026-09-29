@@ -240,7 +240,7 @@ export class DefaultReleaseAdapter {
             '--draft',
             '--title', `Release ${tag}`,
             '--notes-file', tmpNotesFile,
-            `--make-latest=${makeLatest}`,
+            `--latest=${makeLatest}`,
         ];
         if (options.prerelease) {
             args.push('--prerelease');
@@ -278,7 +278,7 @@ export class DefaultReleaseAdapter {
         const args = [
             'release', 'edit', tag,
             '--draft=false',
-            `--make-latest=${makeLatest}`,
+            `--latest=${makeLatest}`,
         ];
         if (options.prerelease) {
             args.push('--prerelease');
@@ -295,12 +295,12 @@ export class DefaultReleaseAdapter {
 
     async setReleaseLatest(tag, makeLatest = 'true') {
         const makeLatestStr = makeLatest === true || makeLatest === 'true' ? 'true' : 'false';
-        const res = spawnSync('gh', ['release', 'edit', tag, `--make-latest=${makeLatestStr}`], {
+        const res = spawnSync('gh', ['release', 'edit', tag, `--latest=${makeLatestStr}`], {
             cwd: this.rootDir,
             encoding: 'utf-8',
         });
         if (res.status !== 0) {
-            throw new Error(`Failed to set --make-latest=${makeLatestStr} for release ${tag}: ${res.stderr}`);
+            throw new Error(`Failed to set --latest=${makeLatestStr} for release ${tag}: ${res.stderr}`);
         }
     }
 

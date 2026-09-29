@@ -84,32 +84,9 @@ function handleClick(event) {
 </template>
 ```
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `maxRotation` | `number` | `15` | Maximum deflection angle (degrees) |
-| `perspective` | `number` | `1000` | 3D perspective depth (px) |
-| `scale` | `number` | `1.02` | Scale ratio on hover |
-| `shadowOffset` | `number` | `10` | Maximum shadow physical displacement in pixels (px) |
-| `shadow` | `'default' \| 'lg' \| 'xl'` | `'default'` | Shadow size variant |
-| `variant` | `'default' \| 'primary' \| 'accent' \| 'muted'` | `'default'` | Card background color variant |
-| `disabled` | `boolean` | `false` | Disables 3D effect, card stays static |
-| `clickable` | `boolean` | `false` | Enables click; when true, adds `role="button"`, `tabindex="0"`, keyboard support and triggers click events |
-| `ariaLabel` | `string` | — | Accessible name for clickable cards; sets `aria-label` only when explicitly provided, otherwise the slot content serves as the accessible name |
-| `class` | `string` | — | External class override |
-
-## Events
-
-| Event | Payload | Description |
-|------|------|------|
-| `click` | `MouseEvent \| KeyboardEvent` | Triggered only when `clickable` is `true` and `disabled` is `false`; pointer click emits `MouseEvent`, Enter/Space keyboard activation emits `KeyboardEvent` |
-
-## Slots
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | Card content, supports any custom content |
+<ComponentApi name="card-3d" />
 
 ## Accessibility
 

@@ -116,43 +116,13 @@ const counterRef = ref()
 </template>
 ```
 
-### 暴露的 API
 
-| 方法/属性 | 类型 | 说明 |
-|-----------|------|------|
-| `play()` | `() => void` | 从 `from` 重新开始播放动画 |
-| `stop()` | `() => void` | 立即停止动画 |
+## API 参考
 
-## Props
+<span id="暴露的-api"></span>
+<span id="事件"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `to` | `number` | — | 目标数值（必填） |
-| `from` | `number` | `0` | 起始数值 |
-| `duration` | `number` | `2000` | 动画时长（毫秒） |
-| `decimals` | `number` | `0` | 小数位数 |
-| `decimalSeparator` | `string` | `'.'` | 小数分隔符 |
-| `prefix` | `string` | `''` | 数字前缀（如 `¥` `$`） |
-| `suffix` | `string` | `''` | 数字后缀（如 `+` `%`） |
-| `prefixComponent` | `Component` | — | 自定义前缀组件 |
-| `suffixComponent` | `Component` | — | 自定义后缀组件 |
-| `animatePrefix` | `boolean` | `true` | 是否显示自定义前缀组件（false 时显示文本前缀） |
-| `animateSuffix` | `boolean` | `true` | 是否显示自定义后缀组件（false 时显示文本后缀） |
-| `separator` | `string` | `','` | 千位分隔符，传空字符串可禁用千分位（仍应用自定义小数分隔符） |
-| `easing` | `'linear' \| 'ease-out' \| 'ease-in-out'` | `'ease-out'` | 缓动函数 |
-| `autoStart` | `boolean` | `true` | 是否挂载后自动播放 |
-| `size` | `'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | 字号预设 |
-| `variant` | `'default' \| 'primary' \| 'accent' \| 'success' \| 'danger'` | `'default'` | 文字颜色变体（仅影响文字颜色，不改变背景） |
-| `title` | `string` | — | 可选标题，传入后启用容器模式 |
-| `card` | `boolean` | `false` | 是否启用卡片容器样式 |
-| `valueStyle` | `CSSProperties` | — | 数值区域内联样式 |
-| `class` | `string` | — | 自定义样式类 |
-
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `complete` | — | 动画播放完毕时触发 |
+<ComponentApi name="counter" />
 
 ## 可访问性
 

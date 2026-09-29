@@ -59,46 +59,25 @@ import { GlitchText } from 'brutx-ui-vue'
 | `both` | 双向撕裂。`::before` 走横向红、`::after` 走纵向蓝，两层叠加呈现更复杂的破碎效果 |
 
 ```vue
-<GlitchText text="HORIZONTAL" direction="horizontal" trigger="click" />
-<GlitchText text="VERTICAL" direction="vertical" trigger="click" />
-<GlitchText text="BOTH" direction="both" trigger="click" />
+<GlitchText text="HORIZONTAL" direction="horizontal" `trigger="click"` />
+<GlitchText text="VERTICAL" direction="vertical" `trigger="click"` />
+<GlitchText text="BOTH" direction="both" `trigger="click"` />
 ```
 
 > `both` 模式下两个伪元素都覆盖在原文上，色块叠加可能降低可读性，按需选用。
 
 ## 程序化控制
 
-| 方法 | 说明 |
-| ---- | ---- |
-| `play()` | 开始故障动画（设置内部 `isActive` 状态为 `true`） |
-| `stop()` | 停止故障动画（设置内部 `isActive` 状态为 `false`） |
+通过组件 ref 调用 `play()` 或 `stop()` 控制毛刺激活状态；完整成员语义见 API 参考。
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-| ---- | ---- | ------ | ---- |
-| `text` | `string` | `''` | 要显示的文本内容（与默认插槽二选一） |
-| `trigger` | `'hover' \| 'click' \| 'autoplay' \| 'none'` | `'hover'` | 动画触发时机 |
-| `interval` | `number` | `3000` | 自动播放时的周期时间 (ms) |
-| `speed` | `'slow' \| 'medium' \| 'fast'` | `'medium'` | 撕裂抖动的频率和速度 |
-| `direction` | `'horizontal' \| 'vertical' \| 'both'` | `'horizontal'` | 撕裂方向（横向/纵向/双向） |
-| `class` | `string` | — | 外部类覆盖 |
+<span id="事件"></span>
+<span id="插槽"></span>
 
-## 事件
-
-| 事件 | 参数 | 说明 |
-| ---- | ---- | ---- |
-| `mouseenter` | `MouseEvent` | 鼠标进入时触发。`hover` 模式下激活动画，`autoplay` 模式下暂停动画 |
-| `mouseleave` | `MouseEvent` | 鼠标离开时触发。`hover` 模式下停止动画，`autoplay` 模式下恢复自动播放 |
-| `click` | `MouseEvent` | 点击时触发。`click` 模式下切换动画开/关状态 |
-
-## 插槽
-
-| 插槽 | 作用域 | 说明 |
-| ---- | ------ | ---- |
-| `default` | — | 文本内容（优先于 `text` prop，允许内联样式化部分文本） |
+<ComponentApi name="glitch-text" />
 
 ## 可访问性
 
-- 组件设置了 `role="status"` 和 `aria-live="polite"`
-- 当用户偏好 `prefers-reduced-motion: reduce` 时，CSS 媒体查询自动禁用所有故障动画
+- `trigger="click"` 时根元素设置按钮语义、键盘焦点和 `aria-pressed`，并支持 Enter / Space 切换；其他触发模式不设置按钮语义
+- 用户偏好 `prefers-reduced-motion: reduce` 时，组件停用毛刺动画

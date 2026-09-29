@@ -1,0 +1,602 @@
+{
+  "id": "component:card",
+  "name": "card",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:card/Card",
+      "name": "Card",
+      "source": {
+        "file": "packages/ui/src/components/card/Card.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acard_2FCard-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"flat\" | \"default\" | \"interactive\" | \"primary\" | \"secondary\" | \"primary-subtle\" | \"secondary-subtle\" | \"success-subtle\" | \"info-subtle\" | \"accent-subtle\" | \"elevated\" | \"destructive-subtle\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent-subtle\"",
+              "\"default\"",
+              "\"destructive-subtle\"",
+              "\"elevated\"",
+              "\"flat\"",
+              "\"info-subtle\"",
+              "\"interactive\"",
+              "\"primary-subtle\"",
+              "\"primary\"",
+              "\"secondary-subtle\"",
+              "\"secondary\"",
+              "\"success-subtle\""
+            ],
+            "references": []
+          },
+          "description": "Controls the card color, shadow, or interactive appearance; the `interactive` variant also enables interactive semantics.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card/Card.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/card/Card.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2FCard-props-padding",
+          "name": "padding",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | \"none\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"none\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "The preset padding for the card content area.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card/Card.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/card/Card.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2FCard-props-texture",
+          "name": "texture",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"none\" | \"grid\" | \"dots\" | null | undefined> | undefined",
+            "literals": [
+              "\"dots\"",
+              "\"grid\"",
+              "\"none\""
+            ],
+            "references": []
+          },
+          "description": "A background texture layered over the card color: blueprint grid or halftone dots.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card/Card.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/card/Card.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2FCard-props-deco",
+          "name": "deco",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"none\" | \"hud\" | null | undefined> | undefined",
+            "literals": [
+              "\"hud\"",
+              "\"none\""
+            ],
+            "references": []
+          },
+          "description": "An optional HUD-style four-corner crosshair decoration, for visual presentation only.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card/Card.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/card/Card.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2FCard-props-interactive",
+          "name": "interactive",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Makes the card respond to clicks and Enter/Space, adding button semantics and keyboard focus.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card/Card.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/card/Card.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2FCard-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Disables focus and activation for an interactive card and sets `aria-disabled`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card/Card.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/card/Card.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2FCard-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the card root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card/Card.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/card/Card.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2FCard-events-activate",
+          "name": "activate",
+          "kind": "events",
+          "type": {
+            "text": "[event: Event]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the native event when an interactive card is activated by the primary click, Enter, or Space. It is suppressed when disabled or when the event originates from a nested interactive element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card/Card.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acard_2FCard-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Card body content, commonly composed with `CardHeader`, `CardContent`, and `CardFooter`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card/Card.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:card/CardContent",
+      "name": "CardContent",
+      "source": {
+        "file": "packages/ui/src/components/card/CardContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acard_2FCardContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the card main-content region.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card/CardContent.vue",
+            "line": 6
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2FCardContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Card body content rendered in the main-content region.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card/CardContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:card/CardDescription",
+      "name": "CardDescription",
+      "source": {
+        "file": "packages/ui/src/components/card/CardDescription.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acard_2FCardDescription-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the description text element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card/CardDescription.vue",
+            "line": 6
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2FCardDescription-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Supplementary descriptive text for the card.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card/CardDescription.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:card/CardFooter",
+      "name": "CardFooter",
+      "source": {
+        "file": "packages/ui/src/components/card/CardFooter.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acard_2FCardFooter-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the card footer action region.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card/CardFooter.vue",
+            "line": 6
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2FCardFooter-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Card footer content, commonly actions or status information.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card/CardFooter.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:card/CardHeader",
+      "name": "CardHeader",
+      "source": {
+        "file": "packages/ui/src/components/card/CardHeader.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acard_2FCardHeader-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the card header region.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card/CardHeader.vue",
+            "line": 6
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2FCardHeader-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Card header content, commonly a title and description.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card/CardHeader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:card/CardTitle",
+      "name": "CardTitle",
+      "source": {
+        "file": "packages/ui/src/components/card/CardTitle.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acard_2FCardTitle-props-as",
+          "name": "as",
+          "kind": "props",
+          "type": {
+            "text": "\"h2\" | \"h3\" | \"h5\" | \"h1\" | \"h4\" | \"h6\" | undefined",
+            "literals": [
+              "\"h1\"",
+              "\"h2\"",
+              "\"h3\"",
+              "\"h4\"",
+              "\"h5\"",
+              "\"h6\""
+            ],
+            "references": []
+          },
+          "description": "Selects which HTML heading element from `h1` through `h6` renders the title.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card/CardTitle.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'h3'",
+              "source": {
+                "file": "packages/ui/src/components/card/CardTitle.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"h3\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2FCardTitle-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the heading element.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card/CardTitle.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/card/CardTitle.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2FCardTitle-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Card title text or inline heading content.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card/CardTitle.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

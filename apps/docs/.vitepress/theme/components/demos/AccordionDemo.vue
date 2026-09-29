@@ -12,7 +12,7 @@ const activeInteractive = ref('interactive-1')
     <div class="w-full max-w-[500px] space-y-8">
         <div class="space-y-2">
             <p class="font-black text-sm">默认</p>
-            <Accordion type="single" collapsible v-model="activeItem">
+            <Accordion v-model="activeItem" type="single" collapsible>
                 <AccordionItem value="item-1">
                     <AccordionTrigger>什么是 BrutxUI？</AccordionTrigger>
                     <AccordionContent>
@@ -26,9 +26,9 @@ const activeInteractive = ref('interactive-1')
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-3" variant="interactive">
-                    <AccordionTrigger>交互动效设计哲学？</AccordionTrigger>
+                    <AccordionTrigger>展开时如何保持阅读位置？</AccordionTrigger>
                     <AccordionContent>
-                        外层卡片在悬停时提供微妙的浮起反馈，而折叠触发器与展开内容则遵循严格的视觉层级与位置稳定性，杜绝容器内部相对晃动。
+                        标题栏与面板边框保持对齐，通过背景色、箭头旋转和内容展开动画提供反馈。
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>
@@ -36,7 +36,7 @@ const activeInteractive = ref('interactive-1')
 
         <div class="space-y-2">
             <p class="font-black text-sm">扁平</p>
-            <Accordion type="single" collapsible v-model="activeFlat">
+            <Accordion v-model="activeFlat" type="single" collapsible>
                 <AccordionItem value="flat-1" variant="flat">
                     <AccordionTrigger>什么是 BrutxUI？</AccordionTrigger>
                     <AccordionContent>
@@ -54,7 +54,7 @@ const activeInteractive = ref('interactive-1')
 
         <div class="space-y-2">
             <p class="font-black text-sm">幽灵</p>
-            <Accordion type="single" collapsible v-model="activeGhost">
+            <Accordion v-model="activeGhost" type="single" collapsible>
                 <AccordionItem value="ghost-1" variant="ghost">
                     <AccordionTrigger>什么是 BrutxUI？</AccordionTrigger>
                     <AccordionContent>
@@ -72,11 +72,11 @@ const activeInteractive = ref('interactive-1')
 
         <div class="space-y-2">
             <p class="font-black text-sm">交互（interactive）</p>
-            <Accordion type="single" collapsible v-model="activeInteractive">
+            <Accordion v-model="activeInteractive" type="single" collapsible>
                 <AccordionItem value="interactive-1" variant="interactive">
                     <AccordionTrigger>悬停时会发生什么？</AccordionTrigger>
                     <AccordionContent>
-                        整个面板会出现阴影放大与位移，内容区也会带有轻微高亮，强化可点击的物理反馈。
+                        面板阴影增强，内容区带有轻微高亮，标题栏与面板保持原位。
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="interactive-2" variant="interactive">

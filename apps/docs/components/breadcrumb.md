@@ -7,6 +7,8 @@ description: 面包屑导航组件，用于展示当前页面的路径层次结�
 
 新粗野主义风格的面包屑导航组件，基于 Reka UI 的面包屑原语构建，适用于展示多级页面树，特别在中后台 Dashboard 等复杂嵌套场景中作为标配导航。
 
+默认链接以完整边框、底色和硬阴影呈现为实体标签。悬停时改变底色，按压时文字与边框整体向阴影方向移动并收起阴影；当前页使用强调色底和较小硬阴影。`folder` 变体保留底边开口的插片外观与平面层次，悬停时同样提供底色反馈。
+
 ## 预览
 
 <ComponentPreview>
@@ -88,66 +90,20 @@ import {
 | `BreadcrumbSeparator` | 分隔符，默认渲染正斜杠 `/` |
 | `BreadcrumbEllipsis` | 省略号指示（纯展示），用于折叠中间层级 |
 
-## Props
+## API 参考
 
-### Breadcrumb
+<span id="breadcrumb"></span>
+<span id="breadcrumblist"></span>
+<span id="breadcrumbitem"></span>
+<span id="breadcrumblink"></span>
+<span id="breadcrumbpage"></span>
+<span id="breadcrumbseparator"></span>
+<span id="breadcrumbellipsis"></span>
+<span id="插槽"></span>
+<span id="breadcrumbseparator-1"></span>
+<span id="breadcrumbellipsis-1"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 自定义样式类 |
-
-### BreadcrumbList
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 自定义样式类 |
-
-### BreadcrumbItem
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 自定义样式类 |
-
-### BreadcrumbLink
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `as` | `string` | `'a'` | 渲染的 HTML 标签，如 `'a'`、`'button'` 等 |
-| `asChild` | `boolean` | `false` | 是否开启 Reka UI 的 asChild，以便配合 Vue-Router 的 `<router-link>` 渲染 |
-| `class` | `string` | — | 自定义样式类 |
-
-### BreadcrumbPage
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 自定义样式类 |
-
-### BreadcrumbSeparator
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 自定义样式类 |
-
-### BreadcrumbEllipsis
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `iconSize` | `IconSize` | `'default'` | 图标尺寸，支持 `IconSize` 枚举值 |
-| `class` | `string` | — | 自定义样式类 |
-
-## 插槽
-
-### BreadcrumbSeparator
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 默认渲染正斜杠 `/`，可放入自定义的小图标组件 |
-
-### BreadcrumbEllipsis
-
-| 插槽 | 作用域 | 说明 |
-|------|--------|------|
-| `default` | — | 默认渲染 `MoreHorizontal` 图标，可放入自定义的省略图标组件 |
+<ComponentApi name="breadcrumb" />
 
 ## 可访问性
 

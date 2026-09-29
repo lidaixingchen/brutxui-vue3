@@ -60,15 +60,11 @@ const isDataLoading = ref(true)
 </template>
 ```
 
-## Props
+## API Reference
 
-### Loading Component
+<span id="loading-component"></span>
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `loading` | `boolean` | `false` | Whether to display the loading overlay |
-| `text` | `string` | `''` | Custom loading description text |
-
+<ComponentApi name="loading" />
 ## Accessibility
 
 - **Pointer Events**: The overlay has `pointer-events-none` on the loader spinner itself but locks inputs to child items to prevent double-submits.

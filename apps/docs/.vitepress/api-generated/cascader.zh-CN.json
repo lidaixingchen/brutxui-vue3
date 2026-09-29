@@ -1,0 +1,573 @@
+{
+  "id": "component:cascader",
+  "name": "cascader",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:cascader/Cascader",
+      "name": "Cascader",
+      "source": {
+        "file": "packages/ui/src/components/cascader/Cascader.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acascader_2FCascader-props-options",
+          "name": "options",
+          "kind": "props",
+          "type": {
+            "text": "CascaderOption<unknown>[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "CascaderOption",
+                "text": "export interface CascaderOption<T = unknown> {\n    value: CascaderValue\n    label: string\n    children?: CascaderOption<T>[]\n    disabled?: boolean\n    data?: T\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcascader%2Fcascader-types.ts%23CascaderOption"
+              }
+            ]
+          },
+          "description": "级联选择的嵌套选项树；每个选项通过 value、label 和可选 children 描述。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "CascaderValue[] | CascaderValue[][] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "CascaderValue",
+                "text": "export type CascaderValue = string | number",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcascader%2Fcascader-types.ts%23CascaderValue"
+              }
+            ]
+          },
+          "description": "当前选择的路径；单选为单条 CascaderValue 路径，多选为路径数组，通过 v-model 绑定。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "下拉面板的受控展开状态；通过 v-model:open 同步。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-multiple",
+          "name": "multiple",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "允许同时选择多个选项路径；开启后 modelValue 为路径数组。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-clearable",
+          "name": "clearable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示清除操作以移除已选路径。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-checkStrictly",
+          "name": "checkStrictly",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "允许独立选择有子项的父节点，而不要求选择到叶子节点。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-separator",
+          "name": "separator",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置触发器中同一路径各级标签之间显示的分隔符。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "' / '",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\" / \""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-maxDisplay",
+          "name": "maxDisplay",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "多选时触发器最多直接显示的路径数量；其余路径折叠为汇总。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "2",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "2"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"lg\" | \"sm\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "设置触发器按钮的尺寸变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "未选择路径时触发器显示的文字。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用选择器及下拉面板的用户交互。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 37
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-dropdownClass",
+          "name": "dropdownClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到级联下拉面板的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 39
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到选择器触发按钮的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 41
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置选择器触发器的无障碍标签。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 43
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: CascaderValue[] | CascaderValue[][]]",
+            "literals": [],
+            "references": [
+              {
+                "name": "CascaderValue",
+                "text": "export type CascaderValue = string | number",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcascader%2Fcascader-types.ts%23CascaderValue"
+              }
+            ]
+          },
+          "description": "选择路径变化时发出新的路径值；配合 v-model 更新受控值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "下拉面板展开状态变化时发出新布尔值，可用于 v-model:open。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-events-change",
+          "name": "change",
+          "kind": "events",
+          "type": {
+            "text": "[value: CascaderValue[] | CascaderValue[][]]",
+            "literals": [],
+            "references": [
+              {
+                "name": "CascaderValue",
+                "text": "export type CascaderValue = string | number",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fcascader%2Fcascader-types.ts%23CascaderValue"
+              }
+            ]
+          },
+          "description": "用户提交新的单选路径或多选路径集合时发出选择结果。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-events-open_2Dchange",
+          "name": "open-change",
+          "kind": "events",
+          "type": {
+            "text": "[open: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "下拉面板打开或关闭时发出当前展开状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

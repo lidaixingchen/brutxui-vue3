@@ -236,45 +236,13 @@ const color = ref(null)
 </template>
 ```
 
-### 暴露的 API
 
-| 方法/属性 | 类型 | 说明 |
-|-----------|------|------|
-| `open` | `Ref<boolean>` | 面板开关状态，可读写；设为 `true` 打开，`false` 关闭 |
+## API 参考
 
-## Props
+<span id="暴露的-api"></span>
+<span id="事件"></span>
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `modelValue` | `string \| null` | `null` | 选中的颜色值，支持 v-model |
-| `format` | `'hex' \| 'rgb' \| 'hsl'` | `'hex'` | 颜色格式 |
-| `showAlpha` | `boolean` | `false` | 是否支持透明度通道 |
-| `presets` | `string[] \| ColorPreset[]` | — | 预设颜色列表 |
-| `showPresets` | `boolean` | `true` | 是否显示预设颜色 |
-| `presetsLabel` | `string` | — | 预设区域标签文本 |
-| `showHistory` | `boolean` | `true` | 是否显示颜色历史记录 |
-| `historyMax` | `number` | `8` | 历史记录最大数量 |
-| `historyStorageKey` | `string` | `'brutx-color-history'` | 历史记录 localStorage 键名 |
-| `showInput` | `boolean` | `true` | 是否显示输入框 |
-| `placeholder` | `string` | — | 占位符文本 |
-| `disabled` | `boolean` | `false` | 禁用状态 |
-| `clearable` | `boolean` | `false` | 是否可清除 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 输入框尺寸 |
-| `name` | `string` | — | 表单字段名；提供时渲染隐藏 `<input type="hidden">`，随所属 `<form>` 提交当前颜色值；`disabled` 时隐藏 input 一并禁用，颜色值不随表单提交 |
-| `id` | `string` | — | 组件 ID |
-| `ariaLabel` | `string` | — | 无障碍标签 |
-| `open` | `boolean` | — | 面板是否打开，支持 v-model:open 双向绑定 |
-| `class` | `ClassValue` | — | 自定义类名（支持数组/对象绑定） |
-
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:modelValue` | `string \| null` | 颜色变化时触发 |
-| `change` | `string \| null` | 面板关闭且值变化时触发，也由确认/清除操作触发 |
-| `open` | — | 面板打开时触发 |
-| `close` | — | 面板关闭时触发 |
-| `update:open` | `boolean` | 面板开关状态变化时触发，配合 v-model:open 使用 |
+<ComponentApi name="color-picker" />
 
 ## 可访问性
 

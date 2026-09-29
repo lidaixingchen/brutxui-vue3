@@ -1,0 +1,1130 @@
+{
+  "id": "component:form",
+  "name": "form",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:form/Form",
+      "name": "Form",
+      "source": {
+        "file": "packages/ui/src/components/form/Form.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aform_2FForm-props-inline",
+          "name": "inline",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "让表单项在可换行的横向布局中排列。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/form/Form.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FForm-props-labelPosition",
+          "name": "labelPosition",
+          "kind": "props",
+          "type": {
+            "text": "\"right\" | \"left\" | \"top\" | undefined",
+            "literals": [
+              "\"left\"",
+              "\"right\"",
+              "\"top\""
+            ],
+            "references": []
+          },
+          "description": "left 与 right 将标签放在控件左侧并分别左对齐或右对齐；top 将标签放在控件上方。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'right'",
+              "source": {
+                "file": "packages/ui/src/components/form/Form.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"right\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FForm-props-labelWidth",
+          "name": "labelWidth",
+          "kind": "props",
+          "type": {
+            "text": "string | number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "横向标签布局的标签列宽度；数值按像素处理，字符串按 CSS 宽度处理，top 布局不使用此值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/form/Form.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FForm-props-scrollToError",
+          "name": "scrollToError",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "调用实例 validate() 且验证失败时，平滑滚动到首个错误字段；原生提交处理不使用此选项。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/form/Form.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FForm-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "\"default\" | \"lg\" | \"sm\" | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "为表单项间距、标签、说明和错误消息提供统一尺寸，并通过 FormControl 插槽向控件提供 size。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/form/Form.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FForm-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到原生 form 根元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/form/Form.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FForm-props-initialValues",
+          "name": "initialValues",
+          "kind": "props",
+          "type": {
+            "text": "Record<string, unknown> | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传给 vee-validate 的表单初始字段值；属性引用改变且表单尚未被用户修改时，使用新值重置表单。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/form/Form.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FForm-props-validationSchema",
+          "name": "validationSchema",
+          "kind": "props",
+          "type": {
+            "text": "unknown",
+            "literals": [],
+            "references": []
+          },
+          "description": "传给 vee-validate 的响应式验证模式，可使用其支持的规则或转换后的 Zod schema。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/form/Form.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FForm-events-submit",
+          "name": "submit",
+          "kind": "events",
+          "type": {
+            "text": "[values: Record<string, unknown>]",
+            "literals": [],
+            "references": []
+          },
+          "description": "表单提交且 vee-validate 验证通过后发出字段值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aform_2FForm-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "表单字段、说明与提交操作，子组件可读取 Form 提供的验证和布局上下文。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aform_2FForm-exposes-validate",
+          "name": "validate",
+          "kind": "exposes",
+          "type": {
+            "text": "() => Promise<boolean>",
+            "literals": [],
+            "references": []
+          },
+          "description": "验证全部字段并异步返回是否有效；失败且 scrollToError 开启时滚动到第一个错误字段。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 140
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Aform_2FForm-exposes-validateField",
+          "name": "validateField",
+          "kind": "exposes",
+          "type": {
+            "text": "(field: string) => Promise<boolean>",
+            "literals": [],
+            "references": []
+          },
+          "description": "按字段名称验证单个字段，并异步返回该字段是否有效。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 141
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Aform_2FForm-exposes-resetFields",
+          "name": "resetFields",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "调用 vee-validate 的 resetForm，将字段和表单状态恢复到初始状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 142
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Aform_2FForm-exposes-clearValidate",
+          "name": "clearValidate",
+          "kind": "exposes",
+          "type": {
+            "text": "(fields?: string[] | undefined) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "清除指定字段的验证错误；未传参数或传空数组时清除全部错误，保留当前字段值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 143
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Aform_2FForm-exposes-scrollToField",
+          "name": "scrollToField",
+          "kind": "exposes",
+          "type": {
+            "text": "(field: string) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "通过表单控件的 name 查找字段并平滑滚动到其顶部；同名单选组取第一个控件，找不到时不执行滚动。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/Form.vue",
+            "line": 144
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    },
+    {
+      "id": "component:form/FormConditional",
+      "name": "FormConditional",
+      "source": {
+        "file": "packages/ui/src/components/form/FormConditional.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aform_2FFormConditional-props-when",
+          "name": "when",
+          "kind": "props",
+          "type": {
+            "text": "(values: Record<string, unknown>) => boolean",
+            "literals": [],
+            "references": []
+          },
+          "description": "决定条件内容是否挂载的判断函数，需要在 Form 内使用；建议使用稳定的具名函数引用。",
+          "notes": [
+            "当前实现从表单上下文读取 values.value，缺失时传入空对象；普通的扁平字段记录不会作为完整 values 传入。"
+          ],
+          "source": {
+            "file": "packages/ui/src/components/form/FormConditional.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormConditional-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "条件为真时合并到包裹内容的 div 元素上的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormConditional.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/form/FormConditional.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormConditional-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "条件为真时挂载的字段或其他内容；条件为假时卸载整个内容区域。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormConditional.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:form/FormControl",
+      "name": "FormControl",
+      "source": {
+        "file": "packages/ui/src/components/form/FormControl.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aform_2FFormControl-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "与表单控件布局样式合并，并通过 as-child 应用到默认插槽唯一根控件的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormControl.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormControl-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{ ariaDescribedby: string | undefined; ariaInvalid: true | undefined; size: FormLayoutSize | undefined; class: string; id: string | undefined; }",
+            "literals": [],
+            "references": [
+              {
+                "name": "FormLayoutSize",
+                "text": "export type FormLayoutSize = 'sm' | 'default' | 'lg'",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fform%2Fform-variants.ts%23FormLayoutSize"
+              }
+            ]
+          },
+          "description": "放置唯一根控件。提供与 FormItem 关联的 id、class、ariaDescribedby、ariaInvalid 和 Form 的 size，可显式绑定到控件；有效错误文本存在时描述关系包含错误消息。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormControl.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:form/FormDescription",
+      "name": "FormDescription",
+      "source": {
+        "file": "packages/ui/src/components/form/FormDescription.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aform_2FFormDescription-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到字段辅助说明段落的 CSS 类；段落使用 FormItem 提供的描述 ID。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormDescription.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormDescription-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "字段的辅助说明；未提供此插槽时不渲染说明段落。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormDescription.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:form/FormField",
+      "name": "FormField",
+      "source": {
+        "file": "packages/ui/src/components/form/FormField.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aform_2FFormField-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "向 vee-validate 注册的字段名称，在组件生命周期内应保持稳定；更换名称需要处理旧字段值和错误残留。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormField.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormField-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "读取当前字段上下文的内容，通常放置 FormItem；此插槽不直接提供字段参数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormField.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:form/FormItem",
+      "name": "FormItem",
+      "source": {
+        "file": "packages/ui/src/components/form/FormItem.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aform_2FFormItem-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到字段布局容器的 CSS 类，容器按 Form 的标签位置、宽度和尺寸布局。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormItem.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormItem-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "字段标签、控件、说明及错误消息，共享此 FormItem 自动生成的关联 ID。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormItem.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:form/FormLabel",
+      "name": "FormLabel",
+      "source": {
+        "file": "packages/ui/src/components/form/FormLabel.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aform_2FFormLabel-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到字段标签的 CSS 类；存在非空错误消息时自动使用错误颜色。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormLabel.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormLabel-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "字段标签内容，通过 for 关联 FormItem 的控件 ID。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormLabel.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:form/FormMessage",
+      "name": "FormMessage",
+      "source": {
+        "file": "packages/ui/src/components/form/FormMessage.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aform_2FFormMessage-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到验证错误段落的 CSS 类；仅当字段错误去除空白后非空时渲染，并使用 role=\"alert\"。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormMessage.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:form/FormWizard",
+      "name": "FormWizard",
+      "source": {
+        "file": "packages/ui/src/components/form/FormWizard.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aform_2FFormWizard-props-steps",
+          "name": "steps",
+          "kind": "props",
+          "type": {
+            "text": "FormStep[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "FormStep",
+                "text": "export interface FormStep {\n    id: string\n    title: string\n    description?: string\n    icon?: Component\n    /** 入参为全量 values（跨步骤共享的扁平字段集合），约定只返回当前步骤相关字段的错误 */\n    validator?: (values: Record<string, unknown>) => ValidationResult\n    /** 线性导航下可跳过（不要求完成即可前进），但不豁免 validator */\n    optional?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fform%2Fform-wizard-types.ts%23FormStep"
+              }
+            ]
+          },
+          "description": "步骤配置列表，包含稳定 id、标题及可选 validator；id 决定 step-{id} 插槽名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/form-wizard-types.ts",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "Record<string, unknown> | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "跨步骤共享的扁平字段记录，通过 v-model 控制；useFormWizard().updateValues() 会浅合并字段补丁后发出更新。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/form-wizard-types.ts",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => ({})",
+              "source": {
+                "file": "packages/ui/src/components/form/FormWizard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "{  }"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-props-initialStep",
+          "name": "initialStep",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "初始步骤索引，从 0 开始，创建时约束到 steps 的有效范围。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/form-wizard-types.ts",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0",
+              "source": {
+                "file": "packages/ui/src/components/form/FormWizard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-props-validateOnNext",
+          "name": "validateOnNext",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "前进时验证当前步骤；完成时重新验证全部带 validator 的步骤，包括 optional 步骤。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/form-wizard-types.ts",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/form/FormWizard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-props-showIndicator",
+          "name": "showIndicator",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示顶部步骤指示器，用户可通过指示器请求导航。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/form-wizard-types.ts",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/form/FormWizard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-props-linear",
+          "name": "linear",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "向前导航前要求目标之前的必选步骤已完成；optional 步骤可跳过，向后导航不受此限制。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/form-wizard-types.ts",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/form/FormWizard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到带 role=\"form\" 的向导根容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/form-wizard-types.ts",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/form/FormWizard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[values: Record<string, unknown>]",
+            "literals": [],
+            "references": []
+          },
+          "description": "通过向导上下文更新字段时，发出与现有数据浅合并后的完整字段记录。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormWizard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-events-complete",
+          "name": "complete",
+          "kind": "events",
+          "type": {
+            "text": "[values: Record<string, unknown>]",
+            "literals": [],
+            "references": []
+          },
+          "description": "完成操作通过已启用的步骤验证后发出全部表单数据。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormWizard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-events-step_2Dchange",
+          "name": "step-change",
+          "kind": "events",
+          "type": {
+            "text": "[step: number, previousStep: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "导航切换或完成校验失败后回到错误步骤时，发出目标与先前的步骤索引，均从 0 开始。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormWizard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-events-validation_2Derror",
+          "name": "validation-error",
+          "kind": "events",
+          "type": {
+            "text": "[step: number, errors: Record<string, string>]",
+            "literals": [],
+            "references": []
+          },
+          "description": "步骤 validator 返回无效结果时发出步骤索引及其字段错误记录。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormWizard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-events-navigation_2Dblocked",
+          "name": "navigation-blocked",
+          "kind": "events",
+          "type": {
+            "text": "[targetStep: number, blockedStep: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "线性导航遇到未完成的必选前置步骤时，发出目标索引和阻塞步骤索引。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormWizard.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aform_2FFormWizard-slots-step_2D_7Bid_7D",
+          "name": "step-{id}",
+          "kind": "slots",
+          "type": {
+            "text": "{ step: FormStep; index: number }",
+            "literals": [],
+            "references": []
+          },
+          "description": "按步骤 id 命名的动态插槽，接收步骤配置与从 0 开始的索引。全部步骤内容保持挂载，通过 v-show 切换当前面板。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/form/FormWizard.vue",
+            "line": 217
+          },
+          "origin": "supplement"
+        }
+      ]
+    }
+  ]
+}

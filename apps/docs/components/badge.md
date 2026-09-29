@@ -204,29 +204,12 @@ import { badgeVariants } from 'brutx-ui-vue'
 const classes = badgeVariants({ variant: 'primary', size: 'sm' })
 ```
 
-## Props
+## API 参考
 
-| 属性 | 类型 | 默认值 | 说明 |
-| ---- | ---- | ------ | ---- |
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success' \| 'outline'` | `'default'` | 颜色变体 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 尺寸 |
-| `dot` | `boolean` | `false` | 是否显示圆点指示器 |
-| `pulse` | `boolean` | `false` | 是否启用脉冲动画（隐含 `dot`） |
-| `closable` | `boolean` | `false` | 是否显示关闭按钮 |
-| `class` | `string` | — | 自定义样式类 |
+<span id="事件"></span>
+<span id="插槽"></span>
 
-## 事件
-
-| 事件 | 参数 | 说明 |
-| ---- | ---- | ---- |
-| `close` | — | 点击关闭按钮时触发（已阻止事件冒泡） |
-
-## 插槽
-
-| 插槽 | 作用域 | 说明 |
-| ---- | ------ | ---- |
-| `default` | — | 徽标文本内容 |
-| `icon` | — | 徽标前的图标内容 |
+<ComponentApi name="badge" />
 
 ## 可访问性
 

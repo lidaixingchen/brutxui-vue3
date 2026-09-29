@@ -1,614 +1,669 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { Search, ChevronDown, ChevronRight, X, Copy, Check } from '@lucide/vue'
-import apiManifest from '../../api-manifest.json'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue'
+import { Search, X } from '@lucide/vue'
+import { Button, Input } from 'brutx-ui-vue'
+import { API_KINDS, type ApiGroup, type ApiKind } from '../../api-types'
+import ComponentApiMember from './ComponentApiMember.vue'
+import {
+    getApiComponentAnchorId,
+    getApiKindAnchorId,
+    getApiMemberAnchorId,
+    isLongApiType,
+    matchesApiMember,
+    matchesApiName,
+    type ComponentApiMemberLabels,
+} from './component-api-view'
 
-interface ComponentPropMeta {
-    name: string
-    type: string
-    required: boolean
-    default: string
-    description: string
+type ApiSelection = ApiKind | 'all'
+type CopyState = 'idle' | 'copied' | 'failed'
+
+interface ComponentApiLabels {
+    title: string
+    search: string
+    searchPlaceholder: string
+    clearSearch: string
+    componentFilter: string
+    allComponents: string
+    kinds: Record<ApiSelection, string>
+    matchCount: string
+    nameColumn: string
+    descriptionColumn: string
+    typeColumn: string
+    defaultColumn: string
+    noMetadata: string
+    noApi: string
+    missingSubcomponent: string
+    noSearchMatches: string
+    noKindMatches: string
+    clearFilters: string
 }
-
-interface ComponentEventMeta {
-    name: string
-    payload: string
-    description: string
-}
-
-interface ComponentSlotMeta {
-    name: string
-    props: string
-    description: string
-}
-
-interface ComponentExposeMeta {
-    name: string
-    type: string
-    description: string
-}
-
-interface ComponentDocMeta {
-    name: string
-    kebabName: string
-    dirName: string
-    category: string
-    description: string
-    filePath: string
-    props: ComponentPropMeta[]
-    events: ComponentEventMeta[]
-    slots: ComponentSlotMeta[]
-    exposes: ComponentExposeMeta[]
-}
-
-interface ComponentGroupDoc {
-    name: string
-    category: string
-    components: ComponentDocMeta[]
-}
-
-interface ApiManifestData {
-    generatedAt: string
-    totalComponents: number
-    totalGroups: number
-    groups: Record<string, ComponentGroupDoc>
-    components: Record<string, ComponentDocMeta>
-}
-
-const manifest = apiManifest as unknown as ApiManifestData
 
 interface Props {
     name: string
+    data: ApiGroup
     subcomponent?: string
-    hideSubcomponents?: boolean
-    defaultTab?: 'all' | 'props' | 'events' | 'slots' | 'exposes'
+    defaultTab?: ApiSelection
+    instance?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
     subcomponent: undefined,
-    hideSubcomponents: false,
     defaultTab: 'all',
+    instance: undefined,
 })
 
-// 搜索关键词
+const labels = computed(() => getLabels(props.data.locale))
+const searchId = 'component-api-search-' + useId()
 const searchQuery = ref('')
-// 当前激活的一级分类 Tab ('all' | 'props' | 'events' | 'slots' | 'exposes')
-const activeSection = ref<'all' | 'props' | 'events' | 'slots' | 'exposes'>(props.defaultTab)
+const activeKind = ref<ApiSelection>('all')
+const selectedComponentId = ref('all')
+const collapsedSections = ref(new Set<string>())
+const collapsedTypes = ref(new Set<string>())
+const copyStates = ref<Record<string, CopyState>>({})
+const isHydrated = ref(false)
+const copyTimers = new Map<string, ReturnType<typeof setTimeout>>()
+const copyOperations = new Map<string, number>()
+let pageGeneration = 0
 
-// 各区块独立展开折叠状态
-const isPropsExpanded = ref(true)
-const isEventsExpanded = ref(true)
-const isSlotsExpanded = ref(true)
-const isExposesExpanded = ref(true)
-
-// 复制提示状态记录
-const copiedPropKey = ref<string | null>(null)
-
-function copyToClipboard(text: string, key: string) {
-    if (typeof navigator !== 'undefined' && navigator.clipboard) {
-        navigator.clipboard.writeText(text).then(() => {
-            copiedPropKey.value = key
-            setTimeout(() => {
-                if (copiedPropKey.value === key) {
-                    copiedPropKey.value = null
-                }
-            }, 1500)
-        }).catch(() => {})
-    }
-}
-
-// 解析可用的组件列表
-const resolvedComponents = computed<ComponentDocMeta[]>(() => {
-    const rawName = props.name.trim()
-    const lowerName = rawName.toLowerCase()
-    const kebabName = rawName.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase()
-
-    // 1. 尝试从 groups 寻找组件组（如 "button", "alert", "dialog"）
-    const group = manifest.groups[lowerName] || manifest.groups[kebabName] || manifest.groups[rawName]
-    if (group && group.components.length > 0) {
-        return group.components
-    }
-
-    // 2. 尝试从 components 单一组件表寻找
-    const single = manifest.components[rawName] || manifest.components[lowerName] || manifest.components[kebabName]
-    if (single) {
-        return [single]
-    }
-
-    return []
+const isNameResolved = computed(() => matchesApiName(props.name, props.data))
+const fixedComponent = computed(() => {
+    if (!props.subcomponent) return undefined
+    const requestedName = props.subcomponent.trim().toLocaleLowerCase()
+    return props.data.components.find(component =>
+        component.name.trim().toLocaleLowerCase() === requestedName ||
+        component.id.trim().toLocaleLowerCase() === requestedName,
+    )
 })
 
-// 当前选中的子组件名称
-const activeComponentName = ref<string>('')
+const baseComponents = computed(() => {
+    if (!isNameResolved.value) return []
+    if (props.subcomponent) return fixedComponent.value ? [fixedComponent.value] : []
+    return props.data.components
+})
 
-// 初始化与同步选中组件
-const currentComponent = computed<ComponentDocMeta | null>(() => {
-    const list = resolvedComponents.value
-    if (list.length === 0) return null
+const scopedComponents = computed(() => {
+    if (selectedComponentId.value === 'all') return baseComponents.value
+    return baseComponents.value.filter(component => component.id === selectedComponentId.value)
+})
 
-    if (props.subcomponent) {
-        const found = list.find(
-            c => c.name.toLowerCase() === props.subcomponent?.toLowerCase()
+const allScopedMembers = computed(() => scopedComponents.value.flatMap(component =>
+    component.members.map(member => ({ component, member, anchorId: getApiMemberAnchorId(member, props.instance) })),
+))
+
+const anchorableMembers = computed(() => baseComponents.value.flatMap(component =>
+    component.members.map(member => ({ component, member, anchorId: getApiMemberAnchorId(member, props.instance) })),
+))
+
+const searchMatchedMembers = computed(() => allScopedMembers.value.filter(({ member }) =>
+    matchesApiMember(member, searchQuery.value),
+))
+
+const kindCounts = computed<Record<ApiKind, number>>(() => Object.fromEntries(
+    API_KINDS.map(kind => [kind, searchMatchedMembers.value.filter(item => item.member.kind === kind).length]),
+) as Record<ApiKind, number>)
+
+const visibleMembers = computed(() => activeKind.value === 'all'
+    ? searchMatchedMembers.value
+    : searchMatchedMembers.value.filter(item => item.member.kind === activeKind.value),
+)
+
+const hasMembersInScope = computed(() => scopedComponents.value.some(component => component.members.length > 0))
+const isSubcomponentMissing = computed(() => !!props.subcomponent && !!isNameResolved.value && !fixedComponent.value)
+const isEmptyApi = computed(() => isNameResolved.value && !isSubcomponentMissing.value && !hasMembersInScope.value)
+const showSearchEmpty = computed(() => hasMembersInScope.value && searchQuery.value.trim().length > 0 && searchMatchedMembers.value.length === 0)
+const showKindEmpty = computed(() => hasMembersInScope.value && !showSearchEmpty.value && visibleMembers.value.length === 0)
+const showComponentName = computed(() => !props.subcomponent && props.data.components.length > 1)
+
+const componentSections = computed(() => scopedComponents.value.map(component => {
+    const kinds = API_KINDS.map(kind => {
+        const sectionId = getApiKindAnchorId(component, kind, props.instance)
+        const members = searchMatchedMembers.value.filter(item =>
+            item.component.id === component.id &&
+            item.member.kind === kind &&
+            (activeKind.value === 'all' || activeKind.value === kind),
         )
-        if (found) return found
-    }
+        return {
+            kind,
+            sectionId,
+            tableId: sectionId + '-members',
+            members,
+        }
+    }).filter(section => section.members.length > 0)
 
-    if (activeComponentName.value) {
-        const found = list.find(c => c.name === activeComponentName.value)
-        if (found) return found
-    }
-
-    return list[0]
-})
-
-// 过滤后的 Props
-const filteredProps = computed<ComponentPropMeta[]>(() => {
-    const comp = currentComponent.value
-    if (!comp) return []
-    const q = searchQuery.value.trim().toLowerCase()
-    if (!q) return comp.props
-    return comp.props.filter(
-        p => p.name.toLowerCase().includes(q) ||
-             p.type.toLowerCase().includes(q) ||
-             p.description.toLowerCase().includes(q)
-    )
-})
-
-// 过滤后的 Events
-const filteredEvents = computed<ComponentEventMeta[]>(() => {
-    const comp = currentComponent.value
-    if (!comp) return []
-    const q = searchQuery.value.trim().toLowerCase()
-    if (!q) return comp.events
-    return comp.events.filter(
-        e => e.name.toLowerCase().includes(q) ||
-             e.payload.toLowerCase().includes(q) ||
-             e.description.toLowerCase().includes(q)
-    )
-})
-
-// 过滤后的 Slots
-const filteredSlots = computed<ComponentSlotMeta[]>(() => {
-    const comp = currentComponent.value
-    if (!comp) return []
-    const q = searchQuery.value.trim().toLowerCase()
-    if (!q) return comp.slots
-    return comp.slots.filter(
-        s => s.name.toLowerCase().includes(q) ||
-             s.props.toLowerCase().includes(q) ||
-             s.description.toLowerCase().includes(q)
-    )
-})
-
-// 过滤后的 Exposes
-const filteredExposes = computed<ComponentExposeMeta[]>(() => {
-    const comp = currentComponent.value
-    if (!comp) return []
-    const q = searchQuery.value.trim().toLowerCase()
-    if (!q) return comp.exposes
-    return comp.exposes.filter(
-        exp => exp.name.toLowerCase().includes(q) ||
-               exp.type.toLowerCase().includes(q) ||
-               exp.description.toLowerCase().includes(q)
-    )
-})
-
-// 统计总命中数
-const totalMatchesCount = computed<number>(() => {
-    return (
-        filteredProps.value.length +
-        filteredEvents.value.length +
-        filteredSlots.value.length +
-        filteredExposes.value.length
-    )
-})
-
-// 类型解析为徽标与字面量集合
-function parseTypeChips(typeStr: string): { isUnion: boolean; parts: string[] } {
-    const trimmed = typeStr.trim()
-    const unionParts = trimmed.split(/\s*\|\s*/).map(p => p.trim()).filter(Boolean)
-    const isUnion = unionParts.length > 1 && unionParts.every(p => /^'[^']*'|"[^"]*"|boolean|number|string$/.test(p))
     return {
-        isUnion,
-        parts: isUnion ? unionParts : [trimmed],
+        component,
+        headingId: getApiComponentAnchorId(component, props.instance),
+        kinds,
+    }
+}).filter(section => section.kinds.length > 0))
+
+const visibleCountText = computed(() => labels.value.matchCount.replace('{count}', String(visibleMembers.value.length)))
+
+function getLabels(locale: ApiGroup['locale']): ComponentApiLabels {
+    if (locale === 'en') {
+        return {
+            title: 'API reference',
+            search: 'Search API members',
+            searchPlaceholder: 'Search names, types, or descriptions',
+            clearSearch: 'Clear search',
+            componentFilter: 'Filter by component',
+            allComponents: 'All components',
+            kinds: { all: 'All', props: 'Props', events: 'Events', slots: 'Slots', exposes: 'Exposes' },
+            matchCount: '{count} matching API members',
+            nameColumn: 'Name',
+            descriptionColumn: 'Description',
+            typeColumn: 'Type',
+            defaultColumn: 'Default',
+            noMetadata: 'API metadata could not be resolved for “{name}”.',
+            noApi: 'This component group has no API members yet.',
+            missingSubcomponent: 'The requested component “{name}” is not part of this API group.',
+            noSearchMatches: 'No API members match “{query}”.',
+            noKindMatches: 'No members in this category match the current filters.',
+            clearFilters: 'Clear filters',
+        }
+    }
+
+    return {
+        title: 'API 参考',
+        search: '搜索 API 成员',
+        searchPlaceholder: '搜索名称、类型或说明',
+        clearSearch: '清空搜索',
+        componentFilter: '按组件筛选',
+        allComponents: '全部组件',
+        kinds: { all: '全部', props: '属性', events: '事件', slots: '插槽', exposes: '暴露成员' },
+        matchCount: '匹配 {count} 项 API 成员',
+        nameColumn: '名称',
+        descriptionColumn: '说明',
+        typeColumn: '类型',
+        defaultColumn: '默认值',
+        noMetadata: '无法解析“{name}”的 API 元数据。',
+        noApi: '此组件组暂时没有 API 成员。',
+        missingSubcomponent: '组件“{name}”不属于此 API 组。',
+        noSearchMatches: '没有匹配“{query}”的 API 成员。',
+        noKindMatches: '当前分类中没有符合筛选条件的成员。',
+        clearFilters: '清空筛选',
     }
 }
 
-function getTypeBadgeStyle(type: string): string {
-    const t = type.toLowerCase()
-    if (t === 'boolean') {
-        return 'bg-emerald-100 dark:bg-emerald-950 text-emerald-900 dark:text-emerald-300 border-emerald-500'
+const memberLabels = computed<ComponentApiMemberLabels>(() => {
+    if (props.data.locale === 'en') {
+        return {
+            required: 'Required',
+            nullable: 'Nullable',
+            readonly: 'Readonly',
+            notApplicable: '—',
+            notDeclared: 'Not declared',
+            declaration: 'Declaration',
+            resolution: 'Resolved value',
+            fallback: 'Runtime fallback',
+            source: 'Source',
+            typeReferences: 'Referenced types',
+            typeReferenceDefinition: 'Type definition',
+            locateTypeReference: 'Locate {name} type definition',
+            copyName: 'Copy member name',
+            copyType: 'Copy full type',
+            copied: 'Copied',
+            copyFailed: 'Copy failed',
+            expandType: 'Show full type',
+            collapseType: 'Collapse type',
+            typeLiterals: 'Literal values',
+        }
     }
-    if (t === 'string' || t.startsWith("'") || t.startsWith('"')) {
-        return 'bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300 border-amber-500'
+
+    return {
+        required: '必填',
+        nullable: '可空',
+        readonly: '只读',
+        notApplicable: '—',
+        notDeclared: '未声明默认值',
+        declaration: '声明',
+        resolution: '解析值',
+        fallback: '运行时回退',
+        source: '来源',
+        typeReferences: '关联类型',
+        typeReferenceDefinition: '类型定义',
+        locateTypeReference: '定位 {name} 类型定义',
+        copyName: '复制成员名称',
+        copyType: '复制完整类型',
+        copied: '已复制',
+        copyFailed: '复制失败',
+        expandType: '展开完整类型',
+        collapseType: '收起类型',
+        typeLiterals: '字面量',
     }
-    if (t === 'number') {
-        return 'bg-sky-100 dark:bg-sky-950 text-sky-900 dark:text-sky-300 border-sky-500'
-    }
-    if (t.includes('=>') || t.includes('function')) {
-        return 'bg-rose-100 dark:bg-rose-950 text-rose-900 dark:text-rose-300 border-rose-500'
-    }
-    return 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-200 border-zinc-400'
+})
+
+function chooseKind(kind: ApiSelection) {
+    if (kind !== 'all' && kindCounts.value[kind] === 0) return
+    activeKind.value = kind
 }
+
+function isSectionExpanded(sectionId: string): boolean {
+    return !collapsedSections.value.has(sectionId)
+}
+
+function toggleSection(sectionId: string) {
+    const next = new Set(collapsedSections.value)
+    if (next.has(sectionId)) next.delete(sectionId)
+    else next.add(sectionId)
+    collapsedSections.value = next
+}
+
+function isTypeCollapsed(anchorId: string): boolean {
+    return collapsedTypes.value.has(anchorId)
+}
+
+function toggleType(anchorId: string) {
+    const next = new Set(collapsedTypes.value)
+    if (next.has(anchorId)) next.delete(anchorId)
+    else next.add(anchorId)
+    collapsedTypes.value = next
+}
+
+function collapseLongTypes() {
+    collapsedTypes.value = new Set(props.data.components.flatMap(component =>
+        component.members
+            .filter(member => isLongApiType(member.type.text))
+            .map(member => getApiMemberAnchorId(member, props.instance)),
+    ))
+}
+
+function applyDefaultKind() {
+    const requestedKind = props.defaultTab
+    activeKind.value = requestedKind && requestedKind !== 'all' && kindCounts.value[requestedKind] > 0
+        ? requestedKind
+        : 'all'
+}
+
+function clearCopyTimer(key: string) {
+    const timer = copyTimers.get(key)
+    if (timer) clearTimeout(timer)
+    copyTimers.delete(key)
+}
+
+async function copyToClipboard(text: string, key: string) {
+    clearCopyTimer(key)
+    const generation = pageGeneration
+    const operation = (copyOperations.get(key) ?? 0) + 1
+    copyOperations.set(key, operation)
+
+    try {
+        if (typeof navigator === 'undefined' || !navigator.clipboard?.writeText) {
+            throw new Error('Clipboard API unavailable')
+        }
+        await navigator.clipboard.writeText(text)
+        if (generation !== pageGeneration || copyOperations.get(key) !== operation) return
+        copyStates.value = { ...copyStates.value, [key]: 'copied' }
+    } catch {
+        if (generation !== pageGeneration || copyOperations.get(key) !== operation) return
+        copyStates.value = { ...copyStates.value, [key]: 'failed' }
+    }
+
+    copyTimers.set(key, setTimeout(() => {
+        if (generation !== pageGeneration || copyOperations.get(key) !== operation) return
+        const next = { ...copyStates.value }
+        delete next[key]
+        copyStates.value = next
+        copyTimers.delete(key)
+        copyOperations.delete(key)
+    }, COPY_FEEDBACK_DURATION_MS))
+}
+
+function clearCopyFeedback() {
+    pageGeneration += 1
+    copyOperations.clear()
+    for (const timer of copyTimers.values()) clearTimeout(timer)
+    copyTimers.clear()
+}
+
+function decodeHash(value: string): string {
+    const raw = value.startsWith('#') ? value.slice(1) : value
+    try {
+        return decodeURIComponent(raw)
+    } catch {
+        return raw
+    }
+}
+
+function matchesHash(anchor: string, hash: string): boolean {
+    return anchor === hash || decodeHash(anchor) === hash
+}
+
+function revealHashTarget(): boolean {
+    if (typeof window === 'undefined' || !window.location.hash) return false
+    const hash = decodeHash(window.location.hash)
+    const member = anchorableMembers.value.find(item => matchesHash(item.anchorId, hash))
+    const component = baseComponents.value.find(item =>
+        matchesHash(getApiComponentAnchorId(item, props.instance), hash) ||
+        API_KINDS.some(kind => matchesHash(getApiKindAnchorId(item, kind, props.instance), hash)),
+    )
+    const componentAnchors = component ? [getApiComponentAnchorId(component, props.instance), ...API_KINDS.map(kind => getApiKindAnchorId(component, kind, props.instance))] : []
+    const targetId = member?.anchorId ?? componentAnchors.find(anchor => matchesHash(anchor, hash))
+    if (!targetId) return false
+
+    searchQuery.value = ''
+    selectedComponentId.value = 'all'
+    activeKind.value = 'all'
+    collapsedSections.value = new Set()
+    if (member) {
+        const next = new Set(collapsedTypes.value)
+        next.delete(member.anchorId)
+        collapsedTypes.value = next
+    }
+
+    void nextTick(() => {
+        const target = document.getElementById(targetId)
+        if (!target) return
+
+        target.focus({ preventScroll: true })
+        const targetTop = window.scrollY + target.getBoundingClientRect().top - HASH_TARGET_TOP_OFFSET_PX
+        if (Math.abs(targetTop - window.scrollY) > HASH_TARGET_SCROLL_THRESHOLD_PX) {
+            window.scrollTo({ top: Math.max(0, targetTop), behavior: 'auto' })
+        }
+    })
+    return true
+}
+
+function resetPageState() {
+    searchQuery.value = ''
+    selectedComponentId.value = 'all'
+    activeKind.value = 'all'
+    collapsedSections.value = new Set()
+    collapsedTypes.value = new Set()
+    copyStates.value = {}
+    clearCopyFeedback()
+
+    if (isHydrated.value) {
+        collapseLongTypes()
+        if (!revealHashTarget()) applyDefaultKind()
+    }
+}
+
+function handleHashChange() {
+    if (!revealHashTarget()) return
+}
+
+watch(
+    () => [props.name, props.data, props.data.id, props.data.locale, props.subcomponent, props.defaultTab, props.instance] as const,
+    resetPageState,
+)
+
+watch([searchQuery, selectedComponentId], () => {
+    if (activeKind.value !== 'all' && kindCounts.value[activeKind.value] === 0) activeKind.value = 'all'
+})
+
+onMounted(() => {
+    isHydrated.value = true
+    window.addEventListener('hashchange', handleHashChange)
+    window.addEventListener('popstate', handleHashChange)
+    collapseLongTypes()
+    if (!revealHashTarget()) applyDefaultKind()
+})
+
+onBeforeUnmount(() => {
+    window.removeEventListener('hashchange', handleHashChange)
+    window.removeEventListener('popstate', handleHashChange)
+    clearCopyFeedback()
+})
+
+const COPY_FEEDBACK_DURATION_MS = 1800
+const HASH_TARGET_TOP_OFFSET_PX = 96
+const HASH_TARGET_SCROLL_THRESHOLD_PX = 4
 </script>
 
 <template>
-    <div class="component-api-root vp-raw my-8 text-black dark:text-zinc-100 font-sans">
-        <!-- 未找到元数据警示框 -->
-        <div
-            v-if="resolvedComponents.length === 0"
-            class="p-4 border-3 border-black dark:border-white bg-amber-200 dark:bg-amber-950 text-black dark:text-amber-100 shadow-[4px_4px_0px_0px_#000] dark:shadow-[4px_4px_0px_0px_#fff]"
-        >
-            <div class="font-black text-base flex items-center gap-2">
-                <span>⚠️</span>
-                <span>未找到组件 "{{ name }}" 的 API 元数据</span>
-            </div>
-            <p class="mt-2 text-sm">
-                请确认组件名称无误（大小写敏感或 kebab-case），或在项目根目录运行
-                <code class="px-1.5 py-0.5 font-mono bg-black text-white dark:bg-white dark:text-black">pnpm --filter brutx-ui-vue docs:manifest</code>
-                更新元数据缓存。
-            </p>
+    <section class="component-api-root vp-raw my-8 overflow-hidden border-3 border-brutal rounded-brutal bg-brutal-bg text-brutal-fg shadow-brutal">
+        <header class="border-b-3 border-brutal bg-brutal-muted px-4 py-3 sm:px-5">
+            <h2 class="font-black tracking-tight text-lg sm:text-xl">{{ labels.title }}</h2>
+            <p class="mt-1 text-sm text-brutal-muted-foreground">{{ props.data.name || props.name }}</p>
+        </header>
+
+        <div v-if="!isNameResolved" class="p-5" role="status">
+            <p class="font-bold">{{ labels.noMetadata.replace('{name}', props.name) }}</p>
         </div>
-
-        <div v-else class="border-3 border-black dark:border-white bg-white dark:bg-zinc-900 shadow-[5px_5px_0px_0px_#000] dark:shadow-[5px_5px_0px_0px_#fff]">
-            <!-- 顶栏：子组件切换 Tabs（若多于 1 个且未被隐藏） -->
-            <div
-                v-if="resolvedComponents.length > 1 && !hideSubcomponents"
-                class="flex flex-wrap items-center gap-2 px-4 pt-4 pb-3 border-b-3 border-black dark:border-white bg-zinc-100 dark:bg-zinc-800"
-            >
-                <span class="text-xs font-black uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mr-1 select-none">
-                    组件成员:
-                </span>
-                <button
-                    v-for="comp in resolvedComponents"
-                    :key="comp.name"
-                    type="button"
-                    class="px-3 py-1 text-xs font-mono font-bold tracking-tight border-2 border-black dark:border-white transition-transform active:translate-x-0.5 active:translate-y-0.5"
-                    :class="currentComponent?.name === comp.name
-                        ? 'bg-black text-white dark:bg-white dark:text-black shadow-[2px_2px_0px_0px_#000] dark:shadow-[2px_2px_0px_0px_#fff]'
-                        : 'bg-white dark:bg-zinc-900 text-black dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-700'"
-                    @click="activeComponentName = comp.name"
-                >
-                    &lt;{{ comp.name }} /&gt;
-                </button>
+        <div v-else-if="isSubcomponentMissing" class="p-5" role="status">
+            <p class="font-bold">{{ labels.missingSubcomponent.replace('{name}', props.subcomponent || '') }}</p>
+        </div>
+        <div v-else-if="isEmptyApi" class="p-5" role="status">
+            <p class="font-bold">{{ labels.noApi }}</p>
+        </div>
+        <template v-else>
+            <div class="flex flex-col gap-4 border-b-2 border-brutal bg-brutal-muted px-4 py-4 md:flex-row md:items-end md:justify-between sm:px-5">
+                <div class="min-w-0 flex-1">
+                    <label :for="searchId" class="mb-2 block text-sm font-bold">{{ labels.search }}</label>
+                    <div class="relative max-w-2xl">
+                        <Search class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brutal-muted-foreground" aria-hidden="true" />
+                        <Input
+                            :id="searchId"
+                            v-model="searchQuery"
+                            type="search"
+                            variant="default"
+                            size="sm"
+                            :placeholder="labels.searchPlaceholder"
+                            :aria-labelledby="searchId + '-label'"
+                            :class="searchQuery ? 'pr-12 pl-10' : 'pl-10'"
+                        />
+                        <span :id="searchId + '-label'" class="sr-only">{{ labels.search }}</span>
+                        <Button
+                            v-if="searchQuery"
+                            size="icon"
+                            variant="ghost"
+                            class="absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2"
+                            :aria-label="labels.clearSearch"
+                            :title="labels.clearSearch"
+                            @click="searchQuery = ''"
+                        >
+                            <X class="h-4 w-4" aria-hidden="true" />
+                        </Button>
+                    </div>
+                </div>
+                <p class="shrink-0 text-sm font-bold text-brutal-muted-foreground" role="status" aria-live="polite">
+                    {{ visibleCountText }}
+                </p>
             </div>
 
-            <!-- 工具栏：搜索筛选与分类过滤 -->
-            <div class="p-4 border-b-2 border-black/80 dark:border-white/80 bg-zinc-50 dark:bg-zinc-900/90 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-                <!-- 搜索框 -->
-                <div class="relative flex-1 max-w-md">
-                    <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 dark:text-zinc-400 pointer-events-none" />
-                    <input
-                        v-model="searchQuery"
-                        type="text"
-                        placeholder="搜索属性、事件、插槽或类型..."
-                        class="w-full pl-9 pr-8 py-1.5 text-xs font-mono border-2 border-black dark:border-white bg-white dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-brutal-ring shadow-[2px_2px_0px_0px_#000] dark:shadow-[2px_2px_0px_0px_#fff] placeholder:text-zinc-400"
-                    />
-                    <button
-                        v-if="searchQuery"
-                        type="button"
-                        class="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-zinc-500 hover:text-black dark:hover:text-white"
-                        @click="searchQuery = ''"
+            <div v-if="!props.subcomponent && props.data.components.length > 1" class="border-b-2 border-brutal px-4 py-3 sm:px-5">
+                <p class="mb-2 text-sm font-bold">{{ labels.componentFilter }}</p>
+                <div class="flex flex-wrap gap-2" role="group" :aria-label="labels.componentFilter">
+                    <Button
+                        size="sm"
+                        :variant="selectedComponentId === 'all' ? 'primary' : 'outline'"
+                        :aria-pressed="selectedComponentId === 'all'"
+                        @click="selectedComponentId = 'all'"
                     >
-                        <X class="w-3.5 h-3.5" />
-                    </button>
-                </div>
-
-                <!-- 分类过滤 Chips -->
-                <div class="flex flex-wrap items-center gap-1.5 text-xs font-mono font-bold">
-                    <button
-                        type="button"
-                        class="px-2 py-1 border border-black dark:border-white transition-all"
-                        :class="activeSection === 'all'
-                            ? 'bg-black text-white dark:bg-white dark:text-black shadow-[1px_1px_0px_0px_#000]'
-                            : 'bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200'"
-                        @click="activeSection = 'all'"
+                        {{ labels.allComponents }}
+                    </Button>
+                    <Button
+                        v-for="component in props.data.components"
+                        :key="component.id"
+                        size="sm"
+                        :variant="selectedComponentId === component.id ? 'primary' : 'outline'"
+                        :aria-pressed="selectedComponentId === component.id"
+                        @click="selectedComponentId = component.id"
                     >
-                        全部 ({{ totalMatchesCount }})
-                    </button>
-                    <button
-                        type="button"
-                        class="px-2 py-1 border border-black dark:border-white transition-all"
-                        :class="activeSection === 'props'
-                            ? 'bg-black text-white dark:bg-white dark:text-black shadow-[1px_1px_0px_0px_#000]'
-                            : 'bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200'"
-                        @click="activeSection = 'props'"
-                    >
-                        Props ({{ filteredProps.length }})
-                    </button>
-                    <button
-                        v-if="currentComponent?.events.length || filteredEvents.length"
-                        type="button"
-                        class="px-2 py-1 border border-black dark:border-white transition-all"
-                        :class="activeSection === 'events'
-                            ? 'bg-black text-white dark:bg-white dark:text-black shadow-[1px_1px_0px_0px_#000]'
-                            : 'bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200'"
-                        @click="activeSection = 'events'"
-                    >
-                        Events ({{ filteredEvents.length }})
-                    </button>
-                    <button
-                        v-if="currentComponent?.slots.length || filteredSlots.length"
-                        type="button"
-                        class="px-2 py-1 border border-black dark:border-white transition-all"
-                        :class="activeSection === 'slots'
-                            ? 'bg-black text-white dark:bg-white dark:text-black shadow-[1px_1px_0px_0px_#000]'
-                            : 'bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200'"
-                        @click="activeSection = 'slots'"
-                    >
-                        Slots ({{ filteredSlots.length }})
-                    </button>
-                    <button
-                        v-if="currentComponent?.exposes.length || filteredExposes.length"
-                        type="button"
-                        class="px-2 py-1 border border-black dark:border-white transition-all"
-                        :class="activeSection === 'exposes'
-                            ? 'bg-black text-white dark:bg-white dark:text-black shadow-[1px_1px_0px_0px_#000]'
-                            : 'bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200'"
-                        @click="activeSection = 'exposes'"
-                    >
-                        Expose ({{ filteredExposes.length }})
-                    </button>
+                        {{ component.name }}
+                    </Button>
                 </div>
             </div>
 
-            <!-- 空搜索状态 -->
-            <div
-                v-if="totalMatchesCount === 0"
-                class="p-8 text-center bg-white dark:bg-zinc-900"
-            >
-                <div class="text-zinc-400 font-mono text-sm">未匹配到包含 "{{ searchQuery }}" 的 API 项目</div>
-                <button
-                    type="button"
-                    class="mt-3 px-3 py-1 text-xs font-mono font-bold border-2 border-black dark:border-white bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 shadow-[2px_2px_0px_0px_#000] dark:shadow-[2px_2px_0px_0px_#fff]"
-                    @click="searchQuery = ''"
+            <nav class="flex flex-wrap gap-2 border-b-2 border-brutal px-4 py-3 sm:px-5" :aria-label="labels.title">
+                <Button
+                    size="sm"
+                    :variant="activeKind === 'all' ? 'secondary' : 'outline'"
+                    :aria-pressed="activeKind === 'all'"
+                    @click="chooseKind('all')"
                 >
-                    清空筛选
-                </button>
+                    {{ labels.kinds.all }} ({{ searchMatchedMembers.length }})
+                </Button>
+                <Button
+                    v-for="kind in API_KINDS"
+                    :key="kind"
+                    size="sm"
+                    :variant="activeKind === kind ? 'secondary' : 'outline'"
+                    :aria-pressed="activeKind === kind"
+                    @click="chooseKind(kind)"
+                >
+                    {{ labels.kinds[kind] }} ({{ kindCounts[kind] }})
+                </Button>
+            </nav>
+
+            <div v-if="showSearchEmpty" class="p-6 text-center" role="status">
+                <p class="font-bold">{{ labels.noSearchMatches.replace('{query}', searchQuery.trim()) }}</p>
+                <Button size="sm" variant="outline" class="mt-3" @click="searchQuery = ''">{{ labels.clearFilters }}</Button>
             </div>
-
-            <!-- 数据表格区 -->
-            <div v-else class="divide-y-3 divide-black dark:divide-white">
-                <!-- 1. Props 区块 -->
-                <section v-if="(activeSection === 'all' || activeSection === 'props') && filteredProps.length > 0">
-                    <button
-                        type="button"
-                        class="w-full px-4 py-2.5 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-750 flex items-center justify-between font-black text-xs uppercase tracking-wider text-left border-b border-black dark:border-white select-none transition-colors"
-                        @click="isPropsExpanded = !isPropsExpanded"
-                    >
-                        <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 bg-amber-400 inline-block border border-black dark:border-white" />
-                            <span>Props 属性 ({{ filteredProps.length }})</span>
-                        </div>
-                        <component :is="isPropsExpanded ? ChevronDown : ChevronRight" class="w-4 h-4" />
-                    </button>
-
-                    <div v-show="isPropsExpanded" class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse text-xs">
-                            <thead>
-                                <tr class="bg-zinc-50 dark:bg-zinc-900/60 border-b border-zinc-300 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 font-mono font-bold">
-                                    <th class="py-2.5 px-4 w-44">属性名</th>
-                                    <th class="py-2.5 px-4 min-w-[200px]">说明</th>
-                                    <th class="py-2.5 px-4 min-w-[220px]">类型</th>
-                                    <th class="py-2.5 px-4 w-40">默认值</th>
+            <div v-else-if="showKindEmpty" class="p-6 text-center" role="status">
+                <p class="font-bold">{{ labels.noKindMatches }}</p>
+                <Button size="sm" variant="outline" class="mt-3" @click="chooseKind('all')">{{ labels.kinds.all }}</Button>
+            </div>
+            <div v-else class="divide-y-3 divide-brutal">
+                <section v-for="section in componentSections" :key="section.component.id" :id="section.headingId" tabindex="-1" class="component-api-group">
+                    <h3 class="border-b-2 border-brutal bg-brutal-accent px-4 py-3 font-black tracking-tight text-brutal-accent-foreground sm:px-5">
+                        {{ section.component.name }}
+                    </h3>
+                    <section v-for="kindSection in section.kinds" :key="kindSection.kind" :id="kindSection.sectionId" class="component-api-kind">
+                        <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            class="component-api-kind-toggle !h-auto w-full justify-between rounded-brutal border-b-2 border-brutal bg-brutal-muted px-4 py-3 text-left font-bold transition-colors hover:bg-brutal-secondary sm:px-5"
+                            :aria-expanded="isSectionExpanded(kindSection.sectionId)"
+                            :aria-controls="kindSection.tableId"
+                            @click="toggleSection(kindSection.sectionId)"
+                        >
+                            <span>{{ labels.kinds[kindSection.kind] }} ({{ kindSection.members.length }})</span>
+                            <span aria-hidden="true">{{ isSectionExpanded(kindSection.sectionId) ? '−' : '+' }}</span>
+                        </Button>
+                        <table v-show="isSectionExpanded(kindSection.sectionId)" :id="kindSection.tableId" class="component-api-table w-full text-left">
+                            <caption class="sr-only">{{ section.component.name }} — {{ labels.kinds[kindSection.kind] }}</caption>
+                            <thead class="bg-brutal-bg text-sm font-bold">
+                                <tr>
+                                    <th scope="col">{{ labels.nameColumn }}</th>
+                                    <th scope="col">{{ labels.descriptionColumn }}</th>
+                                    <th scope="col">{{ labels.typeColumn }}</th>
+                                    <th scope="col">{{ labels.defaultColumn }}</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 font-sans">
-                                <tr
-                                    v-for="prop in filteredProps"
-                                    :key="prop.name"
-                                    class="hover:bg-zinc-50 dark:hover:bg-zinc-800/60 transition-colors group"
-                                >
-                                    <!-- 属性名 -->
-                                    <td class="py-3 px-4 font-mono align-top">
-                                        <div class="flex items-center gap-1.5">
-                                            <span class="font-bold text-black dark:text-white">{{ prop.name }}</span>
-                                            <span
-                                                v-if="prop.required"
-                                                class="px-1 text-[9px] font-black uppercase tracking-wider bg-rose-500 text-white border border-black dark:border-white shadow-[1px_1px_0px_0px_#000]"
-                                                title="必填属性"
-                                            >
-                                                必填
-                                            </span>
-                                            <button
-                                                type="button"
-                                                class="opacity-0 group-hover:opacity-100 text-zinc-400 hover:text-black dark:hover:text-white p-0.5 transition-opacity"
-                                                title="复制属性名"
-                                                @click="copyToClipboard(prop.name, `prop-${prop.name}`)"
-                                            >
-                                                <component :is="copiedPropKey === `prop-${prop.name}` ? Check : Copy" class="w-3 h-3" />
-                                            </button>
-                                        </div>
-                                    </td>
-
-                                    <!-- 说明 -->
-                                    <td class="py-3 px-4 text-zinc-700 dark:text-zinc-300 align-top leading-relaxed">
-                                        <div v-html="prop.description" />
-                                    </td>
-
-                                    <!-- 类型 -->
-                                    <td class="py-3 px-4 font-mono align-top">
-                                        <div class="flex flex-wrap gap-1 items-center">
-                                            <template v-if="parseTypeChips(prop.type).isUnion">
-                                                <span
-                                                    v-for="chip in parseTypeChips(prop.type).parts"
-                                                    :key="chip"
-                                                    class="px-1.5 py-0.5 border text-[11px] font-bold rounded-none"
-                                                    :class="getTypeBadgeStyle(chip)"
-                                                >
-                                                    {{ chip }}
-                                                </span>
-                                            </template>
-                                            <template v-else>
-                                                <span
-                                                    class="px-1.5 py-0.5 border text-[11px] font-bold rounded-none break-all"
-                                                    :class="getTypeBadgeStyle(prop.type)"
-                                                >
-                                                    {{ prop.type }}
-                                                </span>
-                                            </template>
-                                        </div>
-                                    </td>
-
-                                    <!-- 默认值 -->
-                                    <td class="py-3 px-4 font-mono align-top text-zinc-600 dark:text-zinc-400">
-                                        <span
-                                            v-if="prop.default !== '-'"
-                                            class="px-1.5 py-0.5 border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-[11px] font-bold break-all"
-                                        >
-                                            {{ prop.default }}
-                                        </span>
-                                        <span v-else class="text-zinc-400 dark:text-zinc-600">-</span>
-                                    </td>
-                                </tr>
+                            <tbody>
+                                <ComponentApiMember
+                                    v-for="item in kindSection.members"
+                                    :key="item.anchorId"
+                                    :member="item.member"
+                                    :component="item.component"
+                                    :locale="props.data.locale"
+                                    :anchor-id="item.anchorId"
+                                    :type-id="item.anchorId + '-type'"
+                                    :show-component="showComponentName"
+                                    :type-collapsed="isTypeCollapsed(item.anchorId)"
+                                    :name-copy-state="copyStates[item.anchorId + '-name'] || 'idle'"
+                                    :type-copy-state="copyStates[item.anchorId + '-type-copy'] || 'idle'"
+                                    :labels="memberLabels"
+                                    @copy="copyToClipboard"
+                                    @toggle-type="toggleType"
+                                />
                             </tbody>
                         </table>
-                    </div>
-                </section>
-
-                <!-- 2. Events 区块 -->
-                <section v-if="(activeSection === 'all' || activeSection === 'events') && filteredEvents.length > 0">
-                    <button
-                        type="button"
-                        class="w-full px-4 py-2.5 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-750 flex items-center justify-between font-black text-xs uppercase tracking-wider text-left border-b border-black dark:border-white select-none transition-colors"
-                        @click="isEventsExpanded = !isEventsExpanded"
-                    >
-                        <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 bg-emerald-400 inline-block border border-black dark:border-white" />
-                            <span>Events 事件 ({{ filteredEvents.length }})</span>
-                        </div>
-                        <component :is="isEventsExpanded ? ChevronDown : ChevronRight" class="w-4 h-4" />
-                    </button>
-
-                    <div v-show="isEventsExpanded" class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse text-xs">
-                            <thead>
-                                <tr class="bg-zinc-50 dark:bg-zinc-900/60 border-b border-zinc-300 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 font-mono font-bold">
-                                    <th class="py-2.5 px-4 w-44">事件名</th>
-                                    <th class="py-2.5 px-4 min-w-[200px]">说明</th>
-                                    <th class="py-2.5 px-4 min-w-[220px]">参数定义 (Payload)</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 font-sans">
-                                <tr
-                                    v-for="event in filteredEvents"
-                                    :key="event.name"
-                                    class="hover:bg-zinc-50 dark:hover:bg-zinc-800/60 transition-colors"
-                                >
-                                    <td class="py-3 px-4 font-mono font-bold text-black dark:text-white align-top">
-                                        @{{ event.name }}
-                                    </td>
-                                    <td class="py-3 px-4 text-zinc-700 dark:text-zinc-300 align-top leading-relaxed">
-                                        <div v-html="event.description" />
-                                    </td>
-                                    <td class="py-3 px-4 font-mono align-top">
-                                        <span class="px-1.5 py-0.5 border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-[11px] font-bold break-all">
-                                            {{ event.payload }}
-                                        </span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <!-- 3. Slots 区块 -->
-                <section v-if="(activeSection === 'all' || activeSection === 'slots') && filteredSlots.length > 0">
-                    <button
-                        type="button"
-                        class="w-full px-4 py-2.5 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-750 flex items-center justify-between font-black text-xs uppercase tracking-wider text-left border-b border-black dark:border-white select-none transition-colors"
-                        @click="isSlotsExpanded = !isSlotsExpanded"
-                    >
-                        <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 bg-sky-400 inline-block border border-black dark:border-white" />
-                            <span>Slots 插槽 ({{ filteredSlots.length }})</span>
-                        </div>
-                        <component :is="isSlotsExpanded ? ChevronDown : ChevronRight" class="w-4 h-4" />
-                    </button>
-
-                    <div v-show="isSlotsExpanded" class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse text-xs">
-                            <thead>
-                                <tr class="bg-zinc-50 dark:bg-zinc-900/60 border-b border-zinc-300 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 font-mono font-bold">
-                                    <th class="py-2.5 px-4 w-44">插槽名</th>
-                                    <th class="py-2.5 px-4 min-w-[200px]">说明</th>
-                                    <th class="py-2.5 px-4 min-w-[220px]">作用域参数 (Props)</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 font-sans">
-                                <tr
-                                    v-for="slot in filteredSlots"
-                                    :key="slot.name"
-                                    class="hover:bg-zinc-50 dark:hover:bg-zinc-800/60 transition-colors"
-                                >
-                                    <td class="py-3 px-4 font-mono font-bold text-black dark:text-white align-top">
-                                        #{{ slot.name }}
-                                    </td>
-                                    <td class="py-3 px-4 text-zinc-700 dark:text-zinc-300 align-top leading-relaxed">
-                                        <div v-html="slot.description" />
-                                    </td>
-                                    <td class="py-3 px-4 font-mono align-top">
-                                        <span
-                                            v-if="slot.props !== '-'"
-                                            class="px-1.5 py-0.5 border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-[11px] font-bold break-all"
-                                        >
-                                            {{ slot.props }}
-                                        </span>
-                                        <span v-else class="text-zinc-400 dark:text-zinc-600">-</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <!-- 4. Expose 区块 -->
-                <section v-if="(activeSection === 'all' || activeSection === 'exposes') && filteredExposes.length > 0">
-                    <button
-                        type="button"
-                        class="w-full px-4 py-2.5 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-750 flex items-center justify-between font-black text-xs uppercase tracking-wider text-left border-b border-black dark:border-white select-none transition-colors"
-                        @click="isExposesExpanded = !isExposesExpanded"
-                    >
-                        <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 bg-rose-400 inline-block border border-black dark:border-white" />
-                            <span>Expose 暴露方法与属性 ({{ filteredExposes.length }})</span>
-                        </div>
-                        <component :is="isExposesExpanded ? ChevronDown : ChevronRight" class="w-4 h-4" />
-                    </button>
-
-                    <div v-show="isExposesExpanded" class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse text-xs">
-                            <thead>
-                                <tr class="bg-zinc-50 dark:bg-zinc-900/60 border-b border-zinc-300 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 font-mono font-bold">
-                                    <th class="py-2.5 px-4 w-44">方法 / 属性名</th>
-                                    <th class="py-2.5 px-4 min-w-[200px]">说明</th>
-                                    <th class="py-2.5 px-4 min-w-[220px]">签名 / 类型</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 font-sans">
-                                <tr
-                                    v-for="expose in filteredExposes"
-                                    :key="expose.name"
-                                    class="hover:bg-zinc-50 dark:hover:bg-zinc-800/60 transition-colors"
-                                >
-                                    <td class="py-3 px-4 font-mono font-bold text-black dark:text-white align-top">
-                                        {{ expose.name }}
-                                    </td>
-                                    <td class="py-3 px-4 text-zinc-700 dark:text-zinc-300 align-top leading-relaxed">
-                                        <div v-html="expose.description" />
-                                    </td>
-                                    <td class="py-3 px-4 font-mono align-top">
-                                        <span class="px-1.5 py-0.5 border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-[11px] font-bold break-all">
-                                            {{ expose.type }}
-                                        </span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    </section>
                 </section>
             </div>
-        </div>
-    </div>
+        </template>
+    </section>
 </template>
+
+<style scoped>
+.component-api-root {
+    --vp-code-color: var(--brutal-fg);
+}
+
+.component-api-root :deep(a) {
+    color: var(--brutal-fg);
+}
+
+.component-api-table {
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.component-api-table th,
+.component-api-table td {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.component-api-table th {
+    border-bottom: 2px solid var(--brutal-border-color);
+    padding: 0.75rem;
+    text-align: left;
+}
+
+.component-api-table th:nth-child(1) {
+    width: 18%;
+}
+
+.component-api-table th:nth-child(2) {
+    width: 34%;
+}
+
+.component-api-table th:nth-child(3) {
+    width: 32%;
+}
+
+.component-api-table th:nth-child(4) {
+    width: 16%;
+}
+
+.component-api-table :deep(.component-api-member + .component-api-member) {
+    border-top: 1px solid color-mix(in srgb, var(--brutal-border-color) 28%, transparent);
+}
+
+.component-api-table :deep(.component-api-member),
+.component-api-group,
+.component-api-kind {
+    scroll-margin-top: 6rem;
+}
+
+@media (max-width: 48rem) {
+    .component-api-table,
+    .component-api-table tbody {
+        display: block;
+        width: 100%;
+    }
+
+    .component-api-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    .component-api-table :deep(tr.component-api-member) {
+        display: flex;
+        flex-direction: column;
+        margin: 0.75rem;
+        border: 3px solid var(--brutal-border-color);
+        background: var(--brutal-bg);
+    }
+
+    .component-api-table :deep(tr.component-api-member td) {
+        display: grid;
+        grid-template-columns: minmax(5.5rem, 24%) minmax(0, 1fr);
+        gap: 0.75rem;
+        border-bottom: 1px solid color-mix(in srgb, var(--brutal-border-color) 28%, transparent);
+    }
+
+    .component-api-table :deep(tr.component-api-member td::before) {
+        content: attr(data-label);
+        color: var(--brutal-muted-foreground);
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .component-api-table :deep(tr.component-api-member td:last-child) {
+        border-bottom: 0;
+    }
+}
+</style>

@@ -1,0 +1,266 @@
+{
+  "id": "component:tour",
+  "name": "tour",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:tour/Tour",
+      "name": "Tour",
+      "source": {
+        "file": "packages/ui/src/components/tour/Tour.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atour_2FTour-props-steps",
+          "name": "steps",
+          "kind": "props",
+          "type": {
+            "text": "TourStep[]",
+            "literals": [],
+            "references": [
+              {
+                "name": "TourStep",
+                "text": "export interface TourStep {\n    target: string | HTMLElement\n    title?: string\n    description?: string\n    placement?: 'top' | 'bottom' | 'left' | 'right'\n    mask?: boolean\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Ftour%2Ftypes.ts%23TourStep"
+              }
+            ]
+          },
+          "description": "Provides ordered tour steps. Each step targets an element by CSS selector or HTMLElement and may include a title, description, placement, and mask setting.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tour/types.ts",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atour_2FTour-props-mask",
+          "name": "mask",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether the mask is shown outside the current target. It defaults to true and can be overridden by the current TourStep.mask.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tour/types.ts",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/tour/Tour.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atour_2FTour-props-scrollIntoViewOptions",
+          "name": "scrollIntoViewOptions",
+          "kind": "props",
+          "type": {
+            "text": "ScrollIntoViewOptions | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the options passed to scrollIntoView before showing a step. When omitted, block: center and inline: nearest are used.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tour/types.ts",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tour/Tour.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atour_2FTour-props-current",
+          "name": "current",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The zero-based current tour step, synchronized through v-model:current and defaulting to the first step.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tour/Tour.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0",
+              "source": {
+                "file": "packages/ui/src/components/tour/Tour.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atour_2FTour-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Controls whether the tour is open, synchronized through v-model:open and defaulting to open.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tour/Tour.vue"
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/tour/Tour.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atour_2FTour-events-close",
+          "name": "close",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted when the user skips or finishes the tour and it closes.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tour/Tour.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atour_2FTour-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[value: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Emits the new boolean open state when visibility changes so v-model:open can be synchronized.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tour/Tour.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atour_2FTour-events-finish",
+          "name": "finish",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted when the user chooses Finish on the final step.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tour/Tour.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atour_2FTour-events-update_3Acurrent",
+          "name": "update:current",
+          "kind": "events",
+          "type": {
+            "text": "[value: number]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the new index when the current step changes so v-model:current can be synchronized.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tour/Tour.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atour_2FTour-events-skip",
+          "name": "skip",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted when the user chooses to skip the tour.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tour/Tour.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

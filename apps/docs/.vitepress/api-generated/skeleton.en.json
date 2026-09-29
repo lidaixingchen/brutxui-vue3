@@ -1,0 +1,751 @@
+{
+  "id": "component:skeleton",
+  "name": "skeleton",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:skeleton/Skeleton",
+      "name": "Skeleton",
+      "source": {
+        "file": "packages/ui/src/components/skeleton/Skeleton.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Askeleton_2FSkeleton-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "Sets the color variant used by the skeleton placeholder.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/Skeleton.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/Skeleton.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeleton-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | \"xl\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\"",
+              "\"xl\""
+            ],
+            "references": []
+          },
+          "description": "Sets the skeleton height; when shape is circle, it also determines the circle diameter.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/Skeleton.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/Skeleton.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeleton-props-shape",
+          "name": "shape",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"rect\" | \"circle\" | null | undefined> | undefined",
+            "literals": [
+              "\"circle\"",
+              "\"rect\""
+            ],
+            "references": []
+          },
+          "description": "Selects a rectangular or circular placeholder; a circle keeps equal width and height.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/Skeleton.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'rect'",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/Skeleton.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"rect\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeleton-props-effect",
+          "name": "effect",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"none\" | \"scanlines\" | \"ascii\" | null | undefined> | undefined",
+            "literals": [
+              "\"ascii\"",
+              "\"none\"",
+              "\"scanlines\""
+            ],
+            "references": []
+          },
+          "description": "Selects the loading texture: none uses the default pulse, scanlines adds a CRT texture, and ascii renders flickering terminal blocks.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/Skeleton.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'none'",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/Skeleton.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"none\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeleton-props-width",
+          "name": "width",
+          "kind": "props",
+          "type": {
+            "text": "string | number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Overrides the skeleton width. Numbers are converted to pixels and strings are used as CSS widths; for a circle this also sets the height.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/Skeleton.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/Skeleton.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeleton-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes applied to the skeleton status container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/Skeleton.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/Skeleton.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeleton-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Optional placeholder content. With the ascii effect, default terminal-block characters are rendered when this slot is empty.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/Skeleton.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:skeleton/SkeletonAvatar",
+      "name": "SkeletonAvatar",
+      "source": {
+        "file": "packages/ui/src/components/skeleton/SkeletonAvatar.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Askeleton_2FSkeletonAvatar-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "Sets the color variant of the circular avatar placeholder.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonAvatar.vue",
+            "line": 6
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonAvatar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeletonAvatar-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | \"xl\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\"",
+              "\"xl\""
+            ],
+            "references": []
+          },
+          "description": "Sets the diameter of the circular avatar placeholder.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonAvatar.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonAvatar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeletonAvatar-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes applied to the avatar skeleton circle.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonAvatar.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonAvatar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:skeleton/SkeletonCard",
+      "name": "SkeletonCard",
+      "source": {
+        "file": "packages/ui/src/components/skeleton/SkeletonCard.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Askeleton_2FSkeletonCard-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "Sets the color variant used by the card’s skeleton placeholders.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonCard.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeletonCard-props-label",
+          "name": "label",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the accessible name of the card status region; an empty string falls back to the localized loading text.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonCard.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeletonCard-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes applied to the outer skeleton card container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonCard.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonCard.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:skeleton/SkeletonTable",
+      "name": "SkeletonTable",
+      "source": {
+        "file": "packages/ui/src/components/skeleton/SkeletonTable.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Askeleton_2FSkeletonTable-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "Sets the color variant used by the table placeholder cells.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonTable.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeletonTable-props-rows",
+          "name": "rows",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the placeholder data row count. It defaults to 5, non-finite values use that default, and the result is clamped from 0 to 100.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonTable.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_ROWS",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "5"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeletonTable-props-columns",
+          "name": "columns",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the placeholder column count. It defaults to 4, non-finite values use that default, and the result is clamped from 0 to 20.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonTable.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_COLUMNS",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "4"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeletonTable-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes applied to the skeleton table container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonTable.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonTable.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "component:skeleton/SkeletonText",
+      "name": "SkeletonText",
+      "source": {
+        "file": "packages/ui/src/components/skeleton/SkeletonText.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Askeleton_2FSkeletonText-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\""
+            ],
+            "references": []
+          },
+          "description": "Sets the color variant used by the text-line skeletons.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonText.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeletonText-props-lines",
+          "name": "lines",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the number of placeholder text lines. It defaults to 3 and is truncated and clamped from 0 to 100.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonText.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "3",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "3"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeletonText-props-lastLineWidth",
+          "name": "lastLineWidth",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Sets the CSS width of the last line, defaulting to 60%; preceding lines use the full available width.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonText.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'60%'",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"60%\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Askeleton_2FSkeletonText-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Additional CSS classes applied to the multi-line skeleton text container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/skeleton/SkeletonText.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/skeleton/SkeletonText.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

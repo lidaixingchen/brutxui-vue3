@@ -157,45 +157,18 @@ type MessageStatus = 'sending' | 'sent' | 'delivered' | 'read' | 'failed'
 
 > **Note:** `status` is a closed union type at the type level, but message data usually comes from backend APIs and may carry values outside the enum at runtime; in that case ChatBubble silently ignores the status (no status icon is rendered) without throwing an error.
 
-## Props
+## API Reference
 
-### ChatBubble
+<span id="chatbubble-1"></span>
+<span id="chatcontainer-1"></span>
 
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `message` | `ChatMessage` | — | Message data object (required) |
-| `color` | `'default' \| 'primary' \| 'accent'` | `'default'` | Background color scheme for sent bubbles; only effective for `variant="sent"`, received/system are unaffected |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Bubble padding/text size, also adjusts avatar size |
-| `showAvatar` | `boolean` | `true` | Whether to show the avatar area (system messages always hidden) |
-| `showStatus` | `boolean` | `true` | Whether to show the message status icon (sent messages only) |
-| `showTimestamp` | `boolean` | `true` | Whether to show the timestamp |
-| `dateFormat` | `(date: Date) => string` | — | Custom date formatting function; uses `Date.toLocaleString()` when unset |
-| `class` | `string` | — | Custom CSS class for the bubble |
-
-### ChatContainer
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `messages` | `ChatMessage[]` | — | Message array (required) |
-| `groupByTime` | `boolean` | `false` | Whether to group by time (today/yesterday/date) |
-| `groupInterval` | `number` | `5` | Time grouping interval (minutes) within the same date, clamped to a minimum of 1; adjacent messages whose gap **exceeds** this interval (strictly `>`) are split into a new group |
-| `showAvatar` | `boolean` | `true` | Whether to show avatars |
-| `showStatus` | `boolean` | `true` | Whether to show message status |
-| `showTimestamp` | `boolean` | `true` | Whether to show timestamps |
-| `dateFormat` | `(date: Date) => string` | — | Custom date formatting function, also used for group date labels (non today/yesterday) and interval-split group time labels |
-| `class` | `string` | — | Custom CSS class |
+<ComponentApi name="chat-bubble" />
 
 > **Note:** When `groupByTime` is `true`:
 > - Messages with a valid timestamp are **sorted by timestamp ascending**, so unordered input still yields continuous, non-jumping date groups; messages without a valid timestamp (missing, or display-only strings like `'14:30'`, `'yesterday'` that cannot be parsed) stay anchored at their original index — they do not sink to the end and keep their relative order;
 > - Group boundaries are compared by the real calendar date (year/month/day), decoupled from the display string produced by `dateFormat`: even if a custom format outputs a time-only dimension (e.g., HH:mm), messages from different days are never merged and same-day messages are never split into separate date groups;
 > - Groups are separated by dividers and date labels (today/yesterday/specific date);
 > - Within the same date, adjacent messages whose time gap exceeds `groupInterval` minutes are further split into separate groups that show the specific time (HH:mm, customizable via `dateFormat`), without repeating the date label.
-
-## Slots
-
-| Slot | Scope | Description |
-|------|--------|------|
-| `default` | — | Custom bubble content (defaults to displaying `message.content`) |
 
 ## Accessibility
 

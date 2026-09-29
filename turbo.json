@@ -56,9 +56,36 @@
                 "package.json"
             ]
         },
+        "brutx-ui-vue#docs:manifest": {
+            "cache": false,
+            "outputs": [],
+            "inputs": [
+                "$TURBO_DEFAULT$",
+                "api-contract.ts",
+                "package.json",
+                "scripts/api-docs/**",
+                "scripts/generate-component-api.ts",
+                "src/**",
+                "../../apps/docs/.vitepress/api-content/**",
+                "../../apps/docs/.vitepress/api-types.ts",
+                "../../apps/docs/.vitepress/api-generated/**",
+                "../../apps/docs/.vitepress/config.ts",
+                "../../apps/docs/components/**",
+                "../../apps/docs/en/components/**",
+                "../../apps/docs/package.json",
+                "../../apps/docs/tsconfig.json",
+                "../../packages/shared/package.json",
+                "../../packages/shared/src/**",
+                "../../packages/shared/tsconfig.json",
+                "../../pnpm-lock.yaml",
+                "../../pnpm-workspace.yaml",
+                "../../turbo.json"
+            ]
+        },
         "docs#build:artifact": {
             "dependsOn": [
-                "brutx-ui-vue#build:artifact"
+                "brutx-ui-vue#build:artifact",
+                "brutx-ui-vue#docs:manifest"
             ],
             "outputs": [
                 ".vitepress/dist/**"
@@ -67,6 +94,7 @@
                 "$TURBO_DEFAULT$",
                 "**/*.md",
                 ".vitepress/config.ts",
+                ".vitepress/api-generated/**",
                 ".vitepress/theme/**/*",
                 "public/**/*",
                 "package.json",

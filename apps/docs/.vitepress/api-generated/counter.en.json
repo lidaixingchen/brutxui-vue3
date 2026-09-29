@@ -1,0 +1,747 @@
+{
+  "id": "component:counter",
+  "name": "counter",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:counter/Counter",
+      "name": "Counter",
+      "source": {
+        "file": "packages/ui/src/components/counter/Counter.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acounter_2FCounter-props-to",
+          "name": "to",
+          "kind": "props",
+          "type": {
+            "text": "number",
+            "literals": [],
+            "references": []
+          },
+          "description": "The required target value for the count-up animation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-from",
+          "name": "from",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The starting value; `play()` also restarts from this value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-duration",
+          "name": "duration",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Animation duration in milliseconds; non-positive values use the component default duration.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_COUNTER_DURATION",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "2000"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-decimals",
+          "name": "decimals",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The number of displayed decimal places; values are formatted to this precision.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-decimalSeparator",
+          "name": "decimalSeparator",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The separator displayed between the integer and fractional parts.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'.'",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\".\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-prefix",
+          "name": "prefix",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Text displayed before the number, such as a currency symbol.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "''",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-suffix",
+          "name": "suffix",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Text displayed after the number, such as a percent sign or plus sign.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "''",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-prefixComponent",
+          "name": "prefixComponent",
+          "kind": "props",
+          "type": {
+            "text": "Component | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "A display component used instead of the text prefix. It is mounted again for layout measurement, so avoid internal state and side effects.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-suffixComponent",
+          "name": "suffixComponent",
+          "kind": "props",
+          "type": {
+            "text": "Component | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "A display component used instead of the text suffix. It is mounted again for layout measurement, so avoid internal state and side effects.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-animatePrefix",
+          "name": "animatePrefix",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Whether to render `prefixComponent` when provided; when false, the `prefix` text is shown.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-animateSuffix",
+          "name": "animateSuffix",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Whether to render `suffixComponent` when provided; when false, the `suffix` text is shown.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-separator",
+          "name": "separator",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The thousands separator. An empty string disables digit grouping while retaining `decimalSeparator`.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "','",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\",\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-easing",
+          "name": "easing",
+          "kind": "props",
+          "type": {
+            "text": "\"ease-out\" | \"linear\" | \"ease-in-out\" | undefined",
+            "literals": [
+              "\"ease-in-out\"",
+              "\"ease-out\"",
+              "\"linear\""
+            ],
+            "references": []
+          },
+          "description": "The easing function applied to animation progress.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 30
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'ease-out'",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"ease-out\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-autoStart",
+          "name": "autoStart",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Starts the animation on mount. When false, the value stays at `from` and `to`/`from` changes do not auto-play.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"success\" | \"danger\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"danger\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "The number text color variant; it does not change the card background.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"lg\" | \"sm\" | \"md\" | \"xl\" | null | undefined> | undefined",
+            "literals": [
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\""
+            ],
+            "references": []
+          },
+          "description": "The preset font size for the number.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'md'",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"md\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Optional heading text. Providing it enables container layout; title-slot content takes precedence.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-card",
+          "name": "card",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Wraps the value in a card container with border, padding, and shadow.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-valueStyle",
+          "name": "valueStyle",
+          "kind": "props",
+          "type": {
+            "text": "CSSProperties | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Inline styles applied to the wrapper around the value.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Classes added to the outer container in container mode, or to the number element when container mode is off.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 37
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/counter/Counter.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-events-complete",
+          "name": "complete",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted when the animation reaches `to`; it is also emitted when reduced-motion preferences cause the value to jump directly to the target.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-slots-title",
+          "name": "title",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Replaces the `title` prop content; providing this slot also enables container layout.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-exposes-play",
+          "name": "play",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Cancels the current animation and restarts from `from`; under reduced-motion preferences it jumps directly to the target.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 137
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Acounter_2FCounter-exposes-stop",
+          "name": "stop",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "Cancels the current animation and stops further value updates.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/counter/Counter.vue",
+            "line": 137
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    }
+  ]
+}

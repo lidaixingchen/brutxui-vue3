@@ -1,0 +1,404 @@
+{
+  "id": "component:sheet",
+  "name": "sheet",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:sheet/SheetContent",
+      "name": "SheetContent",
+      "source": {
+        "file": "packages/ui/src/components/sheet/SheetContent.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Asheet_2FSheetContent-props-side",
+          "name": "side",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"right\" | \"bottom\" | \"left\" | \"top\" | null | undefined> | undefined",
+            "literals": [
+              "\"bottom\"",
+              "\"left\"",
+              "\"right\"",
+              "\"top\""
+            ],
+            "references": []
+          },
+          "description": "面板从视口哪一侧滑入，控制定位、边框与过渡方向；left 时内置关闭按钮位于左上角，其余方向位于右上角。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetContent.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'right'",
+              "source": {
+                "file": "packages/ui/src/components/sheet/SheetContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"right\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetContent-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到浮动内容面板的 CSS 类；其余属性和监听器通过 $attrs 传给 Reka UI DialogContent。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetContent.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/sheet/SheetContent.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetContent-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "面板主体，可组合 SheetHeader、内容区域与 SheetFooter；本地化的内置关闭按钮位于内容之后。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetContent.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetContent-events-openAutoFocus",
+          "name": "openAutoFocus",
+          "kind": "events",
+          "type": {
+            "text": "[event: Event]",
+            "literals": [],
+            "references": []
+          },
+          "description": "通过 $attrs 转发的 Reka UI 事件，在内容打开时准备自动聚焦时触发，可调用 preventDefault() 接管聚焦。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetContent.vue",
+            "line": 61
+          },
+          "origin": "fallthrough"
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetContent-events-closeAutoFocus",
+          "name": "closeAutoFocus",
+          "kind": "events",
+          "type": {
+            "text": "[event: Event]",
+            "literals": [],
+            "references": []
+          },
+          "description": "通过 $attrs 转发的 Reka UI 事件，在内容关闭时准备恢复焦点时触发，可阻止默认聚焦。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetContent.vue",
+            "line": 61
+          },
+          "origin": "fallthrough"
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetContent-events-interactOutside",
+          "name": "interactOutside",
+          "kind": "events",
+          "type": {
+            "text": "[event: PointerDownOutsideEvent | FocusOutsideEvent]",
+            "literals": [],
+            "references": []
+          },
+          "description": "通过 $attrs 转发的 Reka UI 事件，在面板外发生指针按下或焦点交互时触发，可阻止由该交互引起的关闭。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetContent.vue",
+            "line": 61
+          },
+          "origin": "fallthrough"
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetContent-events-escapeKeyDown",
+          "name": "escapeKeyDown",
+          "kind": "events",
+          "type": {
+            "text": "[event: KeyboardEvent]",
+            "literals": [],
+            "references": []
+          },
+          "description": "通过 $attrs 转发的 Reka UI 事件，在顶层面板收到 Escape 按键时触发，可阻止默认关闭。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetContent.vue",
+            "line": 61
+          },
+          "origin": "fallthrough"
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetContent-events-pointerDownOutside",
+          "name": "pointerDownOutside",
+          "kind": "events",
+          "type": {
+            "text": "[event: PointerDownOutsideEvent]",
+            "literals": [],
+            "references": []
+          },
+          "description": "通过 $attrs 转发的 Reka UI 事件，在面板外按下指针时触发，可阻止默认关闭。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetContent.vue",
+            "line": 61
+          },
+          "origin": "fallthrough"
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetContent-events-focusOutside",
+          "name": "focusOutside",
+          "kind": "events",
+          "type": {
+            "text": "[event: FocusOutsideEvent]",
+            "literals": [],
+            "references": []
+          },
+          "description": "通过 $attrs 转发的 Reka UI 事件，在焦点移到面板外时触发，可阻止该外部交互的默认处理。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetContent.vue",
+            "line": 61
+          },
+          "origin": "fallthrough"
+        }
+      ]
+    },
+    {
+      "id": "component:sheet/SheetDescription",
+      "name": "SheetDescription",
+      "source": {
+        "file": "packages/ui/src/components/sheet/SheetDescription.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Asheet_2FSheetDescription-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到 Reka UI 描述原语的 CSS 类，默认使用辅助说明文字样式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetDescription.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetDescription-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "面板的辅助说明，用于无障碍描述关联；插槽没有有效内容时不渲染描述元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetDescription.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:sheet/SheetFooter",
+      "name": "SheetFooter",
+      "source": {
+        "file": "packages/ui/src/components/sheet/SheetFooter.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Asheet_2FSheetFooter-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到面板底部操作区的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetFooter.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetFooter-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "底部按钮或其他操作内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetFooter.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:sheet/SheetHeader",
+      "name": "SheetHeader",
+      "source": {
+        "file": "packages/ui/src/components/sheet/SheetHeader.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Asheet_2FSheetHeader-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到面板头部容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetHeader.vue",
+            "line": 7
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetHeader-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "面板标题、描述与其他头部内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetHeader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:sheet/SheetTitle",
+      "name": "SheetTitle",
+      "source": {
+        "file": "packages/ui/src/components/sheet/SheetTitle.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Asheet_2FSheetTitle-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到 Reka UI 标题原语的 CSS 类，默认使用粗体标题样式。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetTitle.vue",
+            "line": 8
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Asheet_2FSheetTitle-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "面板标题，用于无障碍名称关联；插槽没有有效内容时不渲染标题元素。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sheet/SheetTitle.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

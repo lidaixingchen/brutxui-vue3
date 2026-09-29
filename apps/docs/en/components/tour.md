@@ -192,37 +192,12 @@ interface TourStep {
 import type { TourStep, TourProps } from 'brutx-ui-vue'
 ```
 
-## Props
+## API Reference
 
-### TourStep
+<span id="tourstep-1"></span>
+<span id="tour-1"></span>
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `target` | `string \| HTMLElement` | — | Target element as a CSS selector string or DOM element reference (required) |
-| `title` | `string` | — | Step title |
-| `description` | `string` | — | Step description text |
-| `placement` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'bottom'` | Popover direction relative to the target element |
-| `mask` | `boolean` | — | Whether to show the mask for this step; inherits from the component-level `mask` prop when not specified |
-
-### Tour
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `steps` | `TourStep[]` | — | Array of tour step data (required) |
-| `mask` | `boolean` | `true` | Whether to show the mask (global default, can be overridden by individual step's `mask`) |
-| `scrollIntoViewOptions` | `ScrollIntoViewOptions` | `{ block: 'center', inline: 'nearest' }` | Options for scrolling the target element into view when switching steps |
-| `v-model:current` | `number` | `0` | Current step index, two-way bound |
-| `v-model:open` | `boolean` | `true` | Whether the tour is visible, two-way bound |
-
-## Events
-
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `update:current` | `(val: number)` | Emitted when the current step changes |
-| `update:open` | `(val: boolean)` | Emitted when the open/close state changes |
-| `skip` | — | Emitted when the user clicks the "Skip" button |
-| `finish` | — | Emitted when the user clicks "Finish" on the last step |
-| `close` | — | Emitted when the tour closes (triggered by both skip and finish) |
+<ComponentApi name="tour" />
 
 ## Accessibility
 

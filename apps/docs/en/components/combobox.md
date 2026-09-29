@@ -143,46 +143,17 @@ interface ComboboxOption {
 }
 ```
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `options` | `ComboboxOption[]` | — (required) | Options list |
-| `multiple` | `boolean` | `false` | Whether to enable multi-select mode |
-| `modelValue` | `string \| string[] \| undefined` | Single: `undefined`; Multi: `[]` | Selected value, supports v-model. In multi-select mode this is `string[]` |
-| `open` | `boolean` | `undefined` | Whether the dropdown is expanded. When set (controlled), closing is only effective if the parent binds `v-model:open` or listens to `update:open` and writes it back |
-| `placeholder` | `string` | locale: `combobox.placeholder` / `combobox.multiPlaceholder` | Placeholder text, switches automatically based on mode |
-| `searchPlaceholder` | `string` | locale: `combobox.searchPlaceholder` | Search box placeholder |
-| `emptyText` | `string` | locale: `combobox.emptyText` | Text shown when no matches found |
-| `disabled` | `boolean` | `false` | Whether disabled |
-| `loading` | `boolean` | `false` | Whether to show loading state |
-| `creative` | `boolean` | `false` | Whether to allow creating new options |
-| `maxDisplay` | `number` | `3` | Maximum number of selected tags to display in multi-select mode |
-| `ariaLabel` | `string` | — | Accessibility label |
-| `iconSize` | `IconSize` | `'default'` | Icon size |
-| `class` | `string` | — | Custom CSS class |
+<span id="exposed-methods-defineexpose"></span>
 
-## Events
-
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `update:modelValue` | `string \| string[] \| undefined` | Triggered when the selected value changes. In single-select mode, selecting the same option again deselects it (value becomes `undefined`); in multi-select mode, toggles selection/deselection of the corresponding option |
-| `update:open` | `boolean` | Triggered when the dropdown open/close state changes |
-| `create` | `string` | Triggered when the "Create" option is clicked; payload is the search text with leading/trailing whitespace trimmed. The component does not update `modelValue` — add the new option to `options` and sync `modelValue` in the handler (see FAQ) |
+<ComponentApi name="combobox" />
 
 ## Accessibility
 
 - **Keyboard**: Supports `Arrow Up` / `Arrow Down` to move focus, `Enter` to select the current item, `Escape` to close the dropdown
 - **ARIA Attributes**: Provides accessibility label via the `ariaLabel` prop
 
-## Exposed Methods (defineExpose)
-
-| Property/Method | Type | Description |
-| --- | --- | --- |
-| `open` | `Ref<boolean>` | Whether the dropdown panel is expanded |
-| `searchQuery` | `Ref<string>` | Current search keyword |
-| `selectedValue` | `ComputedRef<string \| string[] \| undefined>` | Currently selected value (read-only) |
-| `focus` | `() => void` | Focus the trigger |
 
 ## FAQ
 

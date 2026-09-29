@@ -1,0 +1,253 @@
+{
+  "id": "component:sketchy-chart",
+  "name": "sketchy-chart",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:sketchy-chart/SketchyChart",
+      "name": "SketchyChart",
+      "source": {
+        "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Asketchy_2Dchart_2FSketchyChart-props-type",
+          "name": "type",
+          "kind": "props",
+          "type": {
+            "text": "\"line\" | \"bar\" | \"pie\" | undefined",
+            "literals": [
+              "\"bar\"",
+              "\"line\"",
+              "\"pie\""
+            ],
+            "references": []
+          },
+          "description": "选择手绘折线图、柱状图或饼图。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'line'",
+              "source": {
+                "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"line\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Asketchy_2Dchart_2FSketchyChart-props-data",
+          "name": "data",
+          "kind": "props",
+          "type": {
+            "text": "ChartDataItem[] | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "ChartDataItem",
+                "text": "interface ChartDataItem {\n    label: string\n    value: number\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fsketchy-chart%2FSketchyChart.vue%23ChartDataItem"
+              }
+            ]
+          },
+          "description": "图表数据项数组；每项包含标签和数值。组件将负数按绝对值处理，超过 30 项时按步长抽样以控制渲染项数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => []",
+              "source": {
+                "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Asketchy_2Dchart_2FSketchyChart-props-sketchiness",
+          "name": "sketchiness",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "控制 SVG 手绘滤镜的抖动强度；数值乘以内部基准频率，源码没有对传入数值作范围钳制。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "2",
+              "source": {
+                "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "2"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Asketchy_2Dchart_2FSketchyChart-props-grid",
+          "name": "grid",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示折线图或柱状图的背景网格；饼图不渲染网格。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Asketchy_2Dchart_2FSketchyChart-props-width",
+          "name": "width",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置 SVG viewBox 和图表计算使用的宽度，单位为 SVG 用户坐标。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "SKETCHY_CHART_DEFAULT_WIDTH_PX",
+              "source": {
+                "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "600"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Asketchy_2Dchart_2FSketchyChart-props-height",
+          "name": "height",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置 SVG viewBox 和图表计算使用的高度，单位为 SVG 用户坐标。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "SKETCHY_CHART_DEFAULT_HEIGHT_PX",
+              "source": {
+                "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "400"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Asketchy_2Dchart_2FSketchyChart-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到图表外层容器的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

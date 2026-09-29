@@ -212,108 +212,23 @@ const commandRef = ref()
 </template>
 ```
 
-### Exposed API
+## API Reference
 
-| Method/Property | Type | Description |
-|-----------|------|------|
-| `filterSearch` | `Ref<string>` | Current search keyword, readable and writable; writing triggers internal filtering logic (requires `disableFilter` to be `false`) |
+<span id="exposed-api"></span>
+<span id="command-1"></span>
+<span id="commandinput"></span>
+<span id="commanditem"></span>
+<span id="commandgroup"></span>
+<span id="commandlist"></span>
+<span id="commandempty"></span>
+<span id="commandseparator"></span>
+<span id="commandshortcut"></span>
+<span id="commanddialog"></span>
+<span id="commandinput-1"></span>
+<span id="commanditem-1"></span>
+<span id="commanddialog-1"></span>
 
-## Props
-
-### Command
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `disableFilter` | `boolean` | `false` | Disables internal search filtering, for scenarios where external filtering is used |
-| `class` | `ClassValue` | — | Custom CSS class name |
-
-### CommandInput
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `modelValue` | `string` | — | Input field value, supports `v-model` |
-| `placeholder` | `string` | `t('command.placeholder')` | Placeholder text |
-| `class` | `ClassValue` | — | Custom CSS class name |
-
-### CommandItem
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `value` | `string` | — | Unique identifier value for the item |
-| `disabled` | `boolean` | — | Whether the item is disabled |
-| `class` | `ClassValue` | — | Custom CSS class name |
-
-### CommandGroup
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `title` | `string` | — | Group title text |
-| `class` | `ClassValue` | — | Custom CSS class name |
-
-### CommandList
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `class` | `ClassValue` | — | Custom CSS class name |
-
-### CommandEmpty
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `class` | `ClassValue` | — | Custom CSS class name |
-
-### CommandSeparator
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `class` | `ClassValue` | — | Custom CSS class name |
-
-### CommandShortcut
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `class` | `ClassValue` | — | Custom CSS class name |
-
-### CommandDialog
-
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `open` | `boolean` | `false` | Whether the dialog is open, supports `v-model:open` |
-| `title` | `string` | `t('command.dialogTitle')` | Dialog title (for accessibility) |
-| `description` | `string` | `t('command.dialogDescription')` | Dialog description (for accessibility) |
-| `class` | `ClassValue` | — | Custom CSS class name |
-
-## Events
-
-### CommandInput
-
-| Event | Payload | Description |
-|------|------|------|
-| `update:modelValue` | `string` | Triggered when the input value changes |
-
-### CommandItem
-
-| Event | Payload | Description |
-|------|------|------|
-| `select` | `string` | Triggered when an item is selected |
-
-### CommandDialog
-
-| Event | Payload | Description |
-|------|------|------|
-| `update:open` | `boolean` | Triggered when the dialog open/close state changes |
-
-## Slots
-
-| Component | Slot | Description |
-|------|------|------|
-| `Command` | `default` | For placing `CommandInput`, `CommandList` and other child components |
-| `CommandDialog` | `default` | For placing `CommandInput`, `CommandList` and other child components |
-| `CommandList` | `default` | For placing `CommandEmpty`, `CommandGroup` and other child components |
-| `CommandGroup` | `default` | For placing `CommandItem` child components |
-| `CommandItem` | `default` | For placing item content and `CommandShortcut` |
-| `CommandEmpty` | `default` | Custom display content when there are no matching results, defaults to `t('command.emptyText')` |
-| `CommandShortcut` | `default` | For placing shortcut key text |
+<ComponentApi name="command" />
 
 ## Accessibility
 

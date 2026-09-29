@@ -1,85 +1,85 @@
-import { describe, it, expect } from 'vitest'
 import fs from 'node:fs'
 import path from 'node:path'
+import { describe, expect, it } from 'vitest'
+import type { ApiGroup, ApiMember } from '../../../apps/docs/.vitepress/api-types.js'
+import type { ApiCatalog } from './api-docs/catalog.js'
 
-describe('api-manifest 契约与质量守卫', () => {
-    const manifestPath = path.resolve(__dirname, '../../../apps/docs/.vitepress/api-manifest.json')
+const GENERATED_DIRECTORY = path.resolve(__dirname, '../../../apps/docs/.vitepress/api-generated')
 
-    it('api-manifest.json 存在且为合法 JSON', () => {
-        expect(fs.existsSync(manifestPath)).toBe(true)
-        const content = fs.readFileSync(manifestPath, 'utf-8')
-        expect(() => JSON.parse(content)).not.toThrow()
-    })
+function readGeneratedJson<T>(fileName: string): T {
+    return JSON.parse(fs.readFileSync(path.join(GENERATED_DIRECTORY, fileName), 'utf8')) as T
+}
 
-    it('包含必要元数据字段与结构', () => {
-        const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'))
-        expect(manifest).toHaveProperty('generatedAt')
-        expect(manifest).toHaveProperty('totalComponents')
-        expect(manifest).toHaveProperty('totalGroups')
-        expect(manifest).toHaveProperty('groups')
-        expect(manifest).toHaveProperty('components')
-        expect(manifest.totalComponents).toBeGreaterThanOrEqual(50)
-        expect(manifest.totalGroups).toBeGreaterThanOrEqual(30)
-    })
+function readGroup(slug: string, locale: 'zh-CN' | 'en'): ApiGroup {
+    return readGeneratedJson<ApiGroup>(`${slug}.${locale}.json`)
+}
 
-    it('关键组件及组件组完备性验证', () => {
-        const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'))
-        const criticalGroups = ['button', 'alert', 'input', 'dialog', 'card', 'badge']
-        for (const groupName of criticalGroups) {
-            expect(manifest.groups).toHaveProperty(groupName)
-            expect(manifest.groups[groupName].components.length).toBeGreaterThan(0)
+function findMember(componentName: string, members: ApiMember[], kind: ApiMember['kind'], name: string): ApiMember {
+    const member = members.find(item => item.kind === kind && item.name === name)
+    if (!member) throw new Error(`${componentName} ${kind}.${name} is missing from generated API data`)
+    return member
+}
+
+describe('生成的组件 API 分组数据', () => {
+    const catalogPath = path.join(GENERATED_DIRECTORY, 'catalog.json')
+
+    it('目录仅为组件页面生成双语分组文件', () => {
+        const catalog = readGeneratedJson<ApiCatalog>('catalog.json')
+        const pageGroups = catalog.groups.filter(group => group.scope === 'component-page')
+        const files = fs.readdirSync(GENERATED_DIRECTORY).filter(file => file.endsWith('.json'))
+
+        expect(catalog.diagnostics).toEqual([])
+        expect(fs.existsSync(catalogPath)).toBe(true)
+        expect(files).toHaveLength(1 + pageGroups.length * 2)
+        for (const group of pageGroups) {
+            expect(fs.existsSync(path.join(GENERATED_DIRECTORY, `${group.slug}.zh-CN.json`))).toBe(true)
+            expect(fs.existsSync(path.join(GENERATED_DIRECTORY, `${group.slug}.en.json`))).toBe(true)
         }
-
-        const criticalComponents = ['Button', 'Alert', 'Input', 'Card', 'Badge']
-        for (const compName of criticalComponents) {
-            expect(manifest.components).toHaveProperty(compName)
-            expect(manifest.components[compName].props.length).toBeGreaterThan(0)
+        for (const group of catalog.groups.filter(item => item.scope === 'block')) {
+            expect(fs.existsSync(path.join(GENERATED_DIRECTORY, `${group.slug}.zh-CN.json`))).toBe(false)
+            expect(fs.existsSync(path.join(GENERATED_DIRECTORY, `${group.slug}.en.json`))).toBe(false)
         }
     })
 
-    it('Button 组件 Props 规范与类型清理验证', () => {
-        const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'))
-        const button = manifest.components['Button']
-        expect(button).toBeDefined()
-        expect(button.name).toBe('Button')
-        expect(button.dirName).toBe('button')
+    it('Button 分组保留类型默认值并输出独立的中英文语义', () => {
+        const chinese = readGroup('button', 'zh-CN')
+        const english = readGroup('button', 'en')
+        const chineseButton = chinese.components[0]
+        const englishButton = english.components[0]
+        const chineseVariant = findMember(chineseButton.name, chineseButton.members, 'props', 'variant')
+        const englishVariant = findMember(englishButton.name, englishButton.members, 'props', 'variant')
 
-        const variantProp = button.props.find((p: { name: string }) => p.name === 'variant')
-        expect(variantProp).toBeDefined()
-        // 确保 null | undefined 已被清理
-        expect(variantProp.type).not.toContain('| null')
-        expect(variantProp.type).not.toContain('| undefined')
-        expect(variantProp.default).toBe("'default'")
-
-        const sizeProp = button.props.find((p: { name: string }) => p.name === 'size')
-        expect(sizeProp).toBeDefined()
-        expect(sizeProp.default).toBe("'default'")
-
-        const glitchIntervalProp = button.props.find((p: { name: string }) => p.name === 'glitchInterval')
-        expect(glitchIntervalProp).toBeDefined()
-        expect(glitchIntervalProp.default).toBe('3000')
-
-        const pendingTextProp = button.props.find((p: { name: string }) => p.name === 'pendingText')
-        expect(pendingTextProp).toBeDefined()
-        expect(pendingTextProp.default).toContain('i18n')
+        expect(chinese.locale).toBe('zh-CN')
+        expect(english.locale).toBe('en')
+        expect(chineseButton.name).toBe('Button')
+        expect(englishButton.name).toBe('Button')
+        expect(chineseVariant.description).toBe('按钮的主视觉变体，控制配色和交互状态样式')
+        expect(englishVariant.description).toBe('Controls the button’s visual variant, including its color and interaction-state styles.')
+        expect(chineseVariant.description).not.toBe(englishVariant.description)
+        expect(englishVariant.type.literals).toContain('"primary"')
+        expect(englishVariant.default?.declaration).toMatchObject({ kind: 'value', text: "'default'" })
+        expect(englishVariant.default?.resolution?.text).toBe('"default"')
     })
 
-    it('Alert 组件组子组件归集与事件插槽验证', () => {
-        const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'))
-        const alertGroup = manifest.groups['alert']
-        expect(alertGroup).toBeDefined()
-        expect(alertGroup.components.length).toBeGreaterThanOrEqual(2)
+    it('Alert 主组件排首位且包含真实事件与插槽', () => {
+        const group = readGroup('alert', 'en')
+        const names = group.components.map(component => component.name)
+        const alert = group.components[0]
 
-        const subNames = alertGroup.components.map((c: { name: string }) => c.name)
-        expect(subNames).toContain('Alert')
-        expect(subNames).toContain('AlertTitle')
-        expect(subNames).toContain('AlertDescription')
-        // 主组件排首位
-        expect(subNames[0]).toBe('Alert')
+        expect(names[0]).toBe('Alert')
+        expect(names).toEqual(['Alert', 'AlertDescription', 'AlertTitle'])
+        expect(alert.members.some(member => member.kind === 'events' && member.name === 'close')).toBe(true)
+        expect(alert.members.some(member => member.kind === 'slots' && member.name === 'default')).toBe(true)
+        expect(alert.members.some(member => member.kind === 'slots' && member.name === 'actions')).toBe(true)
+    })
 
-        const alertComp = alertGroup.components.find((c: { name: string }) => c.name === 'Alert')
-        expect(alertComp.events.some((e: { name: string }) => e.name === 'close')).toBe(true)
-        expect(alertComp.slots.some((s: { name: string }) => s.name === 'default')).toBe(true)
-        expect(alertComp.slots.some((s: { name: string }) => s.name === 'actions')).toBe(true)
+    it('Dialog 分组以公开主组件 DialogContent 开始', () => {
+        const catalog = readGeneratedJson<ApiCatalog>('catalog.json')
+        const dialogCatalog = catalog.groups.find(group => group.slug === 'dialog')
+        const dialog = readGroup('dialog', 'zh-CN')
+
+        expect(dialogCatalog?.primaryMemberId).toBe('component:dialog/DialogContent')
+        expect(dialog.components[0].name).toBe('DialogContent')
+        expect(dialog.components.some(component => component.name.includes('TestFixture'))).toBe(false)
     })
 })

@@ -1,0 +1,616 @@
+{
+  "id": "component:textarea",
+  "name": "textarea",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:textarea/Textarea",
+      "name": "Textarea",
+      "source": {
+        "file": "packages/ui/src/components/textarea/Textarea.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "文本域的字符串值，通过 v-model 同步。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"success\" | \"error\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"error\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "文本域的边框和状态样式；error 配合非空 errorMessage 显示错误提示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "文本域的尺寸变体，控制高度、内边距和文字大小。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-resize",
+          "name": "resize",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"vertical\" | \"horizontal\" | \"none\" | \"both\" | null | undefined> | undefined",
+            "literals": [
+              "\"both\"",
+              "\"horizontal\"",
+              "\"none\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "浏览器允许用户拖动调整文本域尺寸的方向。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'none'",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"none\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用原生文本域，阻止聚焦和编辑。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-readonly",
+          "name": "readonly",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "保留聚焦、文本选择与复制能力，同时阻止用户编辑。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-placeholder",
+          "name": "placeholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "文本域为空时显示的提示文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "未提供时使用 textarea.placeholder 语言文案。"
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-errorMessage",
+          "name": "errorMessage",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "variant 为 error 且文本非空时，在文本域下方通过 role=\"alert\" 显示的错误消息。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传给原生文本域的无障碍名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-ariaLabelledby",
+          "name": "ariaLabelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "为原生文本域提供标签的元素 ID。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-ariaDescribedby",
+          "name": "ariaDescribedby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "描述元素的 ID；未提供且显示错误提示时自动关联错误消息。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-ariaInvalid",
+          "name": "ariaInvalid",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显式设置无效状态；未提供且显示错误提示时为真。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-ariaErrormessage",
+          "name": "ariaErrormessage",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "错误消息元素的 ID，同时用作内置错误消息的 ID；未提供时内置消息使用自动生成的 ID。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-ariaRequired",
+          "name": "ariaRequired",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "向辅助技术声明文本域的必填状态。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到原生 textarea 元素的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "用户输入时发出新的字符串值；输入法组合期间不发出中间值，组合结束时提交最终值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-exposes-focus",
+          "name": "focus",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "将焦点移到原生文本域。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 84
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-exposes-blur",
+          "name": "blur",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "从原生文本域移除焦点。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 85
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-exposes-select",
+          "name": "select",
+          "kind": "exposes",
+          "type": {
+            "text": "() => void | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "选中原生文本域中的文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 86
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-exposes-ref",
+          "name": "ref",
+          "kind": "exposes",
+          "type": {
+            "text": "Ref<HTMLTextAreaElement | null, HTMLTextAreaElement | null>",
+            "literals": [
+              "null"
+            ],
+            "references": []
+          },
+          "description": "内部原生文本域引用；Vue 会在公开组件实例上解包顶层 Ref，可通过实例的 ref 读取 HTMLTextAreaElement。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue"
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    }
+  ]
+}

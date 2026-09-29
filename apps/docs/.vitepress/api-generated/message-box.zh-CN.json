@@ -1,0 +1,637 @@
+{
+  "id": "component:message-box",
+  "name": "message-box",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:message-box/MessageBox",
+      "name": "MessageBox",
+      "source": {
+        "file": "packages/ui/src/components/message-box/MessageBox.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-open",
+          "name": "open",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制对话框的显示状态，可通过 v-model:open 双向绑定；未提供时默认为打开。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置对话框标题；未提供时使用当前语言的默认标题。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-message",
+          "name": "message",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置正文消息；为空时对话框描述区域使用标题作为备用文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-type",
+          "name": "type",
+          "kind": "props",
+          "type": {
+            "text": "MessageBoxType | undefined",
+            "literals": [
+              "\"error\"",
+              "\"info\"",
+              "\"success\"",
+              "\"warning\""
+            ],
+            "references": [
+              {
+                "name": "MessageBoxType",
+                "text": "export type MessageBoxType = NonNullable<MessageBoxIconVariantProps['type']>",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomponents%2Fmessage-box%2Fmessage-box-variants.ts%23MessageBoxType"
+              }
+            ]
+          },
+          "description": "选择信息、成功、警告或错误状态，并同步决定标题旁显示的状态图标。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'info'",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"info\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-showCancelButton",
+          "name": "showCancelButton",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制底部取消按钮是否显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-showCloseButton",
+          "name": "showCloseButton",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制标题栏右侧的关闭按钮是否显示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-confirmButtonText",
+          "name": "confirmButtonText",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置确认按钮文本；未提供时使用当前语言的默认确认文案。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 37
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-cancelButtonText",
+          "name": "cancelButtonText",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置取消按钮文本；未提供时使用当前语言的默认取消文案。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 38
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-confirmButtonClass",
+          "name": "confirmButtonClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到确认按钮的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 39
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-cancelButtonClass",
+          "name": "cancelButtonClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到取消按钮的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 40
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-showInput",
+          "name": "showInput",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示输入框以启用 Prompt 交互；开启后确认事件携带输入值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 41
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-inputPlaceholder",
+          "name": "inputPlaceholder",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置 Prompt 输入框为空时显示的占位文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 42
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-inputValue",
+          "name": "inputValue",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置 Prompt 输入框的初始值；输入过程保存在组件内部。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 43
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "''",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-inputPattern",
+          "name": "inputPattern",
+          "kind": "props",
+          "type": {
+            "text": "RegExp | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "确认时用于校验输入值的正则表达式；不匹配时显示错误文案且不会发出确认事件或关闭对话框。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 44
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-inputErrorMessage",
+          "name": "inputErrorMessage",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置输入校验失败时显示的错误文本；未提供时使用当前语言的默认提示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 45
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-zIndex",
+          "name": "zIndex",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "同时设置遮罩层和对话框内容的 z-index。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 46
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到对话框卡片容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue",
+            "line": 47
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/message-box/MessageBox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-events-update_3Aopen",
+          "name": "update:open",
+          "kind": "events",
+          "type": {
+            "text": "[val: boolean]",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "受控打开状态变化时发出布尔值，用于同步 v-model:open。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-events-confirm",
+          "name": "confirm",
+          "kind": "events",
+          "type": {
+            "text": "[val?: string | undefined]",
+            "literals": [],
+            "references": []
+          },
+          "description": "确认操作通过输入校验后发出；showInput 开启时携带输入字符串，否则不带参数，并随后请求关闭对话框。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Amessage_2Dbox_2FMessageBox-events-cancel",
+          "name": "cancel",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "用户取消、关闭按钮、遮罩外部交互或按 Escape 结束对话框时发出，不携带参数。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/message-box/MessageBox.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

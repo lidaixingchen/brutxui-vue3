@@ -107,24 +107,9 @@ interface StepperStep {
 import type { StepperStep } from 'brutx-ui-vue'
 ```
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-|------|------|--------|------|
-| `steps` | `StepperStep[]` | — | Step data list |
-| `modelValue` | `number` | — | Current step index (0-based, v-model) |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Layout direction |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Step node size |
-| `variant` | `'default' \| 'primary' \| 'accent'` | `'default'` | Active step color variant |
-| `clickable` | `boolean` | `true` | Whether clicking on step nodes is allowed |
-| `class` | `string` | — | Custom style class |
-
-## Events
-
-| Event | Payload | Description |
-|------|------|------|
-| `update:modelValue` | `number` | Step change (v-model) |
-| `step-click` | `number` | Triggered when a step node is clicked |
+<ComponentApi name="stepper" />
 
 ## Slots
 
@@ -152,15 +137,6 @@ In vertical mode, each step can inject content via the `#step-{id}` slot when ac
 | `upcoming` | Default background color + semi-transparent | Index > current step |
 
 ## Exposed Methods (defineExpose)
+See the API reference above for instance methods and read-only state. Call instance methods through a `ref`:
 
 Access the component instance via `ref` to call the following methods:
-
-| Property/Method | Type | Description |
-| --- | --- | --- |
-| `currentStep` | `ComputedRef<number>` | Current step index (read-only) |
-| `totalSteps` | `ComputedRef<number>` | Total number of steps (read-only) |
-| `isFirstStep` | `ComputedRef<boolean>` | Whether it's the first step (read-only) |
-| `isLastStep` | `ComputedRef<boolean>` | Whether it's the last step (read-only) |
-| `goToStep` | `(index: number) => void` | Jump to a specific step |
-| `nextStep` | `() => void` | Go forward one step |
-| `previousStep` | `() => void` | Go back one step |

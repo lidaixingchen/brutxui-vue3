@@ -1,0 +1,474 @@
+{
+  "id": "component:slider",
+  "name": "slider",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:slider/Slider",
+      "name": "Slider",
+      "source": {
+        "file": "packages/ui/src/components/slider/Slider.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aslider_2FSlider-props-modelValue",
+          "name": "modelValue",
+          "kind": "props",
+          "type": {
+            "text": "number[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前滑块值数组；单值数组渲染一个滑块，双值数组用于范围滑块，可用 `v-model` 受控。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-min",
+          "name": "min",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "可选的最小值，也是空值数组的回退值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "0",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "0"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-max",
+          "name": "max",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "可选的最大值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "100",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "100"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-step",
+          "name": "step",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "键盘或指针调整数值时使用的步长。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "1",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "1"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-disabled",
+          "name": "disabled",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "禁用所有滑块拇指的交互。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 30
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传递给滑块原语的无障碍名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "设置滑轨和拇指的尺寸预设。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"success\" | \"accent\" | null | undefined> | undefined",
+            "literals": [
+              "\"accent\"",
+              "\"default\"",
+              "\"primary\"",
+              "\"secondary\"",
+              "\"success\""
+            ],
+            "references": []
+          },
+          "description": "设置滑块填充及拇指的颜色变体。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 33
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-orientation",
+          "name": "orientation",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"vertical\" | \"horizontal\" | null | undefined> | undefined",
+            "literals": [
+              "\"horizontal\"",
+              "\"vertical\""
+            ],
+            "references": []
+          },
+          "description": "选择水平或垂直布局，并相应布置刻度与提示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'horizontal'",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"horizontal\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-marks",
+          "name": "marks",
+          "kind": "props",
+          "type": {
+            "text": "number[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "在滑轨指定数值位置绘制的刻度标记数组。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 35
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-showTooltip",
+          "name": "showTooltip",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "在当前聚焦或悬停的滑块拇指旁显示其数值提示。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到滑块根容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 37
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/slider/Slider.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-events-update_3AmodelValue",
+          "name": "update:modelValue",
+          "kind": "events",
+          "type": {
+            "text": "[value: number[]]",
+            "literals": [],
+            "references": []
+          },
+          "description": "用户调整滑块时发出新的数值数组；通过父组件更新 `modelValue` 完成受控绑定。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-exposes-currentValue",
+          "name": "currentValue",
+          "kind": "exposes",
+          "type": {
+            "text": "number[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前有效滑块数值数组的计算属性；只读，未传值或空数组时包含 `min`。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 65
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        },
+        {
+          "id": "api-component_3Aslider_2FSlider-exposes-setValue",
+          "name": "setValue",
+          "kind": "exposes",
+          "type": {
+            "text": "(value: number[]) => void",
+            "literals": [],
+            "references": []
+          },
+          "description": "以 `update:modelValue` 事件请求父组件设置新的滑块数值数组。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/slider/Slider.vue",
+            "line": 66
+          },
+          "origin": "declared",
+          "nullable": false,
+          "readonly": false
+        }
+      ]
+    }
+  ]
+}

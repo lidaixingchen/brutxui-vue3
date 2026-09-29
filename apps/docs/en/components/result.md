@@ -69,28 +69,12 @@ Inject buttons inside the `#extra` slot layout to allow further navigation or re
 </template>
 ```
 
-## Props
+## API Reference
 
-### Result
+<span id="result-1"></span>
+<span id="result-2"></span>
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `status` | `'success' \| 'error' \| 'info' \| 'warning' \| 'empty'` | `'info'` | Action feedback status, controlling the color and graphic of the status emblem |
-| `title` | `string` | `''` | Result title text |
-| `subTitle` | `string` | `''` | Secondary description text |
-| `variant` | `'plain' \| 'card'` | `'card'` | Whether to render card chrome with border and hard shadow |
-| `iconSize` | `IconSize` | — | Status icon size |
-
-## Slots
-
-### Result
-
-| Slot | Description |
-|------|-------------|
-| `icon` | Customize/override the status emblem icon box |
-| `title` | Customize/override the result title content |
-| `subTitle` | Customize/override the secondary description content |
-| `extra` | Custom footer action area layout |
+<ComponentApi name="result" />
 
 ## Accessibility
 

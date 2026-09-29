@@ -1,0 +1,416 @@
+{
+  "id": "component:card-window-header",
+  "name": "card-window-header",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:card-window-header/CardWindowHeader",
+      "name": "CardWindowHeader",
+      "source": {
+        "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string",
+            "literals": [],
+            "references": []
+          },
+          "description": "居中显示的窗口标题，采用等宽字体和大写样式，超长内容截断。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": true,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "absent"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-props-showControls",
+          "name": "showControls",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "在没有 actions 插槽且三个交互按钮均未开启时，显示右侧静态 ASCII 控制符。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-props-closable",
+          "name": "closable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用右侧关闭按钮；actions 插槽存在时该按钮由插槽替代。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-props-minimizable",
+          "name": "minimizable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用右侧最小化按钮；actions 插槽存在时该按钮由插槽替代。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-props-maximizable",
+          "name": "maximizable",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "启用右侧最大化按钮；actions 插槽存在时该按钮由插槽替代。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-props-interactiveLamps",
+          "name": "interactiveLamps",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "让左侧指示灯可触发对应操作：红色关闭、黄色最小化、绿色最大化。",
+          "notes": [
+            "三个交互按钮均未开启时，三盏灯均可交互；启用任一按钮后，仅对应已启用操作的灯可交互。actions 插槽不替换左侧指示灯。"
+          ],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-props-closeAriaLabel",
+          "name": "closeAriaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "右侧关闭按钮的无障碍名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "去除首尾空白后为空或未提供时，使用 cardWindowHeader.close 语言文案。"
+          }
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-props-minimizeAriaLabel",
+          "name": "minimizeAriaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "右侧最小化按钮的无障碍名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "去除首尾空白后为空或未提供时，使用 cardWindowHeader.minimize 语言文案。"
+          }
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-props-maximizeAriaLabel",
+          "name": "maximizeAriaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "右侧最大化按钮的无障碍名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            },
+            "fallback": "去除首尾空白后为空或未提供时，使用 cardWindowHeader.maximize 语言文案。"
+          }
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "合并到窗口标题栏根容器的自定义 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue",
+            "line": 31
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-events-close",
+          "name": "close",
+          "kind": "events",
+          "type": {
+            "text": "[event: MouseEvent | KeyboardEvent]",
+            "literals": [],
+            "references": []
+          },
+          "description": "激活关闭按钮或可交互的红色指示灯时发出；由使用方执行实际关闭。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-events-minimize",
+          "name": "minimize",
+          "kind": "events",
+          "type": {
+            "text": "[event: MouseEvent | KeyboardEvent]",
+            "literals": [],
+            "references": []
+          },
+          "description": "激活最小化按钮或可交互的黄色指示灯时发出；由使用方执行实际折叠或最小化。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-events-maximize",
+          "name": "maximize",
+          "kind": "events",
+          "type": {
+            "text": "[event: MouseEvent | KeyboardEvent]",
+            "literals": [],
+            "references": []
+          },
+          "description": "激活最大化按钮或可交互的绿色指示灯时发出；由使用方执行实际展开或最大化。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Acard_2Dwindow_2Dheader_2FCardWindowHeader-slots-actions",
+          "name": "actions",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "替换整个右侧操作区，优先于内置交互按钮和静态 ASCII 控制符。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/card-window-header/CardWindowHeader.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

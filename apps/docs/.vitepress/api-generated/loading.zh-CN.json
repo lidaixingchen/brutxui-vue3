@@ -1,0 +1,396 @@
+{
+  "id": "component:loading",
+  "name": "loading",
+  "locale": "zh-CN",
+  "components": [
+    {
+      "id": "component:loading/Loading",
+      "name": "Loading",
+      "source": {
+        "file": "packages/ui/src/components/loading/Loading.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Aloading_2FLoading-props-loading",
+          "name": "loading",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "控制加载状态；仅在为 true 时显示局部遮罩或页面级加载内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/loading/Loading.vue",
+            "line": 9
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/loading/Loading.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aloading_2FLoading-props-text",
+          "name": "text",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置局部加载遮罩中的自定义短文案；为空时不渲染该文案区域。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/loading/Loading.vue",
+            "line": 10
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/loading/Loading.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aloading_2FLoading-props-background",
+          "name": "background",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置局部加载遮罩的背景色；未提供时使用组件默认的半透明主题背景。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/loading/Loading.vue",
+            "line": 11
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/loading/Loading.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aloading_2FLoading-props-customClass",
+          "name": "customClass",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到局部加载遮罩层的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/loading/Loading.vue",
+            "line": 12
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/loading/Loading.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aloading_2FLoading-props-page",
+          "name": "page",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "切换到页面级加载布局；加载时渲染至少占满视口高度的页面内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/loading/Loading.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/loading/Loading.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aloading_2FLoading-props-fullscreen",
+          "name": "fullscreen",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "显示固定定位的全屏加载视图，即使组件位于普通容器内也覆盖整个视口。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/loading/Loading.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/loading/Loading.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aloading_2FLoading-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置页面级加载卡片的标题。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/loading/Loading.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/loading/Loading.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aloading_2FLoading-props-description",
+          "name": "description",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "设置页面级加载卡片的说明文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/loading/Loading.vue",
+            "line": 16
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/loading/Loading.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aloading_2FLoading-props-progress",
+          "name": "progress",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "提供 0 到 100 的加载进度；仅在有值时显示进度条，超出范围会钳制到边界。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/loading/Loading.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/loading/Loading.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aloading_2FLoading-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "追加到页面级根容器或局部加载容器的 CSS 类。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/loading/Loading.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/loading/Loading.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aloading_2FLoading-slots-header",
+          "name": "header",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "页面级加载布局中标题卡片之前的自定义头部内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/loading/Loading.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aloading_2FLoading-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "页面级加载卡片的主体内容。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/loading/Loading.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Aloading_2FLoading-slots-footer",
+          "name": "footer",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "页面级加载卡片底部的自定义内容，进度条之后渲染。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/loading/Loading.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

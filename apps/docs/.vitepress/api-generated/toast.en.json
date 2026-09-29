@@ -1,0 +1,505 @@
+{
+  "id": "component:toast",
+  "name": "toast",
+  "locale": "en",
+  "components": [
+    {
+      "id": "component:toast/Toast",
+      "name": "Toast",
+      "source": {
+        "file": "packages/ui/src/components/toast/Toast.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atoast_2FToast-props-variant",
+          "name": "variant",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"success\" | \"warning\" | \"info\" | \"error\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"error\"",
+              "\"info\"",
+              "\"success\"",
+              "\"warning\""
+            ],
+            "references": []
+          },
+          "description": "Sets the semantic and visual toast type, such as success, warning, info, or error.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue",
+            "line": 17
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/toast/Toast.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToast-props-size",
+          "name": "size",
+          "kind": "props",
+          "type": {
+            "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "literals": [
+              "\"default\"",
+              "\"lg\"",
+              "\"sm\""
+            ],
+            "references": []
+          },
+          "description": "Sets the size variant of the toast container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'default'",
+              "source": {
+                "file": "packages/ui/src/components/toast/Toast.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"default\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToast-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The toast title text; the title area is omitted when not provided.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/toast/Toast.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToast-props-description",
+          "name": "description",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The toast description text; the description area is omitted when not provided.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/toast/Toast.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToast-props-duration",
+          "name": "duration",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The display duration before the toast closes automatically, in milliseconds; 0 disables automatic closing.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "expression",
+              "text": "DEFAULT_TOAST_DURATION",
+              "source": {
+                "file": "packages/ui/src/components/toast/Toast.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "5000"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToast-props-pauseOnHover",
+          "name": "pauseOnHover",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Pauses the close timer and progress animation on hover, then resumes with the remaining time when the pointer leaves.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "true",
+              "source": {
+                "file": "packages/ui/src/components/toast/Toast.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "true"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToast-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the toast root container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/toast/Toast.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToast-props-iconSize",
+          "name": "iconSize",
+          "kind": "props",
+          "type": {
+            "text": "IconSize | undefined",
+            "literals": [
+              "\"2xl\"",
+              "\"lg\"",
+              "\"md\"",
+              "\"sm\"",
+              "\"xl\"",
+              "\"xs\""
+            ],
+            "references": [
+              {
+                "name": "IconSize",
+                "text": "export type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>",
+                "id": "type-packages%2Fui%2Fsrc%2Flib%2Ficon-size-variants.ts%23IconSize"
+              }
+            ]
+          },
+          "description": "Sets the size of the type icon.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'xl'",
+              "source": {
+                "file": "packages/ui/src/components/toast/Toast.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"xl\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToast-props-count",
+          "name": "count",
+          "kind": "props",
+          "type": {
+            "text": "number | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The aggregated count for similar toasts; values above 1 are shown in a count badge.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "1",
+              "source": {
+                "file": "packages/ui/src/components/toast/Toast.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "1"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToast-events-close",
+          "name": "close",
+          "kind": "events",
+          "type": {
+            "text": "[]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emitted after the toast exit animation finishes so the caller can remove it.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atoast_2FToast-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom supplemental content displayed after the title and description.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/Toast.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "id": "component:toast/ToastContainer",
+      "name": "ToastContainer",
+      "source": {
+        "file": "packages/ui/src/components/toast/ToastContainer.vue"
+      },
+      "members": [
+        {
+          "id": "api-component_3Atoast_2FToastContainer-props-position",
+          "name": "position",
+          "kind": "props",
+          "type": {
+            "text": "ToastPosition | undefined",
+            "literals": [
+              "\"bottom-center\"",
+              "\"bottom-left\"",
+              "\"bottom-right\"",
+              "\"top-center\"",
+              "\"top-left\"",
+              "\"top-right\""
+            ],
+            "references": [
+              {
+                "name": "ToastPosition",
+                "text": "export type ToastPosition =\n    | 'top-left'\n    | 'top-center'\n    | 'top-right'\n    | 'bottom-left'\n    | 'bottom-center'\n    | 'bottom-right'\n    | { x: number; y: number; anchor?: 'top-left' | 'bottom-left' | 'top-right' | 'bottom-right' }",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomposables%2FuseToast.ts%23ToastPosition"
+              }
+            ]
+          },
+          "description": "Sets a preset viewport position for the toast container or uses x, y, and anchor to specify an offset position.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/ToastContainer.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "'bottom-right'",
+              "source": {
+                "file": "packages/ui/src/components/toast/ToastContainer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "\"bottom-right\""
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToastContainer-props-stack",
+          "name": "stack",
+          "kind": "props",
+          "type": {
+            "text": "ToastStackOptions | undefined",
+            "literals": [],
+            "references": [
+              {
+                "name": "ToastStackOptions",
+                "text": "export interface ToastStackOptions {\n    maxVisible?: number\n    gap?: number\n    expandDirection?: 'down' | 'up'\n}",
+                "id": "type-packages%2Fui%2Fsrc%2Fcomposables%2FuseToast.ts%23ToastStackOptions"
+              }
+            ]
+          },
+          "description": "Configures the visible-toast limit, spacing between toasts, and the direction in which the stack expands.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/ToastContainer.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "factory",
+              "text": "() => ({\n        maxVisible: DEFAULT_TOAST_MAX_VISIBLE,\n        gap: DEFAULT_TOAST_GAP_PX,\n        expandDirection: DEFAULT_EXPAND_DIRECTION,\n    })",
+              "source": {
+                "file": "packages/ui/src/components/toast/ToastContainer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "{ \"expandDirection\": \"down\", \"gap\": 12, \"maxVisible\": 5 }"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToastContainer-props-class",
+          "name": "class",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "CSS classes added to the fixed-position toast container.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/ToastContainer.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/toast/ToastContainer.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoast_2FToastContainer-slots-default",
+          "name": "default",
+          "kind": "slots",
+          "type": {
+            "text": "{}",
+            "literals": [],
+            "references": []
+          },
+          "description": "Custom container content; when provided, the caller renders and manages the toast list. Otherwise, the container automatically renders toasts from useToast.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toast/ToastContainer.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        }
+      ]
+    }
+  ]
+}

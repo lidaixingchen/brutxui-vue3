@@ -134,39 +134,13 @@ import {
 } from 'brutx-ui-vue'
 ```
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-| ---- | ---- | ------- | ----------- |
-| `value` | `number \| string \| Date \| null` | `undefined` | Target deadline timestamp (ms), Date object, or ISO date string |
-| `format` | `string` | `'HH:mm:ss'` | Format template supporting `DD`, `D`, `HH`, `H`, `mm`, `m`, `ss`, `s`, `SSS`, `SS`, `S`, and `[...]` escapes |
-| `title` | `string` | `undefined` | Countdown header title text |
-| `prefix` | `string` | `undefined` | Prefix text before the time value |
-| `suffix` | `string` | `undefined` | Suffix text after the time value |
-| `placeholder` | `string` | `'-'` | Fallback placeholder text when target is missing or invalid |
-| `variant` | `'default' \| 'card' \| 'bordered' \| 'subtle'` | `'default'` | Visual container variant |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Size preset |
-| `class` | `string` | `undefined` | Custom CSS class name |
-
-## Events
-
-| Event | Parameters | Description |
-| ----- | ---------- | ----------- |
-| `finish` | — | Emitted once when the countdown reaches zero |
-| `change` | `remaining: number` | Emitted on every tick with the remaining time in milliseconds |
-
-## Slots
-
-| Slot | Scope | Description |
-| ---- | ----- | ----------- |
-| `default` | `{ remaining: number; formatted: string; isFinished: boolean }` | Custom content for the countdown value |
-| `title` | `{ title?: string }` | Custom content for the title area |
-| `prefix` | `{ prefix?: string }` | Custom content for the prefix area |
-| `suffix` | `{ suffix?: string }` | Custom content for the suffix area |
+<ComponentApi name="countdown" />
 
 ## Accessibility
 
 - **Keyboard Interaction**: Pure temporal display component that does not trap keyboard input; embedded interactive controls follow standard focus flow.
 - **ARIA Attributes**: Keeps `aria-live` quiet during high-frequency ticks to avoid screen reader spam; triggers a single `aria-live="polite"` speech announcement when countdown reaches zero.
 - **Focus Management**: Non-modal inline layout without focus traps, respecting assistive cursor navigation.
-- **Motion Reduction**: Number characters use monospace numerals (`font-mono`) to prevent layout shifting on tick updates; outputs deterministic static placeholders during SSR to guarantee hydration consistency.
+- **Number Layout**: Uses monospace numerals (`font-mono`) to reduce width changes during updates. Remaining time is calculated from the current clock; timer scheduling begins after mounting.

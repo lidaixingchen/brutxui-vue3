@@ -60,46 +60,22 @@ Control tear slice and displacement direction via the `direction` prop:
 | `both` | Both directions. `::before` uses horizontal red, `::after` uses vertical blue, two layers overlay for a more complex shattered effect |
 
 ```vue
-<GlitchText text="HORIZONTAL" direction="horizontal" trigger="click" />
-<GlitchText text="VERTICAL" direction="vertical" trigger="click" />
-<GlitchText text="BOTH" direction="both" trigger="click" />
+<GlitchText text="HORIZONTAL" direction="horizontal" `trigger="click"` />
+<GlitchText text="VERTICAL" direction="vertical" `trigger="click"` />
+<GlitchText text="BOTH" direction="both" `trigger="click"` />
 ```
 
 > In `both` mode, both pseudo-elements overlay the original text. Color block stacking may reduce readability; use as needed.
 
 ## Programmatic Control
 
-| Method | Description |
-| ---- | ---- |
-| `play()` | Start the glitch animation (sets internal `isActive` state to `true`) |
-| `stop()` | Stop the glitch animation (sets internal `isActive` state to `false`) |
+Call `play()` or `stop()` through the component ref to control the active glitch state; see API Reference for complete member semantics.
 
-## Props
+## API Reference
 
-| Prop | Type | Default | Description |
-| ---- | ---- | ------ | ---- |
-| `text` | `string` | `''` | Text content to display (mutually exclusive with default slot) |
-| `trigger` | `'hover' \| 'click' \| 'autoplay' \| 'none'` | `'hover'` | Animation trigger timing |
-| `interval` | `number` | `3000` | Cycle time for autoplay (ms) |
-| `speed` | `'slow' \| 'medium' \| 'fast'` | `'medium'` | Tear jitter frequency and speed |
-| `direction` | `'horizontal' \| 'vertical' \| 'both'` | `'horizontal'` | Tear direction (horizontal/vertical/both) |
-| `class` | `string` | — | External class override |
-
-## Events
-
-| Event | Payload | Description |
-| ---- | ---- | ---- |
-| `mouseenter` | `MouseEvent` | Triggered when the mouse enters. Activates animation in `hover` mode, pauses animation in `autoplay` mode |
-| `mouseleave` | `MouseEvent` | Triggered when the mouse leaves. Stops animation in `hover` mode, resumes autoplay in `autoplay` mode |
-| `click` | `MouseEvent` | Triggered on click. Toggles animation on/off in `click` mode |
-
-## Slots
-
-| Slot | Scope | Description |
-| ---- | ------ | ---- |
-| `default` | — | Text content (takes priority over `text` prop, allows inline styling of partial text) |
+<ComponentApi name="glitch-text" />
 
 ## Accessibility
 
-- The component sets `role="status"` and `aria-live="polite"`
-- When the user prefers `prefers-reduced-motion: reduce`, CSS media queries automatically disable all glitch animations
+- With `trigger="click"`, the root receives button semantics, keyboard focus, and `aria-pressed`, and supports Enter / Space to toggle; other trigger modes do not set button semantics
+- The component disables glitch animation when `prefers-reduced-motion: reduce` is active
