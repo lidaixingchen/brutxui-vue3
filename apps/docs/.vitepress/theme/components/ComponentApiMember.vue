@@ -116,7 +116,7 @@ function getDefaultRows(defaultValue: ApiDefault | undefined, labels: ComponentA
             </div>
         </td>
         <td class="component-api-cell component-api-type-cell p-3 align-top" :data-label="locale === 'en' ? 'Type' : '类型'">
-            <code class="component-api-display-type min-w-0 font-mono text-sm text-brutal-fg">{{ displayType }}</code>
+            <code tabindex="0" class="component-api-display-type min-w-0 font-mono text-sm text-brutal-fg focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden">{{ displayType }}</code>
         </td>
         <td v-if="member.kind === 'props'" class="component-api-cell component-api-default-cell p-3 align-top" :data-label="locale === 'en' ? 'Default' : '默认值'">
             <div class="min-w-0">
@@ -156,7 +156,7 @@ function getDefaultRows(defaultValue: ApiDefault | undefined, labels: ComponentA
                             </Button>
                             <span class="sr-only" role="status" aria-live="polite">{{ typeCopyState === 'copied' ? labels.copied : typeCopyState === 'failed' ? labels.copyFailed : '' }}</span>
                         </div>
-                        <pre class="component-api-code-block font-mono text-sm text-brutal-fg">{{ member.type.text }}</pre>
+                        <pre tabindex="0" class="component-api-code-block font-mono text-sm text-brutal-fg focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden">{{ member.type.text }}</pre>
                         <div v-if="member.type.literals.length" class="mt-3">
                             <p class="mb-1 text-xs font-bold text-brutal-muted-foreground">{{ labels.typeLiterals }}</p>
                             <ul class="flex flex-wrap gap-1.5">
@@ -179,7 +179,7 @@ function getDefaultRows(defaultValue: ApiDefault | undefined, labels: ComponentA
                                     <summary class="cursor-pointer py-1 text-xs font-bold text-brutal-fg focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden">
                                         {{ labels.typeReferenceDefinition }} — {{ reference.name }}
                                     </summary>
-                                    <pre class="component-api-code-block font-mono text-xs text-brutal-muted-foreground">{{ reference.text }}</pre>
+                                    <pre tabindex="0" class="component-api-code-block font-mono text-xs text-brutal-muted-foreground focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden">{{ reference.text }}</pre>
                                 </details>
                             </div>
                         </div>
