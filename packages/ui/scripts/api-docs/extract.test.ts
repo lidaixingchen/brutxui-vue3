@@ -4,7 +4,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { apiAnchorPart, apiMemberId, type ApiComponent, type ApiKind, type ApiMember } from '../../../../apps/docs/.vitepress/api-types.js'
 import type { CatalogMember } from './catalog.js'
 import { collectDefaultExpressions, createApiExtractor } from './extract.js'
-import { isVueRefType } from './type-shape.js'
+import { createApiType, isVueRefType } from './type-shape.js'
 import { evaluateFactoryExpression, evaluateStaticExpression, isFactoryExpression } from './default-static-evaluator.js'
 
 const ROOT = path.resolve(__dirname, '../../../..')
@@ -41,6 +41,7 @@ describe('Vue 组件 API 结构提取', () => {
         const glitchInterval = member(button, 'props', 'glitchInterval')
 
         expect(glitchSpeed.type.text).toBe('ButtonGlitchSpeed | undefined')
+        expect(glitchSpeed.type.displayText).toBeUndefined()
         expect(glitchSpeed.required).toBe(false)
         expect(glitchSpeed.nullable).toBe(false)
         expect(glitchSpeed.type.literals).toEqual(['"fast"', '"medium"', '"slow"'])
@@ -57,6 +58,14 @@ describe('Vue 组件 API 结构提取', () => {
             resolution: { kind: 'resolved', text: '3000' },
         }))
         expect(glitchSpeed.id).toBe(apiMemberId(button.id, 'props', 'glitchSpeed'))
+    })
+
+    it('生成 Toggle variant 的语义类型显示并保留外层 undefined', () => {
+        const toggle = extract('Toggle', 'packages/ui/src/components/toggle/Toggle.vue')
+        const variant = member(toggle, 'props', 'variant')
+
+        expect(variant.type.text).toBe('NonNullable<"default" | "outline" | null | undefined> | undefined')
+        expect(variant.type.displayText).toBe('"default" | "outline" | undefined')
     })
 
     it('为 API 成员生成稳定且无分隔符碰撞的锚点', () => {
@@ -78,6 +87,65 @@ describe('Vue 组件 API 结构提取', () => {
         expect(update.source.file).toBe(input.source.file)
         expect(input.members.some(item => item.name.includes('__@'))).toBe(false)
         expect(input.members.some(item => item.kind === 'exposes' && item.name === 'ref.value')).toBe(false)
+    })
+
+    it('NonNullable 类型显示保留外层 nullable 的 null 与 undefined', () => {
+        const fileName = path.join(ROOT, 'packages/ui/scripts/api-docs/api-type-display.fixture.ts')
+        const fixture = `type NullableVariant = NonNullable<'value' | null | undefined> | null | undefined\ndeclare const variant: NullableVariant`
+        const options: ts.CompilerOptions = { target: ts.ScriptTarget.Latest, strictNullChecks: true, noEmit: true }
+        const host = ts.createCompilerHost(options)
+        const originalFileExists = host.fileExists.bind(host)
+        const originalReadFile = host.readFile.bind(host)
+        const originalGetSourceFile = host.getSourceFile.bind(host)
+        host.fileExists = file => path.resolve(file) === fileName || originalFileExists(file)
+        host.readFile = file => path.resolve(file) === fileName ? fixture : originalReadFile(file)
+        host.getSourceFile = (file, languageVersion, onError, shouldCreateNewSourceFile) => path.resolve(file) === fileName
+            ? ts.createSourceFile(file, fixture, languageVersion, true, ts.ScriptKind.TS)
+            : originalGetSourceFile(file, languageVersion, onError, shouldCreateNewSourceFile)
+        const program = ts.createProgram([fileName], options, host)
+        const sourceFile = program.getSourceFile(fileName)!
+        const checker = program.getTypeChecker()
+        const declaration = sourceFile.statements.find(ts.isTypeAliasDeclaration)!
+        const variable = sourceFile.statements.find(ts.isVariableStatement)!.declarationList.declarations[0]
+        const text = declaration.type.getText(sourceFile)
+        const type = checker.getTypeAtLocation(variable.name)
+        const apiType = createApiType(text, type, checker, ROOT, sourceFile)
+
+        expect(apiType.text).toBe("NonNullable<'value' | null | undefined> | null | undefined")
+        expect(apiType.displayText).toBe('"value" | null | undefined')
+    })
+
+    it('简单 nullable 类型保留原始 null 与 undefined', () => {
+        const colorPickerInput = extract('ColorPickerInput', 'packages/ui/src/components/color-picker/ColorPickerInput.vue')
+        const modelValue = member(colorPickerInput, 'props', 'modelValue')
+
+        expect(modelValue.type.text).toBe('string | null | undefined')
+        expect(modelValue.type.displayText).toBeUndefined()
+    })
+
+    it('保留自定义 NonNullable 别名的 nullable 语义与定义', () => {
+        const fileName = path.join(ROOT, 'packages/ui/scripts/api-docs/custom-non-nullable.fixture.ts')
+        const fixture = `export type NonNullable<T> = T | null\ndeclare const variant: NonNullable<'value'>`
+        const options: ts.CompilerOptions = { target: ts.ScriptTarget.Latest, strictNullChecks: true, noEmit: true }
+        const host = ts.createCompilerHost(options)
+        const originalGetSourceFile = host.getSourceFile.bind(host)
+        host.getSourceFile = (file, languageVersion, onError, shouldCreateNewSourceFile) => path.resolve(file) === fileName
+            ? ts.createSourceFile(file, fixture, languageVersion, true, ts.ScriptKind.TS)
+            : originalGetSourceFile(file, languageVersion, onError, shouldCreateNewSourceFile)
+        const program = ts.createProgram([fileName], options, host)
+        const sourceFile = program.getSourceFile(fileName)!
+        const checker = program.getTypeChecker()
+        const variable = sourceFile.statements.find(ts.isVariableStatement)!.declarationList.declarations[0]
+        const apiType = createApiType(variable.type!.getText(sourceFile), checker.getTypeAtLocation(variable.name), checker, ROOT, sourceFile)
+
+        expect(program.getSemanticDiagnostics(sourceFile)).toHaveLength(0)
+        expect(apiType.text).toBe("NonNullable<'value'>")
+        expect(apiType.displayText).toBeUndefined()
+        expect(apiType.literals).toEqual(['"value"', 'null'])
+        expect(apiType.references).toEqual([expect.objectContaining({
+            name: 'NonNullable',
+            text: 'export type NonNullable<T> = T | null',
+        })])
     })
 
     it('将顶层 Ref 暴露值作为实例属性并跳过内部 value 路径', () => {

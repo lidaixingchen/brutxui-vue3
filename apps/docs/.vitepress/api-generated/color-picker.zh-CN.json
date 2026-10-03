@@ -51,6 +51,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "displayText": "\"default\" | \"lg\" | \"sm\" | undefined",
             "literals": [
               "\"default\"",
               "\"lg\"",
@@ -1824,6 +1825,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "displayText": "\"default\" | \"lg\" | \"sm\" | undefined",
             "literals": [
               "\"default\"",
               "\"lg\"",

@@ -117,6 +117,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"slow\" | \"medium\" | \"fast\" | null | undefined> | undefined",
+            "displayText": "\"fast\" | \"medium\" | \"slow\" | undefined",
             "literals": [
               "\"fast\"",
               "\"medium\"",
@@ -153,6 +154,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"vertical\" | \"horizontal\" | \"both\" | null | undefined> | undefined",
+            "displayText": "\"both\" | \"horizontal\" | \"vertical\" | undefined",
             "literals": [
               "\"both\"",
               "\"horizontal\"",

@@ -16,6 +16,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"success\" | \"danger\" | \"primary-subtle\" | \"secondary-subtle\" | \"danger-subtle\" | \"success-subtle\" | \"info-subtle\" | \"accent\" | \"outline\" | \"accent-subtle\" | null | undefined> | undefined",
+            "displayText": "\"accent-subtle\" | \"accent\" | \"danger-subtle\" | \"danger\" | \"default\" | \"info-subtle\" | \"outline\" | \"primary-subtle\" | \"primary\" | \"secondary-subtle\" | \"secondary\" | \"success-subtle\" | \"success\" | undefined",
             "literals": [
               "\"accent-subtle\"",
               "\"accent\"",
@@ -62,6 +63,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "displayText": "\"default\" | \"lg\" | \"sm\" | undefined",
             "literals": [
               "\"default\"",
               "\"lg\"",

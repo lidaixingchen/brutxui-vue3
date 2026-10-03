@@ -469,6 +469,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"primary\" | \"success\" | \"danger\" | \"accent\" | null | undefined> | undefined",
+            "displayText": "\"accent\" | \"danger\" | \"default\" | \"primary\" | \"success\" | undefined",
             "literals": [
               "\"accent\"",
               "\"danger\"",
@@ -507,6 +508,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"lg\" | \"sm\" | \"md\" | \"xl\" | null | undefined> | undefined",
+            "displayText": "\"lg\" | \"md\" | \"sm\" | \"xl\" | undefined",
             "literals": [
               "\"lg\"",
               "\"md\"",

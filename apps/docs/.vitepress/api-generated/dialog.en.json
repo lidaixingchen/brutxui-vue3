@@ -51,6 +51,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | \"xl\" | \"full\" | null | undefined> | undefined",
+            "displayText": "\"default\" | \"full\" | \"lg\" | \"sm\" | \"xl\" | undefined",
             "literals": [
               "\"default\"",
               "\"full\"",
@@ -89,6 +90,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"fade-zoom\" | \"shutter\" | null | undefined> | undefined",
+            "displayText": "\"fade-zoom\" | \"shutter\" | undefined",
             "literals": [
               "\"fade-zoom\"",
               "\"shutter\""

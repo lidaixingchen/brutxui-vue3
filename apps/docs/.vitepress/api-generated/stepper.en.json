@@ -105,6 +105,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "displayText": "\"default\" | \"lg\" | \"sm\" | undefined",
             "literals": [
               "\"default\"",
               "\"lg\"",
@@ -141,6 +142,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"primary\" | \"accent\" | null | undefined> | undefined",
+            "displayText": "\"accent\" | \"default\" | \"primary\" | undefined",
             "literals": [
               "\"accent\"",
               "\"default\"",

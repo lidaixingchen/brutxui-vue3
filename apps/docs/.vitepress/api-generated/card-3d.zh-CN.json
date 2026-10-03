@@ -144,6 +144,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"lg\" | \"xl\" | null | undefined> | undefined",
+            "displayText": "\"default\" | \"lg\" | \"xl\" | undefined",
             "literals": [
               "\"default\"",
               "\"lg\"",
@@ -180,6 +181,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"primary\" | \"accent\" | \"muted\" | null | undefined> | undefined",
+            "displayText": "\"accent\" | \"default\" | \"muted\" | \"primary\" | undefined",
             "literals": [
               "\"accent\"",
               "\"default\"",

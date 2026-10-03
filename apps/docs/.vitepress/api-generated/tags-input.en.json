@@ -765,6 +765,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"success\" | \"danger\" | \"accent\" | null | undefined> | undefined",
+            "displayText": "\"accent\" | \"danger\" | \"default\" | \"primary\" | \"secondary\" | \"success\" | undefined",
             "literals": [
               "\"accent\"",
               "\"danger\"",

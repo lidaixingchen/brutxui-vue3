@@ -16,6 +16,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"accent\" | null | undefined> | undefined",
+            "displayText": "\"accent\" | \"default\" | \"primary\" | \"secondary\" | undefined",
             "literals": [
               "\"accent\"",
               "\"default\"",
@@ -53,6 +54,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | \"xl\" | null | undefined> | undefined",
+            "displayText": "\"default\" | \"lg\" | \"sm\" | \"xl\" | undefined",
             "literals": [
               "\"default\"",
               "\"lg\"",
@@ -90,6 +92,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"rect\" | \"circle\" | null | undefined> | undefined",
+            "displayText": "\"circle\" | \"rect\" | undefined",
             "literals": [
               "\"circle\"",
               "\"rect\""
@@ -125,6 +128,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"none\" | \"scanlines\" | \"ascii\" | null | undefined> | undefined",
+            "displayText": "\"ascii\" | \"none\" | \"scanlines\" | undefined",
             "literals": [
               "\"ascii\"",
               "\"none\"",
@@ -251,6 +255,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"accent\" | null | undefined> | undefined",
+            "displayText": "\"accent\" | \"default\" | \"primary\" | \"secondary\" | undefined",
             "literals": [
               "\"accent\"",
               "\"default\"",
@@ -288,6 +293,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | \"xl\" | null | undefined> | undefined",
+            "displayText": "\"default\" | \"lg\" | \"sm\" | \"xl\" | undefined",
             "literals": [
               "\"default\"",
               "\"lg\"",
@@ -366,6 +372,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"accent\" | null | undefined> | undefined",
+            "displayText": "\"accent\" | \"default\" | \"primary\" | \"secondary\" | undefined",
             "literals": [
               "\"accent\"",
               "\"default\"",
@@ -476,6 +483,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"accent\" | null | undefined> | undefined",
+            "displayText": "\"accent\" | \"default\" | \"primary\" | \"secondary\" | undefined",
             "literals": [
               "\"accent\"",
               "\"default\"",
@@ -618,6 +626,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"accent\" | null | undefined> | undefined",
+            "displayText": "\"accent\" | \"default\" | \"primary\" | \"secondary\" | undefined",
             "literals": [
               "\"accent\"",
               "\"default\"",

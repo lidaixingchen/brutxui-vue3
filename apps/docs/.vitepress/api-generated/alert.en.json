@@ -16,6 +16,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"success\" | \"warning\" | \"danger\" | \"info\" | \"primary-subtle\" | \"secondary-subtle\" | \"warning-subtle\" | \"danger-subtle\" | \"success-subtle\" | \"info-subtle\" | null | undefined> | undefined",
+            "displayText": "\"danger-subtle\" | \"danger\" | \"default\" | \"info-subtle\" | \"info\" | \"primary-subtle\" | \"primary\" | \"secondary-subtle\" | \"secondary\" | \"success-subtle\" | \"success\" | \"warning-subtle\" | \"warning\" | undefined",
             "literals": [
               "\"danger-subtle\"",
               "\"danger\"",
