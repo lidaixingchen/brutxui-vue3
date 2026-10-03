@@ -55,6 +55,7 @@ const componentDependencies: Record<string, string[]> = {
     'toggle-group': ['reka-ui'],
     'radio-group': ['reka-ui'],
     progress: ['reka-ui'],
+    'sketchy-chart': ['reka-ui', 'class-variance-authority', 'clsx', 'tailwind-merge', '@lucide/vue'],
 }
 
 const componentImports: Record<string, string[]> = {
@@ -92,6 +93,7 @@ const componentImports: Record<string, string[]> = {
     'toggle-group': ['ToggleGroup', 'ToggleGroupItem', 'toggleGroupKey'],
     'radio-group': ['RadioGroup', 'RadioGroupItem'],
     progress: ['Progress'],
+    'sketchy-chart': ['SketchyChart'],
     'brutalist-hero': ['BrutalistHero'],
     'pricing-section': ['PricingSection'],
     'auth-card': ['AuthCard'],

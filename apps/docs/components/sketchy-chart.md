@@ -17,6 +17,26 @@ description: SVG 手绘图表，支持完整数据、正负值、统一格式化
 
 <InstallationTabs componentName="sketchy-chart" />
 
+### 手动复制范围
+
+手动安装页中的依赖命令覆盖这个图表源码闭包所需的外部包：`reka-ui`、`class-variance-authority`、`clsx`、`tailwind-merge` 和 `@lucide/vue`。Vue、Tailwind CSS、`src/lib/utils.ts` 以及设计令牌仍按[通用手动安装指南](../guide/installation-manual)的基础步骤配置；`utils.ts` 是所有本地组件共享的类名工具，不属于图表目录。
+
+图表的注册表闭包还包含 `button`、`slider`、`tooltip`、`table` 和 `locale-zh-cn`。从源码复制时，请保持目录结构并一并复制：
+
+- `src/components/ui/sketchy-chart/` 下的 `SketchyChart.vue`、`sketchy-chart-data.ts`、`sketchy-chart-variants.ts`、`useChartInteraction.ts` 和 `index.ts`；
+- `src/components/ui/button/`、`src/components/ui/slider/`、`src/components/ui/tooltip/` 和 `src/components/ui/table/` 的组件目录及其变体、入口文件；
+- `src/composables/useLocale.ts`、`useGlitchEffect.ts`、`useReducedMotion.ts`；
+- `src/locales/en.ts`、`index.ts`、`types.ts` 和 `zh-CN.ts`；
+- `src/lib/defaults.ts`、`z-index.ts`、`icon-size-variants.ts`、`env.ts`、`brutal-interaction-variants.ts`、`floating-content-variants.ts` 和 `floating-animation-classes.ts`。
+
+这些文件分别对应图表源码、注册表组件依赖和它们的内部 helper；不需要复制测试或截图文件。复制完成后，使用安装面板最后一步生成的本地导入：
+
+```ts
+import SketchyChart from '@/components/ui/sketchy-chart/SketchyChart.vue'
+```
+
+组件源码中的相对路径和 `@/` 别名需要保持可解析；这段导入用于本地复制的源码，`brutx-ui-vue` 导入示例用于直接使用已发布包。
+
 ## 用法
 
 ```vue
