@@ -184,6 +184,20 @@
     transition: none !important;
 }
 
+/* 平板宽度复用导航屏幕，完整导航项在桌面断点显示。 */
+.VPNavBar .VPNavBarMenu,
+.VPNavBar .VPNavBarExtra {
+    @apply md:max-lg:hidden;
+}
+
+.VPNavBar .VPNavBarHamburger {
+    @apply md:max-lg:flex;
+}
+
+.VPNav .VPNavScreen {
+    @apply md:max-lg:block;
+}
+
 /* Nav links: bold uppercase */
 .VPNavBar .menu a,
 .VPNavBarMenuLink {
@@ -700,8 +714,10 @@
     border: 3px solid var(--brutal-border-color);
     border-collapse: separate;
     border-spacing: 0;
-    display: table;
+    display: block;
     width: 100%;
+    max-inline-size: 100%;
+    overflow-x: auto;
     box-shadow: 4px 4px 0 0 var(--brutal-border-color);
 }
 

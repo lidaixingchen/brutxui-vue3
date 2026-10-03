@@ -240,6 +240,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"primary\" | \"accent\" | null | undefined> | undefined",
+            "displayText": "\"accent\" | \"default\" | \"primary\" | undefined",
             "literals": [
               "\"accent\"",
               "\"default\"",
@@ -334,6 +335,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | null | undefined> | undefined",
+            "displayText": "\"default\" | \"primary\" | \"secondary\" | undefined",
             "literals": [
               "\"default\"",
               "\"primary\"",
@@ -428,6 +430,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | null | undefined> | undefined",
+            "displayText": "\"default\" | \"primary\" | \"secondary\" | undefined",
             "literals": [
               "\"default\"",
               "\"primary\"",
@@ -464,6 +467,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"none\" | \"dots\" | \"hatch\" | null | undefined> | undefined",
+            "displayText": "\"dots\" | \"hatch\" | \"none\" | undefined",
             "literals": [
               "\"dots\"",
               "\"hatch\"",

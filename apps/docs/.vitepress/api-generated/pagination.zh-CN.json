@@ -407,6 +407,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"rounded\" | \"minimal\" | null | undefined> | undefined",
+            "displayText": "\"default\" | \"minimal\" | \"rounded\" | undefined",
             "literals": [
               "\"default\"",
               "\"minimal\"",
@@ -443,6 +444,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "displayText": "\"default\" | \"lg\" | \"sm\" | undefined",
             "literals": [
               "\"default\"",
               "\"lg\"",

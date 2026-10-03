@@ -246,6 +246,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"lg\" | \"none\" | \"full\" | null | undefined> | undefined",
+            "displayText": "\"default\" | \"full\" | \"lg\" | \"none\" | undefined",
             "literals": [
               "\"default\"",
               "\"full\"",

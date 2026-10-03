@@ -16,6 +16,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"flat\" | \"default\" | \"interactive\" | \"primary\" | \"secondary\" | \"primary-subtle\" | \"secondary-subtle\" | \"success-subtle\" | \"info-subtle\" | \"accent-subtle\" | \"elevated\" | \"destructive-subtle\" | null | undefined> | undefined",
+            "displayText": "\"accent-subtle\" | \"default\" | \"destructive-subtle\" | \"elevated\" | \"flat\" | \"info-subtle\" | \"interactive\" | \"primary-subtle\" | \"primary\" | \"secondary-subtle\" | \"secondary\" | \"success-subtle\" | undefined",
             "literals": [
               "\"accent-subtle\"",
               "\"default\"",
@@ -61,6 +62,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | \"none\" | null | undefined> | undefined",
+            "displayText": "\"default\" | \"lg\" | \"none\" | \"sm\" | undefined",
             "literals": [
               "\"default\"",
               "\"lg\"",
@@ -98,6 +100,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"none\" | \"grid\" | \"dots\" | null | undefined> | undefined",
+            "displayText": "\"dots\" | \"grid\" | \"none\" | undefined",
             "literals": [
               "\"dots\"",
               "\"grid\"",
@@ -134,6 +137,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"none\" | \"hud\" | null | undefined> | undefined",
+            "displayText": "\"hud\" | \"none\" | undefined",
             "literals": [
               "\"hud\"",
               "\"none\""

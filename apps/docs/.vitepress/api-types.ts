@@ -9,6 +9,7 @@ export interface ApiSource {
 
 export interface ApiType {
     text: string
+    displayText?: string
     literals: string[]
     references: Array<{ name: string; text: string; id: string }>
 }

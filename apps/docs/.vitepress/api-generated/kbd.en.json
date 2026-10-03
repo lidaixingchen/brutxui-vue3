@@ -16,6 +16,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"accent\" | \"backlit\" | null | undefined> | undefined",
+            "displayText": "\"accent\" | \"backlit\" | \"default\" | \"primary\" | \"secondary\" | undefined",
             "literals": [
               "\"accent\"",
               "\"backlit\"",
@@ -54,6 +55,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"lg\" | \"sm\" | \"md\" | null | undefined> | undefined",
+            "displayText": "\"lg\" | \"md\" | \"sm\" | undefined",
             "literals": [
               "\"lg\"",
               "\"md\"",

@@ -16,6 +16,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"primary\" | \"muted\" | null | undefined> | undefined",
+            "displayText": "\"default\" | \"muted\" | \"primary\" | undefined",
             "literals": [
               "\"default\"",
               "\"muted\"",
@@ -52,6 +53,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "displayText": "\"default\" | \"lg\" | \"sm\" | undefined",
             "literals": [
               "\"default\"",
               "\"lg\"",
@@ -88,6 +90,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"vertical\" | \"horizontal\" | null | undefined> | undefined",
+            "displayText": "\"horizontal\" | \"vertical\" | undefined",
             "literals": [
               "\"horizontal\"",
               "\"vertical\""

@@ -500,6 +500,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"flat\" | \"default\" | \"ghost\" | \"interactive\" | null | undefined> | undefined",
+            "displayText": "\"default\" | \"flat\" | \"ghost\" | \"interactive\" | undefined",
             "literals": [
               "\"default\"",
               "\"flat\"",

@@ -16,6 +16,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"right\" | \"bottom\" | \"left\" | \"top\" | null | undefined> | undefined",
+            "displayText": "\"bottom\" | \"left\" | \"right\" | \"top\" | undefined",
             "literals": [
               "\"bottom\"",
               "\"left\"",

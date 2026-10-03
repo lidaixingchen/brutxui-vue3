@@ -5,6 +5,7 @@ type ApiType = import('../../../../apps/docs/.vitepress/api-types.js').ApiType
 const MAX_TYPE_WALK_DEPTH = 18
 const MAX_TYPE_REFERENCES = 96
 const MAX_REFERENCE_TEXT_LENGTH = 16_384
+const TYPESCRIPT_LIBRARY_DIRECTORY = path.dirname(ts.getDefaultLibFilePath({}))
 const BUILT_IN_TYPE_ALIASES = new Set([
     'Array', 'ReadonlyArray', 'Record', 'Partial', 'Required', 'Pick', 'Omit', 'Exclude', 'Extract',
     'NonNullable', 'Parameters', 'ConstructorParameters', 'ReturnType', 'InstanceType', 'ThisType',
@@ -14,6 +15,11 @@ const REACTIVE_REFERENCE_TYPES = new Set(['Ref', 'ShallowRef', 'ComputedRef', 'W
 
 function unalias(symbol: ts.Symbol, checker: ts.TypeChecker): ts.Symbol {
     return symbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(symbol) : symbol
+}
+
+function isBuiltInTypeAlias(symbol: ts.Symbol): boolean {
+    return BUILT_IN_TYPE_ALIASES.has(symbol.getName())
+        && Boolean(symbol.declarations?.some(declaration => path.dirname(declaration.getSourceFile().fileName) === TYPESCRIPT_LIBRARY_DIRECTORY))
 }
 
 function typeSymbols(type: ts.Type, checker: ts.TypeChecker): ts.Symbol[] {
@@ -101,7 +107,7 @@ function definitionText(symbol: ts.Symbol, root: string, source: string): string
 function addReference(references: Map<string, ApiType['references'][number]>, symbol: ts.Symbol, checker: ts.TypeChecker, root: string): void {
     const resolved = unalias(symbol, checker)
     if (resolved.flags & ts.SymbolFlags.TypeParameter) return
-    if (BUILT_IN_TYPE_ALIASES.has(resolved.getName())) return
+    if (isBuiltInTypeAlias(resolved)) return
     const source = declarationPath(resolved, root)
     if (!source || source.startsWith('../')) return
     const name = resolved.getName()
@@ -211,8 +217,10 @@ export function typeIncludesNull(type: ts.Type | undefined, checker: ts.TypeChec
 }
 
 export function createApiType(text: string, type: ts.Type | undefined, checker: ts.TypeChecker, root: string, context?: ts.Node): ApiType {
+    const displayText = type ? primitiveTypeDisplayText(text, type, checker, context) : undefined
     return {
         text,
+        ...(displayText && displayText !== text ? { displayText } : {}),
         literals: type ? collectLiterals(type, checker) : [],
         references: collectReferences(text, type, checker, root, context),
     }
@@ -220,6 +228,89 @@ export function createApiType(text: string, type: ts.Type | undefined, checker: 
 
 export function typeToDisplayText(type: ts.Type, checker: ts.TypeChecker): string {
     return checker.typeToString(type, undefined, ts.TypeFormatFlags.NoTruncation | ts.TypeFormatFlags.UseAliasDefinedOutsideCurrentScope)
+}
+
+function isPrimitiveDisplayTypeNode(node: ts.TypeNode, context: ts.Node | undefined, checker: ts.TypeChecker): boolean {
+    if (ts.isUnionTypeNode(node)) return node.types.every(member => isPrimitiveDisplayTypeNode(member, context, checker))
+    if (ts.isParenthesizedTypeNode(node)) return isPrimitiveDisplayTypeNode(node.type, context, checker)
+
+    if (ts.isLiteralTypeNode(node)) {
+        return ts.isStringLiteral(node.literal)
+            || ts.isNoSubstitutionTemplateLiteral(node.literal)
+            || ts.isNumericLiteral(node.literal)
+            || node.literal.kind === ts.SyntaxKind.NullKeyword
+            || node.literal.kind === ts.SyntaxKind.TrueKeyword
+            || node.literal.kind === ts.SyntaxKind.FalseKeyword
+            || ts.isPrefixUnaryExpression(node.literal) && ts.isNumericLiteral(node.literal.operand)
+    }
+
+    switch (node.kind) {
+        case ts.SyntaxKind.StringKeyword:
+        case ts.SyntaxKind.NumberKeyword:
+        case ts.SyntaxKind.BooleanKeyword:
+        case ts.SyntaxKind.BigIntKeyword:
+        case ts.SyntaxKind.SymbolKeyword:
+        case ts.SyntaxKind.UndefinedKeyword:
+        case ts.SyntaxKind.VoidKeyword:
+        case ts.SyntaxKind.NeverKeyword:
+            return true
+    }
+
+    if (!ts.isTypeReferenceNode(node) || !ts.isIdentifier(node.typeName)) return false
+    if (node.typeName.text === 'undefined') return true
+    if (node.typeName.text !== 'NonNullable' || !BUILT_IN_TYPE_ALIASES.has(node.typeName.text) || node.typeArguments?.length !== 1 || !context) return false
+
+    const nonNullable = checker.getSymbolsInScope(context, ts.SymbolFlags.Type | ts.SymbolFlags.Alias)
+        .find(symbol => symbol.getName() === node.typeName.text)
+    return nonNullable !== undefined
+        && isBuiltInTypeAlias(unalias(nonNullable, checker))
+        && isPrimitiveDisplayTypeNode(node.typeArguments[0], context, checker)
+}
+
+function isPrimitiveDisplayType(type: ts.Type): boolean {
+    return Boolean(type.flags & (
+        ts.TypeFlags.StringLike
+        | ts.TypeFlags.NumberLike
+        | ts.TypeFlags.BooleanLike
+        | ts.TypeFlags.BigIntLike
+        | ts.TypeFlags.ESSymbolLike
+        | ts.TypeFlags.Null
+        | ts.TypeFlags.Undefined
+        | ts.TypeFlags.Void
+        | ts.TypeFlags.Never
+    ))
+}
+
+function containsNonNullableTypeNode(node: ts.Node): boolean {
+    if (ts.isTypeReferenceNode(node) && ts.isIdentifier(node.typeName) && node.typeName.text === 'NonNullable') return true
+    return ts.forEachChild(node, containsNonNullableTypeNode) ?? false
+}
+
+function primitiveTypeDisplayText(text: string, type: ts.Type, checker: ts.TypeChecker, context?: ts.Node): string | undefined {
+    const sourceFile = ts.createSourceFile('api-type-display.ts', `type __ApiType = ${text};`, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
+    const declaration = sourceFile.statements.find(ts.isTypeAliasDeclaration)
+    if (!declaration
+        || sourceFile.parseDiagnostics.length > 0
+        || !containsNonNullableTypeNode(declaration.type)
+        || !isPrimitiveDisplayTypeNode(declaration.type, context, checker)) return undefined
+
+    const semanticType = type.aliasSymbol?.getName() === 'NonNullable' && isBuiltInTypeAlias(type.aliasSymbol)
+        ? checker.getNonNullableType(type)
+        : type
+    const members = semanticType.isUnion() ? semanticType.types : [semanticType]
+    if (members.length === 0 || !members.every(isPrimitiveDisplayType)) return undefined
+
+    const formatted = members.map(member => ({
+        type: member,
+        text: typeToDisplayText(member, checker),
+    }))
+    formatted.sort((left, right) => {
+        const leftUndefined = Boolean(left.type.flags & ts.TypeFlags.Undefined)
+        const rightUndefined = Boolean(right.type.flags & ts.TypeFlags.Undefined)
+        if (leftUndefined !== rightUndefined) return leftUndefined ? 1 : -1
+        return left.text.localeCompare(right.text, 'en')
+    })
+    return formatted.map(member => member.text).join(' | ')
 }
 
 function hasVueRefSymbol(type: ts.Type, checker: ts.TypeChecker): boolean {

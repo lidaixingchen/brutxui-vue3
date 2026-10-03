@@ -98,6 +98,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"ghost\" | \"primary\" | \"secondary\" | \"success\" | \"danger\" | \"accent\" | \"outline\" | \"link\" | null | undefined> | undefined",
+            "displayText": "\"accent\" | \"danger\" | \"default\" | \"ghost\" | \"link\" | \"outline\" | \"primary\" | \"secondary\" | \"success\" | undefined",
             "literals": [
               "\"accent\"",
               "\"danger\"",

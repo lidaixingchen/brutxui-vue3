@@ -189,6 +189,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"primary\" | \"secondary\" | \"danger\" | \"accent\" | null | undefined> | undefined",
+            "displayText": "\"accent\" | \"danger\" | \"default\" | \"primary\" | \"secondary\" | undefined",
             "literals": [
               "\"accent\"",
               "\"danger\"",
@@ -227,6 +228,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"slider\" | \"rocker\" | null | undefined> | undefined",
+            "displayText": "\"rocker\" | \"slider\" | undefined",
             "literals": [
               "\"rocker\"",
               "\"slider\""
@@ -262,6 +264,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "displayText": "\"default\" | \"lg\" | \"sm\" | undefined",
             "literals": [
               "\"default\"",
               "\"lg\"",

@@ -48,6 +48,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"success\" | \"error\" | null | undefined> | undefined",
+            "displayText": "\"default\" | \"error\" | \"success\" | undefined",
             "literals": [
               "\"default\"",
               "\"error\"",
@@ -84,6 +85,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"default\" | \"lg\" | \"sm\" | null | undefined> | undefined",
+            "displayText": "\"default\" | \"lg\" | \"sm\" | undefined",
             "literals": [
               "\"default\"",
               "\"lg\"",
@@ -120,6 +122,7 @@
           "kind": "props",
           "type": {
             "text": "NonNullable<\"vertical\" | \"horizontal\" | \"none\" | \"both\" | null | undefined> | undefined",
+            "displayText": "\"both\" | \"horizontal\" | \"none\" | \"vertical\" | undefined",
             "literals": [
               "\"both\"",
               "\"horizontal\"",
