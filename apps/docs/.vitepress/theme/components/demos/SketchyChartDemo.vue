@@ -1,60 +1,45 @@
 <script setup lang="ts">
-import { SketchyChart } from 'brutx-ui-vue'
+import { computed, type ComputedRef } from 'vue'
+import { SketchyChart } from 'brutx-ui-vue/sketchy-chart'
+import { useChartDemoLocale, type ChartDemoItem } from '@/theme/lib/sketchy-chart-demo'
 
-const lineData = [
-    { label: '一月', value: 30 },
-    { label: '二月', value: -15 },
-    { label: '三月', value: 45 },
-    { label: '四月', value: 80 },
-    { label: '五月', value: 55 },
-    { label: '六月', value: 90 },
-]
+const { text } = useChartDemoLocale()
+const lineData: ComputedRef<ChartDemoItem[]> = computed((): ChartDemoItem[] => [
+    { label: text('一月', 'January'), value: 30 },
+    { label: text('二月', 'February'), value: -15 },
+    { label: text('三月', 'March'), value: 45 },
+    { label: text('四月', 'April'), value: 80 },
+    { label: text('五月', 'May'), value: 0 },
+    { label: text('六月', 'June'), value: 90 },
+])
 
-const barData = [
-    { label: 'Vue', value: 85 },
-    { label: 'React', value: 72 },
-    { label: 'Svelte', value: 60 },
-    { label: 'Angular', value: 0 },
-]
+const barData: ComputedRef<ChartDemoItem[]> = computed((): ChartDemoItem[] => [
+    { label: text('北区', 'North'), value: 18 },
+    { label: text('南区', 'South'), value: -12 },
+    { label: text('东区', 'East'), value: 0 },
+    { label: text('西区', 'West'), value: 9 },
+])
 
-const pieData = [
-    { label: '桌面端', value: 45 },
-    { label: '移动端', value: 35 },
-    { label: '平板', value: 15 },
-    { label: '其他', value: 5 },
-]
+const pieData: ComputedRef<ChartDemoItem[]> = computed((): ChartDemoItem[] => [
+    { label: text('桌面端', 'Desktop'), value: 45 },
+    { label: text('移动端', 'Mobile'), value: 35 },
+    { label: text('平板', 'Tablet'), value: 15 },
+    { label: text('其他', 'Other'), value: 5 },
+])
 </script>
 
 <template>
-    <div class="flex flex-col gap-8">
+    <div class="w-full flex flex-col gap-8">
         <div>
-            <p class="text-sm font-bold mb-2">折线图</p>
-            <SketchyChart title="月度净变化" description="单位：万元" type="line" :data="lineData" />
+            <SketchyChart :title="text('月度净变化', 'Monthly net change')" :description="text('单位：万元；零为基线。', 'Unit: CNY 10,000; zero is the baseline.')" type="line" :data="lineData" />
         </div>
 
         <div>
-            <p class="text-sm font-bold mb-2">柱状图</p>
-            <SketchyChart title="框架使用次数" type="bar" :data="barData" />
+            <SketchyChart :title="text('地区订单净变化', 'Net order change by region')" :description="text('单位：笔；正负值分布在零基线两侧。', 'Unit: orders; positive and negative values lie on opposite sides of zero.')" type="bar" :data="barData" />
         </div>
 
         <div>
-            <p class="text-sm font-bold mb-2">饼图</p>
-            <SketchyChart title="设备访问占比" type="pie" :data="pieData" />
-        </div>
-
-        <div>
-            <p class="text-sm font-bold mb-2">高抖动幅度 (sketchiness=8)</p>
-            <SketchyChart title="高抖动月度净变化" type="line" :data="lineData" :sketchiness="8" />
-        </div>
-
-        <div>
-            <p class="text-sm font-bold mb-2">关闭网格线 (grid=false)</p>
-            <SketchyChart title="框架使用次数（简洁网格）" type="bar" :data="barData" :grid="false" />
-        </div>
-
-        <div>
-            <p class="text-sm font-bold mb-2">自定义尺寸 (width=400, height=250)</p>
-            <SketchyChart title="紧凑月度净变化" type="line" :data="lineData" :width="400" :height="250" />
+            <SketchyChart :title="text('设备访问占比', 'Device visit share')" :description="text('单位：次；占比由全部访问次数计算。', 'Unit: visits; shares use every category.')" type="pie" :data="pieData" />
         </div>
     </div>
 </template>

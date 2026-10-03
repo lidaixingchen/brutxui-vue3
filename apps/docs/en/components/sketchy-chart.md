@@ -14,6 +14,8 @@ A Neo-Brutalist chart rendered with Vue and SVG, using fractal noise and hatch t
   <SketchyChartDemo />
 </ComponentPreview>
 
+The line and bar examples contain positive, negative, and zero values. Hover the graphic to read a value, or Tab to the data-item slider and use arrow keys. Expand the table to inspect the original values.
+
 ## Installation
 
 <InstallationTabs componentName="sketchy-chart" />
@@ -81,7 +83,7 @@ The sketchiness prop controls the hand-drawn jitter amplitude. Higher values pro
 ## Data Handling
 
 - **Lines and bars**: Accept finite positive, negative, and zero values. The domain includes zero and the actual extrema; bars and line areas use a zero baseline.
-- **Pie charts**: Accept finite nonnegative values and calculate proportions from the complete dataset. Zero values remain in the legend and table without creating slices.
+- **Pie charts**: Accept finite nonnegative values and calculate proportions from the complete dataset. Zero values remain in the legend, slider, and table without creating slices. Tiny proportions that cannot form a drawable slice also retain their original readings. Pointer hits follow the slices actually drawn.
 - **Invalid values**: Any `NaN`, infinity, or negative pie value invalidates the entire graphic. The table identifies invalid cells while preserving every label.
 - **Empty and zero data**: Empty arrays show an empty state. All-zero lines and bars still render zero values. All-zero pies show a zero-total state with unavailable percentages.
 - **Complete categories**: Datasets above 30 items retain all data and endpoints; only visible category ticks are thinned. Use the complete table for dense data.
@@ -91,6 +93,30 @@ The sketchiness prop controls the hand-drawn jitter amplitude. Higher values pro
 
 Negative values now retain their sign, and negative pie values invalidate the chart. Datasets above 30 items are rendered in full. If your application needs absolute values, aggregation, or sampling, explicitly transform the input and explain that transformation. Use `title` to distinguish charts and `description` for units, methodology, and important trends.
 
+## Complete Categories and Static Readings
+
+The following example retains all 31 daily items. Focus the slider and press End to read day 31, then Home to return to the first item. Expand the table to inspect all 31 rows. Fewer visible ticks do not reduce the dataset.
+
+<ComponentPreview align="start">
+  <SketchyChartCompleteDataDemo />
+</ComponentPreview>
+
+Toggle “Static chart” to set `interactive=false`, removing graphic tooltips and the item slider while keeping the table disclosure. Static mode suits overview displays where details are read through the table.
+
+```vue
+<SketchyChart title="Net change over 31 days" type="bar" :data="data" :interactive="false" />
+```
+
+## Data State Examples
+
+Switch between a single item, an empty array, all-zero data, an invalid number, a negative pie value, and a tiny proportion. Compare the graphic state, reading entry, and table. A single item uses a read-only focus entry; empty and invalid datasets explain their state. All-zero pies have unavailable percentages.
+
+<ComponentPreview align="start">
+  <SketchyChartStatesDemo />
+</ComponentPreview>
+
+“Tiny proportion” uses `1e-15` and `Number.MAX_VALUE`, displayed in scientific notation. The tiny item occupies no drawable slice, but its original value remains readable through the legend, slider, and table. A displayed `0%` reflects percentage rounding, not a zero input value.
+
 ## Reading Interaction
 
 Hover the nearest horizontal line position, a bar category area, or a pie slice to read an item. The pie legend also exposes zero values. Move into the tooltip to keep it open. Escape dismisses it and small movements within the same item keep it closed. Touch selects an item; tapping it again or tapping outside dismisses it. Swiping preserves page scrolling.
@@ -98,6 +124,38 @@ Hover the nearest horizontal line position, a bar category area, or a pie slice 
 The visible data-item slider includes every category in input order. Arrow keys move between items, Home/End reach the endpoints, and Tab leaves normally. Single, empty, and invalid datasets use a read-only focus region. Pointer activity is independent of the slider position. Array replacement, insertion, deletion, reordering, label/value edits, or chart-type changes clear the tooltip and reset the explorer. Scrolling and resizing preserve the active item; locale and formatter changes refresh its text.
 
 Set `:interactive="false"` for a static chart with the complete table disclosure still available. Read dense data through the slider or table; visual distinguishability depends on available space.
+
+## Dynamic Data Updates
+
+The following actions run 3 seconds after clicking, giving you time to focus the slider and press End to read the last item. An update dismisses the tooltip and returns the slider to the first item. Reordering keeps labels paired with their values. Type changes cycle through line, bar, and pie.
+
+<ComponentPreview align="start">
+  <SketchyChartUpdatesDemo />
+</ComponentPreview>
+
+In your application, update the reactive input directly; the delay is for demonstration. Reset cancels any pending action and restores the original data.
+
+## Consistent Formatting Example
+
+Amounts use `Intl.NumberFormat` to display Chinese yuan. Compare the axis ticks, tooltip, legend, and table: they share the same `valueFormatter`. Pie shares are still calculated from the original amounts and formatted separately.
+
+<ComponentPreview align="start">
+  <SketchyChartFormattingDemo />
+</ComponentPreview>
+
+```ts
+const currency: Intl.NumberFormat = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'CNY',
+})
+function formatCurrency(value: number): string {
+    return currency.format(value)
+}
+```
+
+```vue
+<SketchyChart title="Monthly net income" type="bar" :data="data" :value-formatter="formatCurrency" />
+```
 
 ## Tooltip Slot
 
