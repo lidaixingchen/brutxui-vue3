@@ -85,6 +85,24 @@ describe('图表浏览器读数', (): void => {
         await expect.poll((): string | null => mounted!.element.getAttribute('data-active-index')).toBe('2')
     })
 
+    it('极小饼图项保留键盘读数，圆顶鼠标命中可见扇区', async (): Promise<void> => {
+        mounted = mount(SketchyChart, { props: { type: 'pie', valueFormatter: (value: number): string => value.toExponential(), data: [
+            { label: '极小项', value: 1e-15 }, { label: '可见项', value: Number.MAX_VALUE },
+        ] } })
+        await nextTick()
+        const graph: SVGSVGElement = mounted.element.querySelector('svg')!
+        const rect: DOMRect = graph.getBoundingClientRect()
+        await userEvent.hover(graph, { position: { x: rect.width / 2, y: rect.height / 4 } })
+        await expect.poll((): string | null => mounted!.element.getAttribute('data-active-index')).toBe('1')
+        await userEvent.keyboard('{Escape}')
+        const slider: HTMLElement = mounted.element.querySelector('[role="slider"]')!
+        slider.focus()
+        await userEvent.keyboard('{Home}')
+        await expect.poll((): string | null => mounted!.element.getAttribute('data-active-index')).toBe('0')
+        expect(slider.getAttribute('aria-valuetext')).toContain('极小项')
+        expect(mounted.element.querySelectorAll('[data-slot="pie-legend"] li')).toHaveLength(2)
+    })
+
     it('触摸移动与取消保持滚动，点击切换及外部关闭', async (): Promise<void> => {
         mounted = mount(SketchyChart, { props: { type: 'pie', data: [{ label: '零值', value: 0 }, { label: '正值', value: 1 }] } })
         await nextTick()

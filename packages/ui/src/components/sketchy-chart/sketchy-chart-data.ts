@@ -28,6 +28,8 @@ export interface ChartTick {
 export interface PieGeometry {
     index: number
     path: string
+    startFraction: number
+    endFraction: number
 }
 
 export const CHART_PADDING: Readonly<{ top: number; right: number; bottom: number; left: number }> = {
@@ -109,7 +111,9 @@ export function createPieGeometry(model: ChartModel, width: number, height: numb
         const proportion: number = item.percentage ?? 0
         if (proportion <= 0) continue
         const start: number = angle
-        angle += proportion * FULL_TURN
+        const end: number = start + proportion * FULL_TURN
+        if (end === start) continue
+        angle = end
         const x1: number = cx + radius * Math.cos(start)
         const y1: number = cy + radius * Math.sin(start)
         const x2: number = cx + radius * Math.cos(angle)
@@ -118,7 +122,12 @@ export function createPieGeometry(model: ChartModel, width: number, height: numb
         const arc: string = proportion === 1
             ? `A ${radius} ${radius} 0 0 1 ${cx - radius * Math.cos(start)} ${cy - radius * Math.sin(start)} A ${radius} ${radius} 0 0 1 ${x1} ${y1}`
             : `A ${radius} ${radius} 0 ${proportion > 0.5 ? 1 : 0} 1 ${x2} ${y2}`
-        result.push({ index: item.index, path: `M ${cx} ${cy} L ${x1} ${y1} ${arc} Z` })
+        result.push({
+            index: item.index,
+            path: `M ${cx} ${cy} L ${x1} ${y1} ${arc} Z`,
+            startFraction: (start - TOP_ANGLE) / FULL_TURN,
+            endFraction: (angle - TOP_ANGLE) / FULL_TURN,
+        })
     }
     return result
 }

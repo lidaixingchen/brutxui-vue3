@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createChartModel, createChartTicks, chartYPosition, createPieGeometry, type ChartModel, type ChartDataItem, type ChartType } from './sketchy-chart-data'
+import { createChartModel, createChartTicks, chartYPosition, createPieGeometry, type ChartModel, type ChartDataItem, type ChartType, type PieGeometry } from './sketchy-chart-data'
 
 function items(values: number[]): ChartDataItem[] {
     return values.map((value: number, index: number): ChartDataItem => ({ label: String(index), value }))
@@ -75,6 +75,26 @@ describe('图表数据契约', (): void => {
         expect(model.items[0].value).toBe(Number.MIN_VALUE)
         expect(model.items[0].valid).toBe(true)
         expect(model.items).toHaveLength(2)
+    })
+
+    it('无法推进角度的极小饼图项不生成扇区且保留原始读数', (): void => {
+        const cases: ReadonlyArray<{ values: number[]; visibleIndices: number[] }> = [
+            { values: [Number.MIN_VALUE, 1], visibleIndices: [1] },
+            { values: [0.5, Number.MIN_VALUE, 0.5], visibleIndices: [0, 2] },
+            { values: [1, Number.MIN_VALUE], visibleIndices: [0] },
+            { values: [1e-15, Number.MAX_VALUE], visibleIndices: [1] },
+        ]
+        for (const testCase of cases) {
+            const model: ChartModel = createChartModel(items(testCase.values), 'pie')
+            expect(model.items.map((item: ChartDataItem): number => item.value)).toEqual(testCase.values)
+            const slices: PieGeometry[] = createPieGeometry(model, 600, 400)
+            expect(slices.map((slice: PieGeometry): number => slice.index)).toEqual(testCase.visibleIndices)
+            expect(slices[0].startFraction).toBe(0)
+            expect(slices[slices.length - 1].endFraction).toBe(1)
+            for (const slice of slices) expect(slice.endFraction).toBeGreaterThan(slice.startFraction)
+        }
+        const middleModel: ChartModel = createChartModel(items([0.5, Number.MIN_VALUE, 0.5]), 'pie')
+        expect(middleModel.items[1].percentage).toBeGreaterThan(0)
     })
 
     it('零值不生成扇区，单个正值使用两段弧线形成完整圆', (): void => {

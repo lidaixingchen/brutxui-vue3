@@ -161,8 +161,13 @@ const statusId: string = `chart-status-${uid}`
 const FIRST_INDEX: number = 0
 const INDEX_STEP: number = 1
 const FULL_TURN: number = Math.PI * 2
+const PIE_TOP_ANGLE: number = -Math.PI / 2
 const ANCHOR_RADIUS_RATIO: number = 0.75
 const validReadings: ComputedRef<boolean> = computed((): boolean => model.value.state === 'ready' || model.value.state === 'zero-total')
+function isPieFractionInSlice(fraction: number, slice: PieGeometry): boolean {
+    const candidate: number = fraction < slice.startFraction ? fraction + 1 : fraction
+    return candidate >= slice.startFraction && candidate < slice.endFraction
+}
 function hit(event: PointerEvent): number | null {
     const matrix: DOMMatrix | null | undefined = graph.value?.getScreenCTM()
     if (!matrix || !validReadings.value) return null
@@ -172,11 +177,9 @@ function hit(event: PointerEvent): number | null {
         const dy: number = point.y - chartHeight.value / 2
         const radius: number = Math.min(chartWidth.value, chartHeight.value) / 2 * PIE_RADIUS_RATIO
         if (Math.hypot(dx, dy) > radius) return null
-        const fraction: number = ((Math.atan2(dy, dx) + Math.PI / 2 + FULL_TURN) % FULL_TURN) / FULL_TURN
-        let end: number = 0
-        for (const item of readings.value) {
-            end += item.percentage ?? 0
-            if ((item.percentage ?? 0) > 0 && fraction < end) return item.index
+        const fraction: number = ((Math.atan2(dy, dx) - PIE_TOP_ANGLE + FULL_TURN) % FULL_TURN) / FULL_TURN
+        for (const slice of pieSlices.value) {
+            if (isPieFractionInSlice(fraction, slice)) return slice.index
         }
         return null
     }
@@ -202,8 +205,9 @@ const activePoint: ComputedRef<ChartPoint> = computed((): ChartPoint => {
     const item: ChartReading | undefined = activeReading.value
     if (!item) return { x: 0, y: 0 }
     if (props.type !== 'pie') return { x: props.type === 'line' ? dataToSvgX(item.index) : getBarX(item.index) + barWidth.value / 2, y: dataToSvgY(item.value) }
-    const before: number = readings.value.slice(0, item.index).reduce((sum: number, reading: ChartReading): number => sum + (reading.percentage ?? 0), 0)
-    const angle: number = (before + (item.percentage ?? 0) / 2) * FULL_TURN - Math.PI / 2
+    const slice: PieGeometry | undefined = activeSlice.value
+    if (!slice) return { x: 0, y: 0 }
+    const angle: number = (slice.startFraction + slice.endFraction) / 2 * FULL_TURN + PIE_TOP_ANGLE
     const radius: number = Math.min(chartWidth.value, chartHeight.value) / 2 * PIE_RADIUS_RATIO * ANCHOR_RADIUS_RATIO
     return { x: chartWidth.value / 2 + Math.cos(angle) * radius, y: chartHeight.value / 2 + Math.sin(angle) * radius }
 })
