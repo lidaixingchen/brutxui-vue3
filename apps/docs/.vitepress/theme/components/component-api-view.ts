@@ -1,17 +1,23 @@
-import type { ApiComponent, ApiKind, ApiMember } from '../../api-types'
+import uiPackage from '../../../../../packages/ui/package.json'
+import type { ApiComponent, ApiDefault, ApiKind, ApiMember, ApiSource } from '../../api-types'
 import { apiAnchorPart } from '../../api-types'
 
-export const API_TYPE_SUMMARY_LENGTH = 120
+const SOURCE_BRANCH_REFERENCE = 'HEAD'
 
 export interface ComponentApiMemberLabels {
     required: string
     nullable: string
     readonly: string
-    notApplicable: string
     notDeclared: string
+    details: string
+    rawType: string
+    defaultDetails: string
     declaration: string
     resolution: string
+    resolutionExpression: string
     fallback: string
+    fallbackExplanation: string
+    factoryInstance: string
     source: string
     typeReferences: string
     typeReferenceDefinition: string
@@ -20,8 +26,6 @@ export interface ComponentApiMemberLabels {
     copyType: string
     copied: string
     copyFailed: string
-    expandType: string
-    collapseType: string
     typeLiterals: string
 }
 
@@ -42,15 +46,34 @@ export function getApiTypeReferenceAnchorId(memberAnchorId: string, referenceInd
     return memberAnchorId + '-type-reference-' + referenceIndex
 }
 
-export function isLongApiType(type: string): boolean {
-    return type.length > API_TYPE_SUMMARY_LENGTH || type.includes('\n')
+export function getApiSourceFileName(source: ApiSource): string {
+    return source.file.split('/').at(-1) ?? source.file
+}
+
+export function getApiSourceUrl(source: ApiSource): string | undefined {
+    const repository = typeof uiPackage.repository === 'string'
+        ? uiPackage.repository
+        : uiPackage.repository?.url
+    if (!repository) return undefined
+
+    const repositoryUrl = repository.replace(/^git\+/, '').replace(/\.git$/, '').replace(/\/$/, '')
+    const sourcePath = source.file.split('/').map(encodeURIComponent).join('/')
+    const line = source.line ? '#L' + source.line : ''
+    return repositoryUrl + '/blob/' + SOURCE_BRANCH_REFERENCE + '/' + sourcePath + line
+}
+
+export function getApiDefaultMainValue(defaultValue: ApiDefault | undefined, factoryLabel: string): string {
+    if (!defaultValue || defaultValue.declaration.kind === 'absent') return '—'
+    if (defaultValue.resolution?.kind === 'resolved') return defaultValue.resolution.text
+    if (defaultValue.declaration.kind === 'factory') return factoryLabel
+    return defaultValue.declaration.text
 }
 
 export function matchesApiMember(member: ApiMember, query: string): boolean {
     const normalizedQuery = query.trim().toLocaleLowerCase()
     if (!normalizedQuery) return true
 
-    return [member.name, member.type.text, member.description, ...member.notes,
+    return [member.name, member.type.displayText ?? '', member.type.text, member.description, ...member.notes,
         ...member.type.references.flatMap(reference => [reference.name, reference.text])]
         .some(value => value.toLocaleLowerCase().includes(normalizedQuery))
 }
