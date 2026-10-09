@@ -46,9 +46,9 @@ import { RegistryClient } from '../src/lib/registry-client.js';
 import * as diffService from '../src/lib/services/diff-service.js';
 import * as prompts from '@inquirer/prompts';
 import { update } from '../src/commands/update.js';
-import type { DiffResult } from '../src/lib/types.js';
+import type { DiffResult, RegistryItem, RegistryItemSnapshot } from '../src/lib/types.js';
+import type { ComponentUpdatePlanOptions } from '../src/lib/services/component-mutation-engine.js';
 import { ProjectContext } from '../src/lib/project-context.js';
-import { MergeExecutor } from '../src/lib/merge/merge-executor.js';
 
 const mockedReadConfigSafe = vi.mocked(readConfigSafe);
 const mockedGetInstalledComponents = vi.mocked(diffService.getInstalledComponents);
@@ -320,6 +320,7 @@ describe('update command', () => {
                 'https://example.test/registry-a',
                 expect.objectContaining({ name: 'button' }),
                 true,
+                expect.any(Function),
             );
             expect(mockPlanUpdate).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -373,6 +374,7 @@ describe('update command', () => {
                 'https://override.test/registry',
                 expect.objectContaining({ name: 'button' }),
                 true,
+                expect.any(Function),
             );
             expect(mockPlanUpdate).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -583,6 +585,7 @@ describe('update command', () => {
                 'https://example.test/registry',
                 expect.objectContaining({ name: 'badge' }),
                 true,
+                expect.any(Function),
             );
             expect(mockPlanUpdate).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -668,7 +671,54 @@ describe('update command', () => {
                 undefined,
                 undefined,
                 false,
+                expect.any(Function),
             );
+        });
+
+        it('reuses the no-cache registry snapshot for the selected update plan', async () => {
+            const tmpDir: string = await createProjectWithManifest({
+                button: { registrySource: 'https://example.test/registry' },
+            });
+            const localButtonFile: string = path.join(tmpDir, 'src/components/ui/button/Button.vue');
+            await fs.ensureDir(path.dirname(localButtonFile));
+            await fs.writeFile(localButtonFile, '<template><button>Old</button></template>\n');
+            mockedGetInstalledComponents.mockResolvedValue(['button']);
+
+            const registryItem: RegistryItem = {
+                name: 'button',
+                type: 'registry:ui',
+                title: 'Button',
+                description: 'Button',
+                dependencies: [],
+                registryDependencies: [],
+                tailwind: {},
+                cssVars: {},
+                integrity: 'sha256-button-new',
+                files: [
+                    {
+                        path: 'components/ui/button/Button.vue',
+                        type: 'registry:ui',
+                        content: '<template><button>New</button></template>\n',
+                    },
+                ],
+            };
+            const registrySource: string = 'https://mirror.example.test/registry';
+            const fetchItemWithMetaSpy = vi.spyOn(RegistryClient.prototype, 'fetchItemWithMeta')
+                .mockResolvedValue({ item: registryItem, source: registrySource });
+            const actualDiffService = await vi.importActual<typeof import('../src/lib/services/diff-service.js')>(
+                '../src/lib/services/diff-service.js'
+            );
+            mockedDiffComponent.mockImplementation((
+                ...args: Parameters<typeof diffService.diffComponent>
+            ): Promise<DiffResult> => actualDiffService.diffComponent(...args));
+
+            await update([], { cwd: tmpDir, silent: true, yes: true, all: true, force: true, cache: false });
+
+            expect(fetchItemWithMetaSpy).toHaveBeenCalledTimes(1);
+            expect(fetchItemWithMetaSpy).toHaveBeenCalledWith('button', { useCache: false });
+            const planOptions: ComponentUpdatePlanOptions = mockPlanUpdate.mock.calls[0]?.[0] as ComponentUpdatePlanOptions;
+            const snapshot: RegistryItemSnapshot | undefined = planOptions.registrySnapshots?.get('button');
+            expect(snapshot).toEqual({ item: registryItem, source: registrySource });
         });
     });
 

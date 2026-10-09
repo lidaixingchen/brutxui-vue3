@@ -42,6 +42,11 @@ export interface RegistryItem {
     integrity: string;
 }
 
+export interface RegistryItemSnapshot {
+    item: RegistryItem;
+    source: string;
+}
+
 
 export type ProjectType =
     | 'vite-vue'

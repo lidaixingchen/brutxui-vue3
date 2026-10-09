@@ -1,6 +1,6 @@
 import path from 'path';
 import type { ProjectContext } from '../project-context.js';
-import type { RegistryItem } from '../types.js';
+import type { RegistryItem, RegistryItemSnapshot } from '../types.js';
 import { DEFAULT_REGISTRY_URL } from '../constants.js';
 import { ensureUtilsFile } from './add-service.js';
 import { mergeSnippetsFile, hasVscodeDir } from '../vscode-snippets.js';
@@ -56,6 +56,11 @@ export interface ComponentPlanOptions {
     useCache?: boolean;
     /** 是否更新 VS Code 代码片段（默认自动检测） */
     vscode?: boolean;
+}
+
+export interface ComponentUpdatePlanOptions extends ComponentPlanOptions {
+    /** 更新检查阶段已获取的注册表条目快照，缺失项仍由规划阶段独立获取 */
+    registrySnapshots?: ReadonlyMap<string, RegistryItemSnapshot>;
 }
 
 export interface MutationCallbacks {
@@ -226,7 +231,7 @@ export class ComponentMutationEngine {
     /**
      * 阶段一：更新规划（针对已安装组件计算差异与 3-way 合并计划）
      */
-    async planUpdate(options: ComponentPlanOptions): Promise<ComponentMutationPlan> {
+    async planUpdate(options: ComponentUpdatePlanOptions): Promise<ComponentMutationPlan> {
         const manifest = await readManifest(this.context.cwd, this.context.fs).catch(() => null);
         const versionByName = new Map<string, string>();
         const cleanNames: string[] = [];
@@ -252,13 +257,15 @@ export class ComponentMutationEngine {
 
         for (const name of cleanNames) {
             const itemRegistrySource = options.registryOverride ?? manifest?.components[name]?.registrySource;
-            const item = await client.fetchItem(name, {
+            const snapshot: RegistryItemSnapshot | undefined = options.registrySnapshots?.get(name);
+            const item: RegistryItem = snapshot?.item ?? await client.fetchItem(name, {
                 sourceOverride: itemRegistrySource,
                 useCache: options.useCache !== false,
             });
             remoteItems.push(item);
-            if (itemRegistrySource) {
-                registrySources[name] = itemRegistrySource;
+            const registrySource: string | undefined = snapshot?.source ?? itemRegistrySource;
+            if (registrySource) {
+                registrySources[name] = registrySource;
             }
             for (const dep of item.dependencies) {
                 npmDepsSet.add(dep);
@@ -387,6 +394,7 @@ export class ComponentMutationEngine {
         const filesByComponent = new Map<string, string[]>();
         const baselinesByComponent = new Map<string, Record<string, string>>();
         const conflictsMap = new Map<string, string[]>();
+        let manifestUpdated: boolean = false;
 
         try {
             if (plan.ensureUtils) {
@@ -469,7 +477,6 @@ export class ComponentMutationEngine {
                 await mergeSnippetsFile(this.context.cwd, succeeded, this.context.fs, transaction);
             }
 
-            let manifestUpdated = false;
             if (succeeded.length > 0) {
                 await ensureGitattributes(this.context.cwd, this.context.fs, transaction);
 
@@ -497,18 +504,52 @@ export class ComponentMutationEngine {
                 manifestUpdated = true;
             }
 
+        } catch (error: unknown) {
+            const errorMessage: string = error instanceof Error ? error.message : String(error);
+            let rollbackFailures: string[] = [];
+            let rollbackErrorMessage: string | undefined;
+            try {
+                rollbackFailures = await transaction.rollback();
+            } catch (rollbackError: unknown) {
+                rollbackErrorMessage = rollbackError instanceof Error ? rollbackError.message : String(rollbackError);
+            }
+
+            const rollbackDetails: string = rollbackFailures.length > 0
+                ? `rollback was incomplete; inspect paths with rollback failures: ${rollbackFailures.join(', ')}`
+                : rollbackErrorMessage
+                    ? `rollback did not complete: ${rollbackErrorMessage}; inspect changed component files: ${plan.files.map((file: MutationPlanFile): string => file.filePath).join(', ')}`
+                    : 'rollback completed';
+            const code: CliError['code'] | undefined = error instanceof CliError ? error.code : undefined;
+            const exitCode: number | undefined = error instanceof CliError ? error.exitCode : undefined;
+            throw new CliError(
+                `Component mutation failed; ${rollbackDetails}. Original error: ${errorMessage}`,
+                { code, exitCode, cause: error }
+            );
+        }
+
+        try {
             await transaction.commit();
+        } catch (error: unknown) {
+            const errorMessage: string = error instanceof Error ? error.message : String(error);
+            throw new CliError(`Component files were committed, but transaction backup cleanup failed: ${errorMessage}`, {
+                code: error instanceof CliError ? error.code : undefined,
+                exitCode: error instanceof CliError ? error.exitCode : undefined,
+                cause: error,
+            });
+        }
 
-            let dependenciesResult: DependencyInstallResult = {
-                status: 'skipped',
-                packages: plan.npmDependencies,
-            };
+        let dependenciesResult: DependencyInstallResult = {
+            status: 'skipped',
+            packages: plan.npmDependencies,
+        };
 
-            if (plan.npmDependencies.length > 0 && !options.skipDependencies) {
+        if (plan.npmDependencies.length > 0 && !options.skipDependencies) {
+            let topology: Awaited<ReturnType<typeof WorkspaceTopologyEngine.resolveTopology>> | undefined;
+            let targetPackage: string | undefined = options.targetPackageName;
+            try {
                 options.callbacks?.onDependencyStart?.(plan.npmDependencies);
-                const topology = await WorkspaceTopologyEngine.resolveTopology(this.context.cwd, this.context.fs);
+                topology = await WorkspaceTopologyEngine.resolveTopology(this.context.cwd, this.context.fs);
 
-                let targetPackage = options.targetPackageName;
                 if (!targetPackage && topology.isMonorepo) {
                     try {
                         const pkgJsonPath = path.resolve(this.context.cwd, 'package.json');
@@ -520,67 +561,59 @@ export class ComponentMutationEngine {
                             }
                         }
                     } catch {
-                        // ignore and proceed
+                        // 包名不可用时，在工作区层级安装依赖。
                     }
                 }
 
-                try {
-                    await PackageManagerAdapter.executeInstall(
+                await PackageManagerAdapter.executeInstall(
+                    topology.packageManager,
+                    plan.npmDependencies,
+                    topology.workspaceRoot,
+                    targetPackage,
+                    topology.isMonorepo
+                );
+                dependenciesResult = {
+                    status: 'installed',
+                    packages: plan.npmDependencies,
+                };
+            } catch (dependencyError: unknown) {
+                const manualCommand: string | undefined = topology
+                    ? PackageManagerAdapter.getManualInstallCommand(
                         topology.packageManager,
                         plan.npmDependencies,
-                        topology.workspaceRoot,
                         targetPackage,
                         topology.isMonorepo
-                    );
-                    dependenciesResult = {
-                        status: 'installed',
-                        packages: plan.npmDependencies,
-                    };
-                } catch (installError) {
-                    const manualCommand = PackageManagerAdapter.getManualInstallCommand(
-                        topology.packageManager,
-                        plan.npmDependencies,
-                        targetPackage,
-                        topology.isMonorepo
-                    );
-                    dependenciesResult = {
-                        status: 'failed',
-                        packages: plan.npmDependencies,
-                        manualCommand,
-                        error: installError instanceof Error ? installError.message : String(installError),
-                    };
-                }
-            }
+                    )
+                    : undefined;
 
-            const conflicts = Array.from(conflictsMap.entries()).map(([component, conflictFiles]) => ({
-                component,
-                conflictFiles,
-            }));
-
-            return {
-                succeeded,
-                skipped,
-                filesWritten,
-                filesDeleted,
-                conflicts,
-                dependencies: dependenciesResult,
-                manifestUpdated,
-                stats: {
-                    createdFiles,
-                    mergedFiles,
-                    deletedFiles,
-                    skippedFiles,
-                },
-            };
-        } catch (error) {
-            await transaction.rollback();
-            if (error instanceof CliError) {
-                throw error;
+                dependenciesResult = {
+                    status: 'failed',
+                    packages: plan.npmDependencies,
+                    ...(manualCommand ? { manualCommand } : {}),
+                    error: dependencyError instanceof Error ? dependencyError.message : String(dependencyError),
+                };
             }
-            const message = error instanceof Error ? error.message : String(error);
-            throw new CliError(`Component mutation failed and was cleanly rolled back: ${message}`, {
-                cause: error,
-            });
         }
+
+        const conflicts = Array.from(conflictsMap.entries()).map(([component, conflictFiles]) => ({
+            component,
+            conflictFiles,
+        }));
+
+        return {
+            succeeded,
+            skipped,
+            filesWritten,
+            filesDeleted,
+            conflicts,
+            dependencies: dependenciesResult,
+            manifestUpdated,
+            stats: {
+                createdFiles,
+                mergedFiles,
+                deletedFiles,
+                skippedFiles,
+            },
+        };
     }
 }

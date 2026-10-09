@@ -12,8 +12,8 @@ import type { BrutalistConfig, DiffResult, RegistryItem } from '../src/lib/types
 let mockedReadConfigSafe: ReturnType<typeof vi.spyOn>;
 let fetchItemSpy: ReturnType<typeof vi.spyOn>;
 
-function stubRegistryItem(item: RegistryItem, source = 'https://example.test/registry') {
-    fetchItemSpy.mockResolvedValue(item);
+function stubRegistryItem(item: RegistryItem, source: string = 'https://example.test/registry'): void {
+    fetchItemSpy.mockResolvedValue({ item, source });
 }
 
 function createConfig(overrides: Partial<BrutalistConfig> = {}): BrutalistConfig {
@@ -80,7 +80,7 @@ describe('diff command', () => {
 
     beforeEach(async () => {
         mockedReadConfigSafe = vi.spyOn(configLib, 'readConfigSafe');
-        fetchItemSpy = vi.spyOn(RegistryClient.prototype, 'fetchItem');
+        fetchItemSpy = vi.spyOn(RegistryClient.prototype, 'fetchItemWithMeta');
         tmpDir = await createTmpProject();
         savedEnv = process.env.BRUTX_NO_CACHE;
     });
@@ -509,24 +509,24 @@ describe('diff command', () => {
 
             fetchItemSpy.mockImplementation(async (name: string) => {
                 if (name === 'button') {
-                    return {
+                    return { source: 'https://example.test/registry', item: {
                         name: 'button',
                         type: 'registry:ui',
                         files: [{
                             path: 'components/ui/button/Button.vue',
                             content: buttonContent,
                         }],
-                    } as RegistryItem;
+                    } as RegistryItem };
                 }
                 if (name === 'input') {
-                    return {
+                    return { source: 'https://example.test/registry', item: {
                         name: 'input',
                         type: 'registry:ui',
                         files: [{
                             path: 'components/ui/input/Input.vue',
                             content: '<template>different</template>\n',
                         }],
-                    } as RegistryItem;
+                    } as RegistryItem };
                 }
                 throw new Error(`Component "${name}" not found`);
             });

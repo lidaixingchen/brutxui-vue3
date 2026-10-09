@@ -12,10 +12,10 @@ import {
 } from '../src/lib/services/diff-service.js';
 import { ProjectContext } from '../src/lib/project-context.js';
 
-let fetchItemSpy: ReturnType<typeof vi.spyOn>;
+let fetchItemWithMetaSpy: ReturnType<typeof vi.spyOn>;
 
-function stubRegistryItem(item: RegistryItem) {
-    fetchItemSpy.mockResolvedValue(item);
+function stubRegistryItem(item: RegistryItem): void {
+    fetchItemWithMetaSpy.mockResolvedValue({ item, source: 'https://registry.example.test' });
 }
 
 const defaultConfig: BrutalistConfig = {
@@ -78,7 +78,7 @@ describe('diff service', () => {
 
     beforeEach(async () => {
         vi.clearAllMocks();
-        fetchItemSpy = vi.spyOn(RegistryClient.prototype, 'fetchItem');
+        fetchItemWithMetaSpy = vi.spyOn(RegistryClient.prototype, 'fetchItemWithMeta');
         tmpDir = await createTmpProject();
     });
 
@@ -205,7 +205,7 @@ describe('diff service', () => {
             manifestEntry
         );
 
-        expect(fetchItemSpy).toHaveBeenCalledWith('button', { useCache: true });
+        expect(fetchItemWithMetaSpy).toHaveBeenCalledWith('button', { useCache: true });
         expect(result).toMatchObject({
             installedIntegrity: 'sha256-old',
             latestIntegrity: 'sha256-new',
@@ -230,13 +230,16 @@ describe('diff service', () => {
                 files: [cardFile],
             },
         ]);
-        fetchItemSpy.mockImplementation(async (name) => makeRegistryItem(name, [
-            {
-                path: `components/ui/${name}/${name === 'button' ? 'Button' : 'Card'}.vue`,
-                content: `<template>${name}</template>\n`,
-                type: 'registry:ui',
-            },
-        ], `sha256-${name}-new`));
+        fetchItemWithMetaSpy.mockImplementation(async (name: string) => ({
+            item: makeRegistryItem(name, [
+                {
+                    path: `components/ui/${name}/${name === 'button' ? 'Button' : 'Card'}.vue`,
+                    content: `<template>${name}</template>\n`,
+                    type: 'registry:ui',
+                },
+            ], `sha256-${name}-new`),
+            source: `https://example.test/${name}`,
+        }));
 
         const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
         const installed = await getInstalledComponents(context);
@@ -259,12 +262,12 @@ describe('diff service', () => {
         expect(installed).toEqual(['button', 'card']);
         expect(results.map(result => result.component)).toEqual(['button', 'card']);
         expect(results.every(result => result.integrityStatus === 'outdated')).toBe(true);
-        expect(fetchItemSpy).toHaveBeenCalledWith('button', { useCache: true });
-        expect(fetchItemSpy).toHaveBeenCalledWith('card', { useCache: true });
+        expect(fetchItemWithMetaSpy).toHaveBeenCalledWith('button', { useCache: true });
+        expect(fetchItemWithMetaSpy).toHaveBeenCalledWith('card', { useCache: true });
     });
 
     it('returns registry-unreachable when registry lookup fails', async () => {
-        fetchItemSpy.mockRejectedValue(new Error('not found'));
+        fetchItemWithMetaSpy.mockRejectedValue(new Error('not found'));
 
         const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
         const result = await diffComponent(context, 'missing');
@@ -280,5 +283,24 @@ describe('diff service', () => {
             installedAt: undefined,
             registryError: 'not found',
         });
+    });
+
+    it('provides the fetched item and resolved source to an update snapshot callback', async () => {
+        const item: RegistryItem = makeRegistryItem('button', [
+            {
+                path: 'components/ui/button/Button.vue',
+                content: '<template><button>Updated</button></template>\n',
+                type: 'registry:ui',
+            },
+        ], 'sha256-new');
+        const source: string = 'https://mirror.example.test/registry';
+        fetchItemWithMetaSpy.mockResolvedValue({ item, source });
+        const context: ProjectContext = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
+        const onRegistryItem: ReturnType<typeof vi.fn> = vi.fn();
+
+        await diffComponent(context, 'button', undefined, undefined, false, onRegistryItem);
+
+        expect(fetchItemWithMetaSpy).toHaveBeenCalledWith('button', { useCache: false });
+        expect(onRegistryItem).toHaveBeenCalledWith({ item, source });
     });
 });

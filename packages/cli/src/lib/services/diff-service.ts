@@ -7,6 +7,7 @@ import type {
     FileDiff,
     InstalledComponentManifest,
     RegistryItem,
+    RegistryItemSnapshot,
 } from '../types.js';
 import { resolveRegistrySources } from '../registry-source.js';
 import { REGISTRY_PATH_PREFIXES } from '../constants.js';
@@ -130,7 +131,8 @@ export async function diffComponent(
     componentName: string,
     registryOverride?: string,
     manifestEntry?: InstalledComponentManifest,
-    shouldCache = true
+    shouldCache = true,
+    onRegistryItem?: (snapshot: RegistryItemSnapshot) => void,
 ): Promise<DiffResult> {
     const config = context.requireConfig();
     const localFiles = await getLocalComponentFiles(context, componentName);
@@ -140,11 +142,18 @@ export async function diffComponent(
     const client = registryOverride
         ? context.getRegistryClient({ sources: resolveRegistrySources(config, registryOverride) })
         : context.getRegistryClient();
+    let registryItemSource: string | undefined;
     try {
-        registryItem = await client.fetchItem(componentName, { useCache: shouldCache });
+        const result: RegistryItemSnapshot = await client.fetchItemWithMeta(componentName, { useCache: shouldCache });
+        registryItem = result.item;
+        registryItemSource = result.source;
     } catch (error) {
         registryItem = null;
         registryError = error instanceof Error ? error : new Error(String(error));
+    }
+
+    if (registryItem && registryItemSource) {
+        onRegistryItem?.({ item: registryItem, source: registryItemSource });
     }
 
     if (!registryItem) {

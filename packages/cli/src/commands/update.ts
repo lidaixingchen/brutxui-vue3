@@ -1,7 +1,7 @@
 import { checkbox, confirm } from '@inquirer/prompts';
 import chalk from 'chalk';
 import ora from 'ora';
-import type { UpdateOptions, DiffResult } from '../lib/types.js';
+import type { UpdateOptions, DiffResult, RegistryItemSnapshot } from '../lib/types.js';
 import {
     readConfigSafe,
     CliError,
@@ -105,13 +105,17 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
 
     // 错误隔离：单个组件的更新检查失败（registry 不可达、缓存损坏等）不中止其余组件，
     // 失败明细告警后继续；全部失败时才抛汇总 CliError
+    const registrySnapshotsByComponent: Map<string, RegistryItemSnapshot> = new Map();
     const settled = await Promise.allSettled(
-        updatableComponents.map(name => diffComponent(
+        updatableComponents.map((name: string) => diffComponent(
             context,
             name,
             options.registry ?? manifest?.components[name]?.registrySource,
             manifest?.components[name],
             useCache,
+            (snapshot: RegistryItemSnapshot): void => {
+                registrySnapshotsByComponent.set(name, snapshot);
+            },
         ))
     );
 
@@ -221,6 +225,13 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
 
     const conflictStrategy = options.ours ? 'ours' : options.theirs ? 'theirs' : 'markers';
     const engine = new ComponentMutationEngine(context);
+    const selectedRegistrySnapshots: Map<string, RegistryItemSnapshot> = new Map();
+    for (const name of selected) {
+        const snapshot: RegistryItemSnapshot | undefined = registrySnapshotsByComponent.get(name);
+        if (snapshot) {
+            selectedRegistrySnapshots.set(snapshot.item.name, snapshot);
+        }
+    }
 
     logger.newLine();
     logger.info(options.force ? 'Overwriting selected components...' : 'Applying 3-Way Merge for selected components...');
@@ -232,6 +243,7 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
         conflictStrategy,
         registryOverride: options.registry,
         useCache,
+        registrySnapshots: selectedRegistrySnapshots,
     });
 
     const spinner = options.silent ? null : ora({ isSilent: false });
