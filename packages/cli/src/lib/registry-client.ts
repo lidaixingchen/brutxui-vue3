@@ -110,12 +110,16 @@ export class RegistryClient {
             : this.sources;
 
         // 如果包含版本，根据说明符转换源 URL
-        const effectiveSources = targetSources.map(source => this.resolveVersionedSource(source, version));
-        const sourceKey = effectiveSources.join(',');
+        const effectiveSources: string[] = targetSources.map((source: string): string => this.resolveVersionedSource(source, version));
+        const sourceKey: string = effectiveSources.join(',');
 
-        return this.dedupeInflight(name, sourceKey, () => {
+        if (options?.signal) {
             return this.fetchWithSourcesPipeline(name, effectiveSources, options);
-        });
+        }
+
+        return this.dedupeInflight(name, sourceKey, (): Promise<{ item: RegistryItem; source: string }> => {
+            return this.fetchWithSourcesPipeline(name, effectiveSources, options);
+        }, options?.useCache ?? this.useCache);
     }
 
     /**
@@ -476,18 +480,25 @@ export class RegistryClient {
             return this.manifestCache.get(source)!;
         }
 
+        const fetchAndFreeze: (requestSignal?: AbortSignal) => Promise<ManifestSummaryInternal | null> = async (requestSignal?: AbortSignal): Promise<ManifestSummaryInternal | null> => {
+            const result: ManifestSummaryInternal | null = await this.doFetchManifestSummary(source, requestSignal);
+            if (!this.manifestCache.has(source)) {
+                this.manifestCache.set(source, result);
+            }
+            return this.manifestCache.get(source)!;
+        };
+
+        if (signal) {
+            return fetchAndFreeze(signal);
+        }
+
         if (this.inflightManifests.has(source)) {
             return await this.inflightManifests.get(source)!;
         }
 
-        const fetchPromise = (async () => {
+        const fetchPromise: Promise<ManifestSummaryInternal | null> = (async (): Promise<ManifestSummaryInternal | null> => {
             try {
-                const result = await this.doFetchManifestSummary(source, signal);
-                this.manifestCache.set(source, result);
-                return result;
-            } catch (error) {
-                this.manifestCache.delete(source);
-                throw error;
+                return await fetchAndFreeze();
             } finally {
                 this.inflightManifests.delete(source);
             }
@@ -640,14 +651,15 @@ export class RegistryClient {
         name: string,
         sourceKey: string,
         fn: () => Promise<{ item: RegistryItem; source: string }>,
+        effectiveUseCache: boolean,
     ): Promise<{ item: RegistryItem; source: string }> {
-        const key = `${name}::${sourceKey}`;
-        const existing = this.inflightItems.get(key);
+        const key: string = `${name}::${sourceKey}::cache=${effectiveUseCache}`;
+        const existing: Promise<{ item: RegistryItem; source: string }> | undefined = this.inflightItems.get(key);
         if (existing) {
             return existing;
         }
 
-        const promise = fn().finally(() => {
+        const promise: Promise<{ item: RegistryItem; source: string }> = fn().finally(() => {
             this.inflightItems.delete(key);
         });
 
@@ -656,12 +668,7 @@ export class RegistryClient {
     }
 
     /**
-     * 拓扑解析与依赖展开。
-     * 对组件及其 registryDependencies 执行深度优先搜索（DFS），
-     * 通过 ancestors 调用链集合严格防御循环依赖（避免菱形依赖假阳性），
-     * 并发分支通过 resolving Promise 记忆表实现汇聚单飞等待，
-     * 内部通过 Promise.all 树级并发与 dedupeInflight 请求单飞去重，
-     * 保证返回的 items 数组满足拓扑排序（被依赖组件在前）。
+     * 并发加载依赖图并执行拓扑排序，被依赖组件排在依赖它们的组件之前。
      */
     public async resolve(
         specifiers: readonly string[],
@@ -669,91 +676,178 @@ export class RegistryClient {
     ): Promise<ResolvedComponentPlan> {
         const resolved: RegistryItem[] = [];
         const hitSources = new Map<string, string>();
-        const visited = new Set<string>();
-        const resolving = new Map<string, Promise<void>>();
         const dependencies = new Set<string>();
         const devDependencies = new Set<string>();
         const registryDependencies = new Set<string>();
 
-        const targetSources = options?.sourceOverride
+        const targetSources: readonly string[] = options?.sourceOverride
             ? [options.sourceOverride]
             : this.sources;
 
-        const dfs = async (
-            specifier: string,
-            parentSource?: string,
-            ancestors: ReadonlySet<string> = new Set(),
-        ): Promise<void> => {
-            const { name: cleanName, version } = this.parseSpecifier(specifier);
+        interface DependencyRequest {
+            readonly key: string;
+            readonly specifier: string;
+            readonly sourceOverride?: string;
+        }
+
+        interface ResolvedNode {
+            readonly key: string;
+            readonly item: RegistryItem;
+            readonly source: string;
+        }
+
+        interface TraversalFrame {
+            readonly key: string;
+            dependencyIndex: number;
+        }
+
+        const createRequest: (specifier: string, parentSource?: string) => DependencyRequest = (specifier: string, parentSource?: string): DependencyRequest => {
+            const parsedSpecifier: { name: string; version?: string } = this.parseSpecifier(specifier);
+            const cleanName: string = parsedSpecifier.name;
+            const version: string | undefined = parsedSpecifier.version;
             this.assertSafeComponentName(cleanName);
 
-            // 如果有父级源且无显式覆盖，优先沿用父级命中源；否则使用 targetSources
-            const effectiveSources = (parentSource ? [parentSource] : targetSources)
-                .map(source => this.resolveVersionedSource(source, version));
-
-            const sourceKey = effectiveSources.join(',');
-            const dedupeKey = `${cleanName}::${sourceKey}`;
-
-            if (ancestors.has(dedupeKey)) {
-                const cycle = Array.from(ancestors).map(k => k.split('::')[0]).concat(cleanName).join(' -> ');
-                throw new CliError(
-                    `Circular dependency detected: ${cycle}`,
-                    { code: 'INVALID_REGISTRY' }
-                );
-            }
-
-            if (visited.has(dedupeKey)) {
-                return;
-            }
-
-            const ongoing = resolving.get(dedupeKey);
-            if (ongoing) {
-                await ongoing;
-                return;
-            }
-
-            const nextAncestors = new Set(ancestors);
-            nextAncestors.add(dedupeKey);
-
-            const task = (async () => {
-                const { item, source: hitSource } = await this.dedupeInflight(
-                    cleanName,
-                    sourceKey,
-                    () => this.fetchWithSourcesPipeline(cleanName, effectiveSources, options),
-                );
-
-                hitSources.set(cleanName, hitSource);
-
-                if (item.registryDependencies && item.registryDependencies.length > 0) {
-                    item.registryDependencies.forEach(dep => registryDependencies.add(dep));
-                    await Promise.all(
-                        item.registryDependencies.map(dep => dfs(dep, hitSource, nextAncestors))
-                    );
-                }
-
-                visited.add(dedupeKey);
-
-                if (!resolved.some(r => r.name === item.name)) {
-                    resolved.push(item);
-                }
-
-                // 收集依赖
-                item.dependencies?.forEach((dep: string) => dependencies.add(dep));
-                if (item.devDependencies && Array.isArray(item.devDependencies)) {
-                    item.devDependencies.forEach((dep: string) => devDependencies.add(dep));
-                }
-            })();
-
-            resolving.set(dedupeKey, task);
-            try {
-                await task;
-            } finally {
-                resolving.delete(dedupeKey);
-            }
+            const effectiveSources: string[] = (parentSource ? [parentSource] : targetSources)
+                .map((source: string): string => this.resolveVersionedSource(source, version));
+            const sourceKey: string = effectiveSources.join(',');
+            return {
+                key: `${cleanName}::${sourceKey}`,
+                specifier,
+                sourceOverride: parentSource ?? options?.sourceOverride,
+            };
         };
 
-        for (const specifier of specifiers) {
-            await dfs(specifier);
+        const rootRequests: DependencyRequest[] = specifiers.map(
+            (specifier: string): DependencyRequest => createRequest(specifier),
+        );
+        const rootKeys: string[] = rootRequests.map(
+            (request: DependencyRequest): string => request.key,
+        );
+        const nodes: Map<string, ResolvedNode> = new Map();
+        const dependencyKeysByNode: Map<string, readonly string[]> = new Map();
+        let pending: DependencyRequest[] = [...rootRequests];
+
+        const loadNode: (request: DependencyRequest) => Promise<ResolvedNode> = (request: DependencyRequest): Promise<ResolvedNode> => {
+            const fetchOptions: FetchItemOptions = {
+                ...options,
+                ...(request.sourceOverride ? { sourceOverride: request.sourceOverride } : {}),
+            };
+            return this.fetchItemWithMeta(
+                request.specifier,
+                fetchOptions,
+            ).then(({ item, source }: { item: RegistryItem; source: string }): ResolvedNode => ({
+                key: request.key,
+                item,
+                source,
+            }));
+        };
+
+        while (pending.length > 0) {
+            const requestsByKey: Map<string, DependencyRequest> = new Map();
+            for (let requestIndex: number = 0; requestIndex < pending.length; requestIndex += 1) {
+                const request: DependencyRequest = pending[requestIndex]!;
+                if (!nodes.has(request.key) && !requestsByKey.has(request.key)) {
+                    requestsByKey.set(request.key, request);
+                }
+            }
+            pending = [];
+
+            const loadedNodes: ResolvedNode[] = await Promise.all(
+                Array.from(requestsByKey.values(), loadNode),
+            );
+
+            for (let nodeIndex: number = 0; nodeIndex < loadedNodes.length; nodeIndex += 1) {
+                const node: ResolvedNode = loadedNodes[nodeIndex]!;
+                nodes.set(node.key, node);
+                hitSources.set(node.item.name, node.source);
+
+                const dependencyRequests: DependencyRequest[] = node.item.registryDependencies.map(
+                    (specifier: string): DependencyRequest => createRequest(specifier, node.source),
+                );
+                dependencyKeysByNode.set(
+                    node.key,
+                    dependencyRequests.map((request: DependencyRequest): string => request.key),
+                );
+
+                node.item.registryDependencies.forEach((dependency: string): void => {
+                    registryDependencies.add(dependency);
+                });
+                for (
+                    let dependencyIndex: number = 0;
+                    dependencyIndex < dependencyRequests.length;
+                    dependencyIndex += 1
+                ) {
+                    const dependencyRequest: DependencyRequest = dependencyRequests[dependencyIndex]!;
+                    if (!nodes.has(dependencyRequest.key)) {
+                        pending.push(dependencyRequest);
+                    }
+                }
+            }
+        }
+
+        const visited: Set<string> = new Set();
+        const activePath: string[] = [];
+        const activePathIndices: Map<string, number> = new Map();
+        const resolvedNames: Set<string> = new Set();
+
+        for (let rootIndex: number = 0; rootIndex < rootKeys.length; rootIndex += 1) {
+            const rootKey: string = rootKeys[rootIndex]!;
+            if (visited.has(rootKey)) {
+                continue;
+            }
+
+            const traversal: TraversalFrame[] = [{ key: rootKey, dependencyIndex: 0 }];
+            activePathIndices.set(rootKey, 0);
+            activePath.push(rootKey);
+
+            while (traversal.length > 0) {
+                const frame: TraversalFrame = traversal[traversal.length - 1]!;
+                const dependencyKeys: readonly string[] = dependencyKeysByNode.get(frame.key) ?? [];
+
+                if (frame.dependencyIndex < dependencyKeys.length) {
+                    const dependencyKey: string = dependencyKeys[frame.dependencyIndex]!;
+                    frame.dependencyIndex += 1;
+
+                    const cycleStartIndex: number | undefined = activePathIndices.get(dependencyKey);
+                    if (cycleStartIndex !== undefined) {
+                        const cycleKeys: string[] = [...activePath.slice(cycleStartIndex), dependencyKey];
+                        const cycleNames: string[] = cycleKeys.map(
+                            (key: string): string => nodes.get(key)!.item.name,
+                        );
+                        throw new CliError(
+                            `Circular dependency detected: ${cycleNames.join(' -> ')}`,
+                            { code: 'INVALID_REGISTRY' },
+                        );
+                    }
+
+                    if (visited.has(dependencyKey)) {
+                        continue;
+                    }
+
+                    activePathIndices.set(dependencyKey, activePath.length);
+                    activePath.push(dependencyKey);
+                    traversal.push({ key: dependencyKey, dependencyIndex: 0 });
+                    continue;
+                }
+
+                const node: ResolvedNode = nodes.get(frame.key)!;
+                if (!resolvedNames.has(node.item.name)) {
+                    resolved.push(node.item);
+                    resolvedNames.add(node.item.name);
+                }
+
+                (node.item.dependencies ?? []).forEach((dependency: string): void => {
+                    dependencies.add(dependency);
+                });
+                (node.item.devDependencies ?? []).forEach((dependency: string): void => {
+                    devDependencies.add(dependency);
+                });
+
+                visited.add(frame.key);
+                activePathIndices.delete(frame.key);
+                activePath.pop();
+                traversal.pop();
+            }
         }
 
         return {
