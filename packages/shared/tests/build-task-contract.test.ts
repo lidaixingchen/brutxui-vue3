@@ -6,8 +6,16 @@ import { resolve } from 'node:path'
 interface TaskDefinition {
     cache?: boolean
     dependsOn?: string[]
+    env?: string[]
     inputs?: string[]
     outputs?: string[]
+}
+
+interface DryRunEnvironmentVariables {
+    specified: {
+        env: string[]
+    }
+    configured: string[]
 }
 
 interface DryRunTask {
@@ -16,6 +24,7 @@ interface DryRunTask {
     inputs?: Record<string, string>
     dependencies?: string[]
     resolvedTaskDefinition: TaskDefinition
+    environmentVariables?: DryRunEnvironmentVariables
 }
 
 interface TurboJson {
@@ -42,11 +51,16 @@ function readTurboJson(): TurboJson {
     return readJson<TurboJson>('turbo.json')
 }
 
-function runTurboDryRun(args: string[]): TurboDryRun {
+function runTurboDryRun(args: string[], envOverrides: NodeJS.ProcessEnv = {}): TurboDryRun {
     const output = execFileSync(
         turboBinaryPath,
         ['run', ...args, '--dry=json', '--output-logs=none'],
-        { cwd: rootDir, encoding: 'utf-8', shell: process.platform === 'win32' },
+        {
+            cwd: rootDir,
+            encoding: 'utf-8',
+            env: { ...process.env, ...envOverrides },
+            shell: process.platform === 'win32',
+        },
     )
     const jsonStart = output.indexOf('{')
     if (jsonStart < 0) {
@@ -209,7 +223,10 @@ describe('Turbo Build Task Graph Contract', () => {
     })
 
     it('a composite graph schedules each package generator once and keeps generators uncached', () => {
-        const graph = runTurboDryRun(['build:artifact', 'typecheck:source', 'lint:source'])
+        const graph = runTurboDryRun(
+            ['build:artifact', 'typecheck:source', 'lint:source'],
+            { VERCEL: '1' },
+        )
 
         for (const packageName of ['brutx-ui-vue', 'brutx-vue']) {
             const generateTaskId = `${packageName}#generate`
@@ -229,6 +246,13 @@ describe('Turbo Build Task Graph Contract', () => {
         expect(cliArtifact.resolvedTaskDefinition.outputs).toEqual(['dist/**'])
         expect(registryArtifact.resolvedTaskDefinition.outputs).toEqual([])
         expect(docsArtifact.resolvedTaskDefinition.outputs).toEqual(['.vitepress/dist/**'])
+        expect(docsArtifact.resolvedTaskDefinition.env).toContain('VERCEL')
+        expect(docsArtifact.environmentVariables?.specified.env).toContain('VERCEL')
+        expect(
+            docsArtifact.environmentVariables?.configured.some(
+                (variable: string) => variable.startsWith('VERCEL='),
+            ),
+        ).toBe(true)
         expect(uiArtifact.dependencies).toContain('brutx-ui-vue#generate')
         expect(cliArtifact.dependencies).toContain('brutx-vue#generate')
         expect(registryArtifact.dependencies).toContain('brutx-ui-vue#generate')

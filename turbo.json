@@ -87,6 +87,9 @@
                 "brutx-ui-vue#build:artifact",
                 "brutx-ui-vue#docs:manifest"
             ],
+            "env": [
+                "VERCEL"
+            ],
             "outputs": [
                 ".vitepress/dist/**"
             ],
