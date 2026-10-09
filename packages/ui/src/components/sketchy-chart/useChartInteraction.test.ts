@@ -1,10 +1,13 @@
 import { describe, expect, it, vi, afterEach } from 'vitest'
-import { defineComponent, nextTick, ref } from 'vue'
+import { defineComponent, nextTick, ref, type Ref } from 'vue'
 import { mount, enableAutoUnmount } from '@vue/test-utils'
 import { useChartInteraction } from './useChartInteraction'
-import type { ChartDataItem } from './sketchy-chart-data'
+import type { ChartDataItem, ChartType } from './sketchy-chart-data'
 
 enableAutoUnmount(afterEach)
+
+const UPDATED_CHART_LABEL: string = 'Updated'
+const UPDATED_CHART_VALUE: number = 25
 
 describe('useChartInteraction', (): void => {
     function createFixture(overrides: Partial<Parameters<typeof useChartInteraction>[0]> = {}) {
@@ -16,6 +19,7 @@ describe('useChartInteraction', (): void => {
             { label: 'C', value: 30 },
         ])
         const enabled = ref(true)
+        const chartType: Ref<ChartType> = ref<ChartType>('bar')
         const valid = ref(true)
         const hitFn = vi.fn((_event: PointerEvent): number | null => 1)
 
@@ -28,7 +32,7 @@ describe('useChartInteraction', (): void => {
 
                 const interactionInstance = useChartInteraction({
                     data: () => data.value,
-                    type: () => 'bar',
+                    type: () => chartType.value,
                     enabled: () => enabled.value,
                     valid: () => valid.value,
                     root: rootEl,
@@ -44,6 +48,7 @@ describe('useChartInteraction', (): void => {
                 <div ref="rootEl" class="chart-root">
                     <div ref="explorerEl" class="chart-explorer"></div>
                     <div class="chart-tooltip"></div>
+                    <button data-chart-table-trigger></button>
                 </div>
             `,
         }), { attachTo: document.body })
@@ -60,6 +65,7 @@ describe('useChartInteraction', (): void => {
             tooltipEl,
             data,
             enabled,
+            chartType,
             valid,
             hitFn,
         }
@@ -213,12 +219,12 @@ describe('useChartInteraction', (): void => {
         expect(interaction.activeIndex.value).toBeNull()
     })
 
-    it('clears state and attempts focus restoration on data/type updates', async (): Promise<void> => {
-        const { interaction, data, explorer } = createFixture()
+    it('clears state and restores explorer focus after replacing data', async (): Promise<void> => {
+        const { interaction, data, explorer }: ReturnType<typeof createFixture> = createFixture()
         interaction.select(1, 'keyboard')
         expect(interaction.activeIndex.value).toBe(1)
 
-        const slider = document.createElement('div')
+        const slider: HTMLDivElement = document.createElement('div')
         slider.setAttribute('role', 'slider')
         explorer.value!.appendChild(slider)
         slider.focus()
@@ -229,6 +235,48 @@ describe('useChartInteraction', (): void => {
 
         expect(interaction.activeIndex.value).toBeNull()
         expect(interaction.explorerIndex.value).toBe(0)
+        expect(document.activeElement).toBe(slider)
+    })
+
+    it('observes in-place label and value changes and restores explorer focus', async (): Promise<void> => {
+        const { interaction, data, explorer }: ReturnType<typeof createFixture> = createFixture()
+        const slider: HTMLDivElement = document.createElement('div')
+        slider.setAttribute('role', 'slider')
+        explorer.value!.appendChild(slider)
+        slider.focus()
+
+        interaction.select(1, 'keyboard')
+        data.value[1]!.label = UPDATED_CHART_LABEL
+        await nextTick()
+        expect(interaction.activeIndex.value).toBeNull()
+        expect(document.activeElement).toBe(slider)
+
+        interaction.select(1, 'keyboard')
+        data.value[1]!.value = UPDATED_CHART_VALUE
+        await nextTick()
+        expect(interaction.activeIndex.value).toBeNull()
+        expect(document.activeElement).toBe(slider)
+    })
+
+    it('resets interaction and restores focus after type and enabled changes', async (): Promise<void> => {
+        const { interaction, chartType, enabled, root, explorer }: ReturnType<typeof createFixture> = createFixture()
+        const slider: HTMLDivElement = document.createElement('div')
+        slider.setAttribute('role', 'slider')
+        explorer.value!.appendChild(slider)
+        slider.focus()
+        interaction.select(1, 'keyboard')
+
+        chartType.value = 'pie'
+        await nextTick()
+        expect(interaction.activeIndex.value).toBeNull()
+        expect(document.activeElement).toBe(slider)
+
+        interaction.select(1, 'keyboard')
+        enabled.value = false
+        await nextTick()
+        const tableTrigger: Element | null = root.value!.querySelector('[data-chart-table-trigger]')
+        expect(interaction.activeIndex.value).toBeNull()
+        expect(document.activeElement).toBe(tableTrigger)
     })
 
     it('tracks pointer and manages safe corridor event listeners', async (): Promise<void> => {

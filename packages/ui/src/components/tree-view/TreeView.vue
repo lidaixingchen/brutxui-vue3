@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, shallowRef, computed, watch, provide } from 'vue';
+import { ref, shallowRef, computed, watch, provide, type ComputedRef } from 'vue';
 import { getDocument } from '@/lib/env';
 import { cn } from '@/lib/utils';
 import TreeViewNode from './TreeViewNode.vue';
-import { getCheckState, getAllDescendantIds, moveNode, cloneTree } from './tree-view-utils';
+import { getCheckStateMap, getAllDescendantIds, moveNode, cloneTree, TREE_CHECK_STATES_KEY } from './tree-view-utils';
 import { useLocale } from '@/composables/useLocale';
 import type { CheckState, SelectionMode, TreeNode, TreeViewContext } from './types';
 
@@ -103,6 +103,10 @@ function emitNodesUpdate() {
 const expandedIds = shallowRef<Set<string>>(new Set(props.defaultExpanded));
 
 const checkedSet = computed(() => new Set(props.checkedIds));
+const checkStates: ComputedRef<ReadonlyMap<string, CheckState>> = computed((): ReadonlyMap<string, CheckState> => {
+    if (props.selectionMode !== 'checkbox') return new Map<string, CheckState>()
+    return getCheckStateMap(localNodes.value, checkedSet.value)
+})
 const firstFocusableRootIndex = computed(() =>
     localNodes.value.findIndex((node) => !node.disabled && !node.hidden)
 )
@@ -133,7 +137,7 @@ function selectNode(node: TreeNode) {
 
 function toggleCheck(node: TreeNode) {
     if (node.disabled) return
-    const state = getCheckState(node, checkedSet.value)
+    const state = checkStates.value.get(node.id) ?? 'unchecked'
     const descendantIds = getAllDescendantIds(node)
     const currentSet = new Set(checkedSet.value)
 
@@ -411,6 +415,7 @@ function filter(query: string) {
     emitNodesUpdate();
 }
 
+provide(TREE_CHECK_STATES_KEY, checkStates)
 provide('TreeViewContext', {
     lazy: computed(() => props.lazy),
     retryOnError: computed(() => props.retryOnError),

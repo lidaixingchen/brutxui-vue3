@@ -5,6 +5,8 @@ import { useLocale } from '@/composables/useLocale'
 import { virtualScrollRootVariants, virtualScrollItemVariants } from './virtual-scroll-variants'
 import type { VirtualScrollProps, VirtualScrollEmits, VirtualizerInstance } from './types'
 
+type VirtualScrollOptionsSnapshot = readonly [count: number, itemHeight: number, overscan: number, dynamicHeight: boolean]
+
 const slots = useSlots()
 
 const props = withDefaults(defineProps<VirtualScrollProps<T>>(), {
@@ -68,16 +70,16 @@ import('@tanstack/vue-virtual')
 
         stopWatchOptions = watch(
             () => [props.items.length, props.itemHeight, props.overscan, props.dynamicHeight] as const,
-            (newVals, oldVals) => {
+            (newVals: VirtualScrollOptionsSnapshot, oldVals: VirtualScrollOptionsSnapshot | undefined): void => {
                 virtualizer.setOptions({
                     ...getOptions(),
                     onChange: () => {
                         triggerRef(virtualizerRef)
                     }
                 })
-                const oldDynamicHeight = oldVals?.[3]
-                const newDynamicHeight = newVals[3]
-                if (oldDynamicHeight !== undefined && newDynamicHeight !== oldDynamicHeight) {
+                const [, itemHeight, , dynamicHeight]: VirtualScrollOptionsSnapshot = newVals
+                const [, previousItemHeight, , previousDynamicHeight]: VirtualScrollOptionsSnapshot = oldVals ?? newVals
+                if (oldVals && (previousItemHeight !== itemHeight || previousDynamicHeight !== dynamicHeight)) {
                     virtualizer.measure()
                 }
                 virtualizer._willUpdate()

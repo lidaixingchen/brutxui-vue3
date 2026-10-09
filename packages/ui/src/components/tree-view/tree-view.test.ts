@@ -1,11 +1,11 @@
-import { mount } from '@vue/test-utils'
-import { defineComponent, nextTick, ref } from 'vue'
+import { flushPromises, mount } from '@vue/test-utils'
+import { computed, defineComponent, nextTick, ref } from 'vue'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import TreeView from './TreeView.vue'
 import TreeViewNode from './TreeViewNode.vue'
-import { getAllDescendantIds, getCheckState, moveNode } from './tree-view-utils'
-import type { TreeNode } from './types'
+import { getAllDescendantIds, getCheckState, getCheckStateMap, moveNode } from './tree-view-utils'
+import type { CheckState, TreeNode } from './types'
 
 const localeProvide = { [LOCALE_INJECTION_KEY]: en }
 
@@ -41,6 +41,8 @@ const deepNodes: TreeNode[] = [
 ]
 
 const emptyExpandedIds: Set<string> = new Set()
+const emptyCheckedIds: Set<string> = new Set()
+const TREE_CHECK_STATE_SCALE_NODE_COUNT: number = 2_048
 
 describe('TreeView', () => {
     it('renders with role="tree"', () => {
@@ -571,7 +573,7 @@ describe('TreeViewNode - Keyboard Navigation', () => {
                 node: { id: 'file.ts', label: 'file.ts' },
                 expandedIds: emptyExpandedIds,
                 selectionMode: 'checkbox',
-                checkedIds: new Set<string>(),
+                checkedIds: emptyCheckedIds,
             },
             attachTo: document.body,
         })
@@ -585,7 +587,7 @@ describe('TreeViewNode - Keyboard Navigation', () => {
                 node: { id: 'file.ts', label: 'file.ts' },
                 expandedIds: emptyExpandedIds,
                 selectionMode: 'checkbox',
-                checkedIds: new Set<string>(),
+                checkedIds: emptyCheckedIds,
                 disabled: true,
             },
             attachTo: document.body,
@@ -600,7 +602,7 @@ describe('TreeViewNode - Keyboard Navigation', () => {
                 node: { id: 'file.ts', label: 'file.ts' },
                 expandedIds: emptyExpandedIds,
                 selectionMode: 'checkbox',
-                checkedIds: new Set<string>(),
+                checkedIds: emptyCheckedIds,
                 disabled: true,
             },
             attachTo: document.body,
@@ -1054,7 +1056,7 @@ describe('TreeViewNode checkbox mode', () => {
                 node: { id: 'file.ts', label: 'file.ts' },
                 expandedIds: emptyExpandedIds,
                 selectionMode: 'single',
-                checkedIds: new Set<string>(),
+                checkedIds: emptyCheckedIds,
             },
         })
         expect(singleWrapper.findComponent({ name: 'Checkbox' }).exists()).toBe(false)
@@ -1064,7 +1066,7 @@ describe('TreeViewNode checkbox mode', () => {
                 node: { id: 'file.ts', label: 'file.ts' },
                 expandedIds: emptyExpandedIds,
                 selectionMode: 'checkbox',
-                checkedIds: new Set<string>(),
+                checkedIds: emptyCheckedIds,
             },
         })
         expect(checkboxWrapper.findComponent({ name: 'Checkbox' }).exists()).toBe(true)
@@ -1076,7 +1078,7 @@ describe('TreeViewNode checkbox mode', () => {
                 node: { id: 'file.ts', label: 'file.ts' },
                 expandedIds: emptyExpandedIds,
                 selectionMode: 'checkbox',
-                checkedIds: new Set<string>(),
+                checkedIds: emptyCheckedIds,
             },
             attachTo: document.body,
         })
@@ -1091,7 +1093,7 @@ describe('TreeViewNode checkbox mode', () => {
                 node: { id: 'file.ts', label: 'file.ts' },
                 expandedIds: emptyExpandedIds,
                 selectionMode: 'checkbox',
-                checkedIds: new Set<string>(),
+                checkedIds: emptyCheckedIds,
             },
         })
         const checkbox = wrapper.findComponent({ name: 'Checkbox' })
@@ -1106,7 +1108,7 @@ describe('TreeViewNode checkbox mode', () => {
                 node: { id: 'file.ts', label: 'file.ts' },
                 expandedIds: emptyExpandedIds,
                 selectionMode: 'checkbox',
-                checkedIds: new Set<string>(),
+                checkedIds: emptyCheckedIds,
             },
         })
         const rowLabel = wrapper.find('.truncate')
@@ -1284,6 +1286,72 @@ describe('tree-view-utils', () => {
         })
     })
 
+    describe('getCheckStateMap', () => {
+        it('aggregates each node including disabled descendants and the node itself', () => {
+            const nodes: TreeNode[] = [
+                {
+                    id: 'root',
+                    label: 'Root',
+                    children: [
+                        { id: 'disabled', label: 'Disabled', disabled: true },
+                        { id: 'child', label: 'Child' },
+                    ],
+                },
+            ]
+            const checkedIds: ReadonlySet<string> = new Set(['root', 'disabled'])
+
+            const states: ReadonlyMap<string, CheckState> = getCheckStateMap(nodes, checkedIds)
+
+            expect(states.get('root')).toBe('indeterminate')
+            expect(states.get('disabled')).toBe('checked')
+            expect(states.get('child')).toBe('unchecked')
+        })
+
+        it('tracks nested children added in place', () => {
+            const nodes = ref<TreeNode[]>([{ id: 'root', label: 'Root' }])
+            const checkedIds: ReadonlySet<string> = new Set(['root'])
+            const states = computed<ReadonlyMap<string, CheckState>>(
+                () => getCheckStateMap(nodes.value, checkedIds),
+            )
+
+            expect(states.value.get('root')).toBe('checked')
+            nodes.value[0]!.children = [{ id: 'child', label: 'Child' }]
+
+            expect(states.value.get('root')).toBe('indeterminate')
+        })
+
+        it('reads links linearly for a deep tree without recursion', () => {
+            const nodes: TreeNode[] = []
+            for (let index = 0; index < TREE_CHECK_STATE_SCALE_NODE_COUNT; index += 1) {
+                nodes.push({
+                    id: `node-${index}`,
+                    label: `Node ${index}`,
+                })
+            }
+            let childReadCount: number = 0
+
+            for (let index = 0; index < TREE_CHECK_STATE_SCALE_NODE_COUNT; index += 1) {
+                const child: TreeNode | undefined = nodes[index + 1]
+                const children: TreeNode[] = child ? [child] : []
+                Object.defineProperty(nodes[index]!, 'children', {
+                    configurable: true,
+                    get: (): TreeNode[] => {
+                        childReadCount += 1
+                        return children
+                    },
+                })
+            }
+
+            const checkedIds: ReadonlySet<string> = new Set(['node-0'])
+            const states: ReadonlyMap<string, CheckState> = getCheckStateMap([nodes[0]!], checkedIds)
+
+            expect(states.size).toBe(TREE_CHECK_STATE_SCALE_NODE_COUNT)
+            expect(states.get('node-0')).toBe('indeterminate')
+            expect(states.get(`node-${TREE_CHECK_STATE_SCALE_NODE_COUNT - 1}`)).toBe('unchecked')
+            expect(childReadCount).toBeLessThanOrEqual(TREE_CHECK_STATE_SCALE_NODE_COUNT * 2)
+        })
+    })
+
     describe('moveNode', () => {
         it('moves a node before another node', () => {
             const tree: TreeNode[] = [
@@ -1435,6 +1503,31 @@ describe('TreeView - Lazy Loading', () => {
         await nextTick()
         
         expect(wrapper.text()).toContain('Child Node')
+    })
+
+    it('updates checkbox summaries when lazy loading adds children', async () => {
+        const mockLoad = vi.fn().mockResolvedValue([
+            { id: 'child', label: 'Child Node', isLeaf: true },
+        ])
+        const wrapper = mount(TreeView, {
+            props: {
+                nodes: [{ id: 'lazy-root', label: 'Lazy Root' }],
+                selectionMode: 'checkbox',
+                checkedIds: ['lazy-root'],
+                lazy: true,
+                load: mockLoad,
+            },
+            global: { provide: localeProvide },
+        })
+        const root = wrapper.findComponent(TreeViewNode)
+
+        expect(root.attributes('aria-checked')).toBe('true')
+        await root.find('[role="treeitem"] > div').trigger('click')
+        await flushPromises()
+        await nextTick()
+
+        expect(root.attributes('aria-checked')).toBe('mixed')
+        expect(wrapper.findAll('[role="treeitem"]')).toHaveLength(2)
     })
 
     it('shows retry button on failure and retries loading', async () => {

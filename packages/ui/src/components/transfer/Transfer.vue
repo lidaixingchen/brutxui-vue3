@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, type ComputedRef } from 'vue'
 import { cn } from '@/lib/utils'
 import Card from '../card/Card.vue'
 import Checkbox from '../checkbox/Checkbox.vue'
@@ -125,6 +125,13 @@ const {
     items: () => filteredTargetData.value,
 })
 
+const leftCheckedSet: ComputedRef<ReadonlySet<TransferDataItem['key']>> = computed(
+    (): ReadonlySet<TransferDataItem['key']> => new Set<TransferDataItem['key']>(leftChecked.value),
+)
+const rightCheckedSet: ComputedRef<ReadonlySet<TransferDataItem['key']>> = computed(
+    (): ReadonlySet<TransferDataItem['key']> => new Set<TransferDataItem['key']>(rightChecked.value),
+)
+
 // 监视 props.modelValue 或 props.data 发生变化时，清理无效的选中项
 watch(
     [() => props.modelValue, () => props.data],
@@ -218,11 +225,11 @@ function getItemClass(disabled: boolean | undefined, isChecked: boolean) {
                 <div
                     v-for="item in filteredSourceData"
                     :key="item.key"
-                    :class="getItemClass(item.disabled, leftChecked.includes(item.key))"
+                    :class="getItemClass(item.disabled, leftCheckedSet.has(item.key))"
                     @click="toggleLeftChecked(item)"
                 >
                     <Checkbox
-                        :checked="leftChecked.includes(item.key)"
+                        :checked="leftCheckedSet.has(item.key)"
                         :disabled="item.disabled"
                         size="sm"
                         @click.stop
@@ -304,11 +311,11 @@ function getItemClass(disabled: boolean | undefined, isChecked: boolean) {
                 <div
                     v-for="item in filteredTargetData"
                     :key="item.key"
-                    :class="getItemClass(item.disabled, rightChecked.includes(item.key))"
+                    :class="getItemClass(item.disabled, rightCheckedSet.has(item.key))"
                     @click="toggleRightChecked(item)"
                 >
                     <Checkbox
-                        :checked="rightChecked.includes(item.key)"
+                        :checked="rightCheckedSet.has(item.key)"
                         :disabled="item.disabled"
                         size="sm"
                         @click.stop

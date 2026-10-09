@@ -92,23 +92,25 @@ function scrollToTop() {
     container.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-function unbindContainer() {
+function unbindContainer(): void {
     if (container) {
         container.removeEventListener('scroll', throttledScroll)
         container = null
     }
 }
 
-function stopObserving() {
+function stopObserving(): void {
     observer?.disconnect()
     observer = null
 }
 
-function syncContainerWithTarget() {
-    const el = getScrollContainer()
-    if (el && !container) {
-        bindContainer()
-    } else if (!el && container) {
+function syncContainerWithTarget(): void {
+    const nextContainer: HTMLElement | Window | null = getScrollContainer()
+    if (nextContainer === container) return
+
+    if (nextContainer) {
+        bindContainer(nextContainer)
+    } else if (container) {
         // 目标被条件渲染销毁：解绑并保持观察，待重建后自动重新绑定
         unbindContainer()
         visible.value = false
@@ -135,9 +137,9 @@ function observeDynamicTarget() {
     }
 }
 
-function bindContainer() {
+function bindContainer(target: HTMLElement | Window | null = getScrollContainer()): void {
     unbindContainer()
-    container = getScrollContainer()
+    container = target
     if (container) {
         container.addEventListener('scroll', throttledScroll, { passive: true })
         handleScroll()
@@ -157,10 +159,9 @@ onMounted(() => {
 })
 
 watch(() => props.target, () => {
-    if (typeof props.target !== 'string') {
-        stopObserving()
-    }
+    stopObserving()
     bindContainer()
+    observeDynamicTarget()
 })
 
 onBeforeUnmount(() => {

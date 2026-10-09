@@ -59,8 +59,33 @@ const emit = defineEmits<{
     'file-error': [file: UploadFile, error: UploadError]
 }>()
 
+let isUnmounted: boolean = false
+
 // 内部文件列表
 const internalFileList = ref<UploadFile[]>([...props.fileList])
+
+interface ActiveUploadRequest {
+    readonly file: UploadFile
+    readonly abortController: AbortController
+}
+
+const activeUploadRequests: Map<string, ActiveUploadRequest> = new Map()
+
+function cleanupUploadRequest(request: ActiveUploadRequest): void {
+    if (activeUploadRequests.get(request.file.id) === request) {
+        activeUploadRequests.delete(request.file.id)
+        request.file.abortController = undefined
+    }
+}
+
+function cancelActiveUploadRequest(fileId: string): void {
+    const request: ActiveUploadRequest | undefined = activeUploadRequests.get(fileId)
+    if (!request) return
+
+    request.file.status = 'canceled'
+    request.abortController.abort()
+    cleanupUploadRequest(request)
+}
 
 // 生成唯一 ID
 let fileIdCounter = 0
@@ -69,7 +94,18 @@ function generateId(): string {
 }
 
 // 同步外部 fileList，按 id 保留已有对象引用，避免覆盖进行中的上传状态
-watch(() => props.fileList, (newList) => {
+watch(() => props.fileList, (newList: UploadFile[]): void => {
+    const nextFileIds: Set<string> = new Set(newList?.map((file: UploadFile): string => file.id) ?? [])
+    for (const file of internalFileList.value) {
+        if (nextFileIds.has(file.id)) continue
+
+        cancelActiveUploadRequest(file.id)
+        if (file.status === 'uploading') {
+            file.status = 'canceled'
+            file.abortController?.abort()
+        }
+    }
+
     if (!newList) {
         internalFileList.value = []
         return
@@ -110,24 +146,25 @@ function createUploadFile(file: File): UploadFile {
 
 // 上传文件
 async function doUpload(file: UploadFile): Promise<void> {
-    if (!props.httpRequest) return
+    if (isUnmounted || !props.httpRequest) return
 
+    cancelActiveUploadRequest(file.id)
     file.status = 'uploading'
     file.progress = 0
 
     const abortController = new AbortController()
     file.abortController = abortController
+    const request: ActiveUploadRequest = { file, abortController }
+    activeUploadRequests.set(file.id, request)
 
     // 防止 onError 回调与 catch 同时处理导致 file-error 重复触发
     let settled = false
     // 文件被移除后中止上传，回调中跳过已取消的文件，避免触发 file-success/file-error
-    const isCancelled = () => abortController.signal.aborted
+    const isCancelled = (): boolean => isUnmounted
+        || abortController.signal.aborted
+        || activeUploadRequests.get(file.id) !== request
 
-    const cleanup = () => {
-        if (file.abortController === abortController) {
-            file.abortController = undefined
-        }
-    }
+    const cleanup = (): void => cleanupUploadRequest(request)
 
     try {
         await props.httpRequest({
@@ -171,10 +208,12 @@ async function doUpload(file: UploadFile): Promise<void> {
 
 // 重试上传
 async function retryUpload(file: UploadFile): Promise<void> {
+    if (isUnmounted) return
     if (file.status === 'success') {
         return
     }
     if (file.status === 'uploading') {
+        cancelActiveUploadRequest(file.id)
         file.abortController?.abort()
     }
     if (props.maxRetries !== undefined && (file.retryCount ?? 0) >= props.maxRetries) {
@@ -194,6 +233,7 @@ async function retryUpload(file: UploadFile): Promise<void> {
 
 // 处理文件选择
 async function handleFileSelect(files: FileList | File[]): Promise<void> {
+    if (isUnmounted) return
     const fileArray = Array.from(files)
     const pendingUploads: UploadFile[] = []
 
@@ -213,6 +253,8 @@ async function handleFileSelect(files: FileList | File[]): Promise<void> {
     }
 
     for (const file of fileArray) {
+        if (isUnmounted) return
+
         // 验证文件大小
         if (!validateFileSize(file)) {
             const error: UploadError = {
@@ -255,6 +297,7 @@ async function handleFileSelect(files: FileList | File[]): Promise<void> {
         // 执行 beforeUpload 钩子
         if (props.beforeUpload) {
             const result = await props.beforeUpload(file)
+            if (isUnmounted) return
             if (result === false) continue
         }
 
@@ -266,21 +309,25 @@ async function handleFileSelect(files: FileList | File[]): Promise<void> {
 
         const uploadFile = createUploadFile(file)
         internalFileList.value.push(uploadFile)
-        emit('update:fileList', [...internalFileList.value])
-        emit('file-change', uploadFile)
         pendingUploads.push(uploadFile)
+        emit('update:fileList', [...internalFileList.value])
+        if (isUnmounted) return
+        emit('file-change', uploadFile)
+        if (isUnmounted) return
     }
 
     // 统一并发启动上传
-    if (props.autoUpload && pendingUploads.length > 0) {
+    if (!isUnmounted && props.autoUpload && pendingUploads.length > 0) {
         await Promise.allSettled(pendingUploads.map((uploadFile) => doUpload(uploadFile)))
     }
 }
 
 // 删除文件
 async function handleFileRemove(file: UploadFile): Promise<void> {
+    if (isUnmounted) return
     if (props.beforeRemove) {
         const result = await props.beforeRemove(file)
+        if (isUnmounted) return
         if (result === false) return
     }
 
@@ -288,18 +335,26 @@ async function handleFileRemove(file: UploadFile): Promise<void> {
     if (file.status === 'uploading') {
         file.status = 'canceled'
     }
+    cancelActiveUploadRequest(file.id)
     file.abortController?.abort()
+    if (isUnmounted) return
 
     const index = internalFileList.value.findIndex(f => f.id === file.id)
     if (index > -1) {
         internalFileList.value.splice(index, 1)
         emit('update:fileList', [...internalFileList.value])
+        if (isUnmounted) return
         emit('file-remove', file)
     }
 }
 
 // 卸载时中止所有进行中的上传，避免 httpRequest 回调在组件销毁后触发
 onBeforeUnmount(() => {
+    isUnmounted = true
+    for (const request of activeUploadRequests.values()) {
+        request.abortController.abort()
+        cleanupUploadRequest(request)
+    }
     for (const file of internalFileList.value) {
         if (file.status === 'uploading') {
             file.abortController?.abort()

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, useId, watch } from 'vue'
+import { computed, ref, useId, watch, type ComputedRef } from 'vue'
 import { Check, ChevronsUpDown } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '../button/button-variants'
@@ -81,10 +81,14 @@ const open = computed<boolean>({
 })
 const searchQuery = ref('')
 
+const selectedValueSet: ComputedRef<ReadonlySet<string>> = computed((): ReadonlySet<string> => {
+    if (!props.multiple || !Array.isArray(props.modelValue)) return new Set<string>()
+    return new Set<string>(props.modelValue)
+})
+
 const selectedOptions = computed(() => {
     if (props.multiple) {
-        const selected = Array.isArray(props.modelValue) ? props.modelValue : []
-        return props.options.filter((o) => selected.includes(o.value))
+        return props.options.filter((option: ComboboxOption): boolean => selectedValueSet.value.has(option.value))
     }
     const found = props.options.find((o) => o.value === props.modelValue)
     return found ? [found] : []
@@ -145,7 +149,7 @@ const contentId = `combobox-content-${useId()}`
 
 function isSelected(optionValue: string): boolean {
     if (props.multiple) {
-        return Array.isArray(props.modelValue) && props.modelValue.includes(optionValue)
+        return selectedValueSet.value.has(optionValue)
     }
     return props.modelValue === optionValue
 }

@@ -551,7 +551,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/combobox/Combobox.vue",
-            "line": 190
+            "line": 194
           },
           "origin": "declared",
           "nullable": false,
@@ -570,7 +570,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/combobox/Combobox.vue",
-            "line": 191
+            "line": 195
           },
           "origin": "declared",
           "nullable": false,
@@ -589,7 +589,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/combobox/Combobox.vue",
-            "line": 192
+            "line": 196
           },
           "origin": "declared",
           "nullable": false,

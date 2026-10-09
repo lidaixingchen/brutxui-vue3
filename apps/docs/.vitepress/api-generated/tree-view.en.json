@@ -803,7 +803,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeView.vue",
-            "line": 447
+            "line": 452
           },
           "origin": "declared",
           "nullable": false,
@@ -822,7 +822,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeView.vue",
-            "line": 448
+            "line": 453
           },
           "origin": "declared",
           "nullable": false,
@@ -1278,7 +1278,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 267
+            "line": 274
           },
           "origin": "declared",
           "nullable": false,
@@ -1297,7 +1297,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 267
+            "line": 274
           },
           "origin": "declared",
           "nullable": false,

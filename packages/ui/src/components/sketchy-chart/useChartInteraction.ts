@@ -167,26 +167,33 @@ export function useChartInteraction(options: ChartInteractionOptions): ChartInte
         explorerIndex.value = values[0] ?? 0
         select(explorerIndex.value, explorerSource)
     }
-    watch(() => [options.data(), options.type(), options.enabled(), options.data().map((item: ChartDataItem): [string, number] => [item.label, item.value])], (): void => {
-        const owner: Document | undefined = options.root.value?.ownerDocument
-        const focused: boolean = Boolean(owner && options.explorer.value?.contains(owner.activeElement))
-        dismiss()
-        explorerIndex.value = 0
-        suppressedIndex = null
-        gesture = null
-        if (focused) {
-            void nextTick((): void => {
-                const target: HTMLElement | null | undefined = options.enabled()
-                    ? options.explorer.value?.querySelector<HTMLElement>('[role="slider"], [data-chart-status]')
-                    : options.root.value?.querySelector<HTMLElement>('[data-chart-table-trigger]')
-                if (target && target !== owner?.activeElement) {
-                    restoringFocus = true
-                    target.focus({ preventScroll: true })
-                    restoringFocus = false
-                }
-            })
-        }
-    }, { deep: true })
+    watch(
+        (): [readonly ChartDataItem[], ChartType, boolean, [string, number][]] => {
+            const data: readonly ChartDataItem[] = options.data()
+            const itemValues: [string, number][] = data.map((item: ChartDataItem): [string, number] => [item.label, item.value])
+            return [data, options.type(), options.enabled(), itemValues]
+        },
+        (): void => {
+            const owner: Document | undefined = options.root.value?.ownerDocument
+            const focused: boolean = Boolean(owner && options.explorer.value?.contains(owner.activeElement))
+            dismiss()
+            explorerIndex.value = 0
+            suppressedIndex = null
+            gesture = null
+            if (focused) {
+                void nextTick((): void => {
+                    const target: HTMLElement | null | undefined = options.enabled()
+                        ? options.explorer.value?.querySelector<HTMLElement>('[role="slider"], [data-chart-status]')
+                        : options.root.value?.querySelector<HTMLElement>('[data-chart-table-trigger]')
+                    if (target && target !== owner?.activeElement) {
+                        restoringFocus = true
+                        target.focus({ preventScroll: true })
+                        restoringFocus = false
+                    }
+                })
+            }
+        },
+    )
     watch(open, (visible: boolean, _: boolean, cleanup: (fn: () => void) => void): void => {
         if (!visible) return
         const owner: Document | undefined = options.root.value?.ownerDocument

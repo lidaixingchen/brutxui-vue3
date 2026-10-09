@@ -29,6 +29,11 @@ export interface UseDataTablePipelineReturn<T extends object> {
     applyColumnFilterPatch: (patch: DataTableFilterState) => void
 }
 
+interface RowKeySnapshot {
+    count: number
+    keys: ReadonlySet<string | number>
+}
+
 function isFilterValueEmpty(value: DataTableFilterValue): boolean {
     if (value === null || value === undefined || value === '') return true
     if (Array.isArray(value)) return value.length === 0
@@ -98,20 +103,20 @@ export function useDataTablePipeline<T extends object>(
     }
 
     watch(
-        () => toValue(options.data),
-        (newData, oldData) => {
-            if (!oldData || newData === oldData) return
-            const newCount = newData?.length ?? 0
-            const oldCount = oldData?.length ?? 0
-            const getRowKey = selection.getRowKey
-            const keySetOf = (rows: T[]): Set<string | number> =>
-                new Set(rows.map((row) => getRowKey(row)))
-            const newKeys = keySetOf(newData ?? [])
-            const oldKeys = keySetOf(oldData ?? [])
+        (): RowKeySnapshot => {
+            const rows: T[] = rawData.value
+            return {
+                count: rows.length,
+                keys: new Set<string | number>(rows.map((row: T): string | number => selection.getRowKey(row))),
+            }
+        },
+        (newSnapshot: RowKeySnapshot, oldSnapshot: RowKeySnapshot): void => {
+            const newKeys: ReadonlySet<string | number> = newSnapshot.keys
+            const oldKeys: ReadonlySet<string | number> = oldSnapshot.keys
             if (
-                newCount !== oldCount
+                newSnapshot.count !== oldSnapshot.count
                 || newKeys.size !== oldKeys.size
-                || [...newKeys].some((key) => !oldKeys.has(key))
+                || [...newKeys].some((key: string | number): boolean => !oldKeys.has(key))
             ) {
                 selection.clearSelection()
                 pagination.goToPage(1)

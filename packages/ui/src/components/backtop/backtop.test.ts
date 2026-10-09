@@ -1,4 +1,4 @@
-import { mount, flushPromises } from '@vue/test-utils'
+import { mount, flushPromises, type VueWrapper } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { describe, it, expect, vi } from 'vitest'
 import { en } from '@/locales/en'
@@ -6,6 +6,7 @@ import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import Backtop from './Backtop.vue'
 
 const localeProvide = { [LOCALE_INJECTION_KEY]: en }
+const TEST_VISIBILITY_HEIGHT: number = 200
 
 describe('Backtop.vue', () => {
 
@@ -240,6 +241,73 @@ describe('Backtop.vue', () => {
 
         second.remove()
         wrapper.unmount()
+    })
+
+    it('rebinds when a selector target is replaced in one DOM update', async (): Promise<void> => {
+        const wrapper: ReturnType<typeof mount> = mount(Backtop, {
+            props: { target: '.swap-box', visibilityHeight: TEST_VISIBILITY_HEIGHT },
+            global: { provide: localeProvide },
+            attachTo: document.body,
+        })
+        const first: HTMLDivElement = document.createElement('div')
+        first.className = 'swap-box'
+        first.scrollTop = TEST_VISIBILITY_HEIGHT
+        document.body.appendChild(first)
+        await flushPromises()
+        await nextTick()
+        first.dispatchEvent(new Event('scroll'))
+        await nextTick()
+        expect(wrapper.find('button').exists()).toBe(true)
+
+        const second: HTMLDivElement = document.createElement('div')
+        second.className = 'swap-box'
+        second.scrollTop = 0
+        first.remove()
+        document.body.appendChild(second)
+        await flushPromises()
+        await nextTick()
+        expect(wrapper.find('button').exists()).toBe(false)
+
+        second.scrollTop = TEST_VISIBILITY_HEIGHT
+        second.dispatchEvent(new Event('scroll'))
+        await vi.waitFor(() => expect(wrapper.find('button').exists()).toBe(true))
+
+        second.remove()
+        wrapper.unmount()
+    })
+
+    it('observes replacements after switching from an element to an existing selector target', async (): Promise<void> => {
+        const visibilityHeight: number = 200
+        const first: HTMLDivElement = document.createElement('div')
+        const second: HTMLDivElement = document.createElement('div')
+        const replacement: HTMLDivElement = document.createElement('div')
+        second.className = 'switch-selector-target'
+        replacement.className = second.className
+        replacement.scrollTop = visibilityHeight
+        document.body.append(first, second)
+        const replacementScroll: ReturnType<typeof vi.spyOn> = vi.spyOn(replacement, 'scrollTo').mockImplementation((): void => {})
+        const wrapper: VueWrapper = mount(Backtop, {
+            props: { target: first, visibilityHeight },
+            global: { provide: localeProvide },
+            attachTo: document.body,
+        })
+
+        try {
+            await wrapper.setProps({ target: '.switch-selector-target' })
+            second.replaceWith(replacement)
+            await flushPromises()
+            await nextTick()
+
+            expect(wrapper.find('button').exists()).toBe(true)
+            await wrapper.get('button').trigger('click')
+            expect(replacementScroll).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' })
+        } finally {
+            wrapper.unmount()
+            first.remove()
+            second.remove()
+            replacement.remove()
+            replacementScroll.mockRestore()
+        }
     })
 
     it('rebinds scroll listener when target changes', async () => {

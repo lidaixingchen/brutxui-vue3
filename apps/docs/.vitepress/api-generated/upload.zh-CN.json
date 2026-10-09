@@ -690,7 +690,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/upload/Upload.vue",
-            "line": 314
+            "line": 369
           },
           "origin": "declared",
           "nullable": false,
@@ -715,7 +715,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/upload/Upload.vue",
-            "line": 315
+            "line": 370
           },
           "origin": "declared",
           "nullable": false,
@@ -740,7 +740,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/upload/Upload.vue",
-            "line": 316
+            "line": 371
           },
           "origin": "declared",
           "nullable": false,

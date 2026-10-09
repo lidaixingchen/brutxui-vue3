@@ -7,6 +7,11 @@ import Toast from './Toast.vue'
 import ToastContainer from './ToastContainer.vue'
 
 const globalProvide = { provide: { [LOCALE_INJECTION_KEY]: en } }
+const TEST_TOAST_DURATION_MS: number = 5000
+const TEST_ELAPSED_DURATION_MS: number = 2000
+const TEST_RESUMED_DURATION_MS: number = 1000
+const TEST_LEAVE_ANIMATION_DELAY_MS: number = 300
+const TEST_REMAINING_DURATION_MS: number = TEST_TOAST_DURATION_MS - TEST_ELAPSED_DURATION_MS
 
 describe('Toast', () => {
     afterEach(() => {
@@ -252,6 +257,61 @@ describe('Toast', () => {
             vi.advanceTimersByTime(7900)
             expect(wrapper.emitted('close')).toBeFalsy()
             vi.advanceTimersByTime(400)
+            expect(wrapper.emitted('close')).toBeTruthy()
+        })
+
+        it('resumes the remaining time when pauseOnHover turns off while hovered', async (): Promise<void> => {
+            vi.useFakeTimers()
+            const wrapper: ReturnType<typeof mount> = mount(Toast, {
+                props: { duration: TEST_TOAST_DURATION_MS, pauseOnHover: true },
+                global: globalProvide,
+            })
+            vi.advanceTimersByTime(TEST_ELAPSED_DURATION_MS)
+            await wrapper.trigger('mouseenter')
+            await wrapper.setProps({ pauseOnHover: false })
+
+            vi.advanceTimersByTime(TEST_REMAINING_DURATION_MS)
+            expect(wrapper.emitted('close')).toBeFalsy()
+            vi.advanceTimersByTime(TEST_LEAVE_ANIMATION_DELAY_MS)
+            expect(wrapper.emitted('close')).toBeTruthy()
+        })
+
+        it('pauses the remaining time when pauseOnHover turns on while hovered', async (): Promise<void> => {
+            vi.useFakeTimers()
+            const wrapper: ReturnType<typeof mount> = mount(Toast, {
+                props: { duration: TEST_TOAST_DURATION_MS, pauseOnHover: false },
+                global: globalProvide,
+            })
+            vi.advanceTimersByTime(TEST_ELAPSED_DURATION_MS)
+            await wrapper.trigger('mouseenter')
+            await wrapper.setProps({ pauseOnHover: true })
+            vi.advanceTimersByTime(TEST_TOAST_DURATION_MS)
+            expect(wrapper.emitted('close')).toBeFalsy()
+
+            await wrapper.trigger('mouseleave')
+            vi.advanceTimersByTime(TEST_REMAINING_DURATION_MS)
+            expect(wrapper.emitted('close')).toBeFalsy()
+            vi.advanceTimersByTime(TEST_LEAVE_ANIMATION_DELAY_MS)
+            expect(wrapper.emitted('close')).toBeTruthy()
+        })
+
+        it('keeps zero duration persistent while pauseOnHover changes', async (): Promise<void> => {
+            vi.useFakeTimers()
+            const wrapper: ReturnType<typeof mount> = mount(Toast, {
+                props: { duration: 0, pauseOnHover: true },
+                global: globalProvide,
+            })
+            await wrapper.trigger('mouseenter')
+            await wrapper.setProps({ pauseOnHover: false })
+            await wrapper.setProps({ pauseOnHover: true })
+            vi.advanceTimersByTime(TEST_TOAST_DURATION_MS)
+            expect(wrapper.emitted('close')).toBeFalsy()
+
+            await wrapper.setProps({ duration: TEST_RESUMED_DURATION_MS })
+            vi.advanceTimersByTime(TEST_TOAST_DURATION_MS)
+            expect(wrapper.emitted('close')).toBeFalsy()
+            await wrapper.trigger('mouseleave')
+            vi.advanceTimersByTime(TEST_RESUMED_DURATION_MS + TEST_LEAVE_ANIMATION_DELAY_MS)
             expect(wrapper.emitted('close')).toBeTruthy()
         })
     })

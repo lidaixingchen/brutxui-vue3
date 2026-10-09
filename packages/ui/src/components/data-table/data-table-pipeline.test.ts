@@ -150,6 +150,96 @@ describe('useDataTablePipeline', () => {
         expect([...pipeline.selection.selectedRows.value]).toEqual([])
     })
 
+    it('preserves selection and page for in-place row replacement and same-key reordering', async () => {
+        const data = ref<TestItem[]>([
+            { id: 1, name: 'A', category: 'cat', score: 10 },
+            { id: 2, name: 'B', category: 'cat', score: 20 },
+            { id: 3, name: 'C', category: 'cat', score: 30 },
+            { id: 4, name: 'D', category: 'cat', score: 40 },
+        ])
+        const pipeline = useDataTablePipeline<TestItem>({
+            data,
+            columns: defaultColumns,
+            rowKey: 'id',
+            selectable: true,
+            paginated: true,
+            pageSize: 2,
+        })
+
+        pipeline.pagination.goToPage(2)
+        pipeline.selection.toggleRowSelection(data.value[2]!)
+        data.value.splice(2, 1, { id: 3, name: 'C updated', category: 'cat', score: 31 })
+        await nextTick()
+
+        expect(pipeline.pagination.currentPage.value).toBe(2)
+        expect([...pipeline.selection.selectedRows.value]).toEqual([3])
+        expect(pipeline.selection.getSelectedRows()[0]?.name).toBe('C updated')
+
+        data.value.reverse()
+        await nextTick()
+
+        expect(pipeline.pagination.currentPage.value).toBe(2)
+        expect([...pipeline.selection.selectedRows.value]).toEqual([3])
+    })
+
+    it('clears selection and resets page for in-place row additions and removals', async () => {
+        const data = ref<TestItem[]>([
+            { id: 1, name: 'A', category: 'cat', score: 10 },
+            { id: 2, name: 'B', category: 'cat', score: 20 },
+            { id: 3, name: 'C', category: 'cat', score: 30 },
+            { id: 4, name: 'D', category: 'cat', score: 40 },
+        ])
+        const pipeline = useDataTablePipeline<TestItem>({
+            data,
+            columns: defaultColumns,
+            rowKey: 'id',
+            selectable: true,
+            paginated: true,
+            pageSize: 2,
+        })
+
+        pipeline.pagination.goToPage(2)
+        pipeline.selection.toggleRowSelection(data.value[2]!)
+        data.value.push({ id: 5, name: 'E', category: 'cat', score: 50 })
+        await nextTick()
+
+        expect(pipeline.pagination.currentPage.value).toBe(1)
+        expect([...pipeline.selection.selectedRows.value]).toEqual([])
+
+        pipeline.pagination.goToPage(2)
+        pipeline.selection.toggleRowSelection(data.value[2]!)
+        data.value.splice(3, 1)
+        await nextTick()
+
+        expect(pipeline.pagination.currentPage.value).toBe(1)
+        expect([...pipeline.selection.selectedRows.value]).toEqual([])
+    })
+
+    it('clears selection and resets page when an in-place row key changes', async () => {
+        const data = ref<TestItem[]>([
+            { id: 1, name: 'A', category: 'cat', score: 10 },
+            { id: 2, name: 'B', category: 'cat', score: 20 },
+            { id: 3, name: 'C', category: 'cat', score: 30 },
+            { id: 4, name: 'D', category: 'cat', score: 40 },
+        ])
+        const pipeline = useDataTablePipeline<TestItem>({
+            data,
+            columns: defaultColumns,
+            rowKey: 'id',
+            selectable: true,
+            paginated: true,
+            pageSize: 2,
+        })
+
+        pipeline.pagination.goToPage(2)
+        pipeline.selection.toggleRowSelection(data.value[2]!)
+        data.value[2]!.id = 30
+        await nextTick()
+
+        expect(pipeline.pagination.currentPage.value).toBe(1)
+        expect([...pipeline.selection.selectedRows.value]).toEqual([])
+    })
+
     it('handles concurrent filter patch updates atomically', () => {
         const data = ref([...testData])
         const pipeline = useDataTablePipeline<TestItem>({

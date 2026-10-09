@@ -113,6 +113,15 @@ watch(() => props.duration, (newDuration) => {
     }
 })
 
+watch(() => props.pauseOnHover, (pauseOnHover: boolean): void => {
+    if (isLeaving.value || !props.duration) return
+    if (isHovering.value && pauseOnHover) {
+        pauseTimer()
+    } else if (!pauseOnHover) {
+        resumeTimer()
+    }
+})
+
 onBeforeUnmount(() => {
     if (timer.value) clearTimeout(timer.value)
     if (leaveTimer.value) clearTimeout(leaveTimer.value)

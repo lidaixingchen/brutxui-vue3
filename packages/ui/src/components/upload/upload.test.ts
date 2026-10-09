@@ -9,6 +9,7 @@ import UploadTrigger from './UploadTrigger.vue'
 import type { UploadError, UploadFile, UploadRequestOptions } from './upload-types'
 
 type UploadListType = 'text' | 'picture' | 'picture-card'
+const LATE_PROGRESS_PERCENT: number = 80
 
 interface UploadExposed {
     handleFileSelect: (files: FileList | File[]) => Promise<void>
@@ -224,7 +225,7 @@ describe('Upload', () => {
     })
 
     it('preserves uploading status when external fileList updates', async () => {
-        let savedOptions: Pick<UploadRequestOptions, 'onSuccess'> | null = null
+        let savedOptions: Pick<UploadRequestOptions, 'onSuccess' | 'signal'> | null = null
         const httpRequest = vi.fn(async (options: UploadRequestOptions): Promise<void> => {
             savedOptions = options
         })
@@ -248,9 +249,95 @@ describe('Upload', () => {
 
         expect(file.status).toBe('uploading')
         expect(file.abortController).toBeDefined()
+        expect(savedOptions!.signal.aborted).toBe(false)
 
         savedOptions!.onSuccess({ ok: true })
         expect(file.status).toBe('success')
+    })
+
+    it('aborts an active request when the controlled fileList removes it', async (): Promise<void> => {
+        let savedOptions: UploadRequestOptions | undefined
+        let rejectRequest!: (reason: Error) => void
+        const onError: (error: UploadError, file: UploadFile) => void = vi.fn()
+        const httpRequest: (options: UploadRequestOptions) => Promise<void> = vi.fn((options: UploadRequestOptions): Promise<void> => new Promise<void>((_resolve: (value: void | PromiseLike<void>) => void, reject: (reason?: unknown) => void): void => {
+            savedOptions = options
+            rejectRequest = reject
+        }))
+        const wrapper: VueWrapper = mount(Upload, {
+            props: {
+                fileList: [],
+                httpRequest,
+                onError,
+            },
+        })
+
+        const selectionPromise: Promise<void> = getExposed(wrapper).handleFileSelect([createFile('controlled.txt', 'text/plain')])
+        await flushPromises()
+        const selectedFiles: UploadFile[] = wrapper.emitted('update:fileList')![0][0] as UploadFile[]
+        const file: UploadFile = selectedFiles[0]
+        expect(savedOptions!.signal.aborted).toBe(false)
+
+        await wrapper.setProps({ fileList: selectedFiles })
+        expect(savedOptions!.signal.aborted).toBe(false)
+
+        await wrapper.setProps({ fileList: [] })
+        expect(savedOptions!.signal.aborted).toBe(true)
+        expect(file.status).toBe('canceled')
+
+        savedOptions!.onProgress(LATE_PROGRESS_PERCENT)
+        savedOptions!.onSuccess({ ok: true })
+        savedOptions!.onError({ message: 'late failure' })
+        rejectRequest(new Error('late rejection'))
+        await selectionPromise
+
+        expect(file.progress).toBe(0)
+        expect(file.status).toBe('canceled')
+        expect(wrapper.emitted('file-success')).toBeUndefined()
+        expect(wrapper.emitted('file-error')).toBeUndefined()
+        expect(onError).not.toHaveBeenCalled()
+    })
+
+    it('keeps a newer same-id request active when an older request settles late', async (): Promise<void> => {
+        const savedOptions: UploadRequestOptions[] = []
+        const rejectRequests: Array<(reason: Error) => void> = []
+        const resolveRequests: Array<() => void> = []
+        const httpRequest: (options: UploadRequestOptions) => Promise<void> = vi.fn((options: UploadRequestOptions): Promise<void> => new Promise<void>((resolve: (value: void | PromiseLike<void>) => void, reject: (reason?: unknown) => void): void => {
+            savedOptions.push(options)
+            rejectRequests.push(reject)
+            resolveRequests.push(resolve)
+        }))
+        const onError: (error: UploadError, file: UploadFile) => void = vi.fn()
+        const wrapper: VueWrapper = mount(Upload, { props: { httpRequest, onError } })
+
+        const selectionPromise: Promise<void> = getExposed(wrapper).handleFileSelect([createFile('retry-same-id.txt', 'text/plain')])
+        await flushPromises()
+        const file: UploadFile = (wrapper.emitted('update:fileList')![0][0] as UploadFile[])[0]
+        const firstOptions: UploadRequestOptions = savedOptions[0]
+
+        const retryPromise: Promise<void> = getExposed(wrapper).retryUpload(file)
+        await flushPromises()
+        const secondOptions: UploadRequestOptions = savedOptions[1]
+
+        expect(firstOptions.signal.aborted).toBe(true)
+        expect(secondOptions.signal.aborted).toBe(false)
+        firstOptions.onSuccess({ ok: true })
+        firstOptions.onError({ message: 'late failure' })
+        rejectRequests[0](new Error('late rejection'))
+        await selectionPromise
+
+        expect(file.status).toBe('uploading')
+        expect(file.abortController?.signal).toBe(secondOptions.signal)
+        expect(wrapper.emitted('file-success')).toBeUndefined()
+        expect(wrapper.emitted('file-error')).toBeUndefined()
+        expect(onError).not.toHaveBeenCalled()
+
+        secondOptions.onSuccess({ ok: true })
+        resolveRequests[1]()
+        await retryPromise
+
+        expect(file.status).toBe('success')
+        expect(file.abortController).toBeUndefined()
+        expect(wrapper.emitted('file-success')).toHaveLength(1)
     })
 
     it('connects real input and drop events to the parent file list', async () => {
@@ -345,5 +432,114 @@ describe('Upload', () => {
         expect(wrapper.emitted('file-success')).toHaveLength(1)
         expect(wrapper.text()).toContain('[ UPLOADED ]')
         expect(wrapper.find(`button[aria-label="${zhCN.upload.retryUpload}"]`).exists()).toBe(false)
+    })
+
+    it('does not add or upload a file when beforeUpload resolves after unmount', async () => {
+        let resolveBeforeUpload!: (allowed: boolean) => void
+        let renderedFiles: UploadFile[] = []
+        const beforeUpload = vi.fn((_file: File): Promise<boolean> => new Promise<boolean>((resolve) => {
+            resolveBeforeUpload = resolve
+        }))
+        const httpRequest = vi.fn(async (_options: UploadRequestOptions): Promise<void> => {})
+        const wrapper = mount(Upload, {
+            props: { beforeUpload, httpRequest },
+            slots: {
+                'file-list': (slot: UploadFileListSlotProps) => {
+                    renderedFiles = slot.files
+                    return h('div')
+                },
+            },
+        })
+
+        const selectionPromise = getExposed(wrapper).handleFileSelect([createFile('pending.txt', 'text/plain')])
+        await flushPromises()
+        expect(beforeUpload).toHaveBeenCalledTimes(1)
+
+        wrapper.unmount()
+        resolveBeforeUpload(true)
+        await selectionPromise
+
+        expect(wrapper.emitted('update:fileList')).toBeUndefined()
+        expect(wrapper.emitted('file-change')).toBeUndefined()
+        expect(renderedFiles).toHaveLength(0)
+        expect(httpRequest).not.toHaveBeenCalled()
+    })
+
+    it('aborts an active request and ignores its callbacks after unmount', async () => {
+        let savedOptions: UploadRequestOptions | undefined
+        let resolveRequest!: () => void
+        const httpRequest = vi.fn((options: UploadRequestOptions): Promise<void> => new Promise<void>((resolve) => {
+            savedOptions = options
+            resolveRequest = resolve
+        }))
+        const wrapper = mount(Upload, { props: { httpRequest } })
+
+        const selectionPromise = getExposed(wrapper).handleFileSelect([createFile('active.txt', 'text/plain')])
+        await flushPromises()
+        expect(httpRequest).toHaveBeenCalledTimes(1)
+
+        wrapper.unmount()
+        expect(savedOptions!.signal.aborted).toBe(true)
+        savedOptions!.onSuccess({ ok: true })
+        resolveRequest()
+        await selectionPromise
+
+        expect(wrapper.emitted('file-success')).toBeUndefined()
+        expect(wrapper.emitted('file-error')).toBeUndefined()
+    })
+
+    it('does not remove a file when beforeRemove resolves after unmount', async () => {
+        let resolveBeforeRemove!: (allowed: boolean) => void
+        const beforeRemove = vi.fn((_file: UploadFile): Promise<boolean> => new Promise<boolean>((resolve) => {
+            resolveBeforeRemove = resolve
+        }))
+        const file: UploadFile = {
+            id: 'pending-remove',
+            name: 'pending-remove.txt',
+            size: 100,
+            type: 'text/plain',
+            status: 'uploading',
+            progress: 0,
+            abortController: new AbortController(),
+        }
+        const wrapper = mount(Upload, {
+            props: { beforeRemove, fileList: [file], autoUpload: false },
+        })
+
+        const removePromise = getExposed(wrapper).handleFileRemove(file)
+        await flushPromises()
+        expect(beforeRemove).toHaveBeenCalledTimes(1)
+
+        wrapper.unmount()
+        resolveBeforeRemove(true)
+        await removePromise
+
+        expect(wrapper.emitted('update:fileList')).toBeUndefined()
+        expect(wrapper.emitted('file-remove')).toBeUndefined()
+        expect(file.status).toBe('uploading')
+    })
+
+    it('does not retry a file after unmount', async () => {
+        const httpRequest = vi.fn(async (_options: UploadRequestOptions): Promise<void> => {})
+        const onError = vi.fn<(error: UploadError, file: UploadFile) => void>()
+        const wrapper = mount(Upload, {
+            props: { autoUpload: false, httpRequest, maxRetries: 0, onError },
+        })
+        const file: UploadFile = {
+            id: 'retry-after-unmount',
+            name: 'retry.txt',
+            size: 100,
+            type: 'text/plain',
+            status: 'error',
+            progress: 0,
+        }
+
+        wrapper.unmount()
+        await getExposed(wrapper).retryUpload(file)
+
+        expect(file.retryCount).toBeUndefined()
+        expect(onError).not.toHaveBeenCalled()
+        expect(wrapper.emitted('file-error')).toBeUndefined()
+        expect(httpRequest).not.toHaveBeenCalled()
     })
 })

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, nextTick, useId, inject } from 'vue';
+import { computed, ref, nextTick, useId, inject, provide, type ComputedRef } from 'vue';
 import { ChevronRight, File, Folder, FolderOpen, Loader2, RotateCw } from '@lucide/vue';
 import { cn } from '@/lib/utils';
 import { treeItemVariants } from './tree-view-variants';
-import { getCheckState } from './tree-view-utils';
+import { getCheckStateMap, TREE_CHECK_STATES_KEY } from './tree-view-utils';
 import { INDENT_PER_DEPTH, BASE_INDENT_TREE_VIEW, treeChevronBaseClass, treeChevronExpandedClass, treeLabelBaseClass } from '@/lib/tree-variants';
 import Checkbox from '../checkbox/Checkbox.vue';
 import type { CheckState, SelectionMode, TreeNode, TreeViewContext } from './types';
@@ -134,9 +134,16 @@ function handleRetry() {
     context?.triggerLoad(props.node);
 }
 
+const checkStates: ComputedRef<ReadonlyMap<string, CheckState>> = inject(TREE_CHECK_STATES_KEY, null)
+    ?? computed((): ReadonlyMap<string, CheckState> => {
+        if (!isCheckboxMode.value) return new Map<string, CheckState>()
+        return getCheckStateMap([props.node], props.checkedIds)
+    })
+provide(TREE_CHECK_STATES_KEY, checkStates)
+
 const checkState = computed<CheckState>(() => {
     if (!isCheckboxMode.value) return 'unchecked'
-    return getCheckState(props.node, props.checkedIds)
+    return checkStates.value.get(props.node.id) ?? 'unchecked'
 })
 
 const isChecked = computed(() => checkState.value === 'checked');

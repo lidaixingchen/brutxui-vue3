@@ -1,6 +1,9 @@
 import type { CheckState, TreeNode } from './types'
+import type { ComputedRef, InjectionKey } from 'vue'
 
 export type { CheckState } from './types'
+
+export const TREE_CHECK_STATES_KEY: InjectionKey<ComputedRef<ReadonlyMap<string, CheckState>>> = Symbol('TreeViewCheckStates')
 
 export function getAllDescendantIds(node: TreeNode): string[] {
     const result: string[] = []
@@ -31,9 +34,68 @@ export function getCheckState(node: TreeNode, checkedIds: Set<string>): CheckSta
             }
         }
     }
+    return resolveCheckState(total, checked)
+}
+
+interface TreeNodeCheckSummary {
+    total: number
+    checked: number
+}
+
+interface TreeNodeTraversalFrame {
+    node: TreeNode
+    postOrder: boolean
+}
+
+function resolveCheckState(total: number, checked: number): CheckState {
     if (checked === total) return 'checked'
     if (checked === 0) return 'unchecked'
     return 'indeterminate'
+}
+
+export function getCheckStateMap(
+    nodes: readonly TreeNode[],
+    checkedIds: ReadonlySet<string>,
+): ReadonlyMap<string, CheckState> {
+    const states: Map<string, CheckState> = new Map<string, CheckState>()
+    const summaries: Map<TreeNode, TreeNodeCheckSummary> = new Map<TreeNode, TreeNodeCheckSummary>()
+    const pending: TreeNodeTraversalFrame[] = []
+
+    for (let index: number = nodes.length - 1; index >= 0; index -= 1) {
+        pending.push({ node: nodes[index]!, postOrder: false })
+    }
+
+    while (pending.length > 0) {
+        const frame: TreeNodeTraversalFrame = pending.pop()!
+        const node: TreeNode = frame.node
+
+        if (!frame.postOrder) {
+            pending.push({ node, postOrder: true })
+            const children: TreeNode[] | undefined = node.children
+            if (children) {
+                for (let index: number = children.length - 1; index >= 0; index -= 1) {
+                    pending.push({ node: children[index]!, postOrder: false })
+                }
+            }
+            continue
+        }
+
+        let total: number = 1
+        let checked: number = checkedIds.has(node.id) ? 1 : 0
+        const children: TreeNode[] | undefined = node.children
+        if (children) {
+            for (const child of children) {
+                const childSummary: TreeNodeCheckSummary = summaries.get(child)!
+                total += childSummary.total
+                checked += childSummary.checked
+            }
+        }
+
+        summaries.set(node, { total, checked })
+        states.set(node.id, resolveCheckState(total, checked))
+    }
+
+    return states
 }
 
 function cloneTreeAndExtract(nodes: TreeNode[], dragId: string): [TreeNode[], TreeNode | null] {
