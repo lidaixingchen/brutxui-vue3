@@ -6,12 +6,15 @@ import {
 } from 'brutx-shared-vue';
 import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
 import type { ModuleResolver } from 'brutx-shared-vue/module-resolver';
+import type { AnalyzedModuleSource, RewrittenModuleSource } from './ast-rewriter.js';
 import {
+    analyzeModuleSource,
     assertKnownRegistryDeps,
     extractComponentFileDeps,
     extractDeps,
     extractRegistryDeps,
     getFileType,
+    rewriteAnalyzedImports,
     rewriteImports,
 } from './ast-rewriter.js';
 import { buildRegistryComponentIndex } from './public-index.js';
@@ -26,9 +29,52 @@ export interface ResolvedComponentClosure {
     registryDependencies: string[];
 }
 
-export class DependencyResolver {
-    private validatedModuleSources = new Map<string, string>();
+function supportsModuleResolution(importer: string): boolean {
+    return /\.(?:vue|[cm]?tsx?|jsx?)$/u.test(importer);
+}
 
+export class DependencyAnalysisSession {
+    private readonly analyses: Map<string, Map<string, AnalyzedModuleSource>> = new Map();
+    private readonly validatedSources: Map<string, Set<string>> = new Map();
+
+    constructor(private readonly moduleResolver?: ModuleResolver) {}
+
+    public analyze(source: string, filename: string): AnalyzedModuleSource {
+        let bySource: Map<string, AnalyzedModuleSource> | undefined = this.analyses.get(filename);
+        if (!bySource) {
+            bySource = new Map<string, AnalyzedModuleSource>();
+            this.analyses.set(filename, bySource);
+        }
+
+        const cached: AnalyzedModuleSource | undefined = bySource.get(source);
+        if (cached) return cached;
+
+        const analyzed: AnalyzedModuleSource = this.moduleResolver && supportsModuleResolution(filename)
+            ? {
+                source,
+                filename,
+                analysis: this.moduleResolver.analyze(source, filename).analysis,
+            }
+            : analyzeModuleSource(source, filename);
+        bySource.set(source, analyzed);
+        return analyzed;
+    }
+
+    public hasValidatedSource(filename: string, source: string): boolean {
+        return this.validatedSources.get(filename)?.has(source) ?? false;
+    }
+
+    public markSourceValidated(filename: string, source: string): void {
+        let sources: Set<string> | undefined = this.validatedSources.get(filename);
+        if (!sources) {
+            sources = new Set<string>();
+            this.validatedSources.set(filename, sources);
+        }
+        sources.add(source);
+    }
+}
+
+export class DependencyResolver {
     constructor(
         private fs: FileSystemAdapter,
         private paths: CompilerPaths,
@@ -36,6 +82,10 @@ export class DependencyResolver {
         private componentIndexBuilder?: ComponentIndexBuilder,
         private moduleResolver?: ModuleResolver,
     ) {}
+
+    public createAnalysisSession(): DependencyAnalysisSession {
+        return new DependencyAnalysisSession(this.moduleResolver);
+    }
 
     private async readSource(filePath: string): Promise<string> {
         const raw = await this.fs.readFile(filePath, 'utf-8');
@@ -107,26 +157,41 @@ export class DependencyResolver {
         }
     }
 
-    private assertResolvableModules(source: string, importer: string): void {
-        if (!this.moduleResolver) return;
-        if (!/\.(?:vue|[cm]?tsx?|jsx?)$/u.test(importer)) return;
-        if (this.validatedModuleSources.get(importer) === source) return;
-        const analysis = this.moduleResolver.analyze(source, importer).analysis;
+    private assertResolvableModules(
+        analyzed: AnalyzedModuleSource,
+        session: DependencyAnalysisSession,
+    ): void {
+        if (!this.moduleResolver || !supportsModuleResolution(analyzed.filename)) return;
+        if (session.hasValidatedSource(analyzed.filename, analyzed.source)) return;
+        const analysis: AnalyzedModuleSource['analysis'] = analyzed.analysis;
         if (analysis.completeness === 'invalid') {
             const details = analysis.diagnostics.map(diagnostic => diagnostic.message).join('; ');
-            throw new Error(`Failed to parse module references in "${importer}": ${details}`);
+            throw new Error(`Failed to parse module references in "${analyzed.filename}": ${details}`);
         }
 
         for (const reference of analysis.references) {
             if (!/^(?:\.|\/|@\/)/u.test(reference.specifier)) continue;
-            const resolution = this.moduleResolver.resolve(importer, reference.specifier);
+            const resolution = this.moduleResolver.resolve(analyzed.filename, reference.specifier);
             if (resolution.kind !== 'unresolved' && resolution.kind !== 'ambiguous') continue;
             const details = resolution.diagnostics.map(diagnostic => diagnostic.message).join('; ');
             throw new Error(
-                `Unable to resolve module "${reference.specifier}" from "${importer}": ${details}`,
+                `Unable to resolve module "${reference.specifier}" from "${analyzed.filename}": ${details}`,
             );
         }
-        this.validatedModuleSources.set(importer, source);
+        session.markSourceValidated(analyzed.filename, analyzed.source);
+    }
+
+    private async rewriteSource(
+        filePath: string,
+        componentName: string,
+        context: 'component' | 'composable' | 'directive' | 'locale' | 'lib' | 'types',
+        knownComponents: Set<string> | undefined,
+        session: DependencyAnalysisSession,
+    ): Promise<RewrittenModuleSource> {
+        const source: string = await this.readSource(filePath);
+        const analyzed: AnalyzedModuleSource = session.analyze(source, filePath);
+        this.assertResolvableModules(analyzed, session);
+        return rewriteAnalyzedImports(analyzed, componentName, context, knownComponents);
     }
 
     public async resolveComponentClosure(
@@ -134,6 +199,7 @@ export class DependencyResolver {
         componentInfo: MergedRegistryEntry,
         knownComponents?: Set<string>,
         publicProjection?: PublicComponentProjection,
+        session: DependencyAnalysisSession = this.createAnalysisSession(),
     ): Promise<ResolvedComponentClosure> {
         if (!publicProjection) {
             throw new Error(`Public component projection is required for Registry component "${name}"`);
@@ -157,30 +223,29 @@ export class DependencyResolver {
                     throw new Error(`Source file not found at ${filePath}`);
                 }
 
-                let code = await this.readSource(filePath);
-                this.assertResolvableModules(code, filePath);
-                code = rewriteImports(code, name, 'component', knownComponents);
+                const rewritten: RewrittenModuleSource = await this.rewriteSource(filePath, name, 'component', knownComponents, session);
+                const code: string = rewritten.code;
 
-                assertKnownRegistryDeps(code, name, fileName);
-                extractRegistryDeps(code, name, knownComponents).forEach(d => allRegistryDeps.add(d));
+                assertKnownRegistryDeps(rewritten, name, fileName);
+                extractRegistryDeps(rewritten, name, knownComponents).forEach(d => allRegistryDeps.add(d));
 
-                for (const d of extractComponentFileDeps(code, name)) {
+                for (const d of extractComponentFileDeps(rewritten, name)) {
                     const resolved = await this.resolveExtension(d, path.join(this.paths.componentsDir, name));
                     componentFileDeps.add(resolved);
                 }
-                for (const d of extractDeps(code, 'composables')) {
+                for (const d of extractDeps(rewritten, 'composables')) {
                     const resolved = await this.resolveExtension(d, this.paths.composablesDir);
                     composableDeps.add(resolved);
                 }
-                for (const d of extractDeps(code, 'locales')) {
+                for (const d of extractDeps(rewritten, 'locales')) {
                     const resolved = await this.resolveExtension(d, this.paths.localesDir);
                     localeDeps.add(resolved);
                 }
-                for (const d of extractDeps(code, 'lib')) {
+                for (const d of extractDeps(rewritten, 'lib')) {
                     const resolved = await this.resolveExtension(d, this.paths.libDir);
                     libDeps.add(resolved);
                 }
-                for (const d of extractDeps(code, 'types')) {
+                for (const d of extractDeps(rewritten, 'types')) {
                     const typesDir = this.paths.typesDir;
                     if (typesDir) typeDeps.add(await this.resolveExtension(d, typesDir));
                 }
@@ -197,6 +262,7 @@ export class DependencyResolver {
         }
 
         // 内联生成 index.ts 派生 barrel
+        const indexFilePath = path.join(this.paths.componentsDir, name, 'index.ts');
         const indexContent = rewriteImports(
             buildRegistryComponentIndex(
                 publicProjection,
@@ -204,7 +270,8 @@ export class DependencyResolver {
             ),
             name,
             'component',
-            knownComponents
+            knownComponents,
+            indexFilePath,
         );
 
         if (publicProjection) {
@@ -235,7 +302,8 @@ export class DependencyResolver {
             localeDeps,
             libDeps,
             typeDeps,
-            knownComponents
+            knownComponents,
+            session,
         );
 
         await this.processTypes(
@@ -248,6 +316,7 @@ export class DependencyResolver {
             composableDeps,
             libDeps,
             knownComponents,
+            session,
         );
 
         const addedDirectives = new Set<string>();
@@ -261,26 +330,25 @@ export class DependencyResolver {
                     throw new Error(`Directive file not found at ${directivePath}`);
                 }
 
-                let code = await this.readSource(directivePath);
-                this.assertResolvableModules(code, directivePath);
-                code = rewriteImports(code, name, 'directive', knownComponents);
-                assertKnownRegistryDeps(code, name, directiveName);
-                extractRegistryDeps(code, name, knownComponents).forEach(d => allRegistryDeps.add(d));
+                const rewritten: RewrittenModuleSource = await this.rewriteSource(directivePath, name, 'directive', knownComponents, session);
+                const code: string = rewritten.code;
+                assertKnownRegistryDeps(rewritten, name, directiveName);
+                extractRegistryDeps(rewritten, name, knownComponents).forEach(d => allRegistryDeps.add(d));
 
-                for (const d of extractDeps(code, 'composables')) {
+                for (const d of extractDeps(rewritten, 'composables')) {
                     composableDeps.add(await this.resolveExtension(d, this.paths.composablesDir));
                 }
-                for (const d of extractDeps(code, 'locales')) {
+                for (const d of extractDeps(rewritten, 'locales')) {
                     localeDeps.add(await this.resolveExtension(d, this.paths.localesDir));
                 }
-                for (const d of extractDeps(code, 'lib')) {
+                for (const d of extractDeps(rewritten, 'lib')) {
                     libDeps.add(await this.resolveExtension(d, this.paths.libDir));
                 }
-                for (const d of extractDeps(code, 'types')) {
+                for (const d of extractDeps(rewritten, 'types')) {
                     const typesDir = this.paths.typesDir;
                     if (typesDir) typeDeps.add(await this.resolveExtension(d, typesDir));
                 }
-                for (const d of extractDeps(code, 'directives')) {
+                for (const d of extractDeps(rewritten, 'directives')) {
                     directiveDeps.add(await this.resolveExtension(d, this.paths.directivesDir));
                 }
 
@@ -304,7 +372,8 @@ export class DependencyResolver {
             localeDeps,
             libDeps,
             typeDeps,
-            knownComponents
+            knownComponents,
+            session,
         );
         await this.processTypes(
             typeDeps,
@@ -316,6 +385,7 @@ export class DependencyResolver {
             composableDeps,
             libDeps,
             knownComponents,
+            session,
         );
 
         const addedLocaleDeps = new Set<string>();
@@ -325,19 +395,17 @@ export class DependencyResolver {
                 const localeName = await this.resolveExtension(rawLocaleName, this.paths.localesDir);
                 const localePath = path.join(this.paths.localesDir, localeName);
                 if (await this.fs.pathExists(localePath)) {
-                    const raw = await this.readSource(localePath);
-                    this.assertResolvableModules(raw, localePath);
-                    const code = rewriteImports(raw, name, 'locale', knownComponents);
-                    for (const d of extractDeps(code, 'locales')) {
+                    const rewritten: RewrittenModuleSource = await this.rewriteSource(localePath, name, 'locale', knownComponents, session);
+                    for (const d of extractDeps(rewritten, 'locales')) {
                         localeDeps.add(await this.resolveExtension(d, this.paths.localesDir));
                     }
-                    for (const d of extractDeps(code, 'composables')) {
+                    for (const d of extractDeps(rewritten, 'composables')) {
                         composableDeps.add(await this.resolveExtension(d, this.paths.composablesDir));
                     }
-                    for (const d of extractDeps(code, 'lib')) {
+                    for (const d of extractDeps(rewritten, 'lib')) {
                         libDeps.add(await this.resolveExtension(d, this.paths.libDir));
                     }
-                    for (const d of extractDeps(code, 'types')) {
+                    for (const d of extractDeps(rewritten, 'types')) {
                         const typesDir = this.paths.typesDir;
                         if (typesDir) typeDeps.add(await this.resolveExtension(d, typesDir));
                     }
@@ -354,7 +422,8 @@ export class DependencyResolver {
                 localeDeps,
                 libDeps,
                 typeDeps,
-                knownComponents
+                knownComponents,
+                session,
             );
             await this.processTypes(
                 typeDeps,
@@ -366,6 +435,7 @@ export class DependencyResolver {
                 composableDeps,
                 libDeps,
                 knownComponents,
+                session,
             );
         }
 
@@ -380,15 +450,14 @@ export class DependencyResolver {
                 throw new Error(`Lib file not found at ${libPath}`);
             }
 
-            const raw = await this.readSource(libPath);
-            this.assertResolvableModules(raw, libPath);
-            const code = rewriteImports(raw, name, 'lib', knownComponents);
-            assertKnownRegistryDeps(code, name, libName);
-            extractRegistryDeps(code, name, knownComponents).forEach(d => allRegistryDeps.add(d));
-            for (const d of extractDeps(code, 'lib')) {
+            const rewritten: RewrittenModuleSource = await this.rewriteSource(libPath, name, 'lib', knownComponents, session);
+            const code: string = rewritten.code;
+            assertKnownRegistryDeps(rewritten, name, libName);
+            extractRegistryDeps(rewritten, name, knownComponents).forEach(d => allRegistryDeps.add(d));
+            for (const d of extractDeps(rewritten, 'lib')) {
                 libDeps.add(await this.resolveExtension(d, this.paths.libDir));
             }
-            for (const d of extractDeps(code, 'types')) {
+            for (const d of extractDeps(rewritten, 'types')) {
                 const typesDir = this.paths.typesDir;
                 if (typesDir) typeDeps.add(await this.resolveExtension(d, typesDir));
             }
@@ -413,6 +482,7 @@ export class DependencyResolver {
             composableDeps,
             libDeps,
             knownComponents,
+            session,
         );
         await this.processComposables(
             composableDeps,
@@ -424,6 +494,7 @@ export class DependencyResolver {
             libDeps,
             typeDeps,
             knownComponents,
+            session,
         );
 
         return {
@@ -441,7 +512,8 @@ export class DependencyResolver {
         localeDeps: Set<string>,
         libDeps: Set<string>,
         typeDeps: Set<string>,
-        knownComponents?: Set<string>
+        knownComponents: Set<string> | undefined,
+        session: DependencyAnalysisSession,
     ): Promise<void> {
         while (addedComposables.size < composableDeps.size) {
             const pending = Array.from(composableDeps).filter(c => !addedComposables.has(c));
@@ -452,21 +524,20 @@ export class DependencyResolver {
                     throw new Error(`Composable file not found at ${composablePath}`);
                 }
 
-                let code = await this.readSource(composablePath);
-                this.assertResolvableModules(code, composablePath);
-                code = rewriteImports(code, componentName, 'composable', knownComponents);
-                assertKnownRegistryDeps(code, componentName, composableName);
-                extractRegistryDeps(code, componentName, knownComponents).forEach(d => allRegistryDeps.add(d));
-                for (const d of extractDeps(code, 'composables')) {
+                const rewritten: RewrittenModuleSource = await this.rewriteSource(composablePath, componentName, 'composable', knownComponents, session);
+                const code: string = rewritten.code;
+                assertKnownRegistryDeps(rewritten, componentName, composableName);
+                extractRegistryDeps(rewritten, componentName, knownComponents).forEach(d => allRegistryDeps.add(d));
+                for (const d of extractDeps(rewritten, 'composables')) {
                     composableDeps.add(await this.resolveExtension(d, this.paths.composablesDir));
                 }
-                for (const d of extractDeps(code, 'locales')) {
+                for (const d of extractDeps(rewritten, 'locales')) {
                     localeDeps.add(await this.resolveExtension(d, this.paths.localesDir));
                 }
-                for (const d of extractDeps(code, 'lib')) {
+                for (const d of extractDeps(rewritten, 'lib')) {
                     libDeps.add(await this.resolveExtension(d, this.paths.libDir));
                 }
-                for (const d of extractDeps(code, 'types')) {
+                for (const d of extractDeps(rewritten, 'types')) {
                     const typesDir = this.paths.typesDir;
                     if (typesDir) typeDeps.add(await this.resolveExtension(d, typesDir));
                 }
@@ -492,7 +563,8 @@ export class DependencyResolver {
         localeDeps: Set<string>,
         composableDeps: Set<string>,
         libDeps: Set<string>,
-        knownComponents?: Set<string>,
+        knownComponents: Set<string> | undefined,
+        session: DependencyAnalysisSession,
     ): Promise<void> {
         const typesDir = this.paths.typesDir;
         if (!typesDir && typeDeps.size > 0) {
@@ -509,21 +581,20 @@ export class DependencyResolver {
                     throw new Error(`Type file not found at ${typePath}`);
                 }
 
-                let code = await this.readSource(typePath);
-                this.assertResolvableModules(code, typePath);
-                code = rewriteImports(code, componentName, 'types', knownComponents);
-                assertKnownRegistryDeps(code, componentName, typeName);
-                extractRegistryDeps(code, componentName, knownComponents).forEach(d => allRegistryDeps.add(d));
-                for (const d of extractDeps(code, 'types')) {
+                const rewritten: RewrittenModuleSource = await this.rewriteSource(typePath, componentName, 'types', knownComponents, session);
+                const code: string = rewritten.code;
+                assertKnownRegistryDeps(rewritten, componentName, typeName);
+                extractRegistryDeps(rewritten, componentName, knownComponents).forEach(d => allRegistryDeps.add(d));
+                for (const d of extractDeps(rewritten, 'types')) {
                     typeDeps.add(await this.resolveExtension(d, typesDir));
                 }
-                for (const d of extractDeps(code, 'composables')) {
+                for (const d of extractDeps(rewritten, 'composables')) {
                     composableDeps.add(await this.resolveExtension(d, this.paths.composablesDir));
                 }
-                for (const d of extractDeps(code, 'locales')) {
+                for (const d of extractDeps(rewritten, 'locales')) {
                     localeDeps.add(await this.resolveExtension(d, this.paths.localesDir));
                 }
-                for (const d of extractDeps(code, 'lib')) {
+                for (const d of extractDeps(rewritten, 'lib')) {
                     libDeps.add(await this.resolveExtension(d, this.paths.libDir));
                 }
 

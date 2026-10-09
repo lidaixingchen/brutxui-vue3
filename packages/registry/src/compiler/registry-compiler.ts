@@ -19,7 +19,7 @@ import {
 import type { FileSystemAdapter } from '../fs/file-system-adapter.js';
 import { DiskFileSystemAdapter } from '../fs/disk-fs.js';
 import { rewriteImports } from './ast-rewriter.js';
-import { DependencyResolver } from './dependency-resolver.js';
+import { DependencyResolver, type DependencyAnalysisSession } from './dependency-resolver.js';
 import { CACHE_VERSION, CacheManager, computeInputDigest } from './cache-manager.js';
 import type {
     CompiledItemResult,
@@ -263,6 +263,7 @@ export class RegistryCompiler {
             },
             new Set(Object.keys(registry)),
             this.getComponentProjection(name),
+            this.dependencyResolver.createAnalysisSession(),
         );
         return this.computeItemSourceHash(name, normalizedFileMapping, componentInfo, closure);
     }
@@ -332,6 +333,14 @@ export class RegistryCompiler {
         name: string,
         mergedRegistry?: Record<string, MergedRegistryEntry>
     ): Promise<CompiledItemResult> {
+        return this.compileItemWithSession(name, mergedRegistry, this.dependencyResolver.createAnalysisSession());
+    }
+
+    private async compileItemWithSession(
+        name: string,
+        mergedRegistry: Record<string, MergedRegistryEntry> | undefined,
+        analysisSession: DependencyAnalysisSession,
+    ): Promise<CompiledItemResult> {
         const startTime = Date.now();
         const registry = mergedRegistry ?? (await this.loadMergedRegistry());
         const componentInfo = registry[name];
@@ -346,6 +355,7 @@ export class RegistryCompiler {
             componentInfo,
             knownComponents,
             publicProjection,
+            analysisSession,
         );
         const { files, registryDependencies } = closure;
 
@@ -459,6 +469,7 @@ export class RegistryCompiler {
         const mergedRegistry = await this.loadMergedRegistry();
         const componentNames = Object.keys(mergedRegistry).sort();
         const previousCache = options.forceRebuild ? {} : await this.cacheManager.loadCache();
+        const analysisSession: DependencyAnalysisSession = this.dependencyResolver.createAnalysisSession();
 
         const itemsMap = new Map<string, RegistryItem>();
         const itemResults: CompiledItemResult[] = [];
@@ -468,7 +479,7 @@ export class RegistryCompiler {
 
         // 1. 编译各组件
         for (const name of componentNames) {
-            const compiled = await this.compileItem(name, mergedRegistry);
+            const compiled = await this.compileItemWithSession(name, mergedRegistry, analysisSession);
             const res: CompiledItemResult = {
                 ...compiled,
                 cached: previousCache[name] === compiled.sourceHash,

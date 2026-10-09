@@ -6,6 +6,12 @@ import {
 import {
     SfcAstEngine,
     type ClassifiedModuleSpecifier,
+    type ImportRewriterFn,
+    type ImportRewriteContext,
+    type ModuleAnalysisResult,
+    type SourceInput,
+    type TransformResult,
+    transformImportsInternal,
 } from 'brutx-shared-vue/ast';
 import type { RewriteContext } from './types.js';
 
@@ -13,18 +19,117 @@ export {
     type ClassifiedModuleSpecifier,
 };
 
+export interface AnalyzedModuleSource {
+    readonly source: string;
+    readonly filename: string;
+    readonly analysis: ModuleAnalysisResult;
+}
+
+export interface RewrittenModuleSource {
+    readonly code: string;
+    readonly filename: string;
+    readonly dependencies: readonly ClassifiedModuleSpecifier[];
+}
+
+type ModuleSpecifierSource = string | AnalyzedModuleSource | RewrittenModuleSource;
+
+interface MutableModuleSpecifier {
+    specifier: string;
+    isTypeOnly: boolean;
+    isDynamic: boolean;
+    hasVerbatimSideEffect: boolean;
+}
+
+export function analyzeModuleSource(source: string, filename: string = 'component.vue'): AnalyzedModuleSource {
+    return {
+        source,
+        filename,
+        analysis: SfcAstEngine.analyzeModules(source, filename),
+    };
+}
+
+function getClassifiedModuleSpecifiers(
+    input: ModuleSpecifierSource,
+    filename: string = 'component.vue',
+): readonly ClassifiedModuleSpecifier[] {
+    if (typeof input === 'string') return SfcAstEngine.extractModuleSpecifiers(input, filename);
+    if ('dependencies' in input) return input.dependencies;
+    return input.analysis.dependencies;
+}
+
+function rewriteClassifiedModuleSpecifiers(
+    dependencies: readonly ClassifiedModuleSpecifier[],
+    rewriteSpecifier: (specifier: string) => string,
+): ClassifiedModuleSpecifier[] {
+    const rewritten: Map<string, MutableModuleSpecifier> = new Map();
+
+    for (const dependency of dependencies) {
+        const specifier: string = rewriteSpecifier(dependency.specifier);
+        const existing: MutableModuleSpecifier | undefined = rewritten.get(specifier);
+        if (!existing) {
+            rewritten.set(specifier, {
+                specifier,
+                isTypeOnly: dependency.isTypeOnly,
+                isDynamic: dependency.isDynamic,
+                hasVerbatimSideEffect: Boolean(dependency.hasVerbatimSideEffect),
+            });
+            continue;
+        }
+
+        if (!dependency.isTypeOnly || dependency.isDynamic) existing.isTypeOnly = false;
+        if (dependency.isDynamic) existing.isDynamic = true;
+        if (dependency.hasVerbatimSideEffect) existing.hasVerbatimSideEffect = true;
+    }
+
+    return Array.from(rewritten.values());
+}
+
+export function rewriteAnalyzedImports(
+    analyzed: AnalyzedModuleSource,
+    componentName: string,
+    context: RewriteContext = 'component',
+    knownComponents?: Set<string>,
+): RewrittenModuleSource {
+    const known: Set<string> = knownComponents ?? new Set(AVAILABLE_COMPONENTS);
+    const rewriteSpecifier: (specifier: string) => string = (specifier: string): string => resolveRewrittenSpecifier(
+        specifier,
+        componentName,
+        context,
+        known,
+    );
+    const rewriter: ImportRewriterFn = (module: ImportRewriteContext): string => rewriteSpecifier(module.specifier);
+    const dependencies: readonly ClassifiedModuleSpecifier[] = analyzed.analysis.dependencies;
+
+    if (analyzed.analysis.completeness === 'invalid') {
+        return { code: analyzed.source, filename: analyzed.filename, dependencies };
+    }
+
+    const input: SourceInput = { source: analyzed.source, filename: analyzed.filename };
+    const result: TransformResult = transformImportsInternal(input, analyzed.analysis.references, rewriter);
+    return {
+        code: result.code,
+        filename: analyzed.filename,
+        dependencies: result.changed
+            ? rewriteClassifiedModuleSpecifiers(dependencies, rewriteSpecifier)
+            : dependencies,
+    };
+}
+
 /**
  * 提取代码中所有模块导入（纯字符串数组）
  */
-export function extractModuleSpecifiers(code: string, filename = 'component.vue'): string[] {
-    return SfcAstEngine.extractModuleSpecifiers(code, filename).map(item => item.specifier);
+export function extractModuleSpecifiers(input: ModuleSpecifierSource, filename: string = 'component.vue'): string[] {
+    return getClassifiedModuleSpecifiers(input, filename).map((item: ClassifiedModuleSpecifier): string => item.specifier);
 }
 
 /**
  * 提取代码中分类的模块导入（含 isTypeOnly, isDynamic）
  */
-export function extractClassifiedModuleSpecifiers(code: string, filename = 'component.vue'): ClassifiedModuleSpecifier[] {
-    return SfcAstEngine.extractModuleSpecifiers(code, filename);
+export function extractClassifiedModuleSpecifiers(
+    input: ModuleSpecifierSource,
+    filename: string = 'component.vue',
+): ClassifiedModuleSpecifier[] {
+    return [...getClassifiedModuleSpecifiers(input, filename)];
 }
 
 /**
@@ -118,18 +223,20 @@ export function rewriteImports(
     knownComponents?: Set<string>,
     filename?: string
 ): string {
-    const known = knownComponents ?? new Set(AVAILABLE_COMPONENTS);
-    const actualFilename = filename ?? (context === 'component' ? 'component.vue' : `${context}.ts`);
-    return SfcAstEngine.transformImports(code, ctx => {
-        return resolveRewrittenSpecifier(ctx.specifier, componentName, context, known);
-    }, actualFilename);
+    const actualFilename: string = filename ?? (context === 'component' ? 'component.vue' : `${context}.ts`);
+    return rewriteAnalyzedImports(
+        analyzeModuleSource(code, actualFilename),
+        componentName,
+        context,
+        knownComponents,
+    ).code;
 }
 
 /**
  * 提取代码中指定前缀目录（如 'lib', 'composables', 'locales'）的相对文件依赖。
  */
-export function extractDeps(code: string, dirPrefix: string): string[] {
-    const specifiers = extractModuleSpecifiers(code);
+export function extractDeps(input: ModuleSpecifierSource, dirPrefix: string, filename?: string): string[] {
+    const specifiers = extractModuleSpecifiers(input, filename);
     const prefix = `@/${dirPrefix}/`;
     const deps = new Set<string>();
 
@@ -151,8 +258,12 @@ export function extractDeps(code: string, dirPrefix: string): string[] {
 /**
  * 提取代码中引用的其他注册表组件依赖（不含当前组件自身，跳过纯类型导入，仅收集已知组件）。
  */
-export function extractRegistryDeps(code: string, componentName: string, knownComponents?: Set<string>): string[] {
-    const items = extractClassifiedModuleSpecifiers(code);
+export function extractRegistryDeps(
+    input: ModuleSpecifierSource,
+    componentName: string,
+    knownComponents?: Set<string>,
+): string[] {
+    const items = extractClassifiedModuleSpecifiers(input);
     const prefix = '@/components/ui/';
     const deps = new Set<string>();
 
@@ -177,8 +288,8 @@ export function extractRegistryDeps(code: string, componentName: string, knownCo
 /**
  * 提取同一组件内部的其它源文件依赖（相对组件目录的相对文件名）。
  */
-export function extractComponentFileDeps(code: string, componentName: string): string[] {
-    const specifiers = extractModuleSpecifiers(code);
+export function extractComponentFileDeps(input: ModuleSpecifierSource, componentName: string): string[] {
+    const specifiers = extractModuleSpecifiers(input);
     const prefix = `@/components/ui/${componentName}/`;
     const files = new Set<string>();
 
@@ -200,8 +311,8 @@ export function extractComponentFileDeps(code: string, componentName: string): s
 /**
  * 提取代码中未在 COMPONENT_METADATA 中声明的未知组件别名。
  */
-export function extractUnknownRegistryDeps(code: string): string[] {
-    const specifiers = extractModuleSpecifiers(code);
+export function extractUnknownRegistryDeps(input: ModuleSpecifierSource): string[] {
+    const specifiers = extractModuleSpecifiers(input);
     const prefix = '@/components/ui/';
     const unknowns = new Set<string>();
 
@@ -221,8 +332,8 @@ export function extractUnknownRegistryDeps(code: string): string[] {
 /**
  * 断言代码中所有组件导入均属于合法已注册组件，否则抛出附带源上下文的错误。
  */
-export function assertKnownRegistryDeps(code: string, ownerName: string, sourceLabel: string): string[] {
-    const unknowns = extractUnknownRegistryDeps(code);
+export function assertKnownRegistryDeps(input: ModuleSpecifierSource, ownerName: string, sourceLabel: string): string[] {
+    const unknowns = extractUnknownRegistryDeps(input);
     if (unknowns.length > 0) {
         throw new Error(
             `Unknown registry component import(s) in "${ownerName}" (${sourceLabel}): ${unknowns.join(', ')}`

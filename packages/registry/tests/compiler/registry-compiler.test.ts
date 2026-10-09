@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { SfcAstEngine } from 'brutx-shared-vue/ast';
 import type { ComponentMetadataEntry, RegistryManifest } from 'brutx-shared-vue';
 import type { ComponentExportProjection } from 'brutx-shared-vue/api-contract';
 import { MemoryFileSystemAdapter } from '../../src/fs/memory-fs.js';
@@ -74,6 +75,7 @@ describe('RegistryCompiler (Zero-IO Tests)', () => {
                 '<template><button><slot /></button></template>',
                 '<script setup lang="ts">',
                 'import { useLocale } from \'../../composables/useLocale\';',
+                'import { cn } from \'../../lib/utils\';',
                 '</script>',
             ].join('\n'),
             '/ui/src/components/dialog/Dialog.vue': [
@@ -81,6 +83,7 @@ describe('RegistryCompiler (Zero-IO Tests)', () => {
                 '<script setup lang="ts">',
                 'import Button from \'../button/Button.vue\';',
                 'import { useLocale } from \'../../composables/useLocale\';',
+                'import { cn } from \'../../lib/utils\';',
                 '</script>',
             ].join('\n'),
             '/ui/src/composables/useLocale.ts': 'export function useLocale() { return { t: (k: string) => k }; }',
@@ -241,6 +244,38 @@ describe('RegistryCompiler (Zero-IO Tests)', () => {
         expect(result.sbom.bomFormat).toBe('CycloneDX');
         expect(result.sbom.serialNumber.startsWith('urn:uuid:')).toBe(true);
         expect(result.sbom.manifestIntegrity).toBe(result.manifest.integrity);
+    });
+
+    it('reuses shared source analysis within one compile session and observes edited input next time', async () => {
+        const fs = createMockVfs();
+        const compiler = new RegistryCompiler({
+            fs,
+            paths,
+            metadata: mockMetadata,
+            publicProjection: mockPublicProjection,
+        });
+        const analyzeModules = vi.spyOn(SfcAstEngine, 'analyzeModules');
+        const analysisCallCount = (filename: string): number => analyzeModules.mock.calls.filter(([, actualFilename]) =>
+            actualFilename?.replace(/\\/g, '/') === filename,
+        ).length;
+
+        try {
+            await compiler.compileAll({ forceRebuild: true });
+            expect(analysisCallCount('/ui/src/composables/useLocale.ts')).toBe(1);
+            expect(analysisCallCount('/ui/src/lib/utils.ts')).toBe(1);
+
+            await fs.writeFile(
+                '/ui/src/composables/useLocale.ts',
+                'export function useLocale() { return { t: (key: string) => `updated:${key}` }; }',
+            );
+            const second = await compiler.compileAll();
+            const useLocaleFile = second.items.get('button')?.files.find(file => file.path === 'composables/useLocale.ts');
+
+            expect(analysisCallCount('/ui/src/composables/useLocale.ts')).toBe(2);
+            expect(useLocaleFile?.content).toContain('updated:');
+        } finally {
+            analyzeModules.mockRestore();
+        }
     });
 
     it('replays cache records and invalidates modified source', async () => {

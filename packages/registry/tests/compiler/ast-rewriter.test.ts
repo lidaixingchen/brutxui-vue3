@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
+    analyzeModuleSource,
     assertKnownRegistryDeps,
     extractComponentFileDeps,
     extractDeps,
     extractRegistryDeps,
     extractUnknownRegistryDeps,
     getFileType,
+    rewriteAnalyzedImports,
     rewriteImports,
 } from '../../src/compiler/ast-rewriter.js';
 
@@ -78,6 +80,24 @@ describe('AstRewriter', () => {
         expect(extractDeps(code, 'composables')).toEqual(['useForwardProps.ts']);
         expect(extractRegistryDeps(code, 'data-table')).toEqual(['button', 'popover']);
         expect(extractUnknownRegistryDeps(code)).toEqual([]);
+    });
+
+    it('reuses classified source facts while rewriting and separating type-only registry imports', () => {
+        const source = [
+            "import type { ButtonProps } from '../button/types';",
+            "import { useLocale } from '../../composables/useLocale';",
+            "const loadPopover = () => import('../popover/Popover.vue');",
+        ].join('\n');
+        const knownComponents = new Set(['button', 'dialog', 'popover']);
+        const analyzed = analyzeModuleSource(source, '/src/components/dialog/Content.ts');
+        const rewritten = rewriteAnalyzedImports(analyzed, 'dialog', 'component', knownComponents);
+
+        expect(rewritten.code).toContain("from '@/components/ui/button/types'");
+        expect(rewritten.code).toContain("from '@/composables/useLocale'");
+        expect(rewritten.code).toContain("import('@/components/ui/popover/Popover.vue')");
+        expect(extractRegistryDeps(rewritten, 'dialog', knownComponents)).toEqual(['popover']);
+        expect(extractDeps(rewritten, 'composables')).toEqual(['useLocale.ts']);
+        expect(() => assertKnownRegistryDeps(rewritten, 'dialog', 'Content.ts')).not.toThrow();
     });
 
     it('finds unknown component imports and throws descriptive errors', () => {
