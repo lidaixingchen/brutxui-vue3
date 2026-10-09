@@ -39,7 +39,7 @@ async function abortableSleep(ms: number, signal?: AbortSignal): Promise<void> {
  * 1. 2xx 与 304 正常返回；
  * 2. 400/401/403/404/422 等终态状态码不重试，直接返回供上层业务做语义判定；
  * 3. 408/429/5xx 等可重试状态码解析 Retry-After 标头（带 15s 封顶）或使用有界 Full Jitter 退避重试；
- * 4. 网络中断/超时异常按退避重试，耗尽后抛出 REGISTRY_FETCH_FAILED。
+ * 4. 超时与取消覆盖响应体完整接收；网络中断/超时异常按退避重试，耗尽后抛出 REGISTRY_FETCH_FAILED。
  */
 export async function resilientFetch(
     url: string,
@@ -53,55 +53,59 @@ export async function resilientFetch(
             throw new CliError('Request aborted.', { code: 'REGISTRY_FETCH_FAILED' });
         }
 
-        const attemptController = new AbortController();
-        const onParentAbort = () => attemptController.abort(signal?.reason);
-        if (signal) signal.addEventListener('abort', onParentAbort, { once: true });
+        const attemptController: AbortController = new AbortController();
+        const onParentAbort: () => void = (): void => attemptController.abort(signal?.reason);
+        if (signal) {
+            signal.addEventListener('abort', onParentAbort, { once: true });
+            if (signal.aborted) onParentAbort();
+        }
 
-        const timer = setTimeout(() => {
+        const timer: ReturnType<typeof setTimeout> = setTimeout((): void => {
             attemptController.abort(new Error(`Fetch timed out after ${singleAttemptTimeoutMs}ms`));
         }, singleAttemptTimeoutMs);
+        let retryDelayMs: number | null = null;
+        let terminalStatus: number | undefined;
 
         try {
-            const res = await fetch(url, {
+            const res: Response = await fetch(url, {
                 headers,
                 signal: attemptController.signal,
             });
-            clearTimeout(timer);
+            terminalStatus = isTerminalHttpStatus(res.status) ? res.status : undefined;
 
-            if (res.ok || res.status === 304) {
-                return res;
-            }
-
-            if (isTerminalHttpStatus(res.status)) {
-                // 确定性终态，不进行重试直接返回供上层做 404 等语义判断
-                return res;
-            }
-
-            if (isRetryableHttpStatus(res.status)) {
+            if (isRetryableHttpStatus(res.status) && terminalStatus === undefined) {
                 lastError = new Error(`HTTP ${res.status} ${res.statusText}`);
+                await res.body?.cancel();
                 if (attempt < maxRetries) {
-                    const retryAfterMs = parseRetryAfterDelayMs(res.headers.get('retry-after'));
-                    const delayMs = retryAfterMs ?? calculateBoundedJitterDelay(attempt);
-                    await abortableSleep(delayMs, signal);
-                    continue;
+                    const retryAfterMs: number | null = parseRetryAfterDelayMs(res.headers.get('retry-after'));
+                    retryDelayMs = retryAfterMs ?? calculateBoundedJitterDelay(attempt);
                 }
-                break;
+            } else {
+                // 克隆体接收完整响应，原始响应保留元数据和调用方的读取能力。
+                await res.clone().arrayBuffer();
+                return res;
             }
-
-            return res;
         } catch (error: unknown) {
-            clearTimeout(timer);
             if (signal?.aborted) {
                 throw new CliError('Request aborted.', { code: 'REGISTRY_FETCH_FAILED', cause: error instanceof Error ? error : undefined });
             }
+            if (terminalStatus !== undefined) {
+                throw new CliError(`Failed to receive HTTP ${terminalStatus} response from "${url}".`, {
+                    code: 'REGISTRY_FETCH_FAILED',
+                    cause: error,
+                });
+            }
             lastError = error instanceof Error ? error : new Error(String(error));
             if (attempt < maxRetries) {
-                const delayMs = calculateBoundedJitterDelay(attempt);
-                await abortableSleep(delayMs, signal);
-                continue;
+                retryDelayMs = calculateBoundedJitterDelay(attempt);
             }
         } finally {
+            clearTimeout(timer);
             if (signal) signal.removeEventListener('abort', onParentAbort);
+        }
+
+        if (retryDelayMs !== null) {
+            await abortableSleep(retryDelayMs, signal);
         }
     }
 
