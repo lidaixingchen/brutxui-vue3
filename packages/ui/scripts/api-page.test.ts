@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createMarkdownRenderer, disposeMdItInstance } from '../../../apps/docs/node_modules/vitepress/dist/node/index.js'
 import { createApiPagePlugin, createApiPageSearchOptions, parseApiPageMarkdown } from '../../../apps/docs/.vitepress/api-page'
 
@@ -80,6 +80,50 @@ describe('VitePress 组件 API 页面编译与搜索', () => {
         expect(env.sfcBlocks?.scriptSetup?.content).toContain('import __brutxApiGroup0 from "../.vitepress/api-generated/button.zh-CN.json"')
         expect(env.sfcBlocks?.scriptSetup?.contentStripped).toContain('__brutxApiGroup0')
         expect(env.sfcBlocks?.scriptSetup?.contentStripped.match(/import __brutxApiGroup0/gu)).toHaveLength(1)
+    })
+
+    it('复用已解析目录，并在同尺寸快速更新后重新读取', async () => {
+        const md = await createRenderer()
+        const source: string = '<ComponentApi name="button" />'
+        const originalCatalog: string = JSON.stringify(catalog)
+        const updatedCatalog: string = originalCatalog
+            .replace('"slug":"button"', '"slug":"butto"')
+            .replace('"scope":"component-page"', '"scope":"functional-page"')
+        const readFileSpy = vi.spyOn(fs, 'readFileSync')
+        const countCatalogReads = (): number => readFileSpy.mock.calls.filter(([file]) => file === catalogPath).length
+
+        try {
+            md.render(source, createEnvironment('components/button.md'))
+            md.render(source, createEnvironment('components/button.md'))
+            expect(countCatalogReads()).toBe(1)
+            expect(updatedCatalog).toHaveLength(originalCatalog.length)
+
+            fs.writeFileSync(catalogPath, updatedCatalog)
+            expect(() => md.render(source, createEnvironment('components/button.md')))
+                .toThrow(/\[API_CALL_FUNCTIONAL_GROUP\]/u)
+            expect(countCatalogReads()).toBe(2)
+        } finally {
+            readFileSpy.mockRestore()
+        }
+    })
+
+    it('目录文件缺失或非法时保留诊断，并在文件恢复后重新读取', async () => {
+        const md = await createRenderer()
+        const source: string = '<ComponentApi name="button" />'
+
+        fs.writeFileSync(catalogPath, '{')
+        expect(() => md.render(source, createEnvironment('components/button.md')))
+            .toThrow(/\[API_CATALOG_UNAVAILABLE\]/u)
+
+        fs.writeFileSync(catalogPath, JSON.stringify(catalog))
+        expect(() => md.render(source, createEnvironment('components/button.md'))).not.toThrow()
+
+        fs.rmSync(catalogPath)
+        expect(() => md.render(source, createEnvironment('components/button.md')))
+            .toThrow(/\[API_CATALOG_UNAVAILABLE\]/u)
+
+        fs.writeFileSync(catalogPath, JSON.stringify(catalog))
+        expect(() => md.render(source, createEnvironment('components/button.md'))).not.toThrow()
     })
 
     it('静态导入按页面相对路径和当前语言解析', async () => {

@@ -58,14 +58,28 @@ export interface ApiPageSearchOptions {
     _render: (source: string, env: MarkdownEnv, md: MarkdownRenderer) => string
 }
 
+interface CatalogFileVersion {
+    size: bigint
+    mtimeNs: bigint
+    ctimeNs: bigint
+    dev: bigint
+    ino: bigint
+}
+
+interface CachedApiCatalog {
+    version: CatalogFileVersion
+    catalog: ApiPageCatalog
+}
+
 export function createApiPagePlugin(options: ApiPagePluginOptions): (md: MarkdownRenderer) => void {
+    const readCatalog: () => ApiPageCatalog = createCatalogReader(options.catalogPath)
     return (md) => {
         const originalRender = md.render.bind(md)
         md.core.ruler.after('inline', 'brutx-api-page', (rawState) => {
             const state = rawState as unknown as MarkdownState
             const env = state.env as unknown as MarkdownEnvironment
             const sourceFile = resolveSourceFile(env, options.docsRoot)
-            const catalog = readCatalog(options.catalogPath)
+            const catalog = readCatalog()
             const imports = new Map<string, string>()
             const calls: ApiPageInvocation[] = []
             let sourceCursor = 0
@@ -315,14 +329,38 @@ function injectImports(sfcBlocks: NonNullable<MarkdownEnvironment['sfcBlocks']>,
     sfcBlocks.scriptSetup = block
 }
 
-function readCatalog(file: string): ApiPageCatalog {
-    try {
-        const catalog = JSON.parse(fs.readFileSync(file, 'utf8')) as ApiPageCatalog
-        if (!Array.isArray(catalog.groups)) throw new Error('groups must be an array')
-        return catalog
-    } catch (error) {
-        throw new Error(`${file} [API_CATALOG_UNAVAILABLE] ${error instanceof Error ? error.message : String(error)}`)
+function createCatalogReader(file: string): () => ApiPageCatalog {
+    let cached: CachedApiCatalog | undefined
+
+    return (): ApiPageCatalog => {
+        try {
+            const stat: fs.BigIntStats = fs.statSync(file, { bigint: true })
+            const version: CatalogFileVersion = {
+                size: stat.size,
+                mtimeNs: stat.mtimeNs,
+                ctimeNs: stat.ctimeNs,
+                dev: stat.dev,
+                ino: stat.ino,
+            }
+            if (cached && hasSameCatalogFileVersion(cached.version, version)) return cached.catalog
+
+            const catalog: ApiPageCatalog = JSON.parse(fs.readFileSync(file, 'utf8')) as ApiPageCatalog
+            if (!Array.isArray(catalog.groups)) throw new Error('groups must be an array')
+            cached = { version, catalog }
+            return catalog
+        } catch (error: unknown) {
+            cached = undefined
+            throw new Error(`${file} [API_CATALOG_UNAVAILABLE] ${error instanceof Error ? error.message : String(error)}`, { cause: error })
+        }
     }
+}
+
+function hasSameCatalogFileVersion(left: CatalogFileVersion, right: CatalogFileVersion): boolean {
+    return left.size === right.size
+        && left.mtimeNs === right.mtimeNs
+        && left.ctimeNs === right.ctimeNs
+        && left.dev === right.dev
+        && left.ino === right.ino
 }
 
 function readApiGroup(call: ApiPageInvocation): ApiGroup {
