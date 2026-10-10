@@ -228,7 +228,6 @@ jobs:
 
             - name: Test selected packages and SSR
               env:
-                  NODE_MAJOR: ${{ matrix.node-version }}
                   UI: ${{ needs.changes.outputs.ui }}
                   CLI: ${{ needs.changes.outputs.cli }}
                   REGISTRY: ${{ needs.changes.outputs.registry }}
@@ -236,19 +235,54 @@ jobs:
                   filters=(--filter=brutx-shared-vue)
                   [[ "$CLI" != true ]] || filters+=(--filter=brutx-vue)
                   [[ "$REGISTRY" != true ]] || filters+=(--filter=brutx-registry-vue)
-                  if [[ "$NODE_MAJOR" == 24 && "$UI" == true ]]; then
-                    filters+=(--filter=brutx-ui-vue)
-                  fi
                   pnpm exec turbo run test "${filters[@]}"
                   if [[ "$UI" == true ]]; then
                     pnpm exec turbo run test:ssr --filter=brutx-ui-vue
                   fi
 
-    coverage:
-        name: UI coverage
+    ui-test:
+        name: UI test (Node 24, shard ${{ matrix.shard-index }}/${{ matrix.shard-total }})
         needs: changes
         if: needs.changes.outputs.ui == 'true'
         runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                shard-index: [1, 2]
+                shard-total: [2]
+        env:
+            TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+            TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+            - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+            - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+              with:
+                  node-version: 24
+                  cache: pnpm
+            - name: Record Node runtime for Turbo task cache
+              run: echo "BRUTX_RUNTIME_VERSION=$(node -p process.version)" >> "$GITHUB_ENV"
+            - run: pnpm install --frozen-lockfile --prefer-offline
+            - name: Cache UI test results
+              uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+              with:
+                  path: .turbo/cache
+                  key: ${{ runner.os }}-turbo-node24-ui-shard${{ matrix.shard-index }}-${{ hashFiles('pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
+                  restore-keys: |
+                      ${{ runner.os }}-turbo-node24-ui-shard${{ matrix.shard-index }}-${{ hashFiles('pnpm-lock.yaml', 'turbo.json') }}-
+            - name: Test UI source and tooling shard
+              run: pnpm exec turbo run test --filter=brutx-ui-vue -- --shard=${{ matrix.shard-index }}/${{ matrix.shard-total }}
+
+    coverage-shard:
+        name: UI coverage shard (${{ matrix.shard-index }}/${{ matrix.shard-total }})
+        needs: changes
+        if: needs.changes.outputs.ui == 'true'
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                shard-index: [1, 2]
+                shard-total: [2]
         env:
             TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
             TURBO_TEAM: ${{ vars.TURBO_TEAM }}
@@ -272,10 +306,39 @@ jobs:
             - name: Generate component index and styles
               run: pnpm --filter brutx-ui-vue generate
 
+            - name: Measure source coverage shard
+              run: pnpm --filter brutx-ui-vue exec vitest run --config vitest.coverage-shard.config.ts --coverage --reporter=default --reporter=blob --shard=${{ matrix.shard-index }}/${{ matrix.shard-total }}
+            - name: Upload source coverage measurements
+              uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+              with:
+                  name: ui-coverage-shard-${{ matrix.shard-index }}
+                  path: packages/ui/.vitest-reports
+                  include-hidden-files: true
+                  if-no-files-found: error
+
+    coverage:
+        name: UI coverage
+        needs: [changes, coverage-shard]
+        if: needs.changes.outputs.ui == 'true'
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+            - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+            - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+              with:
+                  node-version: 22
+                  cache: pnpm
+            - run: pnpm install --frozen-lockfile --prefer-offline
+            - run: pnpm --filter brutx-ui-vue generate
+            - name: Download source coverage measurements
+              uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+              with:
+                  pattern: ui-coverage-shard-*
+                  path: packages/ui/.vitest-reports
+                  merge-multiple: true
             - name: UI coverage
               id: ui-coverage
-              run: pnpm --filter brutx-ui-vue test:coverage
-
+              run: pnpm --filter brutx-ui-vue exec vitest run --config vitest.coverage.config.ts --merge-reports --coverage
             - name: Record UI coverage environment
               if: always() && steps.ui-coverage.outcome != 'skipped'
               env:
@@ -295,7 +358,7 @@ jobs:
                     node: process.version,
                     pnpm: command('pnpm', ['--version']),
                     vitest: command('pnpm', ['--filter', 'brutx-ui-vue', 'exec', 'vitest', '--version']),
-                    command: 'pnpm --filter brutx-ui-vue test:coverage',
+                    command: 'pnpm --filter brutx-ui-vue exec vitest run --config vitest.coverage.config.ts --merge-reports --coverage',
                     outcome: process.env.COVERAGE_OUTCOME,
                     run: `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
                   }, null, 2))
@@ -523,7 +586,7 @@ jobs:
     ci-gate:
         name: ${{ github.event_name == 'workflow_dispatch' && 'CI Timing (selected checks)' || 'CI Gate (all checks passed)' }}
         if: always()
-        needs: [changes, quality, test, coverage, browser, integration, consumers, site]
+        needs: [changes, quality, test, ui-test, coverage-shard, coverage, browser, integration, consumers, site]
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -538,7 +601,7 @@ jobs:
                   const flags = JSON.parse(process.env.FLAGS || '{}')
                   const selected = ['quality']
                   if (flags.ui || flags.cli || flags.registry || flags.tooling) selected.push('test')
-                  if (flags.ui) selected.push('coverage')
+                  if (flags.ui) selected.push('ui-test', 'coverage-shard', 'coverage')
                   if (flags.browser || flags.cost) selected.push('browser')
                   if (flags.cli) selected.push('integration')
                   if (flags.consumers) selected.push('consumers')
