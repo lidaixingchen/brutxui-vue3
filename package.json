@@ -19,7 +19,7 @@
         "changeset": "changeset",
         "version-packages": "changeset version",
         "test:release": "node scripts/release/tests/run-release-tests.mjs",
-        "test:tooling": "node --test packages/cli/scripts/test-consumers.test.mjs scripts/contracts/generated-contract.test.mjs scripts/generation/check-staged-snapshot.test.mjs scripts/generation/watch-docs-api.test.mjs scripts/ci/change-scope.test.mjs scripts/ci/evaluate-gate.test.mjs scripts/bench-diff.test.mjs packages/ui/perf/cost-profile.test.mjs && pnpm --filter brutx-ui-vue test:tooling",
+        "test:tooling": "node --test packages/cli/scripts/test-consumers.test.mjs scripts/contracts/generated-contract.test.mjs scripts/generation/check-staged-snapshot.test.mjs scripts/generation/watch-docs-api.test.mjs scripts/ci/change-scope.test.mjs scripts/ci/evaluate-gate.test.mjs scripts/ci/require-release-ci.test.mjs scripts/bench-diff.test.mjs packages/ui/perf/cost-profile.test.mjs && pnpm --filter brutx-ui-vue test:tooling",
         "release": "pnpm release:check",
         "release:check": "node scripts/release/check.mjs",
         "release:prepare": "node scripts/release/prepare.mjs",

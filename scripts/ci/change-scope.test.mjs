@@ -39,14 +39,14 @@ test('site pages and API data select documentation and site checks', () => {
     )
     assert.deepEqual(
         classifyGitChangePaths(['packages/ui/src/components/button/Button.vue']),
-        expectedFlags('ui', 'browser', 'generated', 'consumers', 'docs', 'site', 'cost'),
+        expectedFlags('ui', 'registry', 'browser', 'generated', 'consumers', 'docs', 'site', 'cost'),
     )
 })
 
 test('UI changes and Button cost inputs follow their actual dependency scopes', () => {
     assert.deepEqual(
         classifyGitChangePaths(['packages/ui/src/components/input/Input.vue']),
-        expectedFlags('ui', 'browser', 'generated', 'consumers', 'docs', 'site'),
+        expectedFlags('ui', 'registry', 'browser', 'generated', 'consumers', 'docs', 'site'),
     )
     assert.deepEqual(
         classifyGitChangePaths(['packages/ui/src/components/button/button.test.ts']),
@@ -58,7 +58,7 @@ test('UI changes and Button cost inputs follow their actual dependency scopes', 
     )
     assert.deepEqual(
         classifyGitChangePaths(['packages/ui/src/composables/useGlitchEffect.ts']),
-        expectedFlags('ui', 'browser', 'generated', 'consumers', 'cost'),
+        expectedFlags('ui', 'registry', 'browser', 'generated', 'consumers', 'cost'),
     )
     assert.deepEqual(
         classifyGitChangePaths(['packages/ui/scripts/generate-api-contract.ts']),
@@ -74,7 +74,7 @@ test('UI changes and Button cost inputs follow their actual dependency scopes', 
     )
     assert.deepEqual(
         classifyGitChangePaths(['packages/ui/src/styles.css']),
-        expectedFlags('ui', 'browser', 'generated', 'consumers', 'cost'),
+        expectedFlags('ui', 'registry', 'browser', 'generated', 'consumers', 'cost'),
     )
 })
 
@@ -103,6 +103,15 @@ test('CLI, Registry, release, and package fixture changes select their owning ch
         classifyGitChangePaths(['.github/workflows/publish.yml']),
         expectedFlags('tooling', 'release'),
     )
+})
+
+test('package documentation stays scoped while CLI distribution inputs select consumers', () => {
+    for (const file of ['packages/ui/README.md', 'packages/cli/README.md', 'packages/registry/README.md']) {
+        assert.deepEqual(classifyGitChangePaths([file]), expectedFlags('docs'))
+    }
+    for (const file of ['packages/cli/package.json', 'packages/cli/tsup.config.ts', 'packages/cli/tsconfig.json']) {
+        assert.deepEqual(classifyGitChangePaths([file]), expectedFlags('cli', 'consumers'))
+    }
 })
 
 test('root build inputs and change-scope logic force a full comparable run', () => {

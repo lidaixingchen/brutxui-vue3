@@ -136,6 +136,10 @@ function markSharedClosure(flags) {
 }
 
 function classifyUiPath(file, flags) {
+    if (file.endsWith('.md') || file.endsWith('.mdx')) {
+        mark(flags, 'docs')
+        return
+    }
     mark(flags, 'ui')
 
     if (isWithin(file, 'packages/ui/docs')) {
@@ -169,7 +173,7 @@ function classifyUiPath(file, flags) {
             return
         }
 
-        mark(flags, 'browser', 'generated', 'consumers')
+        mark(flags, 'browser', 'generated', 'consumers', 'registry')
         if (isWithin(file, 'packages/ui/src/components') && file.endsWith('.vue')) {
             mark(flags, 'docs', 'site')
         }
@@ -185,7 +189,6 @@ function classifyUiPath(file, flags) {
         if (
             file.includes('/api-contract')
             || file.includes('/api-module-coverage')
-            || file.endsWith('/check-exports.ts')
         ) {
             mark(flags, 'generated', 'consumers')
         }
@@ -246,7 +249,12 @@ function isButtonCostSource(file) {
 }
 
 function classifyCliPath(file, flags) {
+    if (file.endsWith('.md') || file.endsWith('.mdx')) {
+        mark(flags, 'docs')
+        return
+    }
     mark(flags, 'cli')
+    if (file === 'packages/cli/package.json' || /^packages\/cli\/(?:tsconfig[^/]*|tsup\.config)\.[cm]?[jt]s(?:on)?$/u.test(file)) mark(flags, 'consumers')
     if (isTestPath(file) || isWithin(file, 'packages/cli/scripts')) mark(flags, 'tooling')
     if (isWithin(file, 'packages/cli/src') && !isTestPath(file)) mark(flags, 'consumers')
     if (GENERATED_OUTPUT_PATHS.has(file) || file === 'packages/cli/scripts/generate-tokens.ts') {
@@ -256,6 +264,10 @@ function classifyCliPath(file, flags) {
 }
 
 function classifyRegistryPath(file, flags) {
+    if (file.endsWith('.md') || file.endsWith('.mdx')) {
+        mark(flags, 'docs')
+        return
+    }
     mark(flags, 'registry')
     if (isTestPath(file)) {
         mark(flags, 'tooling')

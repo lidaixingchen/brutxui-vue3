@@ -62,7 +62,7 @@ pnpm changeset  ──>  pnpm release:prepare                           ──> 
 | 指令 | 说明 | 执行位置 |
 | --- | --- | --- |
 | `pnpm bench` | Turbo 并行运行所有子包基准测试（Node 环境） | 根目录 |
-| `pnpm --filter brutx-ui-vue bench:json` | 导出 UI 组件基准测试结果为 JSON（用于基准对齐） | 根目录 |
+| `pnpm --filter brutx-ui-vue bench:json bench.json` | 导出 UI 组件基准测试结果为 JSON（用于基准对齐） | 根目录 |
 | `pnpm --filter brutx-registry-vue bench` | 压测 Registry 生成引擎构建耗时 | 根目录 |
 
 ### 2. 生产消费者成本
@@ -85,10 +85,12 @@ U1/C1/C3 可通过 `--artifacts <候选目录或 manifest>` 复用经 SHA-256 �
 node scripts/bench-diff.mjs <main-bench.json> <pr-bench.json>
 ```
 
-- **判定阈值**：
+- **信息报告阈值**：
   - `|delta| < 5%`：视为正常噪声范围；
   - `delta < -5%`：疑似性能回归；若超过 2 项则需人工复核；
-  - `delta > 5%`：判定为性能优化提升。
+  - `delta > 5%`：报告性能提升。
+
+Bench 要求两份结果包含同一组有效测量；缺失、损坏或测试项不完整会使工作流失败，计时变化只作信息报告。PR 基线绑定精确 base SHA。
 
 ---
 
@@ -177,6 +179,6 @@ pnpm --filter docs dev -- --host 127.0.0.1 --port 5180
 | `pnpm --filter brutx-ui-vue docs:manifest` | 生成组件 API 双语分组数据及页面目录 |
 | `pnpm check:generated` | 只读比较 UI、CLI 和组件 API 文档生成结果 |
 | `pnpm check:staged-snapshot` | 从 Git index 物化候选快照并检查生成一致性 |
-| `pnpm test:tooling` | 生成事务、锁、缓存输入、部分暂存与门禁等价回归 |
+| `pnpm test:tooling` | 当前生成契约、部分暂存隔离、调度归约、消费者工具和 UI 脚本测试 |
 
 `pre-commit` 只校验已暂存快照，不运行工作区生成或自动暂存。失败时显式运行生成命令，审查差异并自行暂存需要提交的内容。候选源码依赖的手写文件也须进入暂存区。
