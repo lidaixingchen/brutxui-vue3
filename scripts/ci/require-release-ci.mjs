@@ -12,8 +12,17 @@ export function selectSuccessfulMainRun(runs, sha) {
 export function requireReleaseCi({ repository, sha }) {
     execFileSync('git', ['fetch', 'origin', 'main'], { stdio: 'inherit' })
     execFileSync('git', ['merge-base', '--is-ancestor', sha, 'origin/main'])
-    const response = execFileSync('gh', ['api', `repos/${repository}/actions/workflows/ci.yml/runs?head_sha=${sha}&event=push&per_page=100`], { encoding: 'utf8' })
-    const run = selectSuccessfulMainRun(JSON.parse(response).workflow_runs, sha)
+    const readRuns = () => JSON.parse(execFileSync('gh', ['api', `repos/${repository}/actions/workflows/ci.yml/runs?head_sha=${sha}&event=push&per_page=100`], { encoding: 'utf8' })).workflow_runs
+    let runs = readRuns()
+    let run = selectSuccessfulMainRun(runs, sha)
+    if (!run) {
+        const pending = runs.find(item => item.head_sha === sha && item.head_branch === 'main' && item.event === 'push' && item.status !== 'completed')
+        if (pending) {
+            execFileSync('gh', ['run', 'watch', String(pending.id), '--repo', repository, '--exit-status'], { stdio: 'inherit' })
+            runs = readRuns()
+            run = selectSuccessfulMainRun(runs, sha)
+        }
+    }
     if (!run) throw new Error(`发布提交 ${sha} 需要 main 上同一提交的 CI 成功记录`)
     console.log(`已绑定发布 CI：${run.html_url}`)
     return run
