@@ -22,7 +22,7 @@
 2. **全仓门禁前置放行**：
    ```bash
    pnpm check:docs        # 校验全仓 0 死链、0 绝对路径、方案状态合规（滞留的 done 方案将被拦截）
-   pnpm check:contracts   # 校验静态样式、令牌、导出等 6 合 1 契约全绿通过
+   pnpm check:contracts   # 校验当前静态语义契约
    ```
 3. **提交类型推荐**：
    - 纯方案归档：`docs: 归档xxx方案并同步知识地图`
