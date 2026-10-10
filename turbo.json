@@ -120,7 +120,8 @@
                 "scripts/**",
                 "api-contract.ts",
                 "../../packages/ui/api-contract.ts",
-                "../../packages/ui/src/types/**"
+                "../../packages/ui/src/types/**",
+                "!perf/**"
             ]
         },
         "test:ssr": {

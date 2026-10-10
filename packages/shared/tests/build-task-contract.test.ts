@@ -280,7 +280,7 @@ describe('Turbo Build Task Graph Contract', () => {
         ]) {
             expectInput(cliArtifact, relativePath)
         }
-    })
+    }, TURBO_DRY_RUN_TEST_TIMEOUT_MS)
 
     it('source tests use their required inputs and distinguish Node runtimes in cache', () => {
         const args = ['test', '--filter=brutx-ui-vue', '--filter=brutx-vue', '--filter=brutx-registry-vue', '--filter=brutx-shared-vue']
