@@ -8,7 +8,7 @@
     "缓存观察": "来自对应 attempt 日志；首次不是清空远端缓存后的冷启动；任务命中行数不等同执行全部测试次数"
   },
   "source_baseline": "f29df848099bad94fc55e3e2c4e2d3ee02bce3d0",
-  "implementation_head": "598b219cb3dfe51e0d62dfee4110c44667315758",
+  "implementation_head": "c2ab45f1f10e918715576eaa6f9265a752af7189",
   "full_ci": [
     {
       "source": "https://github.com/lidaixingchen/brutxui-vue3/actions/runs/38037409954/attempts/1",
@@ -983,6 +983,487 @@
       ],
       "created_at": "2026-10-10T09:27:12Z",
       "event": "pull_request"
+    }
+  ],
+  "current_config_validation": {
+    "source": "https://github.com/lidaixingchen/brutxui-vue3/actions/runs/38042626716/attempts/1",
+    "head": "b403975a3af39b1b99bdc062123b5cb852bf57c8",
+    "wall_seconds": 153,
+    "execution_envelope_seconds": 151,
+    "queue_seconds": 2,
+    "runner_seconds": 845,
+    "jobs": {
+      "Change scope": {
+        "seconds": 6,
+        "steps": {
+          "Set up job": 0,
+          "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 2,
+          "Classify changed inputs": 1,
+          "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 0,
+          "Complete job": 0
+        }
+      },
+      "Documentation site": {
+        "seconds": 39,
+        "steps": {
+          "Set up job": 2,
+          "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 3,
+          "Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 9,
+          "Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 6,
+          "Record Node runtime for Turbo task cache": 1,
+          "Run pnpm install --frozen-lockfile --prefer-offline": 5,
+          "Cache turbo local build cache": 1,
+          "Build and typecheck docs": 9,
+          "Post Cache turbo local build cache": 1,
+          "Post Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 0,
+          "Post Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 1,
+          "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 0,
+          "Complete job": 0
+        }
+      },
+      "Real Consumer tests (U1 / C1 / C3)": {
+        "seconds": 122,
+        "steps": {
+          "Set up job": 1,
+          "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 2,
+          "Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 5,
+          "Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 6,
+          "Record Node runtime for Turbo task cache": 0,
+          "Run pnpm install --frozen-lockfile --prefer-offline": 7,
+          "Cache turbo local build cache": 9,
+          "Build consumer artifacts": 7,
+          "Pack shared consumer artifacts": 3,
+          "Run consumer matrix tests": 66,
+          "Upload consumer evidence": 2,
+          "Post Cache turbo local build cache": 9,
+          "Post Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 1,
+          "Post Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 0,
+          "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 0,
+          "Complete job": 0
+        }
+      },
+      "Test (Node 22)": {
+        "seconds": 45,
+        "steps": {
+          "Set up job": 1,
+          "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 1,
+          "Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 5,
+          "Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 4,
+          "Record Node runtime for Turbo task cache": 0,
+          "Run pnpm install --frozen-lockfile --prefer-offline": 7,
+          "Cache turbo local build cache": 8,
+          "Test selected packages and SSR": 8,
+          "Post Cache turbo local build cache": 8,
+          "Post Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 0,
+          "Post Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 0,
+          "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 0,
+          "Complete job": 0
+        }
+      },
+      "CLI Integration tests": {
+        "seconds": 68,
+        "steps": {
+          "Set up job": 1,
+          "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 1,
+          "Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 5,
+          "Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 4,
+          "Record Node runtime for Turbo task cache": 0,
+          "Run pnpm install --frozen-lockfile --prefer-offline": 7,
+          "Cache turbo local build cache": 9,
+          "Build CLI and Registry artifacts": 8,
+          "CLI Integration tests": 21,
+          "Post Cache turbo local build cache": 8,
+          "Post Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 1,
+          "Post Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 0,
+          "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 0,
+          "Complete job": 0
+        }
+      },
+      "Test (Node 24)": {
+        "seconds": 41,
+        "steps": {
+          "Set up job": 1,
+          "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 2,
+          "Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 4,
+          "Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 4,
+          "Record Node runtime for Turbo task cache": 0,
+          "Run pnpm install --frozen-lockfile --prefer-offline": 6,
+          "Cache turbo local build cache": 6,
+          "Test selected packages and SSR": 7,
+          "Post Cache turbo local build cache": 7,
+          "Post Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 0,
+          "Post Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 0,
+          "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 0,
+          "Complete job": 0
+        }
+      },
+      "Quality (build + typecheck + lint + validate)": {
+        "seconds": 135,
+        "steps": {
+          "Set up job": 1,
+          "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 2,
+          "Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 5,
+          "Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 4,
+          "Record Node runtime for Turbo task cache": 0,
+          "Run pnpm install --frozen-lockfile --prefer-offline": 7,
+          "Cache turbo local build cache": 9,
+          "Verify all generated and mixed files (read-only)": 19,
+          "Build and verify selected package graph": 8,
+          "Verify code and spec contracts (parallel)": 4,
+          "Test current generation and tooling contracts": 32,
+          "Public type consumer check": 3,
+          "Verify bundle isolation": 1,
+          "Verify documentation integrity (parallel)": 7,
+          "Package smoke test (exports subpaths + consumer resolution)": 7,
+          "Release verification and coordinator tests": 2,
+          "Check bundle size limits": 2,
+          "Commitlint on PR commits": 11,
+          "i18n mirror check": 1,
+          "Post Cache turbo local build cache": 8,
+          "Post Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 0,
+          "Post Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 1,
+          "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 0,
+          "Complete job": 0
+        }
+      },
+      "Browser tests (Vitest + Playwright)": {
+        "seconds": 129,
+        "steps": {
+          "Set up job": 2,
+          "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 1,
+          "Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 9,
+          "Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 6,
+          "Record Node runtime for Turbo task cache": 1,
+          "Run pnpm install --frozen-lockfile --prefer-offline": 7,
+          "Cache turbo local build cache": 9,
+          "Cache Playwright Browser Binaries": 7,
+          "Clean up problematic APT repositories": 0,
+          "Install Playwright Dependencies (when cache hit)": 20,
+          "Prepare browser source and selected artifact": 3,
+          "Build UI artifact for Button resource checks": 4,
+          "Browser tests": 9,
+          "Pack candidate artifact for cost checks": 2,
+          "Button browser resource assertions and byte report": 33,
+          "Upload Button cost evidence": 1,
+          "Post Cache Playwright Browser Binaries": 4,
+          "Post Cache turbo local build cache": 9,
+          "Post Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 0,
+          "Post Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 0,
+          "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 0,
+          "Complete job": 0
+        }
+      },
+      "UI test (Node 24, shard 1/2)": {
+        "seconds": 26,
+        "steps": {
+          "Set up job": 1,
+          "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 2,
+          "Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 4,
+          "Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 4,
+          "Record Node runtime for Turbo task cache": 0,
+          "Run pnpm install --frozen-lockfile --prefer-offline": 6,
+          "Cache UI test results": 1,
+          "Test UI source and tooling shard": 3,
+          "Post Cache UI test results": 1,
+          "Post Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 0,
+          "Post Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 0,
+          "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 1,
+          "Complete job": 0
+        }
+      },
+      "UI coverage shard (2/2)": {
+        "seconds": 97,
+        "steps": {
+          "Set up job": 1,
+          "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 2,
+          "Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 4,
+          "Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 6,
+          "Record Node runtime for Turbo task cache": 0,
+          "Run pnpm install --frozen-lockfile --prefer-offline": 7,
+          "Generate component index and styles": 4,
+          "Measure source coverage shard": 67,
+          "Upload source coverage measurements": 1,
+          "Post Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 1,
+          "Post Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 0,
+          "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 0,
+          "Complete job": 0
+        }
+      },
+      "UI test (Node 24, shard 2/2)": {
+        "seconds": 20,
+        "steps": {
+          "Set up job": 1,
+          "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 2,
+          "Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 3,
+          "Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 3,
+          "Record Node runtime for Turbo task cache": 0,
+          "Run pnpm install --frozen-lockfile --prefer-offline": 5,
+          "Cache UI test results": 1,
+          "Test UI source and tooling shard": 2,
+          "Post Cache UI test results": 0,
+          "Post Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 1,
+          "Post Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 0,
+          "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 0,
+          "Complete job": 0
+        }
+      },
+      "UI coverage shard (1/2)": {
+        "seconds": 75,
+        "steps": {
+          "Set up job": 1,
+          "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 1,
+          "Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 5,
+          "Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 3,
+          "Record Node runtime for Turbo task cache": 0,
+          "Run pnpm install --frozen-lockfile --prefer-offline": 6,
+          "Generate component index and styles": 2,
+          "Measure source coverage shard": 53,
+          "Upload source coverage measurements": 1,
+          "Post Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 0,
+          "Post Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 0,
+          "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 0,
+          "Complete job": 0
+        }
+      },
+      "UI coverage": {
+        "seconds": 37,
+        "steps": {
+          "Set up job": 1,
+          "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 2,
+          "Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 6,
+          "Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 7,
+          "Run pnpm install --frozen-lockfile --prefer-offline": 7,
+          "Run pnpm --filter brutx-ui-vue generate": 3,
+          "Download source coverage measurements": 1,
+          "UI coverage": 3,
+          "Record UI coverage environment": 1,
+          "Upload UI coverage evidence": 2,
+          "Post Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 0,
+          "Post Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 0,
+          "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 1,
+          "Complete job": 0
+        }
+      },
+      "CI Gate (all checks passed)": {
+        "seconds": 5,
+        "steps": {
+          "Set up job": 1,
+          "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 2,
+          "Evaluate selected checks": 0,
+          "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 0,
+          "Complete job": 0
+        }
+      }
+    },
+    "label": "终态缓存配置全量验收",
+    "run_id": 38042626716,
+    "attempt": 1,
+    "conclusion": "success",
+    "cache_observation": {
+      "restored_actions_caches": {
+        "pnpm": 12,
+        "playwright": 1,
+        "turbo_local": 9
+      },
+      "saved_actions_caches": {
+        "pnpm": 0,
+        "playwright": 0,
+        "turbo_local": 9
+      },
+      "invalid_cache_path_warnings": 0,
+      "turbo_task_hit_lines": 30,
+      "turbo_task_miss_lines": 0,
+      "turbo_task_uncached_lines": 20
+    },
+    "observed_node_versions": [
+      "v22.23.3",
+      "v24.21.0"
+    ],
+    "created_at": "2026-10-10T09:47:23Z",
+    "event": "pull_request"
+  },
+  "doc_scope": [
+    {
+      "source": "https://github.com/lidaixingchen/brutxui-vue3/actions/runs/38042331169/attempts/1",
+      "head": "e240c07191ad58ad85d3904d12c5f0676b16fb9a",
+      "wall_seconds": 71,
+      "execution_envelope_seconds": 68,
+      "queue_seconds": 3,
+      "runner_seconds": 64,
+      "jobs": {
+        "Change scope": {
+          "seconds": 6,
+          "steps": {
+            "Set up job": 0,
+            "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 2,
+            "Classify changed inputs": 1,
+            "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 0,
+            "Complete job": 0
+          }
+        },
+        "Quality (build + typecheck + lint + validate)": {
+          "seconds": 52,
+          "steps": {
+            "Set up job": 1,
+            "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 2,
+            "Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 9,
+            "Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 5,
+            "Record Node runtime for Turbo task cache": 0,
+            "Run pnpm install --frozen-lockfile --prefer-offline": 7,
+            "Cache turbo local build cache": 8,
+            "Build and verify selected package graph": 0,
+            "Verify documentation integrity (parallel)": 7,
+            "i18n mirror check": 1,
+            "Post Cache turbo local build cache": 7,
+            "Post Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 0,
+            "Post Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 0,
+            "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 1,
+            "Complete job": 0
+          }
+        },
+        "CI Timing (selected checks)": {
+          "seconds": 6,
+          "steps": {
+            "Set up job": 0,
+            "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 2,
+            "Evaluate selected checks": 0,
+            "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 0,
+            "Complete job": 0
+          }
+        }
+      },
+      "label": "纯文档范围初次验证",
+      "event": "workflow_dispatch",
+      "run_id": 38042331169,
+      "attempt": 1,
+      "conclusion": "success",
+      "created_at": "2026-10-10T09:42:23Z",
+      "base_sha": "598b219cb3dfe51e0d62dfee4110c44667315758",
+      "skipped_jobs": [
+        "Test (Node ${{ matrix.node-version }})",
+        "CLI Integration tests",
+        "Browser tests (Vitest + Playwright)",
+        "UI test (Node 24, shard ${{ matrix.shard-index }}/${{ matrix.shard-total }})",
+        "UI coverage shard (${{ matrix.shard-index }}/${{ matrix.shard-total }})",
+        "Real Consumer tests (U1 / C1 / C3)",
+        "Documentation site",
+        "UI coverage"
+      ],
+      "scope_flags": {
+        "full": false,
+        "ui": false,
+        "cli": false,
+        "registry": false,
+        "docs": true,
+        "site": false,
+        "generated": false,
+        "tooling": false,
+        "release": false,
+        "browser": false,
+        "consumers": false,
+        "cost": false
+      },
+      "turbo_cache_steps": [
+        {
+          "name": "Cache turbo local build cache",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Cache turbo local build cache",
+          "conclusion": "success"
+        }
+      ],
+      "observed_node_versions": [
+        "v22.23.3"
+      ]
+    },
+    {
+      "source": "https://github.com/lidaixingchen/brutxui-vue3/actions/runs/38042865340/attempts/1",
+      "head": "b403975a3af39b1b99bdc062123b5cb852bf57c8",
+      "wall_seconds": 47,
+      "execution_envelope_seconds": 44,
+      "queue_seconds": 3,
+      "runner_seconds": 41,
+      "jobs": {
+        "Change scope": {
+          "seconds": 7,
+          "steps": {
+            "Set up job": 1,
+            "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 3,
+            "Classify changed inputs": 1,
+            "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 0,
+            "Complete job": 0
+          }
+        },
+        "Quality (build + typecheck + lint + validate)": {
+          "seconds": 29,
+          "steps": {
+            "Set up job": 1,
+            "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 2,
+            "Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 4,
+            "Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 4,
+            "Record Node runtime for Turbo task cache": 0,
+            "Run pnpm install --frozen-lockfile --prefer-offline": 7,
+            "Build and verify selected package graph": 0,
+            "Verify documentation integrity (parallel)": 7,
+            "i18n mirror check": 1,
+            "Post Run actions/setup-node@820762786026740c76f36085b0efc47a31fe5020": 0,
+            "Post Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413": 0,
+            "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 1,
+            "Complete job": 0
+          }
+        },
+        "CI Timing (selected checks)": {
+          "seconds": 5,
+          "steps": {
+            "Set up job": 0,
+            "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 2,
+            "Evaluate selected checks": 0,
+            "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1": 1,
+            "Complete job": 0
+          }
+        }
+      },
+      "label": "终态纯文档范围验收",
+      "event": "workflow_dispatch",
+      "run_id": 38042865340,
+      "attempt": 1,
+      "conclusion": "success",
+      "created_at": "2026-10-10T09:51:26Z",
+      "base_sha": "c2ab45f1f10e918715576eaa6f9265a752af7189",
+      "skipped_jobs": [
+        "Real Consumer tests (U1 / C1 / C3)",
+        "UI coverage shard (${{ matrix.shard-index }}/${{ matrix.shard-total }})",
+        "UI coverage",
+        "UI test (Node 24, shard ${{ matrix.shard-index }}/${{ matrix.shard-total }})",
+        "CLI Integration tests",
+        "Test (Node ${{ matrix.node-version }})",
+        "Documentation site",
+        "Browser tests (Vitest + Playwright)"
+      ],
+      "scope_flags": {
+        "full": false,
+        "ui": false,
+        "cli": false,
+        "registry": false,
+        "docs": true,
+        "site": false,
+        "generated": false,
+        "tooling": false,
+        "release": false,
+        "browser": false,
+        "consumers": false,
+        "cost": false
+      },
+      "turbo_cache_steps": [
+        {
+          "name": "Cache turbo local build cache",
+          "conclusion": "skipped"
+        }
+      ],
+      "observed_node_versions": [
+        "v22.23.3"
+      ]
     }
   ]
 }
