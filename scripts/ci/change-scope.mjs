@@ -153,7 +153,7 @@ function classifyUiPath(file, flags) {
     }
 
     if (file === 'packages/ui/package.json') {
-        mark(flags, 'browser', 'generated', 'consumers', 'cost')
+        mark(flags, 'browser', 'generated', 'consumers', 'cost', 'docs', 'site', 'registry')
         return
     }
 
@@ -163,7 +163,7 @@ function classifyUiPath(file, flags) {
     }
 
     if (file === 'packages/ui/exports-manifest.json' || file === 'packages/ui/src/index.ts' || GENERATED_ENTRY_PATTERN.test(file)) {
-        mark(flags, 'generated', 'consumers', 'browser', 'cost')
+        mark(flags, 'generated', 'consumers', 'browser', 'cost', 'docs', 'site', 'registry')
         return
     }
 
@@ -173,7 +173,7 @@ function classifyUiPath(file, flags) {
             return
         }
 
-        mark(flags, 'browser', 'generated', 'consumers', 'registry')
+        mark(flags, 'browser', 'generated', 'consumers', 'registry', 'docs', 'site')
         if (isWithin(file, 'packages/ui/src/components') && file.endsWith('.vue')) {
             mark(flags, 'docs', 'site')
         }
@@ -218,7 +218,7 @@ function classifyUiPath(file, flags) {
 
     if (isWithin(file, 'packages/ui/perf')) {
         mark(flags, 'tooling')
-        if (BUTTON_COST_PATHS.has(file)) mark(flags, 'cost')
+        if (BUTTON_COST_PATHS.has(file) || isWithin(file, 'packages/ui/perf/fixtures')) mark(flags, 'cost')
         return
     }
 
@@ -227,8 +227,13 @@ function classifyUiPath(file, flags) {
         return
     }
 
+    if (/^packages\/ui\/tsconfig[^/]*\.json$/u.test(file)) {
+        mark(flags, 'generated', 'consumers', 'browser', 'cost', 'docs', 'site', 'registry')
+        return
+    }
+
     if (file === 'packages/ui/vite.config.ts') {
-        mark(flags, 'generated', 'consumers', 'browser', 'cost')
+        mark(flags, 'generated', 'consumers', 'browser', 'cost', 'docs', 'site', 'registry')
         return
     }
 
@@ -256,6 +261,7 @@ function classifyCliPath(file, flags) {
     mark(flags, 'cli')
     if (file === 'packages/cli/package.json' || /^packages\/cli\/(?:tsconfig[^/]*|tsup\.config)\.[cm]?[jt]s(?:on)?$/u.test(file)) mark(flags, 'consumers')
     if (isTestPath(file) || isWithin(file, 'packages/cli/scripts')) mark(flags, 'tooling')
+    if (isWithin(file, 'packages/cli/scripts/fixtures/consumers') || file === 'packages/cli/scripts/test-consumers.mjs') mark(flags, 'consumers')
     if (isWithin(file, 'packages/cli/src') && !isTestPath(file)) mark(flags, 'consumers')
     if (GENERATED_OUTPUT_PATHS.has(file) || file === 'packages/cli/scripts/generate-tokens.ts') {
         mark(flags, 'generated', 'consumers')
@@ -292,7 +298,7 @@ function classifySharedPath(file, flags) {
     }
 
     markSharedClosure(flags)
-    if (file === 'packages/shared/src/design-tokens.ts') mark(flags, 'cost')
+    if (BUTTON_COST_PATHS.has(file)) mark(flags, 'cost')
     if (file === 'packages/shared/src/component-metadata.ts' || file === 'packages/shared/src/api-contract.ts') {
         mark(flags, 'docs', 'site')
     }

@@ -58,7 +58,7 @@ test('UI changes and Button cost inputs follow their actual dependency scopes', 
     )
     assert.deepEqual(
         classifyGitChangePaths(['packages/ui/src/composables/useGlitchEffect.ts']),
-        expectedFlags('ui', 'registry', 'browser', 'generated', 'consumers', 'cost'),
+        expectedFlags('ui', 'registry', 'browser', 'generated', 'consumers', 'docs', 'site', 'cost'),
     )
     assert.deepEqual(
         classifyGitChangePaths(['packages/ui/scripts/generate-api-contract.ts']),
@@ -74,8 +74,15 @@ test('UI changes and Button cost inputs follow their actual dependency scopes', 
     )
     assert.deepEqual(
         classifyGitChangePaths(['packages/ui/src/styles.css']),
-        expectedFlags('ui', 'registry', 'browser', 'generated', 'consumers', 'cost'),
+        expectedFlags('ui', 'registry', 'browser', 'generated', 'consumers', 'docs', 'site', 'cost'),
     )
+})
+
+test('UI distribution and type inputs select dependent site and registry checks', () => {
+    for (const file of ['packages/ui/package.json', 'packages/ui/src/index.ts', 'packages/ui/vite.config.ts', 'packages/ui/tsconfig.json']) {
+        const flags = classifyGitChangePaths([file])
+        for (const required of ['ui', 'registry', 'site', 'docs', 'generated', 'consumers', 'browser', 'cost']) assert.equal(flags[required], true, `${file}: ${required}`)
+    }
 })
 
 test('shared source changes select the dependent package closure', () => {
@@ -112,6 +119,13 @@ test('package documentation stays scoped while CLI distribution inputs select co
     for (const file of ['packages/cli/package.json', 'packages/cli/tsup.config.ts', 'packages/cli/tsconfig.json']) {
         assert.deepEqual(classifyGitChangePaths([file]), expectedFlags('cli', 'consumers'))
     }
+})
+
+test('consumer and cost fixtures select their real execution checks', () => {
+    assert.equal(classifyGitChangePaths(['packages/cli/scripts/fixtures/consumers/u1/pnpm-lock.yaml']).consumers, true)
+    assert.equal(classifyGitChangePaths(['packages/cli/scripts/test-consumers.mjs']).consumers, true)
+    assert.equal(classifyGitChangePaths(['packages/ui/perf/fixtures/consumer-lock.yaml']).cost, true)
+    assert.equal(classifyGitChangePaths(['packages/shared/src/api-contract.ts']).cost, true)
 })
 
 test('root build inputs and change-scope logic force a full comparable run', () => {
