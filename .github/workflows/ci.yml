@@ -105,6 +105,7 @@ jobs:
             - run: pnpm install --frozen-lockfile --prefer-offline
 
             - name: Cache turbo local build cache
+              if: needs.changes.outputs.ui == 'true' || needs.changes.outputs.cli == 'true' || needs.changes.outputs.registry == 'true' || needs.changes.outputs.tooling == 'true'
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
                   path: .turbo/cache
