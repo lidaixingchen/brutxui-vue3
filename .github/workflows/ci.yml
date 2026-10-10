@@ -5,6 +5,12 @@ on:
         branches: [main]
     pull_request:
         branches: [main]
+    workflow_dispatch:
+        inputs:
+            base_sha:
+                description: '用于耗时测量的 Git 对比基线；留空执行全量检查'
+                type: string
+                required: false
 
 concurrency:
     group: ci-${{ github.ref }}
@@ -49,7 +55,7 @@ jobs:
             - name: Classify changed inputs
               id: scope
               env:
-                  BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+                  BASE_SHA: ${{ inputs.base_sha || github.event.pull_request.base.sha || github.event.before }}
                   HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
                   EVENT_NAME: ${{ github.event_name }}
               run: |
@@ -515,7 +521,7 @@ jobs:
               run: pnpm exec turbo run build:artifact typecheck:source --filter=docs
 
     ci-gate:
-        name: CI Gate (all checks passed)
+        name: ${{ github.event_name == 'workflow_dispatch' && 'CI Timing (selected checks)' || 'CI Gate (all checks passed)' }}
         if: always()
         needs: [changes, quality, test, coverage, browser, integration, consumers, site]
         runs-on: ubuntu-latest
