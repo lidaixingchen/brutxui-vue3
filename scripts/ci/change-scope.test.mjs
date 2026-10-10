@@ -33,6 +33,7 @@ test('internal reports and guides select only documentation checks', () => {
 
 test('site pages and API data select documentation and site checks', () => {
     assert.deepEqual(classifyGitChangePaths(['apps/docs/guide/installation.md']), expectedFlags('docs', 'site'))
+    assert.deepEqual(classifyGitChangePaths(['apps/docs/components/button.md']), expectedFlags('docs', 'site', 'generated'))
     assert.deepEqual(
         classifyGitChangePaths(['apps/docs/.vitepress/api-generated/button.en.json']),
         expectedFlags('docs', 'site', 'generated'),

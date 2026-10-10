@@ -409,7 +409,7 @@ function classifyPath(file, flags) {
 
     if (isWithin(file, 'apps/docs')) {
         mark(flags, 'docs', 'site')
-        if (isWithin(file, 'apps/docs/.vitepress/api-generated')) mark(flags, 'generated')
+        if (isWithin(file, 'apps/docs/.vitepress/api-generated') || isWithin(file, 'apps/docs/.vitepress/api-content') || isWithin(file, 'apps/docs/components') || isWithin(file, 'apps/docs/en/components') || isWithin(file, 'apps/docs/blocks') || isWithin(file, 'apps/docs/en/blocks') || ['apps/docs/.vitepress/api-types.ts', 'apps/docs/.vitepress/config.ts', 'apps/docs/package.json', 'apps/docs/tsconfig.json'].includes(file)) mark(flags, 'generated')
         return true
     }
 

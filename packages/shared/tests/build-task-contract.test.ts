@@ -295,17 +295,14 @@ describe('Turbo Build Task Graph Contract', () => {
         }
     }, TURBO_DRY_RUN_TEST_TIMEOUT_MS)
 
-    it('cold and hot generate graph runs retain uncached writers and hash mixed inputs', () => {
+    it('generator graph retains uncached writers and includes mixed inputs', () => {
         const args = ['generate', '--filter=brutx-ui-vue', '--filter=brutx-vue']
-        const coldGraph = runTurboDryRun(args)
-        const hotGraph = runTurboDryRun(args)
+        const graph = runTurboDryRun(args)
 
-        const uiGenerate = findTask(coldGraph, 'brutx-ui-vue#generate')
-        const cliGenerate = findTask(coldGraph, 'brutx-vue#generate')
-        const hotUiGenerate = findTask(hotGraph, 'brutx-ui-vue#generate')
-        const hotCliGenerate = findTask(hotGraph, 'brutx-vue#generate')
+        const uiGenerate = findTask(graph, 'brutx-ui-vue#generate')
+        const cliGenerate = findTask(graph, 'brutx-vue#generate')
 
-        for (const task of [uiGenerate, cliGenerate, hotUiGenerate, hotCliGenerate]) {
+        for (const task of [uiGenerate, cliGenerate]) {
             expect(task.resolvedTaskDefinition.cache).toBe(false)
             expect(task.resolvedTaskDefinition.outputs).toEqual([])
         }

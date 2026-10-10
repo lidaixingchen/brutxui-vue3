@@ -37,7 +37,7 @@ test('reads Vitest 4 outputJson benchmark groups', () => {
     ])
 })
 
-test('rejects empty data and the previous reporter shape', () => {
+test('rejects empty and incomplete benchmark data', () => {
     assert.throws(() => parseBenchResults({ files: [] }, 'empty fixture'), /没有可用的 bench 任务/)
     assert.throws(() => parseBenchResults({ files: [{ tasks: [{ name: '100 rows', result: { hz: 100 } }] }] }, 'old fixture'), /缺少 groups 数组/)
     assert.throws(() => parseBenchResults({ files: [{ groups: [{ fullName: 'render' }] }] }, 'invalid group'), /无效的 bench group/)
