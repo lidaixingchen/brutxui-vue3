@@ -75,7 +75,7 @@ pnpm exec tsx packages/ui/perf/cost-runner.ts --artifact <UI-tarball> --output <
 
 结果包含 JS/CSS 的 raw、gzip、Brotli 字节，静态与动态依赖闭包，以及真实 Chromium 的生命周期资源和 p50/p95。`BRUTX_CHROMIUM_EXECUTABLE` 可指定浏览器路径。计时保留全部测量样本并作为报告项；字节预算由 `size` 校验，资源数量由 `--assert-resources` 校验。聚合样式成本单独统计。
 
-U1/C1/C3 可通过 `--artifacts <候选目录或 manifest>` 复用经 SHA-256 校验的产物。消费者锁文件位于 `packages/cli/scripts/fixtures/consumers/`；成本锁文件位于 `packages/ui/perf/fixtures/`。更新消费者依赖时显式设置 `BRUTX_UPDATE_CONSUMER_LOCKS=1` 运行对应矩阵并审查锁文件，正常验收使用 frozen install。
+U1/C1/C3 可通过 `--artifacts <候选目录或 manifest>` 复用同一次构建与打包的候选产物。消费者锁文件位于 `packages/cli/scripts/fixtures/consumers/`；成本锁文件位于 `packages/ui/perf/fixtures/`。更新消费者依赖时显式设置 `BRUTX_UPDATE_CONSUMER_LOCKS=1` 运行对应矩阵并审查锁文件，正常验收使用 frozen install。
 
 ### 3. 基准回归比对（`scripts/bench-diff.mjs`）
 

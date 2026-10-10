@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict';
-import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -124,10 +123,6 @@ for (const { args, message } of invalidSelectorCases) {
     });
 }
 
-function sha256(content) {
-    return crypto.createHash('sha256').update(content).digest('hex');
-}
-
 test('candidate artifact loader validates and normalizes a reusable manifest', () => {
     const candidateDir = fs.mkdtempSync(path.join(os.tmpdir(), 'brutx-consumer-artifacts-test-'));
     try {
@@ -145,13 +140,11 @@ test('candidate artifact loader validates and normalizes a reusable manifest', (
                         name: 'brutx-ui-vue',
                         version: '0.1.0',
                         tarballFile: 'brutx-ui-vue-0.1.0.tgz',
-                        sha256: sha256(uiContent),
                     },
                     'brutx-vue': {
                         name: 'brutx-vue',
                         version: '0.1.0',
                         tarballFile: 'brutx-vue-0.1.0.tgz',
-                        sha256: sha256(cliContent),
                     },
                 },
             })
@@ -165,12 +158,10 @@ test('candidate artifact loader validates and normalizes a reusable manifest', (
             packages: {
                 'brutx-ui-vue': {
                     version: '0.1.0',
-                    sha256: sha256(uiContent),
                     sizeBytes: uiContent.length,
                 },
                 'brutx-vue': {
                     version: '0.1.0',
-                    sha256: sha256(cliContent),
                     sizeBytes: cliContent.length,
                 },
             },
@@ -180,7 +171,7 @@ test('candidate artifact loader validates and normalizes a reusable manifest', (
     }
 });
 
-test('candidate artifact loader rejects a changed tarball', () => {
+test('candidate artifact loader reports a missing tarball', () => {
     const candidateDir = fs.mkdtempSync(path.join(os.tmpdir(), 'brutx-consumer-artifacts-test-'));
     try {
         const tarballs = {
@@ -195,10 +186,9 @@ test('candidate artifact loader rejects a changed tarball', () => {
                 name: packageName,
                 version: '0.1.0',
                 tarballFile: fileName,
-                sha256: sha256(content),
             };
         }
-        packages['brutx-ui-vue'].sha256 = sha256('changed-candidate');
+        fs.unlinkSync(path.join(candidateDir, 'brutx-ui-vue-0.1.0.tgz'));
         fs.writeFileSync(
             path.join(candidateDir, 'candidate-manifest.json'),
             JSON.stringify({ isTestArtifact: true, packages })
@@ -206,7 +196,7 @@ test('candidate artifact loader rejects a changed tarball', () => {
 
         assert.throws(
             () => loadCandidateArtifacts(path.join(candidateDir, 'candidate-manifest.json')),
-            /Candidate artifact sha256 mismatch for brutx-ui-vue/
+            /Candidate artifact tarball missing for brutx-ui-vue/
         );
     } finally {
         fs.rmSync(candidateDir, { recursive: true, force: true });

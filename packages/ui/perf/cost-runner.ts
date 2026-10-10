@@ -229,13 +229,6 @@ function printUsage(): void {
   --help              显示帮助`)
 }
 
-function hashBuffer(buffer: Uint8Array): string {
-    return createHash('sha256').update(buffer).digest('hex')
-}
-
-async function sha256File(filePath: string): Promise<string> {
-    return hashBuffer(await readFile(filePath))
-}
 
 function runGit(args: string[]): string {
     return execFileSync('git', args, { cwd: REPO_ROOT, encoding: 'utf8' }).trim()
@@ -335,8 +328,6 @@ function packageJsonForFixture(artifactRelativePath: string, packageManager: str
 async function createFixture(artifactPath: string, outputDir: string): Promise<{
     root: string
     lockPath: string
-    lockHash: string
-    packageJsonHash: string
     packageManager: string
 }> {
     const fixtureRoot = await mkdtemp(join(tmpdir(), 'brutx-ui-button-cost-consumer-'))
@@ -373,8 +364,6 @@ async function createFixture(artifactPath: string, outputDir: string): Promise<{
     return {
         root: fixtureRoot,
         lockPath: lockSnapshotPath,
-        lockHash: hashBuffer(Buffer.from(lockText)),
-        packageJsonHash: hashBuffer(Buffer.from(`${packageJson}\n`)),
         packageManager,
     }
 }
@@ -1095,9 +1084,7 @@ async function main(): Promise<void> {
     const outputDir = resolve(options.outputDir)
     const artifactStat = await stat(artifactPath)
     if (!artifactStat.isFile()) throw new Error(`artifact 不是文件：${artifactPath}`)
-    const artifactHash = await sha256File(artifactPath)
     const sourceLockText = await readFile(SOURCE_LOCK_PATH, 'utf8')
-    const sourceLockHash = hashBuffer(Buffer.from(sourceLockText))
     const lockedVersions = readLockedVersions(sourceLockText)
     assertLockedProfile(lockedVersions)
 
@@ -1143,21 +1130,16 @@ async function main(): Promise<void> {
                 gitCommit: runGit(['rev-parse', 'HEAD']),
                 packageManager: fixture.packageManager,
                 sourceLockPath: SOURCE_LOCK_PATH,
-                sourceLockSha256: sourceLockHash,
                 lockedVersions,
             },
             artifact: {
                 path: artifactPath,
-                sha256: artifactHash,
                 sizeBytes: artifactStat.size,
             },
             fixture: {
                 packageName: FIXTURE_PACKAGE_NAME,
-                packageJsonSha256: fixture.packageJsonHash,
                 lockPath: fixture.lockPath,
                 fixedLockPath: FIXED_FIXTURE_LOCK_PATH,
-                lockTemplateSha256: await sha256File(FIXED_FIXTURE_LOCK_PATH),
-                lockSha256: fixture.lockHash,
                 packageManager: fixture.packageManager,
                 optionalPeerPackages: [...CONSUMER_OPTIONAL_PEER_PACKAGES],
                 root: options.keepFixture ? fixture.root : undefined,
