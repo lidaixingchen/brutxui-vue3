@@ -28,7 +28,7 @@
   - 紧凑控件（data-table ColumnFilter）保留 `focus-visible:ring-1`（配合 `outline-hidden`）；
   - 禁止在承载焦点指示的元素上误加 `outline-none`；
   - 合法例外仅一种：focus-within 容器包裹的内层 input 可用 `outline-none` 抑制自身 UA 环（机制与例外见 [TAILWIND_V4_MECHANISMS.md](TAILWIND_V4_MECHANISMS.md) §1）；
-  - 非标 ring 类由 CI 门禁 `check:deprecated:check`（白名单模式）拦截。
+  - 非标 ring 类由 CI 门禁 `check:deprecated`（白名单模式）拦截。
 - **过渡声明规范**：只声明实际变化的属性——
   1. 交互反馈默认 `transition-all`（位移+阴影+颜色统一过渡，全库多数派惯例而非强制）；
   2. 仅位移/阴影时用共享变体 `transition-[transform,box-shadow]`（`brutalPressWithTransition`/`brutalHoverLiftWithTransition`）；

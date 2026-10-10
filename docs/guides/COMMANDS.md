@@ -116,32 +116,30 @@ node scripts/bench-diff.mjs <main-bench.json> <pr-bench.json>
 
 ---
 
-### 底层单项检查与基线维护逃生通道
-当需要单独排查特定规则或更新快照基线时，可使用以下底层命令：
+### 底层单项检查
+当需要单独排查特定规则时，可使用以下底层命令：
 
 ### 1. 幽灵依赖守卫（Phantom Dependencies）
 - **单独检查**：`node scripts/scan-phantom-deps.mjs` 或 `pnpm check:deps`
 - **规则说明**：基于 AST 静态扫描 Monorepo 6 个包的源码与脚本，严禁直接引用未在自身 `package.json` 中声明的依赖。
 
 ### 2. 设计令牌 Fallback 审计
-- **单独检查**：`pnpm --filter brutx-ui-vue audit:fallback:check`
-- **更新基线**：`pnpm --filter brutx-ui-vue audit:fallback:update`（将当前违规快照写入 `.fallback-baseline.json`，仅在确认合理时更新）
+- **单独检查**：`pnpm --filter brutx-ui-vue audit:fallback`
 - **自动修复**：`pnpm --filter brutx-ui-vue audit:fallback:fix`（自动补全缺失的 fallback 值）
 
 ### 3. 已废弃工具类防回潮
-- **单独检查**：`pnpm --filter brutx-ui-vue check:deprecated:check`
-- **更新基线**：`pnpm --filter brutx-ui-vue check:deprecated:update`（更新 `.deprecated-baseline.json`）
+- **单独检查**：`pnpm --filter brutx-ui-vue check:deprecated`
 
 ### 4. Tailwind `@source` 类名字面量
 - **单独检查**：`pnpm --filter brutx-ui-vue check:class-literals`
 - **规则说明**：检查所有动态拼接产出的类名是否在源码中以完整字面量存在，防止 Tailwind v4 扫描器丢失样式。
 
 ### 5. 公开契约与源码依赖
-- **单独检查**：`pnpm --filter brutx-ui-vue check:exports`
+- **单独检查**：`pnpm --filter brutx-ui-vue generate -- --check`
 - **规则说明**：校验 `api-contract.ts`、真实源码符号及全部公共入口投影的一致性。`pnpm check:api-dependencies` 检查模块归属、依赖方向、循环及运行时构建工具隔离。
 
 ### 6. CLI 令牌对齐
-- **单独检查**：`pnpm --filter brutx-vue check:tokens`
+- **单独检查**：`pnpm --filter brutx-vue generate -- --check`
 - **规则说明**：校验 CLI `brutalist.css` 与 UI 侧的主题变量、阴影和实用类对齐。
 
 ---

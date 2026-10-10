@@ -8,6 +8,9 @@ import {
     withGenerateLock,
     writeGeneratedOutputs,
 } from 'brutx-shared-vue/generation'
+import { buildPublicEntryContent } from 'brutx-shared-vue/api-contract'
+import { API_CONTRACT } from '../api-contract.js'
+import { assertApiModuleCoverage } from './api-module-coverage.js'
 import { collectComponentIndexOutputs } from './generate-component-index.js'
 import { collectApiContractOutputs } from './generate-api-contract.js'
 import { collectExportsOutput } from './generate-exports.js'
@@ -21,6 +24,10 @@ export function collectExpectedOutputs(packageRoot: string = PACKAGE_ROOT): Gene
     const tokenOutputs = collectTokenOutputs(packageRoot)
     const scanGeneration = collectScanGeneration(packageRoot)
     const apiOutputs = collectApiContractOutputs(packageRoot)
+    assertApiModuleCoverage(API_CONTRACT, packageRoot, apiOutputs)
+    for (const entry of API_CONTRACT.entries) {
+        buildPublicEntryContent(entry.exports, entry.sideEffects ?? [])
+    }
     const componentIndexOutputs = collectComponentIndexOutputs(packageRoot)
     const exportsOutput = collectExportsOutput(scanGeneration.exportsManifest, packageRoot)
     const outputs = [

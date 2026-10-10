@@ -10,6 +10,8 @@ import {
 } from '../../../scripts/testing/consumer-artifacts.mjs';
 import {
     parseConsumerArguments,
+    projectPublicIndexExports,
+    readPrivateComposableNames,
     selectConsumerTests,
 } from './test-consumers.mjs';
 
@@ -31,6 +33,38 @@ test('consumer selector keeps artifact input separate from matrix selection', ()
     assert.equal(parsed.filter, 'C1');
     assert.equal(parsed.artifactsPath, '/tmp/candidate');
     assert.deepEqual(parsed.tests, ['C1']);
+});
+
+test('public index projection captures exact value and type exports', () => {
+    const source = [
+        "export { default as Button } from './Button.vue'",
+        "export { buttonVariants } from './button-variants'",
+        "export type { ButtonProps as ButtonProps } from './button-types'",
+    ].join('\n');
+
+    assert.deepEqual(projectPublicIndexExports(source), [
+        'type:ButtonProps',
+        'value:Button',
+        'value:buttonVariants',
+    ]);
+});
+
+test('public index projection includes stale exported declarations', () => {
+    const current = "export { default as Button } from './Button.vue'";
+    const stale = `${current}\nexport const staleExport = true`;
+
+    assert.deepEqual(projectPublicIndexExports(stale), [
+        'value:Button',
+        'value:staleExport',
+    ]);
+    assert.notDeepEqual(projectPublicIndexExports(stale), projectPublicIndexExports(current));
+});
+
+test('private consumer type checks derive composables from the API contract', () => {
+    const privateComposableNames = readPrivateComposableNames();
+
+    assert.ok(privateComposableNames.length > 0);
+    assert.deepEqual(privateComposableNames, [...privateComposableNames].sort());
 });
 
 const invalidSelectorCases = [

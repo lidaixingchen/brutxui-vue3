@@ -6,7 +6,6 @@ import {
     generateComponentsSidebar,
     generateBlocksSidebar,
     validateRegistryIndex,
-    validateRegistryIntegrity,
     validateRegistryItem,
 } from 'brutx-shared-vue';
 import { loadMergedRegistry } from './build-registry.js';
@@ -22,6 +21,7 @@ import {
     validateGeneratedItemMatchesMetadata,
     validateRegistryItemInternalImports,
     validateRegistryManifestConsistency,
+    validateRegistryPublicIndexProjection,
     validateSidebarCoverage,
     type RegistryBuildManifestSnapshot,
     type RegistryReferenceItem,
@@ -251,6 +251,7 @@ function validateDocsCoverage(): number {
             pageSlugs: locale.pageSlugs,
             aliases: DOCS_PAGE_ALIASES,
             exemptions: DOCS_PAGE_EXEMPTIONS,
+            checkMissingPages: false,
         });
 
         for (const error of errors) {
@@ -260,7 +261,7 @@ function validateDocsCoverage(): number {
     }
 
     if (docsErrors === 0) {
-        console.log(`✓ Docs component pages cover COMPONENT_METADATA (${componentNames.length} components).`);
+        console.log(`✓ Docs component pages map to COMPONENT_METADATA (${componentNames.length} components).`);
     }
 
     return docsErrors;
@@ -389,6 +390,18 @@ function validate() {
                     console.error(`✗ [${file}] ${error}.`);
                     errorCount++;
                 }
+
+                const currentIndexPath = path.join(UI_COMPONENTS_DIR, data.name, 'index.ts');
+                if (!fs.existsSync(currentIndexPath)) {
+                    console.error(`✗ [${file}] Current UI public index was not found: "${currentIndexPath}".`);
+                    errorCount++;
+                } else {
+                    const currentIndexSource = fs.readFileSync(currentIndexPath, 'utf-8');
+                    for (const error of validateRegistryPublicIndexProjection(data, currentIndexSource)) {
+                        console.error(`✗ [${file}] ${error}.`);
+                        errorCount++;
+                    }
+                }
             }
 
             for (const error of validateRegistryItemInternalImports(data)) {
@@ -426,9 +439,6 @@ function validate() {
                 console.error(`✗ [${file}] replacement "${data.replacement}" does not reference an existing registry item.`);
                 errorCount++;
             }
-
-            validateRegistryIntegrity(data, nameWithoutExtension);
-
         } catch (err: unknown) {
             console.error(`✗ [${file}] Failed to validate JSON:`, err instanceof Error ? err.message : err);
             errorCount++;

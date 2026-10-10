@@ -45,6 +45,11 @@ interface GlobalBindings {
     decls: Map<string, ConstDecl>;
 }
 
+interface SourceFile {
+    filePath: string;
+    content: string;
+}
+
 // ---------------------------------------------------------------------------
 // 源码收集（复用 audit-brutal-fallback.ts 的 walkSourceFiles 骨架）
 // ---------------------------------------------------------------------------
@@ -239,14 +244,13 @@ function parseObjectLiteral(body: string): Map<string, string> | null {
     return seenNonStringValue || entries.size === 0 ? null : entries;
 }
 
-function buildGlobalBindings(files: string[]): GlobalBindings {
+function buildGlobalBindings(files: SourceFile[]): GlobalBindings {
     const decls = new Map<string, ConstDecl>();
     const setIfAbsent = (name: string, decl: ConstDecl): void => {
         if (!decls.has(name)) decls.set(name, decl);
     };
-    for (const f of files) {
-        const content = stripComments(fs.readFileSync(f, 'utf-8'));
-        const statements = mergeLogicalLines(content.split('\n'));
+    for (const file of files) {
+        const statements = mergeLogicalLines(file.content.split('\n'));
         for (const stmt of statements) {
             const m = CONST_DECL_RE.exec(stmt);
             if (!m) continue;
@@ -369,9 +373,14 @@ function isInClassAttribute(content: string, startIdx: number): boolean {
 // ---------------------------------------------------------------------------
 // 检查
 // ---------------------------------------------------------------------------
-function checkFile(filePath: string, literalTokens: Set<string>, bindings: GlobalBindings): Violation[] {
-    const content = stripComments(fs.readFileSync(filePath, 'utf-8'));
-    const rel = path.relative(SCAN_ROOT, filePath).replace(/\\/g, '/');
+function checkFile(
+    file: SourceFile,
+    scanRoot: string,
+    literalTokens: Set<string>,
+    bindings: GlobalBindings,
+): Violation[] {
+    const { filePath, content } = file;
+    const rel = path.relative(scanRoot, filePath).replace(/\\/g, '/');
     const isTs = filePath.endsWith('.ts');
     const hasCva = content.includes('cva(');
     const violations: Violation[] = [];
@@ -412,15 +421,18 @@ function computeLineColumn(text: string, idx: number): number {
     return line;
 }
 
-function main(): void {
-    const files = walkSourceFiles(SCAN_ROOT);
+export function checkClassLiterals(scanRoot: string = SCAN_ROOT): { filesScanned: number; violations: Violation[] } {
+    const files = walkSourceFiles(scanRoot).map((filePath): SourceFile => ({
+        filePath,
+        content: stripComments(fs.readFileSync(filePath, 'utf-8')),
+    }));
     const bindings = buildGlobalBindings(files);
 
     // 令牌字面量集：全部【非测试】源码的静态字符串 + 模板静态片段按空白拆分
     // （模板的静态片段同样可被 Tailwind @source 扫描到，须计入）
     const literalTokens = new Set<string>();
-    for (const f of files) {
-        const content = stripComments(fs.readFileSync(f, 'utf-8'));
+    for (const file of files) {
+        const { content } = file;
         for (const s of extractPlainStrings(content)) {
             for (const tok of s.split(/\s+/)) if (tok) literalTokens.add(tok);
         }
@@ -438,19 +450,26 @@ function main(): void {
     }
 
     const allViolations: Violation[] = [];
-    for (const f of files) allViolations.push(...checkFile(f, literalTokens, bindings));
+    for (const file of files) allViolations.push(...checkFile(file, scanRoot, literalTokens, bindings));
 
-    console.log(`=== @source 完整字面量门禁（扫描 ${files.length} 个非测试源码文件）===`);
-    if (allViolations.length === 0) {
+    return { filesScanned: files.length, violations: allViolations };
+}
+
+function main(): void {
+    const result = checkClassLiterals();
+    const { filesScanned, violations } = result;
+
+    console.log(`=== @source 完整字面量门禁（扫描 ${filesScanned} 个非测试源码文件）===`);
+    if (violations.length === 0) {
         console.log('✓ 所有动态拼接产出的类名均为源码字面量');
-        process.exit(0);
+        return;
     }
-    for (const v of allViolations) {
+    for (const v of violations) {
         console.log(`  ✗ ${v.file}:${v.line} → 非字面量类名「${v.token}」`);
         console.log(`    ${v.snippet}`);
     }
-    console.log(`\n结论：${allViolations.length} 处违规，exit 1`);
-    process.exit(1);
+    console.log(`\n结论：${violations.length} 处违规，exit 1`);
+    process.exitCode = 1;
 }
 
-main();
+if (process.argv[1] && path.resolve(process.argv[1]) === __filename) main();

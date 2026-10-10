@@ -15,12 +15,12 @@ import {
     CONSUMER_TOOLCHAIN_PACKAGES,
     CONSUMER_UI_PEER_PACKAGES,
     COST_PROFILE_VERSION,
-    COST_SCENARIOS,
     LOCKED_PACKAGE_NAMES,
     MEASUREMENT_PROFILE,
+    selectCostScenarios,
+    type CostScenario,
 } from './cost-profile.js'
 
-type CostScenario = (typeof COST_SCENARIOS)[number]
 type BrowserProfile = (typeof BROWSER_PROFILES)[number]
 
 interface MetricTotals {
@@ -339,7 +339,7 @@ async function createFixture(artifactPath: string, outputDir: string): Promise<{
     packageJsonHash: string
     packageManager: string
 }> {
-    const fixtureRoot = await mkdtemp(join(tmpdir(), 'brutx-ui-r2-consumer-'))
+    const fixtureRoot = await mkdtemp(join(tmpdir(), 'brutx-ui-button-cost-consumer-'))
     const artifactDir = join(fixtureRoot, FIXTURE_ARTIFACT_DIR)
     await mkdir(artifactDir, { recursive: true })
     const artifactTarget = join(artifactDir, FIXTURE_ARTIFACT_NAME)
@@ -407,8 +407,7 @@ const label = ref('Empty consumer')
     const staticImport = scenario.dynamic
         ? ''
         : `import { ${scenario.component} as ImportedComponent } from '${scenario.importPath}'`
-    const props = scenario.component === 'Button'
-        ? `
+    const props = `
 const query = new URLSearchParams(window.location.search)
 const effect = query.get('effect') === 'glitch' ? 'glitch' : 'none'
 const trigger = query.get('trigger') === 'autoplay' ? 'autoplay' : 'none'
@@ -416,7 +415,6 @@ const interval = Number(query.get('interval') ?? '${MEASUREMENT_PROFILE.autoplay
 const keepAlive = query.get('lifecycle') === 'keep-alive'
 const buttonVisible = ref(true)
 `
-        : ''
     const buttonMarkup = `<component
             :is="BenchComponent"
             id="bench-button"
@@ -426,28 +424,10 @@ const buttonVisible = ref(true)
         >{{ label }}</component>`
     const keepAliveButtonMarkup = buttonMarkup.replace('<component', '<component v-if="buttonVisible"')
     const standardButtonMarkup = buttonMarkup.replace('<component', '<component v-else')
-    const template = scenario.component === 'Button'
-        ? `<KeepAlive v-if="keepAlive">${keepAliveButtonMarkup}</KeepAlive>${standardButtonMarkup}`
-        : scenario.component === 'Input'
-            ? `<component :is="BenchComponent" id="bench-input" v-model="label" />`
-            : scenario.component === 'DataTable'
-                ? `<component :is="BenchComponent" id="bench-data-table" :data="rows" :columns="columns" row-key="id" />`
-                : `<component :is="BenchComponent" id="bench-glitch-text" text="Baseline glitch text" trigger="none" />`
-    const dataTableState = scenario.component === 'DataTable'
-        ? `
-const rows = [{ id: 1, name: 'one' }, { id: 2, name: 'two' }]
-const columns = [
-    { id: 'id', header: 'ID', accessorKey: 'id' },
-    { id: 'name', header: 'Name', accessorKey: 'name' },
-]
-`
-        : ''
-
-    const buttonController = scenario.component === 'Button'
-        ? `
+    const template = `<KeepAlive v-if="keepAlive">${keepAliveButtonMarkup}</KeepAlive>${standardButtonMarkup}`
+    const buttonController = `
 ;(window as any).__brutxSetButtonVisible = (value: boolean) => { buttonVisible.value = value }
 `
-        : ''
 
     return `<script setup lang="ts">
 import { defineAsyncComponent, ref } from 'vue'
@@ -455,7 +435,7 @@ ${staticImport}
 
 const label = ref('Baseline component')
 const BenchComponent = ${importExpression}
-${props}${dataTableState}${buttonController}
+${props}${buttonController}
 ;(window as any).__brutxSetLabel = (value: string) => { label.value = value }
 </script>
 
@@ -1108,6 +1088,9 @@ async function measureBrowserProfile(
 
 async function main(): Promise<void> {
     const options = parseArgs(process.argv.slice(2))
+    if (options.assertResources && options.skipBrowser) {
+        throw new Error('--assert-resources 需要启用浏览器测量，不能同时使用 --skip-browser')
+    }
     const artifactPath = resolve(options.artifactPath)
     const outputDir = resolve(options.outputDir)
     const artifactStat = await stat(artifactPath)
@@ -1118,12 +1101,7 @@ async function main(): Promise<void> {
     const lockedVersions = readLockedVersions(sourceLockText)
     assertLockedProfile(lockedVersions)
 
-    const scenarios: CostScenario[] = options.scenarioIds.length > 0
-        ? COST_SCENARIOS.filter((scenario: CostScenario) => options.scenarioIds.includes(scenario.id))
-        : [...COST_SCENARIOS]
-    if (scenarios.length === 0) throw new Error('没有匹配的成本场景')
-    const unknownScenarios = options.scenarioIds.filter(id => !COST_SCENARIOS.some((scenario: CostScenario) => scenario.id === id))
-    if (unknownScenarios.length > 0) throw new Error(`未知成本场景：${unknownScenarios.join(', ')}`)
+    const scenarios: CostScenario[] = selectCostScenarios(options.scenarioIds, options.assertResources)
 
     await clearOutputArtifacts(outputDir)
     await mkdir(join(outputDir, 'build-logs'), { recursive: true })
