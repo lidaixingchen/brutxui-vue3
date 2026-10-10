@@ -7,26 +7,26 @@
 
 `publish.yml` 由 push `v*` tag 触发，云端完成发布。整体流程由**发布门禁检验**与**状态机发布协调器**两阶段构成：
 
-### 1. 发布门禁检验（`pnpm release:check`）
+### 1. 发布门禁检验
 
-在进入实际分发前，执行全量质量与一致性拦截：
-- **Changeset 消费校验**：`.changeset/` 下不得残留未消费的变更集
-- **代码与类型门禁**：`turbo run build test typecheck lint`（严格依赖并发构建与单测）
-- **静态契约与规范门禁**：执行 `pnpm check:contracts` 校验多包导出与令牌一致性
-- **真实消费者构建矩阵**：执行 `test-consumers` 验证真实打包产物的独立安装与构建
-- **生成物一致性校验**：`git diff --exit-code` 确保工作区与 commit 绝对一致
+云端发布先确认 tag 提交可从 `main` 到达，并绑定 `main` push 事件中同一提交的成功 CI。CI 承担类型、样式、测试、浏览器、包契约与真实消费者检查；发布工作流使用该记录复用验收结果。
+
+发布端继续执行只读生成检查、未消费 Changeset 检查，并构建 UI、CLI 和带官方签名的 Registry 产物。Registry 构建保持独立执行，签名私钥仅在发布环境注入。文档站构建由站点工作流承担。
+
+本地 `pnpm release:check` 用于发布准备时的工作区验收；它与云端同提交 CI 绑定各自对应开发工作区和待分发提交。
 
 ### 2. 状态机发布协调器（`scripts/release/release-coordinator.mjs`）
 
-门禁通过后，云端统一启动状态机协调器执行密封打包与原子分发，严格遵循六大状态流转：
+门禁通过后，云端统一启动状态机协调器执行密封打包与分阶段分发，严格遵循六大状态流转：
 
 1. **`PREPARED`**：密封打包各包 tarball 并编译 registry 产物，生成权威快照 `release-manifest.json` 与 `SHA256SUMS` 校验清单；
 2. **`DRAFT_ASSETS_READY`**：创建或复用 GitHub Release Draft，先行上传所有 registry 资产、tarball 密封包与校验清单；
 3. **`RELEASE_PUBLISHED`**：将 GitHub Release 设为 Published，但显式保留 `make_latest: "false"`，对外公开资产寻址能力，但严密隔离 latest 主通道；
 4. **`NPM_PACKAGES_READY`**：以一次性打包的密封原件逐包发布到 npm。若版本已存在，执行双哈希强校验（本地 tarball 与远程 npm 的 shasum / integrity），一致则安全幂等通过，不一致则立即熔断阻断；
-5. **`CHANNELS_ADVANCED`**：npm 验证全部通过后，针对正式版本原子推进分发通道：更新 GitHub Release 为 `make_latest: "true"`，并将 npm latest dist-tag 指向当前版本（预发布版本严格隔离）；
+5. **`CHANNELS_ADVANCED`**：npm 验证全部通过后，针对正式版本推进分发通道：更新 GitHub Release 为 `make_latest: "true"`，并将 npm latest dist-tag 指向当前版本（预发布版本严格隔离）；
 6. **`COMPLETED`**：持久化发布审计清单，发布成功结束。
-本地通过 `pnpm release`（`pnpm release:check` 的同名别名）执行发布门禁核验；云端 CI 则在 Tag 触发后统一调用 `node scripts/release/release-coordinator.mjs` 执行六阶段原子发布。针对状态机逻辑的自动化演练与流程测试由 `pnpm test:release` 独立保障。
+GitHub Release、npm 包与渠道更新分别提交；协调器按远端状态支持幂等续跑。
+本地通过 `pnpm release`（`pnpm release:check` 的同名别名）执行发布门禁核验；云端 CI 则在 Tag 触发后统一调用 `node scripts/release/release-coordinator.mjs` 执行六阶段发布。针对状态机逻辑的自动化演练与流程测试由 `pnpm test:release` 独立保障。
 ## Changelog 自动生成（changeset）
 
 ### 工作原理

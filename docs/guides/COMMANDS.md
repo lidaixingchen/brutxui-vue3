@@ -62,7 +62,7 @@ pnpm changeset  ──>  pnpm release:prepare                           ──> 
 | 指令 | 说明 | 执行位置 |
 | --- | --- | --- |
 | `pnpm bench` | Turbo 并行运行所有子包基准测试（Node 环境） | 根目录 |
-| `pnpm --filter brutx-ui-vue bench:json` | 导出 UI 组件基准测试结果为 JSON（用于基准对齐） | 根目录 |
+| `pnpm --filter brutx-ui-vue bench:json bench.json` | 导出 UI 组件基准测试结果为 JSON（用于基准对齐） | 根目录 |
 | `pnpm --filter brutx-registry-vue bench` | 压测 Registry 生成引擎构建耗时 | 根目录 |
 
 ### 2. 生产消费者成本
@@ -75,7 +75,7 @@ pnpm exec tsx packages/ui/perf/cost-runner.ts --artifact <UI-tarball> --output <
 
 结果包含 JS/CSS 的 raw、gzip、Brotli 字节，静态与动态依赖闭包，以及真实 Chromium 的生命周期资源和 p50/p95。`BRUTX_CHROMIUM_EXECUTABLE` 可指定浏览器路径。计时保留全部测量样本并作为报告项；字节预算由 `size` 校验，资源数量由 `--assert-resources` 校验。聚合样式成本单独统计。
 
-U1/C1/C3 可通过 `--artifacts <候选目录或 manifest>` 复用经 SHA-256 校验的产物。消费者锁文件位于 `packages/cli/scripts/fixtures/consumers/`；成本锁文件位于 `packages/ui/perf/fixtures/`。更新消费者依赖时显式设置 `BRUTX_UPDATE_CONSUMER_LOCKS=1` 运行对应矩阵并审查锁文件，正常验收使用 frozen install。
+U1/C1/C3 可通过 `--artifacts <候选目录或 manifest>` 复用同一次构建与打包的候选产物。消费者锁文件位于 `packages/cli/scripts/fixtures/consumers/`；成本锁文件位于 `packages/ui/perf/fixtures/`。更新消费者依赖时显式设置 `BRUTX_UPDATE_CONSUMER_LOCKS=1` 运行对应矩阵并审查锁文件，正常验收使用 frozen install。
 
 ### 3. 基准回归比对（`scripts/bench-diff.mjs`）
 
@@ -85,10 +85,12 @@ U1/C1/C3 可通过 `--artifacts <候选目录或 manifest>` 复用经 SHA-256 �
 node scripts/bench-diff.mjs <main-bench.json> <pr-bench.json>
 ```
 
-- **判定阈值**：
+- **信息报告阈值**：
   - `|delta| < 5%`：视为正常噪声范围；
   - `delta < -5%`：疑似性能回归；若超过 2 项则需人工复核；
-  - `delta > 5%`：判定为性能优化提升。
+  - `delta > 5%`：报告性能提升。
+
+Bench 要求两份结果包含同一组有效测量；缺失、损坏或测试项不完整会使工作流失败，计时变化只作信息报告。PR 基线绑定精确 base SHA。
 
 ---
 
@@ -116,32 +118,30 @@ node scripts/bench-diff.mjs <main-bench.json> <pr-bench.json>
 
 ---
 
-### 底层单项检查与基线维护逃生通道
-当需要单独排查特定规则或更新快照基线时，可使用以下底层命令：
+### 底层单项检查
+当需要单独排查特定规则时，可使用以下底层命令：
 
 ### 1. 幽灵依赖守卫（Phantom Dependencies）
 - **单独检查**：`node scripts/scan-phantom-deps.mjs` 或 `pnpm check:deps`
 - **规则说明**：基于 AST 静态扫描 Monorepo 6 个包的源码与脚本，严禁直接引用未在自身 `package.json` 中声明的依赖。
 
 ### 2. 设计令牌 Fallback 审计
-- **单独检查**：`pnpm --filter brutx-ui-vue audit:fallback:check`
-- **更新基线**：`pnpm --filter brutx-ui-vue audit:fallback:update`（将当前违规快照写入 `.fallback-baseline.json`，仅在确认合理时更新）
+- **单独检查**：`pnpm --filter brutx-ui-vue audit:fallback`
 - **自动修复**：`pnpm --filter brutx-ui-vue audit:fallback:fix`（自动补全缺失的 fallback 值）
 
 ### 3. 已废弃工具类防回潮
-- **单独检查**：`pnpm --filter brutx-ui-vue check:deprecated:check`
-- **更新基线**：`pnpm --filter brutx-ui-vue check:deprecated:update`（更新 `.deprecated-baseline.json`）
+- **单独检查**：`pnpm --filter brutx-ui-vue check:deprecated`
 
 ### 4. Tailwind `@source` 类名字面量
 - **单独检查**：`pnpm --filter brutx-ui-vue check:class-literals`
 - **规则说明**：检查所有动态拼接产出的类名是否在源码中以完整字面量存在，防止 Tailwind v4 扫描器丢失样式。
 
 ### 5. 公开契约与源码依赖
-- **单独检查**：`pnpm --filter brutx-ui-vue check:exports`
+- **单独检查**：`pnpm --filter brutx-ui-vue generate -- --check`
 - **规则说明**：校验 `api-contract.ts`、真实源码符号及全部公共入口投影的一致性。`pnpm check:api-dependencies` 检查模块归属、依赖方向、循环及运行时构建工具隔离。
 
 ### 6. CLI 令牌对齐
-- **单独检查**：`pnpm --filter brutx-vue check:tokens`
+- **单独检查**：`pnpm --filter brutx-vue generate -- --check`
 - **规则说明**：校验 CLI `brutalist.css` 与 UI 侧的主题变量、阴影和实用类对齐。
 
 ---
@@ -179,6 +179,6 @@ pnpm --filter docs dev -- --host 127.0.0.1 --port 5180
 | `pnpm --filter brutx-ui-vue docs:manifest` | 生成组件 API 双语分组数据及页面目录 |
 | `pnpm check:generated` | 只读比较 UI、CLI 和组件 API 文档生成结果 |
 | `pnpm check:staged-snapshot` | 从 Git index 物化候选快照并检查生成一致性 |
-| `pnpm test:tooling` | 生成事务、锁、缓存输入、部分暂存与门禁等价回归 |
+| `pnpm test:tooling` | 当前生成契约、部分暂存隔离、调度归约、消费者工具和 UI 脚本测试 |
 
 `pre-commit` 只校验已暂存快照，不运行工作区生成或自动暂存。失败时显式运行生成命令，审查差异并自行暂存需要提交的内容。候选源码依赖的手写文件也须进入暂存区。

@@ -29,7 +29,7 @@
 | --- | --- | --- |
 | 业务逻辑 / 组件 / 函数 | `pnpm --filter <pkg> test <相对路径>`<br>`pnpm exec eslint <file> --fix` | 运行局部单元测试与代码风格修复 |
 | 类型接口 / 跨包导出 | `pnpm --filter <pkg> typecheck` | 验证 TS 严格类型兼容性 |
-| 样式 / 令牌 / 导出 / 依赖 | `pnpm check:contracts` | 静态契约并发 6 合 1 门禁（全绿放行） |
+| 样式 / 令牌 / 导出 / 依赖 | `pnpm check:contracts` | 静态语义契约并发检查（全绿放行） |
 | 文档 / 规范 / 技能 / 链接 | `pnpm check:docs` | 文档健康度并发门禁（可加 `--fix` 纠偏相对链接） |
 
 完整指令字典与底层排障工具见 [完整指令参考手册](docs/guides/COMMANDS.md)。

@@ -5,6 +5,12 @@ on:
         branches: [main]
     pull_request:
         branches: [main]
+    workflow_dispatch:
+        inputs:
+            base_sha:
+                description: '用于耗时测量的 Git 对比基线；留空执行全量检查'
+                type: string
+                required: false
 
 concurrency:
     group: ci-${{ github.ref }}
@@ -25,8 +31,44 @@ permissions:
 # 注：TURBO_TEAM 使用 variables 而非 secrets，因为团队 slug 非敏感信息（GitHub 最佳实践）
 
 jobs:
+    changes:
+        name: Change scope
+        runs-on: ubuntu-latest
+        outputs:
+            full: ${{ steps.scope.outputs.full }}
+            ui: ${{ steps.scope.outputs.ui }}
+            cli: ${{ steps.scope.outputs.cli }}
+            registry: ${{ steps.scope.outputs.registry }}
+            docs: ${{ steps.scope.outputs.docs }}
+            site: ${{ steps.scope.outputs.site }}
+            generated: ${{ steps.scope.outputs.generated }}
+            tooling: ${{ steps.scope.outputs.tooling }}
+            release: ${{ steps.scope.outputs.release }}
+            browser: ${{ steps.scope.outputs.browser }}
+            consumers: ${{ steps.scope.outputs.consumers }}
+            cost: ${{ steps.scope.outputs.cost }}
+            json: ${{ steps.scope.outputs.json }}
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+              with:
+                  fetch-depth: 0
+            - name: Classify changed inputs
+              id: scope
+              env:
+                  BASE_SHA: ${{ inputs.base_sha || github.event.pull_request.base.sha || github.event.before }}
+                  HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+                  EVENT_NAME: ${{ github.event_name }}
+              run: |
+                  if [[ "$EVENT_NAME" == pull_request ]]; then
+                    node scripts/ci/change-scope.mjs --base "$BASE_SHA" --head "$HEAD_SHA"
+                  elif [[ -z "$BASE_SHA" || "$BASE_SHA" =~ ^0+$ ]]; then
+                    node scripts/ci/change-scope.mjs --base "$HEAD_SHA" --head "$HEAD_SHA" --diff-mode direct
+                  else
+                    node scripts/ci/change-scope.mjs --base "$BASE_SHA" --head "$HEAD_SHA" --diff-mode direct
+                  fi
     quality:
         name: Quality (build + typecheck + lint + validate)
+        needs: changes
         runs-on: ubuntu-latest
         env:
             TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
@@ -34,7 +76,7 @@ jobs:
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
-                  # Changeset 与门禁等价 fixture 读取提交历史。
+                  # Changeset 与提交规范检查需要 PR 提交范围。
                   fetch-depth: 0
 
             - name: Check changeset presence (PR only)
@@ -57,48 +99,72 @@ jobs:
                   node-version: 22
                   cache: pnpm
 
+            - name: Record Node runtime for Turbo task cache
+              run: echo "BRUTX_RUNTIME_VERSION=$(node -p process.version)" >> "$GITHUB_ENV"
+
             - run: pnpm install --frozen-lockfile --prefer-offline
 
             - name: Cache turbo local build cache
+              if: needs.changes.outputs.ui == 'true' || needs.changes.outputs.cli == 'true' || needs.changes.outputs.registry == 'true' || needs.changes.outputs.tooling == 'true'
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
-                  path: node_modules/.cache/turbo
-                  key: ${{ runner.os }}-turbo-quality-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
+                  path: .turbo/cache
+                  key: ${{ runner.os }}-turbo-node22-quality-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
                   restore-keys: |
-                      ${{ runner.os }}-turbo-quality-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
-                      ${{ runner.os }}-turbo-quality-
+                      ${{ runner.os }}-turbo-node22-quality-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
+                      ${{ runner.os }}-turbo-node22-quality-
 
             - name: Verify all generated and mixed files (read-only)
+              if: needs.changes.outputs.generated == 'true'
               run: pnpm check:generated
 
-            - name: Build + typecheck + lint (turbo source graph)
-              run: pnpm exec turbo run build:artifact typecheck:source lint:source
+            - name: Build and verify selected package graph
+              env:
+                  UI: ${{ needs.changes.outputs.ui }}
+                  CLI: ${{ needs.changes.outputs.cli }}
+                  REGISTRY: ${{ needs.changes.outputs.registry }}
+                  TOOLING: ${{ needs.changes.outputs.tooling }}
+              run: |
+                  filters=(--filter=brutx-shared-vue)
+                  [[ "$UI" != true ]] || filters+=(--filter=brutx-ui-vue)
+                  [[ "$CLI" != true ]] || filters+=(--filter=brutx-vue)
+                  [[ "$REGISTRY" != true ]] || filters+=(--filter=brutx-registry-vue)
+                  if [[ "$UI" == true || "$CLI" == true || "$REGISTRY" == true || "$TOOLING" == true ]]; then
+                    pnpm exec turbo run build:artifact typecheck:source lint:source validate "${filters[@]}"
+                  fi
 
             - name: Verify code and spec contracts (parallel)
+              if: needs.changes.outputs.ui == 'true' || needs.changes.outputs.cli == 'true' || needs.changes.outputs.registry == 'true'
               run: pnpm check:contracts
 
-            - name: Validate registry
-              run: pnpm exec turbo run validate --filter=brutx-registry-vue
-
-            - name: Run R3b tooling fault and equivalence checks
-              run: pnpm test:tooling
+            - name: Test current generation and tooling contracts
+              if: needs.changes.outputs.tooling == 'true' || needs.changes.outputs.generated == 'true' || needs.changes.outputs.ui == 'true'
+              run: |
+                  pnpm --filter brutx-ui-vue generate
+                  pnpm test:tooling
 
             - name: Public type consumer check
+              if: needs.changes.outputs.ui == 'true'
               run: pnpm --filter brutx-ui-vue test:types
 
             - name: Verify bundle isolation
+              if: needs.changes.outputs.ui == 'true'
               run: pnpm --filter brutx-ui-vue check:isolation
 
             - name: Verify documentation integrity (parallel)
+              if: needs.changes.outputs.docs == 'true'
               run: pnpm check:docs
 
             - name: Package smoke test (exports subpaths + consumer resolution)
+              if: needs.changes.outputs.ui == 'true'
               run: pnpm --filter brutx-ui-vue test:package
 
             - name: Release verification and coordinator tests
+              if: needs.changes.outputs.release == 'true'
               run: pnpm test:release
 
             - name: Check bundle size limits
+              if: needs.changes.outputs.ui == 'true'
               run: pnpm --filter brutx-ui-vue size
 
             - name: Commitlint on PR commits
@@ -109,10 +175,7 @@ jobs:
                   # base 分支名经 env 传入，避免直接内插进 run: 脚本的注入风险
                   base="origin/$BASE_REF"
                   git fetch origin "$BASE_REF" --depth=50
-                  # 两点 diff + --no-merges：PR 事件 checkout 检出的是合成 merge commit，三点 diff
-                  # 会把该 merge 提交与 base 侧已合并提交一并纳入 → commitlint type-empty 恒红；
-                  # --no-merges 排除合成 merge commit，只校验 PR 分支自身提交；
-                  # 自动化提交（如各类 bot）豁免规范长度限制
+                  # PR 检出合成 merge commit，提交规范检查使用 base..HEAD 的分支提交。
                   git log --format="%an%x09%ae%x09%s" --no-merges "$base..HEAD" | while IFS=$'\t' read -r author email subject; do
                     [ -z "$subject" ] && continue
                     if [[ "$author" == *"[bot]"* ]] || [[ "$email" == *"@users.noreply.github.com"* && "$email" == *"bot"* ]]; then
@@ -123,10 +186,13 @@ jobs:
                   done
 
             - name: i18n mirror check
+              if: needs.changes.outputs.docs == 'true'
               run: pnpm check:i18n:strict
 
     test:
         name: Test (Node ${{ matrix.node-version }})
+        needs: changes
+        if: needs.changes.outputs.ui == 'true' || needs.changes.outputs.cli == 'true' || needs.changes.outputs.registry == 'true' || needs.changes.outputs.tooling == 'true'
         runs-on: ubuntu-latest
         strategy:
             fail-fast: false
@@ -147,24 +213,77 @@ jobs:
                   node-version: ${{ matrix.node-version }}
                   cache: pnpm
 
+            - name: Record Node runtime for Turbo task cache
+              run: echo "BRUTX_RUNTIME_VERSION=$(node -p process.version)" >> "$GITHUB_ENV"
+
             - run: pnpm install --frozen-lockfile --prefer-offline
 
             - name: Cache turbo local build cache
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
-                  path: node_modules/.cache/turbo
+                  path: .turbo/cache
                   key: ${{ runner.os }}-turbo-test-node${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
                   restore-keys: |
                       ${{ runner.os }}-turbo-test-node${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
                       ${{ runner.os }}-turbo-test-node${{ matrix.node-version }}-
 
-            # test 与 test:ssr 都依赖 build:artifact，Turbo 会先生成并构建，再并行跑两个测试任务。
-            - name: Build + test + SSR (turbo)
-              run: pnpm exec turbo run build:artifact test test:ssr
+            - name: Test selected packages and SSR
+              env:
+                  UI: ${{ needs.changes.outputs.ui }}
+                  CLI: ${{ needs.changes.outputs.cli }}
+                  REGISTRY: ${{ needs.changes.outputs.registry }}
+              run: |
+                  filters=(--filter=brutx-shared-vue)
+                  [[ "$CLI" != true ]] || filters+=(--filter=brutx-vue)
+                  [[ "$REGISTRY" != true ]] || filters+=(--filter=brutx-registry-vue)
+                  pnpm exec turbo run test "${filters[@]}"
+                  if [[ "$UI" == true ]]; then
+                    pnpm exec turbo run test:ssr --filter=brutx-ui-vue
+                  fi
 
-    coverage:
-        name: UI coverage
+    ui-test:
+        name: UI test (Node 24, shard ${{ matrix.shard-index }}/${{ matrix.shard-total }})
+        needs: changes
+        if: needs.changes.outputs.ui == 'true'
         runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                shard-index: [1, 2]
+                shard-total: [2]
+        env:
+            TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+            TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+            - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+            - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+              with:
+                  node-version: 24
+                  cache: pnpm
+            - name: Record Node runtime for Turbo task cache
+              run: echo "BRUTX_RUNTIME_VERSION=$(node -p process.version)" >> "$GITHUB_ENV"
+            - run: pnpm install --frozen-lockfile --prefer-offline
+            - name: Cache UI test results
+              uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+              with:
+                  path: .turbo/cache
+                  key: ${{ runner.os }}-turbo-node24-ui-shard${{ matrix.shard-index }}-${{ hashFiles('pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
+                  restore-keys: |
+                      ${{ runner.os }}-turbo-node24-ui-shard${{ matrix.shard-index }}-${{ hashFiles('pnpm-lock.yaml', 'turbo.json') }}-
+            - name: Test UI source and tooling shard
+              run: pnpm exec turbo run test --filter=brutx-ui-vue -- --shard=${{ matrix.shard-index }}/${{ matrix.shard-total }}
+
+    coverage-shard:
+        name: UI coverage shard (${{ matrix.shard-index }}/${{ matrix.shard-total }})
+        needs: changes
+        if: needs.changes.outputs.ui == 'true'
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                shard-index: [1, 2]
+                shard-total: [2]
         env:
             TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
             TURBO_TEAM: ${{ vars.TURBO_TEAM }}
@@ -180,33 +299,55 @@ jobs:
                   node-version: 22
                   cache: pnpm
 
-            - run: pnpm install --frozen-lockfile --prefer-offline
+            - name: Record Node runtime for Turbo task cache
+              run: echo "BRUTX_RUNTIME_VERSION=$(node -p process.version)" >> "$GITHUB_ENV"
 
-            - name: Cache turbo local build cache
-              uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-              with:
-                  path: node_modules/.cache/turbo
-                  key: ${{ runner.os }}-turbo-coverage-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
-                  restore-keys: |
-                      ${{ runner.os }}-turbo-coverage-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
-                      ${{ runner.os }}-turbo-coverage-
+            - run: pnpm install --frozen-lockfile --prefer-offline
 
             - name: Generate component index and styles
               run: pnpm --filter brutx-ui-vue generate
 
+            - name: Measure source coverage shard
+              run: pnpm --filter brutx-ui-vue exec vitest run --config vitest.coverage-shard.config.ts --coverage --reporter=default --reporter=blob --shard=${{ matrix.shard-index }}/${{ matrix.shard-total }}
+            - name: Upload source coverage measurements
+              uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+              with:
+                  name: ui-coverage-shard-${{ matrix.shard-index }}
+                  path: packages/ui/.vitest-reports
+                  include-hidden-files: true
+                  if-no-files-found: error
+
+    coverage:
+        name: UI coverage
+        needs: [changes, coverage-shard]
+        if: needs.changes.outputs.ui == 'true'
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+            - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+            - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+              with:
+                  node-version: 22
+                  cache: pnpm
+            - run: pnpm install --frozen-lockfile --prefer-offline
+            - run: pnpm --filter brutx-ui-vue generate
+            - name: Download source coverage measurements
+              uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+              with:
+                  pattern: ui-coverage-shard-*
+                  path: packages/ui/.vitest-reports
+                  merge-multiple: true
             - name: UI coverage
               id: ui-coverage
-              run: pnpm --filter brutx-ui-vue test:coverage
-
+              run: pnpm --filter brutx-ui-vue exec vitest run --config vitest.coverage.config.ts --merge-reports --coverage
             - name: Record UI coverage environment
               if: always() && steps.ui-coverage.outcome != 'skipped'
               env:
                   COVERAGE_OUTCOME: ${{ steps.ui-coverage.outcome }}
               run: |
                   node --input-type=module <<'NODE'
-                  import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+                  import { mkdirSync, writeFileSync } from 'node:fs'
                   import { execFileSync } from 'node:child_process'
-                  import { createHash } from 'node:crypto'
                   import { platform, release } from 'node:os'
                   const command = (program, args) => execFileSync(program, args, { encoding: 'utf8' }).trim()
                   const directory = 'packages/ui/coverage/full'
@@ -218,8 +359,7 @@ jobs:
                     node: process.version,
                     pnpm: command('pnpm', ['--version']),
                     vitest: command('pnpm', ['--filter', 'brutx-ui-vue', 'exec', 'vitest', '--version']),
-                    lockfileSha256: createHash('sha256').update(readFileSync('pnpm-lock.yaml')).digest('hex'),
-                    command: 'pnpm --filter brutx-ui-vue test:coverage',
+                    command: 'pnpm --filter brutx-ui-vue exec vitest run --config vitest.coverage.config.ts --merge-reports --coverage',
                     outcome: process.env.COVERAGE_OUTCOME,
                     run: `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
                   }, null, 2))
@@ -235,6 +375,8 @@ jobs:
 
     browser:
         name: Browser tests (Vitest + Playwright)
+        needs: changes
+        if: needs.changes.outputs.browser == 'true' || needs.changes.outputs.cost == 'true'
         runs-on: ubuntu-latest
         env:
             TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
@@ -251,16 +393,19 @@ jobs:
                   node-version: 22
                   cache: pnpm
 
+            - name: Record Node runtime for Turbo task cache
+              run: echo "BRUTX_RUNTIME_VERSION=$(node -p process.version)" >> "$GITHUB_ENV"
+
             - run: pnpm install --frozen-lockfile --prefer-offline
 
             - name: Cache turbo local build cache
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
-                  path: node_modules/.cache/turbo
-                  key: ${{ runner.os }}-turbo-browser-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
+                  path: .turbo/cache
+                  key: ${{ runner.os }}-turbo-node22-browser-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
                   restore-keys: |
-                      ${{ runner.os }}-turbo-browser-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
-                      ${{ runner.os }}-turbo-browser-
+                      ${{ runner.os }}-turbo-node22-browser-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
+                      ${{ runner.os }}-turbo-node22-browser-
 
             - name: Cache Playwright Browser Binaries
               id: playwright-cache
@@ -283,13 +428,19 @@ jobs:
               if: steps.playwright-cache.outputs.cache-hit == 'true'
               run: pnpm --filter brutx-ui-vue exec playwright install-deps chromium
 
-            - name: Build (turbo)
-              run: pnpm build
+            - name: Prepare browser source and selected artifact
+              run: pnpm --filter brutx-ui-vue generate
+
+            - name: Build UI artifact for Button resource checks
+              if: needs.changes.outputs.cost == 'true'
+              run: pnpm exec turbo run build:artifact --filter=brutx-ui-vue
 
             - name: Browser tests
+              if: needs.changes.outputs.browser == 'true'
               run: pnpm --filter brutx-ui-vue test:browser
 
             - name: Pack candidate artifact for cost checks
+              if: needs.changes.outputs.cost == 'true'
               run: |
                   cost_artifact_dir="$RUNNER_TEMP/brutx-cost-artifact"
                   mkdir -p "$cost_artifact_dir"
@@ -301,11 +452,12 @@ jobs:
                   fi
                   echo "BRUTX_COST_ARTIFACT=$cost_artifact" >> "$GITHUB_ENV"
 
-            - name: Button browser resource and cost byte gates
-              run: pnpm --filter brutx-ui-vue exec tsx perf/cost-runner.ts --artifact "$BRUTX_COST_ARTIFACT" --output "$RUNNER_TEMP/brutx-cost-result" --assert-resources
+            - name: Button browser resource assertions and byte report
+              if: needs.changes.outputs.cost == 'true'
+              run: pnpm --filter brutx-ui-vue exec tsx perf/cost-runner.ts --artifact "$BRUTX_COST_ARTIFACT" --output "$RUNNER_TEMP/brutx-cost-result" --assert-resources --scenario empty --scenario button-root --scenario button-subpath --scenario button-root-dynamic
 
             - name: Upload Button cost evidence
-              if: always()
+              if: always() && needs.changes.outputs.cost == 'true'
               uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
               with:
                   name: button-cost-${{ github.sha }}
@@ -314,6 +466,8 @@ jobs:
 
     integration:
         name: CLI Integration tests
+        needs: changes
+        if: needs.changes.outputs.cli == 'true'
         runs-on: ubuntu-latest
         env:
             TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
@@ -330,25 +484,30 @@ jobs:
                   node-version: 22
                   cache: pnpm
 
+            - name: Record Node runtime for Turbo task cache
+              run: echo "BRUTX_RUNTIME_VERSION=$(node -p process.version)" >> "$GITHUB_ENV"
+
             - run: pnpm install --frozen-lockfile --prefer-offline
 
             - name: Cache turbo local build cache
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
-                  path: node_modules/.cache/turbo
-                  key: ${{ runner.os }}-turbo-integration-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
+                  path: .turbo/cache
+                  key: ${{ runner.os }}-turbo-node22-integration-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
                   restore-keys: |
-                      ${{ runner.os }}-turbo-integration-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
-                      ${{ runner.os }}-turbo-integration-
+                      ${{ runner.os }}-turbo-node22-integration-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
+                      ${{ runner.os }}-turbo-node22-integration-
 
-            - name: Build (turbo)
-              run: pnpm build
+            - name: Build CLI and Registry artifacts
+              run: pnpm exec turbo run build:artifact --filter=brutx-vue --filter=brutx-registry-vue
 
             - name: CLI Integration tests
               run: pnpm --filter brutx-vue test:integration
 
     consumers:
         name: Real Consumer tests (U1 / C1 / C3)
+        needs: changes
+        if: needs.changes.outputs.consumers == 'true'
         runs-on: ubuntu-latest
         env:
             TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
@@ -365,19 +524,22 @@ jobs:
                   node-version: 22
                   cache: pnpm
 
+            - name: Record Node runtime for Turbo task cache
+              run: echo "BRUTX_RUNTIME_VERSION=$(node -p process.version)" >> "$GITHUB_ENV"
+
             - run: pnpm install --frozen-lockfile --prefer-offline
 
             - name: Cache turbo local build cache
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
-                  path: node_modules/.cache/turbo
-                  key: ${{ runner.os }}-turbo-consumers-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
+                  path: .turbo/cache
+                  key: ${{ runner.os }}-turbo-node22-consumers-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
                   restore-keys: |
-                      ${{ runner.os }}-turbo-consumers-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
-                      ${{ runner.os }}-turbo-consumers-
+                      ${{ runner.os }}-turbo-node22-consumers-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
+                      ${{ runner.os }}-turbo-node22-consumers-
 
-            - name: Build packages
-              run: pnpm build
+            - name: Build consumer artifacts
+              run: pnpm exec turbo run build:artifact --filter=brutx-ui-vue --filter=brutx-vue --filter=brutx-registry-vue
 
             - name: Pack shared consumer artifacts
               run: node --input-type=module -e "import { packCandidateArtifacts } from './scripts/testing/consumer-artifacts.mjs'; packCandidateArtifacts(process.env.RUNNER_TEMP + '/brutx-consumers')"
@@ -392,16 +554,60 @@ jobs:
                   name: consumers-${{ github.sha }}
                   path: ${{ runner.temp }}/brutx-consumers
 
+    site:
+        name: Documentation site
+        needs: changes
+        if: needs.changes.outputs.site == 'true'
+        runs-on: ubuntu-latest
+        env:
+            TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+            TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+              with:
+                  fetch-depth: 0
+            - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413
+            - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+              with:
+                  node-version: 22
+                  cache: pnpm
+            - name: Record Node runtime for Turbo task cache
+              run: echo "BRUTX_RUNTIME_VERSION=$(node -p process.version)" >> "$GITHUB_ENV"
+            - run: pnpm install --frozen-lockfile --prefer-offline
+            - name: Cache turbo local build cache
+              uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+              with:
+                  path: .turbo/cache
+                  key: ${{ runner.os }}-turbo-node22-site-${{ hashFiles('pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
+                  restore-keys: |
+                      ${{ runner.os }}-turbo-node22-site-${{ hashFiles('pnpm-lock.yaml', 'turbo.json') }}-
+            - name: Build and typecheck docs
+              run: pnpm exec turbo run build:artifact typecheck:source --filter=docs
+
     ci-gate:
-        name: CI Gate (all checks passed)
+        name: ${{ github.event_name == 'workflow_dispatch' && 'CI Timing (selected checks)' || 'CI Gate (all checks passed)' }}
         if: always()
-        needs: [quality, test, coverage, browser, integration, consumers]
+        needs: [changes, quality, test, ui-test, coverage-shard, coverage, browser, integration, consumers, site]
         runs-on: ubuntu-latest
         steps:
-            - name: Evaluate upstream jobs
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+            - name: Evaluate selected checks
+              env:
+                  FLAGS: ${{ needs.changes.outputs.json }}
+                  RESULTS: ${{ toJSON(needs) }}
+                  CLASSIFICATION_RESULT: ${{ needs.changes.result }}
               run: |
-                  if [[ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
-                    echo "::error::One or more upstream CI jobs failed or were cancelled."
-                    exit 1
-                  fi
-                  echo "✓ All upstream CI jobs completed successfully."
+                  node --input-type=module <<'NODE'
+                  import { evaluateGate } from './scripts/ci/evaluate-gate.mjs'
+                  const flags = JSON.parse(process.env.FLAGS || '{}')
+                  const selected = ['quality']
+                  if (flags.ui || flags.cli || flags.registry || flags.tooling) selected.push('test')
+                  if (flags.ui) selected.push('ui-test', 'coverage-shard', 'coverage')
+                  if (flags.browser || flags.cost) selected.push('browser')
+                  if (flags.cli) selected.push('integration')
+                  if (flags.consumers) selected.push('consumers')
+                  if (flags.site) selected.push('site')
+                  const result = evaluateGate({ classificationResult: process.env.CLASSIFICATION_RESULT, selected, needs: JSON.parse(process.env.RESULTS) })
+                  console.log(JSON.stringify(result, null, 2))
+                  if (!result.passed) process.exitCode = 1
+                  NODE

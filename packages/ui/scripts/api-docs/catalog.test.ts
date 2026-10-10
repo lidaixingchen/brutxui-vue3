@@ -1,12 +1,18 @@
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import type { ApiContract } from 'brutx-shared-vue/api-contract'
 import { COMPONENT_METADATA } from 'brutx-shared-vue'
+import { checkComponentDocCoverage } from '../../../../scripts/docs/component-doc-coverage.js'
 import { API_CONTRACT } from '../../api-contract.js'
 import { collectApiCatalog, serializeApiCatalog } from './catalog.js'
 
 const ROOT = path.resolve(__dirname, '../../../..')
+
+function createTemporaryRoot(): string {
+    return fs.mkdtempSync(path.join(os.tmpdir(), 'brutx-component-doc-coverage-'))
+}
 
 function changeButton(change: (entry: ApiContract['entries'][number]) => ApiContract['entries'][number]): ApiContract {
     return { ...API_CONTRACT, entries: API_CONTRACT.entries.map(entry => entry.id === 'component:button' ? change(entry) : entry) }
@@ -27,6 +33,74 @@ describe('公开组件文档清单', () => {
         for (const group of catalog.groups.filter(item => item.scope === 'block')) {
             expect(group.pages).toEqual([])
             expect(COMPONENT_METADATA[group.id.replace('component:', '')].kind).toBe('block')
+        }
+    })
+
+    it('规范覆盖检查包含组件与区块并要求真实双语页面精确匹配', () => {
+        const blockName = Object.keys(COMPONENT_METADATA).find(name => COMPONENT_METADATA[name].kind === 'block' && COMPONENT_METADATA[name].docsHidden !== true)
+        expect(blockName).toBeDefined()
+        const canonical = checkComponentDocCoverage(ROOT)
+        const blockPages = canonical.pages.filter(page => page.componentName === blockName)
+        expect(blockPages.map(page => page.file)).toEqual([
+            `apps/docs/blocks/${COMPONENT_METADATA[blockName!].docsSlug ?? blockName}.md`,
+            `apps/docs/en/blocks/${COMPONENT_METADATA[blockName!].docsSlug ?? blockName}.md`,
+        ])
+        expect(blockPages.every(page => page.exists)).toBe(true)
+        expect(canonical.diagnostics).toEqual([])
+
+        const root = createTemporaryRoot()
+        const zhDirectory = path.join(root, 'apps/docs/components')
+        const enDirectory = path.join(root, 'apps/docs/en/components')
+        fs.mkdirSync(zhDirectory, { recursive: true })
+        fs.mkdirSync(enDirectory, { recursive: true })
+
+        try {
+            const missingPages = checkComponentDocCoverage(root, ['button'])
+            expect(missingPages.diagnostics.map(item => item.file)).toEqual([
+                'apps/docs/components/button.md',
+                'apps/docs/en/components/button.md',
+            ])
+            expect(checkComponentDocCoverage(root, ['unregistered-component']).unresolvedComponentNames).toEqual(['unregistered-component'])
+
+            fs.writeFileSync(path.join(zhDirectory, 'Button.md'), '')
+            fs.writeFileSync(path.join(enDirectory, 'button.md'), '')
+            const mismatchedCase = checkComponentDocCoverage(root, ['button'])
+            expect(mismatchedCase.pages.map(page => page.exists)).toEqual([false, true])
+            expect(mismatchedCase.diagnostics.map(item => item.file)).toEqual(['apps/docs/components/button.md'])
+        } finally {
+            fs.rmSync(root, { recursive: true, force: true })
+        }
+    })
+
+    it('公开组件页的大小写错误继续报缺页且保留未映射页诊断', () => {
+        const root = createTemporaryRoot()
+        const zhDirectory = path.join(root, 'apps/docs/components')
+        const enDirectory = path.join(root, 'apps/docs/en/components')
+        const componentDirectory = path.join(root, 'packages/ui/src/components/button')
+        fs.mkdirSync(zhDirectory, { recursive: true })
+        fs.mkdirSync(enDirectory, { recursive: true })
+        fs.mkdirSync(componentDirectory, { recursive: true })
+        fs.writeFileSync(path.join(zhDirectory, 'Button.md'), '')
+        fs.writeFileSync(path.join(enDirectory, 'button.md'), '')
+        fs.writeFileSync(path.join(componentDirectory, 'Button.vue'), '')
+
+        try {
+            const buttonEntry = API_CONTRACT.entries.find(entry => entry.id === 'component:button')!
+            const contract = { ...API_CONTRACT, entries: [buttonEntry] }
+            const catalog = collectApiCatalog(root, contract)
+            const button = catalog.groups.find(group => group.id === 'component:button')!
+
+            expect(button.pages.map(page => page.exists)).toEqual([false, true])
+            expect(catalog.diagnostics).toContainEqual(expect.objectContaining({
+                ruleId: 'API_PAGE_MISSING',
+                file: 'apps/docs/components/button.md',
+            }))
+            expect(catalog.diagnostics).toContainEqual(expect.objectContaining({
+                ruleId: 'API_PAGE_UNMAPPED',
+                file: 'apps/docs/components/Button.md',
+            }))
+        } finally {
+            fs.rmSync(root, { recursive: true, force: true })
         }
     })
 

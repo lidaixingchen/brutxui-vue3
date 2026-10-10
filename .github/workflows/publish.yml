@@ -13,7 +13,7 @@ jobs:
     publish:
         runs-on: ubuntu-latest
         env:
-            # Turbo Remote Cache — Vercel Remote Cache（发布门禁 turbo run build/test/typecheck/lint 同样受益）
+            # Turbo Remote Cache — Vercel Remote Cache
             # 配置步骤见 ci.yml 同名注释（TURBO_TOKEN 用 secrets，TURBO_TEAM 用 vars）
             TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
             TURBO_TEAM: ${{ vars.TURBO_TEAM }}
@@ -24,10 +24,16 @@ jobs:
         permissions:
             contents: write
             id-token: write
+            actions: read
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
-                  fetch-depth: 1 # 发布门禁不需要 git 历史；extract-release-notes 直接从 CHANGELOG.md 读取
+                  fetch-depth: 0
+
+            - name: Bind release to successful main CI
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: node scripts/ci/require-release-ci.mjs
 
             - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
 
@@ -37,24 +43,25 @@ jobs:
                   cache: pnpm
                   registry-url: 'https://registry.npmjs.org'
 
+            - name: Record Node runtime for Turbo task cache
+              run: echo "BRUTX_RUNTIME_VERSION=$(node -p process.version)" >> "$GITHUB_ENV"
+
             - run: pnpm install --frozen-lockfile --prefer-offline
 
             - name: Cache turbo local build cache
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
-                  path: node_modules/.cache/turbo
-                  key: ${{ runner.os }}-turbo-publish-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
+                  path: .turbo/cache
+                  key: ${{ runner.os }}-turbo-node22-publish-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
                   restore-keys: |
-                      ${{ runner.os }}-turbo-publish-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
-                      ${{ runner.os }}-turbo-publish-
+                      ${{ runner.os }}-turbo-node22-publish-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
+                      ${{ runner.os }}-turbo-node22-publish-
 
-            # 发布门禁：build + test + typecheck + lint（turbo 并行，test 依赖 build 自动等待）
-            # test = vitest run（Node 环境），不需要 Playwright/浏览器
             - name: Verify generated artifacts consistency
               run: pnpm check:generated
 
-            - name: Release gate (turbo)
-              run: pnpm exec turbo run build:artifact test typecheck:source lint:source
+            - name: Build signed release artifacts
+              run: pnpm exec turbo run build:artifact --filter=brutx-ui-vue --filter=brutx-vue --filter=brutx-registry-vue
 
             - name: Verify changesets consumed
               run: |
@@ -63,9 +70,6 @@ jobs:
                     ls -A .changeset
                     exit 1
                   fi
-
-            - name: Release verification tests
-              run: pnpm test:release
 
             - name: Extract Release Notes from CHANGELOG
               env:

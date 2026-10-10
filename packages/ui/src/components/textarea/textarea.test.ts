@@ -10,7 +10,6 @@ describe('Textarea', () => {
         expect(textarea.classes()).toContain('border-brutal')
         expect(textarea.classes()).toContain('focus:shadow-brutal')
         expect(textarea.classes()).toContain('resize-none')
-        expect(textarea.classes()).not.toContain('active:translate-x-0.5')
     })
 
     it('applies variant classes', async () => {

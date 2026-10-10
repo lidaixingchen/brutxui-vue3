@@ -1,4 +1,4 @@
-export const COST_PROFILE_VERSION = 'r2-cost-baseline-v2'
+export const COST_PROFILE_VERSION = 'button-cost-v1'
 
 export const CONSUMER_TOOLCHAIN_PACKAGES = {
     '@tailwindcss/vite': '4.3.0',
@@ -32,11 +32,25 @@ export const COST_SCENARIOS = [
     { id: 'empty', component: null, importPath: null, dynamic: false },
     { id: 'button-root', component: 'Button', importPath: 'brutx-ui-vue', dynamic: false },
     { id: 'button-subpath', component: 'Button', importPath: 'brutx-ui-vue/button', dynamic: false },
-    { id: 'input', component: 'Input', importPath: 'brutx-ui-vue/input', dynamic: false },
-    { id: 'data-table', component: 'DataTable', importPath: 'brutx-ui-vue/data-table', dynamic: false },
-    { id: 'glitch-text', component: 'GlitchText', importPath: 'brutx-ui-vue/glitch-text', dynamic: false },
     { id: 'button-root-dynamic', component: 'Button', importPath: 'brutx-ui-vue', dynamic: true },
 ] as const
+
+export type CostScenario = (typeof COST_SCENARIOS)[number]
+
+export function selectCostScenarios(scenarioIds: string[], assertResources: boolean): CostScenario[] {
+    const unknownScenarios = scenarioIds.filter(id => !COST_SCENARIOS.some(scenario => scenario.id === id))
+    if (unknownScenarios.length > 0) throw new Error(`未知成本场景：${unknownScenarios.join(', ')}`)
+
+    const scenarios = scenarioIds.length > 0
+        ? COST_SCENARIOS.filter(scenario => scenarioIds.includes(scenario.id))
+        : [...COST_SCENARIOS]
+    const requiredScenarioIds = assertResources ? ['empty', 'button-root'] : ['empty']
+    const missingScenarios = requiredScenarioIds.filter(id => !scenarios.some(scenario => scenario.id === id))
+    if (missingScenarios.length > 0) {
+        throw new Error(`当前成本配置缺少必需场景：${missingScenarios.join(', ')}`)
+    }
+    return [...scenarios]
+}
 
 export const BROWSER_PROFILES = [
     {

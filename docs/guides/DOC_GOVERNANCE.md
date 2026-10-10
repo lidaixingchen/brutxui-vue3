@@ -176,7 +176,7 @@ pnpm doc:archive docs/plans/<domain>/<name>.md
 在提交前，运行全库自动化门禁，确保 0 违规：
 ```bash
 pnpm check:docs        # 验证全库 0 死链、0 绝对路径、方案 Frontmatter 契约 100% 合规
-pnpm check:contracts   # 验证静态样式、令牌、导出等 6 合 1 契约全绿通过
+pnpm check:contracts   # 验证当前静态语义契约
 ```
 > 可使用 `node scripts/docs/scan-doc-status.mjs --table` 查看终端看板，确认全库活跃方案已收敛、归档矩阵正确。
 

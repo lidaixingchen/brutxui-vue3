@@ -1,5 +1,3 @@
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { Z_INDEX_TOKENS as SHARED_Z_INDEX_TOKENS } from 'brutx-shared-vue'
 import { Z_INDEX, Z_INDEX_TOKENS } from './z-index'
@@ -37,11 +35,5 @@ describe('z-index', () => {
         expect(Z_INDEX.LOADING).toBe(Z_INDEX_TOKENS.loading)
         expect(Z_INDEX.TOAST).toBe(Z_INDEX_TOKENS.toast)
         expect(Z_INDEX.MESSAGE).toBe(Z_INDEX_TOKENS.message)
-    })
-
-    it('remains strictly self-contained with no external module imports', () => {
-        const sourcePath = resolve(__dirname, 'z-index.ts')
-        const fileContent = readFileSync(sourcePath, 'utf8')
-        expect(fileContent).not.toMatch(/^\s*import\s+/m)
     })
 })

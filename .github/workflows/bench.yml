@@ -4,23 +4,101 @@ on:
     push:
         branches: [main]
         paths:
-            - 'packages/ui/**'
+            - 'packages/ui/src/components/button/**'
+            - 'packages/ui/src/components/checkbox/**'
+            - 'packages/ui/src/components/data-table/**'
+            - 'packages/ui/src/components/input/**'
+            - 'packages/ui/src/components/popover/**'
+            - 'packages/ui/src/components/select/**'
+            - 'packages/ui/src/components/tree-view/**'
+            - 'packages/ui/src/components/virtual-scroll/**'
+            - 'packages/ui/src/composables/useClearable.ts'
+            - 'packages/ui/src/composables/useDataTableFilter.ts'
+            - 'packages/ui/src/composables/useDataTablePagination.ts'
+            - 'packages/ui/src/composables/useDataTableSelection.ts'
+            - 'packages/ui/src/composables/useDataTableSort.ts'
+            - 'packages/ui/src/composables/useGlitchEffect.ts'
+            - 'packages/ui/src/composables/useLocale.ts'
+            - 'packages/ui/src/composables/useReducedMotion.ts'
+            - 'packages/ui/src/lib/brutal-interaction-variants.ts'
+            - 'packages/ui/src/lib/data-table-utils.ts'
+            - 'packages/ui/src/lib/date.ts'
+            - 'packages/ui/src/lib/defaults.ts'
+            - 'packages/ui/src/lib/env.ts'
+            - 'packages/ui/src/lib/floating-animation-classes.ts'
+            - 'packages/ui/src/lib/floating-content-variants.ts'
+            - 'packages/ui/src/lib/form-toggle-base.ts'
+            - 'packages/ui/src/lib/icon-size-variants.ts'
+            - 'packages/ui/src/lib/selection-value.ts'
+            - 'packages/ui/src/lib/tree-variants.ts'
+            - 'packages/ui/src/lib/utils.ts'
+            - 'packages/ui/src/lib/z-index.ts'
+            - 'packages/ui/src/locales/**'
+            - 'packages/ui/src/types/data-table.ts'
+            - 'packages/ui/src/types/tree.ts'
+            - 'packages/ui/src/vitest.setup.ts'
+            - 'packages/ui/perf/render.bench.ts'
+            - 'packages/ui/vitest.config.ts'
+            - 'packages/ui/package.json'
+            - 'packages/ui/tsconfig.json'
             - 'packages/shared/**'
-            - 'scripts/bench*/**'
-            - 'scripts/bench*.mjs'
+            - 'scripts/bench-diff.mjs'
+            - 'scripts/bench-diff.test.mjs'
             - '.github/workflows/bench.yml'
-            - 'turbo.json'
+            - '.npmrc'
+            - 'package.json'
             - 'pnpm-lock.yaml'
+            - 'pnpm-workspace.yaml'
+            - 'tsconfig*.json'
     pull_request:
         branches: [main]
         paths:
-            - 'packages/ui/**'
+            - 'packages/ui/src/components/button/**'
+            - 'packages/ui/src/components/checkbox/**'
+            - 'packages/ui/src/components/data-table/**'
+            - 'packages/ui/src/components/input/**'
+            - 'packages/ui/src/components/popover/**'
+            - 'packages/ui/src/components/select/**'
+            - 'packages/ui/src/components/tree-view/**'
+            - 'packages/ui/src/components/virtual-scroll/**'
+            - 'packages/ui/src/composables/useClearable.ts'
+            - 'packages/ui/src/composables/useDataTableFilter.ts'
+            - 'packages/ui/src/composables/useDataTablePagination.ts'
+            - 'packages/ui/src/composables/useDataTableSelection.ts'
+            - 'packages/ui/src/composables/useDataTableSort.ts'
+            - 'packages/ui/src/composables/useGlitchEffect.ts'
+            - 'packages/ui/src/composables/useLocale.ts'
+            - 'packages/ui/src/composables/useReducedMotion.ts'
+            - 'packages/ui/src/lib/brutal-interaction-variants.ts'
+            - 'packages/ui/src/lib/data-table-utils.ts'
+            - 'packages/ui/src/lib/date.ts'
+            - 'packages/ui/src/lib/defaults.ts'
+            - 'packages/ui/src/lib/env.ts'
+            - 'packages/ui/src/lib/floating-animation-classes.ts'
+            - 'packages/ui/src/lib/floating-content-variants.ts'
+            - 'packages/ui/src/lib/form-toggle-base.ts'
+            - 'packages/ui/src/lib/icon-size-variants.ts'
+            - 'packages/ui/src/lib/selection-value.ts'
+            - 'packages/ui/src/lib/tree-variants.ts'
+            - 'packages/ui/src/lib/utils.ts'
+            - 'packages/ui/src/lib/z-index.ts'
+            - 'packages/ui/src/locales/**'
+            - 'packages/ui/src/types/data-table.ts'
+            - 'packages/ui/src/types/tree.ts'
+            - 'packages/ui/src/vitest.setup.ts'
+            - 'packages/ui/perf/render.bench.ts'
+            - 'packages/ui/vitest.config.ts'
+            - 'packages/ui/package.json'
+            - 'packages/ui/tsconfig.json'
             - 'packages/shared/**'
-            - 'scripts/bench*/**'
-            - 'scripts/bench*.mjs'
+            - 'scripts/bench-diff.mjs'
+            - 'scripts/bench-diff.test.mjs'
             - '.github/workflows/bench.yml'
-            - 'turbo.json'
+            - '.npmrc'
+            - 'package.json'
             - 'pnpm-lock.yaml'
+            - 'pnpm-workspace.yaml'
+            - 'tsconfig*.json'
 
 concurrency:
     group: bench-${{ github.ref }}
@@ -38,7 +116,7 @@ jobs:
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
-                  ref: main
+                  ref: ${{ github.sha }}
 
             - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
 
@@ -49,22 +127,27 @@ jobs:
 
             - run: pnpm install --frozen-lockfile --prefer-offline
 
-            - run: pnpm --filter brutx-ui-vue build
-
             - name: Run bench (main baseline)
-              run: pnpm --filter brutx-ui-vue exec vitest bench --reporter=json > bench-main.json
-              continue-on-error: true
+              id: main-bench
+              run: pnpm --filter brutx-ui-vue exec vitest bench --outputJson "$GITHUB_WORKSPACE/bench-main.json"
+
+            - name: Validate main baseline
+              id: validate-main
+              run: node scripts/bench-diff.mjs --validate bench-main.json
 
             - name: Save main bench baseline cache
+              if: steps.validate-main.outcome == 'success'
               uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
                   path: bench-main.json
-                  key: bench-baseline-main-${{ github.sha }}
+                  key: bench-baseline-v2-${{ github.sha }}
 
             - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+              if: always()
               with:
                   name: bench-main
                   path: bench-main.json
+                  if-no-files-found: warn
 
     pr-compare:
         name: Benchmark PR Compare
@@ -84,42 +167,70 @@ jobs:
 
             - run: pnpm install --frozen-lockfile --prefer-offline
 
-            - name: Restore main baseline from cache
+            - name: Restore main baseline for exact base SHA
               id: baseline-cache
               uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
                   path: bench-main.json
-                  key: bench-baseline-main-${{ github.event.pull_request.base.sha }}
-                  restore-keys: |
-                      bench-baseline-main-
+                  key: bench-baseline-v2-${{ github.event.pull_request.base.sha }}
 
-            - name: Fallback generate baseline if cache missed
-              if: steps.baseline-cache.outputs.cache-matched-key == ''
+            - name: Validate restored main baseline
+              id: validate-cached-baseline
+              if: steps.baseline-cache.outputs.cache-matched-key != ''
+              continue-on-error: true
+              run: node scripts/bench-diff.mjs --validate bench-main.json
+
+            - name: Generate baseline from exact base SHA when needed
+              id: fallback-baseline
+              if: always() && (steps.baseline-cache.outputs.cache-matched-key == '' || steps.validate-cached-baseline.outcome == 'failure')
+              continue-on-error: true
+              env:
+                  BASE_SHA: ${{ github.event.pull_request.base.sha }}
               run: |
-                  [ -f bench-main.json ] && exit 0
-                  echo "Baseline cache miss, generating baseline from main..."
-                  git fetch origin main --depth=1
-                  workdir="$RUNNER_TEMP/brutx-bench-baseline"
-                  trap 'git worktree remove "$workdir" --force 2>/dev/null || true' EXIT
-                  git worktree add --detach "$workdir" origin/main
+                  set -euo pipefail
+                  rm -f "$GITHUB_WORKSPACE/bench-main.json"
+                  git fetch origin "$BASE_SHA" --depth=1
+                  baseline_dir="$RUNNER_TEMP/brutx-bench-baseline"
+                  trap 'git worktree remove "$baseline_dir" --force >/dev/null 2>&1 || true' EXIT
+                  git worktree add --detach "$baseline_dir" "$BASE_SHA"
                   (
-                    cd "$workdir"
+                    cd "$baseline_dir"
                     pnpm install --frozen-lockfile --prefer-offline
-                    pnpm --filter brutx-ui-vue build
-                    pnpm --filter brutx-ui-vue exec vitest bench --reporter=json > "$GITHUB_WORKSPACE/bench-main.json" || true
+                    pnpm --filter brutx-ui-vue exec vitest bench --outputJson "$GITHUB_WORKSPACE/bench-main.json"
                   )
 
-            - run: pnpm --filter brutx-ui-vue build
+            - name: Validate generated baseline
+              id: validate-fallback-baseline
+              if: steps.fallback-baseline.outcome == 'success'
+              continue-on-error: true
+              run: node scripts/bench-diff.mjs --validate bench-main.json
+
+            - name: Save generated baseline for exact base SHA
+              if: steps.baseline-cache.outputs.cache-matched-key == '' && steps.validate-fallback-baseline.outcome == 'success'
+              uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+              with:
+                  path: bench-main.json
+                  key: bench-baseline-v2-${{ github.event.pull_request.base.sha }}
 
             - name: Run bench (PR)
-              run: pnpm --filter brutx-ui-vue exec vitest bench --reporter=json > bench-pr.json
+              id: pr-bench
+              if: always()
               continue-on-error: true
+              run: pnpm --filter brutx-ui-vue exec vitest bench --outputJson "$GITHUB_WORKSPACE/bench-pr.json"
+
+            - name: Validate final main baseline
+              id: validate-main-baseline
+              if: always()
+              continue-on-error: true
+              run: node scripts/bench-diff.mjs --validate bench-main.json
 
             - name: Generate diff report
+              id: bench-diff
+              if: always()
               run: node scripts/bench-diff.mjs bench-main.json bench-pr.json > bench-report.md
 
             - name: Find comment
-              if: github.event.pull_request.head.repo.full_name == github.repository
+              if: always() && github.event.pull_request.head.repo.full_name == github.repository
               uses: peter-evans/find-comment@b30e6a3c0ed37e7c023ccd3f1db5c6c0b0c23aad # v4.0.0
               id: fc
               with:
@@ -128,10 +239,35 @@ jobs:
                   body-includes: Performance Bench Report
 
             - name: Create or update comment
-              if: github.event.pull_request.head.repo.full_name == github.repository
+              if: always() && github.event.pull_request.head.repo.full_name == github.repository
               uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
               with:
                   issue-number: ${{ github.event.pull_request.number }}
                   comment-id: ${{ steps.fc.outputs.comment-id }}
                   body-path: bench-report.md
                   edit-mode: replace
+
+            - name: Fail when benchmark data is unavailable
+              if: always()
+              env:
+                  FALLBACK_OUTCOME: ${{ steps.fallback-baseline.outcome }}
+                  PR_BENCH_OUTCOME: ${{ steps.pr-bench.outcome }}
+                  BASELINE_VALIDATION_OUTCOME: ${{ steps.validate-main-baseline.outcome }}
+                  DIFF_OUTCOME: ${{ steps.bench-diff.outcome }}
+              run: |
+                  if [[ "$FALLBACK_OUTCOME" == failure ]]; then
+                    echo "Exact base-SHA baseline generation failed."
+                    exit 1
+                  fi
+                  if [[ "$PR_BENCH_OUTCOME" != success ]]; then
+                    echo "PR benchmark execution failed."
+                    exit 1
+                  fi
+                  if [[ "$BASELINE_VALIDATION_OUTCOME" != success ]]; then
+                    echo "Main benchmark data is missing or invalid."
+                    exit 1
+                  fi
+                  if [[ "$DIFF_OUTCOME" != success ]]; then
+                    echo "Benchmark comparison data is incomplete."
+                    exit 1
+                  fi

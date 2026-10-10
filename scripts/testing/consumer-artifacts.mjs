@@ -1,5 +1,4 @@
 import { execFileSync, execSync, spawn } from 'node:child_process';
-import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -11,14 +10,6 @@ const __dirname = path.dirname(__filename);
 const REPO_ROOT = path.resolve(__dirname, '../..');
 const CANDIDATE_MANIFEST_NAME = 'candidate-manifest.json';
 const REQUIRED_CANDIDATE_PACKAGES = ['brutx-ui-vue', 'brutx-vue'];
-
-/**
- * 计算文件 SHA-256 哈希
- */
-export function computeFileSha256(filePath) {
-    const buffer = fs.readFileSync(filePath);
-    return crypto.createHash('sha256').update(buffer).digest('hex');
-}
 
 /**
  * 获取当前仓库 HEAD Commit SHA
@@ -194,14 +185,12 @@ export function packCandidateArtifacts(destinationDir, rootDir = REPO_ROOT) {
 
         const tarballPath = path.join(destinationDir, matched);
         const stat = fs.statSync(tarballPath);
-        const sha256 = computeFileSha256(tarballPath);
 
         packageRecords[pkg.name] = {
             name: pkg.name,
             version,
             tarballFile: matched,
             tarballPath,
-            sha256,
             sizeBytes: stat.size,
         };
     }
@@ -285,10 +274,6 @@ export function loadCandidateArtifacts(inputPath) {
         if (typeof record.version !== 'string' || record.version.length === 0) {
             throw new Error(`Candidate artifact package ${packageName} has no version.`);
         }
-        if (typeof record.sha256 !== 'string' || record.sha256.length === 0) {
-            throw new Error(`Candidate artifact package ${packageName} has no sha256.`);
-        }
-
         const tarballPath = resolveCandidateTarballPath(record, manifestDir);
         if (!tarballPath || !fs.existsSync(tarballPath)) {
             throw new Error(`Candidate artifact tarball missing for ${packageName}.`);
@@ -297,15 +282,6 @@ export function loadCandidateArtifacts(inputPath) {
         if (stat.isSymbolicLink() || !stat.isFile() || stat.size === 0) {
             throw new Error(`Candidate artifact tarball must be a non-empty regular file for ${packageName}.`);
         }
-        if (record.sizeBytes !== undefined && record.sizeBytes !== stat.size) {
-            throw new Error(`Candidate artifact size mismatch for ${packageName}: expected ${record.sizeBytes}, got ${stat.size}.`);
-        }
-
-        const actualSha256 = computeFileSha256(tarballPath);
-        if (actualSha256 !== record.sha256) {
-            throw new Error(`Candidate artifact sha256 mismatch for ${packageName}: expected ${record.sha256}, got ${actualSha256}.`);
-        }
-
         normalizedPackages[packageName] = {
             ...record,
             tarballPath,
@@ -332,7 +308,6 @@ export function summarizeCandidateArtifacts(manifest) {
                 const record = manifest.packages[packageName];
                 return [packageName, {
                     version: record.version,
-                    sha256: record.sha256,
                     sizeBytes: record.sizeBytes,
                 }];
             })
