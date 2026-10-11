@@ -56,12 +56,12 @@ const suite = defineGuardSuite({
     },
     {
       id: 'refs',
-      desc: '组件文档覆盖率守卫',
-      target: 'scripts/check-guide-refs.ts',
+      desc: '共享组件元数据的双语文档覆盖与精确大小写',
+      target: 'scripts/docs/component-doc-coverage.ts',
       action: {
         type: 'manual_fix',
         command: null,
-        description: '已登记组件缺少对应中英文使用文档或大小写不匹配，请按指引补充。',
+        description: '组件或区块缺少对应中英文使用文档，或文档路径大小写不匹配，请按指引补充。',
       },
     },
     {

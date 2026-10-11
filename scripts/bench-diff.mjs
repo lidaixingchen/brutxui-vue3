@@ -1,87 +1,70 @@
-/**
- * bench-diff.mjs — 性能基准 PR 对比脚本
- *
- * 用法：
- *   node scripts/bench-diff.mjs bench-main.json bench-pr.json
- *
- * 读取两份 vitest bench --reporter=json 输出，按 task name 对齐，
- * 输出 markdown 表格（task name / main hz / pr hz / 变化%）+ 结论摘要。
- *
- * 阈值说明（基于 GitHub-hosted runner 上 tinybench 的 rme 经验值，通常 3–8%）：
- *   |delta| < 5%  → 噪声范围内
- *   delta < -5%   → 疑似回归
- *   delta > 5%    → 改善
- *
- * 错误处理：
- *   任何输入/解析失败均不硬退出（不调用 process.exit(1)），而是输出结构化
- *   markdown 错误报告到 stdout，供下游 PR 评论步骤展示（避免空评论）。
- *   这是有意为之：bench.yml 的 "Generate diff report" 步骤未设置 continue-on-error，
- *   一旦本脚本以非 0 退出，后续 Find/Create comment 步骤将不会执行，
- *   PR 评论无法创建，结构化错误报告也就无法触达维护者。错误详情仅同步打印到
- *   stderr 供 CI 日志排查。
- */
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const NOISE_THRESHOLD = 0.05 // 5%
-const REGRESSION_FLAG_LIMIT = 2 // 疑似回归超过 2 个时提示人工复核
+const NOISE_THRESHOLD = 0.05
+const REGRESSION_FLAG_LIMIT = 2
 
-class BenchDiffError extends Error {
+export class BenchDiffError extends Error {
     constructor(message, { cause } = {}) {
         super(message, { cause })
         this.name = 'BenchDiffError'
     }
 }
 
-function loadBenchResult(filePath) {
-    let raw
-    try {
-        raw = readFileSync(resolve(filePath), 'utf-8')
-    } catch (err) {
-        throw new BenchDiffError(
-            `无法读取基准文件 \`${filePath}\`：${err.message}。请检查 baseline artifact 是否上传成功，或重试 workflow。`,
-            { cause: err },
-        )
+export function parseBenchResults(parsed, source) {
+    if (!parsed || !Array.isArray(parsed.files)) {
+        throw new BenchDiffError(`${source} 不是 Vitest 4 bench JSON：缺少 files 数组。`)
     }
-    try {
-        return JSON.parse(raw)
-    } catch (err) {
-        throw new BenchDiffError(
-            `基准文件 \`${filePath}\` JSON 解析失败：${err.message}。可能 vitest bench 输出被截断或包含非 JSON 日志。`,
-            { cause: err },
-        )
-    }
-}
 
-/**
- * vitest bench --reporter=json 输出格式（关键字段）：
- *   files: [{ tasks: [{ name, result: { hz, ... } }] }]
- * 顶层也可能直接是 tasks 数组。这里兼容两种结构。
- */
-function extractTasks(parsed) {
-    const tasks = []
-    const fileEntries = parsed.files ?? []
-    for (const file of fileEntries) {
-        const fileTasks = file.tasks ?? []
-        for (const task of fileTasks) {
-            if (task.result && typeof task.result.hz === 'number') {
-                tasks.push({ name: task.name, hz: task.result.hz })
+    const tasks = new Map()
+    for (const file of parsed.files) {
+        if (!Array.isArray(file.groups)) {
+            throw new BenchDiffError(`${source} 的 ${file.filepath ?? '未知文件'} 缺少 groups 数组。`)
+        }
+
+        for (const group of file.groups) {
+            if (typeof group.fullName !== 'string' || !Array.isArray(group.benchmarks)) {
+                throw new BenchDiffError(`${source} 中存在无效的 bench group。`)
+            }
+
+            for (const benchmark of group.benchmarks) {
+                if (typeof benchmark.name !== 'string' || benchmark.name.trim() === '') {
+                    throw new BenchDiffError(`${source} 中存在缺少名称的 bench 任务。`)
+                }
+                if (typeof benchmark.hz !== 'number' || !Number.isFinite(benchmark.hz) || benchmark.hz <= 0) {
+                    throw new BenchDiffError(`${source} 中任务「${benchmark.name}」缺少有效 hz 数据。`)
+                }
+
+                const name = `${group.fullName} > ${benchmark.name}`
+                if (tasks.has(name)) throw new BenchDiffError(`${source} 中任务「${name}」重复。`)
+                tasks.set(name, benchmark.hz)
             }
         }
     }
-    // 兼容顶层 tasks（无 files 包装）
-    if (tasks.length === 0 && Array.isArray(parsed.tasks)) {
-        for (const task of parsed.tasks) {
-            if (task.result && typeof task.result.hz === 'number') {
-                tasks.push({ name: task.name, hz: task.result.hz })
-            }
-        }
-    }
+
+    if (tasks.size === 0) throw new BenchDiffError(`${source} 没有可用的 bench 任务。`)
     return tasks
 }
 
+function loadBenchResults(filePath) {
+    let raw
+    try {
+        raw = readFileSync(resolve(filePath), 'utf8')
+    } catch (error) {
+        throw new BenchDiffError(`无法读取基准文件「${filePath}」：${error.message}。`, { cause: error })
+    }
+
+    let parsed
+    try {
+        parsed = JSON.parse(raw)
+    } catch (error) {
+        throw new BenchDiffError(`基准文件「${filePath}」JSON 解析失败：${error.message}。`, { cause: error })
+    }
+    return parseBenchResults(parsed, `基准文件「${filePath}」`)
+}
+
 function formatHz(hz) {
-    if (!isFinite(hz)) return 'N/A'
     if (hz >= 1000) return `${(hz / 1000).toFixed(2)}k`
     return hz.toFixed(2)
 }
@@ -92,84 +75,99 @@ function classifyDelta(delta) {
     return '改善'
 }
 
-function main() {
-    const [mainPath, prPath] = process.argv.slice(2)
+export function compareBenchResults(mainTasks, prTasks) {
+    const rows = []
+    let regressionCount = 0
+    let missingCount = 0
 
+    for (const [name, mainHz] of mainTasks) {
+        const prHz = prTasks.get(name)
+        if (prHz === undefined) {
+            missingCount += 1
+            rows.push(`| ${name} | ${formatHz(mainHz)} | 缺失 | 数据缺失 |`)
+            continue
+        }
+
+        const delta = (prHz - mainHz) / mainHz
+        const label = classifyDelta(delta)
+        if (label === '疑似回归') regressionCount += 1
+        rows.push(`| ${name} | ${formatHz(mainHz)} | ${formatHz(prHz)} | ${delta >= 0 ? '+' : ''}${(delta * 100).toFixed(1)}% (${label}) |`)
+    }
+
+    for (const [name, prHz] of prTasks) {
+        if (!mainTasks.has(name)) rows.push(`| ${name} | — | ${formatHz(prHz)} | 新增基准 |`)
+    }
+
+    const lines = [
+        '## Performance Bench Report',
+        '',
+        '| Task | main (hz) | PR (hz) | 变化 |',
+        '| --- | --- | --- | --- |',
+        ...rows,
+        '',
+    ]
+
+    if (missingCount > 0) {
+        lines.push(`> ⚠️ PR 缺少 ${missingCount} 个主干基准任务，Bench 数据不完整。`)
+    } else {
+        lines.push(`> 疑似回归 ${regressionCount} 个（提示阈值 ${REGRESSION_FLAG_LIMIT}），性能变化仅作信息性参考。`)
+    }
+
+    return { markdown: lines.join('\n'), complete: missingCount === 0 }
+}
+
+function renderErrorReport(error) {
+    const lines = [
+        '## ⚠️ Performance Bench Report — 基准数据缺失',
+        '',
+        `> **错误类型**：${error.name}`,
+        '',
+        `> **详情**：${error.message}`,
+        '',
+        'Bench 对比未能完成，工作流将以失败状态结束。性能波动仍只作信息性参考。',
+    ]
+    if (error.cause?.message) lines.push('', `<details><summary>底层错误</summary>`, '', `\`${error.cause.message}\``, '', '</details>')
+    return lines.join('\n')
+}
+
+export function validateBenchFile(filePath) {
+    return loadBenchResults(filePath)
+}
+
+export function createBenchReport(mainPath, prPath) {
+    const mainTasks = loadBenchResults(mainPath)
+    const prTasks = loadBenchResults(prPath)
+    return compareBenchResults(mainTasks, prTasks)
+}
+
+export function run(argv) {
     try {
-        if (!mainPath || !prPath) {
-            throw new BenchDiffError(
-                '参数缺失。用法：`node scripts/bench-diff.mjs <bench-main.json> <bench-pr.json>`。请检查 workflow 配置。',
-            )
+        if (argv.length === 2 && argv[0] === '--validate') {
+            const tasks = validateBenchFile(argv[1])
+            console.log(`有效 Vitest bench JSON：${tasks.size} 个任务。`)
+            return 0
+        }
+        if (argv.length !== 2) {
+            throw new BenchDiffError('参数错误。用法：`node scripts/bench-diff.mjs <bench-main.json> <bench-pr.json>` 或 `node scripts/bench-diff.mjs --validate <bench.json>`。')
         }
 
-        const mainTasks = new Map(
-            extractTasks(loadBenchResult(mainPath)).map(t => [t.name, t.hz]),
-        )
-        const prTasks = extractTasks(loadBenchResult(prPath))
-
-        const rows = []
-        let regressionCount = 0
-
-        for (const { name, hz: prHz } of prTasks) {
-            const mainHz = mainTasks.get(name)
-            if (mainHz === undefined) {
-                rows.push(`| ${name} | — | ${formatHz(prHz)} | 新增基准 |`)
-                continue
-            }
-            const delta = (prHz - mainHz) / mainHz
-            const label = classifyDelta(delta)
-            if (label === '疑似回归') regressionCount += 1
-            rows.push(
-                `| ${name} | ${formatHz(mainHz)} | ${formatHz(prHz)} | ${delta >= 0 ? '+' : ''}${(delta * 100).toFixed(1)}% (${label}) |`,
-            )
+        const report = createBenchReport(argv[0], argv[1])
+        console.log(report.markdown)
+        if (!report.complete) {
+            console.error('[bench-diff] PR 基准任务缺失。')
+            return 1
         }
-
-        const lines = [
-            '## Performance Bench Report',
-            '',
-            '| Task | main (hz) | PR (hz) | 变化 |',
-            '| --- | --- | --- | --- |',
-            ...rows,
-            '',
-        ]
-
-        if (regressionCount > REGRESSION_FLAG_LIMIT) {
-            lines.push(
-                `> ⚠️ 检测到 ${regressionCount} 个疑似回归（阈值 ${REGRESSION_FLAG_LIMIT}），建议维护者人工复核后再合并。`,
-            )
-        } else {
-            lines.push(
-                `> 疑似回归 ${regressionCount} 个（≤ 阈值 ${REGRESSION_FLAG_LIMIT}），bench 结果仅作信息性参考。`,
-            )
-        }
-
-        console.log(lines.join('\n'))
-    } catch (err) {
-        // 输出结构化错误报告到 stdout（落入 bench-report.md），确保 PR 评论有内容可展示。
-        const errLines = [
-            '## ⚠️ Performance Bench Report — 基准数据缺失',
-            '',
-            `> **错误类型**：${err.name}`,
-            '',
-            `> **详情**：${err.message}`,
-            '',
-            'bench 对比未能完成，结果仅作信息性参考。请维护者检查 baseline artifact 是否上传成功、vitest bench 是否正常退出，或重试本 workflow。',
-        ]
-        if (err.cause?.message) {
-            errLines.push(
-                '',
-                '<details><summary>底层错误</summary>',
-                '',
-                `\`${err.cause.message}\``,
-                '',
-                '</details>',
-            )
-        }
-        console.log(errLines.join('\n'))
-        // 同步打印到 stderr，便于 CI 日志排查；不 exit(1) 以确保下游 PR 评论步骤仍可执行。
-        console.error(`[bench-diff] ${err.name}: ${err.message}`)
-        if (err.cause) console.error(`[bench-diff] cause: ${err.cause.message}`)
+        return 0
+    } catch (error) {
+        const benchError = error instanceof BenchDiffError
+            ? error
+            : new BenchDiffError(error instanceof Error ? error.message : String(error), { cause: error })
+        console.log(renderErrorReport(benchError))
+        console.error(`[bench-diff] ${benchError.name}: ${benchError.message}`)
+        return 1
     }
 }
 
-main()
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+    process.exitCode = run(process.argv.slice(2))
+}

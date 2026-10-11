@@ -78,6 +78,6 @@ BrutxUI 针对不同使用场景提供两种互补的分发与交付形态：
 - 真实消费者集成测试：[`packages/cli/scripts/test-consumers.mjs`](../../packages/cli/scripts/test-consumers.mjs)
 
 ### 2. 修改检查点
-- 修改组件公开导出时，运行 `pnpm check:exports` 验证契约一致性。
+- 修改组件公开导出时，运行 `pnpm check:generated` 验证契约一致性。
 - 调整依赖或子路径时，运行 `pnpm test:consumers` 验证真实消费者打包与安装。
 - 确保内部 helper 不泄漏至 `api-contract.ts` 的 public 列表。

@@ -106,7 +106,7 @@
         },
         "test": {
             "dependsOn": [
-                "build:artifact"
+                "generate"
             ],
             "inputs": [
                 "src/**",
@@ -120,12 +120,13 @@
                 "scripts/**",
                 "api-contract.ts",
                 "../../packages/ui/api-contract.ts",
-                "../../packages/ui/src/types/**"
+                "../../packages/ui/src/types/**",
+                "!perf/**"
             ]
         },
         "test:ssr": {
             "dependsOn": [
-                "build:artifact"
+                "generate"
             ],
             "inputs": [
                 "src/**",
@@ -267,6 +268,23 @@
         },
         "clean": {
             "cache": false
+        },
+        "brutx-vue#test": {
+            "dependsOn": [
+                "build:artifact"
+            ]
+        },
+        "brutx-registry-vue#test": {
+            "dependsOn": [
+                "brutx-ui-vue#generate"
+            ]
+        },
+        "brutx-shared-vue#test": {
+            "dependsOn": []
         }
-    }
+    },
+    "globalEnv": [
+        "BRUTX_RUNTIME_VERSION"
+    ],
+    "cacheDir": ".turbo/cache"
 }

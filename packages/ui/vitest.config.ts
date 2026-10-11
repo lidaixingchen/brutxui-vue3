@@ -2,7 +2,7 @@ import { defineConfig, defaultExclude } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
 
-export default defineConfig({
+export const createUiVitestConfig = (include: string[]) => defineConfig({
     plugins: [vue()],
     resolve: {
         alias: {
@@ -15,7 +15,7 @@ export default defineConfig({
         testTimeout: 10000,
         environment: 'happy-dom',
         setupFiles: ['./src/vitest.setup.ts'],
-        include: ['src/**/*.{test,spec}.{ts,tsx}', 'scripts/**/*.{test,spec}.{ts,tsx}'],
+        include,
         exclude: ['src/**/*.browser.test.ts', 'src/ssr/**/*.test.ts', ...defaultExclude],
         pool: 'threads',
         maxWorkers: process.env.CI ? 2 : undefined,
@@ -70,3 +70,5 @@ export default defineConfig({
         },
     },
 })
+
+export default createUiVitestConfig(['src/**/*.{test,spec}.{ts,tsx}', 'scripts/**/*.{test,spec}.{ts,tsx}'])

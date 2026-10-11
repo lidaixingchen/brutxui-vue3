@@ -14,6 +14,7 @@ import {
     validateGeneratedItemMatchesMetadata,
     validateRegistryItemInternalImports,
     validateRegistryManifestConsistency,
+    validateRegistryPublicIndexProjection,
     type RegistryBuildManifestSnapshot,
 } from '../scripts/validate-utils'
 import type { RegistryIndexItem } from 'brutx-shared-vue'
@@ -337,6 +338,52 @@ describe('validate-registry helpers', () => {
             'status does not match registry metadata',
             'replacement does not match registry metadata',
             'declared file "components/ui/button/button-variants.ts" is missing from generated registry item',
+        ])
+    })
+
+    it('matches generated public index exports to the current UI index projection', () => {
+        const currentIndex = [
+            "export { default as Button } from './Button.vue'",
+            "export { buttonVariants as buttonVariants } from './button-variants'",
+            "export type { ButtonProps as ButtonProps } from './button-types'",
+        ].join('\n')
+        const item = createRegistryItem('button', {
+            files: ['components/ui/button/index.ts'],
+        })
+        item.files[0].content = [
+            "export type { ButtonProps } from './button-types'",
+            "export { buttonVariants } from './button-variants'",
+            "export { default as Button } from './Button.vue'",
+        ].join('\n')
+
+        expect(validateRegistryPublicIndexProjection(item, currentIndex)).toEqual([])
+    })
+
+    it('reports missing and stale public index exports', () => {
+        const currentIndex = [
+            "export { default as Button } from './Button.vue'",
+            "export type { ButtonProps } from './button-types'",
+        ].join('\n')
+        const item = createRegistryItem('button', {
+            files: ['components/ui/button/index.ts'],
+        })
+        item.files[0].content = [
+            "export { default as Button } from './Button.vue'",
+            'export const staleExport = true',
+        ].join('\n')
+
+        expect(validateRegistryPublicIndexProjection(item, currentIndex)).toEqual([
+            'public index export projection does not match current UI index (expected [type:ButtonProps, value:Button], received [value:Button, value:staleExport])',
+        ])
+    })
+
+    it('reports generated registry items without a public index', () => {
+        const item = createRegistryItem('button', {
+            files: ['components/ui/button/Button.vue'],
+        })
+
+        expect(validateRegistryPublicIndexProjection(item, "export { default as Button } from './Button.vue'")).toEqual([
+            'public index "components/ui/button/index.ts" is missing from generated registry item',
         ])
     })
 

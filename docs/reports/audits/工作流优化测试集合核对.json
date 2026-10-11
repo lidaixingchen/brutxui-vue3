@@ -1,0 +1,161 @@
+{
+  "核对说明": {
+    "基线": "f29df848099bad94fc55e3e2c4e2d3ee02bce3d0",
+    "实现提交": "598b219cb3dfe51e0d62dfee4110c44667315758",
+    "标识": "相对文件路径与完整测试名称，保留同名测试出现次数",
+    "shared改名": "generator graph retains uncached writers and includes mixed inputs 保留原依赖和输入断言；重复 dry-run 合并为一次",
+    "退役断言": "z-index 源码零 import 实现形态限制"
+  },
+  "ui": {
+    "before": 4123,
+    "after": 4134,
+    "removed": [
+      {
+        "file": "packages/ui/src/lib/z-index.test.ts",
+        "name": "z-index > remains strictly self-contained with no external module imports",
+        "count": 1
+      }
+    ],
+    "added": [
+      {
+        "file": "packages/ui/scripts/audit-brutal-fallback.test.ts",
+        "name": "auditFallbacks > accepts theme-equivalent values and the dark subtle-color fallbacks",
+        "count": 1
+      },
+      {
+        "file": "packages/ui/scripts/audit-brutal-fallback.test.ts",
+        "name": "auditFallbacks > fails on missing fallbacks and mismatches outside the narrow theme exception",
+        "count": 1
+      },
+      {
+        "file": "packages/ui/scripts/api-module-coverage.test.ts",
+        "name": "API contract module coverage > accepts registered modules and missing entry files owned by generation",
+        "count": 1
+      },
+      {
+        "file": "packages/ui/scripts/api-module-coverage.test.ts",
+        "name": "API contract module coverage > reports component, composable, and directive sources missing from the contract",
+        "count": 1
+      },
+      {
+        "file": "packages/ui/scripts/check-class-literals.test.ts",
+        "name": "checkClassLiterals > accepts classes resolved from a closed literal map",
+        "count": 1
+      },
+      {
+        "file": "packages/ui/scripts/check-class-literals.test.ts",
+        "name": "checkClassLiterals > reports runtime values interpolated into class names",
+        "count": 1
+      },
+      {
+        "file": "packages/ui/scripts/check-deprecated-utilities.test.ts",
+        "name": "auditDeprecatedUtilities > accepts the standard focus rings and registered brutal shadows",
+        "count": 1
+      },
+      {
+        "file": "packages/ui/scripts/check-deprecated-utilities.test.ts",
+        "name": "auditDeprecatedUtilities > reports nonstandard ring utilities and hard-coded rgba shadows",
+        "count": 1
+      },
+      {
+        "file": "packages/ui/scripts/focus-ring-contract.test.ts",
+        "name": "FOCUS_RING_CLASSES > keeps the current focus-visible ring contract",
+        "count": 1
+      },
+      {
+        "file": "packages/ui/scripts/focus-ring-contract.test.ts",
+        "name": "FOCUS_RING_CLASSES > keeps both generated CLI utils templates aligned with the UI constant",
+        "count": 1
+      },
+      {
+        "file": "packages/ui/scripts/api-docs/catalog.test.ts",
+        "name": "公开组件文档清单 > 规范覆盖检查包含组件与区块并要求真实双语页面精确匹配",
+        "count": 1
+      },
+      {
+        "file": "packages/ui/scripts/api-docs/catalog.test.ts",
+        "name": "公开组件文档清单 > 公开组件页的大小写错误继续报缺页且保留未映射页诊断",
+        "count": 1
+      }
+    ]
+  },
+  "cli": {
+    "before": 810,
+    "after": 810,
+    "removed": [],
+    "added": []
+  },
+  "shared": {
+    "before": 320,
+    "after": 321,
+    "removed": [
+      {
+        "file": "packages/shared/tests/build-task-contract.test.ts",
+        "name": "Turbo Build Task Graph Contract > cold and hot generate graph runs retain uncached writers and hash mixed inputs",
+        "count": 1
+      }
+    ],
+    "added": [
+      {
+        "file": "packages/shared/tests/build-task-contract.test.ts",
+        "name": "Turbo Build Task Graph Contract > source tests use their required inputs and distinguish Node runtimes in cache",
+        "count": 1
+      },
+      {
+        "file": "packages/shared/tests/build-task-contract.test.ts",
+        "name": "Turbo Build Task Graph Contract > generator graph retains uncached writers and includes mixed inputs",
+        "count": 1
+      }
+    ]
+  },
+  "registry": {
+    "before": 139,
+    "after": 142,
+    "removed": [],
+    "added": [
+      {
+        "file": "packages/registry/tests/validate-utils.test.ts",
+        "name": "validate-registry helpers > matches generated public index exports to the current UI index projection",
+        "count": 1
+      },
+      {
+        "file": "packages/registry/tests/validate-utils.test.ts",
+        "name": "validate-registry helpers > reports missing and stale public index exports",
+        "count": 1
+      },
+      {
+        "file": "packages/registry/tests/validate-utils.test.ts",
+        "name": "validate-registry helpers > reports generated registry items without a public index",
+        "count": 1
+      }
+    ]
+  },
+  "ssr": {
+    "before": 212,
+    "after": 212,
+    "removed": [],
+    "added": []
+  },
+  "partition": {
+    "default": 4134,
+    "coverage": 4034,
+    "tooling": 100,
+    "equal": true
+  },
+  "ui_shards": {
+    "counts": [
+      2125,
+      2009
+    ],
+    "total": 4134,
+    "equal": true
+  },
+  "coverage_shards": {
+    "counts": [
+      2062,
+      1972
+    ],
+    "total": 4034,
+    "equal": true
+  }
+}

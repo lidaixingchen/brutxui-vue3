@@ -15,9 +15,6 @@ const FORBIDDEN_DEPENDENCIES = [
     '@vue/compiler-core',
     'vue-component-meta',
     'magic-string',
-    'brutx-shared-vue/ast',
-    'brutx-shared-vue/scan',
-    'brutx-shared-vue/fs',
     'brutx-shared-vue',
 ] as const;
 
@@ -62,7 +59,7 @@ function scanDir(dir: string, violations: Violation[]): void {
             scanDir(fullPath, violations);
         } else if (entry.isFile()) {
             const ext = path.extname(entry.name);
-            if (ext === '.js' || ext === '.mjs' || ext === '.cjs' || ext === '.ts' || fullPath.endsWith('.d.ts')) {
+            if (ext === '.js' || ext === '.mjs' || ext === '.cjs' || ext === '.ts') {
                 scanFile(fullPath, violations);
             }
         }

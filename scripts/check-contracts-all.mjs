@@ -31,9 +31,8 @@ const suite = defineGuardSuite({
     },
     {
       id: 'fallback-vars',
-      desc: '设计令牌 Fallback 覆盖率基线',
+      desc: '设计令牌 Fallback 覆盖率检查',
       target: 'packages/ui/scripts/audit-brutal-fallback.ts',
-      args: ['--check-baseline'],
       fix: {
         command: 'pnpm --filter brutx-ui-vue audit:fallback:fix',
         description: '自动补全缺失的设计令牌 fallback。',
@@ -41,7 +40,7 @@ const suite = defineGuardSuite({
       action: {
         type: 'auto_fix',
         command: 'pnpm --filter brutx-ui-vue audit:fallback:fix',
-        description: '自动补全缺失的设计令牌 fallback（若属预期变更请运行 pnpm --filter brutx-ui-vue audit:fallback:update 更新基线）。',
+        description: '自动补全缺失的设计令牌 fallback。',
       },
     },
     {
@@ -56,17 +55,12 @@ const suite = defineGuardSuite({
     },
     {
       id: 'deprecated-utils',
-      desc: '已废弃工具类防回潮基线',
+      desc: '已废弃工具类检查',
       target: 'packages/ui/scripts/check-deprecated-utilities.ts',
-      args: ['--check-baseline'],
-      fix: {
-        command: 'pnpm --filter brutx-ui-vue check:deprecated:update',
-        description: '更新废弃类基线快照。',
-      },
       action: {
-        type: 'auto_fix',
-        command: 'pnpm --filter brutx-ui-vue check:deprecated:update',
-        description: '若废弃类变更属预期，运行此命令更新基线快照；否则请移除废弃的 ring 或 shadow-rgba 工具类。',
+        type: 'manual_fix',
+        command: null,
+        description: '移除扫描报告中的 ring 或 shadow-rgba 工具类。',
       },
     },
     {
@@ -78,49 +72,6 @@ const suite = defineGuardSuite({
         type: 'manual_fix',
         command: null,
         description: '请根据依赖链诊断补充 API contract 归属或修正越层、未解析和编译工具依赖。',
-      },
-    },
-    {
-      id: 'api-exports',
-      desc: 'UI API 契约投影与 exports 同步',
-      target: 'packages/ui/scripts/check-exports.ts',
-      timeoutMs: HEAVY_CONTRACT_TIMEOUT_MS,
-      action: {
-        type: 'manual_fix',
-        command: null,
-        description: '请从 API contract 生成并校验公共入口、组件 index 与 package exports 投影。',
-      },
-    },
-    {
-      id: 'tokens-alignment',
-      desc: 'CLI 生成输出对齐',
-      target: 'packages/cli/scripts/generate.ts',
-      args: ['--check'],
-      timeoutMs: HEAVY_CONTRACT_TIMEOUT_MS,
-      fix: {
-        command: 'pnpm --filter brutx-vue generate',
-        description: '重新从 shared 单一信源生成 CLI 输出。',
-      },
-      action: {
-        type: 'auto_fix',
-        command: 'pnpm --filter brutx-vue generate',
-        description: '重新从 shared 单一信源生成 CLI 输出。',
-      },
-    },
-    {
-      id: 'ui-generation-sync',
-      desc: 'UI 生成输出对齐',
-      target: 'packages/ui/scripts/generate.ts',
-      args: ['--check'],
-      timeoutMs: HEAVY_CONTRACT_TIMEOUT_MS,
-      fix: {
-        command: 'pnpm --filter brutx-ui-vue generate',
-        description: '按 tokens、scan、component index、exports 顺序重新生成 UI 输出。',
-      },
-      action: {
-        type: 'auto_fix',
-        command: 'pnpm --filter brutx-ui-vue generate',
-        description: '按 tokens、scan、component index、exports 顺序重新生成 UI 输出。',
       },
     },
   ],

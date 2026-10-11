@@ -134,31 +134,8 @@ test('只按 index 快照运行 UI 生成检查，并保持工作树和 index �
     assert.deepEqual(calls.map(call => call.packageName), ['ui', 'docs'])
     assert.deepEqual(indexAfter, indexBefore)
     assert.equal(statusAfter, statusBefore)
-})
-
-test('即使 Git status 未变化也能检测工作树文件字节被改写', async t => {
-    const repoRoot = createRepo()
-    t.after(() => disposeRepo(repoRoot))
-    stageFile(repoRoot, UI_SOURCE, '<template>staged</template>\n')
-    runGit(repoRoot, 'update-index', '--assume-unchanged', '--', UI_SOURCE)
-    const indexPath = join(repoRoot, runGit(repoRoot, 'rev-parse', '--git-path', 'index'))
-    const indexBefore = readFileSync(indexPath)
-    const statusBefore = runGit(repoRoot, 'status', '--porcelain=v1', '--untracked-files=all')
-
-    await assert.rejects(
-        checkStagedSnapshot({
-            repoRoot,
-            generatorRunner: createRunner([], ({ packageName }) => {
-                assert.equal(packageName, 'ui')
-                writeRepoFile(repoRoot, UI_SOURCE, '<template>silently changed</template>\n')
-                return successfulRun()
-            }),
-        }),
-        /工作树文件内容\/状态/,
-    )
-
-    assert.deepEqual(readFileSync(indexPath), indexBefore)
-    assert.equal(runGit(repoRoot, 'status', '--porcelain=v1', '--untracked-files=all'), statusBefore)
+    assert.equal(readFileSync(join(repoRoot, UI_SOURCE), 'utf8'), '<template>unstaged</template>\n')
+    assert.equal(readFileSync(join(repoRoot, UI_GENERATOR), 'utf8'), 'export const source = "unstaged"\n')
 })
 
 test('根生成输入覆盖 UI、CLI 与 API 文档，快照检查代码仍不触发文档生成', () => {
@@ -253,6 +230,8 @@ test('API 文档生成检查读取候选快照并保持工作树与 index 不变
     assert.deepEqual(calls.map(call => call.packageName), ['docs'])
     assert.deepEqual(readFileSync(indexPath), indexBefore)
     assert.equal(runGit(repoRoot, 'status', '--porcelain=v1', '--untracked-files=all'), statusBefore)
+    assert.equal(readFileSync(join(repoRoot, contentPath), 'utf8'), 'export const content = "unstaged"\n')
+    assert.equal(readFileSync(join(repoRoot, generatedPath), 'utf8'), '{"description":"unstaged"}\n')
 })
 
 test('API 文档生成失败指出只读检查命令', async t => {

@@ -20,6 +20,7 @@ interface DryRunEnvironmentVariables {
 
 interface DryRunTask {
     taskId: string
+    hash: string
     command: string
     inputs?: Record<string, string>
     dependencies?: string[]
@@ -279,19 +280,29 @@ describe('Turbo Build Task Graph Contract', () => {
         ]) {
             expectInput(cliArtifact, relativePath)
         }
-    })
+    }, TURBO_DRY_RUN_TEST_TIMEOUT_MS)
 
-    it('cold and hot generate graph runs retain uncached writers and hash mixed inputs', () => {
+    it('source tests use their required inputs and distinguish Node runtimes in cache', () => {
+        const args = ['test', '--filter=brutx-ui-vue', '--filter=brutx-vue', '--filter=brutx-registry-vue', '--filter=brutx-shared-vue']
+        const node22 = runTurboDryRun(args, { BRUTX_RUNTIME_VERSION: 'v22.0.0' })
+        const node24 = runTurboDryRun(args, { BRUTX_RUNTIME_VERSION: 'v24.0.0' })
+        expect(findTask(node22, 'brutx-ui-vue#test').dependencies).toEqual(['brutx-ui-vue#generate'])
+        expect(findTask(node22, 'brutx-vue#test').dependencies).toContain('brutx-vue#build:artifact')
+        expect(findTask(node22, 'brutx-registry-vue#test').dependencies).toEqual(['brutx-ui-vue#generate'])
+        expect(node22.tasks.some(task => task.taskId.startsWith('docs#'))).toBe(false)
+        for (const packageName of ['brutx-ui-vue', 'brutx-vue', 'brutx-registry-vue', 'brutx-shared-vue']) {
+            expect(findTask(node22, `${packageName}#test`).hash).not.toBe(findTask(node24, `${packageName}#test`).hash)
+        }
+    }, TURBO_DRY_RUN_TEST_TIMEOUT_MS)
+
+    it('generator graph retains uncached writers and includes mixed inputs', () => {
         const args = ['generate', '--filter=brutx-ui-vue', '--filter=brutx-vue']
-        const coldGraph = runTurboDryRun(args)
-        const hotGraph = runTurboDryRun(args)
+        const graph = runTurboDryRun(args)
 
-        const uiGenerate = findTask(coldGraph, 'brutx-ui-vue#generate')
-        const cliGenerate = findTask(coldGraph, 'brutx-vue#generate')
-        const hotUiGenerate = findTask(hotGraph, 'brutx-ui-vue#generate')
-        const hotCliGenerate = findTask(hotGraph, 'brutx-vue#generate')
+        const uiGenerate = findTask(graph, 'brutx-ui-vue#generate')
+        const cliGenerate = findTask(graph, 'brutx-vue#generate')
 
-        for (const task of [uiGenerate, cliGenerate, hotUiGenerate, hotCliGenerate]) {
+        for (const task of [uiGenerate, cliGenerate]) {
             expect(task.resolvedTaskDefinition.cache).toBe(false)
             expect(task.resolvedTaskDefinition.outputs).toEqual([])
         }

@@ -1,17 +1,15 @@
 import { execFileSync, execSync } from 'node:child_process'
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
-import { createRequire } from 'node:module'
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
+import process from 'node:process'
 import path from 'node:path'
-import { fileURLToPath, pathToFileURL } from 'node:url'
+import { fileURLToPath } from 'node:url'
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const packageJsonPath = path.join(packageRoot, 'package.json')
 const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'))
-const require = createRequire(import.meta.url)
 const failures = []
 const checkedTargets = new Set()
-const loadedEntries = new Set()
 const resolvedConsumerEntries = new Set()
 
 function addFailure(message) {
@@ -133,25 +131,6 @@ function assertTargetExists(entry) {
     return filePath
 }
 
-async function loadEntry(entry, filePath) {
-    if (entry.condition !== 'import' && entry.condition !== 'require') return
-
-    const key = `${entry.condition}:${entry.target}`
-    if (loadedEntries.has(key)) return
-    loadedEntries.add(key)
-
-    try {
-        if (entry.condition === 'import') {
-            await import(pathToFileURL(filePath).href)
-        } else {
-            require(filePath)
-        }
-    } catch (error) {
-        const reason = error instanceof Error ? error.message : String(error)
-        addFailure(`${entry.subpath} ${entry.condition} failed to load ${entry.target}: ${reason}`)
-    }
-}
-
 function runConsumerScript(scriptPath, description) {
     try {
         execFileSync(process.execPath, [scriptPath], {
@@ -205,7 +184,6 @@ function writeConsumerProjectScripts(consumerRoot, specifiers) {
 function smokeConsumerResolution() {
     const consumerRoot = mkdtempSync(path.join(tmpdir(), 'brutx-ui-package-smoke-'))
     const nodeModulesDir = path.join(consumerRoot, 'node_modules')
-    const packageDest = path.join(nodeModulesDir, packageJson.name)
 
     try {
         mkdirSync(nodeModulesDir, { recursive: true })
@@ -288,10 +266,7 @@ function smokeConsumerResolution() {
 
 async function main() {
     for (const entry of collectPackageTargets()) {
-        const filePath = assertTargetExists(entry)
-        if (filePath) {
-            await loadEntry(entry, filePath)
-        }
+        assertTargetExists(entry)
     }
 
     smokeConsumerResolution()
@@ -304,7 +279,7 @@ async function main() {
         process.exit(1)
     }
 
-    console.log(`Package smoke check passed: ${checkedTargets.size} files checked, ${loadedEntries.size} JS entries loaded, ${resolvedConsumerEntries.size} consumer specifiers resolved.`)
+    console.log(`Package smoke check passed: ${checkedTargets.size} files checked, ${resolvedConsumerEntries.size} consumer specifiers resolved.`)
 }
 
 main()

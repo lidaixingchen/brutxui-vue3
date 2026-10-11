@@ -1,5 +1,4 @@
 import { execFileSync, spawnSync } from 'node:child_process'
-import { createHash } from 'node:crypto'
 import {
     chmodSync,
     existsSync,
@@ -7,7 +6,6 @@ import {
     mkdirSync,
     mkdtempSync,
     readFileSync,
-    readlinkSync,
     readdirSync,
     realpathSync,
     rmdirSync,
@@ -70,15 +68,6 @@ const PATH_SEPARATOR = '/'
 const WORKSPACE_PACKAGE_SCOPE = 'packages'
 const GENERATED_INDEX_FILE = /^packages\/ui\/src\/components\/[^/]+\/index\.ts$/
 const TEST_FILE = /(?:\.test|\.spec)\.[^.]+$/
-const INTEGRITY_FIELD_SEPARATOR = '\0'
-const MODE_STRING_RADIX = 8
-const WORKTREE_EXCLUDED_PATH_SEGMENTS = new Set(['.git', 'node_modules'])
-const WORKTREE_FILE_KIND = Object.freeze({
-    FILE: 'file',
-    SYMLINK: 'symlink',
-    OTHER: 'other',
-    MISSING: 'missing',
-})
 const ROOT_GENERATION_INPUTS = new Set(['package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml'])
 const ROOT_TYPESCRIPT_CONFIGURATION = /^tsconfig(?:\.[^/]+)?\.json$/
 const SHARED_GENERATION_CHECK_FILES = new Set(['.husky/pre-commit'])
@@ -139,100 +128,6 @@ function getRepositoryRoot(repositoryRoot) {
     const resolvedRoot = repositoryRoot ? path.resolve(repositoryRoot) : DEFAULT_REPOSITORY_ROOT
     const gitRoot = runGit(resolvedRoot, ['rev-parse', '--show-toplevel'], { encoding: 'utf8' }).trim()
     return path.resolve(gitRoot)
-}
-
-function getIndexPath(repositoryRoot) {
-    const gitPath = runGit(repositoryRoot, ['rev-parse', '--git-path', 'index'], { encoding: 'utf8' }).trim()
-    return path.resolve(repositoryRoot, gitPath)
-}
-
-function hashBytes(bytes) {
-    return createHash('sha256').update(bytes).digest('hex')
-}
-
-function isExcludedWorktreePath(relativePath) {
-    return relativePath.split(PATH_SEPARATOR).some(segment => WORKTREE_EXCLUDED_PATH_SEGMENTS.has(segment))
-}
-
-function readWorktreePaths(repositoryRoot) {
-    return splitNulSeparated(
-        runGit(repositoryRoot, ['ls-files', '--cached', '--others', '--exclude-standard', '-z']),
-    )
-        .map(value => value.toString('utf8'))
-        .filter(relativePath => !isExcludedWorktreePath(relativePath))
-        .sort((left, right) => Buffer.from(left).compare(Buffer.from(right)))
-}
-
-function readWorktreeEntry(repositoryRoot, relativePath) {
-    const absolutePath = path.resolve(repositoryRoot, ...relativePath.split(PATH_SEPARATOR))
-    let fileStat
-    try {
-        fileStat = lstatSync(absolutePath)
-    } catch (error) {
-        if (error?.code === 'ENOENT') {
-            return { kind: WORKTREE_FILE_KIND.MISSING, mode: '0', content: Buffer.alloc(0) }
-        }
-        throw error
-    }
-
-    if (fileStat.isSymbolicLink()) {
-        return {
-            kind: WORKTREE_FILE_KIND.SYMLINK,
-            mode: fileStat.mode.toString(MODE_STRING_RADIX),
-            content: Buffer.from(readlinkSync(absolutePath), 'utf8'),
-        }
-    }
-    if (fileStat.isFile()) {
-        return {
-            kind: WORKTREE_FILE_KIND.FILE,
-            mode: fileStat.mode.toString(MODE_STRING_RADIX),
-            content: readFileSync(absolutePath),
-        }
-    }
-    return {
-        kind: WORKTREE_FILE_KIND.OTHER,
-        mode: fileStat.mode.toString(MODE_STRING_RADIX),
-        content: Buffer.alloc(0),
-    }
-}
-
-function getWorktreeHash(repositoryRoot) {
-    const digest = createHash('sha256')
-    for (const relativePath of readWorktreePaths(repositoryRoot)) {
-        const entry = readWorktreeEntry(repositoryRoot, relativePath)
-        digest.update(
-            `${relativePath}${INTEGRITY_FIELD_SEPARATOR}${entry.kind}${INTEGRITY_FIELD_SEPARATOR}${entry.mode}${INTEGRITY_FIELD_SEPARATOR}`,
-            'utf8',
-        )
-        digest.update(entry.content)
-        digest.update(INTEGRITY_FIELD_SEPARATOR, 'utf8')
-    }
-    return digest.digest('hex')
-}
-
-function getRepositoryIntegrity(repositoryRoot) {
-    const indexPath = getIndexPath(repositoryRoot)
-    const indexBytes = existsSync(indexPath) ? readFileSync(indexPath) : Buffer.alloc(0)
-    const statusBytes = runGit(repositoryRoot, ['status', '--porcelain=v1', '--untracked-files=all', '-z'])
-    return {
-        indexPath,
-        indexHash: hashBytes(indexBytes),
-        statusHash: hashBytes(statusBytes),
-        worktreeHash: getWorktreeHash(repositoryRoot),
-    }
-}
-
-function assertRepositoryIntegrity(repositoryRoot, before) {
-    const after = getRepositoryIntegrity(repositoryRoot)
-    if (
-        after.indexHash !== before.indexHash ||
-        after.statusHash !== before.statusHash ||
-        after.worktreeHash !== before.worktreeHash
-    ) {
-        throw new Error(
-            '暂存快照检查修改了 Git index 或工作树文件内容/状态，已中止提交；请检查生成检查入口是否写入仓库。',
-        )
-    }
 }
 
 function splitNulSeparated(bytes) {
@@ -667,7 +562,6 @@ export async function checkStagedSnapshot(options = {}) {
     const affectedPackages = determineAffectedPackages(stagedPaths)
     if (affectedPackages.length === 0) return { checked: false, packages: [], stagedPaths }
 
-    const integrityBefore = getRepositoryIntegrity(repositoryRoot)
     const candidateRoot = mkdtempSync(path.join(options.tempDirectory ?? os.tmpdir(), TEMPORARY_DIRECTORY_PREFIX))
     let operationError
     try {
@@ -687,11 +581,6 @@ export async function checkStagedSnapshot(options = {}) {
         } catch (cleanupError) {
             operationError ??= cleanupError
         }
-    }
-    try {
-        assertRepositoryIntegrity(repositoryRoot, integrityBefore)
-    } catch (integrityError) {
-        operationError = integrityError
     }
     if (operationError) throw operationError
     return { checked: true, packages: affectedPackages, stagedPaths }

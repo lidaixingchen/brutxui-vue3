@@ -2,12 +2,18 @@ import fs from 'node:fs'
 import path from 'node:path'
 import type { ApiContract } from 'brutx-shared-vue/api-contract'
 import { COMPONENT_METADATA } from 'brutx-shared-vue'
+// eslint-disable-next-line no-restricted-imports
+import {
+    checkComponentDocCoverage,
+    DOC_LOCALE_DIRECTORIES,
+    DOC_LOCALES,
+    type ComponentDocPageCoverage,
+} from '../../../../scripts/docs/component-doc-coverage.js'
 
-export const DOC_LOCALES = ['zh-CN', 'en'] as const
+export { DOC_LOCALES }
 export const CATALOG_VERSION = 1
 export const CATALOG_PATH = 'apps/docs/.vitepress/api-generated/catalog.json'
 const MIGRATION_PATH = 'apps/docs/.vitepress/api-content/migrations.json'
-const LOCALE_DIRECTORIES = { 'zh-CN': 'components', en: 'en/components' } as const
 
 /** 文档主成员独立于按名称排列的导出顺序。 */
 const PRIMARY_MEMBERS: Readonly<Record<string, string>> = {
@@ -94,6 +100,16 @@ export function collectApiCatalog(root: string, contract: ApiContract): ApiCatal
     const diagnostics: CatalogDiagnostic[] = []
     const groups: CatalogGroup[] = []
     const mappedPages = new Set<string>()
+    const componentEntries = contract.entries.filter(item => item.kind === 'component')
+    const pageCoverage = checkComponentDocCoverage(root, componentEntries
+        .filter(item => COMPONENT_METADATA[item.subpath.replace(/^\.\//u, '')]?.kind !== 'block')
+        .map(item => item.subpath.replace(/^\.\//u, '')))
+    const pagesByComponent = new Map<string, Map<typeof DOC_LOCALES[number], ComponentDocPageCoverage>>()
+    for (const page of pageCoverage.pages) {
+        const componentPages = pagesByComponent.get(page.componentName) ?? new Map<typeof DOC_LOCALES[number], ComponentDocPageCoverage>()
+        componentPages.set(page.locale, page)
+        pagesByComponent.set(page.componentName, componentPages)
+    }
     const migrationFile = path.join(root, MIGRATION_PATH)
     const migration = fs.existsSync(migrationFile)
         ? JSON.parse(fs.readFileSync(migrationFile, 'utf8')) as {
@@ -107,7 +123,7 @@ export function collectApiCatalog(root: string, contract: ApiContract): ApiCatal
         diagnostics.push({ ...diagnostic, severity: 'error' })
     }
 
-    for (const entry of contract.entries.filter(item => item.kind === 'component')) {
+    for (const entry of componentEntries) {
         const groupId = entry.id
         const name = entry.subpath.replace(/^\.\//u, '')
         const metadata = COMPONENT_METADATA[name]
@@ -149,11 +165,12 @@ export function collectApiCatalog(root: string, contract: ApiContract): ApiCatal
         const pages: CatalogPage[] = []
         if (scope !== 'block') {
             for (const locale of DOC_LOCALES) {
-                const file = `apps/docs/${LOCALE_DIRECTORIES[locale]}/${slug}.md`
+                const file = `apps/docs/${DOC_LOCALE_DIRECTORIES[locale].component}/${slug}.md`
                 if (mappedPages.has(file)) report({ ruleId: 'API_PAGE_DUPLICATE', groupId, file, message: '页面映射到多个组件组' })
                 mappedPages.add(file)
-                const exists = fs.existsSync(path.join(root, file))
-                if (!exists) report({ ruleId: 'API_PAGE_MISSING', groupId, file, message: '组件缺少对应语言页面' })
+                const coveredPage = pagesByComponent.get(name)?.get(locale)
+                const exists = coveredPage?.exists ?? fs.existsSync(path.join(root, file))
+                if (!exists) report({ ruleId: 'API_PAGE_MISSING', groupId, file, message: '组件缺少对应语言页面或文档路径大小写不匹配' })
                 const presentation = !exists
                     ? 'missing'
                     : scope === 'functional-page'
@@ -170,7 +187,8 @@ export function collectApiCatalog(root: string, contract: ApiContract): ApiCatal
         groups.push({ id: groupId, slug, scope, primaryMemberId: primary?.id ?? null, ...(functionalApi ? { functionalApi } : {}), members: ordered, supportingExports, pages })
     }
 
-    for (const directory of Object.values(LOCALE_DIRECTORIES)) {
+    for (const locale of DOC_LOCALES) {
+        const directory = DOC_LOCALE_DIRECTORIES[locale].component
         const absolute = path.join(root, 'apps/docs', directory)
         if (!fs.existsSync(absolute)) continue
         for (const name of fs.readdirSync(absolute).sort()) {

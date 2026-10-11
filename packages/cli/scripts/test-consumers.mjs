@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import ts from 'typescript';
 import {
     loadCandidateArtifacts,
     packCandidateArtifacts,
@@ -20,12 +21,9 @@ const localRegistryDir = path.join(repoRoot, 'packages/registry/registry');
 
 const ALL_CONSUMER_IDS = Object.freeze(['U1', 'C1', 'C3']);
 const DEFAULT_CONSUMER_IDS = Object.freeze(['U1', 'C1']);
-const INTERNAL_SELECTION_HELPERS = Object.freeze([
-    'useClearableSelection',
-    'useSelectableTrigger',
-    'useSelectionDisplayText',
-    'useTransferPanelSelection',
-]);
+const C1_COMPONENT_NAMES = Object.freeze(['button', 'combobox', 'tree-select', 'transfer']);
+const PUBLIC_COMPONENT_INDEX_FILENAME = 'index.ts';
+const COMPOSABLE_MODULE_PREFIX = 'composable:';
 const SIGNAL_EXIT_CODES = Object.freeze({
     SIGINT: 130,
     SIGTERM: 143,
@@ -52,17 +50,6 @@ const CONSUMER_VERSIONS = Object.freeze({
     prismjs: '1.30.0',
     vCalendar: '3.1.2',
     veeValidate: '4.15.1',
-});
-const C1_PUBLIC_INDEX_EXPECTATIONS = Object.freeze({
-    button: ['export { default as Button }', 'export { buttonVariants }'],
-    combobox: ['export { default as Combobox }', 'export type { ComboboxOption }'],
-    'tree-select': [
-        'export { default as TreeSelect }',
-        'export { default as TreeSelectNode }',
-        'export type { SelectionMode }',
-        'export type { TreeNode }',
-    ],
-    transfer: ['export { default as Transfer }', 'export type { TransferDataItem }'],
 });
 const CONSUMER_NPMRC = 'ignore-scripts=true\nconfirmModulesPurge=false\nlink-workspace-packages=false\nprefer-workspace-packages=false\n';
 
@@ -283,34 +270,83 @@ function assertExpectedTypecheckFailure(cwd, sourcePath, expectedMessages) {
     }
 }
 
+function getObjectProperty(object, name) {
+    return object.properties.find(property =>
+        ts.isPropertyAssignment(property)
+        && (ts.isIdentifier(property.name) || ts.isStringLiteral(property.name))
+        && property.name.text === name
+    );
+}
+
+function getStringProperty(object, name) {
+    const property = getObjectProperty(object, name);
+    return property && ts.isStringLiteral(property.initializer) ? property.initializer.text : undefined;
+}
+
+export function readPrivateComposableNames() {
+    const contractPath = path.join(repoRoot, 'packages/ui/api-contract.ts');
+    const contractSource = fs.readFileSync(contractPath, 'utf-8');
+    const sourceFile = ts.createSourceFile(contractPath, contractSource, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+    const declaration = sourceFile.statements
+        .filter(ts.isVariableStatement)
+        .flatMap(statement => statement.declarationList.declarations)
+        .find(candidate => ts.isIdentifier(candidate.name) && candidate.name.text === 'API_CONTRACT');
+
+    if (!declaration?.initializer || !ts.isObjectLiteralExpression(declaration.initializer)) {
+        throw new Error(`Could not read API_CONTRACT from ${contractPath}`);
+    }
+
+    const modulesProperty = getObjectProperty(declaration.initializer, 'modules');
+    if (!modulesProperty || !ts.isArrayLiteralExpression(modulesProperty.initializer)) {
+        throw new Error(`API_CONTRACT modules are not available in ${contractPath}`);
+    }
+
+    const names = modulesProperty.initializer.elements.flatMap((moduleEntry) => {
+        if (!ts.isObjectLiteralExpression(moduleEntry)) return [];
+
+        const id = getStringProperty(moduleEntry, 'id');
+        const publicProperty = getObjectProperty(moduleEntry, 'public');
+        if (
+            !id?.startsWith(COMPOSABLE_MODULE_PREFIX)
+            || publicProperty?.initializer.kind !== ts.SyntaxKind.FalseKeyword
+        ) {
+            return [];
+        }
+
+        return [id.slice(COMPOSABLE_MODULE_PREFIX.length)];
+    }).sort();
+
+    return names;
+}
+
 function runU1NegativeImports(tempConsumerDir) {
     const negativeDir = path.join(tempConsumerDir, 'negative');
     fs.mkdirSync(negativeDir, { recursive: true });
 
+    const privateComposableNames = readPrivateComposableNames();
+    if (privateComposableNames.length === 0) return;
     const rootPath = path.join(negativeDir, 'root-helper.ts');
     writeText(
         rootPath,
-        `import { ${INTERNAL_SELECTION_HELPERS.join(', ')} } from 'brutx-ui-vue';\n`
+        `import { ${privateComposableNames.join(', ')} } from 'brutx-ui-vue';\n`
     );
     assertExpectedTypecheckFailure(
         tempConsumerDir,
         rootPath,
-        INTERNAL_SELECTION_HELPERS.map(helper => helper === 'useClearableSelection'
-            ? `'"brutx-ui-vue"' has no exported member named '${helper}'.`
-            : `Module '"brutx-ui-vue"' has no exported member '${helper}'.`)
+        privateComposableNames.map(name => `'${name}'`)
     );
 
     const subpathPath = path.join(negativeDir, 'subpath-helper.ts');
     writeText(
         subpathPath,
-        INTERNAL_SELECTION_HELPERS
+        privateComposableNames
             .map(helper => `import { ${helper} } from 'brutx-ui-vue/${helper}';`)
             .join('\n') + '\n'
     );
     assertExpectedTypecheckFailure(
         tempConsumerDir,
         subpathPath,
-        INTERNAL_SELECTION_HELPERS.map(helper => `Cannot find module 'brutx-ui-vue/${helper}' or its corresponding type declarations.`)
+        privateComposableNames.map(helper => `Cannot find module 'brutx-ui-vue/${helper}' or its corresponding type declarations.`)
     );
 }
 
@@ -634,18 +670,101 @@ export type PublicTransferProps = ComponentProps<typeof Transfer>;
     );
 }
 
-function assertC1PublicIndexes(tempConsumerDir) {
-    for (const [componentName, expectedExports] of Object.entries(C1_PUBLIC_INDEX_EXPECTATIONS)) {
-        const indexPath = path.join(tempConsumerDir, 'src/components/ui', componentName, 'index.ts');
-        assertFile(indexPath, `Expected generated public index for ${componentName}: ${indexPath}`);
-        const content = fs.readFileSync(indexPath, 'utf-8');
-        for (const expectedExport of expectedExports) {
-            assertContains(content, expectedExport, `Public index ${indexPath} is missing ${expectedExport}`);
+function appendPublicBindingNames(name, kind, exports) {
+    if (ts.isIdentifier(name)) {
+        exports.push(`${kind}:${name.text}`);
+        return;
+    }
+
+    for (const element of name.elements) {
+        if (ts.isBindingElement(element)) {
+            appendPublicBindingNames(element.name, kind, exports);
         }
-        for (const internalHelper of INTERNAL_SELECTION_HELPERS) {
-            if (content.includes(internalHelper)) {
-                throw new Error(`Public index ${indexPath} leaked internal helper ${internalHelper}`);
+    }
+}
+
+export function projectPublicIndexExports(source) {
+    const sourceFile = ts.createSourceFile('component-index.ts', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+    const exports = [];
+
+    for (const statement of sourceFile.statements) {
+        if (ts.isExportDeclaration(statement)) {
+            if (!statement.exportClause) {
+                if (statement.moduleSpecifier && ts.isStringLiteral(statement.moduleSpecifier)) {
+                    const kind = statement.isTypeOnly ? 'type' : 'value';
+                    exports.push(`${kind}:*:${statement.moduleSpecifier.text}`);
+                }
+                continue;
             }
+
+            if (ts.isNamedExports(statement.exportClause)) {
+                for (const element of statement.exportClause.elements) {
+                    const kind = statement.isTypeOnly || element.isTypeOnly ? 'type' : 'value';
+                    exports.push(`${kind}:${element.name.text}`);
+                }
+            } else {
+                exports.push(`namespace:${statement.exportClause.name.text}`);
+            }
+            continue;
+        }
+
+        if (ts.isExportAssignment(statement)) {
+            exports.push(`${statement.isExportEquals ? 'commonjs' : 'value'}:default`);
+            continue;
+        }
+
+        if (!statement.modifiers?.some(modifier => modifier.kind === ts.SyntaxKind.ExportKeyword)) {
+            continue;
+        }
+
+        const isDefault = statement.modifiers.some(modifier => modifier.kind === ts.SyntaxKind.DefaultKeyword);
+        if (isDefault) {
+            const kind = ts.isInterfaceDeclaration(statement) || ts.isTypeAliasDeclaration(statement) ? 'type' : 'value';
+            exports.push(`${kind}:default`);
+            continue;
+        }
+
+        if (ts.isVariableStatement(statement)) {
+            for (const declaration of statement.declarationList.declarations) {
+                appendPublicBindingNames(declaration.name, 'value', exports);
+            }
+        } else if (ts.isInterfaceDeclaration(statement) || ts.isTypeAliasDeclaration(statement)) {
+            exports.push(`type:${statement.name.text}`);
+        } else if (ts.isClassDeclaration(statement)) {
+            const name = statement.name?.text ?? 'default';
+            exports.push(`type:${name}`, `value:${name}`);
+        } else if (ts.isFunctionDeclaration(statement) || ts.isEnumDeclaration(statement) || ts.isModuleDeclaration(statement)) {
+            if (statement.name) {
+                exports.push(`value:${statement.name.text}`);
+            }
+        }
+    }
+
+    return exports.sort();
+}
+
+function readRegistryPublicIndex(registryDirectory, componentName) {
+    const itemPath = path.join(registryDirectory, `${componentName}.json`);
+    assertFile(itemPath, `Expected Registry item was not found: ${itemPath}`);
+    const item = JSON.parse(fs.readFileSync(itemPath, 'utf-8'));
+    const indexFile = item.files?.find(file => file.path === `components/ui/${componentName}/${PUBLIC_COMPONENT_INDEX_FILENAME}`);
+    if (!indexFile) {
+        throw new Error(`Registry item ${itemPath} does not contain a public component index.`);
+    }
+    return indexFile.content;
+}
+
+function assertC1PublicIndexes(tempConsumerDir) {
+    for (const componentName of C1_COMPONENT_NAMES) {
+        const indexPath = path.join(tempConsumerDir, 'src/components/ui', componentName, PUBLIC_COMPONENT_INDEX_FILENAME);
+        assertFile(indexPath, `Expected generated public index for ${componentName}: ${indexPath}`);
+        const actual = projectPublicIndexExports(fs.readFileSync(indexPath, 'utf-8'));
+        const expected = projectPublicIndexExports(readRegistryPublicIndex(localRegistryDir, componentName));
+        if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+            throw new Error(
+                `Public index ${indexPath} does not match the current Registry projection. ` +
+                `Expected [${expected.join(', ')}], received [${actual.join(', ')}].`
+            );
         }
     }
 }
@@ -707,7 +826,7 @@ async function runC1(manifest, artifactSummary) {
         });
 
         const localRegistryUrl = registryUrl(baselineRegistry);
-        for (const componentName of ['button', 'combobox', 'tree-select', 'transfer']) {
+        for (const componentName of C1_COMPONENT_NAMES) {
             console.log(`[C1] Adding ${componentName} from the local registry snapshot...`);
             execWithLogging(`pnpm exec brutx-vue add ${componentName} --yes --no-cache --registry "${localRegistryUrl}"`, {
                 cwd: tempConsumerDir,
@@ -747,9 +866,6 @@ async function runC1(manifest, artifactSummary) {
             throw new Error('CLI update left conflict markers in the locally modified Button.');
         }
         assertC1PublicIndexes(tempConsumerDir);
-        if (fs.readFileSync(path.join(tempConsumerDir, 'src/components/ui/button/index.ts'), 'utf8').includes('consumerBaseline')) {
-            throw new Error('update 未移除基线快照中的公开符号');
-        }
         const replayEvidence = path.join(process.env.BRUTX_CONSUMER_EVIDENCE_DIR
             ?? path.join(path.dirname(manifest.packages['brutx-ui-vue'].tarballPath), 'consumers'), 'C1');
         writeJson(path.join(replayEvidence, 'replay.json'), {

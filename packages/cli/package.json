@@ -37,8 +37,7 @@
         "test": "vitest run --exclude \"tests/integration/**\" --exclude \"scripts/**\"",
         "test:integration": "vitest run tests/integration",
         "test:package": "node scripts/smoke-package.mjs",
-        "test:consumers": "node scripts/test-consumers.mjs",
-        "check:tokens": "tsx scripts/check-brutalist-tokens.ts"
+        "test:consumers": "node scripts/test-consumers.mjs"
     },
     "dependencies": {
         "@inquirer/prompts": "^8.5.2",
