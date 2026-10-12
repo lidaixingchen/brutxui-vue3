@@ -30,9 +30,8 @@
 ### 1. 标准发版时序
 
 ```text
-[日常迭代]             [版本准备]                                          [发布门禁]               [版本打 Tag]           [远程发布]
-pnpm changeset  ──>  pnpm release:prepare                           ──>  pnpm release:check  ──>  pnpm release:tag  ──>  git push origin main --tags
-(声明变更意图)          (守卫 + 自动 version-packages + 根 CHANGELOG + 提交)    (构建/契约/消费者门禁)     (读取 UI 版本打 tag)    (CI 自动化签名发布)
+pnpm changeset → pnpm release:prepare → pnpm release:check → pnpm release:tag
+git push origin main → 等待同一提交 CI 成功 → git push origin v<version> → 云端发布
 ```
 
 ### 2. 发布相关命令
@@ -87,7 +86,7 @@ node scripts/bench-diff.mjs <main-bench.json> <pr-bench.json>
 
 - **信息报告阈值**：
   - `|delta| < 5%`：视为正常噪声范围；
-  - `delta < -5%`：疑似性能回归；若超过 2 项则需人工复核；
+  - `delta < -5%`：疑似性能回归；
   - `delta > 5%`：报告性能提升。
 
 Bench 要求两份结果包含同一组有效测量；缺失、损坏或测试项不完整会使工作流失败，计时变化只作信息报告。PR 基线绑定精确 base SHA。
