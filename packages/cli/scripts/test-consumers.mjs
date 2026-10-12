@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
+import { projectPublicIndexExports } from '../../shared/src/ast/public-index-projection.ts';
 import {
     loadCandidateArtifacts,
     packCandidateArtifacts,
@@ -668,79 +669,6 @@ export type PublicTransferProps = ComponentProps<typeof Transfer>;
         path.join(tempConsumerDir, 'index.html'),
         '<!DOCTYPE html><html><body><div id="app"></div><script type="module" src="/src/main.ts"></script></body></html>'
     );
-}
-
-function appendPublicBindingNames(name, kind, exports) {
-    if (ts.isIdentifier(name)) {
-        exports.push(`${kind}:${name.text}`);
-        return;
-    }
-
-    for (const element of name.elements) {
-        if (ts.isBindingElement(element)) {
-            appendPublicBindingNames(element.name, kind, exports);
-        }
-    }
-}
-
-export function projectPublicIndexExports(source) {
-    const sourceFile = ts.createSourceFile('component-index.ts', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
-    const exports = [];
-
-    for (const statement of sourceFile.statements) {
-        if (ts.isExportDeclaration(statement)) {
-            if (!statement.exportClause) {
-                if (statement.moduleSpecifier && ts.isStringLiteral(statement.moduleSpecifier)) {
-                    const kind = statement.isTypeOnly ? 'type' : 'value';
-                    exports.push(`${kind}:*:${statement.moduleSpecifier.text}`);
-                }
-                continue;
-            }
-
-            if (ts.isNamedExports(statement.exportClause)) {
-                for (const element of statement.exportClause.elements) {
-                    const kind = statement.isTypeOnly || element.isTypeOnly ? 'type' : 'value';
-                    exports.push(`${kind}:${element.name.text}`);
-                }
-            } else {
-                exports.push(`namespace:${statement.exportClause.name.text}`);
-            }
-            continue;
-        }
-
-        if (ts.isExportAssignment(statement)) {
-            exports.push(`${statement.isExportEquals ? 'commonjs' : 'value'}:default`);
-            continue;
-        }
-
-        if (!statement.modifiers?.some(modifier => modifier.kind === ts.SyntaxKind.ExportKeyword)) {
-            continue;
-        }
-
-        const isDefault = statement.modifiers.some(modifier => modifier.kind === ts.SyntaxKind.DefaultKeyword);
-        if (isDefault) {
-            const kind = ts.isInterfaceDeclaration(statement) || ts.isTypeAliasDeclaration(statement) ? 'type' : 'value';
-            exports.push(`${kind}:default`);
-            continue;
-        }
-
-        if (ts.isVariableStatement(statement)) {
-            for (const declaration of statement.declarationList.declarations) {
-                appendPublicBindingNames(declaration.name, 'value', exports);
-            }
-        } else if (ts.isInterfaceDeclaration(statement) || ts.isTypeAliasDeclaration(statement)) {
-            exports.push(`type:${statement.name.text}`);
-        } else if (ts.isClassDeclaration(statement)) {
-            const name = statement.name?.text ?? 'default';
-            exports.push(`type:${name}`, `value:${name}`);
-        } else if (ts.isFunctionDeclaration(statement) || ts.isEnumDeclaration(statement) || ts.isModuleDeclaration(statement)) {
-            if (statement.name) {
-                exports.push(`value:${statement.name.text}`);
-            }
-        }
-    }
-
-    return exports.sort();
 }
 
 function readRegistryPublicIndex(registryDirectory, componentName) {

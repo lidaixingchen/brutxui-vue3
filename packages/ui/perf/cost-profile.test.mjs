@@ -10,7 +10,13 @@ test('Button cost profile contains the four consumer builds', () => {
 })
 
 test('resource assertions retain all Button browser profiles with only their required bundles', () => {
-    assert.equal(BROWSER_PROFILES.length, 5)
+    assert.deepEqual(BROWSER_PROFILES.map(profile => profile.id), [
+        'button-effect-none',
+        'button-effect-none-autoplay',
+        'button-effect-glitch-autoplay',
+        'button-effect-glitch-reduced-motion',
+        'button-effect-glitch-keep-alive',
+    ])
     assert.throws(
         () => selectCostScenarios(['empty', 'button-subpath', 'button-root-dynamic'], true),
         /缺少必需场景：button-root/,

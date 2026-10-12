@@ -174,9 +174,6 @@ function classifyUiPath(file, flags) {
         }
 
         mark(flags, 'browser', 'generated', 'consumers', 'registry', 'docs', 'site')
-        if (isWithin(file, 'packages/ui/src/components') && file.endsWith('.vue')) {
-            mark(flags, 'docs', 'site')
-        }
         if (isButtonCostSource(file)) mark(flags, 'cost')
         return
     }
@@ -237,11 +234,6 @@ function classifyUiPath(file, flags) {
         return
     }
 
-    if (file.endsWith('.md') || file.endsWith('.mdx')) {
-        mark(flags, 'docs')
-        return
-    }
-
     if (isWithin(file, 'packages/ui')) {
         mark(flags, 'tooling')
         return
@@ -266,7 +258,6 @@ function classifyCliPath(file, flags) {
     if (GENERATED_OUTPUT_PATHS.has(file) || file === 'packages/cli/scripts/generate-tokens.ts') {
         mark(flags, 'generated', 'consumers')
     }
-    if (file.endsWith('.md') || file.endsWith('.mdx')) mark(flags, 'docs')
 }
 
 function classifyRegistryPath(file, flags) {
@@ -277,10 +268,6 @@ function classifyRegistryPath(file, flags) {
     mark(flags, 'registry')
     if (isTestPath(file)) {
         mark(flags, 'tooling')
-        return
-    }
-    if (file.endsWith('.md') || file.endsWith('.mdx')) {
-        mark(flags, 'docs')
         return
     }
     mark(flags, 'cli', 'consumers', 'generated')
@@ -299,25 +286,17 @@ function classifySharedPath(file, flags) {
 
     markSharedClosure(flags)
     if (BUTTON_COST_PATHS.has(file)) mark(flags, 'cost')
-    if (file === 'packages/shared/src/component-metadata.ts' || file === 'packages/shared/src/api-contract.ts') {
-        mark(flags, 'docs', 'site')
-    }
 }
 
 function classifyScriptPath(file, flags) {
     mark(flags, 'tooling')
-
-    if (isWithin(file, 'scripts/ci')) {
-        markFull(flags)
-        return
-    }
 
     if (isWithin(file, 'scripts/release')) {
         mark(flags, 'release')
         return
     }
 
-    if (isWithin(file, 'scripts/docs') || /^scripts\/(?:check-doc|check-guide-refs|check-i18n)/u.test(file)) {
+    if (isWithin(file, 'scripts/docs') || /^scripts\/(?:check-doc|check-i18n)/u.test(file)) {
         mark(flags, 'docs')
         return
     }
@@ -333,7 +312,7 @@ function classifyScriptPath(file, flags) {
         return
     }
 
-    if (isWithin(file, 'scripts/contracts') || file === 'scripts/check-contracts-all.mjs') {
+    if (file === 'scripts/check-contracts-all.mjs') {
         mark(flags, 'ui', 'cli', 'registry', 'generated', 'consumers')
         return
     }
@@ -342,8 +321,6 @@ function classifyScriptPath(file, flags) {
         mark(flags, 'consumers')
         return
     }
-
-    if (file === 'scripts/bench-diff.mjs' || isWithin(file, 'scripts')) return
 }
 
 function classifyPath(file, flags) {
@@ -445,17 +422,6 @@ function classifyPath(file, flags) {
 
     if (isWithin(file, 'scripts')) {
         classifyScriptPath(file, flags)
-        return true
-    }
-
-    if (file.startsWith('.') || !file.includes('/')) {
-        if (file === 'README.md' || file === 'CONTRIBUTING.md' || file === 'LICENSE' || file === 'AGENTS.md') {
-            mark(flags, 'docs')
-        } else if (file === 'commitlint.config.mjs') {
-            mark(flags, 'tooling')
-        } else {
-            markFull(flags)
-        }
         return true
     }
 

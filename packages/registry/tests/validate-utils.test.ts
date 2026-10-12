@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { projectPublicIndexExports } from '../../shared/src/ast/public-index-projection.js'
 import {
     buildDependencyGraph,
     classifyRegistryImport,
@@ -20,6 +21,33 @@ import {
 import type { RegistryIndexItem } from 'brutx-shared-vue'
 
 describe('validate-registry helpers', () => {
+    it('projects namespaces, star exports and declaration bindings', () => {
+        const source = [
+            "export * from './values'",
+            "export type * from './types'",
+            "export * as helpers from './helpers'",
+            'export class Widget {}',
+            'export const { first, nested: { second } } = source',
+            'export const [third, ...rest] = values',
+            'export default function component() {}',
+            'export = legacy',
+        ].join('\n')
+
+        expect(projectPublicIndexExports(source)).toEqual([
+            'commonjs:default',
+            'namespace:helpers',
+            'type:*:./types',
+            'type:Widget',
+            'value:*:./values',
+            'value:Widget',
+            'value:default',
+            'value:first',
+            'value:rest',
+            'value:second',
+            'value:third',
+        ])
+    })
+
     it('finds registry dependencies that do not reference known items', () => {
         expect(findUnknownRegistryReferences([
             { name: 'button', registryDependencies: [] },

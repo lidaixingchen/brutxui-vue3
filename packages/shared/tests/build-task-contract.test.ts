@@ -282,7 +282,7 @@ describe('Turbo Build Task Graph Contract', () => {
         }
     }, TURBO_DRY_RUN_TEST_TIMEOUT_MS)
 
-    it('source tests use their required inputs and distinguish Node runtimes in cache', () => {
+    it('source tests use scoped dependencies and distinguish Node runtimes in cache', () => {
         const args = ['test', '--filter=brutx-ui-vue', '--filter=brutx-vue', '--filter=brutx-registry-vue', '--filter=brutx-shared-vue']
         const node22 = runTurboDryRun(args, { BRUTX_RUNTIME_VERSION: 'v22.0.0' })
         const node24 = runTurboDryRun(args, { BRUTX_RUNTIME_VERSION: 'v24.0.0' })

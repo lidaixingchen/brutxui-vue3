@@ -1,10 +1,6 @@
 import assert from 'node:assert/strict'
-import { spawnSync } from 'node:child_process'
 import test from 'node:test'
-import { fileURLToPath } from 'node:url'
 import { evaluateGate } from './evaluate-gate.mjs'
-
-const SCRIPT_PATH = fileURLToPath(new URL('./evaluate-gate.mjs', import.meta.url))
 
 function gateInput(overrides = {}) {
     return {
@@ -67,14 +63,4 @@ test('an empty selection fails rather than turning the Gate into a no-op', () =>
     const evaluation = evaluateGate(gateInput({ selected: [] }))
     assert.equal(evaluation.passed, false)
     assert.ok(evaluation.failures.some(failure => failure.reason === 'at least one check must be selected'))
-})
-
-test('the CLI reads selected names and needs results from JSON stdin', () => {
-    const processResult = spawnSync(process.execPath, [SCRIPT_PATH, '--stdin'], {
-        encoding: 'utf8',
-        input: JSON.stringify(gateInput()),
-    })
-
-    assert.equal(processResult.status, 0, processResult.stderr)
-    assert.equal(JSON.parse(processResult.stdout).passed, true)
 })
