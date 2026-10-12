@@ -251,7 +251,7 @@ function formatReport(result: AuditResult): string {
     return lines.join('\n');
 }
 
-function fixFile(filePath: string, scanRoot: string): number {
+export function fixFile(filePath: string, scanRoot: string): number {
     let content = fs.readFileSync(filePath, 'utf-8');
     const relativeFile = path.relative(scanRoot, filePath).replace(/\\/g, '/');
     const replacements: Array<{ startIdx: number; endIdx: number; replacement: string }> = [];
@@ -267,7 +267,9 @@ function fixFile(filePath: string, scanRoot: string): number {
         }
         const varNameMatch = parsed.inner.match(/^--brutal-[a-z0-9-]+/);
         const varName = varNameMatch ? varNameMatch[0] : null;
-        if (varName && !INTENTIONAL_FALLBACK_OVERRIDES.has(`${relativeFile}:${varName}`)) {
+        const allowedOverrides = INTENTIONAL_FALLBACK_OVERRIDES.get(`${relativeFile}:${varName}`);
+        const isIntentionalFallback = allowedOverrides?.has(normalizeCssValue(parsed.fallback ?? ''));
+        if (varName && !isIntentionalFallback) {
             const tokenKey = varName.slice(2);
             const expected = LIGHT_VARS[tokenKey];
             if (expected !== undefined) {
