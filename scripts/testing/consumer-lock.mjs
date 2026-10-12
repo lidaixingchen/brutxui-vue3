@@ -40,9 +40,4 @@ export function installLockedConsumer({ directory, id, artifact, lockDirectory, 
     fs.copyFileSync(lockPath, path.join(evidence, 'pnpm-lock.yaml'))
     fs.copyFileSync(packagePath, path.join(evidence, 'package.json'))
     fs.writeFileSync(path.join(evidence, 'install.log'), installOutput)
-    fs.writeFileSync(path.join(evidence, 'identity.json'), `${JSON.stringify({
-        artifactSha256: artifact.sha256,
-        lockTemplateSha256: createHash('sha256').update(template).digest('hex'),
-        lockSha256: createHash('sha256').update(fs.readFileSync(lockPath)).digest('hex'),
-    }, null, 2)}\n`)
 }

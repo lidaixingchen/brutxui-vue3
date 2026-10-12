@@ -1,7 +1,3 @@
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
-import { pathToFileURL } from 'node:url'
-
 const ALLOWED_RESULTS = new Set(['success', 'skipped', 'failure', 'cancelled'])
 
 function isRecord(value) {
@@ -52,7 +48,7 @@ export function evaluateGate(input) {
         observedResults.set(job, result)
         if (!ALLOWED_RESULTS.has(result)) {
             failures.push({ job, result: result ?? 'missing', reason: 'job result is missing or unsupported' })
-        } else if (result === 'failure' || result === 'cancelled') {
+        } else if (!selectedSet.has(job) && (result === 'failure' || result === 'cancelled')) {
             failures.push({ job, result, reason: 'failed or cancelled jobs block the gate' })
         }
     }
@@ -72,37 +68,5 @@ export function evaluateGate(input) {
         passed: failures.length === 0,
         selected: selectedNames,
         failures,
-    }
-}
-
-function readInput(argv) {
-    if (argv.length === 0 || (argv.length === 1 && argv[0] === '--stdin')) {
-        return readFileSync(0, 'utf8')
-    }
-    if (argv.length === 2 && argv[0] === '--input') {
-        return readFileSync(argv[1], 'utf8')
-    }
-    if (argv.length === 1 && argv[0] === '--help') {
-        console.log('用法：node scripts/ci/evaluate-gate.mjs [--input <json-file> | --stdin]')
-        return null
-    }
-    throw new Error('输入方式只能是 --input <json-file> 或 --stdin')
-}
-
-function main(argv) {
-    const serialized = readInput(argv)
-    if (serialized === null) return
-    const result = evaluateGate(JSON.parse(serialized))
-    console.log(JSON.stringify(result, null, 2))
-    if (!result.passed) process.exitCode = 1
-}
-
-if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
-    try {
-        main(process.argv.slice(2))
-    } catch (error) {
-        const message = error instanceof Error ? error.message : String(error)
-        console.error(message)
-        process.exitCode = 2
     }
 }

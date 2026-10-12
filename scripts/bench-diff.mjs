@@ -3,7 +3,6 @@ import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const NOISE_THRESHOLD = 0.05
-const REGRESSION_FLAG_LIMIT = 2
 
 export class BenchDiffError extends Error {
     constructor(message, { cause } = {}) {
@@ -110,7 +109,7 @@ export function compareBenchResults(mainTasks, prTasks) {
     if (missingCount > 0) {
         lines.push(`> ⚠️ PR 缺少 ${missingCount} 个主干基准任务，Bench 数据不完整。`)
     } else {
-        lines.push(`> 疑似回归 ${regressionCount} 个（提示阈值 ${REGRESSION_FLAG_LIMIT}），性能变化仅作信息性参考。`)
+        lines.push(`> 疑似回归 ${regressionCount} 个，性能变化仅作信息性参考。`)
     }
 
     return { markdown: lines.join('\n'), complete: missingCount === 0 }

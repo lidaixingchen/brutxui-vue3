@@ -28,6 +28,15 @@ afterEach(() => {
 })
 
 describe('API contract module coverage', () => {
+    it('reports registered sources that have no source or generated output', () => {
+        const root = createFixtureRoot()
+        const missing = module('component:missing', 'src/components/missing')
+
+        expect(collectApiModuleCoverageIssues({ modules: [missing] }, root)).toEqual([
+            `${missing.id} → ${missing.source}`,
+        ])
+    })
+
     it('accepts registered modules and missing entry files owned by generation', () => {
         const root = createFixtureRoot()
         const modules = [

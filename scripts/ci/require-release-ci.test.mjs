@@ -5,6 +5,14 @@ import { requireReleaseCi, selectSuccessfulMainRun } from './require-release-ci.
 const sha = 'release-commit'
 const success = { head_sha: sha, head_branch: 'main', event: 'push', status: 'completed', conclusion: 'success' }
 
+test('发布在缺少成功 CI 或 CI 失败时中止', () => {
+    for (const runs of [[], [{ ...success, conclusion: 'failure' }]]) {
+        assert.throws(() => requireReleaseCi({ repository: 'example/repo', sha }, (program, args) => {
+            return program === 'gh' && args[0] === 'api' ? JSON.stringify({ workflow_runs: runs }) : ''
+        }), /需要 main 上同一提交的 CI 成功记录/)
+    }
+})
+
 test('发布绑定 main push 的同一提交成功 CI', () => {
     assert.equal(selectSuccessfulMainRun([success], sha), success)
     for (const change of [{ head_sha: 'another-commit' }, { head_branch: 'feature' }, { event: 'pull_request' }, { status: 'in_progress' }, { conclusion: 'failure' }]) {

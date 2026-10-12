@@ -128,7 +128,6 @@ jobs:
             - run: pnpm install --frozen-lockfile --prefer-offline
 
             - name: Run bench (main baseline)
-              id: main-bench
               run: pnpm --filter brutx-ui-vue exec vitest bench --outputJson "$GITHUB_WORKSPACE/bench-main.json"
 
             - name: Validate main baseline

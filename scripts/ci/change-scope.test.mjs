@@ -19,7 +19,7 @@ function allFlags() {
     return Object.fromEntries(CHANGE_SCOPE_FIELDS.map(field => [field, true]))
 }
 
-test('normalizes Git paths and deduplicates old and new rename paths', () => {
+test('normalizes Git paths and removes duplicates', () => {
     assert.deepEqual(
         normalizeGitChangePaths(['./docs/guides/guide.md', 'docs/guides/guide.md', 'packages\\cli\\src\\command.ts']),
         ['docs/guides/guide.md', 'packages/cli/src/command.ts'],

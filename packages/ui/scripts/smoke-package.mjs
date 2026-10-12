@@ -119,16 +119,15 @@ function assertTargetExists(entry) {
 
     if (!existsSync(filePath)) {
         addFailure(`${entry.subpath} ${entry.condition} is missing: ${entry.target}`)
-        return null
+        return
     }
 
     if (statSync(filePath).size === 0) {
         addFailure(`${entry.subpath} ${entry.condition} is empty: ${entry.target}`)
-        return null
+        return
     }
 
     checkedTargets.add(entry.target)
-    return filePath
 }
 
 function runConsumerScript(scriptPath, description) {
@@ -264,7 +263,7 @@ function smokeConsumerResolution() {
     }
 }
 
-async function main() {
+function main() {
     for (const entry of collectPackageTargets()) {
         assertTargetExists(entry)
     }

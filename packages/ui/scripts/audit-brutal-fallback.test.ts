@@ -2,7 +2,8 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { auditFallbacks } from './audit-brutal-fallback';
+import { CSS_VARS } from 'brutx-shared-vue';
+import { auditFallbacks, fixFile } from './audit-brutal-fallback';
 
 const temporaryDirectories: string[] = [];
 
@@ -25,6 +26,26 @@ afterEach(() => {
 });
 
 describe('auditFallbacks', () => {
+    it('fixes invalid and missing theme fallbacks while preserving exact dark overrides', () => {
+        const sourceRoot = createFixture();
+        writeFixture(sourceRoot, 'styles.css', `
+.dark { color: var(--brutal-bg, #141414); background: var(--brutal-info, #3B82F6); }
+.invalid { color: var(--brutal-bg, #222222); }
+.missing { color: var(--brutal-bg); background: var(--brutal-info); }
+`);
+
+        const filePath = path.join(sourceRoot, 'styles.css');
+        const before = auditFallbacks(sourceRoot);
+        expect(fixFile(filePath, sourceRoot)).toBe(before.violations.length);
+        const fixed = fs.readFileSync(filePath, 'utf8');
+        expect(fixed).toContain('var(--brutal-bg, #141414)');
+        expect(fixed).toContain('var(--brutal-info, #3B82F6)');
+        expect(fixed).toContain(`var(--brutal-bg, ${CSS_VARS.light['brutal-bg']})`);
+        expect(fixed).toContain(`var(--brutal-info, ${CSS_VARS.light['brutal-info']})`);
+        expect(auditFallbacks(sourceRoot).violations).toEqual([]);
+        expect(fixFile(filePath, sourceRoot)).toBe(0);
+    });
+
     it('accepts theme-equivalent values and the dark subtle-color fallbacks', () => {
         const sourceRoot = createFixture();
         writeFixture(sourceRoot, 'styles.css', `
