@@ -33,6 +33,14 @@ const content = {
                         en: 'When omitted, empty, or not recognized by the shape library, the component uses the Lucide Star icon.',
                     },
                 },
+                ariaLabel: {
+                    zh: '自定义评分控件的无障碍名称；未提供 aria-labelledby 时使用本属性，两者均未提供时使用当前语言包默认名称。',
+                    en: 'The custom accessible name for the rating control. It is used when aria-labelledby is omitted; when both are omitted, the current locale supplies the default name.',
+                },
+                ariaLabelledby: {
+                    zh: '关联外部标签元素的 ID；提供时作为评分控件的无障碍名称，并优先于 ariaLabel。',
+                    en: 'The ID of an external label element. When provided, it names the rating control and takes precedence over ariaLabel.',
+                },
             },
             events: {
                 'update:modelValue': {

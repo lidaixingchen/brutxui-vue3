@@ -5,7 +5,7 @@ import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCw, RotateCcw, Fli
 import { Button } from '@/components/button'
 import { cn } from '@/lib/utils'
 import { Z_INDEX } from '@/lib/z-index'
-import { hasIntersectionObserver, getDocument, getIntersectionObserverCtor } from '@/lib/env'
+import { getDocument, getIntersectionObserverCtor } from '@/lib/env'
 import { useLocale } from '@/composables/useLocale'
 
 const { t } = useLocale()
@@ -46,11 +46,12 @@ const emit = defineEmits<{
 // 图像加载状态
 const isLoaded = ref(false)
 const hasError = ref(false)
-const isInView = ref(false)
+const isInView = ref(props.loading !== 'lazy')
 const isFallbackActive = ref(false)
 
 // 懒加载 observer
 const containerRef = ref<HTMLElement | null>(null)
+const imageRef = ref<HTMLImageElement | null>(null)
 let observer: IntersectionObserver | null = null
 
 // 大图预览状态
@@ -80,13 +81,13 @@ const srcToShow = computed(() => {
         return props.fallback
     }
     if (props.loading === 'lazy') {
-        return isInView.value || !hasIntersectionObserver ? props.src : ''
+        return isInView.value ? props.src : ''
     }
     return props.src
 })
 
 const isLoading = computed(() => {
-    if (props.loading === 'lazy' && hasIntersectionObserver && !isInView.value) return true
+    if (props.loading === 'lazy' && !isInView.value) return true
     return !isLoaded.value && !hasError.value
 })
 
@@ -157,6 +158,7 @@ watch(
 )
 
 const handleLoad = (e: Event) => {
+    if (isLoaded.value && !hasError.value) return
     isLoaded.value = true
     hasError.value = false
     emit('load', e)
@@ -319,14 +321,13 @@ watch(
 const initObserver = () => {
     if (props.loading !== 'lazy') return
     if (observer) return
-    if (!hasIntersectionObserver) {
-        isInView.value = true
-        return
-    }
     if (!containerRef.value) return
 
     const Ctor = getIntersectionObserverCtor()
-    if (!Ctor) return
+    if (!Ctor) {
+        isInView.value = true
+        return
+    }
 
     observer = new Ctor(
         (entries) => {
@@ -344,7 +345,15 @@ const initObserver = () => {
     observer.observe(containerRef.value)
 }
 
+const syncImageLoadState = () => {
+    const image = imageRef.value
+    if (!image?.complete || isLoaded.value || hasError.value) return
+
+    image.dispatchEvent(new Event(image.naturalWidth > 0 ? 'load' : 'error'))
+}
+
 onMounted(() => {
+    syncImageLoadState()
     if (props.loading === 'lazy') {
         initObserver()
     }
@@ -356,6 +365,7 @@ watch(
     () => props.loading,
     (val) => {
         if (val === 'lazy') {
+            isInView.value = false
             initObserver()
         } else {
             if (observer) {
@@ -396,6 +406,7 @@ const imageClasses = computed(() =>
     >
         <img
             v-if="!hasError && srcToShow"
+            ref="imageRef"
             :src="srcToShow"
             :alt="alt"
             :class="imageClasses"

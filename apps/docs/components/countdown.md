@@ -1,11 +1,11 @@
 ---
 title: Countdown 倒计时
-description: 基于绝对时间戳差值的倒计时组件，支持格式化、毫秒刷新、后台休眠自校准与读屏到期播报。
+description: 基于绝对时间戳差值的倒计时组件，支持稳定的 SSR 首帧、格式化、毫秒刷新、后台休眠自校准与读屏到期播报。
 ---
 
 # Countdown 倒计时
 
-精准倒计时组件，核心调度基于系统绝对时间戳差值计算。当浏览器标签页从后台休眠唤醒时自适应校准，杜绝累积定时器漂移，并内置读屏高频降噪与到期通知。
+精准倒计时组件，核心调度基于系统绝对时间戳差值计算。当浏览器标签页从后台休眠唤醒时自适应校准，杜绝累积定时器漂移，并内置读屏高频降噪与到期通知。为保证 SSR 水合首帧一致，服务端和客户端初次渲染显示占位文本；读取浏览器时钟并启动计时从挂载后开始。
 
 ## 预览
 
@@ -21,10 +21,15 @@ description: 基于绝对时间戳差值的倒计时组件，支持格式化、�
 
 ```vue
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { Countdown } from 'brutx-ui-vue'
 
-const targetTime = ref(Date.now() + 1000 * 60 * 60 * 24)
+const ONE_DAY_MS = 24 * 60 * 60 * 1000
+const targetTime = ref<number | null>(null)
+
+onMounted(() => {
+    targetTime.value = Date.now() + ONE_DAY_MS
+})
 </script>
 
 <template>
@@ -41,15 +46,38 @@ const targetTime = ref(Date.now() + 1000 * 60 * 60 * 24)
 </template>
 ```
 
+### SSR 首帧与自定义内容
+
+SSR 和水合期间，组件会先显示 `placeholder`（默认 `-`），挂载后才按 `value` 目标时间计算剩余时间。默认插槽的 `formatted` 在准备完成前也是占位文本；这时 `remaining` 为 `0`、`isFinished` 为 `false`。`isReady` 会在挂载并完成首次计算后变为 `true`，此时 `remaining` 和 `isFinished` 才对应当前目标。
+
+```vue
+<Countdown :value="targetTime">
+    <template #default="{ formatted, isReady }">
+        {{ isReady ? formatted : '正在准备倒计时' }}
+    </template>
+</Countdown>
+```
+
 ### 毫秒级刷新与格式化转义
 
 在 `format` 格式化字符串中包含 `SSS` 时会自动以高频（~30fps）刷新毫秒。普通文本字符若包含保留标识（如 `D`、`H`、`m`、`s`）时，可用方括号 `[...]` 包裹转义：
 
 ```vue
+<script setup>
+import { onMounted, ref } from 'vue'
+
+const ONE_MINUTE_MS = 60 * 1000
+const targetTime = ref<number | null>(null)
+
+onMounted(() => {
+    targetTime.value = Date.now() + ONE_MINUTE_MS
+})
+</script>
+
 <template>
     <Countdown
         title="秒杀倒计时"
-        :value="Date.now() + 60000"
+        :value="targetTime"
         format="mm:ss.SSS"
         variant="card"
     />
@@ -62,7 +90,15 @@ const targetTime = ref(Date.now() + 1000 * 60 * 60 * 24)
 
 ```vue
 <script setup>
+import { onMounted, ref } from 'vue'
 import { Countdown } from 'brutx-ui-vue'
+
+const FIVE_SECONDS_MS = 5 * 1000
+const targetTime = ref<number | null>(null)
+
+onMounted(() => {
+    targetTime.value = Date.now() + FIVE_SECONDS_MS
+})
 
 function onFinish() {
     console.log('倒计时结束！')
@@ -75,7 +111,7 @@ function onChange(remainingMs: number) {
 
 <template>
     <Countdown
-        :value="Date.now() + 5000"
+        :value="targetTime"
         @finish="onFinish"
         @change="onChange"
     />
@@ -146,4 +182,4 @@ import {
 - **键盘操作**：时序展示类组件，不捕获键盘输入；嵌套在交互区块中时，焦点遵循 DOM 正常流转。
 - **ARIA 属性**：高频走字期间保持 `aria-live` 静默，防止屏幕阅读器频繁读秒骚扰用户；倒计时到达零值时通过 `aria-live="polite"` 触发一次性完成语音通知。
 - **焦点管理**：无内部模态或焦点锁定，不干预辅助技术正常光标导航。
-- **数字排版**：使用等宽数字（`font-mono`）减少更新时的宽度变化。剩余时间依据当前时钟计算，计时调度在挂载后启动。
+- **数字排版**：使用等宽数字（`font-mono`）减少更新时的宽度变化。剩余时间依据当前时钟计算，计时调度在挂载后启动；自定义默认插槽可用 `isReady` 区分占位首帧与已计算状态。

@@ -39,6 +39,7 @@ const popoverOpen = ref(false)
 const dropdownOpen = ref(false)
 const tooltipOpen = ref(false)
 const selectOpen = ref(false)
+const selectPosition = ref<'popper' | 'item-aligned'>('popper')
 const sheetOpen = ref(false)
 const sheetPopoverOpen = ref(false)
 const alertOpen = ref(false)
@@ -55,6 +56,7 @@ defineExpose({
     dropdownOpen,
     tooltipOpen,
     selectOpen,
+    selectPosition,
     sheetOpen,
     sheetPopoverOpen,
     alertOpen,
@@ -105,7 +107,7 @@ defineExpose({
                     <SelectTrigger as-child>
                         <button><SelectValue placeholder="Open select" /></button>
                     </SelectTrigger>
-                    <SelectContent data-testid="nested-select-content">
+                    <SelectContent data-testid="nested-select-content" :position="selectPosition">
                         <SelectItem value="one">One</SelectItem>
                     </SelectContent>
                 </SelectRoot>

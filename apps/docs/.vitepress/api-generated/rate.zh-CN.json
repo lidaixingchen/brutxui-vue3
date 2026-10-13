@@ -23,7 +23,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/rate/Rate.vue",
-            "line": 10
+            "line": 11
           },
           "origin": "declared",
           "required": false,
@@ -55,7 +55,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/rate/Rate.vue",
-            "line": 11
+            "line": 12
           },
           "origin": "declared",
           "required": false,
@@ -90,7 +90,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/rate/Rate.vue",
-            "line": 12
+            "line": 13
           },
           "origin": "declared",
           "required": false,
@@ -125,7 +125,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/rate/Rate.vue",
-            "line": 13
+            "line": 14
           },
           "origin": "declared",
           "required": false,
@@ -161,7 +161,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/rate/Rate.vue",
-            "line": 14
+            "line": 15
           },
           "origin": "declared",
           "required": false,
@@ -193,7 +193,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/rate/Rate.vue",
-            "line": 16
+            "line": 17
           },
           "origin": "declared",
           "required": false,
@@ -211,6 +211,70 @@
               "text": "undefined"
             },
             "fallback": "未提供、传入空字符串或名称不在图腾库中时，使用 Lucide Star 星形。"
+          }
+        },
+        {
+          "id": "api-component_3Arate_2FRate-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "自定义评分控件的无障碍名称；未提供 aria-labelledby 时使用本属性，两者均未提供时使用当前语言包默认名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/rate/Rate.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/rate/Rate.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Arate_2FRate-props-ariaLabelledby",
+          "name": "ariaLabelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "关联外部标签元素的 ID；提供时作为评分控件的无障碍名称，并优先于 ariaLabel。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/rate/Rate.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/rate/Rate.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
           }
         },
         {

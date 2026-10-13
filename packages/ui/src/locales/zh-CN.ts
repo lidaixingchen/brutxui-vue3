@@ -38,6 +38,9 @@ export const zhCN: Locale = {
     spinner: {
         loading: '加载中...',
     },
+    rate: {
+        ariaLabel: '评分',
+    },
     submitButton: {
         submitting: '提交中...',
     },

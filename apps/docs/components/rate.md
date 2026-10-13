@@ -34,6 +34,15 @@ const value = ref(3)
 </template>
 ```
 
+Rate 默认使用当前语言包中的评分名称。可通过 `aria-label` 自定义名称，也可用 `aria-labelledby` 关联页面上的可见标签；提供 `aria-labelledby` 时会优先采用外部标签。
+
+```vue
+<template>
+    <span id="product-rating-label">商品评分</span>
+    <Rate v-model="value" aria-labelledby="product-rating-label" />
+</template>
+```
+
 ### 允许半星
 
 使用 `allow-half` 属性可以支持半星评分。
@@ -92,4 +101,5 @@ const value = ref(3.5)
 
 - **键盘操作**：方向右键或上键增加评分，左键或下键减少评分；`Home` 归零，`End` 选取最高分。启用 `allowHalf` 时方向键按半分调整；只读时停止键盘修改并移出 Tab 焦点顺序
 - **ARIA 属性**：组件根元素设置了 `role="slider"` 角色，同时声明 `aria-valuenow` 对应当前评分值，`aria-valuemin="0"`，`aria-valuemax` 对应 `max`，且有 `aria-readonly` 属性标记只读状态
+- **无障碍名称**：默认名称来自当前语言包；`aria-labelledby` 关联外部可见标签并优先于 `aria-label`，未关联外部标签时可用 `aria-label` 自定义名称
 - **动效降级**：敲选图标后的敲印回弹会读取 `prefers-reduced-motion`，开启“减弱动态效果”时不播放该动画

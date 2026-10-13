@@ -48,6 +48,10 @@ export interface SpinnerLocale {
     loading: string
 }
 
+export interface RateLocale {
+    ariaLabel: string
+}
+
 export interface SubmitButtonLocale {
     submitting: string
 }
@@ -532,6 +536,7 @@ export interface Locale {
     pagination: PaginationLocale
     carousel: CarouselLocale
     spinner: SpinnerLocale
+    rate: RateLocale
     submitButton: SubmitButtonLocale
     copyToClipboard: CopyToClipboardLocale
     beforeAfter: BeforeAfterLocale

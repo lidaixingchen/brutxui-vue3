@@ -9,7 +9,7 @@ import { TooltipRoot as Tooltip, TooltipTrigger } from 'reka-ui'
     <div class="flex flex-wrap items-center gap-4">
         <TooltipProvider :delay-duration="0">
             <Tooltip>
-                <TooltipTrigger>
+                <TooltipTrigger as-child>
                     <Button>无延迟</Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -20,7 +20,7 @@ import { TooltipRoot as Tooltip, TooltipTrigger } from 'reka-ui'
 
         <TooltipProvider>
             <Tooltip>
-                <TooltipTrigger>
+                <TooltipTrigger as-child>
                     <Button variant="secondary">默认延迟</Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -31,7 +31,7 @@ import { TooltipRoot as Tooltip, TooltipTrigger } from 'reka-ui'
 
         <TooltipProvider :delay-duration="1500">
             <Tooltip>
-                <TooltipTrigger>
+                <TooltipTrigger as-child>
                     <Button variant="outline">长延迟</Button>
                 </TooltipTrigger>
                 <TooltipContent>

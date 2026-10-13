@@ -8,7 +8,7 @@ import { DialogRoot as Sheet, DialogTrigger as SheetTrigger } from 'reka-ui'
 
 <template>
     <Sheet>
-        <SheetTrigger>
+        <SheetTrigger as-child>
             <Button>打开抽屉</Button>
         </SheetTrigger>
         <SheetContent side="right">

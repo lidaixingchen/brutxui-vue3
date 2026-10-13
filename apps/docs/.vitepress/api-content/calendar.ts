@@ -16,6 +16,7 @@ const content = {
                 events: ['提供需要标记的日历事件；每项包含日期和标题，并可携带自定义字段。', 'Provides calendar events to mark; each item has a date and title and may include custom fields.'],
                 eventRenderer: ['自定义事件展示文本的回调；接收一个 CalendarEvent 并返回可渲染内容。', 'Callback for customizing event display content; receives a CalendarEvent and returns renderable content.'],
                 mode: ['设置事件标记呈现方式：default 使用圆点和提示框，card 使用日历卡片和徽章。', 'Sets how event markers are rendered: default uses dots and tooltips, while card uses calendar cards and badges.'],
+                locale: ['v-calendar 的语言代码；未指定时使用 useLocale() 当前语言包的代码，缺省回退为 zh-CN。', 'The v-calendar locale code; defaults to the current useLocale() language-pack code, with zh-CN as the fallback.'],
                 retroHeader: ['显示复古挂历头部装饰；装饰内容不参与无障碍语义。', 'Shows a retro wall-calendar header decoration; the decorative elements carry no accessibility semantics.'],
             }),
             events: describe({ 'update:modelValue': ['用户选择日期或范围变化时发出新的日期值。', 'Emits the updated date value when the user changes the selected date or range.'] }),

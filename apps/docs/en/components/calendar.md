@@ -64,6 +64,14 @@ const dateRange = ref(null)
 </template>
 ```
 
+### Locale
+
+Calendar reads the `code` from the locale pack provided through `provideLocale`. If the pack has no code, it uses `zh-CN`. Set `locale` to a v-calendar locale code to override the language for one calendar:
+
+```vue
+<Calendar locale="en-US" />
+```
+
 ## API Reference
 
 <ComponentApi name="calendar" />

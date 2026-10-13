@@ -84,6 +84,69 @@ describe('Image Component', () => {
         expect(wrapper.find('.test-placeholder').exists()).toBe(false)
     })
 
+    it('settles loading state when the image completed before mount listeners attach', async () => {
+        const completeDescriptor = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'complete')
+        const naturalWidthDescriptor = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'naturalWidth')
+        Object.defineProperty(HTMLImageElement.prototype, 'complete', { configurable: true, get: () => true })
+        Object.defineProperty(HTMLImageElement.prototype, 'naturalWidth', { configurable: true, get: () => 1 })
+
+        try {
+            wrapper = mount(Image, {
+                props: { src: 'https://example.com/cached-image.jpg' },
+                slots: { placeholder: '<div class="test-placeholder">loading...</div>' },
+            })
+            await nextTick()
+
+            expect(wrapper.find('img').element.complete).toBe(true)
+            expect(wrapper.find('img').element.naturalWidth).toBe(1)
+            expect(wrapper.find('.test-placeholder').exists()).toBe(false)
+            expect(wrapper.emitted('load')).toHaveLength(1)
+        } finally {
+            if (completeDescriptor) {
+                Object.defineProperty(HTMLImageElement.prototype, 'complete', completeDescriptor)
+            } else {
+                Reflect.deleteProperty(HTMLImageElement.prototype, 'complete')
+            }
+            if (naturalWidthDescriptor) {
+                Object.defineProperty(HTMLImageElement.prototype, 'naturalWidth', naturalWidthDescriptor)
+            } else {
+                Reflect.deleteProperty(HTMLImageElement.prototype, 'naturalWidth')
+            }
+        }
+    })
+
+    it('uses the fallback when a failed image completed before mount listeners attach', async () => {
+        const completeDescriptor = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'complete')
+        const naturalWidthDescriptor = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'naturalWidth')
+        Object.defineProperty(HTMLImageElement.prototype, 'complete', { configurable: true, get: () => true })
+        Object.defineProperty(HTMLImageElement.prototype, 'naturalWidth', { configurable: true, get: () => 0 })
+
+        try {
+            wrapper = mount(Image, {
+                props: {
+                    src: 'https://example.com/failed-image.jpg',
+                    fallback: 'https://example.com/fallback.jpg',
+                },
+                slots: { error: '<div class="test-error">error!</div>' },
+            })
+            await nextTick()
+
+            expect(wrapper.find('img').attributes('src')).toBe('https://example.com/fallback.jpg')
+            expect(wrapper.find('.test-error').exists()).toBe(false)
+        } finally {
+            if (completeDescriptor) {
+                Object.defineProperty(HTMLImageElement.prototype, 'complete', completeDescriptor)
+            } else {
+                Reflect.deleteProperty(HTMLImageElement.prototype, 'complete')
+            }
+            if (naturalWidthDescriptor) {
+                Object.defineProperty(HTMLImageElement.prototype, 'naturalWidth', naturalWidthDescriptor)
+            } else {
+                Reflect.deleteProperty(HTMLImageElement.prototype, 'naturalWidth')
+            }
+        }
+    })
+
     it('shows error slot on image load failure', async () => {
         wrapper = mount(Image, {
             props: {

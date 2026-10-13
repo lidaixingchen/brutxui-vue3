@@ -12,7 +12,7 @@ import DialogOverlay from './DialogOverlay.vue'
 import { dialogContentVariants, dialogCloseVariants, dialogViewportClasses } from './dialog-variants'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
-import { useModalOverlayLayerStyle } from '@/lib/overlay-layer'
+import { useModalOverlayLayer } from '@/lib/overlay-layer'
 
 defineOptions({ inheritAttrs: false })
 
@@ -36,7 +36,7 @@ const props = withDefaults(defineProps<DialogContentProps>(), {
 })
 
 const { t } = useLocale()
-const modalLayerStyle = useModalOverlayLayerStyle()
+const modalLayer = useModalOverlayLayer()
 
 const contentClasses = computed(() =>
     cn(dialogContentVariants({ size: props.size, entrance: props.entrance }), dialogViewportClasses, props.class)
@@ -53,9 +53,11 @@ const closeIconClasses = cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
         <DialogOverlay :force-mount="props.forceMount" />
         <DialogContentPrimitive
             v-bind="$attrs"
+            :ref="modalLayer.ref"
             :class="contentClasses"
             :force-mount="props.forceMount"
-            :style="modalLayerStyle"
+            :style="[modalLayer.style.value, $attrs.style]"
+            @open-auto-focus="modalLayer.ref"
         >
             <slot />
             <DialogClosePrimitive v-if="showCloseButton" :class="closeClasses">

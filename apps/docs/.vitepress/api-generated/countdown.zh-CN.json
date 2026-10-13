@@ -187,7 +187,7 @@
             "literals": [],
             "references": []
           },
-          "description": "目标时间为空或无效时显示的占位文本。",
+          "description": "挂载前或目标时间为空、无效时显示的占位文本。",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/countdown/types.ts",
@@ -411,11 +411,11 @@
           "name": "default",
           "kind": "slots",
           "type": {
-            "text": "{ remaining: number; formatted: string; isFinished: boolean; }",
+            "text": "{ remaining: number; formatted: string; isFinished: boolean; isReady: boolean; }",
             "literals": [],
             "references": []
           },
-          "description": "自定义数值区域，接收剩余毫秒数、格式化字符串及是否完成的状态。",
+          "description": "自定义数值区域，接收剩余毫秒数、格式化字符串、是否完成及是否已挂载的 isReady 状态。",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/countdown/Countdown.vue",

@@ -181,7 +181,9 @@
     "files": [
       "Calendar.vue"
     ],
-    "composables": [],
+    "composables": [
+      "useLocale.ts"
+    ],
     "directives": [],
     "lib": [
       "brutal-interaction-variants.ts",
@@ -759,9 +761,7 @@
       "Marquee.vue",
       "marquee-variants.ts"
     ],
-    "composables": [
-      "useReducedMotion.ts"
-    ],
+    "composables": [],
     "directives": [],
     "lib": []
   },
@@ -914,6 +914,7 @@
       "Rate.vue"
     ],
     "composables": [
+      "useLocale.ts",
       "useReducedMotion.ts"
     ],
     "directives": [],

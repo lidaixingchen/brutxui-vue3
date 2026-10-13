@@ -3,7 +3,6 @@ import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { marqueeContainerVariants, marqueeTrackVariants } from './marquee-variants'
-import { useReducedMotion } from '@/composables/useReducedMotion'
 
 type MarqueeContainerVariantProps = VariantProps<typeof marqueeContainerVariants>
 
@@ -30,8 +29,6 @@ const props = withDefaults(defineProps<MarqueeProps>(), {
     class: undefined,
 })
 
-const prefersReducedMotion = useReducedMotion()
-
 const containerClasses = computed(() =>
     cn(
         marqueeContainerVariants({
@@ -46,9 +43,11 @@ const containerClasses = computed(() =>
 const trackClasses = computed(() =>
     cn(
         marqueeTrackVariants({ direction: props.direction, pauseOnHover: props.pauseOnHover || undefined }),
-        prefersReducedMotion.value && 'animate-none!',
+        'motion-reduce:animate-none',
     )
 )
+
+const cloneTrackClasses = computed(() => cn(trackClasses.value, 'motion-reduce:hidden'))
 
 const containerStyle = computed(() => {
     const validSpeed = typeof props.speed === 'number' && Number.isFinite(props.speed) ? props.speed : DEFAULT_SPEED
@@ -63,7 +62,7 @@ const containerStyle = computed(() => {
         <div :class="trackClasses">
             <slot />
         </div>
-        <div v-if="!prefersReducedMotion" :class="trackClasses" aria-hidden="true" inert>
+        <div :class="cloneTrackClasses" aria-hidden="true" inert>
             <slot />
         </div>
     </div>

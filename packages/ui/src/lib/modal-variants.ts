@@ -55,6 +55,7 @@ export const modalCloseButtonVariants = cva(CLOSE_BUTTON_BASE_CLASSES, {
 })
 
 export const baseModalContentClasses = [
+    'transition-none',
     'bg-brutal-bg',
     'border-3 border-brutal',
     'shadow-brutal-xl',

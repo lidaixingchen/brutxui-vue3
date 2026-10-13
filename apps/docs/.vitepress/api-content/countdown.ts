@@ -11,7 +11,7 @@ const content = {
                 prefix: { zh: '显示在倒计时数值前的文本，prefix 插槽可替换其内容。', en: 'Text before the countdown value; the prefix slot can replace its content.' },
                 suffix: { zh: '显示在倒计时数值后的文本，suffix 插槽可替换其内容。', en: 'Text after the countdown value; the suffix slot can replace its content.' },
                 placeholder: {
-                    zh: '目标时间为空或无效时显示的占位文本。', en: 'The placeholder displayed when the target time is empty or invalid.',
+                    zh: '挂载前或目标时间为空、无效时显示的占位文本。', en: 'The placeholder displayed before mount or when the target time is empty or invalid.',
                     fallback: { 'zh-CN': '未提供时使用短横线“-”。', en: 'Uses a hyphen when omitted.' },
                 },
                 variant: { zh: '倒计时外层容器的背景和边框变体。', en: 'The background and border variant of the countdown container.' },
@@ -23,7 +23,7 @@ const content = {
                 change: { zh: '计时刷新或目标时间重新计算时发出剩余毫秒数，最小为零。', en: 'Emits the remaining milliseconds, clamped at zero, when the timer updates or the target is recalculated.' },
             },
             slots: {
-                default: { zh: '自定义数值区域，接收剩余毫秒数、格式化字符串及是否完成的状态。', en: 'Customizes the value area with the remaining milliseconds, formatted string, and finished state.' },
+                default: { zh: '自定义数值区域，接收剩余毫秒数、格式化字符串、是否完成及是否已挂载的 isReady 状态。', en: 'Customizes the value area with the remaining milliseconds, formatted string, finished state, and mounted isReady state.' },
                 title: { zh: '自定义标题区域，接收 title 属性值；默认显示该文本。', en: 'Customizes the title area with the title prop value, which is rendered by default.' },
                 prefix: { zh: '自定义数值前缀区域，接收 prefix 属性值。', en: 'Customizes the value prefix area with the prefix prop value.' },
                 suffix: { zh: '自定义数值后缀区域，接收 suffix 属性值。', en: 'Customizes the value suffix area with the suffix prop value.' },

@@ -8,7 +8,7 @@ import {
 import { cn } from '@/lib/utils'
 import { floatingContentSideOffsets } from '@/lib/floating-content-variants'
 import { popoverContentVariants } from './popover-variants'
-import { useFloatingOverlayLayerStyle } from '@/lib/overlay-layer'
+import { useFloatingOverlayLayer } from '@/lib/overlay-layer'
 
 defineOptions({ inheritAttrs: false })
 
@@ -26,7 +26,7 @@ const props = withDefaults(defineProps<PopoverContentProps>(), {
     class: undefined,
 })
 
-const overlayLayerStyle = useFloatingOverlayLayerStyle('popover')
+const { style: overlayLayerStyle, ref: floatingLayerRef } = useFloatingOverlayLayer('popover')
 
 const classes = computed(() =>
     cn(popoverContentVariants(), props.class)
@@ -36,12 +36,13 @@ const classes = computed(() =>
 <template>
     <PopoverPortalPrimitive>
         <PopoverContentPrimitive
+            :ref="floatingLayerRef"
             v-bind="$attrs"
             :align="align"
             :side-offset="sideOffset"
             :collision-padding="collisionPadding"
             :class="classes"
-            :style="overlayLayerStyle"
+            :style="[overlayLayerStyle, $attrs.style]"
         >
             <slot />
         </PopoverContentPrimitive>

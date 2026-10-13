@@ -23,7 +23,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/rate/Rate.vue",
-            "line": 10
+            "line": 11
           },
           "origin": "declared",
           "required": false,
@@ -55,7 +55,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/rate/Rate.vue",
-            "line": 11
+            "line": 12
           },
           "origin": "declared",
           "required": false,
@@ -90,7 +90,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/rate/Rate.vue",
-            "line": 12
+            "line": 13
           },
           "origin": "declared",
           "required": false,
@@ -125,7 +125,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/rate/Rate.vue",
-            "line": 13
+            "line": 14
           },
           "origin": "declared",
           "required": false,
@@ -161,7 +161,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/rate/Rate.vue",
-            "line": 14
+            "line": 15
           },
           "origin": "declared",
           "required": false,
@@ -193,7 +193,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/rate/Rate.vue",
-            "line": 16
+            "line": 17
           },
           "origin": "declared",
           "required": false,
@@ -211,6 +211,70 @@
               "text": "undefined"
             },
             "fallback": "When omitted, empty, or not recognized by the shape library, the component uses the Lucide Star icon."
+          }
+        },
+        {
+          "id": "api-component_3Arate_2FRate-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The custom accessible name for the rating control. It is used when aria-labelledby is omitted; when both are omitted, the current locale supplies the default name.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/rate/Rate.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/rate/Rate.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Arate_2FRate-props-ariaLabelledby",
+          "name": "ariaLabelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The ID of an external label element. When provided, it names the rating control and takes precedence over ariaLabel.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/rate/Rate.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/rate/Rate.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
           }
         },
         {

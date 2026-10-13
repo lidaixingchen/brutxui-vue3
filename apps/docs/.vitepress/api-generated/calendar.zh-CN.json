@@ -25,7 +25,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/calendar/Calendar.vue",
-            "line": 30
+            "line": 32
           },
           "origin": "declared",
           "required": false,
@@ -60,7 +60,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/calendar/Calendar.vue",
-            "line": 31
+            "line": 33
           },
           "origin": "declared",
           "required": false,
@@ -95,7 +95,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/calendar/Calendar.vue",
-            "line": 32
+            "line": 34
           },
           "origin": "declared",
           "required": false,
@@ -127,7 +127,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/calendar/Calendar.vue",
-            "line": 33
+            "line": 35
           },
           "origin": "declared",
           "required": false,
@@ -165,7 +165,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/calendar/Calendar.vue",
-            "line": 34
+            "line": 36
           },
           "origin": "declared",
           "required": false,
@@ -203,7 +203,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/calendar/Calendar.vue",
-            "line": 35
+            "line": 37
           },
           "origin": "declared",
           "required": false,
@@ -238,7 +238,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/calendar/Calendar.vue",
-            "line": 36
+            "line": 38
           },
           "origin": "declared",
           "required": false,
@@ -258,6 +258,38 @@
           }
         },
         {
+          "id": "api-component_3Acalendar_2FCalendar-props-locale",
+          "name": "locale",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "v-calendar 的语言代码；未指定时使用 useLocale() 当前语言包的代码，缺省回退为 zh-CN。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/calendar/Calendar.vue",
+            "line": 40
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/calendar/Calendar.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
           "id": "api-component_3Acalendar_2FCalendar-props-retroHeader",
           "name": "retroHeader",
           "kind": "props",
@@ -273,7 +305,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/calendar/Calendar.vue",
-            "line": 38
+            "line": 42
           },
           "origin": "declared",
           "required": false,

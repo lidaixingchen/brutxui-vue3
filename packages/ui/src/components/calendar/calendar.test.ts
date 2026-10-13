@@ -2,6 +2,9 @@ import { mount, flushPromises } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { vi } from 'vitest'
 import Calendar from './Calendar.vue'
+import { LOCALE_INJECTION_KEY } from '../../composables/useLocale'
+import { en } from '../../locales/en'
+import { zhCN } from '../../locales/zh-CN'
 
 interface CalendarExposed {
     rootClasses: string
@@ -27,7 +30,7 @@ const { dayRef } = vi.hoisted(() => ({
 vi.mock('v-calendar', () => ({
     DatePicker: {
         name: 'VDatePicker',
-        props: ['modelValue', 'mode', 'isRange', 'disabled', 'class', 'selectAttribute', 'dragAttribute', 'trimWeeks', 'firstDayOfWeek', 'popover'],
+        props: ['modelValue', 'mode', 'isRange', 'disabled', 'class', 'selectAttribute', 'dragAttribute', 'trimWeeks', 'firstDayOfWeek', 'popover', 'locale'],
         emits: ['update:model-value', 'drag'],
         data() {
             return { day: { ...dayRef }, dayPropsClass: dayRef.propsClass }
@@ -237,6 +240,31 @@ describe('Calendar', () => {
             const wrapper = await mountCalendar()
             const stub = await findVDatePicker(wrapper)
             expect(stub.props('isRange')).toBe(false)
+        })
+
+        it('uses the default locale code for VDatePicker', async () => {
+            const wrapper = await mountCalendar()
+            const stub = await findVDatePicker(wrapper)
+            expect(stub.props('locale')).toBe(zhCN.code)
+        })
+
+        it('uses the injected locale code for VDatePicker', async () => {
+            const wrapper = mount(Calendar, {
+                global: { provide: { [LOCALE_INJECTION_KEY]: en } },
+            })
+            await flushPromises()
+            const stub = await findVDatePicker(wrapper)
+            expect(stub.props('locale')).toBe(en.code)
+        })
+
+        it('allows an explicit locale to override the injected locale', async () => {
+            const wrapper = mount(Calendar, {
+                props: { locale: 'fr-FR' },
+                global: { provide: { [LOCALE_INJECTION_KEY]: en } },
+            })
+            await flushPromises()
+            const stub = await findVDatePicker(wrapper)
+            expect(stub.props('locale')).toBe('fr-FR')
         })
 
         it('applies disabled styles to rootClasses when disabled', async () => {

@@ -4,6 +4,8 @@ import { type ClassValue } from 'clsx'
 import { TooltipRoot as Tooltip, TooltipTrigger } from 'reka-ui'
 import TooltipContent from '../tooltip/TooltipContent.vue'
 import TooltipProvider from '../tooltip/TooltipProvider.vue'
+import { useLocale } from '@/composables/useLocale'
+import { zhCN } from '@/locales/zh-CN'
 
 const DatePicker = defineAsyncComponent(async () => {
     try {
@@ -34,6 +36,8 @@ interface CalendarProps {
     events?: CalendarEvent[]
     eventRenderer?: (event: CalendarEvent) => unknown
     mode?: 'default' | 'card'
+    /** v-calendar 使用的语言代码；未指定时读取 useLocale() 的语言包代码。 */
+    locale?: string
     /** 复古挂历头装饰：双金属打孔环 + 红色粗横条（纯装饰层） */
     retroHeader?: boolean
 }
@@ -52,11 +56,15 @@ const props = withDefaults(defineProps<CalendarProps>(), {
     eventRenderer: undefined,
     retroHeader: false,
     mode: 'default',
+    locale: undefined,
 })
 
 const emit = defineEmits<{
     'update:modelValue': [value: Date | Date[] | null]
 }>()
+
+const { locale: globalLocale } = useLocale()
+const datePickerLocale = computed(() => props.locale ?? globalLocale.value.code ?? zhCN.code)
 
 const rootClasses = computed(() =>
     cn(
@@ -227,6 +235,7 @@ function getDayEvents(day: { date?: Date; startDate?: Date }) {
             :model-value="vCalendarModelValue"
             mode="date"
             :is-range="isRange"
+            :locale="datePickerLocale"
             :class="rootClasses"
             :select-attribute="selectAttribute"
             :drag-attribute="dragAttribute"

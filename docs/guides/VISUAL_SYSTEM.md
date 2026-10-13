@@ -133,6 +133,7 @@
   - **Level 3（模态内容）**：`z-dialog` (1000) — Dialog、AlertDialog、Drawer/Sheet、MessageBox 遮罩与内容。
   - **Level 4（系统覆盖层）**：`z-tour-canvas` (9000)、`z-tour-popover` (9001)、`z-preview-overlay` (9100)、`z-preview-control` (9101)、`z-loading` (9200)。
   - **Level 5（通知）**：`z-toast` (10010) / `z-message` (10010) — 全局通知与消息。
+- **消费端覆盖与嵌套浮层**：语义层级令牌通过 CSS 变量解析；组件根节点保留消费端的令牌覆盖、同名行内样式及语义 `z-*` 类。经 Teleport 挂载的模态后代按所属内容节点的当前计算层级派生，遮罩与内容保持同层，祖先 class/style 更新会同步影响后代浮层。
 - **tailwind-merge 去重保障**：全库 `cn()` 已通过 `classGroups.z` 注册全部语义类名，外部传入 `z-50` 或其他层级类名时可实现确定性覆盖去重（机制见 [TAILWIND_V4_MECHANISMS.md](TAILWIND_V4_MECHANISMS.md) §6）。
 
 ## CVA 变体文件

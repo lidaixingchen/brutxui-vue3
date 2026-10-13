@@ -13,7 +13,7 @@ import { sheetVariants } from './sheet-variants'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
 import { modalCloseButtonVariants, overlayVariants } from '@/lib/modal-variants'
 import { useLocale } from '@/composables/useLocale'
-import { useModalOverlayLayerStyle } from '@/lib/overlay-layer'
+import { useModalOverlayLayer } from '@/lib/overlay-layer'
 
 defineOptions({
     inheritAttrs: false,
@@ -32,7 +32,7 @@ const props = withDefaults(defineProps<SheetContentProps>(), {
 })
 
 const { t } = useLocale()
-const modalLayerStyle = useModalOverlayLayerStyle()
+const modalLayer = useModalOverlayLayer()
 
 const CLOSE_BUTTON_PLACEMENT_MAP: Record<NonNullable<SheetVariantProps['side']>, 'sheet-left' | 'sheet-right'> = {
     left: 'sheet-left',
@@ -59,8 +59,14 @@ const closeIconClasses = cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
 
 <template>
     <DialogPortalPrimitive>
-        <DialogOverlayPrimitive :class="overlayClasses" :style="modalLayerStyle" />
-        <DialogContentPrimitive v-bind="$attrs" :class="contentClasses" :style="modalLayerStyle">
+        <DialogOverlayPrimitive :class="overlayClasses" :style="modalLayer.overlayStyle.value" />
+        <DialogContentPrimitive
+            v-bind="$attrs"
+            :ref="modalLayer.ref"
+            :class="contentClasses"
+            :style="[modalLayer.style.value, $attrs.style]"
+            @open-auto-focus="modalLayer.ref"
+        >
             <slot />
             <DialogClosePrimitive :class="closeClasses">
                 <X :class="closeIconClasses" />

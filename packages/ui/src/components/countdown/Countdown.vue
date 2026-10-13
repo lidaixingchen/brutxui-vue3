@@ -26,7 +26,7 @@ defineSlots<{
     title?: (props: { title?: string }) => unknown
     prefix?: (props: { prefix?: string }) => unknown
     suffix?: (props: { suffix?: string }) => unknown
-    default?: (props: { remaining: number; formatted: string; isFinished: boolean }) => unknown
+    default?: (props: { remaining: number; formatted: string; isFinished: boolean; isReady: boolean }) => unknown
 }>()
 
 const { t } = useLocale()
@@ -48,8 +48,8 @@ function calculateRemaining(): number {
     return Math.max(0, targetTimestamp.value - Date.now())
 }
 
-const remaining = ref(calculateRemaining())
-const isFinished = ref(targetTimestamp.value !== null && remaining.value === 0)
+const remaining = ref(0)
+const isFinished = ref(false)
 
 function tick(): void {
     if (targetTimestamp.value === null) {
@@ -128,7 +128,7 @@ function handleWindowFocus(): void {
 }
 
 watch(targetTimestamp, () => {
-    restartCountdown()
+    if (isMounted.value) restartCountdown()
 })
 
 watch(() => props.format, () => {
@@ -166,7 +166,7 @@ onBeforeUnmount(() => {
 })
 
 const formattedDisplay = computed(() => {
-    if (targetTimestamp.value === null) {
+    if (!isMounted.value || targetTimestamp.value === null) {
         return props.placeholder ?? '-'
     }
     return formatCountdown(remaining.value, props.format)
@@ -194,6 +194,7 @@ const classes = computed(() =>
                     :remaining="remaining"
                     :formatted="formattedDisplay"
                     :is-finished="isFinished"
+                    :is-ready="isMounted"
                 >
                     {{ formattedDisplay }}
                 </slot>

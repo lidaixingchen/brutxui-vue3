@@ -7,7 +7,7 @@ import {
 import { cn } from '@/lib/utils'
 import { floatingContentSideOffsets } from '@/lib/floating-content-variants'
 import { dropdownMenuContentVariants } from './dropdown-menu-variants'
-import { useFloatingOverlayLayerStyle } from '@/lib/overlay-layer'
+import { useFloatingOverlayLayer } from '@/lib/overlay-layer'
 
 interface DropdownMenuContentProps {
     sideOffset?: number
@@ -26,7 +26,7 @@ const props = withDefaults(defineProps<DropdownMenuContentProps>(), {
     class: undefined,
 })
 
-const overlayLayerStyle = useFloatingOverlayLayerStyle('dropdown')
+const { style: overlayLayerStyle, ref: floatingLayerRef } = useFloatingOverlayLayer('dropdown')
 
 const classes = computed(() =>
     cn(dropdownMenuContentVariants(), props.class)
@@ -40,11 +40,12 @@ defineOptions({ inheritAttrs: false })
 <template>
     <DropdownMenuPortalPrimitive :to="to">
         <DropdownMenuContentPrimitive
+            :ref="floatingLayerRef"
             v-bind="$attrs"
             :side-offset="sideOffset"
             :align="align"
             :class="classes"
-            :style="overlayLayerStyle"
+            :style="[overlayLayerStyle, $attrs.style]"
         >
             <slot />
         </DropdownMenuContentPrimitive>

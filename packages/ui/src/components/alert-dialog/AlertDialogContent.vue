@@ -9,7 +9,7 @@ import {
 import { cn } from '@/lib/utils'
 import { overlayVariants } from '@/lib/modal-variants'
 import { alertDialogContentVariants } from './alert-dialog-variants'
-import { useModalOverlayLayerStyle } from '@/lib/overlay-layer'
+import { useModalOverlayLayer } from '@/lib/overlay-layer'
 
 // 根节点为 Portal（Teleport），Vue 无法将 attrs 自动落到弹层根元素上，
 // 故关闭隐式继承，改由模板显式 v-bind="$attrs" 到 Content primitive，确保 aria-*/data-*/style 等透传可预期。
@@ -22,7 +22,7 @@ interface AlertDialogContentProps {
 }
 
 const props = defineProps<AlertDialogContentProps>()
-const modalLayerStyle = useModalOverlayLayerStyle()
+const modalLayer = useModalOverlayLayer()
 
 const overlayClasses = computed(() => cn(overlayVariants(), props.overlayClass))
 
@@ -33,8 +33,14 @@ const contentClasses = computed(() =>
 
 <template>
     <AlertDialogPortalPrimitive>
-        <AlertDialogOverlayPrimitive :class="overlayClasses" :style="modalLayerStyle" />
-        <AlertDialogContentPrimitive v-bind="$attrs" :class="contentClasses" :style="modalLayerStyle">
+        <AlertDialogOverlayPrimitive :class="overlayClasses" :style="modalLayer.overlayStyle.value" />
+        <AlertDialogContentPrimitive
+            v-bind="$attrs"
+            :ref="modalLayer.ref"
+            :class="contentClasses"
+            :style="[modalLayer.style.value, $attrs.style]"
+            @open-auto-focus="modalLayer.ref"
+        >
             <slot />
         </AlertDialogContentPrimitive>
     </AlertDialogPortalPrimitive>

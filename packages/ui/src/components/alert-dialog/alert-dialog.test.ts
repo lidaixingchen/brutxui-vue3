@@ -63,15 +63,15 @@ describe('AlertDialogContent', () => {
         expect(overlay.classes()).toContain('custom-overlay')
     })
 
-    it('uses the semantic dialog layer for both overlay and content', () => {
+    it('preserves consumer layer tokens in content styles', () => {
+        const customLayer = '3333'
         const wrapper = mount(AlertDialogContent, {
+            attrs: { style: { '--z-index-dialog': customLayer } },
             global: { stubs: contentStubs },
         })
 
-        expect(wrapper.find('[data-testid="alert-dialog-overlay"]').attributes('style'))
-            .toContain('--z-index-dialog: 1000')
         expect(wrapper.find('[data-testid="alert-dialog-content"]').attributes('style'))
-            .toContain('--z-index-dialog: 1000')
+            .toContain(`--z-index-dialog: ${customLayer}`)
     })
 })
 

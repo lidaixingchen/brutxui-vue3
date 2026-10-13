@@ -38,6 +38,9 @@ export const en: Locale = {
     spinner: {
         loading: 'Loading...',
     },
+    rate: {
+        ariaLabel: 'Rating',
+    },
     submitButton: {
         submitting: 'Submitting...',
     },

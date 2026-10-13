@@ -15,7 +15,7 @@ describe('Countdown', () => {
         vi.useRealTimers()
     })
 
-    it('renders formatted remaining time based on target timestamp', () => {
+    it('renders formatted remaining time based on target timestamp', async () => {
         const now = 1700000000000
         vi.setSystemTime(now)
 
@@ -24,11 +24,12 @@ describe('Countdown', () => {
         const wrapper = mount(Countdown, {
             props: { value: target },
         })
+        await wrapper.vm.$nextTick()
 
         expect(wrapper.text()).toContain('01:02:03')
     })
 
-    it('supports custom formats with days and escaped literals', () => {
+    it('supports custom formats with days and escaped literals', async () => {
         const now = 1700000000000
         vi.setSystemTime(now)
 
@@ -40,11 +41,12 @@ describe('Countdown', () => {
                 format: 'DD [天] HH:mm:ss',
             },
         })
+        await wrapper.vm.$nextTick()
 
         expect(wrapper.text()).toContain('02 天 03:04:05')
     })
 
-    it('supports millisecond format token SSS', () => {
+    it('supports millisecond format token SSS', async () => {
         const now = 1700000000000
         vi.setSystemTime(now)
 
@@ -55,6 +57,7 @@ describe('Countdown', () => {
                 format: 'ss.SSS',
             },
         })
+        await wrapper.vm.$nextTick()
 
         expect(wrapper.text()).toContain('05.123')
     })
@@ -67,6 +70,7 @@ describe('Countdown', () => {
         const wrapper = mount(Countdown, {
             props: { value: target },
         })
+        await wrapper.vm.$nextTick()
 
         expect(wrapper.text()).toContain('00:00:05')
 
@@ -89,6 +93,7 @@ describe('Countdown', () => {
         const wrapper = mount(Countdown, {
             props: { value: target },
         })
+        await wrapper.vm.$nextTick()
 
         expect(wrapper.text()).toContain('00:01:00')
 
@@ -159,6 +164,7 @@ describe('Countdown', () => {
         const wrapper = mount(Countdown, {
             props: { value: pastTarget },
         })
+        await wrapper.vm.$nextTick()
 
         expect(wrapper.emitted('finish')).toHaveLength(1)
         expect(wrapper.text()).toContain('00:00:00')
@@ -199,6 +205,7 @@ describe('Countdown', () => {
             },
         })
         const wrapper = mount(Parent)
+        await wrapper.vm.$nextTick()
 
         const statusEl = wrapper.find('[role="status"]')
         expect(statusEl.exists()).toBe(true)
@@ -251,7 +258,7 @@ describe('Countdown', () => {
         expect(setTimeoutSpy).not.toHaveBeenCalled()
     })
 
-    it('supports custom default slot for custom time units rendering', () => {
+    it('supports custom default slot for custom time units rendering', async () => {
         const now = 1700000000000
         vi.setSystemTime(now)
 
@@ -262,6 +269,7 @@ describe('Countdown', () => {
                     h('div', { class: 'custom-clock' }, `REMAINING:${slotProps.formatted}`),
             },
         })
+        await wrapper.vm.$nextTick()
 
         expect(wrapper.find('.custom-clock').text()).toBe('REMAINING:00:00:10')
     })

@@ -34,6 +34,15 @@ const value = ref(3)
 </template>
 ```
 
+Rate uses the current locale for its default accessible name. Use `aria-label` to provide a custom name, or `aria-labelledby` to reference visible page text. When `aria-labelledby` is present, the external label takes precedence.
+
+```vue
+<template>
+    <span id="product-rating-label">Product rating</span>
+    <Rate v-model="value" aria-labelledby="product-rating-label" />
+</template>
+```
+
 ### Half Star Support
 
 Allow decimal ratings (half stars) using the `allow-half` property.
@@ -90,5 +99,6 @@ Add `readonly` to display a rating while preventing hover previews, pointer sele
 
 - **Keyboard Interaction**: Right or Up increases the rating; Left or Down decreases it. `Home` selects zero and `End` selects the maximum. With `allowHalf`, arrow keys use half-point steps. Read-only mode prevents keyboard changes and removes the component from the Tab order
 - **ARIA Attributes**: The root element has `role="slider"`, `aria-valuenow` representing the current rating score, `aria-valuemin="0"`, `aria-valuemax` mapped to `max`, and `aria-readonly` indicating readonly state
+- **Accessible Name**: The default name comes from the current locale. `aria-labelledby` references a visible external label and takes precedence over `aria-label`; use `aria-label` when no external label is available
 - **Reduced Motion**: The stamp animation after icon selection reads `prefers-reduced-motion` and does not play when reduced motion is requested
 

@@ -21,6 +21,14 @@ const iconStarVal = ref(5)
         </div>
 
         <div>
+            <h3 class="text-lg font-bold mb-3">关联外部标签</h3>
+            <div class="flex items-center gap-4">
+                <span id="rating-label" class="text-sm font-medium">商品评分</span>
+                <Rate v-model="val1" aria-labelledby="rating-label" />
+            </div>
+        </div>
+
+        <div>
             <h3 class="text-lg font-bold mb-3">允许半星</h3>
             <Rate v-model="val2" allow-half />
             <div class="mt-2 text-sm text-neutral-500">当前分值: {{ val2 }}</div>

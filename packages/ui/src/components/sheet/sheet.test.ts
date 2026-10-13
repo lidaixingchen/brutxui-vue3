@@ -125,13 +125,15 @@ describe('SheetContent', () => {
         expect(content.attributes('aria-label')).toBe('My Sheet Label')
     })
 
-    it('uses the semantic dialog layer for both overlay and content', () => {
+    it('preserves consumer layer tokens in content styles', () => {
+        const customLayer = '3333'
         const wrapper = mount(SheetContent, {
+            attrs: { style: { '--z-index-dialog': customLayer } },
             global: { stubs: contentStubs },
         })
 
         expect(wrapper.find('[data-testid="sheet-content"]').attributes('style'))
-            .toContain('--z-index-dialog: 1000')
+            .toContain(`--z-index-dialog: ${customLayer}`)
     })
 })
 

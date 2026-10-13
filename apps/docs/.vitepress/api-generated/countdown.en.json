@@ -187,7 +187,7 @@
             "literals": [],
             "references": []
           },
-          "description": "The placeholder displayed when the target time is empty or invalid.",
+          "description": "The placeholder displayed before mount or when the target time is empty or invalid.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/countdown/types.ts",
@@ -411,11 +411,11 @@
           "name": "default",
           "kind": "slots",
           "type": {
-            "text": "{ remaining: number; formatted: string; isFinished: boolean; }",
+            "text": "{ remaining: number; formatted: string; isFinished: boolean; isReady: boolean; }",
             "literals": [],
             "references": []
           },
-          "description": "Customizes the value area with the remaining milliseconds, formatted string, and finished state.",
+          "description": "Customizes the value area with the remaining milliseconds, formatted string, finished state, and mounted isReady state.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/countdown/Countdown.vue",

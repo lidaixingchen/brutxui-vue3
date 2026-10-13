@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 import { Star } from '@lucide/vue'
 import { useReducedMotion } from '@/composables/useReducedMotion'
+import { useLocale } from '@/composables/useLocale'
 import BrutalShape from '../brutal-shape/BrutalShape.vue'
 import { isBrutalShapeName } from '../brutal-shape/shapes'
 
@@ -14,6 +15,10 @@ interface RateProps {
     size?: 'sm' | 'md' | 'lg'
     /** 图腾图标名（brutal-shape 图腾库）；缺省渲染默认星形 */
     icon?: string
+    /** 自定义无障碍名称；优先级低于 ariaLabelledby */
+    ariaLabel?: string
+    /** 关联外部标签元素 ID；提供时优先于其他无障碍名称 */
+    ariaLabelledby?: string
 }
 
 const props = withDefaults(defineProps<RateProps>(), {
@@ -23,6 +28,8 @@ const props = withDefaults(defineProps<RateProps>(), {
     readonly: false,
     size: 'md',
     icon: undefined,
+    ariaLabel: undefined,
+    ariaLabelledby: undefined,
 })
 
 const emit = defineEmits<{
@@ -30,12 +37,16 @@ const emit = defineEmits<{
     change: [value: number]
 }>()
 
+const { t } = useLocale()
 const prefersReducedMotion = useReducedMotion()
 const hoverValue = ref<number>(0)
 /** 最近被敲选的图腾序号：驱动 Stamp Impact 敲印回弹动效 */
 const stampedIndex = ref<number | null>(null)
 
 const usesGlyphIcon = computed(() => Boolean(props.icon && isBrutalShapeName(props.icon)))
+const resolvedAriaLabel = computed(() =>
+    props.ariaLabelledby ? undefined : props.ariaLabel ?? t('rate.ariaLabel')
+)
 
 const displayValue = computed<number>(() => {
     return hoverValue.value > 0 ? hoverValue.value : props.modelValue
@@ -163,6 +174,8 @@ const foregroundStarClass = computed(() =>
     <div
         :class="containerClasses"
         role="slider"
+        :aria-label="resolvedAriaLabel"
+        :aria-labelledby="props.ariaLabelledby"
         :aria-valuenow="displayValue"
         :aria-valuemin="0"
         :aria-valuemax="max"

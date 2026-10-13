@@ -1,12 +1,12 @@
 ---
 title: Marquee
-description: Infinite horizontal scrolling marquee banner component with a bold, dynamic visual style that perfectly fits the neo-brutalist aesthetic.
+description: Infinite horizontal marquee banner with CSS reduced-motion support and stable SSR hydration structure.
 translated: true
 ---
 
 # Marquee
 
-A horizontal marquee component that enables infinite seamless scrolling of text, images, or any card content along a horizontal track. Ideal for displaying promotional slogans or partner brands on marketing pages and Hero sections. Supports bidirectional scrolling, hover pause, and edge fade effects, with automatic adaptation to system motion preferences via the `useReducedMotion` composable.
+A horizontal marquee component that enables infinite seamless scrolling of text, images, or any card content along a horizontal track. Ideal for displaying promotional slogans or partner brands on marketing pages and Hero sections. Supports bidirectional scrolling, hover pause, and edge fade effects, and adapts to system motion preferences through CSS media queries.
 
 ## Demo
 
@@ -74,9 +74,7 @@ Control text size and padding via the `size` property.
 <ComponentApi name="marquee" />
 ## Accessibility
 
-- **Motion Reduction**: The component respects the `prefers-reduced-motion` system setting. When the user enables "Reduce Motion", the scroll animation is removed from the track (adds `[animation:none]`), content is displayed statically, and the repeated track copies used for seamless looping (mirror tracks with `aria-hidden`) are no longer rendered, keeping only a single copy to avoid visual redundancy.
-
-This behavior is implemented through the `useReducedMotion` composable, which listens to the `prefers-reduced-motion: reduce` media query and responds in real-time to system setting changes without requiring a page refresh.
+- **Motion Reduction**: The component respects the `prefers-reduced-motion` system setting. When "Reduce Motion" is enabled, CSS stops the track animation and hides the repeated track. The repeated track remains in the DOM to keep server-rendered and client hydration structure consistent. It has `aria-hidden` and `inert`, so it does not expose duplicate content or interactive elements. CSS responds immediately when the system preference changes.
 
 ## Customization
 

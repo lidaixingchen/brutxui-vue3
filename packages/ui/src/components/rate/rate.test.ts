@@ -1,5 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
+import { en } from '@/locales/en'
 import Rate from './Rate.vue'
 
 describe('Rate', () => {
@@ -118,6 +120,39 @@ describe('Rate', () => {
 
         await slider.trigger('keydown', { key: 'Home' })
         expect(wrapper.emitted('update:modelValue')![1]).toEqual([0])
+    })
+
+    it('uses the locale for its default accessible name', () => {
+        const defaultWrapper = mount(Rate)
+        const wrapper = mount(Rate, {
+            global: {
+                provide: { [LOCALE_INJECTION_KEY as symbol]: en },
+            },
+        })
+
+        expect(defaultWrapper.find('[role="slider"]').attributes('aria-label')).toBe('评分')
+        expect(wrapper.find('[role="slider"]').attributes('aria-label')).toBe('Rating')
+    })
+
+    it('keeps a caller-provided aria-label', () => {
+        const wrapper = mount(Rate, {
+            attrs: { 'aria-label': 'Rate this product' },
+        })
+
+        expect(wrapper.find('[role="slider"]').attributes('aria-label')).toBe('Rate this product')
+    })
+
+    it('uses aria-labelledby without adding a default aria-label', () => {
+        const wrapper = mount(Rate, {
+            attrs: {
+                'aria-labelledby': 'rating-label',
+                'aria-label': 'Rate this product',
+            },
+        })
+
+        const slider = wrapper.find('[role="slider"]')
+        expect(slider.attributes('aria-labelledby')).toBe('rating-label')
+        expect(slider.attributes('aria-label')).toBeUndefined()
     })
 })
 

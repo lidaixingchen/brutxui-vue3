@@ -1,8 +1,21 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { Countdown } from 'brutx-ui-vue'
 
-const targetTime = ref(Date.now() + 1000 * 60 * 60 * 24 + 1000 * 60 * 30)
+const MILLISECONDS_PER_SECOND = 1000
+const SECONDS_PER_MINUTE = 60
+const MINUTES_PER_HOUR = 60
+const HOURS_PER_DAY = 24
+const HALF_HOUR_IN_MINUTES = 30
+const COUNTDOWN_DURATION_MS = (HOURS_PER_DAY * MINUTES_PER_HOUR + HALF_HOUR_IN_MINUTES)
+    * SECONDS_PER_MINUTE
+    * MILLISECONDS_PER_SECOND
+
+const targetTime = ref<number | null>(null)
+
+onMounted(() => {
+    targetTime.value = Date.now() + COUNTDOWN_DURATION_MS
+})
 </script>
 
 <template>

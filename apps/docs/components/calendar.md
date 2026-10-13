@@ -63,6 +63,14 @@ const dateRange = ref(null)
 </template>
 ```
 
+### 语言
+
+日历默认读取 `provideLocale` 注入语言包的 `code`；语言包未提供代码时使用 `zh-CN`。可通过 `locale` 为单个日历指定 v-calendar 支持的语言代码：
+
+```vue
+<Calendar locale="en-US" />
+```
+
 ## API 参考
 
 <span id="事件"></span>

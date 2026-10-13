@@ -321,13 +321,13 @@
 
 .dark .VPSidebarItem.is-active > .item > .link {
     background-color: var(--brutal-accent) !important;
-    color: var(--brutal-fg) !important;
+    color: var(--brutal-accent-foreground) !important;
     border-color: var(--brutal-border-color) !important;
     box-shadow: 4px 4px 0px 0px var(--brutal-border-color) !important;
 }
 
 .dark .VPSidebarItem.is-active > .item > .link > .text {
-    color: var(--brutal-fg) !important;
+    color: var(--brutal-accent-foreground) !important;
 }
 
 /* Hover text color override */
