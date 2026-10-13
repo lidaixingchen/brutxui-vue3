@@ -326,7 +326,7 @@ const columns: DataTableColumn<User>[] = [
 </template>
 ```
 
-启用 `stickyHeader` 后，`<thead>` 会添加 `sticky top-0 z-10`，在长表格垂直滚动时表头始终可见。建议配合固定高度的滚动容器使用。
+启用 `stickyHeader` 后，表头会在页面或外层垂直滚动容器滚动时停留在可视区域顶部。表头与表格主体保持横向滚动同步；虚拟滚动仍由其行滚动区域负责纵向滚动。
 
 ## 数据类型
 
@@ -483,7 +483,7 @@ function goNextPage() {
 | `minWidth` | `number` | — | 最小列宽 |
 | `maxWidth` | `number` | — | 最大列宽 |
 | `align` | `'left' \| 'center' \| 'right'` | — | 列内容对齐方式 |
-| `fixed` | `'left' \| 'right'` | — | 固定列方向 |
+| `fixed` | `'left' \| 'right'` | — | 固定列方向，偏移量依据浏览器实际渲染宽度计算；需要稳定宽度时可同时设置 `width` |
 | `type` | `'default' \| 'expand'` | `'default'` | 列类型（`expand` 为展开列） |
 
 ## 可访问性

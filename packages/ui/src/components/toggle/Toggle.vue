@@ -42,13 +42,17 @@ const isDisabled = computed(() => props.disabled || props.loading)
 const classes = computed(() =>
     cn(
         toggleVariants({ variant: props.variant, size: props.size }),
+        props.loading && 'relative',
         isDisabled.value && 'pointer-events-none',
         props.class,
     )
 )
 
 const loaderClasses = computed(() =>
-    cn(iconSizeVariants({ size: TOGGLE_SIZE_TO_ICON[props.size] }), 'animate-spin')
+    cn(
+        iconSizeVariants({ size: TOGGLE_SIZE_TO_ICON[props.size] }),
+        'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-spin motion-reduce:animate-none'
+    )
 )
 </script>
 
@@ -61,7 +65,10 @@ const loaderClasses = computed(() =>
         :aria-busy="loading || undefined"
         @update:model-value="emit('update:modelValue', $event)"
     >
-        <Loader2 v-if="loading" :class="loaderClasses" />
+        <span v-if="loading" class="inline-flex items-center gap-2 opacity-0">
+            <slot />
+        </span>
         <slot v-else />
+        <Loader2 v-if="loading" :class="loaderClasses" aria-hidden="true" />
     </Toggle>
 </template>

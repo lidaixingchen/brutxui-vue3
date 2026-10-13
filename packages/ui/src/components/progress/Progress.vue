@@ -68,7 +68,13 @@ const percentage = computed(() => {
 
 const rootModelValue = computed(() => props.indeterminate ? null : sanitizedValue.value)
 
-const labelClasses = 'absolute inset-0 flex items-center justify-center text-xs font-bold text-white mix-blend-difference pointer-events-none'
+const labelClasses = computed(() =>
+    cn('absolute inset-0 flex items-center justify-center pointer-events-none')
+)
+
+const labelContentClasses = computed(() =>
+    cn('inline-flex items-center rounded-brutal bg-brutal-bg px-1 text-xs leading-none font-bold text-brutal-fg')
+)
 </script>
 
 <template>
@@ -83,6 +89,8 @@ const labelClasses = 'absolute inset-0 flex items-center justify-center text-xs 
             :style="indicatorStyle"
             aria-hidden="true"
         />
-        <span v-if="showLabel && !indeterminate" :class="labelClasses">{{ Math.round(percentage) }}%</span>
+        <span v-if="showLabel && !indeterminate" :class="labelClasses">
+            <span :class="labelContentClasses">{{ Math.round(percentage) }}%</span>
+        </span>
     </ProgressRoot>
 </template>

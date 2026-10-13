@@ -223,7 +223,7 @@ The hover-to-pause / leave-to-resume interaction logic is preserved in motion de
 - **Thumbnail buttons**: Each thumbnail is a `<button type="button">` with `aria-label` (via `t('carousel.goToSlide', { index })` internationalization); the current thumbnail is identified by visual highlight
 - **Navigation deduplication**: When thumbnails are shown, the default bottom dot navigation is automatically hidden (`showDots` and `thumbnails.show` are mutually exclusive) to avoid duplicate navigation
 - **Autoplay indicators**: Progress bar / fraction / dots are decorative visual elements (`<div>`), non-interactive and do not steal focus
-- **Pause on hover**: When `autoplayIndicator.pauseOnHover` is enabled, entering the carousel area pauses autoplay and resumes on leave
+- **Autoplay pause**: Keyboard focus within the carousel pauses autoplay and resumes it after focus leaves only if it was running before and has not been manually stopped. Pointer hover follows `autoplayIndicator.pauseOnHover`; it defaults to pausing when no autoplay indicator is configured. When hover pause is enabled, autoplay stays paused while either focus or hover remains inside
 - **Parallax animation**: Driven by CSS variables, inherits `useCarousel`'s `prefers-reduced-motion` handling — parallax scale and opacity transitions are also disabled when reduced motion is enabled
 
 ## FAQ

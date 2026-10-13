@@ -5,6 +5,7 @@ import { TooltipPortal, TooltipContent as TooltipContentPrimitive, useForwardPro
 import { cn } from '@/lib/utils'
 import { floatingContentSideOffsets } from '@/lib/floating-content-variants'
 import { tooltipContentVariants } from './tooltip-variants'
+import { useFloatingOverlayLayerStyle } from '@/lib/overlay-layer'
 
 defineOptions({ inheritAttrs: false })
 
@@ -26,6 +27,7 @@ const delegatedProps = computed(() => {
 })
 
 const forwarded = useForwardProps(delegatedProps)
+const overlayLayerStyle = useFloatingOverlayLayerStyle('tooltip')
 
 const classes = computed(() =>
     cn(tooltipContentVariants(), props.class)
@@ -34,7 +36,7 @@ const classes = computed(() =>
 
 <template>
     <TooltipPortal :to="to">
-        <TooltipContentPrimitive v-bind="{ ...forwarded, ...$attrs }" :class="classes">
+        <TooltipContentPrimitive v-bind="{ ...forwarded, ...$attrs }" :class="classes" :style="overlayLayerStyle">
             <slot />
         </TooltipContentPrimitive>
     </TooltipPortal>

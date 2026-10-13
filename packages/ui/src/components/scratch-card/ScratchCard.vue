@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, toRef, watch, onUnmounted } from 'vue'
 import { getCanvas2DContext, getDevicePixelRatio, getDocument, getComputedStyle } from '@/lib/env'
-import { cn } from '@/lib/utils'
+import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 import { FALLBACK_PRIMARY_COLOR, FALLBACK_SECONDARY_COLOR, FALLBACK_FG_COLOR } from '@/lib/theme-fallbacks'
 import { useReducedMotion } from '@/composables/useReducedMotion'
 import { useCanvasInteraction } from '@/composables/useCanvasInteraction'
@@ -110,7 +110,7 @@ defineExpose({
 })
 
 const containerClasses = computed(() =>
-    cn(scratchCardVariants(), props.class)
+    cn(scratchCardVariants(), FOCUS_RING_CLASSES, props.class)
 )
 
 const canvasClasses = computed(() =>

@@ -27,7 +27,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/alert-dialog/AlertDialogContent.vue",
-            "line": 18
+            "line": 19
           },
           "origin": "declared",
           "required": false,
@@ -55,7 +55,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/alert-dialog/AlertDialogContent.vue",
-            "line": 20
+            "line": 21
           },
           "origin": "declared",
           "required": false,

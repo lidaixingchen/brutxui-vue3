@@ -118,7 +118,7 @@ const BUTTON_SIZE_TO_ICON: Record<NonNullable<ButtonVariantProps['size']>, IconS
 }
 
 const loaderClasses = computed(() =>
-    cn(iconSizeVariants({ size: BUTTON_SIZE_TO_ICON[props.size] }), 'animate-spin')
+    cn(iconSizeVariants({ size: BUTTON_SIZE_TO_ICON[props.size] }), 'animate-spin motion-reduce:animate-none')
 )
 
 const resolvedPendingText = computed(() => props.pendingText ?? t('submitButton.submitting'))

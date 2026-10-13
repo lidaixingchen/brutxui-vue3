@@ -34,4 +34,15 @@ describe('PopoverContent', () => {
         const content = wrapper.find('[data-testid="popover-content"]')
         expect(content.classes()).toContain('custom-popover')
     })
+
+    it('allows a caller z-index class to override the semantic default', () => {
+        const wrapper = mount(PopoverContent, {
+            props: { class: 'z-dialog' },
+            global: { stubs: contentStubs },
+        })
+
+        const content = wrapper.find('[data-testid="popover-content"]')
+        expect(content.classes()).toContain('z-dialog')
+        expect(content.classes()).not.toContain('z-popover')
+    })
 })

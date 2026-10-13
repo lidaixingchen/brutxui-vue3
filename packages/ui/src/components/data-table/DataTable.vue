@@ -1,7 +1,8 @@
 <script setup lang="ts" generic="T extends object = Record<string, unknown>">
-import { computed, nextTick, ref, shallowRef, watch, watchEffect, markRaw, useSlots } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, ref, shallowRef, watch, watchEffect, markRaw, useSlots } from 'vue'
 import { cn } from '@/lib/utils'
 import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_SIZE_OPTIONS, DATA_TABLE_COLUMN_WIDTH_FALLBACK_PX, DATA_TABLE_EXPAND_COLUMN_WIDTH_PX, DATA_TABLE_SELECT_COLUMN_WIDTH_PX, DATA_TABLE_ROW_HEIGHT_FALLBACK_PX, DATA_TABLE_FIXED_COLUMN_Z_INDEX } from '@/lib/defaults'
+import { getResizeObserverCtor } from '@/lib/env'
 import { useLocale } from '@/composables/useLocale'
 import { getCellValue } from '@/lib/data-table-utils'
 import { useDataTablePipeline } from './useDataTablePipeline'
@@ -43,6 +44,13 @@ import DataTableColumnFilter from './DataTableColumnFilter.vue'
 
 const slots = useSlots()
 const { t } = useLocale()
+const DATA_TABLE_WIDTH_MEASUREMENT_TOLERANCE_PX = 0.5
+const rootRef = ref<HTMLElement | null>(null)
+const horizontalScrollRef = ref<HTMLElement | null>(null)
+const stickyHeaderScrollRef = ref<HTMLElement | null>(null)
+const measuredWidths = shallowRef<Record<string, number>>({})
+let fixedWidthObserver: ResizeObserver | null = null
+const observedWidthElements = new Set<HTMLElement>()
 
 const props = withDefaults(defineProps<DataTableProps<T>>(), {
     sortable: false,
@@ -114,7 +122,7 @@ function isRowExpanded(row: T): boolean {
     return expandedRowKeys.value.has(getRowKeyValue(row))
 }
 
-const virtualScrollRef = ref<{ measure: () => void } | null>(null)
+const virtualScrollRef = ref<{ measure: () => void; $el: HTMLElement } | null>(null)
 
 // 展开/收起会改变行高：虚拟滚动下固定 item-height 无法感知内容高度变化，
 // 展开状态变化后触发重测，避免后续行重叠或内容被裁切。
@@ -129,28 +137,155 @@ watch(
     },
 )
 
-// 计算固定列的偏移量
+function resolveDeclaredWidth(column: DataTableColumn<T>): number {
+    if (typeof column.width === 'number') return column.width
+    const match = typeof column.width === 'string' ? /^(\d+(?:\.\d+)?)px$/.exec(column.width) : null
+    return match ? Number(match[1]) : DATA_TABLE_COLUMN_WIDTH_FALLBACK_PX
+}
+
+function getMeasuredWidth(key: string, fallback: number): number {
+    return measuredWidths.value[key] ?? fallback
+}
+
+function getColumnWidth(column: DataTableColumn<T>): number {
+    return getMeasuredWidth(`column:${column.id}`, resolveDeclaredWidth(column))
+}
+
+function getUtilityColumnOffset(kind: 'expand' | 'select'): number {
+    if (kind === 'expand') return 0
+    return props.expandable ? getMeasuredWidth('expand', DATA_TABLE_EXPAND_COLUMN_WIDTH_PX) : 0
+}
+
+function getUtilityColumnWidth(kind: 'expand' | 'select'): number {
+    return getMeasuredWidth(kind, kind === 'expand' ? DATA_TABLE_EXPAND_COLUMN_WIDTH_PX : DATA_TABLE_SELECT_COLUMN_WIDTH_PX)
+}
+
+// 固定列偏移使用表头的实际轨道宽度，与浏览器表格布局保持一致。
 function getFixedColumnOffset(column: DataTableColumn<T>, side: 'left' | 'right'): number {
     const cols = visibleColumns.value.filter(c => c.fixed === side)
     const index = cols.findIndex(c => c.id === column.id)
     if (index === -1) return 0
 
-    const resolveWidth = (col: DataTableColumn<T>): number => {
-        if (typeof col.width === 'number') return col.width
-        const m = typeof col.width === 'string' ? /^(\d+(?:\.\d+)?)px$/.exec(col.width) : null
-        return m ? Number(m[1]) : DATA_TABLE_COLUMN_WIDTH_FALLBACK_PX
-    }
-
     let offset = 0
     if (side === 'left') {
-        if (props.expandable) offset += DATA_TABLE_EXPAND_COLUMN_WIDTH_PX
-        if (props.selectable) offset += DATA_TABLE_SELECT_COLUMN_WIDTH_PX
-        for (let i = 0; i < index; i++) offset += resolveWidth(cols[i]!)
+        if (props.expandable) offset += getUtilityColumnWidth('expand')
+        if (props.selectable) offset += getUtilityColumnWidth('select')
+        for (let i = 0; i < index; i++) offset += getColumnWidth(cols[i]!)
     } else {
-        for (let i = index + 1; i < cols.length; i++) offset += resolveWidth(cols[i]!)
+        for (let i = index + 1; i < cols.length; i++) offset += getColumnWidth(cols[i]!)
     }
     return offset
 }
+
+const nativeStickyTableWidth = computed(() => {
+    const observedTableWidth = measuredWidths.value.table
+    if (observedTableWidth) return observedTableWidth
+
+    const columnWidths = [
+        ...(props.expandable ? [getUtilityColumnWidth('expand')] : []),
+        ...(props.selectable ? [getUtilityColumnWidth('select')] : []),
+        ...visibleColumns.value.map(getColumnWidth),
+    ]
+    return columnWidths.every(width => width > 0) ? columnWidths.reduce((total, width) => total + width, 0) : undefined
+})
+
+const virtualTableWidth = computed(() => {
+    const observedWidth = measuredWidths.value['virtual-table']
+    if (observedWidth) return observedWidth
+
+    const columnWidths = [
+        ...(props.expandable ? [getUtilityColumnWidth('expand')] : []),
+        ...(props.selectable ? [getUtilityColumnWidth('select')] : []),
+        ...visibleColumns.value.map(getColumnWidth),
+    ]
+    return columnWidths.every(width => width > 0) ? columnWidths.reduce((total, width) => total + width, 0) : undefined
+})
+
+function getNativeColumnWidthStyle(column: DataTableColumn<T>): string | undefined {
+    const width = measuredWidths.value[`column:${column.id}`]
+    if (width) return `${width}px`
+    if (typeof column.width === 'number') return `${column.width}px`
+    return typeof column.width === 'string' && /^\d+(?:\.\d+)?px$/.test(column.width) ? column.width : undefined
+}
+
+function syncStickyHeaderScroll(): void {
+    const horizontalScrollElement = props.virtualScroll?.enabled
+        ? virtualScrollRef.value?.$el
+        : horizontalScrollRef.value
+    if (!stickyHeaderScrollRef.value || !horizontalScrollElement) return
+    stickyHeaderScrollRef.value.scrollLeft = horizontalScrollElement.scrollLeft
+}
+
+function handleHorizontalScroll(): void {
+    syncStickyHeaderScroll()
+}
+
+function handleStickyHeaderScroll(): void {
+    const horizontalScrollElement = props.virtualScroll?.enabled
+        ? virtualScrollRef.value?.$el
+        : horizontalScrollRef.value
+    if (!stickyHeaderScrollRef.value || !horizontalScrollElement) return
+    horizontalScrollElement.scrollLeft = stickyHeaderScrollRef.value.scrollLeft
+}
+
+function handleFixedWidthResize(entries: ResizeObserverEntry[]): void {
+    const nextWidths = { ...measuredWidths.value }
+    let changed = false
+
+    for (const entry of entries) {
+        const target = entry.target as HTMLElement
+        const key = target.dataset.tableWidthKey
+        if (!key) continue
+        const borderBox = Array.isArray(entry.borderBoxSize) ? entry.borderBoxSize[0] : entry.borderBoxSize
+        const width = target.getBoundingClientRect().width || borderBox?.inlineSize || entry.contentRect.width
+        if (width <= 0 || Math.abs((nextWidths[key] ?? 0) - width) < DATA_TABLE_WIDTH_MEASUREMENT_TOLERANCE_PX) continue
+        nextWidths[key] = width
+        changed = true
+    }
+
+    if (changed) measuredWidths.value = nextWidths
+}
+
+function syncFixedWidthObservers(): void {
+    const ResizeObserverCtor = getResizeObserverCtor()
+    if (!ResizeObserverCtor || !rootRef.value) return
+    if (!fixedWidthObserver) fixedWidthObserver = new ResizeObserverCtor(handleFixedWidthResize)
+
+    const elements = Array.from(rootRef.value.querySelectorAll<HTMLElement>('[data-table-width-key]'))
+    const currentElements = new Set(elements)
+    for (const element of observedWidthElements) {
+        if (currentElements.has(element)) continue
+        fixedWidthObserver.unobserve(element)
+        observedWidthElements.delete(element)
+    }
+
+    const currentKeys = new Set(elements.map(element => element.dataset.tableWidthKey).filter((key): key is string => Boolean(key)))
+    const retainedWidths = Object.fromEntries(Object.entries(measuredWidths.value).filter(([key]) => currentKeys.has(key)))
+    if (Object.keys(retainedWidths).length !== Object.keys(measuredWidths.value).length) measuredWidths.value = retainedWidths
+
+    for (const element of elements) {
+        if (observedWidthElements.has(element)) continue
+        fixedWidthObserver.observe(element)
+        observedWidthElements.add(element)
+    }
+}
+
+onMounted(async () => {
+    await nextTick()
+    syncFixedWidthObservers()
+    syncStickyHeaderScroll()
+})
+
+onUpdated(() => {
+    syncFixedWidthObservers()
+    syncStickyHeaderScroll()
+})
+
+onBeforeUnmount(() => {
+    fixedWidthObserver?.disconnect()
+    fixedWidthObserver = null
+    observedWidthElements.clear()
+})
 
 // 预计算所有单元格的合并结果，避免模板中重复调用 spanMethod
 const cellSpanInfo = computed(() => {
@@ -313,7 +448,8 @@ const gridTemplateColumns = computed(() => {
 const rootClasses = computed(() =>
     cn(
         dataTableRootVariants({ size: props.size }),
-        props.section && 'max-w-5xl mx-auto overflow-hidden',
+        props.section && 'max-w-5xl mx-auto',
+        props.section && (props.stickyHeader ? 'overflow-clip' : 'overflow-hidden'),
         props.framed === false && 'border-0 shadow-none rounded-none',
         props.class,
     ),
@@ -327,7 +463,8 @@ const rootStyle = computed(() => {
 })
 
 const toolbarClasses = computed(() => cn(dataTableToolbarVariants()))
-const headerClasses = computed(() => cn(dataTableHeaderVariants(), props.stickyHeader && 'sticky top-0 z-sticky'))
+const headerClasses = computed(() => cn(dataTableHeaderVariants()))
+const stickyHeaderClasses = computed(() => cn(dataTableHeaderVariants(), props.stickyHeader && 'sticky top-0 z-sticky'))
 const emptyClasses = computed(() => cn(dataTableEmptyVariants()))
 const paginationClasses = computed(() => cn(dataTablePaginationVariants()))
 const loadingClasses = computed(() => cn(dataTableLoadingVariants()))
@@ -421,7 +558,7 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
 </script>
 
 <template>
-    <div :class="rootClasses" :style="rootStyle" role="grid" :aria-label="t('dataTable.label')">
+    <div ref="rootRef" :class="rootClasses" :style="rootStyle" role="grid" :aria-label="t('dataTable.label')">
         <slot name="header">
             <div v-if="title || description" class="border-b-3 border-brutal px-6 py-4">
                 <h2 v-if="title" class="text-3xl font-black tracking-tight">
@@ -459,10 +596,12 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
         </div>
 
         <!-- Table / Virtual Scroll -->
-        <div class="min-w-0 overflow-x-auto">
+        <div class="min-w-0">
             <!-- 虚拟滚动启用时的布局 -->
             <template v-if="props.virtualScroll?.enabled">
-                <div class="w-full min-w-max border-collapse" role="presentation">
+                <div :class="stickyHeaderClasses" data-table-sticky-header role="presentation">
+                    <div ref="stickyHeaderScrollRef" class="overflow-hidden" data-table-sticky-scroll @scroll="handleStickyHeaderScroll">
+                <div class="w-full min-w-max border-collapse" role="presentation" data-table-width-key="virtual-table">
                     <!-- Header -->
                     <div :class="headerClasses" role="rowgroup">
                         <div
@@ -470,10 +609,10 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                             :style="{ gridTemplateColumns }"
                             role="row"
                         >
-                            <div v-if="expandable" class="w-10 bg-brutal-muted px-2 py-3 text-center flex items-center justify-center font-bold" role="columnheader" :style="{ position: 'sticky', left: '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
+                            <div v-if="expandable" class="w-10 bg-brutal-muted px-2 py-3 text-center flex items-center justify-center font-bold" role="columnheader" data-table-width-key="expand" :style="{ position: 'sticky', left: `${getUtilityColumnOffset('expand')}px`, zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                                 <span class="sr-only">Expand</span>
                             </div>
-                            <div v-if="selectable" class="w-12 bg-brutal-muted px-4 py-3 text-center flex items-center justify-center" role="columnheader" :style="{ position: 'sticky', left: expandable ? '40px' : '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
+                            <div v-if="selectable" class="w-12 bg-brutal-muted px-4 py-3 text-center flex items-center justify-center" role="columnheader" data-table-width-key="select" :style="{ position: 'sticky', left: `${getUtilityColumnOffset('select')}px`, zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                                 <Checkbox
                                     :checked="selection.isIndeterminate.value ? 'indeterminate' : selection.isAllSelected.value"
                                     size="sm"
@@ -492,6 +631,8 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                                     zIndex: column.fixed ? DATA_TABLE_FIXED_COLUMN_Z_INDEX : undefined,
                                 }"
                                 role="columnheader"
+                                :data-table-width-key="`column:${column.id}`"
+                                :data-table-fixed-column="column.fixed ? column.id : undefined"
                                 :tabindex="sortable && column.sortable !== false ? 0 : undefined"
                                 :aria-sort="sort.sortState.value.column === column.id ? (sort.sortState.value.direction === 'asc' ? 'ascending' : 'descending') : 'none'"
                                 @click="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
@@ -519,7 +660,10 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                             </div>
                         </div>
                     </div>
-                    
+                    </div>
+                    </div>
+                </div>
+
                     <!-- Body with Virtual Scroll -->
                     <VirtualScroll
                         v-if="displayData.length > 0"
@@ -529,13 +673,15 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                         :dynamic-height="props.virtualScroll.rowHeight === 'auto' || props.expandable"
                         role="rowgroup"
                         item-role="none"
-                        class="w-full max-h-[400px] overflow-y-auto border-3 border-t-0 border-brutal"
+                        class="w-full min-w-0 max-h-[400px] overflow-x-auto overflow-y-auto border-3 border-t-0 border-brutal"
+                        data-table-horizontal-scroll
+                        @scroll="handleHorizontalScroll"
                     >
                         <template #default="{ index: rowIndex }">
                             <div v-if="displayData[rowIndex]" class="flex flex-col w-full border-b border-brutal/30 last:border-b-0">
                                 <div
                                     class="grid"
-                                    :style="{ gridTemplateColumns }"
+                                    :style="{ gridTemplateColumns, minWidth: virtualTableWidth ? `${virtualTableWidth}px` : undefined }"
                                     :class="getRowClasses(displayData[rowIndex])"
                                     role="row"
                                     :tabindex="rowClickable ? 0 : undefined"
@@ -544,7 +690,7 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                                     @click="handleRowClick(displayData[rowIndex], $event)"
                                     @keydown.enter="handleRowClick(displayData[rowIndex], $event)"
                                 >
-                                    <div v-if="expandable" :class="['w-10 px-2 py-3 text-center flex items-center justify-center', getFixedCellClasses(displayData[rowIndex], rowIndex, false)]" role="gridcell" :style="{ position: 'sticky', left: '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
+                                    <div v-if="expandable" :class="['w-10 px-2 py-3 text-center flex items-center justify-center', getFixedCellClasses(displayData[rowIndex], rowIndex, false)]" role="gridcell" :style="{ position: 'sticky', left: `${getUtilityColumnOffset('expand')}px`, zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                                         <Button
                                             variant="ghost"
                                             size="sm"
@@ -562,7 +708,7 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                                             />
                                         </Button>
                                     </div>
-                                    <div v-if="selectable" :class="['w-12 px-4 py-3 text-center flex items-center justify-center', getFixedCellClasses(displayData[rowIndex], rowIndex, false)]" role="gridcell" :style="{ position: 'sticky', left: expandable ? '40px' : '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
+                                    <div v-if="selectable" :class="['w-12 px-4 py-3 text-center flex items-center justify-center', getFixedCellClasses(displayData[rowIndex], rowIndex, false)]" role="gridcell" :style="{ position: 'sticky', left: `${getUtilityColumnOffset('select')}px`, zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                                         <Checkbox
                                             :checked="selection.selectedRows.value.has(selection.getRowKey(displayData[rowIndex]))"
                                             size="sm"
@@ -581,6 +727,7 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                                             zIndex: column.fixed ? DATA_TABLE_FIXED_COLUMN_Z_INDEX : undefined,
                                         }"
                                         role="gridcell"
+                                        :data-table-fixed-column="column.fixed ? column.id : undefined"
                                     >
                                         <template v-if="column.type === 'expand'">
                                             <Button
@@ -638,18 +785,85 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                             </div>
                         </div>
                     </div>
-                </div>
             </template>
 
             <!-- Native Table Layout -->
-            <table v-else class="w-full border-collapse">
+            <template v-else>
+                <div v-if="stickyHeader" :class="stickyHeaderClasses" data-table-sticky-header role="presentation">
+                    <div ref="stickyHeaderScrollRef" class="overflow-hidden" data-table-sticky-scroll @scroll="handleStickyHeaderScroll">
+                        <table class="table-fixed border-collapse" :style="nativeStickyTableWidth ? { width: `${nativeStickyTableWidth}px` } : undefined">
+                            <colgroup>
+                                <col v-if="expandable" :style="{ width: `${getUtilityColumnWidth('expand')}px` }">
+                                <col v-if="selectable" :style="{ width: `${getUtilityColumnWidth('select')}px` }">
+                                <col v-for="column in visibleColumns" :key="column.id" :style="getNativeColumnWidthStyle(column) ? { width: getNativeColumnWidthStyle(column) } : undefined">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th v-if="expandable" class="w-10 bg-brutal-muted px-2 py-3 text-center" :style="{ position: 'sticky', left: `${getUtilityColumnOffset('expand')}px`, zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
+                                        <span class="sr-only">Expand</span>
+                                    </th>
+                                    <th v-if="selectable" class="w-12 bg-brutal-muted px-4 py-3 text-center" :style="{ position: 'sticky', left: `${getUtilityColumnOffset('select')}px`, zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
+                                        <Checkbox
+                                            :checked="selection.isIndeterminate.value ? 'indeterminate' : selection.isAllSelected.value"
+                                            size="sm"
+                                            class="cursor-pointer"
+                                            @update:checked="handleToggleAll"
+                                        />
+                                    </th>
+                                    <th
+                                        v-for="column in visibleColumns"
+                                        :key="column.id"
+                                        :class="getHeadClasses(column)"
+                                        :style="{
+                                            width: getNativeColumnWidthStyle(column),
+                                            position: column.fixed ? 'sticky' : undefined,
+                                            left: column.fixed === 'left' ? `${getFixedColumnOffset(column, 'left')}px` : undefined,
+                                            right: column.fixed === 'right' ? `${getFixedColumnOffset(column, 'right')}px` : undefined,
+                                            zIndex: column.fixed ? DATA_TABLE_FIXED_COLUMN_Z_INDEX : undefined,
+                                        }"
+                                        :data-table-fixed-column="column.fixed ? column.id : undefined"
+                                        :tabindex="sortable && column.sortable !== false ? 0 : undefined"
+                                        :aria-sort="sort.sortState.value.column === column.id ? (sort.sortState.value.direction === 'asc' ? 'ascending' : 'descending') : 'none'"
+                                        @click="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
+                                        @keydown.enter="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
+                                        @keydown.space.prevent="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
+                                    >
+                                        <div class="flex items-center gap-2" :class="{ 'justify-center': column.align === 'center', 'justify-end': column.align === 'right' }">
+                                            <span>{{ getHeaderLabel(column) }}</span>
+                                            <DataTableColumnFilter
+                                                v-if="props.filterable && column.filterType"
+                                                :filter-state="filter.filterState.value"
+                                                :column="column"
+                                                :header-label="getHeaderLabel(column)"
+                                                @update:filter-state="applyColumnFilterPatch"
+                                            />
+                                            <span v-if="sortable && column.sortable !== false" class="inline-flex text-inherit">
+                                                <ArrowUp v-if="sort.sortState.value.column === column.id && sort.sortState.value.direction === 'asc'" class="w-4 h-4" />
+                                                <ArrowDown v-else-if="sort.sortState.value.column === column.id && sort.sortState.value.direction === 'desc'" class="w-4 h-4" />
+                                                <ArrowUpDown v-else class="w-4 h-4" />
+                                            </span>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+
+                <div ref="horizontalScrollRef" class="min-w-0 overflow-x-auto" data-table-horizontal-scroll @scroll="handleHorizontalScroll">
+            <table class="w-full border-collapse" data-table-width-key="table">
                 <!-- Header -->
-                <thead :class="headerClasses">
+                <thead
+                    :class="headerClasses"
+                    data-table-original-header
+                    :aria-hidden="stickyHeader ? 'true' : undefined"
+                    :style="stickyHeader ? { visibility: 'collapse' } : undefined"
+                >
                     <tr>
-                        <th v-if="expandable" class="w-10 bg-brutal-muted px-2 py-3 text-center" :style="{ position: 'sticky', left: '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
+                        <th v-if="expandable" class="w-10 bg-brutal-muted px-2 py-3 text-center" data-table-width-key="expand" :style="{ position: 'sticky', left: `${getUtilityColumnOffset('expand')}px`, zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                             <span class="sr-only">Expand</span>
                         </th>
-                        <th v-if="selectable" class="w-12 bg-brutal-muted px-4 py-3 text-center" :style="{ position: 'sticky', left: expandable ? '40px' : '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
+                        <th v-if="selectable" class="w-12 bg-brutal-muted px-4 py-3 text-center" data-table-width-key="select" :style="{ position: 'sticky', left: `${getUtilityColumnOffset('select')}px`, zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                             <Checkbox
                                 :checked="selection.isIndeterminate.value ? 'indeterminate' : selection.isAllSelected.value"
                                 size="sm"
@@ -671,6 +885,8 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                                 zIndex: column.fixed ? DATA_TABLE_FIXED_COLUMN_Z_INDEX : undefined,
                             }"
                             role="columnheader"
+                            :data-table-width-key="`column:${column.id}`"
+                            :data-table-fixed-column="column.fixed ? column.id : undefined"
                             :tabindex="sortable && column.sortable !== false ? 0 : undefined"
                             :aria-sort="sort.sortState.value.column === column.id ? (sort.sortState.value.direction === 'asc' ? 'ascending' : 'descending') : 'none'"
                             @click="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
@@ -716,7 +932,7 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                                 @click="handleRowClick(row, $event)"
                                 @keydown.enter="handleRowClick(row, $event)"
                             >
-                                <td v-if="expandable" :class="['w-10 px-2 py-3 text-center', getFixedCellClasses(row, rowIndex, false)]" role="gridcell" :style="{ position: 'sticky', left: '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
+                                <td v-if="expandable" :class="['w-10 px-2 py-3 text-center', getFixedCellClasses(row, rowIndex, false)]" role="gridcell" :data-table-width-key="rowIndex === 0 ? 'expand' : undefined" :style="{ position: 'sticky', left: `${getUtilityColumnOffset('expand')}px`, zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                                     <Button
                                         variant="ghost"
                                         size="sm"
@@ -734,7 +950,7 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                                         />
                                     </Button>
                                 </td>
-                                <td v-if="selectable" :class="['w-12 px-4 py-3 text-center', getFixedCellClasses(row, rowIndex, false)]" role="gridcell" :style="{ position: 'sticky', left: expandable ? '40px' : '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
+                                <td v-if="selectable" :class="['w-12 px-4 py-3 text-center', getFixedCellClasses(row, rowIndex, false)]" role="gridcell" :data-table-width-key="rowIndex === 0 ? 'select' : undefined" :style="{ position: 'sticky', left: `${getUtilityColumnOffset('select')}px`, zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                                     <Checkbox
                                         :checked="selection.selectedRows.value.has(selection.getRowKey(row))"
                                         size="sm"
@@ -747,12 +963,14 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                                     v-show="isCellVisible(rowIndex, columnIndex)"
                                     :key="column.id"
                                     :class="getCellClasses(column, row, rowIndex)"
+                                    :data-table-width-key="rowIndex === 0 ? `column:${column.id}` : undefined"
                                     :style="{
                                         position: column.fixed ? 'sticky' : undefined,
                                         left: column.fixed === 'left' ? `${getFixedColumnOffset(column, 'left')}px` : undefined,
                                         right: column.fixed === 'right' ? `${getFixedColumnOffset(column, 'right')}px` : undefined,
                                         zIndex: column.fixed ? DATA_TABLE_FIXED_COLUMN_Z_INDEX : undefined,
                                     }"
+                                    :data-table-fixed-column="column.fixed ? column.id : undefined"
                                     :rowspan="getCellSpan(rowIndex, columnIndex)?.[0] || undefined"
                                     :colspan="getCellSpan(rowIndex, columnIndex)?.[1] || undefined"
                                     role="gridcell"
@@ -820,6 +1038,8 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                     </template>
                 </tbody>
             </table>
+                </div>
+            </template>
         </div>
 
         <!-- Pagination -->

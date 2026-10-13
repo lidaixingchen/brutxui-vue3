@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { Upload } from '@lucide/vue'
-import { cn } from '@/lib/utils'
+import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 
 interface UploadTriggerProps {
     /** 是否支持拖拽 */
@@ -108,6 +108,7 @@ function handleDrop(event: DragEvent) {
 const containerClasses = computed(() =>
     cn(
         'relative cursor-pointer',
+        !props.disabled && FOCUS_RING_CLASSES,
         props.disabled && 'cursor-not-allowed opacity-50',
         props.class,
     )

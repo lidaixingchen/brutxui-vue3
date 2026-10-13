@@ -74,7 +74,7 @@ function handleClose(id: string): void {
                         <p v-if="msg.title" class="font-black text-base leading-tight">
                             {{ msg.title }}
                         </p>
-                        <p v-if="msg.description" class="text-sm font-medium mt-1 opacity-80 leading-snug">
+                        <p v-if="msg.description" class="text-sm font-medium mt-1 leading-snug">
                             {{ msg.description }}
                         </p>
                     </div>

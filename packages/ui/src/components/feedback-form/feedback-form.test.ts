@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import FeedbackForm from './FeedbackForm.vue'
@@ -181,6 +182,30 @@ describe('FeedbackForm', () => {
         expect(wrapper.emitted('submit')).toBeFalsy()
     })
 
+    it('keeps the duplicate guard for the parent-controlled loading duration', async () => {
+        const wrapper = mount(FeedbackForm, {
+            ...localeProvide,
+        })
+        const inputs = wrapper.findAll('input')
+        await inputs[0].setValue('Alice')
+        await inputs[1].setValue('alice@example.com')
+        await wrapper.find('textarea').setValue('Great work!')
+
+        const form = wrapper.find('form').element
+        const submit = () => form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
+        submit()
+        expect(wrapper.emitted('submit')).toHaveLength(1)
+
+        await wrapper.setProps({ loading: true })
+        expect(wrapper.findComponent({ name: 'Button' }).props('loading')).toBe(true)
+        submit()
+        expect(wrapper.emitted('submit')).toHaveLength(1)
+
+        await wrapper.setProps({ loading: false })
+        submit()
+        expect(wrapper.emitted('submit')).toHaveLength(2)
+    })
+
     it('shows validation error for invalid email', async () => {
         const wrapper = mount(FeedbackForm, {
             ...localeProvide,
@@ -208,7 +233,7 @@ describe('FeedbackForm', () => {
         expect(wrapper.text()).toContain(en.feedbackForm.messageRequired)
     })
 
-    it('emits submit only once on rapid double submit', async () => {
+    it('guards same-turn duplicate submits and releases the guard without controlled loading', async () => {
         const wrapper = mount(FeedbackForm, {
             ...localeProvide,
         })
@@ -217,11 +242,22 @@ describe('FeedbackForm', () => {
         await inputs[1].setValue('alice@example.com')
         await wrapper.find('textarea').setValue('Great work!')
 
-        const form = wrapper.find('form')
-        await form.trigger('submit.prevent')
-        await form.trigger('submit.prevent')
+        const form = wrapper.find('form').element
+        const submit = () => form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
 
+        submit()
+        submit()
         expect(wrapper.emitted('submit')).toHaveLength(1)
+
+        await nextTick()
+        submit()
+        expect(wrapper.emitted('submit')).toHaveLength(2)
+        await nextTick()
+        submit()
+        expect(wrapper.emitted('submit')).toHaveLength(3)
+        await nextTick()
+        await nextTick()
+        expect(wrapper.find('input').attributes('disabled')).toBeUndefined()
     })
 
     it('emits trimmed payload values', async () => {
@@ -251,7 +287,7 @@ describe('FeedbackForm', () => {
         expect(wrapper.text()).not.toContain(en.feedbackForm.nameRequired)
     })
 
-    it('disables inputs while submitting', async () => {
+    it('disables inputs while parent-controlled loading is active', async () => {
         const wrapper = mount(FeedbackForm, {
             ...localeProvide,
         })
@@ -260,8 +296,8 @@ describe('FeedbackForm', () => {
         await inputs[1].setValue('alice@example.com')
         await wrapper.find('textarea').setValue('Great work!')
         await wrapper.find('form').trigger('submit.prevent')
+        await wrapper.setProps({ loading: true })
 
-        // 父组件未维护 loading/success 时 submitting 保持 true，控件禁用防数据漂移
         for (const input of wrapper.findAll('input')) {
             expect(input.attributes('disabled')).toBeDefined()
         }

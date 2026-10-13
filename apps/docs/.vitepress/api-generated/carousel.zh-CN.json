@@ -413,7 +413,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/carousel/Carousel.vue",
-            "line": 132
+            "line": 234
           },
           "origin": "declared",
           "nullable": false,
@@ -432,7 +432,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/carousel/Carousel.vue",
-            "line": 133
+            "line": 235
           },
           "origin": "declared",
           "nullable": false,
@@ -451,7 +451,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/carousel/Carousel.vue",
-            "line": 134
+            "line": 236
           },
           "origin": "declared",
           "nullable": false,
@@ -470,7 +470,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/carousel/Carousel.vue",
-            "line": 135
+            "line": 237
           },
           "origin": "declared",
           "nullable": false,
@@ -492,7 +492,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/carousel/Carousel.vue",
-            "line": 136
+            "line": 238
           },
           "origin": "declared",
           "nullable": false,
@@ -514,7 +514,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/carousel/Carousel.vue",
-            "line": 137
+            "line": 239
           },
           "origin": "declared",
           "nullable": false,
@@ -533,7 +533,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/carousel/Carousel.vue",
-            "line": 138
+            "line": 240
           },
           "origin": "declared",
           "nullable": false,
@@ -552,7 +552,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/carousel/Carousel.vue",
-            "line": 139
+            "line": 241
           },
           "origin": "declared",
           "nullable": false,

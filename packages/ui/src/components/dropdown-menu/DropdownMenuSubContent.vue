@@ -4,6 +4,7 @@ import { DropdownMenuSubContent as DropdownMenuSubContentPrimitive } from 'reka-
 import { cn } from '@/lib/utils'
 import { floatingContentSideOffsets } from '@/lib/floating-content-variants'
 import { dropdownMenuSubContentVariants } from './dropdown-menu-variants'
+import { useFloatingOverlayLayerStyle } from '@/lib/overlay-layer'
 
 interface DropdownMenuSubContentProps {
     sideOffset?: number
@@ -14,6 +15,8 @@ const props = withDefaults(defineProps<DropdownMenuSubContentProps>(), {
     sideOffset: floatingContentSideOffsets.dropdownMenu,
     class: undefined,
 })
+
+const overlayLayerStyle = useFloatingOverlayLayerStyle('dropdown')
 
 const classes = computed(() =>
     cn(
@@ -27,7 +30,12 @@ defineOptions({ inheritAttrs: false })
 </script>
 
 <template>
-    <DropdownMenuSubContentPrimitive v-bind="$attrs" :side-offset="sideOffset" :class="classes">
+    <DropdownMenuSubContentPrimitive
+        v-bind="$attrs"
+        :side-offset="sideOffset"
+        :class="classes"
+        :style="overlayLayerStyle"
+    >
         <slot />
     </DropdownMenuSubContentPrimitive>
 </template>

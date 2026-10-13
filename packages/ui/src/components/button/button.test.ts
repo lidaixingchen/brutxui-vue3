@@ -59,6 +59,7 @@ describe('Button', () => {
         const svg = wrapper.find('svg')
         expect(svg.exists()).toBe(true)
         expect(svg.classes()).toContain('animate-spin')
+        expect(svg.classes()).toContain('motion-reduce:animate-none')
     })
 
     it('links loader icon size to button size via shared iconSizeVariants', async () => {

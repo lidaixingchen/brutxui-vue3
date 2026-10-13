@@ -17,7 +17,7 @@ const delegatedProps = computed(() => {
 const forwarded = useForwardProps(delegatedProps)
 
 const classes = computed(() =>
-    cn('text-xs font-black uppercase tracking-wide', props.class)
+    cn('text-xs font-black uppercase tracking-wide min-w-0 break-all', props.class)
 )
 </script>
 

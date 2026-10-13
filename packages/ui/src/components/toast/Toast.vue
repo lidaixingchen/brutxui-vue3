@@ -199,7 +199,7 @@ const progressBarStyle = computed(() => ({
                 <p v-else-if="count && count > 1" class="font-black text-base leading-tight">
                     ({{ count }})
                 </p>
-                <p v-if="description" class="font-medium text-sm mt-1 opacity-80 leading-snug">
+                <p v-if="description" class="font-medium text-sm mt-1 leading-snug">
                     {{ description }}
                 </p>
                 <slot />

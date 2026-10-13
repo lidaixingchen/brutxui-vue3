@@ -124,6 +124,15 @@ describe('SheetContent', () => {
         expect(content.attributes('data-custom')).toBe('my-sheet-attr')
         expect(content.attributes('aria-label')).toBe('My Sheet Label')
     })
+
+    it('uses the semantic dialog layer for both overlay and content', () => {
+        const wrapper = mount(SheetContent, {
+            global: { stubs: contentStubs },
+        })
+
+        expect(wrapper.find('[data-testid="sheet-content"]').attributes('style'))
+            .toContain('--z-index-dialog: 1000')
+    })
 })
 
 describe('SheetHeader', () => {

@@ -247,7 +247,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/glitch-text/GlitchText.vue",
-            "line": 91
+            "line": 92
           },
           "origin": "declared",
           "nullable": false,
@@ -266,7 +266,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/glitch-text/GlitchText.vue",
-            "line": 92
+            "line": 93
           },
           "origin": "declared",
           "nullable": false,

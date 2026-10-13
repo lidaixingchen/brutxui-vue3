@@ -58,7 +58,7 @@ import FeedbackForm from '@/components/ui/feedback-form/FeedbackForm.vue'
 
 ### 加载状态
 
-设置 `loading` 为 `true` 时，提交按钮进入 loading 态并显示 spinner，期间禁止重复提交。`submit` 事件仍正常触发，由调用方在异步请求结束后将 `loading` 置回 `false`。
+组件会阻止同一提交回合内的重复触发。若要在异步请求期间持续锁定表单，应在 `submit` 回调中同步将受控的 `loading` 设为 `true`，并在请求结束后重置为 `false`；未接管 `loading` 时，内部防重锁会在下一个 Vue 更新周期释放。
 
 ```vue
 <script setup>
@@ -69,8 +69,11 @@ const loading = ref(false)
 
 async function handleSubmit(payload) {
     loading.value = true
-    await sendFeedback(payload)
-    loading.value = false
+    try {
+        await sendFeedback(payload)
+    } finally {
+        loading.value = false
+    }
 }
 </script>
 
@@ -93,9 +96,12 @@ const success = ref(false)
 
 async function handleSubmit(payload) {
     loading.value = true
-    await sendFeedback(payload)
-    loading.value = false
-    success.value = true
+    try {
+        await sendFeedback(payload)
+        success.value = true
+    } finally {
+        loading.value = false
+    }
 }
 
 function handleSuccessConfirm() {
@@ -149,5 +155,5 @@ function handleSuccessConfirm() {
 ## 可访问性
 
 - 表单字段均使用语义化 `<label>` 关联，确保屏幕阅读器可正确识别。
-- 提交按钮在 `loading` 状态下会被禁用，防止重复提交。
+- `loading` 状态会禁用提交控件；组件同时阻止同一提交回合内的重复提交。
 - 成功卡片提供确认按钮，支持键盘导航和焦点管理。

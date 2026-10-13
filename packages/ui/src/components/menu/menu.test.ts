@@ -33,6 +33,24 @@ describe('Menu', () => {
         expect(items.length).toBeGreaterThanOrEqual(3)
     })
 
+    it('declares the default vertical menubar orientation', () => {
+        wrapper = mount({
+            components: { Menu, MenuItem },
+            template: '<Menu><MenuItem index="one">One</MenuItem></Menu>',
+        })
+
+        expect(wrapper.find('[role="menubar"]').attributes('aria-orientation')).toBe('vertical')
+    })
+
+    it('declares horizontal menubar orientation when configured', () => {
+        wrapper = mount({
+            components: { Menu, MenuItem },
+            template: '<Menu mode="horizontal"><MenuItem index="one">One</MenuItem></Menu>',
+        })
+
+        expect(wrapper.find('[role="menubar"]').attributes('aria-orientation')).toBe('horizontal')
+    })
+
     it('sets default active item and applies active classes', () => {
         wrapper = mount({
             components: { Menu, MenuItem },

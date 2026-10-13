@@ -5,7 +5,7 @@ export const commandInputWrapperVariants = cva(
     [
         'flex h-12 items-center gap-3 px-4',
         'border-b-3 border-brutal',
-        'bg-brutal-accent',
+        'bg-brutal-accent text-brutal-accent-foreground',
         // 容器为 div（不可聚焦），内层 input 聚焦须用 focus-within:* 才可见（与 input 容器同模式）
         'focus-within:ring-2 focus-within:ring-brutal-ring focus-within:ring-offset-2 focus-within:ring-offset-brutal-bg focus-within:outline-hidden',
     ]
@@ -18,7 +18,7 @@ export const commandItemVariants = cva(
         // listbox 项不可聚焦（高亮由 reka Listbox 键盘导航管理），不携带 outline-none
         'select-none',
         'border-3 border-transparent',
-        'data-[highlighted]:bg-brutal-secondary data-[highlighted]:text-brutal-fg',
+        'data-[highlighted]:bg-brutal-secondary data-[highlighted]:text-brutal-secondary-foreground',
         'data-[highlighted]:font-black',
         // 交互样式（lift/按压/焦点边框）无需为禁用态追加 data-[disabled] 覆盖：
         // reka Listbox 键盘导航与 changeHighlight 均过滤 data-disabled 项，handleSelect 对 disabled 有守卫，

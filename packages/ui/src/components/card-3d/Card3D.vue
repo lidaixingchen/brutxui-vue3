@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
-import { cn } from '@/lib/utils'
+import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 import { getComputedStyle } from '@/lib/env'
 import { useReducedMotion } from '@/composables/useReducedMotion'
 import { useLocale } from '@/composables/useLocale'
@@ -164,6 +164,7 @@ const containerClasses = computed(() =>
 const cardClasses = computed(() =>
     cn(
         card3dVariants({ shadow: props.shadow, variant: props.variant }),
+        props.clickable && !props.disabled && FOCUS_RING_CLASSES,
         props.clickable && 'cursor-pointer',
     )
 )

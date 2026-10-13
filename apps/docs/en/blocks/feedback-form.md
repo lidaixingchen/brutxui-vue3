@@ -59,7 +59,7 @@ import FeedbackForm from '@/components/ui/feedback-form/FeedbackForm.vue'
 
 ### Loading State
 
-Set `loading` to `true` to put the submit button in a loading state with a spinner, preventing duplicate submissions during this period. The `submit` event still fires normally; the caller should set `loading` back to `false` after the async request completes.
+The component blocks duplicate submissions in the same submit turn. To keep the form locked during an async request, set the controlled `loading` prop to `true` synchronously in the `submit` handler and reset it to `false` when the request finishes. If the handler does not take over `loading`, the internal duplicate guard releases on the next Vue update cycle.
 
 ```vue
 <script setup>
@@ -70,8 +70,11 @@ const loading = ref(false)
 
 async function handleSubmit(payload) {
     loading.value = true
-    await sendFeedback(payload)
-    loading.value = false
+    try {
+        await sendFeedback(payload)
+    } finally {
+        loading.value = false
+    }
 }
 </script>
 
@@ -94,9 +97,12 @@ const success = ref(false)
 
 async function handleSubmit(payload) {
     loading.value = true
-    await sendFeedback(payload)
-    loading.value = false
-    success.value = true
+    try {
+        await sendFeedback(payload)
+        success.value = true
+    } finally {
+        loading.value = false
+    }
 }
 
 function handleSuccessConfirm() {
@@ -150,5 +156,5 @@ function handleSuccessConfirm() {
 ## Accessibility
 
 - All form fields use semantic `<label>` associations, ensuring screen readers can correctly identify them.
-- The submit button is disabled in the `loading` state to prevent duplicate submissions.
+- The submit controls are disabled while `loading`; the component also blocks duplicate submissions in the same submit turn.
 - The success card provides a confirm button with keyboard navigation and focus management support.

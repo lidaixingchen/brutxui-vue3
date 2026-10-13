@@ -26,7 +26,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/dialog/DialogContent.vue",
-            "line": 19
+            "line": 22
           },
           "origin": "declared",
           "required": false,
@@ -65,7 +65,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/dialog/DialogContent.vue",
-            "line": 20
+            "line": 23
           },
           "origin": "declared",
           "required": false,
@@ -101,7 +101,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/dialog/DialogContent.vue",
-            "line": 22
+            "line": 25
           },
           "origin": "declared",
           "required": false,
@@ -136,7 +136,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/dialog/DialogContent.vue",
-            "line": 23
+            "line": 26
           },
           "origin": "declared",
           "required": false,
@@ -168,7 +168,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/dialog/DialogContent.vue",
-            "line": 24
+            "line": 27
           },
           "origin": "declared",
           "required": false,
@@ -1053,7 +1053,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/dialog/DialogOverlay.vue",
-            "line": 8
+            "line": 9
           },
           "origin": "declared",
           "required": false,
@@ -1088,7 +1088,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/dialog/DialogOverlay.vue",
-            "line": 10
+            "line": 11
           },
           "origin": "declared",
           "required": false,
@@ -1123,7 +1123,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/dialog/DialogOverlay.vue",
-            "line": 11
+            "line": 12
           },
           "origin": "declared",
           "required": false,
@@ -1158,7 +1158,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/dialog/DialogOverlay.vue",
-            "line": 13
+            "line": 14
           },
           "origin": "declared",
           "required": false,

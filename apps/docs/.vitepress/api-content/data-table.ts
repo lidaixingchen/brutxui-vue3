@@ -27,7 +27,7 @@ const content = {
                 size: { zh: '设置表格尺寸变体。', en: 'Sets the table size variant.' },
                 dense: { zh: '启用更紧凑的行和单元格间距。', en: 'Uses more compact row and cell spacing.' },
                 striped: { zh: '控制相邻数据行的条纹背景。', en: 'Controls alternating background stripes on data rows.' },
-                stickyHeader: { zh: '将表头设为滚动容器顶部的粘性区域。', en: 'Makes the header sticky at the top of its scrolling container.' },
+                stickyHeader: { zh: '页面或外层垂直滚动容器滚动时，将表头固定在可视区域顶部；横向滚动与表格主体同步。', en: 'Keeps the header at the top of the visible area during page or outer-container vertical scrolling and synchronizes it with horizontal body scrolling.' },
                 expandable: { zh: '显示行展开控制并允许呈现 expanded-row 插槽。', en: 'Shows row expansion controls and allows the expanded-row slot to render.' },
                 expandRowKeys: { zh: '受控展开行键集合；键须与 rowKey 的解析结果一致，变更会同步内部展开状态。', en: 'The controlled set of expanded row keys. Keys must match rowKey resolution, and changes synchronize the internal expansion state.' },
                 spanMethod: { zh: '对当前显示行和可见列的每个单元格计算合并范围；返回 rowspan、colspan，或不返回以使用默认跨度。', en: 'Calculates a merge span for each displayed row and visible column. Return rowspan and colspan, or nothing to use the default span.' },

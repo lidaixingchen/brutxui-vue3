@@ -255,7 +255,7 @@ const menuClasses = computed(() => {
 </script>
 
 <template>
-    <ul :class="menuClasses" role="menubar">
+    <ul :class="menuClasses" role="menubar" :aria-orientation="props.mode">
         <slot />
     </ul>
 </template>

@@ -2,14 +2,19 @@
 import { ref } from 'vue'
 import { FeedbackForm, Button } from 'brutx-ui-vue'
 
+const DEMO_SUBMISSION_DURATION_MS = 1200
+
 const loading = ref(false)
 const success = ref(false)
 
 async function handleSubmit() {
     loading.value = true
-    await new Promise((resolve) => setTimeout(resolve, 1200))
-    loading.value = false
-    success.value = true
+    try {
+        await new Promise((resolve) => setTimeout(resolve, DEMO_SUBMISSION_DURATION_MS))
+        success.value = true
+    } finally {
+        loading.value = false
+    }
 }
 
 function handleSuccessConfirm() {
@@ -25,7 +30,7 @@ const previewSuccess = ref(false)
 
         <div class="space-y-3">
             <p class="text-sm font-bold tracking-wide">加载与成功状态</p>
-            <p class="text-xs opacity-60">填写表单后点击提交，先进入 loading 态，请求完成后切换为成功状态。</p>
+            <p class="text-xs opacity-60">填写表单后点击提交，事件回调同步进入 loading 态，请求完成后切换为成功状态。</p>
             <FeedbackForm
                 :loading="loading"
                 :success="success"

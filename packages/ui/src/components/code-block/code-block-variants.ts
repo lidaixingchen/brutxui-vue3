@@ -23,7 +23,7 @@ export const codeBlockBodyVariants = cva(
 // 行号列位于 overflow-x-auto 的正文容器内：sticky left-0 使超宽代码横向滚动时行号仍贴左可见，
 // 配同底色与 z-index 防止代码从下方透出；显式声明 font-mono，不依赖正文继承（独立使用也不丢对齐）。
 export const codeBlockLineNumbersVariants = cva(
-    'sticky left-0 z-10 bg-brutal-bg flex flex-col text-right font-mono text-brutal-fg/40 select-none pr-4 mr-4 border-r-3 border-brutal font-bold'
+    'sticky left-0 z-10 bg-brutal-bg flex flex-col text-right font-mono text-brutal-fg select-none pr-4 mr-4 border-r-3 border-brutal font-bold'
 )
 
 export const codeBlockCopyButtonVariants = cva(

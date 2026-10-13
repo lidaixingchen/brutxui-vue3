@@ -29,7 +29,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/sheet/SheetContent.vue",
-            "line": 24
+            "line": 25
           },
           "origin": "declared",
           "required": false,
@@ -61,7 +61,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/sheet/SheetContent.vue",
-            "line": 25
+            "line": 26
           },
           "origin": "declared",
           "required": false,

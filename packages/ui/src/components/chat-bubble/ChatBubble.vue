@@ -133,7 +133,7 @@ const statusIconClass = computed(() => cn('w-3 h-3', statusClass.value));
                 <slot>{{ message.content }}</slot>
             </div>
             <div v-if="showTimestamp || showStatus" class="flex items-center gap-1 px-1">
-                <span v-if="showTimestamp && formattedTimestamp" class="text-xs opacity-40 font-medium">
+                <span v-if="showTimestamp && formattedTimestamp" class="text-xs font-medium text-brutal-fg">
                     {{ formattedTimestamp }}
                 </span>
                 <component

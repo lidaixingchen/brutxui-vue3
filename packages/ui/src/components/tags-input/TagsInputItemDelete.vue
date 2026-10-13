@@ -38,7 +38,7 @@ const forwarded = useForwardProps(delegatedProps)
 
 const classes = computed(() =>
     cn(
-        'h-4 w-4 flex items-center justify-center border-3 border-brutal bg-brutal-bg text-brutal-fg shadow-brutal-sm transition-all hover:bg-brutal-destructive hover:text-brutal-destructive-foreground hover:-translate-y-0.5 rounded-brutal cursor-pointer',
+        'h-4 w-4 shrink-0 flex items-center justify-center border-3 border-brutal bg-brutal-bg text-brutal-fg shadow-brutal-sm transition-all hover:bg-brutal-destructive hover:text-brutal-destructive-foreground hover:-translate-y-0.5 rounded-brutal cursor-pointer data-[disabled]:pointer-events-none data-[disabled]:cursor-not-allowed data-[disabled]:hover:bg-brutal-bg data-[disabled]:hover:text-brutal-fg data-[disabled]:hover:transform-none data-[disabled]:active:transform-none data-[disabled]:active:shadow-brutal-sm',
         brutalPress,
         props.class
     )

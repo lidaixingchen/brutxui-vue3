@@ -93,12 +93,13 @@ export function useCarouselEnhanced(options: UseCarouselEnhancedOptions = {}) {
     })
 
     // 增强版自动播放控制（集成进度追踪）
-    function startAutoplay() {
-        carousel.startAutoplay()
+    function startAutoplay(): boolean {
+        const started = carousel.startAutoplay()
         // 配置允许自动播放时启动进度追踪：carousel.startAutoplay 内部同样受该配置约束，
         // 避免 autoplay=false 时"手动启动"出现轮播未动而进度条空转的假象；
         // 运行时启停（watch / onAutoplayChange 回调）由回调路径同步
-        if (toValue(options.autoplay) === true) startProgressTimer()
+        if (started && toValue(options.autoplay) === true) startProgressTimer()
+        return started
     }
 
     function stopAutoplay() {

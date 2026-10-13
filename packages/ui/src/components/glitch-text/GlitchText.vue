@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, useSlots, type VNodeChild } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
-import { cn } from '@/lib/utils'
+import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '@/lib/defaults'
 import { useGlitchEffect } from '@/composables/useGlitchEffect'
 import { glitchTextVariants } from './glitch-text-variants'
@@ -82,6 +82,7 @@ function extractText(node: VNodeChild): string {
 const classes = computed(() =>
     cn(
         glitchTextVariants({ speed: props.speed, direction: props.direction }),
+        props.trigger === 'click' && FOCUS_RING_CLASSES,
         isGlitching.value ? 'is-glitching' : '',
         props.class
     )

@@ -72,7 +72,7 @@ const wrapperClasses = computed(() =>
 const inputClasses = computed(() =>
     cn(
         'flex h-full w-full bg-transparent py-3',
-        'text-sm font-bold text-brutal-fg placeholder:text-brutal-placeholder',
+        'text-sm font-bold text-brutal-accent-foreground placeholder:text-brutal-accent-foreground',
         'outline-none',
         'disabled:cursor-not-allowed disabled:opacity-50',
         props.class
@@ -82,7 +82,7 @@ const inputClasses = computed(() =>
 
 <template>
     <div :class="wrapperClasses" data-slot="command-input">
-        <Search class="size-5 shrink-0 stroke-[3] text-brutal-fg" />
+        <Search class="size-5 shrink-0 stroke-[3] text-brutal-accent-foreground" />
         <input
             :value="searchValue"
             :placeholder="resolvedPlaceholder"

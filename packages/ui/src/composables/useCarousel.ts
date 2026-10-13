@@ -166,8 +166,9 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
 
     watch(() => toValue(options.autoplayDelay), () => {
         if (toValue(options.autoplay)) {
-            startAutoplay()
+            const started = startAutoplay()
             options.onAutoplayDelayChange?.()
+            if (started) options.onAutoplayChange?.(true)
         }
     })
 
@@ -192,6 +193,7 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
         isDeactivated.value = true
         wasAutoplayRunningBeforeDeactivate = autoplayTimer !== null
         stopAutoplay()
+        if (wasAutoplayRunningBeforeDeactivate) options.onAutoplayChange?.(false)
     })
 
     onActivated(() => {
@@ -199,7 +201,7 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
         // 未启动定时器）都重启——startAutoplay 内部复核 autoplay / reduced / delay 条件
         isDeactivated.value = false
         if (wasAutoplayRunningBeforeDeactivate || toValue(options.autoplay)) {
-            startAutoplay()
+            if (startAutoplay()) options.onAutoplayChange?.(true)
         }
     })
 

@@ -724,7 +724,7 @@
             ],
             "references": []
           },
-          "description": "将表头设为滚动容器顶部的粘性区域。",
+          "description": "页面或外层垂直滚动容器滚动时，将表头固定在可视区域顶部；横向滚动与表格主体同步。",
           "notes": [],
           "source": {
             "file": "packages/ui/src/types/data-table.ts",

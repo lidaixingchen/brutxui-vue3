@@ -398,11 +398,134 @@ describe('DataTable visual compliance', () => {
         expect(wrapper.html()).toContain('bg-brutal-primary text-brutal-primary-foreground')
     })
 
-    it('stickyHeader applies sticky top-0 to thead', () => {
-        const wrapper = mountDataTable({ data: testData, columns: testColumns, rowKey: 'id', stickyHeader: true })
-        const thead = wrapper.find('thead')
-        expect(thead.classes()).toContain('sticky')
-        expect(thead.classes()).toContain('top-0')
+    it('keeps the sticky header outside the horizontal scroll container and mirrors horizontal scrolling', async () => {
+        const columns: DataTableColumn<TestRow>[] = [
+            { ...testColumns[0]!, filterType: 'text' },
+            testColumns[1]!,
+            { ...testColumns[2]!, hidden: true },
+        ]
+        const wrapper = mountDataTable({
+            data: testData,
+            columns,
+            rowKey: 'id',
+            stickyHeader: true,
+            sortable: true,
+            filterable: true,
+        })
+        const stickyHeader = wrapper.find('[data-table-sticky-header]')
+        const bodyScroll = wrapper.find('[data-table-horizontal-scroll]')
+
+        expect(stickyHeader.exists()).toBe(true)
+        expect(stickyHeader.classes()).toContain('sticky')
+        expect(stickyHeader.classes()).toContain('top-0')
+        expect(stickyHeader.classes()).toContain('z-sticky')
+        expect(stickyHeader.element.contains(bodyScroll.element)).toBe(false)
+        expect(wrapper.find('[data-table-original-header]').attributes('aria-hidden')).toBe('true')
+        expect(stickyHeader.find('[aria-label="Filter name"]').exists()).toBe(true)
+        expect(stickyHeader.text()).not.toContain('Age')
+
+        await stickyHeader.find('th[aria-sort]').trigger('click')
+        await nextTick()
+        expect(wrapper.emitted('sort')?.[0]).toEqual(['name', 'asc'])
+        expect(wrapper.find('[data-table-sticky-header] th[aria-sort]').attributes('aria-sort')).toBe('ascending')
+
+        const scrollElement = bodyScroll.element as HTMLElement
+        scrollElement.scrollLeft = 173
+        await bodyScroll.trigger('scroll')
+        expect((wrapper.find('[data-table-sticky-scroll]').element as HTMLElement).scrollLeft).toBe(173)
+        const headerScroll = wrapper.find('[data-table-sticky-scroll]')
+        ;(headerScroll.element as HTMLElement).scrollLeft = 250
+        await headerScroll.trigger('scroll')
+        expect(scrollElement.scrollLeft).toBe(250)
+        wrapper.unmount()
+    })
+
+    it('uses observed header widths for fixed offsets, including utility columns and later width changes', async () => {
+        const observers: Array<{ callback: ResizeObserverCallback; targets: Element[] }> = []
+        class MockResizeObserver {
+            private targets: Element[] = []
+
+            constructor(callback: ResizeObserverCallback) {
+                observers.push({ callback, targets: this.targets })
+            }
+
+            observe(target: Element) {
+                this.targets.push(target)
+            }
+
+            unobserve(target: Element) {
+                this.targets = this.targets.filter(item => item !== target)
+            }
+
+            disconnect() {
+                this.targets = []
+            }
+        }
+
+        vi.stubGlobal('ResizeObserver', MockResizeObserver)
+        const columns: DataTableColumn<TestRow>[] = [
+            { id: 'name', header: 'Name', accessorKey: 'name', fixed: 'left' },
+            { id: 'email', header: 'Email', accessorKey: 'email', fixed: 'left' },
+            { id: 'age', header: 'Age', accessorKey: 'age', fixed: 'right' },
+            { id: 'id', header: 'ID', accessorKey: 'id', fixed: 'right' },
+        ]
+        const wrapper = mountDataTable({
+            data: testData,
+            columns,
+            rowKey: 'id',
+            selectable: true,
+            expandable: true,
+        })
+        await nextTick()
+
+        const observer = observers[0]
+        expect(observer).toBeDefined()
+        const widths = new Map<string, number>([
+            ['expand', 37],
+            ['select', 55],
+            ['column:name', 48],
+            ['column:email', 121],
+            ['column:age', 62],
+            ['column:id', 74],
+        ])
+        observer!.callback(
+            observer!.targets.map(target => ({
+                target,
+                contentRect: { width: widths.get((target as HTMLElement).dataset.tableWidthKey ?? '') ?? 0 } as DOMRectReadOnly,
+            }) as ResizeObserverEntry),
+            {} as ResizeObserver,
+        )
+        await nextTick()
+
+        expect(wrapper.find('[data-table-fixed-column="name"]').attributes('style')).toContain('left: 92px')
+        expect(wrapper.find('[data-table-fixed-column="email"]').attributes('style')).toContain('left: 140px')
+        expect(wrapper.find('[data-table-fixed-column="age"]').attributes('style')).toContain('right: 74px')
+
+        widths.set('column:name', 60)
+        observer!.callback(
+            observer!.targets
+                .filter(target => (target as HTMLElement).dataset.tableWidthKey === 'column:name')
+                .map(target => ({ target, contentRect: { width: 60 } as DOMRectReadOnly }) as ResizeObserverEntry),
+            {} as ResizeObserver,
+        )
+        await nextTick()
+
+        expect(wrapper.find('[data-table-fixed-column="email"]').attributes('style')).toContain('left: 152px')
+        wrapper.unmount()
+        vi.unstubAllGlobals()
+    })
+
+    it('moves a virtual sticky header outside the body scroll container', () => {
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
+            stickyHeader: true,
+            virtualScroll: { enabled: true, rowHeight: 48 },
+        })
+        expect(wrapper.find('[data-table-sticky-header]').exists()).toBe(true)
+        expect(wrapper.find('[data-table-sticky-header]').element.contains(wrapper.find('[data-table-horizontal-scroll]').element)).toBe(false)
+        wrapper.unmount()
     })
 })
 

@@ -338,3 +338,161 @@ describe('Carousel indicators and thumbnails', () => {
         expect(wrapper.attributes('style')).toContain('--parallax-opacity: 1')
     })
 })
+
+describe('Carousel autoplay interaction pause', () => {
+    const AUTOPLAY_DELAY = 100
+    const PAUSE_OBSERVATION_WINDOW = AUTOPLAY_DELAY * 2
+    const RESUME_OBSERVATION_WINDOW = AUTOPLAY_DELAY
+
+    const mountAutoplayCarousel = (autoplayIndicator?: { type: 'fraction'; pauseOnHover?: boolean }) => mount(Carousel, {
+        ...localeProvide,
+        props: {
+            autoplay: true,
+            autoplayDelay: AUTOPLAY_DELAY,
+            loop: true,
+            autoplayIndicator,
+        },
+        slots: {
+            default: '<button type="button" class="slide-control">Slide control</button>',
+        },
+    })
+
+    it('pauses for keyboard focus, keeps pausing across internal focus changes, then resumes after focus leaves', async () => {
+        vi.useFakeTimers()
+        const wrapper = mountAutoplayCarousel({ type: 'fraction', pauseOnHover: false })
+        const nextButton = wrapper.get('button[aria-label="Next slide"]')
+        const slideControl = wrapper.get('button.slide-control')
+
+        try {
+            await vi.advanceTimersByTimeAsync(AUTOPLAY_DELAY)
+            expect(mockCarouselState.scrollNext).toHaveBeenCalledTimes(1)
+
+            await nextButton.trigger('focusin')
+            await vi.advanceTimersByTimeAsync(PAUSE_OBSERVATION_WINDOW)
+            expect(mockCarouselState.scrollNext).toHaveBeenCalledTimes(1)
+
+            await nextButton.trigger('focusout', { relatedTarget: slideControl.element })
+            await slideControl.trigger('focusin')
+            await vi.advanceTimersByTimeAsync(PAUSE_OBSERVATION_WINDOW)
+            expect(mockCarouselState.scrollNext).toHaveBeenCalledTimes(1)
+
+            await slideControl.trigger('focusout', { relatedTarget: document.body })
+            await vi.advanceTimersByTimeAsync(RESUME_OBSERVATION_WINDOW)
+            expect(mockCarouselState.scrollNext).toHaveBeenCalledTimes(2)
+        } finally {
+            wrapper.unmount()
+        }
+    })
+
+    it('keeps autoplay paused until both hover and focus have ended', async () => {
+        vi.useFakeTimers()
+        const wrapper = mountAutoplayCarousel()
+        const frame = wrapper.element.firstElementChild as HTMLElement
+        const nextButton = wrapper.get('button[aria-label="Next slide"]')
+
+        try {
+            await vi.advanceTimersByTimeAsync(AUTOPLAY_DELAY)
+            expect(mockCarouselState.scrollNext).toHaveBeenCalledTimes(1)
+
+            await nextButton.trigger('focusin')
+            await frame.dispatchEvent(new MouseEvent('mouseenter'))
+            await frame.dispatchEvent(new MouseEvent('mouseleave'))
+            await vi.advanceTimersByTimeAsync(PAUSE_OBSERVATION_WINDOW)
+            expect(mockCarouselState.scrollNext).toHaveBeenCalledTimes(1)
+
+            await nextButton.trigger('focusout', { relatedTarget: document.body })
+            await vi.advanceTimersByTimeAsync(RESUME_OBSERVATION_WINDOW)
+            expect(mockCarouselState.scrollNext).toHaveBeenCalledTimes(2)
+        } finally {
+            wrapper.unmount()
+        }
+    })
+
+    it('keeps autoplay paused when the delay changes while focus remains inside', async () => {
+        vi.useFakeTimers()
+        const wrapper = mountAutoplayCarousel()
+        const nextButton = wrapper.get('button[aria-label="Next slide"]')
+
+        try {
+            await vi.advanceTimersByTimeAsync(AUTOPLAY_DELAY)
+            expect(mockCarouselState.scrollNext).toHaveBeenCalledTimes(1)
+
+            await nextButton.trigger('focusin')
+            await wrapper.setProps({ autoplayDelay: PAUSE_OBSERVATION_WINDOW })
+            await vi.advanceTimersByTimeAsync(PAUSE_OBSERVATION_WINDOW)
+            expect(mockCarouselState.scrollNext).toHaveBeenCalledTimes(1)
+
+            await nextButton.trigger('focusout', { relatedTarget: document.body })
+            await vi.advanceTimersByTimeAsync(PAUSE_OBSERVATION_WINDOW)
+            expect(mockCarouselState.scrollNext).toHaveBeenCalledTimes(2)
+        } finally {
+            wrapper.unmount()
+        }
+    })
+
+    it('does not resume after stopAutoplay is called while focus pauses playback', async () => {
+        vi.useFakeTimers()
+        const wrapper = mountAutoplayCarousel()
+        const nextButton = wrapper.get('button[aria-label="Next slide"]')
+
+        try {
+            await vi.advanceTimersByTimeAsync(AUTOPLAY_DELAY)
+            expect(mockCarouselState.scrollNext).toHaveBeenCalledTimes(1)
+
+            await nextButton.trigger('focusin')
+            ;(wrapper.vm as { stopAutoplay: () => void }).stopAutoplay()
+            await nextButton.trigger('focusout', { relatedTarget: document.body })
+            await vi.advanceTimersByTimeAsync(PAUSE_OBSERVATION_WINDOW)
+            expect(mockCarouselState.scrollNext).toHaveBeenCalledTimes(1)
+        } finally {
+            wrapper.unmount()
+        }
+    })
+
+    it('keeps focus pause across reduced-motion changes and respects the active preference', async () => {
+        vi.useFakeTimers()
+        let reducedMotion = false
+        let onChange: ((event: MediaQueryListEvent) => void) | undefined
+        const matchMedia = vi.spyOn(window, 'matchMedia').mockImplementation(() => ({
+            matches: reducedMotion,
+            media: '(prefers-reduced-motion: reduce)',
+            onchange: null,
+            addEventListener: (_type: string, listener: EventListenerOrEventListenerObject) => {
+                onChange = listener as (event: MediaQueryListEvent) => void
+            },
+            removeEventListener: () => {},
+            addListener: () => {},
+            removeListener: () => {},
+            dispatchEvent: () => true,
+        }) as MediaQueryList)
+        const wrapper = mountAutoplayCarousel()
+        const nextButton = wrapper.get('button[aria-label="Next slide"]')
+
+        const setReducedMotion = (matches: boolean) => {
+            reducedMotion = matches
+            const event = new Event('change') as MediaQueryListEvent
+            Object.defineProperty(event, 'matches', { value: matches })
+            onChange?.(event)
+        }
+
+        try {
+            await vi.advanceTimersByTimeAsync(AUTOPLAY_DELAY)
+            expect(mockCarouselState.scrollNext).toHaveBeenCalledTimes(1)
+
+            await nextButton.trigger('focusin')
+            setReducedMotion(true)
+            await nextTick()
+            setReducedMotion(false)
+            await nextTick()
+            await vi.advanceTimersByTimeAsync(PAUSE_OBSERVATION_WINDOW)
+            expect(mockCarouselState.scrollNext).toHaveBeenCalledTimes(1)
+
+            await nextButton.trigger('focusout', { relatedTarget: document.body })
+            await vi.advanceTimersByTimeAsync(RESUME_OBSERVATION_WINDOW)
+            expect(mockCarouselState.scrollNext).toHaveBeenCalledTimes(2)
+        } finally {
+            wrapper.unmount()
+            matchMedia.mockRestore()
+        }
+    })
+})

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
-import { cn } from '@/lib/utils'
+import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 import { requestAnimationFrame } from '@/lib/env'
 import { brutalHoverLiftNoX } from '@/lib/brutal-interaction-variants'
 import { cardVariants } from './card-variants'
@@ -46,6 +46,7 @@ const classes = computed(() =>
             texture: props.texture,
             deco: props.deco,
         }),
+        isInteractive.value && !props.disabled && FOCUS_RING_CLASSES,
         props.interactive && !props.disabled && props.variant !== 'interactive' &&
             `cursor-pointer ${brutalHoverLiftNoX} transition-all`,
         props.class

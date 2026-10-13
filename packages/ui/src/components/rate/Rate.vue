@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { cn } from '@/lib/utils'
+import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 import { Star } from '@lucide/vue'
 import { useReducedMotion } from '@/composables/useReducedMotion'
 import BrutalShape from '../brutal-shape/BrutalShape.vue'
@@ -131,7 +131,7 @@ const handleKeydown = (event: KeyboardEvent) => {
 }
 
 const containerClasses = computed(() =>
-    cn('inline-flex items-center select-none', gapClass.value)
+    cn('inline-flex items-center select-none', gapClass.value, !props.readonly && FOCUS_RING_CLASSES)
 )
 
 function getStarWrapperClass(index: number): string {

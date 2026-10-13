@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, type ComputedRef } from 'vue';
+import { computed, onDeactivated, ref, watch, type ComputedRef } from 'vue';
 import { ChevronLeft, ChevronRight } from '@lucide/vue';
 import { cn } from '@/lib/utils';
 import { carouselRootVariants } from './carousel-variants';
@@ -7,6 +7,7 @@ import { dotActiveClasses, dotInactiveClasses, prevButtonClasses, nextButtonClas
 import { useLocale } from '@/composables/useLocale';
 import { DEFAULT_AUTOPLAY_DELAY } from '@/composables/useCarousel';
 import { useCarouselEnhanced } from '@/composables/useCarouselEnhanced';
+import { useReducedMotion } from '@/composables/useReducedMotion';
 import { brutalHoverLiftSmNoX, brutalPress } from '@/lib/brutal-interaction-variants';
 import Button from '../button/Button.vue';
 import type { CarouselProps } from './types';
@@ -26,12 +27,61 @@ const props = withDefaults(defineProps<CarouselProps>(), {
     class: undefined,
 });
 
-const { emblaRef, selectedIndex, scrollSnaps, canScrollPrev, canScrollNext, scrollPrev, scrollNext, scrollTo, startAutoplay, stopAutoplay, autoplayProgress } = useCarouselEnhanced({
+const prefersReducedMotion = useReducedMotion();
+const isAutoplayRunning = ref(false);
+const isPointerInside = ref(false);
+const hasFocusWithin = ref(false);
+let interactionPauseActive = false;
+let shouldResumeAfterInteraction = false;
+let isManuallyPaused = false;
+
+const shouldPauseOnHover = computed(() =>
+    props.autoplayIndicator ? !!props.autoplayIndicator.pauseOnHover : true
+);
+const shouldPauseForInteraction = computed(() =>
+    hasFocusWithin.value || (isPointerInside.value && shouldPauseOnHover.value)
+);
+
+let pauseAutoplayForInteraction = () => {};
+
+function handleAutoplayChange(enabled: boolean) {
+    if (!enabled) {
+        isAutoplayRunning.value = false;
+        if (!props.autoplay) {
+            shouldResumeAfterInteraction = false;
+            isManuallyPaused = false;
+        }
+        return;
+    }
+
+    if (isManuallyPaused) {
+        pauseAutoplayForInteraction();
+        return;
+    }
+
+    if (shouldPauseForInteraction.value) {
+        interactionPauseActive = true;
+        shouldResumeAfterInteraction = true;
+        pauseAutoplayForInteraction();
+        return;
+    }
+
+    isAutoplayRunning.value = true;
+}
+
+const { emblaRef, selectedIndex, scrollSnaps, canScrollPrev, canScrollNext, scrollPrev, scrollNext, scrollTo, startAutoplay: startEnhancedAutoplay, stopAutoplay: stopEnhancedAutoplay, autoplayProgress } = useCarouselEnhanced({
     loop: () => props.loop,
     autoplay: () => props.autoplay,
     autoplayDelay: () => props.autoplayDelay,
     trackProgress: () => !!props.autoplayIndicator,
+    prefersReducedMotion,
+    onAutoplayChange: handleAutoplayChange,
 });
+
+pauseAutoplayForInteraction = () => {
+    stopEnhancedAutoplay();
+    isAutoplayRunning.value = false;
+};
 
 const rootClass = computed(() =>
     cn(carouselRootVariants({ size: props.size }), props.class)
@@ -96,11 +146,6 @@ const parallaxStyle = computed(() => {
     }
 })
 
-// 未配置 autoplayIndicator 时默认悬停暂停（与多数轮播惯例一致，属有意设计）
-const shouldPauseOnHover = computed(() =>
-    props.autoplayIndicator ? !!props.autoplayIndicator.pauseOnHover : true
-)
-
 // 消费 autoplayIndicator.position：progress/fraction 靠边贴边，dots 留出呼吸间距
 const indicatorBarPositionClasses = computed(() =>
     props.autoplayIndicator?.position === 'bottom'
@@ -113,14 +158,71 @@ const dotsPositionClasses = computed(() =>
         : 'absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-10'
 )
 
+function startAutoplay() {
+    isManuallyPaused = false;
+    if (shouldPauseForInteraction.value) {
+        interactionPauseActive = true;
+        shouldResumeAfterInteraction = true;
+        pauseAutoplayForInteraction();
+        return;
+    }
+
+    isAutoplayRunning.value = startEnhancedAutoplay();
+}
+
+function stopAutoplay() {
+    isManuallyPaused = true;
+    shouldResumeAfterInteraction = false;
+    stopEnhancedAutoplay();
+    isAutoplayRunning.value = false;
+}
+
 function handleMouseEnter() {
-    // 仅在自动播放激活时暂停：不依赖 composable 内部 autoplay 守卫（语义不清，守卫调整即失效）
-    if (props.autoplay && shouldPauseOnHover.value) stopAutoplay()
+    isPointerInside.value = true;
 }
 
 function handleMouseLeave() {
-    if (props.autoplay && shouldPauseOnHover.value) startAutoplay()
+    isPointerInside.value = false;
 }
+
+function handleFocusIn() {
+    hasFocusWithin.value = true;
+}
+
+function handleFocusOut(event: FocusEvent) {
+    const root = event.currentTarget as HTMLElement;
+    if (event.relatedTarget instanceof Node && root.contains(event.relatedTarget)) return;
+    hasFocusWithin.value = false;
+}
+
+watch(shouldPauseForInteraction, (paused) => {
+    if (paused) {
+        if (!interactionPauseActive) {
+            interactionPauseActive = true;
+            shouldResumeAfterInteraction = isAutoplayRunning.value;
+        }
+        if (isAutoplayRunning.value) pauseAutoplayForInteraction();
+        return;
+    }
+
+    if (!interactionPauseActive) return;
+    interactionPauseActive = false;
+    const shouldResume = shouldResumeAfterInteraction;
+    shouldResumeAfterInteraction = false;
+    if (shouldResume && !isManuallyPaused) startAutoplay();
+}, { flush: 'sync' });
+
+onDeactivated(() => {
+    isPointerInside.value = false;
+    hasFocusWithin.value = false;
+});
+
+watch(() => props.autoplay, (enabled) => {
+    if (!enabled) {
+        isManuallyPaused = false;
+        shouldResumeAfterInteraction = false;
+    }
+}, { flush: 'sync' });
 
 // 模板 ref="emblaRef" 消费该变量，vue-tsc 无法识别字符串模板 ref 的用法（TS6133 误报），
 // 显式引用消除报错，替代 @ts-expect-error（避免 vue-tsc/TS 升级后该注释自身成为编译错误）
@@ -141,7 +243,7 @@ defineExpose({
 </script>
 
 <template>
-    <div :class="wrapperClass" :style="parallaxStyle">
+    <div :class="wrapperClass" :style="parallaxStyle" @focusin="handleFocusIn" @focusout="handleFocusOut">
         <div :class="carouselFrameClass" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
             <div v-if="autoplayIndicator && autoplay" :class="indicatorBarPositionClasses">
                 <div v-if="autoplayIndicator.type === 'progress'" class="h-1 bg-brutal-fg/20">

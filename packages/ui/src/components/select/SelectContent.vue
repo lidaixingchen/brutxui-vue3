@@ -9,6 +9,9 @@ import { cn } from '@/lib/utils'
 import SelectScrollUpButton from './SelectScrollUpButton.vue'
 import SelectScrollDownButton from './SelectScrollDownButton.vue'
 import { selectContentVariants } from './select-variants'
+import { useFloatingOverlayLayerStyle } from '@/lib/overlay-layer'
+
+defineOptions({ inheritAttrs: false })
 
 interface SelectContentProps {
     position?: 'popper' | 'item-aligned'
@@ -19,6 +22,8 @@ const props = withDefaults(defineProps<SelectContentProps>(), {
     position: 'popper',
     class: undefined,
 })
+
+const overlayLayerStyle = useFloatingOverlayLayerStyle('dropdown')
 
 const contentClasses = computed(() =>
     cn(
@@ -40,7 +45,7 @@ const viewportClasses = computed(() =>
 
 <template>
     <SelectPortalPrimitive>
-        <SelectContentPrimitive :class="contentClasses" :position="position">
+        <SelectContentPrimitive v-bind="$attrs" :class="contentClasses" :position="position" :style="overlayLayerStyle">
             <SelectScrollUpButton />
             <SelectViewportPrimitive :class="viewportClasses">
                 <slot />

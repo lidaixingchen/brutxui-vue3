@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { DialogOverlay as DialogOverlayPrimitive } from 'reka-ui'
 import { cn } from '@/lib/utils'
 import { overlayVariants } from '@/lib/modal-variants'
+import { useCurrentModalOverlayLayerStyle } from '@/lib/overlay-layer'
 
 interface DialogOverlayProps {
     class?: string
@@ -20,6 +21,8 @@ const props = withDefaults(defineProps<DialogOverlayProps>(), {
     pattern: false,
 })
 
+const overlayLayerStyle = useCurrentModalOverlayLayerStyle()
+
 const classes = computed(() =>
     cn(overlayVariants(), props.pattern && 'bg-pattern-dots', props.class)
 )
@@ -30,6 +33,7 @@ const classes = computed(() =>
         :class="classes"
         :force-mount="props.forceMount"
         :as-child="props.asChild"
+        :style="overlayLayerStyle"
     >
         <slot />
     </DialogOverlayPrimitive>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { cn } from '@/lib/utils'
+import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 import { type ColorPreset, DEFAULT_COLOR_PRESETS } from '@/lib/default-presets'
 import { HSV_PERCENT_PRECISION, HUE_DEGREES, HSV_COMPONENT_MAX, ALPHA_PRECISION } from '@/lib/defaults'
 import {
@@ -316,7 +316,7 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
 </script>
 
 <template>
-    <div :class="panelClasses" role="dialog" aria-modal="true" :aria-label="t('colorPicker.placeholder')">
+    <div :class="panelClasses" role="dialog" :aria-label="t('colorPicker.placeholder')">
         <div
             ref="svPadEl"
             role="slider"
@@ -326,6 +326,7 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
             aria-valuemin="0"
             aria-valuemax="100"
             class="relative w-full h-32 border-3 border-brutal cursor-crosshair overflow-hidden"
+            :class="FOCUS_RING_CLASSES"
             :style="{ backgroundColor: svBackground }"
             @pointerdown="handlePointerDown('sv', $event)"
             @pointermove="handlePointerMove"
@@ -352,6 +353,7 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
                 aria-valuemin="0"
                 aria-valuemax="360"
                 class="relative h-4 w-full border-3 border-brutal cursor-pointer"
+                :class="FOCUS_RING_CLASSES"
                 style="background: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)"
                 @pointerdown="handlePointerDown('hue', $event)"
                 @pointermove="handlePointerMove"
@@ -376,6 +378,7 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
                 aria-valuemin="0"
                 aria-valuemax="100"
                 class="relative h-4 w-full border-3 border-brutal cursor-pointer"
+                :class="FOCUS_RING_CLASSES"
                 :style="{ background: alphaTrackBackground }"
                 @pointerdown="handlePointerDown('alpha', $event)"
                 @pointermove="handlePointerMove"

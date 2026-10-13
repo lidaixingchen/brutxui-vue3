@@ -37,6 +37,12 @@ describe('useCarouselEnhanced', () => {
         expect(autoplayProgress.value).toBe(0)
     })
 
+    it('returns whether autoplay actually started', () => {
+        const { startAutoplay } = useCarouselEnhanced({ autoplay: true })
+
+        expect(startAutoplay()).toBe(true)
+    })
+
     it('should accept trackProgress option', () => {
         const trackProgress = ref(true)
         const result = useCarouselEnhanced({ trackProgress })

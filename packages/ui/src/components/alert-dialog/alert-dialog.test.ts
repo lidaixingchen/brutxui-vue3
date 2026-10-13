@@ -62,6 +62,17 @@ describe('AlertDialogContent', () => {
         const overlay = wrapper.find('[data-testid="alert-dialog-overlay"]')
         expect(overlay.classes()).toContain('custom-overlay')
     })
+
+    it('uses the semantic dialog layer for both overlay and content', () => {
+        const wrapper = mount(AlertDialogContent, {
+            global: { stubs: contentStubs },
+        })
+
+        expect(wrapper.find('[data-testid="alert-dialog-overlay"]').attributes('style'))
+            .toContain('--z-index-dialog: 1000')
+        expect(wrapper.find('[data-testid="alert-dialog-content"]').attributes('style'))
+            .toContain('--z-index-dialog: 1000')
+    })
 })
 
 describe('AlertDialogHeader', () => {

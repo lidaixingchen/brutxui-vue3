@@ -40,7 +40,7 @@ const containerClasses = computed(() =>
 )
 
 const dotClasses = computed(() =>
-    cn(sizeMap[props.size ?? 'default'], 'border-3 border-brutal', SPINNER_COLOR_CLASSES[props.color], 'animate-bounce')
+    cn(sizeMap[props.size ?? 'default'], 'border-3 border-brutal', SPINNER_COLOR_CLASSES[props.color], 'animate-bounce motion-reduce:animate-none')
 )
 </script>
 

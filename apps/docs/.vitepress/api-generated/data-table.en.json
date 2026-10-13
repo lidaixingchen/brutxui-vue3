@@ -724,7 +724,7 @@
             ],
             "references": []
           },
-          "description": "Makes the header sticky at the top of its scrolling container.",
+          "description": "Keeps the header at the top of the visible area during page or outer-container vertical scrolling and synchronizes it with horizontal body scrolling.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/types/data-table.ts",

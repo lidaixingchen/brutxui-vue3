@@ -216,6 +216,15 @@ describe('ColorPicker', () => {
         expect(dialog).not.toBeNull()
     })
 
+    it('does not expose the non-modal popover panel as a modal dialog', async () => {
+        wrapper = mount(ColorPicker, { ...localeProvide, attachTo: document.body })
+        await openPanel(wrapper)
+        const dialogs = Array.from(document.body.querySelectorAll('[role="dialog"]'))
+
+        expect(dialogs.length).toBeGreaterThan(0)
+        expect(dialogs.some((dialog) => dialog.getAttribute('aria-modal') === 'true')).toBe(false)
+    })
+
     it('emits open event when panel opens', async () => {
         wrapper = mount(ColorPicker, { ...localeProvide, attachTo: document.body })
         await openPanel(wrapper)

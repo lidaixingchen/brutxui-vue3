@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, reactive, useId, watch } from 'vue'
+import { computed, nextTick, ref, reactive, useId, watch } from 'vue'
 import { Send } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
@@ -77,6 +77,7 @@ const errors = reactive({
 })
 
 const submitting = ref(false)
+const isSubmitting = computed(() => props.loading || submitting.value)
 
 // 输入修正时即时清除对应错误，避免旧错误滞留误导
 watch(name, () => {
@@ -131,6 +132,11 @@ function handleSubmit() {
         email: email.value.trim(),
         subject: subject.value.trim(),
         message: message.value.trim(),
+    })
+
+    // 父组件未在提交回调中同步接管 loading 时，防重锁只覆盖当前提交回合
+    void nextTick(() => {
+        if (!props.loading) submitting.value = false
     })
 }
 
@@ -187,7 +193,7 @@ function handleSuccessConfirm() {
                                     v-model="name"
                                     :placeholder="nameLabel"
                                     :variant="errors.name ? 'error' : 'default'"
-                                    :disabled="loading || submitting"
+                                    :disabled="isSubmitting"
                                     :aria-invalid="!!errors.name"
                                     :aria-errormessage="errors.name ? fieldId('name-error') : undefined"
                                     :aria-required="true"
@@ -206,7 +212,7 @@ function handleSuccessConfirm() {
                                     type="email"
                                     :placeholder="emailLabel"
                                     :variant="errors.email ? 'error' : 'default'"
-                                    :disabled="loading || submitting"
+                                    :disabled="isSubmitting"
                                     :aria-invalid="!!errors.email"
                                     :aria-errormessage="errors.email ? fieldId('email-error') : undefined"
                                     :aria-required="true"
@@ -219,7 +225,7 @@ function handleSuccessConfirm() {
                                 <Label :for="fieldId('subject')">
                                     {{ subjectLabel }}
                                 </Label>
-                                <Input :id="fieldId('subject')" v-model="subject" :placeholder="subjectLabel" :disabled="loading || submitting" />
+                                <Input :id="fieldId('subject')" v-model="subject" :placeholder="subjectLabel" :disabled="isSubmitting" />
                             </div>
                             <div class="space-y-2">
                                 <Label :for="fieldId('message')" required>
@@ -230,7 +236,7 @@ function handleSuccessConfirm() {
                                     v-model="message"
                                     :placeholder="messageLabel"
                                     :variant="errors.message ? 'error' : 'default'"
-                                    :disabled="loading || submitting"
+                                    :disabled="isSubmitting"
                                     :aria-invalid="!!errors.message"
                                     :aria-errormessage="errors.message ? fieldId('message-error') : undefined"
                                     :aria-required="true"
@@ -239,7 +245,7 @@ function handleSuccessConfirm() {
                                     {{ errors.message }}
                                 </p>
                             </div>
-                            <Button variant="primary" type="submit" class="w-full" :loading="loading">
+                            <Button variant="primary" type="submit" class="w-full" :loading="isSubmitting">
                                 <Send :class="iconClasses" />
                                 {{ resolvedSubmitText }}
                             </Button>

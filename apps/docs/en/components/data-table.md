@@ -327,7 +327,7 @@ When `loading` is `true`, a spinning loader overlay appears above the table. You
 </template>
 ```
 
-Enabling `stickyHeader` adds `sticky top-0 z-10` to `<thead>`, keeping the header always visible during vertical scrolling of long tables. Recommended for use with a fixed-height scroll container.
+When `stickyHeader` is enabled, the header stays at the top of the visible area while the page or an outer vertical scroll container moves. The header follows the body during horizontal scrolling; virtual rows keep their own vertical scroll area.
 
 ## Data Types
 
@@ -482,7 +482,7 @@ A component ref provides sorting, filtering, selection, pagination, and row-expa
 | `minWidth` | `number` | — | Minimum column width |
 | `maxWidth` | `number` | — | Maximum column width |
 | `align` | `'left' \| 'center' \| 'right'` | — | Column content alignment |
-| `fixed` | `'left' \| 'right'` | — | Fixed column direction |
+| `fixed` | `'left' \| 'right'` | — | Fixed column direction; offsets use the browser-rendered width. Set `width` when a stable width is needed. |
 | `type` | `'default' \| 'expand'` | `'default'` | Column type (`expand` for expand column) |
 
 ## Accessibility

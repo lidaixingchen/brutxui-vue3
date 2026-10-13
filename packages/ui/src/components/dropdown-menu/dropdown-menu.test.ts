@@ -31,6 +31,8 @@ describe('DropdownMenuContent', () => {
         expect(content.classes()).toContain('shadow-brutal')
         expect(content.classes()).toContain('bg-brutal-bg')
         expect(content.classes()).toContain('text-brutal-fg')
+        expect(content.classes()).toContain('max-h-[var(--reka-dropdown-menu-content-available-height)]')
+        expect(content.classes()).toContain('overflow-y-auto')
     })
 
     it('applies custom class', () => {
@@ -205,6 +207,8 @@ describe('DropdownMenuSubContent', () => {
         expect(wrapper.classes()).toContain('shadow-brutal')
         expect(wrapper.classes()).toContain('bg-brutal-bg')
         expect(wrapper.classes()).toContain('text-brutal-fg')
+        expect(wrapper.classes()).toContain('max-h-[var(--reka-dropdown-menu-content-available-height)]')
+        expect(wrapper.classes()).toContain('overflow-y-auto')
     })
 
     it('applies custom class', () => {
