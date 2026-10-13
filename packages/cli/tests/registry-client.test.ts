@@ -80,35 +80,113 @@ describe('RegistryClient Base Pipeline', () => {
 
     it('handles HTTP 304 Not Modified conditional request', async () => {
         const item = createMockItem('card');
-        let requestCount = 0;
+        const itemRequestHeaders: Record<string, string>[] = [];
+        const revalidationCache = new CacheStorage({
+            fs: memoryFs,
+            cacheDir: '/cache-304',
+            defaultTtl: 0,
+        });
 
         const mockFetcher = vi.fn(async (url: string, init?: RequestInit) => {
-            requestCount++;
             const headers = (init?.headers as Record<string, string>) ?? {};
-            if (headers['If-None-Match'] === '"etag-123"') {
-                return new Response(null, { status: 304 });
+            if (url.endsWith('/registry-manifest.json')) {
+                return new Response('Not Found', { status: 404 });
             }
-            return new Response(JSON.stringify(item), {
-                status: 200,
-                headers: { etag: '"etag-123"', 'content-type': 'application/json' },
-            });
+            if (url.endsWith('/card.json')) {
+                itemRequestHeaders.push(headers);
+                if (headers['If-None-Match'] === '"etag-123"') {
+                    return new Response(null, { status: 304 });
+                }
+                return new Response(JSON.stringify(item), {
+                    status: 200,
+                    headers: { etag: '"etag-123"', 'content-type': 'application/json' },
+                });
+            }
+            return new Response('Not Found', { status: 404 });
         });
 
         const client = new RegistryClient({
             sources: ['https://registry.example.com'],
             fsAdapter: memoryFs,
-            cacheStorage,
+            cacheStorage: revalidationCache,
             httpFetcher: mockFetcher,
         });
 
-        // 首次请求：200 写入缓存
         const first = await client.fetchItem('card');
         expect(first.name).toBe('card');
 
-        // 第二次请求：发送 If-None-Match，返回 304，复用缓存
         const second = await client.fetchItem('card');
         expect(second.name).toBe('card');
-        expect(requestCount).toBe(2);
+        expect(second.integrity).toBe(item.integrity);
+        expect(itemRequestHeaders).toHaveLength(2);
+        expect(itemRequestHeaders[1]?.['If-None-Match']).toBe('"etag-123"');
+    });
+
+    it('fetches an unknown-version cache entry when the manifest declares a newer item', async () => {
+        const source = 'https://registry.example.com';
+        const oldItem = createMockItem('legacy-cache');
+        const currentFiles = oldItem.files.map(file => ({ ...file, content: '<template>current</template>' }));
+        const currentItem = createMockItem('legacy-cache', { files: currentFiles });
+        const manifestBase = {
+            name: 'brutx-registry',
+            schemaVersion: 1,
+            registryVersion: '2.0.0',
+            items: { [currentItem.name]: { integrity: currentItem.integrity } },
+        };
+        const manifest = {
+            ...manifestBase,
+            integrity: computeRegistryManifestIntegrity(manifestBase),
+        };
+        const initialClient = new RegistryClient({
+            sources: [source],
+            fsAdapter: memoryFs,
+            cacheStorage,
+            httpFetcher: async (url: string) => url.endsWith('/registry-manifest.json')
+                ? new Response('Not Found', { status: 404 })
+                : new Response(JSON.stringify(oldItem), {
+                    status: 200,
+                    headers: { etag: '"legacy-etag"' },
+                }),
+        });
+
+        await expect(initialClient.fetchItem(oldItem.name)).resolves.toMatchObject({
+            integrity: oldItem.integrity,
+        });
+        await expect(cacheStorage.get(oldItem.name, source)).resolves.toMatchObject({
+            etag: '"legacy-etag"',
+            registryVersion: undefined,
+        });
+
+        const itemRequestValidators: Array<string | undefined> = [];
+        let itemRequests = 0;
+        const client = new RegistryClient({
+            sources: [source],
+            fsAdapter: memoryFs,
+            cacheStorage,
+            httpFetcher: async (url: string, init?: RequestInit) => {
+                if (url.endsWith('/registry-manifest.json')) {
+                    return new Response(JSON.stringify(manifest), { status: 200 });
+                }
+                itemRequests += 1;
+                const headers = (init?.headers as Record<string, string>) ?? {};
+                itemRequestValidators.push(headers['If-None-Match']);
+                if (itemRequests === 1) return new Response(null, { status: 304 });
+                return new Response(JSON.stringify(currentItem), {
+                    status: 200,
+                    headers: { etag: '"current-etag"' },
+                });
+            },
+        });
+
+        await expect(client.fetchItem(oldItem.name)).resolves.toMatchObject({
+            integrity: currentItem.integrity,
+        });
+        expect(itemRequests).toBe(2);
+        expect(itemRequestValidators).toEqual([undefined, undefined]);
+        await expect(cacheStorage.get(oldItem.name, source)).resolves.toMatchObject({
+            registryVersion: manifest.registryVersion,
+            etag: '"current-etag"',
+        });
     });
 
     it('resolves version-pinned specifier on GitHub raw source', async () => {

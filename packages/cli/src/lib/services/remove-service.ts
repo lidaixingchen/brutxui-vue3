@@ -566,7 +566,7 @@ export async function removeComponents(
     const transaction = context.createTransaction();
 
     try {
-        const componentRemovalCounts = await Promise.all(
+        const componentRemovalCounts = await awaitConcurrentResults(
             componentsToRemove.map(async (comp) => {
                 const componentPath = await context.resolveComponentDir(comp);
 
@@ -583,7 +583,7 @@ export async function removeComponents(
         let orphanedRemoved = 0;
 
         if (options.removeOrphaned) {
-            const orphanRemovalCounts = await Promise.all(
+            const orphanRemovalCounts = await awaitConcurrentResults(
                 orphanedFiles.map(async (f): Promise<number> => {
                     if (!await context.isSafePath(f)) return 0;
                     if (await context.fs.pathExists(f)) {
@@ -609,5 +609,29 @@ export async function removeComponents(
             rollbackFailures,
         }));
     }
+}
+
+async function awaitConcurrentResults<T>(tasks: Promise<T>[]): Promise<T[]> {
+    let firstFailure: unknown;
+    let hasFailed = false;
+    const observedTasks = tasks.map((task) => task.catch((error: unknown) => {
+        if (!hasFailed) {
+            hasFailed = true;
+            firstFailure = error;
+        }
+        throw error;
+    }));
+    const results = await Promise.allSettled(observedTasks);
+
+    if (hasFailed) {
+        throw firstFailure;
+    }
+
+    return results.map((result) => {
+        if (result.status === 'fulfilled') {
+            return result.value;
+        }
+        throw result.reason;
+    });
 }
 

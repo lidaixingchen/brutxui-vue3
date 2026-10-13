@@ -58,6 +58,8 @@ describe('Config Domain Module', () => {
             expect(() => validateBrutalistConfig({ style: 123 })).toThrow('"style" must be a string');
             expect(() => validateBrutalistConfig({ tailwind: 'not-obj' })).toThrow('"tailwind" must be an object');
             expect(() => validateBrutalistConfig({ aliases: 'not-obj' })).toThrow('"aliases" must be an object');
+            expect(() => validateBrutalistConfig({ aliases: { locales: 123 } })).toThrow('"aliases.locales" must be a string');
+            expect(() => validateBrutalistConfig({ aliases: { directives: 123 } })).toThrow('"aliases.directives" must be a string');
         });
 
         it('validates trustedPublicKeys array and elements', () => {
@@ -101,6 +103,26 @@ describe('Config Domain Module', () => {
 
             // 核心断言：纯函数读取配置不会隐式改变全局状态或环境变量
             expect(process.env.BRUTX_REQUIRE_SIGNATURE).toBeUndefined();
+        });
+
+        it('reads locale and directive aliases from components.json', async () => {
+            await memoryFs.writeJson('/workspace/components.json', {
+                $version: 1,
+                style: 'brutalism',
+                tailwind: { config: 'tailwind.config.js', css: 'src/app.css' },
+                aliases: {
+                    components: '@/components',
+                    utils: '@/lib/utils',
+                    composables: '@/composables',
+                    locales: '@/i18n/locales',
+                    directives: '@/framework/directives',
+                },
+            });
+
+            const parsed = await readConfig('/workspace', memoryFs);
+
+            expect(parsed.aliases.locales).toBe('@/i18n/locales');
+            expect(parsed.aliases.directives).toBe('@/framework/directives');
         });
     });
 });

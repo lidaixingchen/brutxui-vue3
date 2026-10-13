@@ -13,14 +13,27 @@ export interface ResilientFetchOptions {
     readonly singleAttemptTimeoutMs?: number;
 }
 
+function createAbortReason(): Error {
+    const error = new Error('Request aborted.');
+    error.name = 'AbortError';
+    return error;
+}
+
+function createAbortedRequestError(signal?: AbortSignal): CliError {
+    return new CliError('Request aborted.', {
+        code: 'REGISTRY_FETCH_FAILED',
+        cause: signal?.reason ?? createAbortReason(),
+    });
+}
+
 async function abortableSleep(ms: number, signal?: AbortSignal): Promise<void> {
     if (signal?.aborted) {
-        throw new CliError('Request aborted.', { code: 'REGISTRY_FETCH_FAILED' });
+        throw createAbortedRequestError(signal);
     }
     return new Promise<void>((resolve, reject) => {
         const onAbort = () => {
             clearTimeout(timer);
-            reject(new CliError('Request aborted.', { code: 'REGISTRY_FETCH_FAILED' }));
+            reject(createAbortedRequestError(signal));
         };
         const timer = setTimeout(() => {
             if (signal) signal.removeEventListener('abort', onAbort);
@@ -50,7 +63,7 @@ export async function resilientFetch(
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         if (signal?.aborted) {
-            throw new CliError('Request aborted.', { code: 'REGISTRY_FETCH_FAILED' });
+            throw createAbortedRequestError(signal);
         }
 
         const attemptController: AbortController = new AbortController();
@@ -87,7 +100,7 @@ export async function resilientFetch(
             }
         } catch (error: unknown) {
             if (signal?.aborted) {
-                throw new CliError('Request aborted.', { code: 'REGISTRY_FETCH_FAILED', cause: error instanceof Error ? error : undefined });
+                throw new CliError('Request aborted.', { code: 'REGISTRY_FETCH_FAILED', cause: error });
             }
             if (terminalStatus !== undefined) {
                 throw new CliError(`Failed to receive HTTP ${terminalStatus} response from "${url}".`, {

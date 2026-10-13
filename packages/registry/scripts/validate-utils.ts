@@ -1,4 +1,4 @@
-import type { ComponentMetadataEntry, MergedRegistryEntry, RegistryIndex, RegistryIndexItem, RegistryItem } from 'brutx-shared-vue'
+import { COMPONENT_METADATA, type ComponentMetadataEntry, type MergedRegistryEntry, type RegistryIndex, type RegistryIndexItem, type RegistryItem } from 'brutx-shared-vue'
 import { extractClassifiedModuleSpecifiers } from 'brutx-shared-vue/ast'
 import { projectPublicIndexExports } from '../../shared/src/ast/public-index-projection.js'
 
@@ -539,6 +539,16 @@ export function validateRegistryItemInternalImports(
 
     for (const file of item.files) {
         for (const classified of extractClassifiedModuleSpecifiers(file.content)) {
+            const directComponentAlias = /^@\/components\/([a-zA-Z0-9-]+)(?:\/|$)/.exec(
+                classified.specifier.split(/[?#]/)[0] ?? '',
+            )
+            const directComponentName = directComponentAlias?.[1]
+            if (directComponentName && COMPONENT_METADATA[directComponentName]) {
+                errors.push(
+                    `file "${file.path}" imports "${classified.specifier}", but known component aliases must use "@/components/ui/${directComponentName}" in registry items`,
+                )
+            }
+
             const expectedPath = resolveRegistryAliasImport(item.name, classified.specifier)
 
             if (!expectedPath || REGISTRY_ITEM_IGNORED_IMPORTS.has(expectedPath)) {

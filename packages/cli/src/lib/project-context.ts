@@ -198,12 +198,14 @@ export class ProjectContext {
             }
         } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.locales)) {
             const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.locales.length);
-            const composablesPath = await this.resolveAliasPath(config.aliases.composables);
-            resolved = path.join(path.dirname(composablesPath), 'locales', relative);
+            const composablesAlias = config.aliases.composables ?? config.aliases.utils.replace(/\/utils$/, '/composables');
+            const localesAlias = config.aliases.locales ?? `${path.posix.dirname(composablesAlias)}/locales`;
+            resolved = await this.resolveAliasPath(`${localesAlias}/${relative}`);
         } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.directives)) {
             const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.directives.length);
-            const composablesPath = await this.resolveAliasPath(config.aliases.composables);
-            resolved = path.join(path.dirname(composablesPath), 'directives', relative);
+            const composablesAlias = config.aliases.composables ?? config.aliases.utils.replace(/\/utils$/, '/composables');
+            const directivesAlias = config.aliases.directives ?? `${path.posix.dirname(composablesAlias)}/directives`;
+            resolved = await this.resolveAliasPath(`${directivesAlias}/${relative}`);
         } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.types)) {
             const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.types.length);
             const aliasPath = sharedBase
@@ -309,24 +311,55 @@ export class ProjectContext {
         const paths = this.tsConfig?.compilerOptions?.paths;
         if (!paths) return null;
 
-        const aliasPattern = `${aliasPrefix}/*`;
+        const specifier = `${aliasPrefix}/${relativePath}`;
+        const matches = Object.entries(paths).flatMap(([pattern, targets]) => {
+            const wildcardIndex = pattern.indexOf('*');
+            if (wildcardIndex < 0) {
+                return pattern === specifier
+                    ? [{ targets, prefixLength: pattern.length, suffixLength: 0, suffix: '' }]
+                    : [];
+            }
+
+            const prefix = pattern.slice(0, wildcardIndex);
+            const suffix = pattern.slice(wildcardIndex + 1);
+            if (
+                !specifier.startsWith(prefix) ||
+                !specifier.endsWith(suffix) ||
+                specifier.length < prefix.length + suffix.length
+            ) {
+                return [];
+            }
+
+            return [{
+                targets,
+                prefixLength: prefix.length,
+                suffixLength: suffix.length,
+                suffix: specifier.slice(prefix.length, specifier.length - suffix.length),
+            }];
+        }).sort((left, right) =>
+            right.prefixLength - left.prefixLength || right.suffixLength - left.suffixLength
+        );
+        const matchedPaths = matches[0];
+        if (!matchedPaths) return null;
+
         const baseUrl = this.tsConfig?.compilerOptions?.baseUrl || '.';
         const baseDir = path.isAbsolute(baseUrl) ? baseUrl : path.join(this.cwd, baseUrl);
 
-        if (paths[aliasPattern]) {
-            const targets = paths[aliasPattern];
-            for (const targetPath of targets) {
-                const resolvedBase = targetPath.replace('/*', '');
-                const candidate = path.join(baseDir, resolvedBase, relativePath);
-                if (await this.fs.pathExists(candidate)) {
-                    return candidate;
-                }
+        const resolveTarget = (targetPath: string): string => {
+            const target = targetPath.includes('*')
+                ? targetPath.replace('*', matchedPaths.suffix)
+                : path.join(targetPath, matchedPaths.suffix);
+            return path.join(baseDir, target);
+        };
+
+        for (const targetPath of matchedPaths.targets) {
+            const candidate = resolveTarget(targetPath);
+            if (await this.fs.pathExists(candidate)) {
+                return candidate;
             }
-            const firstBase = targets[0].replace('/*', '');
-            return path.join(baseDir, firstBase, relativePath);
         }
 
-        return null;
+        return resolveTarget(matchedPaths.targets[0]);
     }
 
     private async resolveByProjectType(relativePath: string): Promise<string> {

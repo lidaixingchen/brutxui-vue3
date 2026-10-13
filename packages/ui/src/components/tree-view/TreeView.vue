@@ -84,9 +84,12 @@ watch(
             lastEmittedNodes = null;
             return;
         }
+        lastEmittedNodes = null;
+        // 父级持有 localNodes 同一引用时，深层变更已直接反映到本地树。
+        if (newVal === localNodes.value) return;
         localNodes.value = cloneTree(newVal);
     },
-    { immediate: true }
+    { immediate: true, deep: true }
 );
 
 function emitNodesUpdate() {
@@ -247,29 +250,34 @@ function findNodeById(nodes: TreeNode[], id: string): TreeNode | null {
 }
 
 async function triggerLoad(node: TreeNode) {
-    if (loadingKeys.value.has(node.id)) return;
-    
-    loadingKeys.value.add(node.id);
+    const nodeId = node.id;
+    if (loadingKeys.value.has(nodeId)) return;
+
+    loadingKeys.value.add(nodeId);
     node.loading = true;
-    failedKeys.value.delete(node.id);
+    failedKeys.value.delete(nodeId);
     emitNodesUpdate();
     
     try {
         const result = await props.load?.(node);
+        const currentNode = findNodeById(localNodes.value, nodeId);
+        if (!currentNode) return;
         if (result) {
-            node.children = result;
+            currentNode.children = result;
         }
-        node.loaded = true;
-        node.loading = false;
+        currentNode.loaded = true;
+        currentNode.loading = false;
         emitNodesUpdate();
     } catch (err) {
-        node.loading = false;
-        node.loaded = false;
-        failedKeys.value.add(node.id);
-        console.error(`Failed to load children for node ${node.id}:`, err);
+        console.error(`Failed to load children for node ${nodeId}:`, err);
+        const currentNode = findNodeById(localNodes.value, nodeId);
+        if (!currentNode) return;
+        currentNode.loading = false;
+        currentNode.loaded = false;
+        failedKeys.value.add(nodeId);
         emitNodesUpdate();
     } finally {
-        loadingKeys.value.delete(node.id);
+        loadingKeys.value.delete(nodeId);
     }
 }
 

@@ -1789,3 +1789,238 @@ describe('TreeView - Echo write-back and external updates', () => {
     })
 })
 
+describe('TreeView - Reactive nodes prop', () => {
+    it('renders additions and removals from the same reactive parent array', async () => {
+        const nodes = ref<TreeNode[]>([{ id: 'first', label: 'First' }])
+        const Parent = defineComponent({
+            components: { TreeView },
+            setup() {
+                return { nodes }
+            },
+            template: '<TreeView :nodes="nodes" />',
+        })
+        const wrapper = mount(Parent, {
+            global: { provide: localeProvide },
+        })
+
+        try {
+            nodes.value.push({ id: 'second', label: 'Second' })
+            await nextTick()
+
+            expect(wrapper.text()).toContain('Second')
+
+            nodes.value.splice(0, 1)
+            await nextTick()
+
+            expect(wrapper.text()).not.toContain('First')
+            expect(wrapper.text()).toContain('Second')
+        } finally {
+            wrapper.unmount()
+        }
+    })
+
+    it('renders in-place node field and nested child updates', async () => {
+        const nodes = ref<TreeNode[]>([
+            {
+                id: 'root',
+                label: 'Original Root',
+                children: [{ id: 'existing-child', label: 'Existing Child' }],
+            },
+        ])
+        const Parent = defineComponent({
+            components: { TreeView },
+            setup() {
+                return { nodes }
+            },
+            template: '<TreeView :nodes="nodes" :default-expanded="[\'root\']" />',
+        })
+        const wrapper = mount(Parent, {
+            global: { provide: localeProvide },
+        })
+
+        try {
+            nodes.value[0]!.label = 'Updated Root'
+            nodes.value[0]!.children!.push({ id: 'new-child', label: 'New Child' })
+            await nextTick()
+
+            expect(wrapper.text()).toContain('Updated Root')
+            expect(wrapper.text()).toContain('New Child')
+        } finally {
+            wrapper.unmount()
+        }
+    })
+
+    it('keeps an in-flight lazy load attached after an echoed tree changes in place', async () => {
+        let resolveLoad!: (loadedNodes: TreeNode[]) => void
+        const nodes = ref<TreeNode[]>([{ id: 'lazy-root', label: 'Lazy Root' }])
+        const Parent = defineComponent({
+            components: { TreeView },
+            setup() {
+                const load = () => new Promise<TreeNode[]>((resolve) => {
+                    resolveLoad = resolve
+                })
+                return { nodes, load }
+            },
+            template: '<TreeView :nodes="nodes" lazy :load="load" @update:nodes="nodes = $event" />',
+        })
+        const wrapper = mount(Parent, {
+            global: { provide: localeProvide },
+        })
+
+        try {
+            await wrapper.find('[role="treeitem"] > div').trigger('click')
+            await nextTick()
+
+            nodes.value.push({ id: 'external-node', label: 'External Node' })
+            await nextTick()
+            resolveLoad([{ id: 'loaded-child', label: 'Loaded Child', isLeaf: true }])
+            await flushPromises()
+
+            expect(wrapper.text()).toContain('External Node')
+            expect(wrapper.text()).toContain('Loaded Child')
+        } finally {
+            wrapper.unmount()
+        }
+    })
+
+    it('applies lazy results after a non-echo parent changes the source array in place', async () => {
+        let resolveLoad!: (loadedNodes: TreeNode[]) => void
+        const nodes = ref<TreeNode[]>([{ id: 'lazy-root', label: 'Lazy Root' }])
+        const Parent = defineComponent({
+            components: { TreeView },
+            setup() {
+                const load = () => new Promise<TreeNode[]>((resolve) => {
+                    resolveLoad = resolve
+                })
+                return { nodes, load }
+            },
+            template: '<TreeView :nodes="nodes" lazy :load="load" />',
+        })
+        const wrapper = mount(Parent, {
+            global: { provide: localeProvide },
+        })
+
+        try {
+            await wrapper.find('[role="treeitem"] > div').trigger('click')
+            await nextTick()
+
+            nodes.value.push({ id: 'external-node', label: 'External Node' })
+            await nextTick()
+            resolveLoad([{ id: 'loaded-child', label: 'Loaded Child', isLeaf: true }])
+            await flushPromises()
+
+            expect(wrapper.text()).toContain('External Node')
+            expect(wrapper.text()).toContain('Loaded Child')
+        } finally {
+            wrapper.unmount()
+        }
+    })
+
+    it('does not apply a lazy result after the source node is removed', async () => {
+        let resolveLoad!: (loadedNodes: TreeNode[]) => void
+        const nodes = ref<TreeNode[]>([{ id: 'lazy-root', label: 'Lazy Root' }])
+        const Parent = defineComponent({
+            components: { TreeView },
+            setup() {
+                const load = () => new Promise<TreeNode[]>((resolve) => {
+                    resolveLoad = resolve
+                })
+                return { nodes, load }
+            },
+            template: '<TreeView :nodes="nodes" lazy :load="load" />',
+        })
+        const wrapper = mount(Parent, {
+            global: { provide: localeProvide },
+        })
+
+        try {
+            await wrapper.find('[role="treeitem"] > div').trigger('click')
+            await nextTick()
+
+            nodes.value.splice(0, 1)
+            await nextTick()
+            resolveLoad([{ id: 'loaded-child', label: 'Loaded Child', isLeaf: true }])
+            await flushPromises()
+
+            expect(wrapper.text()).not.toContain('Lazy Root')
+            expect(wrapper.text()).not.toContain('Loaded Child')
+            expect(wrapper.findComponent(TreeView).emitted('update:nodes')).toHaveLength(1)
+        } finally {
+            wrapper.unmount()
+        }
+    })
+
+    it('applies failed load state to the current node after a non-echo update', async () => {
+        let rejectLoad!: (error: Error) => void
+        const nodes = ref<TreeNode[]>([{ id: 'lazy-root', label: 'Lazy Root' }])
+        const Parent = defineComponent({
+            components: { TreeView },
+            setup() {
+                const load = () => new Promise<TreeNode[]>((_, reject) => {
+                    rejectLoad = reject
+                })
+                return { nodes, load }
+            },
+            template: '<TreeView :nodes="nodes" lazy retry-on-error :load="load" />',
+        })
+        const wrapper = mount(Parent, {
+            global: { provide: localeProvide },
+        })
+
+        try {
+            await wrapper.find('[role="treeitem"] > div').trigger('click')
+            await nextTick()
+
+            nodes.value.push({ id: 'external-node', label: 'External Node' })
+            await nextTick()
+            rejectLoad(new Error('Load error'))
+            await flushPromises()
+
+            const treeView = wrapper.findComponent(TreeView)
+            const updates = treeView.emitted('update:nodes')!
+            const updatedNodes = updates[updates.length - 1]![0] as TreeNode[]
+            const currentRoot = updatedNodes.find((node) => node.id === 'lazy-root')!
+
+            expect(currentRoot).toMatchObject({ loading: false, loaded: false })
+            expect(wrapper.find('button[title="Retry Loading"]').exists()).toBe(true)
+        } finally {
+            wrapper.unmount()
+        }
+    })
+
+    it('keeps drag reordering after the parent echoes update:nodes', async () => {
+        const nodes = ref<TreeNode[]>([
+            { id: 'drag-node', label: 'Drag Node' },
+            { id: 'drop-node', label: 'Drop Node' },
+        ])
+        const Parent = defineComponent({
+            components: { TreeView },
+            setup() {
+                return { nodes }
+            },
+            template: '<TreeView :nodes="nodes" draggable @update:nodes="nodes = $event" />',
+        })
+        const wrapper = mount(Parent, {
+            global: { provide: localeProvide },
+        })
+
+        try {
+            const treeItems = wrapper.findAll('[role="treeitem"]')
+            const dragItem = treeItems[0]!
+            const dropItem = treeItems[1]!
+
+            await dragItem.find('[draggable="true"]').trigger('dragstart', { preventDefault: () => {} })
+            await dropItem.find('[role="treeitem"] > div').trigger('dragover', { clientY: 10, preventDefault: () => {} })
+            await dropItem.find('[role="treeitem"] > div').trigger('drop', { preventDefault: () => {} })
+            await nextTick()
+
+            expect(wrapper.findAll('[role="treeitem"]').map((item) => item.text())).toEqual([
+                'Drop Node',
+                'Drag Node',
+            ])
+        } finally {
+            wrapper.unmount()
+        }
+    })
+})
+

@@ -55,6 +55,12 @@ export function validateBrutalistConfig(data: unknown): asserts data is Record<s
         if (aliases.composables !== undefined && typeof aliases.composables !== 'string') {
             throw new Error('Invalid components.json: "aliases.composables" must be a string.');
         }
+        if (aliases.locales !== undefined && typeof aliases.locales !== 'string') {
+            throw new Error('Invalid components.json: "aliases.locales" must be a string.');
+        }
+        if (aliases.directives !== undefined && typeof aliases.directives !== 'string') {
+            throw new Error('Invalid components.json: "aliases.directives" must be a string.');
+        }
     }
 
     if (config.registries !== undefined) {
@@ -184,6 +190,8 @@ export async function readConfig(
             components: (typeof aliases?.components === 'string' ? aliases.components : undefined) ?? DEFAULT_ALIASES.components,
             utils: (typeof aliases?.utils === 'string' ? aliases.utils : undefined) ?? DEFAULT_ALIASES.utils,
             composables: (typeof aliases?.composables === 'string' ? aliases.composables : undefined) ?? DEFAULT_ALIASES.composables,
+            ...(typeof aliases?.locales === 'string' ? { locales: aliases.locales } : {}),
+            ...(typeof aliases?.directives === 'string' ? { directives: aliases.directives } : {}),
         },
         sharedBase: typeof raw.sharedBase === 'string' ? raw.sharedBase : undefined,
         registries: Array.isArray(raw.registries)
