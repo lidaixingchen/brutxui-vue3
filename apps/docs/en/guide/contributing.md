@@ -13,7 +13,7 @@ Thank you for your interest in BrutxUI! Here are the guidelines and workflows fo
 
 ### Prerequisites
 
-- Node.js 22.5+
+- Node.js `^22.13.0 || ^24.0.0 || >=26.0.0`
 - pnpm 11+ (The repository strictly requires pnpm; npm or yarn is forbidden)
 - Git
 
