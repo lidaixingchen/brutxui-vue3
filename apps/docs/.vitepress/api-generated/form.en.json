@@ -641,7 +641,7 @@
             "literals": [],
             "references": []
           },
-          "description": "Content that consumes the current field context, typically FormItem. The slot does not directly provide field arguments.",
+          "description": "Field content, typically FormItem. Provides componentField for v-bind on the control, including the field name, current value, value updates, and focusout validation.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/form/FormField.vue"

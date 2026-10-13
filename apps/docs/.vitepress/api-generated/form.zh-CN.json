@@ -641,7 +641,7 @@
             "literals": [],
             "references": []
           },
-          "description": "读取当前字段上下文的内容，通常放置 FormItem；此插槽不直接提供字段参数。",
+          "description": "字段内容，通常放置 FormItem。提供 componentField，可通过 v-bind 绑定到控件，传递字段名称、当前值、值更新和失焦校验事件。",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/form/FormField.vue"
