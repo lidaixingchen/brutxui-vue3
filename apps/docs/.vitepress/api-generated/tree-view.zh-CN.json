@@ -803,7 +803,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeView.vue",
-            "line": 452
+            "line": 454
           },
           "origin": "declared",
           "nullable": false,
@@ -822,7 +822,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeView.vue",
-            "line": 453
+            "line": 455
           },
           "origin": "declared",
           "nullable": false,

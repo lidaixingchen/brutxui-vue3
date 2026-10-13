@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import path from 'path';
 import { MemoryFileSystemAdapter } from '../src/lib/fs/memory-fs.js';
 import { ProjectContext } from '../src/lib/project-context.js';
+import { readConfig } from '../src/lib/config.js';
 import type { BrutalistConfig } from '../src/lib/types.js';
 
 describe('ProjectContext', () => {
@@ -157,6 +158,44 @@ import { Button } from '@/components/ui/button';
         expect(rewritten).toContain("import { cn } from '@/custom/utils';");
         expect(rewritten).toContain("import { useToast } from '@/custom/composables/useToast';");
         expect(rewritten).toContain("import { Button } from '@/ui/components/ui/button';");
+    });
+
+    it('carries parsed locale and directive aliases into the project context', async () => {
+        const customConfig: BrutalistConfig = {
+            ...sampleConfig,
+            aliases: {
+                ...sampleConfig.aliases,
+                locales: '@/i18n/locales',
+                directives: '@/framework/directives',
+            },
+        };
+        await fs.writeJson(path.join(projectCwd, 'components.json'), customConfig);
+
+        const parsedConfig = await readConfig(projectCwd, fs);
+        const context = await ProjectContext.loadUninitialized(projectCwd, {
+            fs,
+            configOverride: parsedConfig,
+        });
+
+        expect(context.requireConfig().aliases).toEqual(parsedConfig.aliases);
+        expect(context.toRelativePosixPath(await context.resolveTargetPath('locales/zh-CN.ts')))
+            .toBe('src/i18n/locales/zh-CN.ts');
+        expect(context.toRelativePosixPath(await context.resolveTargetPath('directives/loading.ts')))
+            .toBe('src/framework/directives/loading.ts');
+        const rewritten = context.transformImports(
+            "import locale from '@/locales/zh-CN';\nimport { vLoading } from '@/directives/loading';",
+            'aliases.ts',
+        );
+        expect(rewritten).toContain("from '@/i18n/locales/zh-CN'");
+        expect(rewritten).toContain("from '@/framework/directives/loading'");
+    });
+
+    it('resolves wildcard alias suffixes containing replacement markers literally', async () => {
+        const context = await ProjectContext.load(projectCwd, { fs });
+        const aliasPath = '@/locales/$&.ts';
+
+        expect(context.toRelativePosixPath(await context.resolveAliasPath(aliasPath)))
+            .toBe('src/locales/$&.ts');
     });
 
     it('should create FileTransaction bound to context VFS', async () => {

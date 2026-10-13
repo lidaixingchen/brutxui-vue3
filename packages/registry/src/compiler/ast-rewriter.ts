@@ -168,6 +168,23 @@ const KNOWN_DIR_PREFIXES: Record<string, string> = {
     types: '@/types/',
 };
 
+const REGISTRY_COMPONENT_ALIAS_PREFIX = '@/components/ui/';
+
+function normalizeDirectComponentAlias(specifier: string, knownComponents?: Set<string>): string | undefined {
+    if (specifier.startsWith(REGISTRY_COMPONENT_ALIAS_PREFIX)) return undefined;
+
+    const match = /^@\/components\/([a-zA-Z0-9-]+)(\/.+)?$/.exec(specifier);
+    const componentName = match?.[1];
+    if (!componentName) return undefined;
+
+    const isKnown = knownComponents
+        ? knownComponents.has(componentName)
+        : Boolean(COMPONENT_METADATA[componentName]);
+    if (!isKnown) return undefined;
+
+    return `${REGISTRY_COMPONENT_ALIAS_PREFIX}${componentName}${match[2] ?? ''}`;
+}
+
 /**
  * 计算单个 import/export specifier 重写后的目标别名。
  * 若无需重写则返回原 specifier。
@@ -178,6 +195,9 @@ export function resolveRewrittenSpecifier(
     context: RewriteContext = 'component',
     knownComponents: Set<string> = new Set(AVAILABLE_COMPONENTS)
 ): string {
+    const directComponentAlias = normalizeDirectComponentAlias(specifier, knownComponents);
+    if (directComponentAlias) return directComponentAlias;
+
     // 1. ../composables/..., ../lib/..., ../locales/..., ../directives/... (支持单层或多层 ../)
     for (const [prefix, alias] of Object.entries(KNOWN_DIR_PREFIXES)) {
         const match = new RegExp(`^(?:\\.\\./)+${prefix}/(.+)$`).exec(specifier);
@@ -268,12 +288,12 @@ export function extractRegistryDeps(
     knownComponents?: Set<string>,
 ): string[] {
     const items = extractClassifiedModuleSpecifiers(input);
-    const prefix = '@/components/ui/';
+    const prefix = REGISTRY_COMPONENT_ALIAS_PREFIX;
     const deps = new Set<string>();
 
     for (const item of items) {
         if (item.isTypeOnly) continue;
-        const spec = item.specifier;
+        const spec = normalizeDirectComponentAlias(item.specifier, knownComponents) ?? item.specifier;
         if (spec.startsWith(prefix)) {
             const remainder = spec.slice(prefix.length);
             const comp = remainder.split('/')[0];

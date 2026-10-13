@@ -20,6 +20,13 @@ export interface SourceAttemptError {
     readonly error: unknown;
 }
 
+export class HedgedRaceWinnerAbort extends Error {
+    constructor() {
+        super('Another registry source succeeded.');
+        this.name = 'HedgedRaceWinnerAbort';
+    }
+}
+
 /**
  * 聚合多源失败异常，遵循供应链安全与 404 优先级：
  * 1. REGISTRY_SIGNATURE_INVALID（签名被篡改）最高优先级透出
@@ -159,7 +166,7 @@ export async function hedgedRace<T>(
                     if (completed) return;
                     completed = true;
                     cleanupAll();
-                    masterController.abort();
+                    masterController.abort(new HedgedRaceWinnerAbort());
 
                     resolve({
                         result,

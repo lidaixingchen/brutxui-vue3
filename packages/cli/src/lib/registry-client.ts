@@ -14,7 +14,7 @@ import { logger } from './logger.js';
 import { createDefaultCacheStorage, isOfflineMode, type CacheStorage, type CacheReadResult } from './storage/cache-storage.js';
 import { resilientFetch } from './resilience/resilient-fetch.js';
 import { RegistrySourceTracker } from './resilience/source-tracker.js';
-import { hedgedRace } from './resilience/hedged-race.js';
+import { hedgedRace, HedgedRaceWinnerAbort } from './resilience/hedged-race.js';
 import { buildAuthHeaders } from './registry-source.js';
 import { verifyManifestIntegrityAndSignature, loadTrustedPublicKeys } from './signature.js';
 import type {
@@ -41,6 +41,18 @@ interface ManifestSummaryInternal extends RegistryManifestSummary {
 
 function isHttpUrl(str: string): boolean {
     return str.startsWith('http://') || str.startsWith('https://');
+}
+
+function isSignalCancellation(error: unknown, signal?: AbortSignal): boolean {
+    if (!signal?.aborted) return false;
+    let candidate: unknown = error;
+    while (candidate !== undefined) {
+        if (candidate === signal.reason) return true;
+        if (!(candidate instanceof Error)) return false;
+        if (candidate.name === 'AbortError') return true;
+        candidate = (candidate as Error & { cause?: unknown }).cause;
+    }
+    return false;
 }
 
 const defaultHttpFetcher: HttpFetcher = (url: string, init?: RequestInit): Promise<Response> => {
@@ -253,7 +265,9 @@ export class RegistryClient {
                 this.lastHitSources.set(name, source);
                 return { item, source };
             } catch (err) {
-                this.tracker.recordFailure(source);
+                if (!isSignalCancellation(err, signal)) {
+                    this.tracker.recordFailure(source);
+                }
                 throw err;
             }
         }
@@ -262,10 +276,21 @@ export class RegistryClient {
         const raceResult = await hedgedRace<RegistryItem>(
             rankedSources,
             async (source, sourceSignal) => {
+                const attemptStartedAt = Date.now();
                 try {
                     return await this.fetchSingleSource(name, source, { ...options, signal: sourceSignal ?? signal });
                 } catch (err) {
-                    this.tracker.recordFailure(source);
+                    if (isSignalCancellation(err, signal)) {
+                        throw err;
+                    }
+                    if (
+                        sourceSignal.reason instanceof HedgedRaceWinnerAbort &&
+                        isSignalCancellation(err, sourceSignal)
+                    ) {
+                        this.tracker.recordCanceledByWinner(source, Date.now() - attemptStartedAt);
+                    } else {
+                        this.tracker.recordFailure(source);
+                    }
                     throw err;
                 }
             },
@@ -375,22 +400,21 @@ export class RegistryClient {
 
         if (effectiveUseCache) {
             cachedEntry = await this.cache.get<RegistryItem>(name, source);
-            if (cachedEntry) {
-                const versionMatch = !currentRegistryVersion ||
-                    !cachedEntry.registryVersion ||
-                    cachedEntry.registryVersion === currentRegistryVersion;
+        }
+        const cachedVersionMatches = !currentRegistryVersion || !cachedEntry ||
+            cachedEntry.registryVersion === currentRegistryVersion;
 
-                const offlineOk = this.offline && versionMatch;
-                const onlineFresh = !cachedEntry.expired && versionMatch;
+        if (cachedEntry) {
+            const offlineOk = this.offline && cachedVersionMatches;
+            const onlineFresh = !cachedEntry.expired && cachedVersionMatches;
 
-                if (offlineOk || onlineFresh) {
-                    if (offlineOk) {
-                        logger.info(`[OFFLINE CACHE HIT] ${name} (source: ${source})`);
-                    }
-                    this.verifyManifestItemCrossCheck(cachedEntry.data, name, manifestSummary);
-                    this.validateItemIntegrity(cachedEntry.data, name);
-                    return cachedEntry.data;
+            if (offlineOk || onlineFresh) {
+                if (offlineOk) {
+                    logger.info(`[OFFLINE CACHE HIT] ${name} (source: ${source})`);
                 }
+                this.verifyManifestItemCrossCheck(cachedEntry.data, name, manifestSummary);
+                this.validateItemIntegrity(cachedEntry.data, name);
+                return cachedEntry.data;
             }
         }
 
@@ -405,18 +429,28 @@ export class RegistryClient {
             ...buildAuthHeaders(source),
         };
 
-        if (effectiveUseCache && cachedEntry) {
+        if (effectiveUseCache && cachedEntry && cachedVersionMatches) {
             if (cachedEntry.etag) headers['If-None-Match'] = cachedEntry.etag;
             if (cachedEntry.lastModified) headers['If-Modified-Since'] = cachedEntry.lastModified;
         }
 
-        const res = await this.fetcher(url, { headers, signal });
+        let res = await this.fetcher(url, { headers, signal });
 
-        if (res.status === 304 && cachedEntry) {
+        if (res.status === 304 && cachedEntry && cachedVersionMatches) {
             await this.cache.touch(name, source);
             this.verifyManifestItemCrossCheck(cachedEntry.data, name, manifestSummary);
             this.validateItemIntegrity(cachedEntry.data, name);
             return cachedEntry.data;
+        }
+
+        if (res.status === 304 && cachedEntry && !cachedVersionMatches) {
+            res = await this.fetcher(url, { headers: buildAuthHeaders(source), signal });
+        }
+
+        if (res.status === 304) {
+            throw new CliError(`Registry returned 304 without a matching cached component "${name}".`, {
+                code: 'REGISTRY_FETCH_FAILED',
+            });
         }
 
         if (!res.ok) {

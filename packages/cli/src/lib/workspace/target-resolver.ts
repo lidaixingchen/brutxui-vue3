@@ -103,16 +103,15 @@ export class TargetResolver {
 
     private static buildPlanForPackage(pkg: WorkspacePackageInfo, rootConfig?: BrutalistConfig): ResolvedInstallationPlan {
         const effectiveConfig: BrutalistConfig = {
+            ...rootConfig,
             style: rootConfig?.style ?? 'default',
             tailwind: rootConfig?.tailwind ?? { config: 'tailwind.config.js', css: 'src/styles.css' },
             aliases: {
+                ...rootConfig?.aliases,
                 components: rootConfig?.aliases.components ?? '@/components',
                 utils: rootConfig?.aliases.utils ?? '@/lib/utils',
                 composables: rootConfig?.aliases.composables ?? '@/composables',
-                locales: rootConfig?.aliases.locales,
-                directives: rootConfig?.aliases.directives,
             },
-            workspace: rootConfig?.workspace,
         };
 
         return {

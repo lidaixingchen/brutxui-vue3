@@ -422,11 +422,7 @@ jobs:
               if: steps.playwright-cache.outputs.cache-hit == 'true'
               run: pnpm --filter brutx-ui-vue exec playwright install-deps chromium
 
-            - name: Prepare browser source and selected artifact
-              run: pnpm --filter brutx-ui-vue generate
-
-            - name: Build UI artifact for Button resource checks
-              if: needs.changes.outputs.cost == 'true'
+            - name: Build UI artifact for browser and resource checks
               run: pnpm exec turbo run build:artifact --filter=brutx-ui-vue
 
             - name: Browser tests

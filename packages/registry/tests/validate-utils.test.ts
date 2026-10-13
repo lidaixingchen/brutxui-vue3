@@ -496,6 +496,29 @@ describe('validate-registry helpers', () => {
         expect(validateRegistryItemInternalImports(item)).toEqual([])
     })
 
+    it('reports known direct component aliases left in generated registry files', () => {
+        const item = createRegistryItem('popconfirm', {
+            description: 'Popconfirm component',
+            files: [
+                'components/ui/popconfirm/Popconfirm.vue',
+            ],
+        })
+        item.files[0].content = [
+            "import { Popover } from '@/components/popover'",
+            "import type { ButtonProps } from '@/components/button/types'",
+            "import Missing from '@/components/missing-widget'",
+        ].join('\n')
+        item.registryDependencies = ['button', 'popover']
+
+        const errors = validateRegistryItemInternalImports(item)
+        expect(errors).toHaveLength(2)
+        expect(errors).toEqual(expect.arrayContaining([
+            expect.stringContaining('"@/components/popover"'),
+            expect.stringContaining('"@/components/button/types"'),
+        ]))
+        expect(errors.join('\n')).not.toContain('missing-widget')
+    })
+
     it('ignores type-only cross-component imports when checking registryDependencies', () => {
         // `import type { Foo } from '@/components/ui/button/types'` does not
         // create a runtime registry dependency; type-only imports do not require

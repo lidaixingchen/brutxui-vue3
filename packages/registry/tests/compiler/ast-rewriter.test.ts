@@ -100,6 +100,60 @@ describe('AstRewriter', () => {
         expect(() => assertKnownRegistryDeps(rewritten, 'dialog', 'Content.ts')).not.toThrow();
     });
 
+    it('normalizes known direct component aliases and extracts their dependencies', () => {
+        const source = [
+            "import Button from '@/components/button'",
+            "import { PopoverContent } from '@/components/popover/PopoverContent.vue'",
+            "import type { ButtonProps } from '@/components/button/types'",
+        ].join('\n');
+        const knownComponents = new Set(['button', 'dialog', 'popover']);
+        const rewritten = rewriteAnalyzedImports(
+            analyzeModuleSource(source, '/src/components/dialog/Content.vue'),
+            'dialog',
+            'component',
+            knownComponents,
+        );
+
+        expect(rewritten.code).toContain("from '@/components/ui/button'");
+        expect(rewritten.code).toContain("from '@/components/ui/popover/PopoverContent.vue'");
+        expect(rewritten.code).toContain("from '@/components/ui/button/types'");
+        expect(extractRegistryDeps(rewritten, 'dialog', knownComponents)).toEqual(['button', 'popover']);
+        expect(rewritten.dependencies.find(dependency => dependency.isTypeOnly)).toMatchObject({
+            specifier: '@/components/ui/button/types',
+            isTypeOnly: true,
+        });
+    });
+
+    it('extracts direct alias dependencies without rewriting and leaves unknown aliases unchanged', () => {
+        const source = [
+            "import Button from '@/components/button'",
+            "import Missing from '@/components/missing-widget'",
+        ].join('\n');
+        const knownComponents = new Set(['button', 'dialog']);
+
+        expect(extractRegistryDeps(source, 'dialog', knownComponents)).toEqual(['button']);
+        expect(rewriteImports(source, 'dialog', 'component', knownComponents)).toContain(
+            "from '@/components/missing-widget'",
+        );
+    });
+
+    it('does not add a runtime dependency for a pure type-only direct component alias', () => {
+        const source = "import type { ButtonProps } from '@/components/button/types'";
+        const knownComponents = new Set(['button', 'dialog']);
+        const rewritten = rewriteAnalyzedImports(
+            analyzeModuleSource(source, '/src/components/dialog/types.ts'),
+            'dialog',
+            'component',
+            knownComponents,
+        );
+
+        expect(rewritten.code).toContain("from '@/components/ui/button/types'");
+        expect(rewritten.dependencies).toMatchObject([
+            { specifier: '@/components/ui/button/types', isTypeOnly: true },
+        ]);
+        expect(extractRegistryDeps(rewritten, 'dialog', knownComponents)).toEqual([]);
+    });
+
     it('finds unknown component imports and throws descriptive errors', () => {
         const code = [
             'import Button from \'@/components/ui/button/Button.vue\';',

@@ -22,7 +22,7 @@ const localRegistryDir = path.join(repoRoot, 'packages/registry/registry');
 
 const ALL_CONSUMER_IDS = Object.freeze(['U1', 'C1', 'C3']);
 const DEFAULT_CONSUMER_IDS = Object.freeze(['U1', 'C1']);
-const C1_COMPONENT_NAMES = Object.freeze(['button', 'combobox', 'tree-select', 'transfer']);
+const C1_COMPONENT_NAMES = Object.freeze(['popconfirm', 'button', 'combobox', 'tree-select', 'transfer']);
 const PUBLIC_COMPONENT_INDEX_FILENAME = 'index.ts';
 const COMPOSABLE_MODULE_PREFIX = 'composable:';
 const SIGNAL_EXIT_CODES = Object.freeze({
@@ -622,6 +622,7 @@ createApp(App).mount('#app');
         `<script setup lang="ts">
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
+import { Popconfirm } from '@/components/ui/popconfirm';
 import { TreeSelect } from '@/components/ui/tree-select';
 import { Transfer } from '@/components/ui/transfer';
 
@@ -634,6 +635,9 @@ const selectedTransfer = ['one'];
 <template>
     <main class="p-4">
         <Button>CLI Added Button</Button>
+        <Popconfirm title="确认操作">
+            <Button>确认</Button>
+        </Popconfirm>
         <Combobox :options="comboboxOptions" />
         <TreeSelect :nodes="treeNodes" />
         <Transfer :data="transferData" :model-value="selectedTransfer" />
