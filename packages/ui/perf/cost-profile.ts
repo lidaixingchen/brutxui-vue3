@@ -4,7 +4,7 @@ export const CONSUMER_TOOLCHAIN_PACKAGES = {
     '@tailwindcss/vite': '4.3.0',
     '@vitejs/plugin-vue': '6.0.7',
     vite: '8.0.16',
-    vue: '3.5.35',
+    vue: '3.5.43',
 } as const
 
 export const CONSUMER_UI_PEER_PACKAGES = {
@@ -16,7 +16,7 @@ export const CONSUMER_UI_PEER_PACKAGES = {
     tailwindcss: '4.3.0',
     'v-calendar': '3.1.2',
     'vee-validate': '4.15.1',
-    vue: '3.5.35',
+    vue: '3.5.43',
 } as const
 
 export const CONSUMER_OPTIONAL_PEER_PACKAGES = [
