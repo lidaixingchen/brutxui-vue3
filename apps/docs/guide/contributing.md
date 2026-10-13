@@ -13,7 +13,7 @@ description: 如何参与 BrutxUI 开发与贡献代码
 
 ### 前置要求
 
-- Node.js 22.5+
+- Node.js `^22.13.0 || ^24.0.0 || >=26.0.0`
 - pnpm 11+（仓库包管理器限定为 pnpm，严禁使用 npm 或 yarn）
 - Git
 

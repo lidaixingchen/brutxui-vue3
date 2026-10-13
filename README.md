@@ -22,7 +22,7 @@
   [![TypeScript](https://img.shields.io/badge/TypeScript-6.0+-FFE66D.svg?style=flat-square)](https://www.typescriptlang.org/)
   [![Vue 3](https://img.shields.io/badge/Vue_3-3.5+-4FC08D.svg?style=flat-square&logo=vuedotjs&logoColor=white)](https://vuejs.org/)
   [![Vite](https://img.shields.io/badge/Vite-8+-646CFF.svg?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
-  [![Node.js](https://img.shields.io/badge/Node.js-22.5+-339933.svg?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+  [![Node.js](https://img.shields.io/badge/Node.js-22.13%2B%20%7C%2024%20%7C%2026%2B-339933.svg?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
   [![pnpm](https://img.shields.io/badge/pnpm-11+-F69220.svg?style=flat-square&logo=pnpm&logoColor=white)](https://pnpm.io/)
 
 
