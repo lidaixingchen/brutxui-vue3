@@ -616,4 +616,23 @@ describe('DatePickerRangePanel', () => {
         expect(wrapper.emitted('update:modelValue')).toBeTruthy()
         expect(wrapper.emitted('update:modelValue')![0]).toEqual([[start, end]])
     })
+
+    it('ignores shortcuts outside min/max bounds', async () => {
+        const shortcuts: DatePickerRangeShortcut[] = [
+            { label: 'Earlier', value: [new Date(2026, 0, 1), new Date(2026, 0, 7)] },
+        ]
+        wrapper = mount(DatePickerRangePanel, {
+            ...localeProvide,
+            props: {
+                minDate: new Date(2026, 0, 10),
+                maxDate: new Date(2026, 0, 20),
+                shortcuts,
+            },
+            attachTo: document.body,
+        })
+
+        await wrapper.find('[role="option"]').trigger('click')
+
+        expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    })
 })

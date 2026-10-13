@@ -47,7 +47,7 @@ const content = {
         },
         FormField: {
             props: { name: { zh: '向 vee-validate 注册的字段名称，在组件生命周期内应保持稳定；更换名称需要处理旧字段值和错误残留。', en: 'The field name registered with vee-validate. Keep it stable during the component lifetime; changing it requires handling retained values and errors for the previous name.' } },
-            slots: { default: { zh: '读取当前字段上下文的内容，通常放置 FormItem；此插槽不直接提供字段参数。', en: 'Content that consumes the current field context, typically FormItem. The slot does not directly provide field arguments.' } },
+            slots: { default: { zh: '字段内容，通常放置 FormItem。提供 componentField，可通过 v-bind 绑定到控件，传递字段名称、当前值、值更新和失焦校验事件。', en: 'Field content, typically FormItem. Provides componentField for v-bind on the control, including the field name, current value, value updates, and focusout validation.' } },
         },
         FormItem: {
             props: { class: { zh: '合并到字段布局容器的 CSS 类，容器按 Form 的标签位置、宽度和尺寸布局。', en: 'CSS classes merged onto the field layout container, which follows the Form label position, width, and size.' } },

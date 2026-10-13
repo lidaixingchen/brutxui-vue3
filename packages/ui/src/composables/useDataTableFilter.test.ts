@@ -6,7 +6,7 @@ interface Row extends Record<string, unknown> {
     name: string
     email: string
     age: number
-    createdAt?: string
+    createdAt?: string | number | Date | null
 }
 
 const columns: DataTableColumn<Row>[] = [
@@ -148,5 +148,24 @@ describe('useDataTableFilter', () => {
         setColumnFilter('createdAt', { start: '2026-01-02', end: '2026-01-03' })
 
         expect(filteredData(dateData).map((row) => row.id)).toEqual([2, 3])
+    })
+
+    it('keeps epoch timestamp zero and excludes missing or invalid dates in a date range', () => {
+        const dateColumns: DataTableColumn<Row>[] = [
+            { id: 'createdAt', header: 'Created', accessorKey: 'createdAt', filterType: 'date-range' },
+        ]
+        const dateData: Row[] = [
+            { id: 1, name: 'Epoch', email: 'epoch@example.com', age: 1, createdAt: 0 },
+            { id: 2, name: 'Missing', email: 'missing@example.com', age: 2, createdAt: null },
+            { id: 3, name: 'Invalid', email: 'invalid@example.com', age: 3, createdAt: 'not-a-date' },
+        ]
+        const { setColumnFilter, filteredData } = useDataTableFilter({
+            columns: () => dateColumns,
+            filterable: () => true,
+        })
+
+        setColumnFilter('createdAt', { start: '1969-12-31', end: '1970-01-01' })
+
+        expect(filteredData(dateData).map((row) => row.id)).toEqual([1])
     })
 })

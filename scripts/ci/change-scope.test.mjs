@@ -5,9 +5,10 @@ import os from 'node:os'
 import path from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { CHANGE_SCOPE_FIELDS, classifyGitChangePaths, normalizeGitChangePaths } from './change-scope.mjs'
+import { CHANGE_SCOPE_FIELDS, classifyCiChangeScope, classifyGitChangePaths, normalizeGitChangePaths } from './change-scope.mjs'
 
 const SCRIPT_PATH = fileURLToPath(new URL('./change-scope.mjs', import.meta.url))
+const CI_WORKFLOW_PATH = fileURLToPath(new URL('../../.github/workflows/ci.yml', import.meta.url))
 
 function expectedFlags(...enabled) {
     const flags = Object.fromEntries(CHANGE_SCOPE_FIELDS.map(field => [field, false]))
@@ -207,13 +208,57 @@ test('the merge-base mode excludes changes made only on the target branch', () =
         execFileSync('git', ['commit', '--quiet', '-m', 'target'], { cwd: repository })
         const base = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repository, encoding: 'utf8' }).trim()
 
-        const result = spawnSync(process.execPath, [SCRIPT_PATH, '--base', base, '--head', head, '--diff-mode', 'merge-base'], {
+        const result = spawnSync(process.execPath, [SCRIPT_PATH, '--event', 'pull_request', '--base', base, '--head', head], {
             cwd: repository,
             encoding: 'utf8',
         })
 
         assert.equal(result.status, 0, result.stderr)
         assert.deepEqual(JSON.parse(result.stdout), expectedFlags('docs', 'site'))
+    } finally {
+        rmSync(repository, { recursive: true, force: true })
+    }
+})
+
+test('main push validation covers a code commit even when a following docs push replaces its run', () => {
+    const repository = mkdtempSync(path.join(os.tmpdir(), 'brutx-change-scope-push-'))
+    try {
+        execFileSync('git', ['init', '--quiet'], { cwd: repository })
+        execFileSync('git', ['config', 'user.name', 'Scope Test'], { cwd: repository })
+        execFileSync('git', ['config', 'user.email', 'scope@example.test'], { cwd: repository })
+        mkdirSync(path.join(repository, 'packages/ui/src'), { recursive: true })
+        writeFileSync(path.join(repository, 'README.md'), 'base\n')
+        writeFileSync(path.join(repository, 'packages/ui/src/input.ts'), 'export const input = 1\n')
+        execFileSync('git', ['add', '.'], { cwd: repository })
+        execFileSync('git', ['commit', '--quiet', '-m', 'base'], { cwd: repository })
+
+        writeFileSync(path.join(repository, 'packages/ui/src/input.ts'), 'export const input = 2\n')
+        execFileSync('git', ['add', '.'], { cwd: repository })
+        execFileSync('git', ['commit', '--quiet', '-m', 'fix(ui): update input'], { cwd: repository })
+        const codeCommit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repository, encoding: 'utf8' }).trim()
+
+        writeFileSync(path.join(repository, 'README.md'), 'docs update\n')
+        execFileSync('git', ['add', '.'], { cwd: repository })
+        execFileSync('git', ['commit', '--quiet', '-m', 'docs: update readme'], { cwd: repository })
+        const docsCommit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repository, encoding: 'utf8' }).trim()
+
+        const pushResult = spawnSync(process.execPath, [SCRIPT_PATH, '--event', 'push', '--base', codeCommit, '--head', docsCommit], {
+            cwd: repository,
+            encoding: 'utf8',
+        })
+        assert.equal(pushResult.status, 0, pushResult.stderr)
+        assert.deepEqual(JSON.parse(pushResult.stdout), allFlags(), 'each main push must select full checks for its exact head')
+        assert.deepEqual(
+            classifyCiChangeScope({ eventName: 'workflow_dispatch', base: codeCommit, head: docsCommit, cwd: repository }),
+            expectedFlags('docs'),
+            'an explicit manual baseline must retain direct-diff selection',
+        )
+        assert.deepEqual(
+            classifyCiChangeScope({ eventName: 'workflow_dispatch', head: docsCommit, cwd: repository }),
+            allFlags(),
+            'a manual run without a baseline must remain full-scope',
+        )
+        assert.match(readFileSync(CI_WORKFLOW_PATH, 'utf8'), /node scripts\/ci\/change-scope\.mjs --event "\$EVENT_NAME" --base "\$BASE_SHA" --head "\$HEAD_SHA"/u)
     } finally {
         rmSync(repository, { recursive: true, force: true })
     }

@@ -24,7 +24,7 @@ import { useLocale } from '@/composables/useLocale'
 import { getWeekStartDate } from '@/lib/date'
 import { datePickerPanelVariants, datePickerShortcutVariants } from './date-picker-variants'
 import { type DatePickerShortcut } from './types'
-import { resolveShortcutValue } from './date-picker-utils'
+import { isDateWithinBounds, resolveShortcutValue } from './date-picker-utils'
 import DatePickerPanelFooter from './DatePickerPanelFooter.vue'
 import './panel-styles.css'
 
@@ -100,6 +100,7 @@ function handleUpdate(value: Date | null) {
 
 function handleShortcutSelect(shortcut: DatePickerShortcut) {
     const value = resolveShortcutValue(shortcut)
+    if (!isDateWithinBounds(value, props.minDate, props.maxDate)) return
     const weekStart = getWeekStartDate(value, props.weekStartsOn)
     emit('update:modelValue', weekStart)
 }

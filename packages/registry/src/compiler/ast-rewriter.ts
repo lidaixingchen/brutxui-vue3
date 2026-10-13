@@ -29,6 +29,10 @@ export interface RewrittenModuleSource {
     readonly code: string;
     readonly filename: string;
     readonly dependencies: readonly ClassifiedModuleSpecifier[];
+    readonly resolvedReferences?: readonly {
+        readonly specifier: string;
+        readonly resolvedPath?: string;
+    }[];
 }
 
 type ModuleSpecifierSource = string | AnalyzedModuleSource | RewrittenModuleSource;

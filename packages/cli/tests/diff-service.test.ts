@@ -162,6 +162,27 @@ describe('diff service', () => {
         ]);
     });
 
+    it('diffs a single-file component at the resolved installation target', async () => {
+        const localPath = path.join(tmpDir, 'src', 'components', 'ui', 'button.ts');
+        await fs.ensureDir(path.dirname(localPath));
+        await fs.writeFile(localPath, 'export const button = {};\n', 'utf-8');
+        stubRegistryItem(makeRegistryItem('button', [
+            {
+                path: 'components/ui/button.ts',
+                content: 'export const button = {};\n',
+                type: 'registry:ui',
+            },
+        ]));
+
+        const context = await ProjectContext.loadUninitialized(tmpDir, { configOverride: defaultConfig });
+        const result = await diffComponent(context, 'button');
+
+        expect(result.status).toBe('up-to-date');
+        expect(result.files).toEqual([
+            { path: 'components/ui/button.ts', status: 'unchanged' },
+        ]);
+    });
+
     it('rejects component names that traverse outside the components directory', async () => {
         stubRegistryItem(makeRegistryItem('button', [
             {

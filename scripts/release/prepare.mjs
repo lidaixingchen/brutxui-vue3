@@ -132,14 +132,22 @@ function prepare(dryRun) {
     step('执行 pnpm changelog（更新根 CHANGELOG + 自动归档）');
     pnpm(['changelog']);
 
-    // 自动提交根 CHANGELOG（含本次新增的归档文件）
+    // 自动提交根 CHANGELOG 与本次生成的归档文件
     const archivedNew = archivedVersions().filter((v) => !archivedBefore.includes(v));
     const suffix = archivedNew.length ? `并归档 ${archivedNew.join(', ')}` : '';
     const commitMsg = `docs: 更新根 CHANGELOG 至 ${version}${suffix}`;
 
     const addPaths = [];
     if (existsSync(path.join(repoRoot, 'CHANGELOG.md'))) addPaths.push('CHANGELOG.md');
-    if (existsSync(ARCHIVE_DIR)) addPaths.push('apps/docs/changelog');
+    if (archivedNew.length > 0) {
+        addPaths.push(...archivedNew.map((version) =>
+            path.relative(repoRoot, path.join(ARCHIVE_DIR, `v${version}.md`)).split(path.sep).join('/')
+        ));
+        const archiveIndexPath = path.join(ARCHIVE_DIR, 'index.md');
+        if (existsSync(archiveIndexPath)) {
+            addPaths.push(path.relative(repoRoot, archiveIndexPath).split(path.sep).join('/'));
+        }
+    }
     if (existsSync(GUIDE_CHANGELOG_PATH)) addPaths.push('apps/docs/guide/changelog.md');
     const add = git(['add', '--', ...addPaths]);
     if (add.status !== 0) fail(`git add 根 CHANGELOG 失败：${add.stderr}`);

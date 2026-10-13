@@ -16,6 +16,7 @@ import {
     getFileType,
     rewriteAnalyzedImports,
     rewriteImports,
+    resolveRewrittenSpecifier,
 } from './ast-rewriter.js';
 import { buildRegistryComponentIndex } from './public-index.js';
 import type {
@@ -191,7 +192,101 @@ export class DependencyResolver {
         const source: string = await this.readSource(filePath);
         const analyzed: AnalyzedModuleSource = session.analyze(source, filePath);
         this.assertResolvableModules(analyzed, session);
-        return rewriteAnalyzedImports(analyzed, componentName, context, knownComponents);
+        const rewritten = rewriteAnalyzedImports(analyzed, componentName, context, knownComponents);
+        const moduleResolver = this.moduleResolver;
+        if (!moduleResolver) return rewritten;
+
+        const emittedSpecifiers = new Set(rewritten.dependencies.map(dependency => dependency.specifier));
+        const resolvedReferences = analyzed.analysis.dependencies.map(({ specifier }) => {
+            const rewrittenSpecifier = resolveRewrittenSpecifier(
+                specifier,
+                componentName,
+                context,
+                knownComponents,
+            );
+            const emittedSpecifier = emittedSpecifiers.has(rewrittenSpecifier)
+                ? rewrittenSpecifier
+                : specifier;
+            const resolution = moduleResolver.resolve(filePath, specifier);
+            return resolution.kind === 'internal' && resolution.resolvedPath
+                ? { specifier: emittedSpecifier, resolvedPath: resolution.resolvedPath }
+                : { specifier: emittedSpecifier };
+        });
+
+        return { ...rewritten, resolvedReferences };
+    }
+
+    private resolveDependenciesFromSourceRoot(
+        rewritten: RewrittenModuleSource,
+        directory: string,
+        specifierPrefix: string,
+        fallback: (source: RewrittenModuleSource) => string[],
+        skipGeneratedIndex = false,
+    ): string[] {
+        const resolvedReferences = rewritten.resolvedReferences;
+        if (!resolvedReferences) return fallback(rewritten);
+
+        const resolvedRoot = path.resolve(directory);
+        const dependencies = new Set<string>();
+        const unresolvedSpecifiers = new Set<string>();
+
+        for (const reference of resolvedReferences) {
+            if (reference.resolvedPath) {
+                const relativePath = path.relative(resolvedRoot, path.resolve(reference.resolvedPath));
+                if (
+                    relativePath.length === 0 ||
+                    relativePath === '..' ||
+                    relativePath.startsWith(`..${path.sep}`) ||
+                    path.isAbsolute(relativePath)
+                ) {
+                    if (reference.specifier.startsWith(specifierPrefix)) unresolvedSpecifiers.add(reference.specifier);
+                    continue;
+                }
+
+                const normalizedPath = relativePath.split(path.sep).join('/');
+                if (skipGeneratedIndex && (normalizedPath === 'index' || normalizedPath === 'index.ts')) continue;
+                dependencies.add(normalizedPath);
+            } else if (reference.specifier.startsWith(specifierPrefix)) {
+                unresolvedSpecifiers.add(reference.specifier);
+            }
+        }
+
+        if (unresolvedSpecifiers.size > 0) {
+            const unresolvedSource: RewrittenModuleSource = {
+                ...rewritten,
+                dependencies: rewritten.dependencies.filter(dependency => unresolvedSpecifiers.has(dependency.specifier)),
+            };
+            for (const dependency of fallback(unresolvedSource)) dependencies.add(dependency);
+        }
+
+        return Array.from(dependencies);
+    }
+
+    private getDependencyPaths(
+        rewritten: RewrittenModuleSource,
+        directoryName: string,
+        directory: string,
+    ): string[] {
+        return this.resolveDependenciesFromSourceRoot(
+            rewritten,
+            directory,
+            `@/${directoryName}/`,
+            source => extractDeps(source, directoryName),
+        );
+    }
+
+    private getComponentFilePaths(
+        rewritten: RewrittenModuleSource,
+        componentName: string,
+        componentDir: string,
+    ): string[] {
+        return this.resolveDependenciesFromSourceRoot(
+            rewritten,
+            componentDir,
+            `@/components/ui/${componentName}/`,
+            source => extractComponentFileDeps(source, componentName),
+            true,
+        );
     }
 
     public async resolveComponentClosure(
@@ -229,25 +324,28 @@ export class DependencyResolver {
                 assertKnownRegistryDeps(rewritten, name, fileName);
                 extractRegistryDeps(rewritten, name, knownComponents).forEach(d => allRegistryDeps.add(d));
 
-                for (const d of extractComponentFileDeps(rewritten, name)) {
-                    const resolved = await this.resolveExtension(d, path.join(this.paths.componentsDir, name));
+                const componentDir = path.join(this.paths.componentsDir, name);
+                for (const d of this.getComponentFilePaths(rewritten, name, componentDir)) {
+                    const resolved = await this.resolveExtension(d, componentDir);
                     componentFileDeps.add(resolved);
                 }
-                for (const d of extractDeps(rewritten, 'composables')) {
+                for (const d of this.getDependencyPaths(rewritten, 'composables', this.paths.composablesDir)) {
                     const resolved = await this.resolveExtension(d, this.paths.composablesDir);
                     composableDeps.add(resolved);
                 }
-                for (const d of extractDeps(rewritten, 'locales')) {
+                for (const d of this.getDependencyPaths(rewritten, 'locales', this.paths.localesDir)) {
                     const resolved = await this.resolveExtension(d, this.paths.localesDir);
                     localeDeps.add(resolved);
                 }
-                for (const d of extractDeps(rewritten, 'lib')) {
+                for (const d of this.getDependencyPaths(rewritten, 'lib', this.paths.libDir)) {
                     const resolved = await this.resolveExtension(d, this.paths.libDir);
                     libDeps.add(resolved);
                 }
-                for (const d of extractDeps(rewritten, 'types')) {
-                    const typesDir = this.paths.typesDir;
-                    if (typesDir) typeDeps.add(await this.resolveExtension(d, typesDir));
+                const typesDir = this.paths.typesDir;
+                if (typesDir) {
+                    for (const d of this.getDependencyPaths(rewritten, 'types', typesDir)) {
+                        typeDeps.add(await this.resolveExtension(d, typesDir));
+                    }
                 }
 
                 const relPath = `components/ui/${name}/${fileName}`;
@@ -335,20 +433,22 @@ export class DependencyResolver {
                 assertKnownRegistryDeps(rewritten, name, directiveName);
                 extractRegistryDeps(rewritten, name, knownComponents).forEach(d => allRegistryDeps.add(d));
 
-                for (const d of extractDeps(rewritten, 'composables')) {
+                for (const d of this.getDependencyPaths(rewritten, 'composables', this.paths.composablesDir)) {
                     composableDeps.add(await this.resolveExtension(d, this.paths.composablesDir));
                 }
-                for (const d of extractDeps(rewritten, 'locales')) {
+                for (const d of this.getDependencyPaths(rewritten, 'locales', this.paths.localesDir)) {
                     localeDeps.add(await this.resolveExtension(d, this.paths.localesDir));
                 }
-                for (const d of extractDeps(rewritten, 'lib')) {
+                for (const d of this.getDependencyPaths(rewritten, 'lib', this.paths.libDir)) {
                     libDeps.add(await this.resolveExtension(d, this.paths.libDir));
                 }
-                for (const d of extractDeps(rewritten, 'types')) {
-                    const typesDir = this.paths.typesDir;
-                    if (typesDir) typeDeps.add(await this.resolveExtension(d, typesDir));
+                const typesDir = this.paths.typesDir;
+                if (typesDir) {
+                    for (const d of this.getDependencyPaths(rewritten, 'types', typesDir)) {
+                        typeDeps.add(await this.resolveExtension(d, typesDir));
+                    }
                 }
-                for (const d of extractDeps(rewritten, 'directives')) {
+                for (const d of this.getDependencyPaths(rewritten, 'directives', this.paths.directivesDir)) {
                     directiveDeps.add(await this.resolveExtension(d, this.paths.directivesDir));
                 }
 
@@ -396,18 +496,20 @@ export class DependencyResolver {
                 const localePath = path.join(this.paths.localesDir, localeName);
                 if (await this.fs.pathExists(localePath)) {
                     const rewritten: RewrittenModuleSource = await this.rewriteSource(localePath, name, 'locale', knownComponents, session);
-                    for (const d of extractDeps(rewritten, 'locales')) {
+                    for (const d of this.getDependencyPaths(rewritten, 'locales', this.paths.localesDir)) {
                         localeDeps.add(await this.resolveExtension(d, this.paths.localesDir));
                     }
-                    for (const d of extractDeps(rewritten, 'composables')) {
+                    for (const d of this.getDependencyPaths(rewritten, 'composables', this.paths.composablesDir)) {
                         composableDeps.add(await this.resolveExtension(d, this.paths.composablesDir));
                     }
-                    for (const d of extractDeps(rewritten, 'lib')) {
+                    for (const d of this.getDependencyPaths(rewritten, 'lib', this.paths.libDir)) {
                         libDeps.add(await this.resolveExtension(d, this.paths.libDir));
                     }
-                    for (const d of extractDeps(rewritten, 'types')) {
-                        const typesDir = this.paths.typesDir;
-                        if (typesDir) typeDeps.add(await this.resolveExtension(d, typesDir));
+                    const typesDir = this.paths.typesDir;
+                    if (typesDir) {
+                        for (const d of this.getDependencyPaths(rewritten, 'types', typesDir)) {
+                            typeDeps.add(await this.resolveExtension(d, typesDir));
+                        }
                     }
                 }
                 addedLocaleDeps.add(rawLocaleName);
@@ -454,12 +556,14 @@ export class DependencyResolver {
             const code: string = rewritten.code;
             assertKnownRegistryDeps(rewritten, name, libName);
             extractRegistryDeps(rewritten, name, knownComponents).forEach(d => allRegistryDeps.add(d));
-            for (const d of extractDeps(rewritten, 'lib')) {
+            for (const d of this.getDependencyPaths(rewritten, 'lib', this.paths.libDir)) {
                 libDeps.add(await this.resolveExtension(d, this.paths.libDir));
             }
-            for (const d of extractDeps(rewritten, 'types')) {
-                const typesDir = this.paths.typesDir;
-                if (typesDir) typeDeps.add(await this.resolveExtension(d, typesDir));
+            const typesDir = this.paths.typesDir;
+            if (typesDir) {
+                for (const d of this.getDependencyPaths(rewritten, 'types', typesDir)) {
+                    typeDeps.add(await this.resolveExtension(d, typesDir));
+                }
             }
 
             if (this.libExclude.has(libName)) continue;
@@ -528,18 +632,20 @@ export class DependencyResolver {
                 const code: string = rewritten.code;
                 assertKnownRegistryDeps(rewritten, componentName, composableName);
                 extractRegistryDeps(rewritten, componentName, knownComponents).forEach(d => allRegistryDeps.add(d));
-                for (const d of extractDeps(rewritten, 'composables')) {
+                for (const d of this.getDependencyPaths(rewritten, 'composables', this.paths.composablesDir)) {
                     composableDeps.add(await this.resolveExtension(d, this.paths.composablesDir));
                 }
-                for (const d of extractDeps(rewritten, 'locales')) {
+                for (const d of this.getDependencyPaths(rewritten, 'locales', this.paths.localesDir)) {
                     localeDeps.add(await this.resolveExtension(d, this.paths.localesDir));
                 }
-                for (const d of extractDeps(rewritten, 'lib')) {
+                for (const d of this.getDependencyPaths(rewritten, 'lib', this.paths.libDir)) {
                     libDeps.add(await this.resolveExtension(d, this.paths.libDir));
                 }
-                for (const d of extractDeps(rewritten, 'types')) {
-                    const typesDir = this.paths.typesDir;
-                    if (typesDir) typeDeps.add(await this.resolveExtension(d, typesDir));
+                const typesDir = this.paths.typesDir;
+                if (typesDir) {
+                    for (const d of this.getDependencyPaths(rewritten, 'types', typesDir)) {
+                        typeDeps.add(await this.resolveExtension(d, typesDir));
+                    }
                 }
 
                 const relPath = `composables/${composableName}`;
@@ -585,16 +691,16 @@ export class DependencyResolver {
                 const code: string = rewritten.code;
                 assertKnownRegistryDeps(rewritten, componentName, typeName);
                 extractRegistryDeps(rewritten, componentName, knownComponents).forEach(d => allRegistryDeps.add(d));
-                for (const d of extractDeps(rewritten, 'types')) {
+                for (const d of this.getDependencyPaths(rewritten, 'types', typesDir)) {
                     typeDeps.add(await this.resolveExtension(d, typesDir));
                 }
-                for (const d of extractDeps(rewritten, 'composables')) {
+                for (const d of this.getDependencyPaths(rewritten, 'composables', this.paths.composablesDir)) {
                     composableDeps.add(await this.resolveExtension(d, this.paths.composablesDir));
                 }
-                for (const d of extractDeps(rewritten, 'locales')) {
+                for (const d of this.getDependencyPaths(rewritten, 'locales', this.paths.localesDir)) {
                     localeDeps.add(await this.resolveExtension(d, this.paths.localesDir));
                 }
-                for (const d of extractDeps(rewritten, 'lib')) {
+                for (const d of this.getDependencyPaths(rewritten, 'lib', this.paths.libDir)) {
                     libDeps.add(await this.resolveExtension(d, this.paths.libDir));
                 }
 

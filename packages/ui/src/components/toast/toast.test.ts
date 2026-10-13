@@ -335,6 +335,10 @@ describe('Toast', () => {
 })
 
 describe('ToastContainer', () => {
+    afterEach(() => {
+        vi.useRealTimers()
+    })
+
     it('renders with default props', () => {
         const wrapper = mount(ToastContainer)
         expect(wrapper.classes()).toContain('fixed')
@@ -452,6 +456,62 @@ describe('ToastContainer', () => {
         await toastComponent.vm.$emit('close')
         await nextTick()
         expect(wrapper.findAllComponents(Toast).length).toBe(0)
+    })
+
+    it('restarts the grouped toast lifecycle after a close begins in each default container', async () => {
+        vi.useFakeTimers()
+        let toastStore: ReturnType<typeof provideToast> | undefined
+
+        const wrapper = mount({
+            components: { ToastContainer },
+            setup() {
+                toastStore = provideToast({ grouping: true })
+                return {}
+            },
+            template: '<div><ToastContainer /><ToastContainer /></div>',
+        }, { global: globalProvide })
+
+        const firstId = toastStore!.addToast({
+            title: 'Repeated notification',
+            variant: 'success',
+            duration: TEST_TOAST_DURATION_MS,
+        })
+        await nextTick()
+        expect(wrapper.findAllComponents(Toast)).toHaveLength(2)
+
+        await wrapper.findComponent(Toast).find('button[aria-label="Close"]').trigger('click')
+
+        const groupedId = toastStore!.addToast({
+            title: 'Repeated notification',
+            variant: 'success',
+            duration: TEST_TOAST_DURATION_MS,
+        })
+        await nextTick()
+
+        expect(groupedId).toBe(firstId)
+        expect(toastStore!.toasts.value).toHaveLength(1)
+        expect(toastStore!.toasts.value[0].count).toBe(2)
+        expect(wrapper.findAllComponents(Toast)).toHaveLength(2)
+
+        vi.advanceTimersByTime(TEST_TOAST_DURATION_MS - TEST_LEAVE_ANIMATION_DELAY_MS)
+        await nextTick()
+        expect(toastStore!.toasts.value).toHaveLength(1)
+        expect(
+            wrapper.findAllComponents(Toast).every((toast) => !toast.classes().includes('animate-out'))
+        ).toBe(true)
+
+        vi.advanceTimersByTime(TEST_LEAVE_ANIMATION_DELAY_MS)
+        await nextTick()
+        expect(toastStore!.toasts.value).toHaveLength(1)
+        expect(
+            wrapper.findAllComponents(Toast).every((toast) => toast.classes().includes('animate-out'))
+        ).toBe(true)
+
+        vi.advanceTimersByTime(TEST_LEAVE_ANIMATION_DELAY_MS)
+        await nextTick()
+        expect(toastStore!.toasts.value).toHaveLength(0)
+        expect(wrapper.findAllComponents(Toast)).toHaveLength(0)
+        wrapper.unmount()
     })
 
     it('respects maxVisible by removing the oldest toast when limit exceeded', async () => {

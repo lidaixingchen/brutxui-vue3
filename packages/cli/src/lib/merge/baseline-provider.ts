@@ -1,8 +1,8 @@
 import path from 'path';
 import type { FileSystemAdapter } from '../fs/index.js';
 import type { ProjectContext } from '../project-context.js';
-import type { RegistryItem, InstalledComponentManifest } from '../types.js';
-import { readManifest } from '../manifest.js';
+import type { RegistryItem, InstalledComponentManifest, BrutxManifest } from '../types.js';
+import { getManifestPath, readManifest } from '../manifest.js';
 import { resolveImportAlias } from '../project.js';
 import { logger } from '../logger.js';
 
@@ -45,9 +45,10 @@ export class BaselineProvider {
         const fsAdapter = this.fsAdapter ?? context.fs;
         const useCache = options.useCache !== false;
 
+        let manifest: BrutxManifest | null = null;
         let manifestEntry: InstalledComponentManifest | undefined;
         try {
-            const manifest = await readManifest(context.cwd, fsAdapter);
+            manifest = await readManifest(context.cwd, fsAdapter);
             manifestEntry = manifest ? manifest.components[componentName] : undefined;
         } catch {
             manifestEntry = undefined;
@@ -68,14 +69,34 @@ export class BaselineProvider {
         let allLocalBaselinesExist = true;
 
         if (manifestEntry.files && manifestEntry.files.length > 0) {
-            for (const fileRelPath of manifestEntry.files) {
-                const baseName = path.basename(fileRelPath);
-                const recordedPath = manifestEntry.baselines?.[baseName] ?? `.brutx/baselines/${componentName}/${baseName}`;
+            const normalizedFilePaths = manifestEntry.files.map(filePath => filePath.replace(/\\/g, '/'));
+            const basenameCounts = new Map<string, number>();
+            for (const fileRelPath of normalizedFilePaths) {
+                const baseName = path.posix.basename(fileRelPath);
+                basenameCounts.set(baseName, (basenameCounts.get(baseName) ?? 0) + 1);
+            }
+
+            const hasAmbiguousLegacyBaseline = normalizedFilePaths.some(fileRelPath => {
+                const baseName = path.posix.basename(fileRelPath);
+                return basenameCounts.get(baseName)! > 1 && !manifestEntry.baselines?.[fileRelPath];
+            });
+            if (hasAmbiguousLegacyBaseline) {
+                allLocalBaselinesExist = false;
+            }
+
+            for (const fileRelPath of normalizedFilePaths) {
+                if (!allLocalBaselinesExist) break;
+                const baseName = path.posix.basename(fileRelPath);
+                const recordedPath = manifestEntry.baselines?.[fileRelPath]
+                    ?? manifestEntry.baselines?.[baseName]
+                    ?? `.brutx/baselines/${componentName}/${baseName}`;
                 const absBaselinePath = path.resolve(context.cwd, recordedPath);
                 if (await fsAdapter.pathExists(absBaselinePath)) {
                     const content = await fsAdapter.readFile(absBaselinePath, 'utf-8');
-                    filesMap.set(baseName, content);
-                    filesMap.set(fileRelPath.replace(/\\/g, '/'), content);
+                    filesMap.set(fileRelPath, content);
+                    if (basenameCounts.get(baseName) === 1) {
+                        filesMap.set(baseName, content);
+                    }
                 } else {
                     allLocalBaselinesExist = false;
                     break;
@@ -129,28 +150,47 @@ export class BaselineProvider {
             const config = context.config;
 
             if (rawItem.files && Array.isArray(rawItem.files)) {
+                const basenameCounts = new Map<string, number>();
+                const recoveredBaselines: Record<string, string> = { ...(manifestEntry.baselines ?? {}) };
+                let allBaselinesWritten = rawItem.files.length > 0;
+                for (const file of rawItem.files) {
+                    const baseName = path.posix.basename(file.path.replace(/\\/g, '/'));
+                    basenameCounts.set(baseName, (basenameCounts.get(baseName) ?? 0) + 1);
+                }
+
                 for (const file of rawItem.files) {
                     const originalContent = file.content ?? '';
                     const projectedContent = config
                         ? resolveImportAlias(originalContent, config)
                         : originalContent;
 
-                    // 记录文件相对路径与文件名基名
-                    const normalizedPath = file.path.replace(/\\/g, '/');
-                    filesMap.set(normalizedPath, projectedContent);
-                    const baseName = normalizedPath.split('/').pop()!;
-                    if (!filesMap.has(baseName)) {
+                    const targetPath = await context.resolveTargetPath(file.path);
+                    const projectRelativePath = context.toRelativePosixPath(targetPath);
+                    const baseName = path.posix.basename(file.path.replace(/\\/g, '/'));
+                    filesMap.set(projectRelativePath, projectedContent);
+                    if (basenameCounts.get(baseName) === 1) {
                         filesMap.set(baseName, projectedContent);
                     }
 
-                    // 补齐自愈本地基线
                     try {
-                        const localBaselinePath = path.resolve(context.cwd, `.brutx/baselines/${componentName}/${baseName}`);
+                        const localBaselinePath = path.resolve(
+                            context.cwd,
+                            `.brutx/baselines/${componentName}/${projectRelativePath}`
+                        );
                         await fsAdapter.ensureDir(path.dirname(localBaselinePath));
                         await fsAdapter.writeFile(localBaselinePath, projectedContent);
+                        recoveredBaselines[projectRelativePath] = `.brutx/baselines/${componentName}/${projectRelativePath}`;
                     } catch {
-                        // 忽略自愈写入异常
+                        allBaselinesWritten = false;
                     }
+                }
+
+                if (manifest && allBaselinesWritten) {
+                    manifest.components[componentName] = {
+                        ...manifestEntry,
+                        baselines: recoveredBaselines,
+                    };
+                    await fsAdapter.writeJson(getManifestPath(context.cwd), manifest, { spaces: 4 });
                 }
             }
 

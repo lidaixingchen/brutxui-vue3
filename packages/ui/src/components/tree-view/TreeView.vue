@@ -3,7 +3,7 @@ import { ref, shallowRef, computed, watch, provide, type ComputedRef } from 'vue
 import { getDocument } from '@/lib/env';
 import { cn } from '@/lib/utils';
 import TreeViewNode from './TreeViewNode.vue';
-import { getCheckStateMap, getAllDescendantIds, moveNode, cloneTree, TREE_CHECK_STATES_KEY } from './tree-view-utils';
+import { getCheckStateMap, getCheckableDescendantIds, moveNode, cloneTree, TREE_CHECK_STATES_KEY } from './tree-view-utils';
 import { useLocale } from '@/composables/useLocale';
 import type { CheckState, SelectionMode, TreeNode, TreeViewContext } from './types';
 
@@ -138,7 +138,7 @@ function selectNode(node: TreeNode) {
 function toggleCheck(node: TreeNode) {
     if (node.disabled) return
     const state = checkStates.value.get(node.id) ?? 'unchecked'
-    const descendantIds = getAllDescendantIds(node)
+    const descendantIds = getCheckableDescendantIds(node)
     const currentSet = new Set(checkedSet.value)
 
     if (state === 'checked' || state === 'indeterminate') {

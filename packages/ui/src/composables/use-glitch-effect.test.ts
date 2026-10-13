@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { defineComponent, nextTick, ref, type Ref } from 'vue'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { DEFAULT_AUTOPLAY_INTERVAL_MS, GLITCH_AUTOPLAY_ACTIVE_DURATION_MS, GLITCH_MIN_INTERVAL_MS } from '@/lib/defaults'
 import { useGlitchEffect, type UseGlitchEffectOptions } from './useGlitchEffect'
 
 interface HarnessApi {
@@ -80,6 +81,31 @@ describe('useGlitchEffect', () => {
         expect(api.isActive.value).toBe(false)
         expect(vi.getTimerCount()).toBe(0)
 
+        wrapper.unmount()
+    })
+
+    it('keeps the current pulse stop deadline when the autoplay interval changes', async () => {
+        const interval = ref(DEFAULT_AUTOPLAY_INTERVAL_MS)
+        const { wrapper, api } = mountHarness({ trigger: 'autoplay', interval })
+
+        await vi.advanceTimersByTimeAsync(interval.value)
+        expect(api.isActive.value).toBe(true)
+
+        interval.value += GLITCH_AUTOPLAY_ACTIVE_DURATION_MS
+        await nextTick()
+        await vi.advanceTimersByTimeAsync(GLITCH_AUTOPLAY_ACTIVE_DURATION_MS)
+
+        expect(api.isActive.value).toBe(false)
+        wrapper.unmount()
+    })
+
+    it('leaves an inactive gap when the configured interval is below the active duration', async () => {
+        const { wrapper, api } = mountHarness({ trigger: 'autoplay', interval: GLITCH_MIN_INTERVAL_MS })
+
+        const effectiveInterval = GLITCH_AUTOPLAY_ACTIVE_DURATION_MS + GLITCH_MIN_INTERVAL_MS
+        await vi.advanceTimersByTimeAsync(GLITCH_AUTOPLAY_ACTIVE_DURATION_MS + effectiveInterval)
+
+        expect(api.isActive.value).toBe(false)
         wrapper.unmount()
     })
 })

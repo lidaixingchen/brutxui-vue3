@@ -20,14 +20,31 @@ export function getAllDescendantIds(node: TreeNode): string[] {
     return result
 }
 
+export function getCheckableDescendantIds(node: TreeNode): string[] {
+    const result: string[] = []
+    const stack: TreeNode[] = [node]
+    while (stack.length > 0) {
+        const current = stack.pop() as TreeNode
+        if (!current.disabled) result.push(current.id)
+        if (current.children) {
+            for (let i = current.children.length - 1; i >= 0; i--) {
+                stack.push(current.children[i])
+            }
+        }
+    }
+    return result
+}
+
 export function getCheckState(node: TreeNode, checkedIds: Set<string>): CheckState {
     let total = 0
     let checked = 0
     const stack: TreeNode[] = [node]
     while (stack.length > 0) {
         const current = stack.pop() as TreeNode
-        total++
-        if (checkedIds.has(current.id)) checked++
+        if (current === node || !current.disabled) {
+            total++
+            if (checkedIds.has(current.id)) checked++
+        }
         if (current.children) {
             for (const child of current.children) {
                 stack.push(child)
@@ -80,8 +97,8 @@ export function getCheckStateMap(
             continue
         }
 
-        let total: number = 1
-        let checked: number = checkedIds.has(node.id) ? 1 : 0
+        let total: number = node.disabled ? 0 : 1
+        let checked: number = !node.disabled && checkedIds.has(node.id) ? 1 : 0
         const children: TreeNode[] | undefined = node.children
         if (children) {
             for (const child of children) {
@@ -92,7 +109,9 @@ export function getCheckStateMap(
         }
 
         summaries.set(node, { total, checked })
-        states.set(node.id, resolveCheckState(total, checked))
+        const stateTotal: number = total + (node.disabled ? 1 : 0)
+        const stateChecked: number = checked + (node.disabled && checkedIds.has(node.id) ? 1 : 0)
+        states.set(node.id, resolveCheckState(stateTotal, stateChecked))
     }
 
     return states

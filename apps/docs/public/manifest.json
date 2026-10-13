@@ -2,13 +2,13 @@
     "name": "BrutxUI",
     "short_name": "BrutxUI",
     "description": "BrutxUI - Neo-Brutalism 风格 Vue 3 组件库 - 35+ 无障碍组件，粗边框、硬阴影、鲜艳色彩。",
-    "start_url": "/brutxui-vue3/",
+    "start_url": "./",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#FF6B6B",
     "icons": [
         {
-            "src": "/brutxui-vue3/favicon.svg",
+            "src": "./favicon.svg",
             "sizes": "any",
             "type": "image/svg+xml"
         }

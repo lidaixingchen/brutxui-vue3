@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { provide, toRef } from 'vue'
+import { computed, provide, toRef } from 'vue'
 import { useField } from 'vee-validate'
 import { formFieldKey } from './form-context'
 
@@ -11,7 +11,14 @@ interface FormFieldProps {
 const props = defineProps<FormFieldProps>()
 
 const fieldName = toRef(props, 'name')
-const { errorMessage, value, setValue, setErrors } = useField(fieldName)
+const { errorMessage, value, handleChange, handleBlur, setValue, setErrors } = useField(fieldName)
+
+const componentField = computed(() => ({
+    name: fieldName.value,
+    modelValue: value.value,
+    'onUpdate:modelValue': handleChange,
+    onFocusout: (event: FocusEvent) => handleBlur(event, true),
+}))
 
 function setError(message: string | undefined) {
     // 空白归一化：空串/纯空白与 undefined 一视同仁（清错而非进入无文案错误态），
@@ -30,5 +37,5 @@ provide(formFieldKey, {
 </script>
 
 <template>
-    <slot />
+    <slot :component-field="componentField" />
 </template>

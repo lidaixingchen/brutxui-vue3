@@ -63,23 +63,25 @@ export function useGlitchEffect(options: UseGlitchEffectOptions = {}) {
         if (prefersReducedMotion.value) return
         // KeepAlive 停用期间不启动定时器，避免隐藏故障效果继续翻转 isActive
         if (isDeactivated.value) return
-        stopAutoplay()
-        // interval 下界同时钳制为激活时长：若 interval 小于激活时长，tick 会反复清掉未到期的 stop
-        // 定时器并重新调度，isActive 永远无法置回 false，故障效果将持续开启
+        if (autoplayTimer.value) {
+            clearInterval(autoplayTimer.value)
+            autoplayTimer.value = null
+        }
+        // 确保本次脉冲的停止计时先于下一次 autoplay tick 到期
         const interval = Math.max(
             Number(toValue(options.interval)) || DEFAULT_AUTOPLAY_INTERVAL_MS,
             GLITCH_MIN_INTERVAL_MS,
-            GLITCH_AUTOPLAY_ACTIVE_DURATION_MS,
+            GLITCH_AUTOPLAY_ACTIVE_DURATION_MS + GLITCH_MIN_INTERVAL_MS,
         )
         autoplayTimer.value = setInterval(() => {
             if (prefersReducedMotion.value) return
             isActive.value = true
-            if (autoplayStopTimer.value) {
-                clearTimeout(autoplayStopTimer.value)
+            if (!autoplayStopTimer.value) {
+                autoplayStopTimer.value = setTimeout(() => {
+                    autoplayStopTimer.value = null
+                    isActive.value = false
+                }, GLITCH_AUTOPLAY_ACTIVE_DURATION_MS)
             }
-            autoplayStopTimer.value = setTimeout(() => {
-                isActive.value = false
-            }, GLITCH_AUTOPLAY_ACTIVE_DURATION_MS)
         }, interval)
     }
 

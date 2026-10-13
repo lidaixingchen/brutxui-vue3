@@ -1,9 +1,22 @@
-import { describe, expect, it } from 'vitest';
+import * as fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { afterEach, describe, expect, it } from 'vitest';
 import type { MergedRegistryEntry } from 'brutx-shared-vue';
 import type { ComponentExportProjection } from 'brutx-shared-vue/api-contract';
+import { createModuleResolver } from 'brutx-shared-vue/module-resolver';
+import { DiskFileSystemAdapter } from '../../src/fs/disk-fs.js';
 import { MemoryFileSystemAdapter } from '../../src/fs/memory-fs.js';
 import { DependencyResolver } from '../../src/compiler/dependency-resolver.js';
 import type { CompilerPaths } from '../../src/compiler/types.js';
+
+const temporaryDirectories: string[] = [];
+
+afterEach(() => {
+    for (const directory of temporaryDirectories.splice(0)) {
+        fs.rmSync(directory, { recursive: true, force: true });
+    }
+});
 
 describe('DependencyResolver', () => {
     const paths: CompilerPaths = {
@@ -65,6 +78,105 @@ describe('DependencyResolver', () => {
 
         const indexFile = result.files.find(f => f.path === 'components/ui/button/index.ts');
         expect(indexFile?.content).toContain('export { default as Button } from \'@/components/ui/button/Button.vue\'');
+    });
+
+    it('keeps TypeScript source paths resolved from JavaScript module specifiers in the closure', async () => {
+        const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), 'brutx-registry-module-closure-'));
+        temporaryDirectories.push(rootDir);
+
+        const sourceDir = path.join(rootDir, 'src');
+        const componentsDir = path.join(sourceDir, 'components');
+        const componentDir = path.join(componentsDir, 'button');
+        const libDir = path.join(sourceDir, 'lib');
+        fs.mkdirSync(componentDir, { recursive: true });
+        fs.mkdirSync(libDir, { recursive: true });
+
+        const componentPath = path.join(componentDir, 'Button.vue');
+        const basePath = path.join(componentDir, 'base.vue');
+        const helperPath = path.join(componentDir, 'helper.ts');
+        const helperViewPath = path.join(componentDir, 'helper-view.tsx');
+        const componentTypesPath = path.join(componentDir, 'types.ts');
+        const utilityPath = path.join(libDir, 'utils.ts');
+        fs.writeFileSync(componentPath, [
+            '<script setup lang="ts">',
+            'import Base from "./base.vue";',
+            'import { helper } from "./helper.js";',
+            'import { helperView } from "./helper-view.jsx";',
+            'import type { ButtonVariant } from "./types.ts";',
+            'void Base;',
+            'void helper;',
+            'void helperView;',
+            'const variant: ButtonVariant = "default";',
+            '</script>',
+        ].join('\n'));
+        fs.writeFileSync(basePath, '<template><span /></template>');
+        fs.writeFileSync(helperPath, 'import { cn } from "../../lib/utils.js"; export const helper = cn("button");');
+        fs.writeFileSync(helperViewPath, 'export const helperView = () => <div />;');
+        fs.writeFileSync(componentTypesPath, 'export type ButtonVariant = "default";');
+        fs.writeFileSync(utilityPath, 'export const cn = (...values: string[]) => values.join(" ");');
+
+        const resolverPaths: CompilerPaths = {
+            componentsDir,
+            composablesDir: path.join(sourceDir, 'composables'),
+            localesDir: path.join(sourceDir, 'locales'),
+            libDir,
+            directivesDir: path.join(sourceDir, 'directives'),
+            typesDir: path.join(sourceDir, 'types'),
+            manifestPath: path.join(rootDir, 'registry-manifest.json'),
+            outputDir: path.join(rootDir, 'registry'),
+        };
+        const moduleResolver = createModuleResolver({
+            rootDir: sourceDir,
+            viteAliases: [{ find: '@', replacement: sourceDir }],
+        });
+        const sourceResolution = moduleResolver.resolve(componentPath, './helper.js');
+        expect(sourceResolution).toMatchObject({ kind: 'internal', resolvedPath: helperPath });
+
+        const resolver = new DependencyResolver(
+            new DiskFileSystemAdapter(),
+            resolverPaths,
+            new Set(),
+            undefined,
+            moduleResolver,
+        );
+        const meta: MergedRegistryEntry = {
+            name: 'button',
+            title: 'Button',
+            titleZh: '按钮',
+            description: 'Button component',
+            category: 'action',
+            kind: 'component',
+            files: ['Button.vue'],
+            composables: [],
+            directives: [],
+            lib: [],
+            dependencies: [],
+            examples: [],
+        };
+        const projection: ComponentExportProjection = {
+            componentId: 'button',
+            exports: [
+                { source: './Button.vue', sourceName: 'default', publicName: 'Button', kind: 'value' },
+            ],
+        };
+
+        const result = await resolver.resolveComponentClosure('button', meta, undefined, projection);
+        const files = new Map(result.files.map(file => [file.path, file.content]));
+
+        const component = files.get('components/ui/button/Button.vue');
+        expect(component).toContain('@/components/ui/button/base.vue');
+        expect(component).toContain('@/components/ui/button/helper.js');
+        expect(component).toContain('@/components/ui/button/helper-view.jsx');
+        expect(component).toContain('@/components/ui/button/types.ts');
+        expect(files.get('components/ui/button/base.vue')).toContain('<span />');
+        expect(files.get('components/ui/button/helper.ts')).toContain('@/lib/utils.js');
+        expect(files.get('components/ui/button/helper-view.tsx')).toContain('helperView');
+        expect(files.get('components/ui/button/types.ts')).toContain('ButtonVariant');
+        expect([...files.keys()]).toContain('lib/utils.ts');
+        expect(files.get('lib/utils.ts')).toContain('export const cn');
+        expect(files.has('components/ui/button/helper.js.ts')).toBe(false);
+        expect(files.has('components/ui/button/helper-view.jsx.ts')).toBe(false);
+        expect(files.has('lib/utils.js.ts')).toBe(false);
     });
 
     it('throws descriptive error if source file is missing', async () => {

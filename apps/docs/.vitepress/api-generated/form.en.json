@@ -637,11 +637,11 @@
           "name": "default",
           "kind": "slots",
           "type": {
-            "text": "{}",
+            "text": "{ componentField: { name: string; modelValue: unknown; 'onUpdate:modelValue': (e: unknown, shouldValidate?: boolean | undefined) => void; onFocusout: (event: FocusEvent) => void; }; }",
             "literals": [],
             "references": []
           },
-          "description": "Content that consumes the current field context, typically FormItem. The slot does not directly provide field arguments.",
+          "description": "Field content, typically FormItem. Provides componentField for v-bind on the control, including the field name, current value, value updates, and focusout validation.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/form/FormField.vue"

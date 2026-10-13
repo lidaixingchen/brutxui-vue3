@@ -28,17 +28,22 @@ describe('useClipboard', () => {
         expect(isSupported.value).toBe(false)
     })
 
-    it('copy writes text to clipboard', async () => {
-        const writeText = vi.fn().mockResolvedValue(undefined)
+    it('calls writeText with the clipboard receiver and shows success feedback', async () => {
+        const clipboard = {
+            writeText: vi.fn(function (this: unknown) {
+                if (this !== clipboard) throw new TypeError('Illegal invocation')
+                return Promise.resolve()
+            }),
+        }
         vi.stubGlobal('navigator', {
-            clipboard: { writeText },
+            clipboard,
         })
 
         const { copy, copied } = useClipboard()
         const result = await copy('Hello World')
 
         expect(result).toBe(true)
-        expect(writeText).toHaveBeenCalledWith('Hello World')
+        expect(clipboard.writeText).toHaveBeenCalledWith('Hello World')
         expect(copied.value).toBe(true)
     })
 

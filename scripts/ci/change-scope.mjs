@@ -440,6 +440,18 @@ export function classifyGitChangePaths(paths) {
     return flags
 }
 
+export function classifyCiChangeScope({ eventName, base = '', head, cwd = process.cwd() }) {
+    if (!['push', 'pull_request', 'workflow_dispatch'].includes(eventName)) {
+        throw new Error('--event 只能是 push、pull_request 或 workflow_dispatch')
+    }
+    if (eventName === 'push' || (eventName === 'workflow_dispatch' && (!base || /^0+$/u.test(base)))) {
+        return classifyGitChangePaths([])
+    }
+
+    const diffMode = eventName === 'pull_request' ? 'merge-base' : 'direct'
+    return classifyGitChangePaths(readGitChangePaths({ base, head, diffMode, cwd }))
+}
+
 function runGit(args, cwd) {
     return execFileSync('git', args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim()
 }
@@ -471,16 +483,24 @@ export function readGitChangePaths({ base, head, diffMode = 'merge-base', cwd = 
 }
 
 function parseArguments(argv) {
-    const options = { base: '', head: '', diffMode: 'merge-base' }
+    const options = { base: '', head: '', diffMode: 'merge-base', eventName: '' }
     for (let index = 0; index < argv.length; index += 1) {
         const argument = argv[index]
         if (argument === '--base') options.base = argv[++index] ?? ''
         else if (argument === '--head') options.head = argv[++index] ?? ''
         else if (argument === '--diff-mode') options.diffMode = argv[++index] ?? ''
+        else if (argument === '--event') options.eventName = argv[++index] ?? ''
         else if (argument === '--help') return { help: true }
         else throw new Error(`未知参数：${argument}`)
     }
-    if (!options.base || !options.head) throw new Error('必须明确传入 --base 和 --head')
+    if (options.eventName) {
+        if (!['push', 'pull_request', 'workflow_dispatch'].includes(options.eventName)) {
+            throw new Error('--event 只能是 push、pull_request 或 workflow_dispatch')
+        }
+        if (!options.head) throw new Error('使用 --event 时必须明确传入 --head')
+    } else if (!options.base || !options.head) {
+        throw new Error('必须明确传入 --base 和 --head')
+    }
     return options
 }
 
@@ -493,7 +513,7 @@ function writeGitHubOutputs(flags) {
 }
 
 function printUsage() {
-    console.log('用法：node scripts/ci/change-scope.mjs --base <ref> --head <ref> [--diff-mode merge-base|direct]')
+    console.log('用法：node scripts/ci/change-scope.mjs --base <ref> --head <ref> [--diff-mode merge-base|direct] | --event push|pull_request|workflow_dispatch --base <ref> --head <ref>')
 }
 
 function main(argv) {
@@ -502,8 +522,9 @@ function main(argv) {
         printUsage()
         return
     }
-    const paths = readGitChangePaths(options)
-    const flags = classifyGitChangePaths(paths)
+    const flags = options.eventName
+        ? classifyCiChangeScope(options)
+        : classifyGitChangePaths(readGitChangePaths(options))
     writeGitHubOutputs(flags)
     console.log(JSON.stringify(flags, null, 2))
 }

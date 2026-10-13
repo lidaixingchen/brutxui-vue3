@@ -23,7 +23,7 @@ import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { useLocale } from '@/composables/useLocale'
 import { datePickerPanelVariants, datePickerShortcutVariants } from './date-picker-variants'
 import { type DatePickerRangeShortcut, type DateRange } from './types'
-import { resolveRangeShortcutValue } from './date-picker-utils'
+import { isDateWithinBounds, resolveRangeShortcutValue } from './date-picker-utils'
 import DatePickerPanelFooter from './DatePickerPanelFooter.vue'
 import './panel-styles.css'
 
@@ -133,6 +133,7 @@ function handleShortcutSelect(shortcut: DatePickerRangeShortcut) {
     // 只解析一次：缓存值（决定 active 高亮）与 emit 的提交值必须是同一实例，
     // 避免函数型快捷项两次解析跨午夜产生不同日期
     const value = resolveRangeShortcutValue(shortcut)
+    if (!value.every(date => isDateWithinBounds(date, props.minDate, props.maxDate))) return
     refreshShortcutValue(shortcut, value)
     emit('update:modelValue', value)
 }

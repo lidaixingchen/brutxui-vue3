@@ -130,7 +130,7 @@ watch(
         <slot>
             <Toast
                 v-for="toast in toasts"
-                :key="toast.id"
+                :key="`${toast.id}:${toast.count}`"
                 :variant="toast.variant"
                 :size="toast.size"
                 :title="toast.title"
