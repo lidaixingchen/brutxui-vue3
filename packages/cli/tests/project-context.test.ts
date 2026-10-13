@@ -190,6 +190,14 @@ import { Button } from '@/components/ui/button';
         expect(rewritten).toContain("from '@/framework/directives/loading'");
     });
 
+    it('resolves wildcard alias suffixes containing replacement markers literally', async () => {
+        const context = await ProjectContext.load(projectCwd, { fs });
+        const aliasPath = '@/locales/$&.ts';
+
+        expect(context.toRelativePosixPath(await context.resolveAliasPath(aliasPath)))
+            .toBe('src/locales/$&.ts');
+    });
+
     it('should create FileTransaction bound to context VFS', async () => {
         const ctx = await ProjectContext.load(projectCwd, { fs });
         const tx = ctx.createTransaction();

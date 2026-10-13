@@ -64,7 +64,7 @@ describe('RegistryClient source health', () => {
                 if (url.endsWith('/registry-manifest.json')) {
                     return new Response('Not Found', { status: 404 });
                 }
-                if (url.startsWith(PRIMARY_SOURCE)) {
+                if (new URL(url).origin === PRIMARY_SOURCE) {
                     return new Promise<Response>((_resolve, reject) => {
                         init?.signal?.addEventListener('abort', () => {
                             const error = new Error('aborted by faster mirror');
@@ -98,7 +98,7 @@ describe('RegistryClient source health', () => {
             if (url.endsWith('/registry-manifest.json')) {
                 return new Response('Not Found', { status: HTTP_NOT_FOUND });
             }
-            if (url.startsWith(PRIMARY_SOURCE)) {
+            if (new URL(url).origin === PRIMARY_SOURCE) {
                 return new Promise<Response>((_resolve, reject) => {
                     init?.signal?.addEventListener('abort', () => {
                         reject(init?.signal?.reason);
@@ -325,7 +325,7 @@ describe('RegistryClient source health', () => {
                 if (url.endsWith('/registry-manifest.json')) {
                     return new Response('Not Found', { status: 404 });
                 }
-                if (url.startsWith(PRIMARY_SOURCE)) throw new TypeError('network unavailable');
+                if (new URL(url).origin === PRIMARY_SOURCE) throw new TypeError('network unavailable');
                 return new Response(JSON.stringify(item), { status: 200 });
             },
         });

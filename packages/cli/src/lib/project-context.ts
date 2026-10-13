@@ -347,7 +347,7 @@ export class ProjectContext {
 
         const resolveTarget = (targetPath: string): string => {
             const target = targetPath.includes('*')
-                ? targetPath.replace('*', matchedPaths.suffix)
+                ? targetPath.replaceAll('*', () => matchedPaths.suffix)
                 : path.join(targetPath, matchedPaths.suffix);
             return path.join(baseDir, target);
         };

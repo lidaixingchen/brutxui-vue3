@@ -71,10 +71,7 @@ const { t } = useLocale();
 const treeRootRef = ref<HTMLDivElement | null>(null);
 
 const localNodes = ref<TreeNode[]>([]);
-// 最近一次 emit 出去的 localNodes 引用。getCurrentInstance() 在事件处理器与 await 之后会返回 null，
-// 无法在 emitNodesUpdate 内动态探测监听器；改为引用比较：父组件通过 v-model:nodes 把该值原样回写时
-// 引用相同即判定为“回写”，跳过重建 localNodes，避免懒加载 await 期间持有的 node 引用变成游离对象，
-// 同时父组件“只监听不回写”时不会残留标志吞掉后续外部 props.nodes 变更。
+// 父级原样回写时保留本地节点引用，使懒加载与拖拽流程共用同一份节点状态。
 let lastEmittedNodes: TreeNode[] | null = null;
 
 watch(
@@ -94,9 +91,6 @@ watch(
 
 function emitNodesUpdate() {
     emit('update:nodes', localNodes.value);
-    // 契约：父组件应通过 v-model:nodes 把该引用原样回写（newVal === lastEmittedNodes）。
-    // 若父组件在 setter 里拷贝/转换数据，回写判定失效，localNodes 会被重建，
-    // 懒加载 await 期间持有的 node 引用将变成游离对象、加载结果丢失。
     lastEmittedNodes = localNodes.value;
 }
 
