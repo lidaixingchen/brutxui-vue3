@@ -152,7 +152,6 @@ export function useDataTableFilter<T extends object>(
                     if (start === null && end === null) return true
 
                     const val = getCellValue(row, col)
-                    if (!val) return false
                     const cellDate = parseDateValue(val as string | number | Date)
                     if (cellDate === null) return false
 

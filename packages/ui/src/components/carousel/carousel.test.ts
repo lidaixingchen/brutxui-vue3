@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { nextTick, ref } from 'vue'
+import { afterEach, vi } from 'vitest'
 import Carousel from './Carousel.vue'
 import CarouselItem from './CarouselItem.vue'
 import { en } from '@/locales/en'
@@ -7,23 +8,38 @@ import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 
 const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
+const mockCarouselState = vi.hoisted(() => ({
+    canScrollNext: true,
+    selectedIndex: 0,
+    scrollNext: vi.fn(),
+    reInit: vi.fn(),
+}))
+
 vi.mock('embla-carousel-vue', () => ({
     default: () => {
         const emblaApi = {
             scrollSnapList: () => [0, 1, 2],
-            selectedScrollSnap: () => 0,
+            selectedScrollSnap: () => mockCarouselState.selectedIndex,
             canScrollPrev: () => false,
-            canScrollNext: () => true,
+            canScrollNext: () => mockCarouselState.canScrollNext,
             scrollPrev: () => {},
-            scrollNext: () => {},
+            scrollNext: mockCarouselState.scrollNext,
             scrollTo: () => {},
-            reInit: () => {},
+            reInit: mockCarouselState.reInit,
             on: () => {},
             off: () => {},
         }
         return [ref(null), ref(emblaApi)]
     },
 }))
+
+afterEach(() => {
+    vi.useRealTimers()
+    mockCarouselState.canScrollNext = true
+    mockCarouselState.selectedIndex = 0
+    mockCarouselState.scrollNext.mockReset()
+    mockCarouselState.reInit.mockReset()
+})
 
 describe('Carousel', () => {
     it('renders with default classes', () => {
@@ -216,6 +232,41 @@ describe('Carousel indicators and thumbnails', () => {
         const container = track?.element.parentElement as HTMLElement | null
         expect(container?.className).toContain('bottom-0')
         wrapper.unmount()
+    })
+
+    it('restarts autoplay and its progress indicator when loop is enabled at the end', async () => {
+        const autoplayDelay = 100
+        const progressStep = autoplayDelay / 2
+        vi.useFakeTimers()
+        mockCarouselState.canScrollNext = false
+        mockCarouselState.selectedIndex = 2
+        const wrapper = mount(Carousel, {
+            ...localeProvide,
+            props: {
+                autoplay: true,
+                autoplayDelay,
+                autoplayIndicator: { type: 'progress' },
+            },
+        })
+
+        try {
+            const progress = wrapper.find('.h-full.bg-brutal-primary')
+            await vi.advanceTimersByTimeAsync(autoplayDelay)
+            await nextTick()
+            expect(mockCarouselState.scrollNext).not.toHaveBeenCalled()
+            expect(progress.attributes('style')).toContain('width: 0%')
+
+            await wrapper.setProps({ loop: true })
+            await vi.advanceTimersByTimeAsync(progressStep)
+            await nextTick()
+            expect(progress.attributes('style')).toContain('width: 50%')
+
+            await vi.advanceTimersByTimeAsync(progressStep)
+            await nextTick()
+            expect(mockCarouselState.scrollNext).toHaveBeenCalledTimes(1)
+        } finally {
+            wrapper.unmount()
+        }
     })
 
     it('positions dots indicator at top when position=top', async () => {

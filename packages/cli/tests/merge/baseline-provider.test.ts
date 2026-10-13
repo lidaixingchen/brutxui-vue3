@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import path from 'path';
 import { MemoryFileSystemAdapter } from '../../src/lib/fs/memory-fs.js';
 import { ProjectContext } from '../../src/lib/project-context.js';
@@ -147,5 +147,61 @@ describe('BaselineProvider', () => {
         const result = await provider.getComponentBaseline(ctx, 'button');
         expect(result.status).toBe('fallback-diff');
         expect(result.files.size).toBe(0);
+    });
+
+    it('rebuilds an ambiguous legacy basename baseline from the installed registry version', async () => {
+        const oldItem: RegistryItem = {
+            ...mockButtonRegistryItem,
+            name: 'widget',
+            integrity: 'sha256-widget-v1',
+            files: [
+                { path: 'components/ui/widget/a/index.ts', type: 'registry:ui', content: 'export const a = "v1-a";\n' },
+                { path: 'components/ui/widget/b/index.ts', type: 'registry:ui', content: 'export const b = "v1-b";\n' },
+            ],
+        };
+        const fs = new MemoryFileSystemAdapter({
+            [path.join(projectCwd, 'components.json')]: JSON.stringify(sampleConfig),
+            [path.join(projectCwd, '.brutx/baselines/widget/index.ts')]: 'export const b = "v1-b";\n',
+        });
+        const ctx = await ProjectContext.loadUninitialized(projectCwd, { fs, configOverride: sampleConfig });
+        const fileA = ctx.toRelativePosixPath(await ctx.resolveTargetPath('components/ui/widget/a/index.ts'));
+        const fileB = ctx.toRelativePosixPath(await ctx.resolveTargetPath('components/ui/widget/b/index.ts'));
+        await fs.writeJson(path.join(projectCwd, '.brutx/manifest.json'), {
+            version: 1,
+            components: {
+                widget: {
+                    name: 'widget',
+                    version: '1.0.0',
+                    registrySource: 'official',
+                    integrity: oldItem.integrity,
+                    installedAt: '2026-08-20T00:00:00.000Z',
+                    files: [fileA, fileB],
+                    dependencies: [],
+                    registryDependencies: [],
+                    baselines: { 'index.ts': '.brutx/baselines/widget/index.ts' },
+                },
+            },
+        });
+        const fetcher = vi.fn(async () => oldItem);
+        const provider = new BaselineProvider({ fs, itemFetcher: fetcher });
+
+        const result = await provider.getComponentBaseline(ctx, 'widget');
+
+        expect(fetcher).toHaveBeenCalledWith('widget@1.0.0', 'official', true, fs);
+        expect(result.status).toBe('ready');
+        expect(result.files.get(fileA)).toBe('export const a = "v1-a";\n');
+        expect(result.files.get(fileB)).toBe('export const b = "v1-b";\n');
+
+        const recoveredManifest = await fs.readJson(path.join(projectCwd, '.brutx/manifest.json'));
+        expect(recoveredManifest.components.widget.baselines).toMatchObject({
+            [fileA]: `.brutx/baselines/widget/${fileA}`,
+            [fileB]: `.brutx/baselines/widget/${fileB}`,
+        });
+
+        const secondResult = await provider.getComponentBaseline(ctx, 'widget');
+        expect(secondResult.status).toBe('ready');
+        expect(secondResult.files.get(fileA)).toBe('export const a = "v1-a";\n');
+        expect(secondResult.files.get(fileB)).toBe('export const b = "v1-b";\n');
+        expect(fetcher).toHaveBeenCalledTimes(1);
     });
 });

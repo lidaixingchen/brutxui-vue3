@@ -4,6 +4,9 @@ import { defineConfig } from 'vitepress'
 import tailwindcss from '@tailwindcss/vite'
 import { createApiPagePlugin, createApiPageSearchOptions } from './api-page'
 import { generateComponentsSidebar, generateBlocksSidebar } from './theme/lib/sidebar-generator'
+import { createDocsSitePaths } from './site-paths'
+
+const sitePaths = createDocsSitePaths(Boolean(process.env.VERCEL))
 
 const apiPageOptions = {
     catalogPath: path.resolve(import.meta.dirname, 'api-generated/catalog.json'),
@@ -176,13 +179,13 @@ export default defineConfig({
         },
     },
     description: 'Neo-Brutalism 风格 Vue 3 组件库',
-    base: process.env.VERCEL ? '/' : '/brutxui-vue3/',
+    base: sitePaths.base,
     lastUpdated: true,
     sitemap: {
         hostname: 'https://lidaixingchen.github.io/brutxui-vue3/',
     },
     head: [
-        ['link', { rel: 'icon', type: 'image/svg+xml', href: '/brutxui-vue3/favicon.svg' }],
+        ['link', { rel: 'icon', type: 'image/svg+xml', href: sitePaths.favicon }],
         ['meta', { name: 'theme-color', content: '#FF6B6B' }],
         ['meta', { property: 'og:type', content: 'website' }],
         ['meta', { property: 'og:title', content: 'BrutxUI' }],
@@ -193,7 +196,7 @@ export default defineConfig({
         ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
         ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
         ['link', { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;900&display=swap' }],
-        ['link', { rel: 'manifest', href: '/brutxui-vue3/manifest.json' }],
+        ['link', { rel: 'manifest', href: sitePaths.manifest }],
     ],
     transformHead(context) {
         let pageUrl = context.page.replace(/\.md$/, '')

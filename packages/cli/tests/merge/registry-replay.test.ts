@@ -1,10 +1,11 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import path from 'path';
 import { MemoryFileSystemAdapter } from '../../src/lib/fs/memory-fs.js';
 import { ProjectContext } from '../../src/lib/project-context.js';
 import { BaselineProvider } from '../../src/lib/merge/baseline-provider.js';
 import { threeWayMerge } from '../../src/lib/merge/three-way-merge-engine.js';
 import { ComponentMutationEngine } from '../../src/lib/services/component-mutation-engine.js';
+import { readManifest } from '../../src/lib/manifest.js';
 import type { BrutalistConfig, RegistryItem } from '../../src/lib/types.js';
 
 describe('Registry Replay & Deterministic 3-Way Merge', () => {
@@ -112,7 +113,7 @@ describe('Registry Replay & Deterministic 3-Way Merge', () => {
                     registrySource: 'official',
                     integrity: 'sha256-v1-hash',
                     installedAt: '2026-08-20T00:00:00.000Z',
-                    files: ['src/components/ui/button/Button.vue'],
+                    files: ['components/ui/button/Button.vue'],
                     dependencies: [],
                     registryDependencies: [],
                 },
@@ -125,17 +126,33 @@ describe('Registry Replay & Deterministic 3-Way Merge', () => {
         });
 
         const ctx = await ProjectContext.load(projectCwd, { fs });
-        const mockFetcher = async () => v1ButtonRegistryItem;
+        const mockFetcher = vi.fn(async () => v1ButtonRegistryItem);
         const provider = new BaselineProvider({ fs, itemFetcher: mockFetcher });
+        const projectRelativePath = ctx.toRelativePosixPath(
+            await ctx.resolveTargetPath(v1ButtonRegistryItem.files[0].path)
+        );
 
         const result = await provider.getComponentBaseline(ctx, 'button');
         expect(result.status).toBe('ready');
+        expect(result.files.get(projectRelativePath)).toBe(v1ButtonRegistryItem.files[0].content);
         expect(result.files.has('Button.vue')).toBe(true);
 
         // 验证已自动在磁盘补齐本地基线
-        const healedBaselinePath = path.join(projectCwd, '.brutx/baselines/button/Button.vue');
+        const baselineRelativePath = `.brutx/baselines/button/${projectRelativePath}`;
+        const healedBaselinePath = path.join(projectCwd, baselineRelativePath);
         expect(await fs.pathExists(healedBaselinePath)).toBe(true);
         expect(await fs.readFile(healedBaselinePath, 'utf-8')).toContain('class="bg-primary"');
+
+        const healedManifest = await readManifest(projectCwd, fs);
+        expect(healedManifest?.components.button.files).toEqual([projectRelativePath]);
+        expect(healedManifest?.components.button.baselines).toEqual({
+            [projectRelativePath]: baselineRelativePath,
+        });
+
+        const replayedResult = await provider.getComponentBaseline(ctx, 'button');
+        expect(replayedResult.status).toBe('ready');
+        expect(replayedResult.files.get(projectRelativePath)).toBe(v1ButtonRegistryItem.files[0].content);
+        expect(mockFetcher).toHaveBeenCalledTimes(1);
     });
 
     it('performs deterministic 3-way merge preserving user local changes while applying official upgrade', async () => {
@@ -186,12 +203,13 @@ describe('Registry Replay & Deterministic 3-Way Merge', () => {
         const ctx = await ProjectContext.load(projectCwd, { fs });
         const engine = new ComponentMutationEngine(ctx);
 
+        const targetPath = await ctx.resolveTargetPath(v1ButtonRegistryItem.files[0].path);
         const mockPlan = {
             items: [v1ButtonRegistryItem],
             files: [
                 {
                     componentName: 'button',
-                    filePath: path.join(projectCwd, 'src/components/ui/button/Button.vue'),
+                    filePath: targetPath,
                     action: 'create' as const,
                     sourceContent: v1ButtonRegistryItem.files[0].content,
                 },
@@ -208,11 +226,15 @@ describe('Registry Replay & Deterministic 3-Way Merge', () => {
         expect(result.succeeded).toContain('button');
 
         // 1. 验证源码已写入
-        const userSourcePath = path.join(projectCwd, 'src/components/ui/button/Button.vue');
+        const projectRelativePath = ctx.toRelativePosixPath(
+            await ctx.resolveTargetPath(v1ButtonRegistryItem.files[0].path)
+        );
+        const userSourcePath = path.join(projectCwd, projectRelativePath);
         expect(await fs.pathExists(userSourcePath)).toBe(true);
 
         // 2. 验证基线已写入 .brutx/baselines/
-        const baselinePath = path.join(projectCwd, '.brutx/baselines/button/Button.vue');
+        const baselineRelativePath = `.brutx/baselines/button/${projectRelativePath}`;
+        const baselinePath = path.join(projectCwd, baselineRelativePath);
         expect(await fs.pathExists(baselinePath)).toBe(true);
         expect(await fs.readFile(baselinePath, 'utf-8')).toBe(v1ButtonRegistryItem.files[0].content);
 
@@ -223,8 +245,9 @@ describe('Registry Replay & Deterministic 3-Way Merge', () => {
         expect(gitattributes).toContain('baselines/** -text');
 
         // 4. 验证 manifest 记录了 baselines 引用
-        const manifestRaw = await fs.readFile(path.join(projectCwd, '.brutx/manifest.json'), 'utf-8');
-        const manifest = JSON.parse(manifestRaw);
-        expect(manifest.components.button.baselines['Button.vue']).toBe('.brutx/baselines/button/Button.vue');
+        const manifest = await readManifest(projectCwd, fs);
+        expect(manifest?.components.button.baselines).toEqual({
+            [projectRelativePath]: baselineRelativePath,
+        });
     });
 });

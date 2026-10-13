@@ -255,6 +255,45 @@ describe('Upload', () => {
         expect(file.status).toBe('success')
     })
 
+    it('updates the rendered file list during progress and when requests settle', async () => {
+        const requests: UploadRequestOptions[] = []
+        const resolveRequests: Array<() => void> = []
+        const httpRequest = vi.fn((options: UploadRequestOptions): Promise<void> => new Promise<void>((resolve) => {
+            requests.push(options)
+            resolveRequests.push(resolve)
+        }))
+        const wrapper = mount(Upload, {
+            props: { autoUpload: true, httpRequest },
+            slots: createUploadSlots(),
+        })
+        const selectionPromise = getExposed(wrapper).handleFileSelect([
+            createFile('complete.txt', 'text/plain'),
+            createFile('failed.txt', 'text/plain'),
+        ])
+        await flushPromises()
+
+        const fileList = wrapper.findComponent(UploadFileList)
+        expect(requests).toHaveLength(2)
+        expect(fileList.text()).toContain('0%')
+
+        requests[0].onProgress(42)
+        await flushPromises()
+        expect(fileList.text()).toContain('42%')
+
+        requests[0].onSuccess({ ok: true })
+        requests[1].onError({ message: 'Upload rejected' })
+        resolveRequests[0]()
+        resolveRequests[1]()
+        await selectionPromise
+        await flushPromises()
+
+        expect(fileList.text()).toContain('[ UPLOADED ]')
+        expect(fileList.text()).toContain('Upload rejected')
+        expect(wrapper.emitted('file-success')).toHaveLength(1)
+        expect(wrapper.emitted('file-error')).toHaveLength(1)
+        wrapper.unmount()
+    })
+
     it('aborts an active request when the controlled fileList removes it', async (): Promise<void> => {
         let savedOptions: UploadRequestOptions | undefined
         let rejectRequest!: (reason: Error) => void

@@ -681,6 +681,38 @@ describe('useCarousel', () => {
             wrapper.unmount()
         })
 
+        it('reports autoplay resumed when loop is enabled after reaching the end', async () => {
+            const autoplayDelay = 100
+            const loop = ref(false)
+            const api = createMockEmblaApi({
+                scrollSnapList: vi.fn().mockReturnValue([0, 0.5, 1]),
+                selectedScrollSnap: vi.fn().mockReturnValue(2),
+                canScrollNext: vi.fn().mockReturnValue(false),
+            })
+            mockEmblaApi.value = api
+            const onAutoplayChange = vi.fn()
+            const { wrapper } = mountWithCarousel({
+                loop,
+                autoplay: true,
+                autoplayDelay,
+                onAutoplayChange,
+            })
+
+            try {
+                vi.advanceTimersByTime(autoplayDelay)
+                expect(onAutoplayChange).toHaveBeenLastCalledWith(false)
+
+                loop.value = true
+                await nextTick()
+                expect(onAutoplayChange).toHaveBeenLastCalledWith(true)
+
+                vi.advanceTimersByTime(autoplayDelay)
+                expect(api.scrollNext).toHaveBeenCalledTimes(1)
+            } finally {
+                wrapper.unmount()
+            }
+        })
+
         it('uses default false when loop becomes undefined', async () => {
             const loop = ref<boolean | undefined>(false)
             const api = createMockEmblaApi()

@@ -21,6 +21,7 @@ function runStep(label, cmd, args) {
 }
 
 runStep('Release Coordinator State Machine Tests', 'node', ['--test', 'scripts/release/tests/release-coordinator.test.mjs']);
+runStep('Release Prepare Staging Boundary Fixture', 'node', ['--test', 'scripts/release/tests/prepare.test.mjs']);
 runStep('Toolchain & Provenance Verification Fixture', 'node', ['scripts/release/tests/provenance-fixture.mjs']);
 
 console.log('\n[test:release] All release tests passed successfully.');

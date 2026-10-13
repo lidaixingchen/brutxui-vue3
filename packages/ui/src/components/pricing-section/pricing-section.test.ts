@@ -170,6 +170,31 @@ describe('PricingSection', () => {
         expect(wrapper.text()).toContain('billed annually')
     })
 
+    it('keeps lifetime labels for one-time plans when annual billing is selected', async () => {
+        const wrapper = mount(PricingSection, {
+            props: {
+                plans: [
+                    ...subscriptionPlans,
+                    {
+                        name: 'Lifetime',
+                        description: 'One-time purchase',
+                        price: '$99',
+                        features: ['Lifetime access'],
+                        buttonText: 'Buy once',
+                    },
+                ],
+                billingMode: 'toggle',
+            },
+            ...localeProvide,
+        })
+
+        const annualButton = wrapper.findAll('button').find(button => button.text() === 'Annually')
+        await annualButton!.trigger('click')
+
+        const lifetimeCard = wrapper.findAll('.grid > div').find(card => card.text().includes('Lifetime'))
+        expect(lifetimeCard?.find('span.text-sm').text()).toBe('/ lifetime')
+    })
+
     it('auto-enables billing toggle when requested and subscription prices exist', () => {
         const wrapper = mount(PricingSection, {
             props: { plans: subscriptionPlans, billingMode: 'auto' },

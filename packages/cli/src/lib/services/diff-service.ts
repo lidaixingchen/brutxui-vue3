@@ -75,15 +75,24 @@ export async function getInstalledComponents(
 
 async function getLocalComponentFiles(
     context: ProjectContext,
-    componentName: string
+    componentName: string,
+    registryFiles: RegistryItem['files'] = [],
 ): Promise<Array<{ relativePath: string; absolutePath: string }>> {
     const componentPath = await context.resolveComponentDir(componentName);
-
-    if (!await context.fs.pathExists(componentPath)) {
-        return [];
-    }
-
     const files: Array<{ relativePath: string; absolutePath: string }> = [];
+
+    for (const registryFile of registryFiles) {
+        const normalizedRegistryPath = registryFile.path.replace(/\\/g, '/');
+        const singleFilePrefix = `${REGISTRY_PATH_PREFIXES.components}ui/${componentName}.`;
+        if (!normalizedRegistryPath.startsWith(singleFilePrefix)) {
+            continue;
+        }
+
+        const absolutePath = await context.resolveTargetPath(registryFile.path);
+        if (await context.fs.pathExists(absolutePath)) {
+            files.push({ relativePath: path.posix.basename(normalizedRegistryPath), absolutePath });
+        }
+    }
 
     async function walkDir(dir: string, relativeBase: string): Promise<void> {
         const entries = await context.fs.readdir(dir, { withFileTypes: true });
@@ -99,7 +108,9 @@ async function getLocalComponentFiles(
         }
     }
 
-    await walkDir(componentPath, '');
+    if (await context.fs.pathExists(componentPath)) {
+        await walkDir(componentPath, '');
+    }
     return files;
 }
 
@@ -135,7 +146,6 @@ export async function diffComponent(
     onRegistryItem?: (snapshot: RegistryItemSnapshot) => void,
 ): Promise<DiffResult> {
     const config = context.requireConfig();
-    const localFiles = await getLocalComponentFiles(context, componentName);
     let registryItem: RegistryItem | null;
     let registryError: Error | null = null;
 
@@ -155,6 +165,8 @@ export async function diffComponent(
     if (registryItem && registryItemSource) {
         onRegistryItem?.({ item: registryItem, source: registryItemSource });
     }
+
+    const localFiles = await getLocalComponentFiles(context, componentName, registryItem?.files);
 
     if (!registryItem) {
         let status: DiffComponentStatus;

@@ -59,13 +59,7 @@ jobs:
                   HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
                   EVENT_NAME: ${{ github.event_name }}
               run: |
-                  if [[ "$EVENT_NAME" == pull_request ]]; then
-                    node scripts/ci/change-scope.mjs --base "$BASE_SHA" --head "$HEAD_SHA"
-                  elif [[ -z "$BASE_SHA" || "$BASE_SHA" =~ ^0+$ ]]; then
-                    node scripts/ci/change-scope.mjs --base "$HEAD_SHA" --head "$HEAD_SHA" --diff-mode direct
-                  else
-                    node scripts/ci/change-scope.mjs --base "$BASE_SHA" --head "$HEAD_SHA" --diff-mode direct
-                  fi
+                  node scripts/ci/change-scope.mjs --event "$EVENT_NAME" --base "$BASE_SHA" --head "$HEAD_SHA"
     quality:
         name: Quality (build + typecheck + lint + validate)
         needs: changes

@@ -9,6 +9,7 @@ import type { RegistryClient } from '../src/lib/registry-client.js';
 import { BaselineProvider } from '../src/lib/merge/baseline-provider.js';
 import { diffComponent } from '../src/lib/services/diff-service.js';
 import { CliError } from '../src/lib/error.js';
+import { integrityHashDriftRule } from '../src/lib/diagnostics/rules/integrity-rules.js';
 
 describe('ComponentMutationEngine (VFS Zero-IO)', () => {
     let fs: MemoryFileSystemAdapter;
@@ -52,6 +53,18 @@ describe('ComponentMutationEngine (VFS Zero-IO)', () => {
         files: buttonFiles,
         integrity: computeRegistryIntegrity(buttonFiles),
     };
+
+    function makeComponentItem(name: string, files: RegistryItem['files']): RegistryItem {
+        return {
+            ...buttonItem,
+            name,
+            title: name,
+            description: `${name} component`,
+            dependencies: [],
+            files,
+            integrity: computeRegistryIntegrity(files),
+        };
+    }
 
     function setupMockRegistry(context: ProjectContext, items: RegistryItem[] = [buttonItem]) {
         const mockClient = {
@@ -431,6 +444,167 @@ describe('ComponentMutationEngine (VFS Zero-IO)', () => {
         expect(mergedContent).toContain('<<<<<<<');
         expect(mergedContent).toContain('=======');
         expect(mergedContent).toContain('>>>>>>>');
+    });
+
+    it('keeps same-basename nested baselines distinct across sequential updates', async () => {
+        const initialItem = makeComponentItem('widget', [
+            { path: 'components/ui/widget/a/index.ts', content: 'export const a = "base-a";\n', type: 'registry:ui' },
+            { path: 'components/ui/widget/b/index.ts', content: 'export const b = "base-b";\n', type: 'registry:ui' },
+        ]);
+        const registryItems = [initialItem];
+        const context = await ProjectContext.loadUninitialized(projectCwd, { fs });
+        setupMockRegistry(context, registryItems);
+        const engine = new ComponentMutationEngine(context);
+
+        await engine.execute(await engine.planInstall({ components: ['widget'] }), { skipDependencies: true });
+
+        const fileA = path.join(projectCwd, 'src/components/ui/widget/a/index.ts');
+        const fileB = path.join(projectCwd, 'src/components/ui/widget/b/index.ts');
+        await fs.writeFile(fileA, 'export const a = "local-a";\n');
+
+        registryItems[0] = makeComponentItem('widget', [
+            { path: 'components/ui/widget/a/index.ts', content: 'export const a = "base-a";\n', type: 'registry:ui' },
+            { path: 'components/ui/widget/b/index.ts', content: 'export const b = "remote-b2";\n', type: 'registry:ui' },
+        ]);
+        const updateV2 = await engine.planUpdate({ components: ['widget'], conflictStrategy: 'markers' });
+        const resultV2 = await engine.execute(updateV2, { skipDependencies: true });
+
+        expect(resultV2.conflicts).toEqual([]);
+        expect(await fs.readFile(fileA, 'utf-8')).toBe('export const a = "local-a";\n');
+        expect(await fs.readFile(fileB, 'utf-8')).toBe('export const b = "remote-b2";\n');
+
+        registryItems[0] = makeComponentItem('widget', [
+            { path: 'components/ui/widget/a/index.ts', content: 'export const a = "base-a";\n', type: 'registry:ui' },
+            { path: 'components/ui/widget/b/index.ts', content: 'export const b = "remote-b3";\n', type: 'registry:ui' },
+        ]);
+        const updateV3 = await engine.planUpdate({ components: ['widget'], conflictStrategy: 'markers' });
+        const resultV3 = await engine.execute(updateV3, { skipDependencies: true });
+
+        expect(resultV3.conflicts).toEqual([]);
+        expect(await fs.readFile(fileA, 'utf-8')).toBe('export const a = "local-a";\n');
+        expect(await fs.readFile(fileB, 'utf-8')).toBe('export const b = "remote-b3";\n');
+
+        const manifest = await fs.readJson(path.join(projectCwd, '.brutx/manifest.json'));
+        const baselines = manifest.components.widget.baselines as Record<string, string>;
+        expect(baselines['src/components/ui/widget/a/index.ts']).toBeDefined();
+        expect(baselines['src/components/ui/widget/b/index.ts']).toBeDefined();
+        expect(baselines['src/components/ui/widget/a/index.ts']).not.toBe(baselines['src/components/ui/widget/b/index.ts']);
+    });
+
+    it('retains skipped files and their baselines through the next update', async () => {
+        const initialItem = makeComponentItem('card', [
+            {
+                path: 'components/ui/card/Card.vue',
+                content: 'export const upstream = "base";\nexport const local = "base";\n',
+                type: 'registry:ui',
+            },
+            {
+                path: 'components/ui/card/card-options.ts',
+                content: 'export const upstream = "base";\nexport const customization = "base";\n',
+                type: 'registry:ui',
+            },
+        ]);
+        const registryItems = [initialItem];
+        const context = await ProjectContext.loadUninitialized(projectCwd, { fs });
+        setupMockRegistry(context, registryItems);
+        const engine = new ComponentMutationEngine(context);
+
+        await engine.execute(await engine.planInstall({ components: ['card'] }), { skipDependencies: true });
+
+        const cardFile = path.join(projectCwd, 'src/components/ui/card/Card.vue');
+        const optionsFile = path.join(projectCwd, 'src/components/ui/card/card-options.ts');
+        await fs.writeFile(cardFile, 'export const upstream = "base";\nexport const local = "user";\n');
+        registryItems[0] = makeComponentItem('card', [
+            {
+                path: 'components/ui/card/Card.vue',
+                content: 'export const upstream = "remote-v2";\nexport const local = "base";\n',
+                type: 'registry:ui',
+            },
+            {
+                path: 'components/ui/card/card-options.ts',
+                content: 'export const upstream = "base";\nexport const customization = "base";\n',
+                type: 'registry:ui',
+            },
+        ]);
+        const updateV2 = await engine.planUpdate({ components: ['card'], conflictStrategy: 'markers' });
+        expect(updateV2.files.find(file => file.filePath === optionsFile)?.action).toBe('skip');
+        const resultV2 = await engine.execute(updateV2, { skipDependencies: true });
+        expect(resultV2.conflicts).toEqual([]);
+
+        const manifestAfterV2 = await fs.readJson(path.join(projectCwd, '.brutx/manifest.json'));
+        expect(manifestAfterV2.components.card.files).toEqual([
+            'src/components/ui/card/Card.vue',
+            'src/components/ui/card/card-options.ts',
+        ]);
+        expect(manifestAfterV2.components.card.baselines['src/components/ui/card/card-options.ts']).toBeDefined();
+        const integrityResults = await integrityHashDriftRule.check({
+            cwd: projectCwd,
+            projectContext: context,
+            fs,
+            config: sampleConfig,
+            manifest: manifestAfterV2,
+            offline: true,
+        });
+        expect(integrityResults).toEqual(expect.arrayContaining([
+            expect.objectContaining({ ruleId: 'integrity.hash-drift', status: 'pass' }),
+        ]));
+
+        await fs.writeFile(optionsFile, 'export const upstream = "base";\nexport const customization = "user";\n');
+        registryItems[0] = makeComponentItem('card', [
+            {
+                path: 'components/ui/card/Card.vue',
+                content: 'export const upstream = "remote-v2";\nexport const local = "base";\n',
+                type: 'registry:ui',
+            },
+            {
+                path: 'components/ui/card/card-options.ts',
+                content: 'export const upstream = "remote-v3";\nexport const customization = "base";\n',
+                type: 'registry:ui',
+            },
+        ]);
+        const updateV3 = await engine.planUpdate({ components: ['card'], conflictStrategy: 'markers' });
+        const resultV3 = await engine.execute(updateV3, { skipDependencies: true });
+
+        expect(resultV3.conflicts).toEqual([]);
+        expect(await fs.readFile(optionsFile, 'utf-8')).toBe(
+            'export const upstream = "remote-v3";\nexport const customization = "user";\n'
+        );
+    });
+
+    it('updates remaining files when an upstream change targets a locally deleted file', async () => {
+        const registryItems = [makeComponentItem('card', [
+            { path: 'components/ui/card/Card.vue', content: 'export const card = "base";\n', type: 'registry:ui' },
+            { path: 'components/ui/card/card-options.ts', content: 'export const options = "base";\n', type: 'registry:ui' },
+        ])];
+        const context = await ProjectContext.loadUninitialized(projectCwd, { fs });
+        setupMockRegistry(context, registryItems);
+        const engine = new ComponentMutationEngine(context);
+
+        await engine.execute(await engine.planInstall({ components: ['card'] }), { skipDependencies: true });
+
+        const cardFile = path.join(projectCwd, 'src/components/ui/card/Card.vue');
+        const optionsFile = path.join(projectCwd, 'src/components/ui/card/card-options.ts');
+        await fs.remove(cardFile);
+        registryItems[0] = makeComponentItem('card', [
+            { path: 'components/ui/card/Card.vue', content: 'export const card = "remote-v2";\n', type: 'registry:ui' },
+            { path: 'components/ui/card/card-options.ts', content: 'export const options = "remote-v2";\n', type: 'registry:ui' },
+        ]);
+
+        const update = await engine.planUpdate({ components: ['card'], conflictStrategy: 'markers' });
+        expect(update.files.find(file => file.filePath === cardFile)?.action).toBe('skip');
+        const result = await engine.execute(update, { skipDependencies: true });
+
+        expect(result.succeeded).toEqual(['card']);
+        expect(result.manifestUpdated).toBe(true);
+        expect(await fs.pathExists(cardFile)).toBe(false);
+        expect(await fs.readFile(optionsFile, 'utf-8')).toBe('export const options = "remote-v2";\n');
+
+        const manifest = await fs.readJson(path.join(projectCwd, '.brutx/manifest.json'));
+        expect(manifest.components.card.files).toEqual([
+            'src/components/ui/card/Card.vue',
+            'src/components/ui/card/card-options.ts',
+        ]);
+        expect(manifest.components.card.installedContentHash).toBeUndefined();
     });
 
     it('planUpdate should reuse supplied registry snapshots and their resolved sources', async () => {

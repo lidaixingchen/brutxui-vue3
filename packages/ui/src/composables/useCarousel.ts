@@ -158,7 +158,10 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
         if (emblaApi.value) emblaApi.value.reInit({ loop: toValue(options.loop) ?? false })
         // loop 由 false 切 true 前，非 loop 模式自动播放可能已在末页 stopAutoplay()，
         // 而 autoplay 值本身未变化、其 watcher 不会再次触发，需在此主动恢复
-        if (toValue(options.autoplay) && !prefersReducedMotion.value) startAutoplay()
+        // 仅成功恢复时上报，令 useCarouselEnhanced 的进度计时同步启动
+        if (toValue(options.autoplay) && !prefersReducedMotion.value && startAutoplay()) {
+            options.onAutoplayChange?.(true)
+        }
     })
 
     watch(() => toValue(options.autoplayDelay), () => {

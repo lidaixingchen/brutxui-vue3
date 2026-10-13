@@ -859,6 +859,43 @@ describe('TreeView checkbox mode', () => {
         expect(newIds).toEqual([])
     })
 
+    it('cascades only through checkable nodes and preserves externally checked disabled nodes', async () => {
+        const wrapper = mount(TreeView, {
+            props: {
+                nodes: [{
+                    id: 'root',
+                    label: 'Root',
+                    children: [
+                        { id: 'enabled', label: 'Enabled' },
+                        { id: 'disabled', label: 'Disabled', disabled: true },
+                    ],
+                }],
+                selectionMode: 'checkbox',
+                defaultExpanded: ['root'],
+                checkedIds: ['disabled'],
+            },
+            global: { provide: localeProvide },
+        })
+
+        const root = wrapper.findAll('[role="treeitem"]')[0]
+        const disabled = wrapper.findAll('[role="treeitem"]')[2]
+        expect(root.attributes('aria-checked')).toBe('false')
+        expect(disabled.attributes('aria-checked')).toBe('true')
+
+        const rootCheckbox = wrapper.findAllComponents({ name: 'Checkbox' })[0]
+        await rootCheckbox.vm.$emit('update:checked', true)
+
+        const emitted = wrapper.emitted('update:checkedIds')
+        expect(emitted).toBeTruthy()
+        expect(emitted![0][0]).toEqual(['disabled', 'root', 'enabled'])
+
+        await wrapper.setProps({ checkedIds: emitted![0][0] as string[] })
+        expect(root.attributes('aria-checked')).toBe('true')
+        await rootCheckbox.vm.$emit('update:checked', false)
+
+        expect(wrapper.emitted('update:checkedIds')![1][0]).toEqual(['disabled'])
+    })
+
     it('emits check event with checked flag', async () => {
         const wrapper = mount(TreeView, {
             props: {
@@ -1284,10 +1321,23 @@ describe('tree-view-utils', () => {
             const leaf: TreeNode = { id: 'leaf', label: 'leaf' }
             expect(getCheckState(leaf, new Set())).toBe('unchecked')
         })
+
+        it('does not count checked disabled descendants in the parent state', () => {
+            const node: TreeNode = {
+                id: 'root',
+                label: 'Root',
+                children: [
+                    { id: 'disabled', label: 'Disabled', disabled: true },
+                    { id: 'child', label: 'Child' },
+                ],
+            }
+
+            expect(getCheckState(node, new Set(['disabled']))).toBe('unchecked')
+        })
     })
 
     describe('getCheckStateMap', () => {
-        it('aggregates each node including disabled descendants and the node itself', () => {
+        it('excludes disabled nodes from parent states and preserves their own state', () => {
             const nodes: TreeNode[] = [
                 {
                     id: 'root',
@@ -1298,11 +1348,11 @@ describe('tree-view-utils', () => {
                     ],
                 },
             ]
-            const checkedIds: ReadonlySet<string> = new Set(['root', 'disabled'])
+            const checkedIds: ReadonlySet<string> = new Set(['disabled'])
 
             const states: ReadonlyMap<string, CheckState> = getCheckStateMap(nodes, checkedIds)
 
-            expect(states.get('root')).toBe('indeterminate')
+            expect(states.get('root')).toBe('unchecked')
             expect(states.get('disabled')).toBe('checked')
             expect(states.get('child')).toBe('unchecked')
         })

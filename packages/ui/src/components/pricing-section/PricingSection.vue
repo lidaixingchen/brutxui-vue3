@@ -206,7 +206,9 @@ function getPriceLabel(plan: BrutalistPricingPlan) {
         if (plan.priceAnnually !== undefined) return t('pricingSection.perMonthBilledAnnually')
         return t('pricingSection.perLifetime')
     }
-    return plan.priceAnnually !== undefined ? t('pricingSection.perMonthBilledAnnually') : t('pricingSection.perMonth')
+    if (plan.priceAnnually !== undefined) return t('pricingSection.perMonthBilledAnnually')
+    if (plan.priceMonthly !== undefined) return t('pricingSection.perMonth')
+    return t('pricingSection.perLifetime')
 }
 
 function getFeatureText(feature: string | PricingFeature) {

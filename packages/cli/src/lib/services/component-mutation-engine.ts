@@ -397,6 +397,7 @@ export class ComponentMutationEngine {
         let manifestUpdated: boolean = false;
 
         try {
+            const previousManifest = await readManifest(this.context.cwd, this.context.fs);
             if (plan.ensureUtils) {
                 await ensureUtilsFile(this.context, undefined, undefined, transaction);
             }
@@ -427,10 +428,6 @@ export class ComponentMutationEngine {
                         await transaction.remove(file.filePath);
                         filesDeleted.push(file.filePath);
 
-                        const baselineRelPath = `.brutx/baselines/${item.name}/${path.basename(file.filePath)}`;
-                        const baselineAbsPath = path.resolve(this.context.cwd, baselineRelPath);
-                        await transaction.remove(baselineAbsPath);
-
                         options.callbacks?.onFileWritten?.({
                             component: item.name,
                             filePath: file.filePath,
@@ -441,15 +438,6 @@ export class ComponentMutationEngine {
 
                     const contentToWrite = file.mergedContent ?? file.sourceContent;
                     await transaction.writeFile(file.filePath, contentToWrite);
-
-                    // 写入 .brutx/baselines/<component>/<basename> 基线文件
-                    const baselineRelPath = `.brutx/baselines/${item.name}/${path.basename(file.filePath)}`;
-                    const baselineAbsPath = path.resolve(this.context.cwd, baselineRelPath);
-                    await transaction.writeFile(baselineAbsPath, file.sourceContent);
-
-                    const compBaselines = baselinesByComponent.get(item.name) ?? {};
-                    compBaselines[path.basename(file.filePath)] = baselineRelPath;
-                    baselinesByComponent.set(item.name, compBaselines);
 
                     filesWritten.push(file.filePath);
                     writtenForThisItem.push(file.filePath);
@@ -469,7 +457,38 @@ export class ComponentMutationEngine {
 
                 if (writtenForThisItem.length > 0 || itemFiles.some(f => f.action === 'delete')) {
                     succeeded.push(item.name);
-                    filesByComponent.set(item.name, writtenForThisItem);
+
+                    const installedPaths: string[] = [];
+                    const componentBaselines: Record<string, string> = {};
+                    const currentBaselinePaths = new Set<string>();
+                    for (const registryFile of item.files) {
+                        const targetPath = await this.context.resolveTargetPath(registryFile.path);
+                        const projectRelativePath = this.context.toRelativePosixPath(targetPath);
+                        const baselineRelPath = `.brutx/baselines/${item.name}/${projectRelativePath}`;
+                        const baselineAbsPath = path.resolve(this.context.cwd, baselineRelPath);
+                        const baselineContent = this.context.resolveImportAlias(registryFile.content);
+
+                        await transaction.writeFile(baselineAbsPath, baselineContent);
+                        installedPaths.push(targetPath);
+                        componentBaselines[projectRelativePath] = baselineRelPath;
+                        currentBaselinePaths.add(baselineRelPath);
+                    }
+
+                    const previousEntry = previousManifest?.components[item.name];
+                    const previousBaselinePaths = new Set([
+                        ...Object.values(previousEntry?.baselines ?? {}),
+                        ...(previousEntry?.files ?? []).map(filePath =>
+                            `.brutx/baselines/${item.name}/${path.posix.basename(filePath.replace(/\\/g, '/'))}`
+                        ),
+                    ]);
+                    for (const baselineRelPath of previousBaselinePaths) {
+                        if (!currentBaselinePaths.has(baselineRelPath)) {
+                            await transaction.remove(path.resolve(this.context.cwd, baselineRelPath));
+                        }
+                    }
+
+                    filesByComponent.set(item.name, installedPaths);
+                    baselinesByComponent.set(item.name, componentBaselines);
                 }
             }
 
@@ -485,7 +504,9 @@ export class ComponentMutationEngine {
                         .filter(item => succeeded.includes(item.name))
                         .map(async item => {
                             const compFiles = filesByComponent.get(item.name) ?? [];
-                            const installedContentHash = compFiles.length > 0
+                            const allInstalledFilesExist = compFiles.length > 0
+                                && (await Promise.all(compFiles.map(filePath => this.context.fs.pathExists(filePath)))).every(Boolean);
+                            const installedContentHash = allInstalledFilesExist
                                 ? await computeInstalledContentHash(compFiles, this.context.fs)
                                 : undefined;
 

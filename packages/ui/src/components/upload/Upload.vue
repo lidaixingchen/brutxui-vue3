@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { cn } from '@/lib/utils'
 import { useUpload } from '@/composables/useUpload'
 import type { UploadFile, UploadError, UploadRequestOptions } from './upload-types'
@@ -307,7 +307,7 @@ async function handleFileSelect(files: FileList | File[]): Promise<void> {
             continue
         }
 
-        const uploadFile = createUploadFile(file)
+        const uploadFile = reactive(createUploadFile(file))
         internalFileList.value.push(uploadFile)
         pendingUploads.push(uploadFile)
         emit('update:fileList', [...internalFileList.value])

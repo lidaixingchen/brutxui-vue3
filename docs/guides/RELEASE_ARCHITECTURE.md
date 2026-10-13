@@ -19,7 +19,7 @@
 
 门禁通过后，云端统一启动状态机协调器执行密封打包与分阶段分发，严格遵循六大状态流转：
 
-1. **`PREPARED`**：密封打包各包 tarball 并编译 registry 产物，生成权威快照 `release-manifest.json` 与 `SHA256SUMS` 校验清单；
+1. **`PREPARED`**：先清理并重建 staging 目录，再密封打包各包 tarball 并收集 registry 产物，生成权威快照 `release-manifest.json` 与 `SHA256SUMS` 校验清单；
 2. **`DRAFT_ASSETS_READY`**：创建或复用 GitHub Release Draft，先行上传所有 registry 资产、tarball 密封包与校验清单；
 3. **`RELEASE_PUBLISHED`**：将 GitHub Release 设为 Published，但显式保留 `make_latest: "false"`，对外公开资产寻址能力，但严密隔离 latest 主通道；
 4. **`NPM_PACKAGES_READY`**：以一次性打包的密封原件逐包发布到 npm。若版本已存在，执行双哈希强校验（本地 tarball 与远程 npm 的 shasum / integrity），一致则安全幂等通过，不一致则立即熔断阻断；
@@ -34,6 +34,8 @@ GitHub Release、npm 包与渠道更新分别提交；协调器按远端状态�
 1. **声明变更**：PR 时通过 `pnpm changeset` 交互式生成 `.changeset/*.md` 文件，描述变更类型（major/minor/patch）和变更内容
 2. **版本提升**：合并 PR 后运行 `pnpm release:prepare`（底层调用 `changeset version`），读取 `.changeset/*.md`，自动 bump 受影响包版本号并生成各包 CHANGELOG；配置了 `"commit"` 时自动生成 `RELEASING` commit（`skipCI` 已配置为 `false`）
 3. **门禁与发布**：本地运行 `pnpm release:check` 验证全部契约，打 tag 推送后由 CI 状态机协调器完成发布
+
+`release:prepare` 的 CHANGELOG 提交只包含根 `CHANGELOG.md`、本次新生成的版本归档文件、随归档更新的索引页，以及文档站版本历史页。归档目录中的其他本地文件保持未提交。
 
 ### Changeset Commit 与 CI 发布触发契约
 

@@ -4,7 +4,9 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { installFakePnpm } from './fake-pnpm.mjs';
 import {
+    DefaultReleaseAdapter,
     ReleaseCoordinator,
     ReleaseStage,
     computeSha256,
@@ -174,6 +176,47 @@ class MockReleaseAdapter {
         }
     }
 }
+
+it('DefaultReleaseAdapter clears an existing staging directory before packing real adapter outputs', async () => {
+    const fixtureRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'brutx-release-adapter-'));
+    const binDir = path.join(fixtureRoot, 'bin');
+    const stagingDir = path.join(fixtureRoot, 'staging');
+    const previousPath = process.env.PATH;
+    try {
+        fs.mkdirSync(path.join(fixtureRoot, 'packages', 'ui'), { recursive: true });
+        fs.mkdirSync(path.join(fixtureRoot, 'packages', 'cli'), { recursive: true });
+        fs.mkdirSync(path.join(fixtureRoot, 'packages', 'registry', 'registry'), { recursive: true });
+        fs.mkdirSync(binDir, { recursive: true });
+        fs.mkdirSync(stagingDir, { recursive: true });
+        fs.writeFileSync(path.join(fixtureRoot, 'packages', 'ui', 'package.json'), JSON.stringify({ name: 'brutx-ui-vue', version: '0.2.1' }));
+        fs.writeFileSync(path.join(fixtureRoot, 'packages', 'cli', 'package.json'), JSON.stringify({ name: 'brutx-vue', version: '0.2.1' }));
+        fs.writeFileSync(path.join(fixtureRoot, 'packages', 'registry', 'registry', 'registry-manifest.json'), JSON.stringify({ digest: 'fixture-digest' }));
+        fs.writeFileSync(path.join(fixtureRoot, 'packages', 'registry', 'registry', 'button.json'), JSON.stringify({ name: 'button' }));
+        fs.writeFileSync(path.join(fixtureRoot, 'pnpm-lock.yaml'), 'lockfileVersion: 9\n');
+        fs.writeFileSync(path.join(stagingDir, 'stale.txt'), 'stale');
+        installFakePnpm(binDir, `
+const { readFileSync, writeFileSync } = require('node:fs');
+const path = require('node:path');
+const destination = process.argv[process.argv.indexOf('--pack-destination') + 1];
+const pkg = JSON.parse(readFileSync(path.join(process.cwd(), 'package.json'), 'utf-8'));
+writeFileSync(path.join(destination, pkg.name + '-' + pkg.version + '.tgz'), pkg.name);
+`);
+        process.env.PATH = `${binDir}${path.delimiter}${previousPath ?? ''}`;
+
+        const adapter = new DefaultReleaseAdapter({ rootDir: fixtureRoot });
+        const artifacts = await adapter.packArtifacts(stagingDir);
+
+        assert.equal(fs.existsSync(path.join(stagingDir, 'stale.txt')), false);
+        assert.equal(fs.readFileSync(artifacts.uiTarball, 'utf-8'), 'brutx-ui-vue');
+        assert.equal(fs.readFileSync(artifacts.cliTarball, 'utf-8'), 'brutx-vue');
+        assert.deepEqual(artifacts.registryFiles.map(file => path.basename(file)).sort(), ['button.json', 'registry-manifest.json']);
+        assert.equal(fs.existsSync(artifacts.sha256SumsPath), true);
+        assert.equal(fs.existsSync(artifacts.releaseManifestPath), true);
+    } finally {
+        process.env.PATH = previousPath;
+        fs.rmSync(fixtureRoot, { recursive: true, force: true });
+    }
+});
 
 describe('ReleaseCoordinator 状态机与故障恢复测试', () => {
     it('全流程干净稳定版本发布：完整阶段流转并正确推进 latest 指针', async () => {

@@ -637,7 +637,7 @@
           "name": "default",
           "kind": "slots",
           "type": {
-            "text": "{}",
+            "text": "{ componentField: { name: string; modelValue: unknown; 'onUpdate:modelValue': (e: unknown, shouldValidate?: boolean | undefined) => void; onFocusout: (event: FocusEvent) => void; }; }",
             "literals": [],
             "references": []
           },

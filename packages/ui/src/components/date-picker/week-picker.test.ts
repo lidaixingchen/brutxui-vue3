@@ -537,6 +537,25 @@ describe('WeekPickerPanel', () => {
         expect(value.getDay()).toBe(1)
     })
 
+    it('ignores shortcuts outside min/max bounds', async () => {
+        const shortcuts: DatePickerShortcut[] = [
+            { label: 'Earlier', value: new Date(2026, 0, 1) },
+        ]
+        wrapper = mount(WeekPickerPanel, {
+            ...localeProvide,
+            props: {
+                minDate: new Date(2026, 0, 10),
+                maxDate: new Date(2026, 0, 20),
+                shortcuts,
+            },
+            attachTo: document.body,
+        })
+
+        await wrapper.find('[role="option"]').trigger('click')
+
+        expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    })
+
     it('marks active shortcut with aria-selected', () => {
         const today = new Date(2026, 5, 26)
         const shortcuts: DatePickerShortcut[] = [

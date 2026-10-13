@@ -29,7 +29,8 @@ export function useClipboard(options: { duration?: MaybeRefOrGetter<number> } = 
         // 避免依赖它渲染的 UI（如禁用复制按钮）与实际不一致。
         // 不通过 isSupported 快速短路：若某次检测失败置 false，权限恢复后
         // 仍能重新进入动态检测并恢复 true（双向同步）
-        const writeText = getNavigator()?.clipboard?.writeText
+        const clipboard = getNavigator()?.clipboard
+        const writeText = clipboard?.writeText
         if (!writeText) {
             isSupported.value = false
             return false
@@ -39,7 +40,7 @@ export function useClipboard(options: { duration?: MaybeRefOrGetter<number> } = 
         }
 
         try {
-            await writeText(text)
+            await writeText.call(clipboard, text)
             // 卸载后不再更新 copied 状态，但返回值语义统一为"写入是否成功"，
             // 避免卸载竞态下返回 true 却看不到反馈的状态不一致
             if (!disposed) {
