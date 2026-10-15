@@ -714,7 +714,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 355
+            "line": 357
           },
           "origin": "declared",
           "nullable": false,
@@ -739,7 +739,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 356
+            "line": 358
           },
           "origin": "declared",
           "nullable": false,
@@ -758,7 +758,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 357
+            "line": 359
           },
           "origin": "declared",
           "nullable": false,
@@ -777,7 +777,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 358
+            "line": 360
           },
           "origin": "declared",
           "nullable": false,

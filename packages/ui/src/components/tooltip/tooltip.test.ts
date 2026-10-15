@@ -1,5 +1,15 @@
+import { vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import TooltipContent from './TooltipContent.vue'
+
+vi.mock('reka-ui', async (importOriginal) => {
+    const primitives = await importOriginal<typeof import('reka-ui')>()
+    const { ref } = await import('vue')
+    return {
+        ...primitives,
+        injectTooltipRootContext: () => ({ open: ref(false) }),
+    }
+})
 
 const primitiveStub = {
     template: '<div><slot /></div>',

@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import Select from './Select.vue'
 import type { SelectOption } from './types'
@@ -8,6 +9,15 @@ import SelectLabel from './SelectLabel.vue'
 import SelectSeparator from './SelectSeparator.vue'
 import SelectScrollUpButton from './SelectScrollUpButton.vue'
 import SelectScrollDownButton from './SelectScrollDownButton.vue'
+
+vi.mock('reka-ui', async (importOriginal) => {
+    const primitives = await importOriginal<typeof import('reka-ui')>()
+    const { ref } = await import('vue')
+    return {
+        ...primitives,
+        injectSelectRootContext: () => ({ open: ref(false) }),
+    }
+})
 
 const primitiveStub = {
     template: '<div><slot /></div>',

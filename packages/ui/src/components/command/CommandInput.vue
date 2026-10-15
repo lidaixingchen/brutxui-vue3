@@ -6,6 +6,7 @@ import { useLocale } from '@/composables/useLocale'
 import { Search } from '@lucide/vue'
 import { commandInputWrapperVariants } from './command-variants'
 import { injectCommandRootContext } from './command-context'
+import { ListboxFilter } from 'reka-ui'
 
 interface CommandInputProps {
     modelValue?: string
@@ -57,12 +58,10 @@ watch(rootContext.filterSearch, (val) => {
 
 applyFilterSearch(searchValue.value)
 
-function handleInput(event: Event) {
-    const target = event.target
-    if (!(target instanceof HTMLInputElement)) return
-    searchValue.value = target.value
+function handleFilterInput(value: string) {
+    searchValue.value = value
     // 仅在真正的用户输入处 emit，避免父驱动更新被再次回显形成多余事件
-    emit('update:modelValue', target.value)
+    emit('update:modelValue', value)
 }
 
 const wrapperClasses = computed(() =>
@@ -83,15 +82,14 @@ const inputClasses = computed(() =>
 <template>
     <div :class="wrapperClasses" data-slot="command-input">
         <Search class="size-5 shrink-0 stroke-[3] text-brutal-accent-foreground" />
-        <input
-            :value="searchValue"
+        <ListboxFilter
+            :model-value="searchValue"
             :placeholder="resolvedPlaceholder"
             :class="inputClasses"
-            type="text"
             role="searchbox"
             aria-autocomplete="list"
             :aria-label="t('command.searchLabel')"
-            @input="handleInput"
-        >
+            @update:model-value="handleFilterInput"
+        />
     </div>
 </template>

@@ -456,7 +456,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/command/CommandInput.vue",
-            "line": 11
+            "line": 12
           },
           "origin": "declared",
           "required": false,
@@ -488,7 +488,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/command/CommandInput.vue",
-            "line": 12
+            "line": 13
           },
           "origin": "declared",
           "required": false,
@@ -525,7 +525,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/command/CommandInput.vue",
-            "line": 13
+            "line": 14
           },
           "origin": "declared",
           "required": false,

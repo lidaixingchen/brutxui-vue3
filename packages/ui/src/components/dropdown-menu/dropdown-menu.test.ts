@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import DropdownMenuContent from './DropdownMenuContent.vue'
 import DropdownMenuItem from './DropdownMenuItem.vue'
@@ -8,6 +9,15 @@ import DropdownMenuSeparator from './DropdownMenuSeparator.vue'
 import DropdownMenuShortcut from './DropdownMenuShortcut.vue'
 import DropdownMenuSubTrigger from './DropdownMenuSubTrigger.vue'
 import DropdownMenuSubContent from './DropdownMenuSubContent.vue'
+
+vi.mock('reka-ui', async (importOriginal) => {
+    const primitives = await importOriginal<typeof import('reka-ui')>()
+    const { ref } = await import('vue')
+    return {
+        ...primitives,
+        injectDropdownMenuRootContext: () => ({ open: ref(false) }),
+    }
+})
 
 const primitiveStub = {
     template: '<div><slot /></div>',

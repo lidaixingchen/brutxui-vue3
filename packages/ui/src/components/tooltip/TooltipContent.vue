@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { TooltipContentProps as RekaTooltipContentProps } from 'reka-ui'
-import { TooltipPortal, TooltipContent as TooltipContentPrimitive, useForwardProps } from 'reka-ui'
+import { TooltipPortal, TooltipContent as TooltipContentPrimitive, useForwardProps, injectTooltipRootContext } from 'reka-ui'
 import { cn } from '@/lib/utils'
 import { floatingContentSideOffsets } from '@/lib/floating-content-variants'
 import { tooltipContentVariants } from './tooltip-variants'
@@ -27,7 +27,7 @@ const delegatedProps = computed(() => {
 })
 
 const forwarded = useForwardProps(delegatedProps)
-const { style: overlayLayerStyle, ref: floatingLayerRef } = useFloatingOverlayLayer('tooltip')
+const { style: overlayLayerStyle, ref: floatingLayerRef } = useFloatingOverlayLayer('tooltip', injectTooltipRootContext().open)
 
 const classes = computed(() =>
     cn(tooltipContentVariants(), props.class)

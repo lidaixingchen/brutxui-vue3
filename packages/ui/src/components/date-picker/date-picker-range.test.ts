@@ -338,6 +338,31 @@ describe('DatePickerRange', () => {
         expect(wrapper.emitted('close')).toBeTruthy()
     })
 
+    it('closes the panel and ignores panel changes when disabled becomes true', async () => {
+        wrapper = mount(DatePickerRange, {
+            ...localeProvide,
+            props: {
+                modelValue: [new Date(2026, 0, 5), new Date(2026, 0, 10)],
+                clearable: true,
+            },
+            attachTo: document.body,
+        })
+        await openPanel(wrapper)
+        const panel = wrapper.findComponent(DatePickerRangePanel)
+
+        await wrapper.setProps({ disabled: true })
+        await nextTick()
+        panel.vm.$emit('update:modelValue', [new Date(2026, 1, 5), new Date(2026, 1, 10)])
+        panel.vm.$emit('clear')
+        panel.vm.$emit('confirm', null)
+        await nextTick()
+
+        expect(wrapper.emitted('close')).toBeTruthy()
+        expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+        expect(wrapper.emitted('change')).toBeUndefined()
+        expect(wrapper.find('[role="combobox"]').attributes('aria-expanded')).toBe('false')
+    })
+
     it('opens panel on Enter key', async () => {
         wrapper = mount(DatePickerRange, { ...localeProvide, attachTo: document.body })
         const trigger = wrapper.find('[role="combobox"]')

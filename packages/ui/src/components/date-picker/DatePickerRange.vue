@@ -91,6 +91,14 @@ watch(() => props.modelValue, (value) => {
     displayValue.value = value
 })
 
+watch(() => props.disabled, (isDisabled) => {
+    if (!isDisabled || !open.value) return
+
+    displayValue.value = props.modelValue
+    suppressCloseChange = true
+    open.value = false
+})
+
 const formattedStart = computed(() => {
     if (!props.modelValue || props.modelValue.length !== 2) return ''
     return formatDate(props.modelValue[0], props.displayFormat)
@@ -125,6 +133,7 @@ const clearButtonClasses = computed(() =>
 )
 
 function handlePanelUpdate(value: DateRange | null) {
+    if (props.disabled) return
     displayValue.value = value
     // 新值非空时取消抑制：清除后重新选择并关闭面板时仍需触发 change
     // （与单日期 useDatePicker 的语义一致）
@@ -133,6 +142,7 @@ function handlePanelUpdate(value: DateRange | null) {
 }
 
 function handlePanelConfirm(value: DateRange | null) {
+    if (props.disabled) return
     displayValue.value = value
     emit('update:modelValue', value)
     emit('change', value)
@@ -141,6 +151,7 @@ function handlePanelConfirm(value: DateRange | null) {
 }
 
 function handlePanelClear() {
+    if (props.disabled) return
     displayValue.value = null
     emit('update:modelValue', null)
     emit('change', null)
@@ -150,6 +161,7 @@ function handlePanelClear() {
 
 function handleClearClick(event: Event) {
     event.stopPropagation()
+    if (props.disabled) return
     displayValue.value = null
     emit('update:modelValue', null)
     emit('change', null)

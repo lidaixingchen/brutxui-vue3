@@ -4,6 +4,7 @@ import {
     SelectPortal as SelectPortalPrimitive,
     SelectContent as SelectContentPrimitive,
     SelectViewport as SelectViewportPrimitive,
+    injectSelectRootContext,
 } from 'reka-ui'
 import { cn } from '@/lib/utils'
 import SelectScrollUpButton from './SelectScrollUpButton.vue'
@@ -23,7 +24,7 @@ const props = withDefaults(defineProps<SelectContentProps>(), {
     class: undefined,
 })
 
-const { style: overlayLayerStyle, ref: floatingLayerRef } = useFloatingOverlayLayer('dropdown', () => props.position === 'item-aligned')
+const { style: overlayLayerStyle, ref: floatingLayerRef } = useFloatingOverlayLayer('dropdown', injectSelectRootContext().open, () => props.position === 'item-aligned')
 
 const contentClasses = computed(() =>
     cn(

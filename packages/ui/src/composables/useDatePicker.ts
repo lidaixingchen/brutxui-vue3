@@ -69,6 +69,17 @@ export function useDatePicker(options: UseDatePickerOptions): UseDatePickerRetur
         }
     })
 
+    watch(() => toValue(options.disabled), (isDisabled) => {
+        if (!isDisabled) return
+
+        const requestedOpen = toValue(options.openProp) ?? internalOpen.value
+        if (!requestedOpen) return
+
+        displayValue.value = toValue(options.modelValue) ?? null
+        suppressCloseChange = true
+        open.value = false
+    }, { immediate: true })
+
     // 无条件注册：openProp 为 undefined（非受控）时 watcher 无副作用（val 恒为 undefined 不写入），
     // 但运行期从非受控切换到受控（openProp 传入值为 undefined 的 ref 或动态引入）时，
     // 注册条件与取值能保持一致，internalOpen 不会与受控值脱节
@@ -87,6 +98,7 @@ export function useDatePicker(options: UseDatePickerOptions): UseDatePickerRetur
     })
 
     function handlePanelUpdate(value: Date | null) {
+        if (toValue(options.disabled)) return
         displayValue.value = value
         // 仅在新值非空时取消抑制：面板清除按钮会先 emit('clear') 再 emit('update:modelValue', null)，
         // 若此处无条件重置，会把 handlePanelClear 刚置位的 suppressCloseChange 中和掉，
@@ -96,6 +108,7 @@ export function useDatePicker(options: UseDatePickerOptions): UseDatePickerRetur
     }
 
     function handlePanelConfirm(value: Date | null) {
+        if (toValue(options.disabled)) return
         displayValue.value = value
         options.emit('update:modelValue', value)
         options.emit('change', value)
@@ -104,6 +117,7 @@ export function useDatePicker(options: UseDatePickerOptions): UseDatePickerRetur
     }
 
     function handlePanelClear() {
+        if (toValue(options.disabled)) return
         displayValue.value = null
         options.emit('update:modelValue', null)
         options.emit('change', null)
@@ -114,6 +128,7 @@ export function useDatePicker(options: UseDatePickerOptions): UseDatePickerRetur
 
     function handleClearClick(event: Event) {
         event.stopPropagation()
+        if (toValue(options.disabled)) return
         displayValue.value = null
         options.emit('update:modelValue', null)
         options.emit('change', null)

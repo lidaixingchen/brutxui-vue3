@@ -132,46 +132,49 @@ const rightCheckedSet: ComputedRef<ReadonlySet<TransferDataItem['key']>> = compu
     (): ReadonlySet<TransferDataItem['key']> => new Set<TransferDataItem['key']>(rightChecked.value),
 )
 
+const leftMovableKeys = computed(() => {
+    const movableKeys = new Set(sourceData.value.filter(item => !item.disabled).map(item => item.key))
+    return leftChecked.value.filter(key => movableKeys.has(key))
+})
+const rightMovableKeys = computed(() => {
+    const movableKeys = new Set(targetData.value.filter(item => !item.disabled).map(item => item.key))
+    return rightChecked.value.filter(key => movableKeys.has(key))
+})
+
 // 监视 props.modelValue 或 props.data 发生变化时，清理无效的选中项
 watch(
     [() => props.modelValue, () => props.data],
     () => {
         pruneLeftCheckedKeys(sourceData.value)
         pruneRightCheckedKeys(targetData.value)
+        removeLeftCheckedKeys(sourceData.value.filter(item => item.disabled).map(item => item.key))
+        removeRightCheckedKeys(targetData.value.filter(item => item.disabled).map(item => item.key))
     },
     { deep: true }
 )
 
 // 按钮禁用状态
-const leftToRightDisabled = computed(() => leftChecked.value.length === 0)
-const rightToLeftDisabled = computed(() => rightChecked.value.length === 0)
+const leftToRightDisabled = computed(() => leftMovableKeys.value.length === 0)
+const rightToLeftDisabled = computed(() => rightMovableKeys.value.length === 0)
 
 // 源列表 -> 目标列表 (左 -> 右)
 const addToRight = () => {
     if (leftToRightDisabled.value) return
-    const keysToMove = leftChecked.value.filter(key => {
-        const item = dataMap.value.get(key)
-        return item && !item.disabled
-    })
+    const keysToMove = leftMovableKeys.value
     const newValue = Array.from(new Set([...props.modelValue, ...keysToMove]))
     emit('update:modelValue', newValue)
     emit('change', newValue, 'right', keysToMove)
-    // 清除整个面板选中态：选中后才变为 disabled 的键无法进入 keysToMove，需一并清理，否则计数虚高
     removeLeftCheckedKeys(leftChecked.value)
 }
 
 // 目标列表 -> 源列表 (右 -> 左)
 const addToLeft = () => {
     if (rightToLeftDisabled.value) return
-    const keysToMove = rightChecked.value.filter(key => {
-        const item = dataMap.value.get(key)
-        return item && !item.disabled
-    })
+    const keysToMove = rightMovableKeys.value
     const moveSet = new Set(keysToMove)
     const newValue = props.modelValue.filter(key => !moveSet.has(key))
     emit('update:modelValue', newValue)
     emit('change', newValue, 'left', keysToMove)
-    // 同上：清除整个面板选中态，清理选中后才变为 disabled 的残留键
     removeRightCheckedKeys(rightChecked.value)
 }
 
@@ -204,7 +207,7 @@ function getItemClass(disabled: boolean | undefined, isChecked: boolean) {
                     <span class="min-w-0 break-words font-bold text-sm select-none">{{ resolvedTitles[0] }}</span>
                 </div>
                 <span class="text-xs font-semibold text-brutal-muted-foreground">
-                    {{ leftChecked.length }}/{{ filteredSourceData.length }}
+                    {{ leftMovableKeys.length }}/{{ filteredSourceData.length }}
                 </span>
             </div>
 
@@ -290,7 +293,7 @@ function getItemClass(disabled: boolean | undefined, isChecked: boolean) {
                     <span class="min-w-0 break-words font-bold text-sm select-none">{{ resolvedTitles[1] }}</span>
                 </div>
                 <span class="text-xs font-semibold text-brutal-muted-foreground">
-                    {{ rightChecked.length }}/{{ filteredTargetData.length }}
+                    {{ rightMovableKeys.length }}/{{ filteredTargetData.length }}
                 </span>
             </div>
 

@@ -553,6 +553,21 @@ describe('DatePicker', () => {
         const trigger = wrapper.find('[role="combobox"]')
         expect(trigger.text()).toContain('2026-06-26')
     })
+
+    it('closes the panel when disabled becomes true', async () => {
+        wrapper = mount(DatePicker, {
+            ...localeProvide,
+            props: { modelValue: new Date(2026, 0, 5), clearable: true },
+            attachTo: document.body,
+        })
+        await openPanel(wrapper)
+
+        await wrapper.setProps({ disabled: true })
+        await nextTick()
+
+        expect(wrapper.emitted('close')).toBeTruthy()
+        expect(wrapper.find('[role="combobox"]').attributes('aria-expanded')).toBe('false')
+    })
 })
 
 describe('DatePickerPanel', () => {

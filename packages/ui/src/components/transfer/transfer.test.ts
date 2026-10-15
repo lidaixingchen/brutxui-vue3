@@ -134,7 +134,7 @@ describe('Transfer', () => {
         expect(changeEvents![0]).toEqual([[5], 'left', [4]])
     })
 
-    it('filters items correctly when filterable is true', async () => {
+    it('moves selected items hidden by search from their current panel', async () => {
         const wrapper = mount(Transfer, {
             props: {
                 data: mockData,
@@ -148,16 +148,33 @@ describe('Transfer', () => {
         const inputs = wrapper.findAll('input')
         expect(inputs.length).toBeGreaterThanOrEqual(2)
 
-        // 模拟在左侧输入搜索 'Item 3'
+        // 隐藏左侧已选条目后，仍可从左侧移动该条目
+        const item1 = wrapper.findAll('.cursor-pointer').find(w => w.text().includes('Item 1'))
+        await item1!.trigger('click')
         const leftInput = inputs[0]
         await leftInput.setValue('Item 3')
 
-        // 此时源列表中应该只有 'Item 3'，'Item 1' 应该被过滤掉
         expect(wrapper.text()).toContain('Item 3')
         expect(wrapper.text()).not.toContain('Item 1')
+        const buttons = wrapper.findAllComponents(Button)
+        expect(buttons[0].props('disabled')).toBe(false)
+        await buttons[0].trigger('click')
+        expect(wrapper.emitted('change')?.at(-1)).toEqual([[4, 5, 1], 'right', [1]])
+
+        // 父级接收左移结果后，右侧搜索隐藏的选中项仍属于右侧并可移回
+        await wrapper.setProps({ modelValue: [1, 4, 5] })
+        const item4 = wrapper.findAll('.cursor-pointer').find(w => w.text().includes('Item 4'))
+        await item4!.trigger('click')
+        const rightInput = wrapper.findAll('input')[1]
+        await rightInput.setValue('Item 5')
+
+        expect(wrapper.text()).not.toContain('Item 4')
+        expect(buttons[1].props('disabled')).toBe(false)
+        await buttons[1].trigger('click')
+        expect(wrapper.emitted('change')?.at(-1)).toEqual([[1, 5], 'left', [4]])
     })
 
-    it('clears left checked residue when a selected item becomes disabled', async () => {
+    it('removes a disabled left selection and blocks an empty move', async () => {
         const wrapper = mount(Transfer, {
             props: {
                 data: [
@@ -183,13 +200,27 @@ describe('Transfer', () => {
             ],
         })
 
-        // 点击右移：keysToMove 为空，但整个面板选中态应被清空
+        expect(wrapper.text()).toContain('0/2')
+        const disabledCheckbox = wrapper.findAllComponents(Checkbox).find(checkbox => checkbox.props('disabled'))
+        expect(disabledCheckbox?.props('checked')).toBe(false)
         const buttons = wrapper.findAllComponents(Button)
+        expect(buttons[0].props('disabled')).toBe(true)
         await buttons[0].trigger('click')
         expect(wrapper.text()).toContain('0/2')
+        expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+        expect(wrapper.emitted('change')).toBeUndefined()
+
+        await wrapper.setProps({
+            data: [
+                { key: 1, label: 'Item 1' },
+                { key: 2, label: 'Item 2' },
+            ],
+        })
+        expect(wrapper.text()).toContain('0/2')
+        expect(buttons[0].props('disabled')).toBe(true)
     })
 
-    it('clears right checked residue when a selected item becomes disabled', async () => {
+    it('removes a disabled right selection and blocks an empty move', async () => {
         const wrapper = mount(Transfer, {
             props: {
                 data: [
@@ -215,10 +246,24 @@ describe('Transfer', () => {
             ],
         })
 
-        // 点击左移：keysToMove 为空，但右侧选中态应被清空
+        expect(wrapper.text()).toContain('0/2')
+        const disabledCheckbox = wrapper.findAllComponents(Checkbox).find(checkbox => checkbox.props('disabled'))
+        expect(disabledCheckbox?.props('checked')).toBe(false)
         const buttons = wrapper.findAllComponents(Button)
+        expect(buttons[1].props('disabled')).toBe(true)
         await buttons[1].trigger('click')
         expect(wrapper.text()).toContain('0/2')
+        expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+        expect(wrapper.emitted('change')).toBeUndefined()
+
+        await wrapper.setProps({
+            data: [
+                { key: 1, label: 'Item 1' },
+                { key: 2, label: 'Item 2' },
+            ],
+        })
+        expect(wrapper.text()).toContain('0/2')
+        expect(buttons[1].props('disabled')).toBe(true)
     })
 
     it('deduplicates duplicate keys in modelValue in right panel', () => {

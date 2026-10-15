@@ -228,11 +228,25 @@ function collectMatchedAncestors(
     }
 }
 
-// 选择首个非禁用的节点作为初始焦点（roving tabindex）
-// 若 focusedId 指向禁用节点，所有 treeitem 的 tabindex 均为 -1，键盘将无法进入树
-function findFirstFocusableNode(nodes: TreeNode[]): TreeNode | undefined {
-    return nodes.find((node) => !node.disabled)
+function getVisibleFocusableNodes(nodes: TreeNode[]): TreeNode[] {
+    const visibleNodes: TreeNode[] = []
+    const stack = [...nodes].reverse()
+
+    while (stack.length > 0) {
+        const node = stack.pop()!
+        if (!node.disabled) visibleNodes.push(node)
+
+        if (node.children?.length && expandedIds.value.has(node.id)) {
+            for (let index = node.children.length - 1; index >= 0; index--) {
+                stack.push(node.children[index])
+            }
+        }
+    }
+
+    return visibleNodes
 }
+
+const visibleFocusableNodes = computed(() => getVisibleFocusableNodes(filteredNodes.value))
 
 watch(searchQuery, (query) => {
     if (query) {
@@ -248,18 +262,12 @@ watch(searchQuery, (query) => {
     }
 })
 
-// 更新焦点节点当搜索结果变化时
-watch(filteredNodes, (nodes) => {
-    if (open.value && focusedId.value) {
-        // 检查当前焦点节点是否仍在过滤结果中（递归检查子节点）
-        const isFocusedVisible = flattenNodes(nodes).some(node => node.id === focusedId.value)
-        if (!isFocusedVisible) {
-            // 焦点节点不在过滤结果中，重置为首个可聚焦（非禁用）节点
-            const firstNode = findFirstFocusableNode(nodes)
-            focusedId.value = firstNode?.id
-        }
-    }
-})
+// 保持焦点落在当前实际展示的可用节点中，避免搜索或折叠后焦点留在已隐藏项上。
+watch([open, visibleFocusableNodes], ([isOpen, nodes]) => {
+    if (!isOpen) return
+    if (nodes.some((node) => node.id === focusedId.value)) return
+    focusedId.value = nodes[0]?.id
+}, { flush: 'post' })
 
 // 更新焦点节点（roving tabindex）
 function handleNodeFocus(id: string) {
@@ -327,12 +335,6 @@ watch(open, (isOpen) => {
     if (!isOpen) {
         searchQuery.value = ''
         focusedId.value = undefined
-    } else {
-        // 打开时设置首个可聚焦（非禁用）节点为焦点节点（roving tabindex）
-        const firstNode = findFirstFocusableNode(filteredNodes.value)
-        if (firstNode) {
-            focusedId.value = firstNode.id
-        }
     }
 })
 

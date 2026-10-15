@@ -6,13 +6,15 @@ import {
     onUpdated,
     provide,
     shallowRef,
+    watch,
     watchPostEffect,
     type ComputedRef,
     type InjectionKey,
+    type Ref,
     type ShallowRef,
     type StyleValue,
 } from 'vue'
-import { getComputedStyle, getMutationObserverCtor } from './env'
+import { getComputedStyle, getDocument, getMutationObserverCtor } from './env'
 import { useForwardExpose } from 'reka-ui'
 
 type ModalLayerToken = 'dialog'
@@ -66,6 +68,20 @@ function readZIndex(element: HTMLElement): number | null {
     return Number.isFinite(value) ? value : null
 }
 
+function observeViewportResize(element: HTMLElement, callback: () => void): () => void {
+    const view = element.ownerDocument.defaultView
+    if (!view) return () => {}
+
+    const visualViewport = view.visualViewport
+    view.addEventListener('resize', callback)
+    visualViewport?.addEventListener('resize', callback)
+
+    return () => {
+        view.removeEventListener('resize', callback)
+        visualViewport?.removeEventListener('resize', callback)
+    }
+}
+
 function readLayerToken(element: HTMLElement, token: ModalLayerToken | FloatingLayerToken): number | null {
     const probe = element.ownerDocument.createElement('span')
     probe.style.position = 'absolute'
@@ -98,6 +114,7 @@ function createModalLayerContext(parentLayer: ModalLayerContext | null): ModalLa
     const zIndex = shallowRef<number | null>(null)
     const revision = shallowRef(0)
     let observer: MutationObserver | null = null
+    let stopViewportObservation: (() => void) | null = null
     let observedPath: Element[] = []
     let tokenValues: Array<number | null> = []
 
@@ -137,6 +154,10 @@ function createModalLayerContext(parentLayer: ModalLayerContext | null): ModalLa
         const currentElement = element.value
         observer?.disconnect()
         observer = null
+        stopViewportObservation?.()
+        stopViewportObservation = currentElement
+            ? observeViewportResize(currentElement, refresh)
+            : null
         observedPath = currentElement ? readPath(currentElement) : []
 
         const Observer = getMutationObserverCtor()
@@ -205,7 +226,10 @@ function createModalLayerContext(parentLayer: ModalLayerContext | null): ModalLa
     }
 
     onMounted(observeElement)
-    onBeforeUnmount(() => observer?.disconnect())
+    onBeforeUnmount(() => {
+        observer?.disconnect()
+        stopViewportObservation?.()
+    })
 
     return context
 }
@@ -238,12 +262,14 @@ export function useCurrentModalOverlayLayerStyle(): ComputedRef<StyleValue> {
 
 export function useFloatingOverlayLayer(
     token: FloatingLayerToken,
+    open?: Readonly<Ref<boolean>>,
     itemAligned: () => boolean = () => false,
 ): { style: ComputedRef<StyleValue>; ref: ReturnType<typeof useForwardExpose>['forwardRef'] } {
     const modalLayer = inject(modalLayerKey, null)
     const { forwardRef, currentRef } = useForwardExpose()
     let observedElement: HTMLElement | null = null
     let observer: MutationObserver | null = null
+    let stopViewportObservation: (() => void) | null = null
 
     const style = computed(() => {
         if (!modalLayer) {
@@ -280,7 +306,9 @@ export function useFloatingOverlayLayer(
 
         if (element !== observedElement) {
             observer?.disconnect()
+            stopViewportObservation?.()
             observedElement = element
+            stopViewportObservation = observeViewportResize(element, syncPositionerLayer)
             const Observer = getMutationObserverCtor()
             observer = Observer ? new Observer(syncPositionerLayer) : null
             let ancestor: Element | null = element
@@ -296,9 +324,20 @@ export function useFloatingOverlayLayer(
 
     // 定位容器是浮层的实际堆叠上下文；内容层级变化时须同步容器。
     watchPostEffect(syncPositionerLayer)
-    onMounted(syncPositionerLayer)
+    if (open) watch(open, syncPositionerLayer, { flush: 'post' })
+    onMounted(() => {
+        // 关闭的 Portal 尚无内容元素，视口监听需先于内容挂载建立。
+        const documentElement = getDocument()?.documentElement
+        if (!stopViewportObservation && documentElement) {
+            stopViewportObservation = observeViewportResize(documentElement, syncPositionerLayer)
+        }
+        syncPositionerLayer()
+    })
     onUpdated(syncPositionerLayer)
-    onBeforeUnmount(() => observer?.disconnect())
+    onBeforeUnmount(() => {
+        observer?.disconnect()
+        stopViewportObservation?.()
+    })
 
     return { style, ref: forwardRef }
 }

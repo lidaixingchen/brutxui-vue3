@@ -273,4 +273,48 @@ describe('useDatePicker', () => {
         await nextTick()
         expect(displayValue.value).toEqual(new Date(2026, 5, 26))
     })
+
+    it('closes an open controlled panel when disabled becomes true', async () => {
+        const disabled = ref(false)
+        const openProp = ref(false)
+        const openUpdates: boolean[] = []
+        const { open } = createDatePicker({
+            disabled,
+            openProp,
+            emitUpdateOpen: (value) => {
+                openUpdates.push(value)
+                openProp.value = value
+            },
+            emit: () => {},
+        })
+
+        openProp.value = true
+        await nextTick()
+        expect(open.value).toBe(true)
+
+        disabled.value = true
+        await nextTick()
+
+        expect(open.value).toBe(false)
+        expect(openUpdates).toContain(false)
+    })
+
+    it('ignores panel updates, confirmation, and clearing while disabled', () => {
+        const modelValue = new Date(2026, 0, 1)
+        const emitted: Array<[string, unknown]> = []
+        const { displayValue, handlePanelUpdate, handlePanelConfirm, handlePanelClear, handleClearClick } = createDatePicker({
+            disabled: () => true,
+            modelValue: () => modelValue,
+            emit: (event: string, ...args: unknown[]) => emitted.push([event, args[0]]),
+        })
+
+        handlePanelUpdate(new Date(2026, 5, 26))
+        handlePanelConfirm(new Date(2026, 5, 26))
+        handlePanelClear()
+        handleClearClick(new MouseEvent('click'))
+
+        expect(displayValue.value).toEqual(modelValue)
+        expect(emitted.filter(([event]) => event === 'update:modelValue')).toEqual([])
+        expect(emitted.filter(([event]) => event === 'change')).toEqual([])
+    })
 })

@@ -54,6 +54,57 @@ async function pressKey(item: HTMLElement, key: string): Promise<void> {
 }
 
 describe('TreeSelect keyboard browser integration', () => {
+    it('tabs to and selects a matching child below a disabled ancestor', async () => {
+        const disabledRootNodes: TreeNode[] = [
+            {
+                id: 'disabled-root',
+                label: 'Disabled Root',
+                disabled: true,
+                children: [
+                    { id: 'enabled-child', label: 'Enabled Child' },
+                    { id: 'enabled-peer', label: 'Enabled Peer' },
+                ],
+            },
+            { id: 'outside', label: 'Outside' },
+        ]
+        const selectedValues: (string | string[] | undefined)[] = []
+        wrapper = mount(TreeSelect, {
+            props: {
+                nodes: disabledRootNodes,
+                'onUpdate:modelValue': (value: string | string[] | undefined) => selectedValues.push(value),
+            },
+            attachTo: host!,
+        })
+        const trigger = host!.querySelector<HTMLElement>('[role="combobox"]')
+        if (!trigger) throw new Error('TreeSelect trigger not found')
+
+        await userEvent.click(trigger)
+        const input = document.querySelector<HTMLInputElement>('input[type="text"]')
+        if (!input) throw new Error('TreeSelect search input not found')
+        await userEvent.click(input)
+        await userEvent.type(input, 'Enabled')
+
+        const child = getTreeItem('Enabled Child')
+        await expect.poll(() => child.getAttribute('tabindex')).toBe('0')
+
+        await userEvent.tab()
+        await expect.poll(() => document.activeElement).toBe(child)
+        await pressKey(child, 'ArrowDown')
+        expect(document.activeElement).toBe(getTreeItem('Enabled Peer'))
+        await pressKey(getTreeItem('Enabled Peer'), 'ArrowUp')
+        expect(document.activeElement).toBe(child)
+        await pressKey(child, 'Enter')
+
+        await expect.poll(() => selectedValues).toEqual(['enabled-child'])
+        await expect.poll(() => trigger.getAttribute('aria-expanded')).toBe('false')
+
+        await userEvent.click(trigger)
+        const outside = getTreeItem('Outside')
+        expect(document.querySelectorAll('[role="treeitem"]')).toHaveLength(2)
+        expect(outside.getAttribute('tabindex')).toBe('0')
+        expect(document.body.textContent).not.toContain('Enabled Child')
+    })
+
     it('enters the tree, navigates across nested levels once, and restores trigger focus on close', async () => {
         wrapper = mount(TreeSelect, { props: { nodes }, attachTo: host! })
         const trigger = host!.querySelector<HTMLElement>('[role="combobox"]')

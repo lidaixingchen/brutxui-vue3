@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import {
     DropdownMenuPortal as DropdownMenuPortalPrimitive,
     DropdownMenuContent as DropdownMenuContentPrimitive,
+    injectDropdownMenuRootContext,
 } from 'reka-ui'
 import { cn } from '@/lib/utils'
 import { floatingContentSideOffsets } from '@/lib/floating-content-variants'
@@ -26,7 +27,7 @@ const props = withDefaults(defineProps<DropdownMenuContentProps>(), {
     class: undefined,
 })
 
-const { style: overlayLayerStyle, ref: floatingLayerRef } = useFloatingOverlayLayer('dropdown')
+const { style: overlayLayerStyle, ref: floatingLayerRef } = useFloatingOverlayLayer('dropdown', injectDropdownMenuRootContext().open)
 
 const classes = computed(() =>
     cn(dropdownMenuContentVariants(), props.class)

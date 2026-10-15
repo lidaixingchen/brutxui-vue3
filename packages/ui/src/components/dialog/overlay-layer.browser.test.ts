@@ -1,11 +1,19 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { nextTick } from 'vue'
+import { page, userEvent } from 'vitest/browser'
 import '../../../dist/styles.css'
 import OverlayLayerTestFixture from '@/test/fixtures/OverlayLayerTestFixture.vue'
 import NestedDialogTestFixture from './NestedDialogTestFixture.vue'
 import { mount } from '@/test/browser-mount'
 
 const OVERLAY_SETTLE_DURATION_MS = 100
+const RESPONSIVE_DIALOG_LAYER_BREAKPOINT_PX = 768
+const NARROW_VIEWPORT_WIDTH_PX = RESPONSIVE_DIALOG_LAYER_BREAKPOINT_PX - 1
+const WIDE_VIEWPORT_WIDTH_PX = RESPONSIVE_DIALOG_LAYER_BREAKPOINT_PX
+const TEST_VIEWPORT_HEIGHT_PX = 900
+const RESPONSIVE_DIALOG_LAYER_VALUE = 5000
+const RESPONSIVE_POPOVER_LAYER_VALUE = 6200
+const LIVE_POPOVER_LAYER_VALUE = 3500
 
 interface OverlayLayerFixtureVm {
     dialogOpen: boolean
@@ -24,18 +32,26 @@ interface OverlayLayerFixtureVm {
 describe('Overlay Layer Browser Integration (Chromium)', () => {
     let host: HTMLDivElement | null = null
     let activeWrapper: ReturnType<typeof mount> | null = null
+    let originalViewport: { width: number; height: number } | null = null
+    let responsiveLayerStyle: HTMLStyleElement | null = null
 
     beforeEach(() => {
         host = document.createElement('div')
         document.body.appendChild(host)
     })
 
-    afterEach(() => {
+    afterEach(async () => {
         activeWrapper?.unmount()
         activeWrapper = null
         if (host?.parentNode) {
             host.parentNode.removeChild(host)
             host = null
+        }
+        responsiveLayerStyle?.remove()
+        responsiveLayerStyle = null
+        if (originalViewport) {
+            await page.viewport(originalViewport.width, originalViewport.height)
+            originalViewport = null
         }
         document.body.style.overflow = ''
         document.body.style.pointerEvents = ''
@@ -125,6 +141,120 @@ describe('Overlay Layer Browser Integration (Chromium)', () => {
         const outerLayer = readZIndex(document.querySelector<HTMLElement>('#outer-content')!.parentElement!)
         const innerLayer = readZIndex(document.querySelector<HTMLElement>('#inner-content')!.parentElement!)
         expect(innerLayer).toBeGreaterThan(outerLayer)
+    })
+
+    it('updates nested modal and popper layers when responsive tokens change', async () => {
+        originalViewport = { width: window.innerWidth, height: window.innerHeight }
+        await page.viewport(NARROW_VIEWPORT_WIDTH_PX, TEST_VIEWPORT_HEIGHT_PX)
+
+        responsiveLayerStyle = document.createElement('style')
+        responsiveLayerStyle.textContent = `
+            @media (min-width: ${RESPONSIVE_DIALOG_LAYER_BREAKPOINT_PX}px) {
+                :root {
+                    --z-index-dialog: ${RESPONSIVE_DIALOG_LAYER_VALUE};
+                    --z-index-popover: ${RESPONSIVE_POPOVER_LAYER_VALUE};
+                }
+            }
+        `
+        document.head.appendChild(responsiveLayerStyle)
+
+        expect(window.matchMedia(`(min-width: ${RESPONSIVE_DIALOG_LAYER_BREAKPOINT_PX}px)`).matches).toBe(false)
+
+        activeWrapper = mount(NestedDialogTestFixture, { attachTo: host! })
+        const vm = activeWrapper.vm as unknown as {
+            outerOpen: boolean
+            innerOpen: boolean
+            innerPopoverOpen: boolean
+            rootPopoverOpen: boolean
+        }
+        vm.rootPopoverOpen = true
+        await nextTick()
+        await settleOverlay()
+        vm.outerOpen = true
+        await nextTick()
+        await settleOverlay()
+        vm.innerOpen = true
+        await nextTick()
+        await settleOverlay()
+        vm.innerPopoverOpen = true
+        await nextTick()
+        await settleOverlay()
+
+        const outer = document.querySelector<HTMLElement>('#outer-content')!.parentElement!
+        const inner = document.querySelector<HTMLElement>('#inner-content')!.parentElement!
+        const innerPopover = document.querySelector<HTMLElement>('[data-testid="inner-dialog-popover"]')!
+        const positioner = innerPopover.closest<HTMLElement>('[data-reka-popper-content-wrapper]')!
+        const rootPopover = document.querySelector<HTMLElement>('[data-testid="root-popover-content"]')!
+        const rootPositioner = rootPopover.closest<HTMLElement>('[data-reka-popper-content-wrapper]')!
+        const overlays = [...document.querySelectorAll<HTMLElement>('.bg-brutal-overlay')]
+        const outerOverlay = overlays.find(overlay => readZIndex(overlay) === readZIndex(outer))
+        const innerOverlay = overlays.find(overlay => readZIndex(overlay) === readZIndex(inner))
+
+        expect(readZIndex(outer)).toBeGreaterThan(0)
+        expect(outerOverlay).toBeDefined()
+        expect(innerOverlay).toBeDefined()
+        expect(readZIndex(outerOverlay!)).toBe(readZIndex(outer))
+        expect(readZIndex(innerOverlay!)).toBe(readZIndex(inner))
+        expect(readZIndex(inner)).toBeGreaterThan(readZIndex(outer))
+        expect(readZIndex(innerPopover)).toBeGreaterThan(readZIndex(inner))
+        expect(readZIndex(positioner)).toBe(readZIndex(innerPopover))
+        expect(readZIndex(rootPositioner)).toBe(readZIndex(rootPopover))
+
+        await page.viewport(WIDE_VIEWPORT_WIDTH_PX, TEST_VIEWPORT_HEIGHT_PX)
+        await settleOverlay()
+
+        expect(window.matchMedia(`(min-width: ${RESPONSIVE_DIALOG_LAYER_BREAKPOINT_PX}px)`).matches).toBe(true)
+        expect(readZIndex(outer)).toBe(RESPONSIVE_DIALOG_LAYER_VALUE)
+        expect(readZIndex(outerOverlay!)).toBe(readZIndex(outer))
+        expect(readZIndex(innerOverlay!)).toBe(readZIndex(inner))
+        expect(readZIndex(inner)).toBeGreaterThan(readZIndex(outer))
+        expect(readZIndex(innerPopover)).toBeGreaterThan(readZIndex(inner))
+        expect(readZIndex(positioner)).toBe(readZIndex(innerPopover))
+        expect(readZIndex(rootPopover)).toBe(RESPONSIVE_POPOVER_LAYER_VALUE)
+        expect(readZIndex(rootPositioner)).toBe(readZIndex(rootPopover))
+    })
+
+    it('tracks the positioner after a root popover opens through its trigger', async () => {
+        originalViewport = { width: window.innerWidth, height: window.innerHeight }
+        await page.viewport(NARROW_VIEWPORT_WIDTH_PX, TEST_VIEWPORT_HEIGHT_PX)
+        responsiveLayerStyle = document.createElement('style')
+        responsiveLayerStyle.textContent = `
+            @media (min-width: ${RESPONSIVE_DIALOG_LAYER_BREAKPOINT_PX}px) {
+                :root { --z-index-popover: ${RESPONSIVE_POPOVER_LAYER_VALUE}; }
+            }
+        `
+        document.head.appendChild(responsiveLayerStyle)
+        activeWrapper = mount(NestedDialogTestFixture, { attachTo: host! })
+
+        await userEvent.click(host!.querySelector<HTMLElement>('#root-popover-trigger')!)
+        await settleOverlay()
+        const content = document.querySelector<HTMLElement>('[data-testid="root-popover-content"]')!
+        const positioner = content.closest<HTMLElement>('[data-reka-popper-content-wrapper]')!
+        expect(readZIndex(positioner)).toBe(readZIndex(content))
+
+        const tokenName = '--z-index-popover'
+        layerTokenValues = new Map([[tokenName, document.documentElement.style.getPropertyValue(tokenName)]])
+        document.documentElement.style.setProperty(tokenName, String(LIVE_POPOVER_LAYER_VALUE))
+        await settleOverlay()
+        expect(readZIndex(content)).toBe(LIVE_POPOVER_LAYER_VALUE)
+        expect(readZIndex(positioner)).toBe(readZIndex(content))
+        document.documentElement.style.removeProperty(tokenName)
+
+        await page.viewport(WIDE_VIEWPORT_WIDTH_PX, TEST_VIEWPORT_HEIGHT_PX)
+        await settleOverlay()
+        expect(readZIndex(content)).toBe(RESPONSIVE_POPOVER_LAYER_VALUE)
+        expect(readZIndex(positioner)).toBe(readZIndex(content))
+
+        await userEvent.keyboard('[Escape]')
+        await expect.poll(() => document.querySelector('[data-testid="root-popover-content"]')).toBeNull()
+        await userEvent.click(host!.querySelector<HTMLElement>('#root-popover-trigger')!)
+        await settleOverlay()
+        const reopenedContent = document.querySelector<HTMLElement>('[data-testid="root-popover-content"]')!
+        const reopenedPositioner = reopenedContent.closest<HTMLElement>('[data-reka-popper-content-wrapper]')!
+        document.documentElement.style.setProperty(tokenName, String(LIVE_POPOVER_LAYER_VALUE))
+        await settleOverlay()
+        expect(readZIndex(reopenedContent)).toBe(LIVE_POPOVER_LAYER_VALUE)
+        expect(readZIndex(reopenedPositioner)).toBe(readZIndex(reopenedContent))
     })
 
     it('preserves CSS tokens and follows live modal class and style changes', async () => {

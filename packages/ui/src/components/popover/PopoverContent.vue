@@ -4,6 +4,7 @@ import type { PopoverContentProps as RekaPopoverContentProps } from 'reka-ui'
 import {
     PopoverPortal as PopoverPortalPrimitive,
     PopoverContent as PopoverContentPrimitive,
+    injectPopoverRootContext,
 } from 'reka-ui'
 import { cn } from '@/lib/utils'
 import { floatingContentSideOffsets } from '@/lib/floating-content-variants'
@@ -26,7 +27,7 @@ const props = withDefaults(defineProps<PopoverContentProps>(), {
     class: undefined,
 })
 
-const { style: overlayLayerStyle, ref: floatingLayerRef } = useFloatingOverlayLayer('popover')
+const { style: overlayLayerStyle, ref: floatingLayerRef } = useFloatingOverlayLayer('popover', injectPopoverRootContext().open)
 
 const classes = computed(() =>
     cn(popoverContentVariants(), props.class)

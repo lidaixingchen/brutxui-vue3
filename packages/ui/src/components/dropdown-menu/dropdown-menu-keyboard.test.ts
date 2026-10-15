@@ -1,8 +1,17 @@
 import { mount } from '@vue/test-utils'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import DropdownMenuContent from './DropdownMenuContent.vue'
 import DropdownMenuItem from './DropdownMenuItem.vue'
 import DropdownMenuSeparator from './DropdownMenuSeparator.vue'
+
+vi.mock('reka-ui', async (importOriginal) => {
+    const primitives = await importOriginal<typeof import('reka-ui')>()
+    const { ref } = await import('vue')
+    return {
+        ...primitives,
+        injectDropdownMenuRootContext: () => ({ open: ref(false) }),
+    }
+})
 
 describe('DropdownMenu keyboard navigation support', () => {
     afterEach(() => {

@@ -1,8 +1,17 @@
 import { mount } from '@vue/test-utils'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import SelectTrigger from './SelectTrigger.vue'
 import SelectContent from './SelectContent.vue'
 import SelectItem from './SelectItem.vue'
+
+vi.mock('reka-ui', async (importOriginal) => {
+    const primitives = await importOriginal<typeof import('reka-ui')>()
+    const { ref } = await import('vue')
+    return {
+        ...primitives,
+        injectSelectRootContext: () => ({ open: ref(false) }),
+    }
+})
 
 describe('Select keyboard navigation support', () => {
     afterEach(() => {
