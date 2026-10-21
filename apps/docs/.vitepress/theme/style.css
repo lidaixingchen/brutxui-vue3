@@ -1192,8 +1192,9 @@ body > [data-reka-popper-content-wrapper],
 /* 1. Prevent popper/portal wrapper from clipping the neo-brutalist box shadows */
 /* 作用域收窄到日历/日期选择器弹层，避免污染其他 reka 浮动弹层 */
 [data-reka-popper-content-wrapper]:has(.brutx-calendar) {
-    padding-right: 16px !important;
-    padding-bottom: 16px !important;
+    --brutx-calendar-popper-gutter: calc(var(--spacing, 0.25rem) * 4);
+    padding-right: var(--brutx-calendar-popper-gutter) !important;
+    padding-bottom: var(--brutx-calendar-popper-gutter) !important;
 }
 
 /* 2. Prevent v-calendar highlights container from clipping selected cell shadows */

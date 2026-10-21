@@ -21,7 +21,7 @@ import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { useLocale } from '@/composables/useLocale'
-import { datePickerPanelVariants, datePickerShortcutVariants, datePickerFooterVariants } from './date-picker-variants'
+import { dateTimePickerPanelVariants, datePickerShortcutVariants, datePickerFooterVariants } from './date-picker-variants'
 import { type DatePickerShortcut } from './types'
 import { resolveShortcutValue } from './date-picker-utils'
 import TimePicker from './TimePicker.vue'
@@ -65,7 +65,7 @@ const resolvedShortcutsLabel = computed(() => t('datePicker.shortcuts'))
 
 const hasShortcuts = computed(() => props.shortcuts.length > 0)
 
-const panelClasses = computed(() => cn(datePickerPanelVariants()))
+const panelClasses = computed(() => cn(dateTimePickerPanelVariants()))
 
 // 合并后的结果收敛到 [minDate, maxDate]：日历禁用日期但时间部分可能绕过边界。
 // 天粒度边界（maxDate 时分秒为 00:00）时按"日"钳制：仅日期跨界才收敛到边界日，
@@ -187,7 +187,7 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
 }
 
 const rootClasses = computed(() => cn('brutx-calendar', 'p-2 sm:p-3', 'bg-brutal-bg text-brutal-fg'))
-const footerClasses = cn(datePickerFooterVariants())
+const footerClasses = cn(datePickerFooterVariants(), 'shrink-0')
 
 function getShortcutClasses(shortcut: DatePickerShortcut): string {
     return cn(datePickerShortcutVariants({ active: isShortcutActive(shortcut) }))
@@ -200,7 +200,7 @@ function getShortcutClasses(shortcut: DatePickerShortcut): string {
             v-if="hasShortcuts"
             role="listbox"
             :aria-label="resolvedShortcutsLabel"
-            class="flex flex-col gap-1 p-2 border-r-3 border-brutal min-w-[8rem]"
+            class="flex min-h-0 flex-col gap-1 overflow-y-auto p-2 border-r-3 border-brutal min-w-[8rem]"
         >
             <button
                 v-for="(shortcut, index) in shortcuts"
@@ -215,8 +215,8 @@ function getShortcutClasses(shortcut: DatePickerShortcut): string {
             </button>
         </div>
 
-        <div class="flex flex-col">
-            <div :class="rootClasses">
+        <div class="flex min-h-0 flex-1 flex-col">
+            <div :class="rootClasses" class="min-h-0 flex-1 overflow-y-auto">
                 <DatePicker
                     :model-value="modelValue"
                     mode="date"
@@ -256,6 +256,7 @@ function getShortcutClasses(shortcut: DatePickerShortcut): string {
                 :show-seconds="showSeconds"
                 :time-step="timeStep"
                 :embedded="true"
+                class="shrink-0"
                 :aria-label="t('datePicker.timePlaceholder')"
                 @update:model-value="handleTimeUpdate"
             />

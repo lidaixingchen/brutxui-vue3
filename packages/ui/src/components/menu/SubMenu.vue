@@ -4,6 +4,7 @@ import { ChevronDown } from '@lucide/vue'
 import { MENU_KEY, SUB_MENU_HOVER_DELAY_MS, type MenuRuntimeContext } from './menu-types'
 import { hasDocument, getDocument, matchMedia } from '@/lib/env'
 import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
+import { subMenuLayoutVariants, subMenuTitleVariants, subMenuTriggerLayoutVariants } from './menu-variants'
 
 interface SubMenuProps {
     /** Unique key of the sub-menu */
@@ -227,10 +228,11 @@ const tabIndex = computed(() => {
     return context?.firstEnabledIndex.value === props.index ? 0 : -1
 })
 
+const titleClasses = computed(() => cn(subMenuTitleVariants({ vertical: isVertical.value })))
+
 const subMenuClasses = computed(() => {
     return cn(
-        'list-none',
-        !isVertical.value && 'relative',
+        subMenuLayoutVariants({ vertical: isVertical.value }),
         props.class
     )
 })
@@ -239,6 +241,7 @@ const triggerClasses = computed(() => {
     return cn(
         'flex items-center justify-between gap-4 px-4 py-2.5 rounded-brutal border-3 font-semibold text-sm cursor-pointer select-none transition-all duration-150 motion-reduce:transition-none',
         FOCUS_RING_CLASSES,
+        subMenuTriggerLayoutVariants({ vertical: isVertical.value }),
         props.inset && 'pl-10',
         isChildActive.value
             ? 'text-brutal-primary-foreground bg-brutal-primary border-brutal shadow-brutal-sm'
@@ -429,7 +432,7 @@ function onAfterLeave(el: Element) {
             @click="handleTriggerClick"
             @keydown="handleTriggerKeydown"
         >
-            <span class="flex items-center gap-2 truncate">
+            <span :class="titleClasses">
                 <slot name="title">{{ title }}</slot>
             </span>
             <ChevronDown :class="arrowClasses" />

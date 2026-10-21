@@ -1015,8 +1015,9 @@
 /* 作用域收窄到日历/日期选择器弹层：reka popper wrapper 是 .brutx-calendar 的祖先，全量命中会
    给所有浮动弹层（popover/tooltip/dropdown 等）额外加 padding，干扰其位置测量与视觉偏移 */
 [data-reka-popper-content-wrapper]:has(.brutx-calendar) {
-    padding-right: 16px !important;
-    padding-bottom: 16px !important;
+    --brutx-calendar-popper-gutter: calc(var(--spacing, 0.25rem) * 4);
+    padding-right: var(--brutx-calendar-popper-gutter) !important;
+    padding-bottom: var(--brutx-calendar-popper-gutter) !important;
 }
 
 /* 2. Prevent v-calendar highlights container from clipping selected cell shadows */

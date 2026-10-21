@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { userEvent } from 'vitest/browser'
 import { defineComponent, h, nextTick, ref, type Component, type Ref } from 'vue'
 import { mount } from '@/test/browser-mount'
+import '../../../dist/styles.css'
 import Menu from './Menu.vue'
 import MenuItem from './MenuItem.vue'
 import SubMenu from './SubMenu.vue'
@@ -255,5 +256,71 @@ describe('Menu roving focus browser integration', () => {
         await nextTick()
         expect(host!.querySelector('#submenu')).toBeNull()
         expect(document.activeElement).toBe(outside)
+    })
+})
+
+describe('Menu responsive layout browser integration', () => {
+    it('wraps horizontal items before their labels or icons shrink at narrow widths', async () => {
+        const menuSurfaceWidth = '304px'
+        const component = defineComponent({
+            setup() {
+                return () => h('div', { style: { width: menuSurfaceWidth } }, [
+                    h(Menu, { id: 'horizontal-menu', mode: 'horizontal' }, {
+                        default: () => [
+                            h(MenuItem, { index: 'home', id: 'menu-home' }, {
+                                default: () => h('span', { id: 'home-label' }, '首页'),
+                            }),
+                            h(SubMenu, { index: 'admin', id: 'menu-admin', title: '管理面板' }, {
+                                title: () => h('span', { id: 'admin-label' }, '管理面板'),
+                                default: () => h(MenuItem, { index: 'admin-user' }, {
+                                    default: () => '用户管理',
+                                }),
+                            }),
+                            h(MenuItem, { index: 'about', id: 'menu-about', inset: true }, {
+                                default: () => h('span', { id: 'about-label' }, '关于我们'),
+                            }),
+                            h(MenuItem, { index: 'disabled', id: 'menu-disabled', inset: true, disabled: true }, {
+                                default: () => h('span', { id: 'disabled-label' }, '禁用项目'),
+                            }),
+                        ],
+                    }),
+                ])
+            },
+        })
+
+        wrapper = mount(component, { attachTo: host! })
+
+        const menu = getElement(host!, '#horizontal-menu')
+        const items = [
+            getElement(host!, '#menu-home'),
+            getElement(host!, '#menu-about'),
+            getElement(host!, '#menu-disabled'),
+        ]
+        const submenu = getElement(host!, '#menu-admin')
+        const trigger = getElement(submenu, '[aria-haspopup="true"]')
+
+        await document.fonts.ready
+        const menuRect = menu.getBoundingClientRect()
+        for (const item of [...items, trigger]) {
+            const rect = item.getBoundingClientRect()
+            expect(rect.left).toBeGreaterThanOrEqual(menuRect.left)
+            expect(rect.right).toBeLessThanOrEqual(menuRect.right)
+        }
+        expect(items[1].getBoundingClientRect().top).toBeGreaterThan(items[0].getBoundingClientRect().top)
+        for (const label of menu.querySelectorAll('[id$="-label"]')) {
+            const range = document.createRange()
+            range.selectNodeContents(label)
+            expect(range.getClientRects().length).toBe(1)
+        }
+
+        items[0].focus()
+        await userEvent.keyboard('[ArrowRight]')
+        await nextTick()
+        expect(document.activeElement).toBe(trigger)
+
+        await userEvent.keyboard('[ArrowDown]')
+        await nextTick()
+        const submenuChild = getElement(host!, '[role="menu"][aria-orientation="vertical"] [role="menuitem"]')
+        expect(document.activeElement).toBe(submenuChild)
     })
 })

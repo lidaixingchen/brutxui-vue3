@@ -3,8 +3,8 @@ import { Statistic } from 'brutx-ui-vue'
 </script>
 
 <template>
-    <div class="space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="w-full min-w-0 space-y-6">
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,var(--container-2xs)),1fr))] gap-4">
             <Statistic
                 title="活跃用户"
                 :value="112893"

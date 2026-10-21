@@ -157,7 +157,7 @@ defineExpose({ open })
                 <X :class="smallIconClasses" class="stroke-[3]" />
             </button>
         </div>
-        <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent" align="start" :aria-label="resolvedAriaLabel">
+        <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent overflow-visible" align="start" :aria-label="resolvedAriaLabel">
             <DateTimePickerPanel
                 :model-value="displayValue"
                 :min-date="minDate"

@@ -17,7 +17,7 @@ const iconStarVal = ref(5)
         <div>
             <h3 class="text-lg font-bold mb-3">基础评分</h3>
             <Rate v-model="val1" />
-            <div class="mt-2 text-sm text-neutral-500">当前分值: {{ val1 }}</div>
+            <div class="mt-2 text-sm text-brutal-muted-foreground">当前分值: {{ val1 }}</div>
         </div>
 
         <div>
@@ -31,34 +31,34 @@ const iconStarVal = ref(5)
         <div>
             <h3 class="text-lg font-bold mb-3">允许半星</h3>
             <Rate v-model="val2" allow-half />
-            <div class="mt-2 text-sm text-neutral-500">当前分值: {{ val2 }}</div>
+            <div class="mt-2 text-sm text-brutal-muted-foreground">当前分值: {{ val2 }}</div>
         </div>
 
         <div>
             <h3 class="text-lg font-bold mb-3">自定义最大值 (10颗星)</h3>
             <Rate v-model="val3" :max="10" />
-            <div class="mt-2 text-sm text-neutral-500">当前分值: {{ val3 }}</div>
+            <div class="mt-2 text-sm text-brutal-muted-foreground">当前分值: {{ val3 }}</div>
         </div>
 
         <div>
             <h3 class="text-lg font-bold mb-3">只读模式</h3>
             <Rate v-model="val4" readonly allow-half />
-            <div class="mt-2 text-sm text-neutral-500">只读分值: {{ val4 }}</div>
+            <div class="mt-2 text-sm text-brutal-muted-foreground">只读分值: {{ val4 }}</div>
         </div>
 
         <div>
             <h3 class="text-lg font-bold mb-3">自定义图腾图标 (icon)</h3>
             <div class="flex flex-col gap-3">
                 <div class="flex items-center gap-4">
-                    <span class="w-24 text-sm text-neutral-500">heart:</span>
+                    <span class="w-24 text-sm text-brutal-muted-foreground">heart:</span>
                     <Rate v-model="iconHeartVal" icon="heart" />
                 </div>
                 <div class="flex items-center gap-4">
-                    <span class="w-24 text-sm text-neutral-500">lightning:</span>
+                    <span class="w-24 text-sm text-brutal-muted-foreground">lightning:</span>
                     <Rate v-model="iconBoltVal" icon="lightning" />
                 </div>
                 <div class="flex items-center gap-4">
-                    <span class="w-24 text-sm text-neutral-500">star-8:</span>
+                    <span class="w-24 text-sm text-brutal-muted-foreground">star-8:</span>
                     <Rate v-model="iconStarVal" icon="star-8" />
                 </div>
             </div>
@@ -68,15 +68,15 @@ const iconStarVal = ref(5)
             <h3 class="text-lg font-bold mb-3">不同的尺寸</h3>
             <div class="flex flex-col gap-3">
                 <div class="flex items-center gap-4">
-                    <span class="w-16 text-sm text-neutral-500">小 (sm):</span>
+                    <span class="w-16 text-sm text-brutal-muted-foreground">小 (sm):</span>
                     <Rate v-model="sizeVal" size="sm" />
                 </div>
                 <div class="flex items-center gap-4">
-                    <span class="w-16 text-sm text-neutral-500">中 (md):</span>
+                    <span class="w-16 text-sm text-brutal-muted-foreground">中 (md):</span>
                     <Rate v-model="sizeVal" size="md" />
                 </div>
                 <div class="flex items-center gap-4">
-                    <span class="w-16 text-sm text-neutral-500">大 (lg):</span>
+                    <span class="w-16 text-sm text-brutal-muted-foreground">大 (lg):</span>
                     <Rate v-model="sizeVal" size="lg" />
                 </div>
             </div>

@@ -2,6 +2,7 @@
 import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { MENU_KEY, type MenuRuntimeContext } from './menu-types'
 import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
+import { menuItemLayoutVariants } from './menu-variants'
 
 interface MenuItemProps {
     /** Unique key of the menu item */
@@ -106,6 +107,7 @@ const classes = computed(() => {
     return cn(
         'flex items-center gap-2 px-4 py-2.5 rounded-brutal border-3 font-semibold transition-all duration-150 cursor-pointer select-none text-sm outline-none',
         FOCUS_RING_CLASSES,
+        menuItemLayoutVariants({ horizontal: context?.mode.value === 'horizontal' }),
         props.inset && 'pl-10',
         isActive.value
             ? 'bg-brutal-primary text-brutal-primary-foreground border-brutal shadow-brutal-sm'

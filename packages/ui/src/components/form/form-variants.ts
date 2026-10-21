@@ -3,7 +3,7 @@ import { cva } from 'class-variance-authority'
 export type FormLayoutPosition = 'left' | 'right' | 'top'
 export type FormLayoutSize = 'sm' | 'default' | 'lg'
 
-const horizontalFormItemLayout = 'grid grid-cols-[max-content_minmax(0,1fr)] items-start gap-x-3'
+const horizontalFormItemLayout = 'grid grid-cols-[fit-content(50%)_minmax(0,1fr)] items-start gap-x-3'
 
 export const formItemVariants = cva(
     [],
@@ -37,8 +37,8 @@ export const formLabelVariants = cva(
     {
         variants: {
             labelPosition: {
-                left: 'col-start-1 row-start-1 justify-self-start',
-                right: 'col-start-1 row-start-1 justify-self-end',
+                left: 'col-start-1 row-start-1 justify-self-start min-w-0',
+                right: 'col-start-1 row-start-1 justify-self-end min-w-0',
                 top: '',
             },
         },
@@ -53,8 +53,8 @@ export const formControlVariants = cva(
     {
         variants: {
             labelPosition: {
-                left: 'col-start-2 row-start-1',
-                right: 'col-start-2 row-start-1',
+                left: 'col-start-2 row-start-1 min-w-0',
+                right: 'col-start-2 row-start-1 min-w-0',
                 top: '',
             },
         },

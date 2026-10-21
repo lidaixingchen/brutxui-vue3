@@ -770,7 +770,8 @@
       "Menu.vue",
       "MenuItem.vue",
       "SubMenu.vue",
-      "menu-types.ts"
+      "menu-types.ts",
+      "menu-variants.ts"
     ],
     "composables": [],
     "directives": [],

@@ -129,7 +129,9 @@ onUnmounted(() => {
                     <span class="text-xs font-bold opacity-60">primary</span>
                 </div>
                 <div class="flex flex-col items-center gap-1">
-                    <Counter :key="key" :to="128" variant="accent" size="lg" :duration="RESET_DELAY" />
+                    <div class="px-3 py-1 bg-brutal-black rounded-brutal">
+                        <Counter :key="key" :to="128" variant="accent" size="lg" :duration="RESET_DELAY" />
+                    </div>
                     <span class="text-xs font-bold opacity-60">accent</span>
                 </div>
                 <div class="flex flex-col items-center gap-1">

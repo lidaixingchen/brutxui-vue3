@@ -188,7 +188,7 @@ describe('Counter', () => {
         const wrapper = mount(Counter, {
             props: { to: 100, variant: 'primary' },
         })
-        expect(getDisplaySpan(wrapper).classes()).toContain('text-brutal-primary')
+        expect(getDisplaySpan(wrapper).classes()).toContain('text-[color-mix(in_srgb,var(--brutal-primary)_var(--brutal-counter-color-weight),var(--brutal-fg))]')
     })
 
     it('applies accent variant classes', () => {
@@ -202,7 +202,7 @@ describe('Counter', () => {
         const wrapper = mount(Counter, {
             props: { to: 100, variant: 'success' },
         })
-        expect(getDisplaySpan(wrapper).classes()).toContain('text-brutal-success')
+        expect(getDisplaySpan(wrapper).classes()).toContain('text-[color-mix(in_srgb,var(--brutal-success)_var(--brutal-counter-color-weight),var(--brutal-fg))]')
     })
 
     it('applies danger variant classes', () => {

@@ -2,6 +2,7 @@
 import { computed, provide, ref, watch, getCurrentInstance, onMounted, nextTick } from 'vue'
 import { MENU_KEY, type MenuItemEntry } from './menu-types'
 import { cn } from '@/lib/utils'
+import { menuLayoutVariants } from './menu-variants'
 
 interface MenuProps {
     /** Layout mode: horizontal or vertical */
@@ -285,9 +286,7 @@ onMounted(() => {
 const menuClasses = computed(() => {
     return cn(
         'flex border-3 border-brutal shadow-brutal bg-brutal-bg p-2 rounded-brutal',
-        props.mode === 'horizontal' 
-            ? 'flex-row items-center gap-2 w-full' 
-            : 'flex-col gap-1.5 w-64',
+        menuLayoutVariants({ mode: props.mode }),
         props.class
     )
 })

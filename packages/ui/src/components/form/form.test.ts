@@ -755,7 +755,7 @@ describe('FormItem', () => {
         })
 
         expect(wrapper.classes()).toContain('grid')
-        expect(wrapper.classes()).toContain('grid-cols-[max-content_minmax(0,1fr)]')
+        expect(wrapper.classes()).toContain('grid-cols-[fit-content(50%)_minmax(0,1fr)]')
         expect(wrapper.element.style.gridTemplateColumns).toBe('120px minmax(0, 1fr)')
         expect(wrapper.classes()).toContain('gap-y-1')
     })
@@ -765,13 +765,13 @@ describe('Form layout contract', () => {
     it.each([
         {
             labelPosition: 'left' as const,
-            labelClasses: ['col-start-1', 'justify-self-start'],
-            controlClasses: ['col-start-2'],
+            labelClasses: ['col-start-1', 'justify-self-start', 'min-w-0'],
+            controlClasses: ['col-start-2', 'min-w-0'],
         },
         {
             labelPosition: 'right' as const,
-            labelClasses: ['col-start-1', 'justify-self-end'],
-            controlClasses: ['col-start-2'],
+            labelClasses: ['col-start-1', 'justify-self-end', 'min-w-0'],
+            controlClasses: ['col-start-2', 'min-w-0'],
         },
         {
             labelPosition: 'top' as const,

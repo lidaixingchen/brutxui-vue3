@@ -41,6 +41,11 @@ export const datePickerPanelVariants = cva([
     'shadow-brutal-lg',
 ])
 
+export const dateTimePickerPanelVariants = cva([
+    datePickerPanelVariants(),
+    'max-h-[calc(var(--reka-popover-content-available-height)-var(--brutx-calendar-popper-gutter,0px))] min-h-0 overflow-y-hidden',
+])
+
 export const datePickerShortcutVariants = cva(
     [
         'w-full px-3 py-2 text-left text-sm font-semibold',
