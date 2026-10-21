@@ -152,8 +152,12 @@ function toggleCheck(node: TreeNode) {
 function getVisibleTreeItems(): HTMLElement[] {
     const root = treeRootRef.value
     if (!root) return []
-    return Array.from(root.querySelectorAll<HTMLElement>('[role="treeitem"]:not([data-hidden="true"])'))
-        .filter((item) => item.getAttribute('aria-disabled') !== 'true')
+    return Array.from(root.querySelectorAll<HTMLElement>('[role="treeitem"]'))
+        .filter((item) => item.getAttribute('data-hidden') !== 'true' && !item.parentElement?.closest('[data-hidden="true"]'))
+}
+
+function getNavigableTreeItems(): HTMLElement[] {
+    return getVisibleTreeItems().filter((item) => item.getAttribute('aria-disabled') !== 'true')
 }
 
 function focusAdjacent(direction: -1 | 1) {
@@ -168,10 +172,15 @@ function focusAdjacent(direction: -1 | 1) {
     const currentIndex = currentItem instanceof HTMLElement
         ? items.indexOf(currentItem)
         : -1
-    const nextIndex = currentIndex + direction
-    if (nextIndex >= 0 && nextIndex < items.length) {
-        items[nextIndex].focus()
+    let nextIndex = currentIndex + direction
+    while (
+        nextIndex >= 0 &&
+        nextIndex < items.length &&
+        items[nextIndex]?.getAttribute('aria-disabled') === 'true'
+    ) {
+        nextIndex += direction
     }
+    if (nextIndex >= 0 && nextIndex < items.length) items[nextIndex]?.focus()
 }
 
 function handleFocusPrev() {
@@ -185,16 +194,18 @@ function handleFocusNext() {
 function handleFocusParent() {
     const doc = getDocument()
     if (!doc) return
-    const items = getVisibleTreeItems()
+    const items = getNavigableTreeItems()
     if (items.length === 0) return
     const activeEl = doc.activeElement
     if (!(activeEl instanceof HTMLElement)) return
-    const currentItem = activeEl.closest('[role="treeitem"]')
+    let currentItem = activeEl.closest('[role="treeitem"]')
     if (!(currentItem instanceof HTMLElement)) return
-    const parentGroup = currentItem.parentElement?.closest('[role="treeitem"]')
-    if (parentGroup instanceof HTMLElement) {
-        parentGroup.focus()
+    let parentItem = currentItem.parentElement?.closest('[role="treeitem"]')
+    while (parentItem instanceof HTMLElement && !items.includes(parentItem)) {
+        currentItem = parentItem
+        parentItem = currentItem.parentElement?.closest('[role="treeitem"]')
     }
+    if (parentItem instanceof HTMLElement && items.includes(parentItem)) parentItem.focus()
 }
 
 function handleFocusFirstChild() {
@@ -206,21 +217,19 @@ function handleFocusFirstChild() {
     if (!(currentItem instanceof HTMLElement)) return
     const childGroup = currentItem.querySelector('[role="group"]')
     if (childGroup) {
-        const firstChild = childGroup.querySelector('[role="treeitem"]')
-        if (firstChild instanceof HTMLElement) {
-            firstChild.focus()
-        }
+        const firstChild = getNavigableTreeItems().find((item) => item.parentElement === childGroup)
+        firstChild?.focus()
     }
 }
 
 function handleFocusFirst() {
-    const items = getVisibleTreeItems()
+    const items = getNavigableTreeItems()
     if (items.length === 0) return
     items[0].focus()
 }
 
 function handleFocusLast() {
-    const items = getVisibleTreeItems()
+    const items = getNavigableTreeItems()
     if (items.length === 0) return
     items[items.length - 1].focus()
 }

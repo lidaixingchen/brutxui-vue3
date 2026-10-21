@@ -31,4 +31,9 @@ export interface MenuContext {
     unregisterSubMenu: (index: string) => void
 }
 
+export interface MenuRuntimeContext extends MenuContext {
+    tabStopIndex: ComputedRef<string | null>
+    unregisterItem: (index: string, restoreFocus?: boolean) => void
+}
+
 export const MENU_KEY: InjectionKey<MenuContext> = Symbol.for('BrutxMenu')

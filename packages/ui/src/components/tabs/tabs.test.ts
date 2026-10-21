@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { computed, nextTick, ref } from 'vue'
+import { computed, nextTick, reactive, ref } from 'vue'
 import Tabs from './Tabs.vue'
 import TabsList from './TabsList.vue'
 import TabsTrigger from './TabsTrigger.vue'
@@ -388,6 +388,59 @@ describe('Tabs (tabs prop array mode)', () => {
         // 重新加入被删除的 tab：activeValue 应保持首项，internalValue 已同步，不再自动跳回旧选中项
         await wrapper.setProps({ tabs: mockTabs })
         expect(root().props('modelValue')).toBe('overview')
+    })
+
+    it('keeps the fallback after the active tab is removed and re-added in place', async () => {
+        const beta: TabItem = { label: 'Beta', value: 'beta' }
+        const tabs = reactive<TabItem[]>([
+            { label: 'Alpha', value: 'alpha' },
+            beta,
+            { label: 'Gamma', value: 'gamma' },
+        ])
+        const wrapper = mount(Tabs, {
+            props: { tabs },
+            global: { stubs: tabsGlobalStubs },
+        })
+        const root = () => wrapper.findComponent({ name: 'TabsRoot' })
+
+        root().vm.$emit('update:modelValue', 'beta')
+        await nextTick()
+        expect(root().props('modelValue')).toBe('beta')
+
+        tabs.splice(1, 1)
+        await nextTick()
+        expect(root().props('modelValue')).toBe('alpha')
+
+        tabs.splice(1, 0, beta)
+        await nextTick()
+        expect(root().props('modelValue')).toBe('alpha')
+
+        tabs.splice(1, 1)
+        await nextTick()
+        tabs.push(beta)
+        await nextTick()
+        expect(root().props('modelValue')).toBe('alpha')
+    })
+
+    it('keeps the controlled value when tabs are changed in place', async () => {
+        const beta: TabItem = { label: 'Beta', value: 'beta' }
+        const tabs = reactive<TabItem[]>([
+            { label: 'Alpha', value: 'alpha' },
+            beta,
+        ])
+        const wrapper = mount(Tabs, {
+            props: { tabs, modelValue: 'beta' },
+            global: { stubs: tabsGlobalStubs },
+        })
+        const root = () => wrapper.findComponent({ name: 'TabsRoot' })
+
+        tabs.splice(1, 1)
+        await nextTick()
+        expect(root().props('modelValue')).toBe('beta')
+
+        tabs.push(beta)
+        await nextTick()
+        expect(root().props('modelValue')).toBe('beta')
     })
 })
 

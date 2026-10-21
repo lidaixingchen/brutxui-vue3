@@ -47,8 +47,8 @@ async function handleUpload(options) {
         accept="image/*"
         :max-size="5 * 1024 * 1024"
     >
-        <template #trigger="{ selectFiles, drag }">
-            <UploadTrigger :drag="drag" @select="selectFiles" />
+        <template #trigger="{ selectFiles, drag, accept, multiple }">
+            <UploadTrigger :drag="drag" :accept="accept" :multiple="multiple" @select="selectFiles" />
         </template>
         <template #file-list="{ files, remove, retry }">
             <UploadFileList :files="files" @remove="remove" @retry="retry" />
@@ -74,8 +74,8 @@ const fileList = ref<UploadFile[]>([])
         :limit="5"
         multiple
     >
-        <template #trigger="{ selectFiles }">
-            <UploadTrigger @select="selectFiles" />
+        <template #trigger="{ selectFiles, drag, accept, multiple }">
+            <UploadTrigger :drag="drag" :accept="accept" :multiple="multiple" @select="selectFiles" />
         </template>
         <template #file-list="{ files, remove }">
             <UploadFileList :files="files" list-type="picture-card" @remove="remove" />
@@ -113,8 +113,8 @@ async function beforeRemove(file) {
         :before-upload="beforeUpload"
         :before-remove="beforeRemove"
     >
-        <template #trigger="{ selectFiles }">
-            <UploadTrigger @select="selectFiles" />
+        <template #trigger="{ selectFiles, drag, accept, multiple }">
+            <UploadTrigger :drag="drag" :accept="accept" :multiple="multiple" @select="selectFiles" />
         </template>
         <template #file-list="{ files, remove }">
             <UploadFileList :files="files" @remove="remove" />

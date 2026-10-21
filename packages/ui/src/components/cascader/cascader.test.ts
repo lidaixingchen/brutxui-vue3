@@ -461,6 +461,156 @@ describe('Cascader', () => {
             expect(vm.activeItemIndex).toBe(-1)
         })
 
+        it('enters the first enabled child and exposes disabled option semantics', async () => {
+            const nestedOptions: CascaderOption[] = [
+                {
+                    value: 'root',
+                    label: 'Root',
+                    children: [
+                        { value: 'blocked', label: 'Blocked child', disabled: true },
+                        { value: 'ready', label: 'Ready child' },
+                    ],
+                },
+            ]
+            wrapper = mount(Cascader, {
+                ...localeProvide,
+                props: { options: nestedOptions },
+                attachTo: document.body,
+            })
+            const vm = wrapper.vm as any
+            vm.open = true
+            await nextTick()
+
+            const key = (k: string) => ({ key: k, preventDefault: () => {} }) as any
+            vm.handleKeyDown(key('ArrowDown'))
+            vm.handleKeyDown(key('ArrowRight'))
+            await nextTick()
+
+            const blockedOption = Array.from(document.querySelectorAll<HTMLElement>('[role="option"]'))
+                .find((item) => item.textContent?.includes('Blocked child'))
+            const activeDescendant = document.getElementById(wrapper.find('[role="combobox"]').attributes('aria-activedescendant')!)
+
+            expect(vm.activeColumnIndex).toBe(1)
+            expect(vm.activeItemIndex).toBe(1)
+            expect(vm.activePath).toEqual(['root', 'ready'])
+            expect(blockedOption?.getAttribute('aria-disabled')).toBe('true')
+            expect(activeDescendant?.textContent).toContain('Ready child')
+            expect(wrapper.emitted('update:modelValue')).toBeFalsy()
+        })
+
+        it('moves the active descendant when the active option becomes disabled', async () => {
+            const changingOptions = ref<CascaderOption[]>([
+                {
+                    value: 'root',
+                    label: 'Root',
+                    children: [
+                        { value: 'ready', label: 'Ready child' },
+                        { value: 'next', label: 'Next child' },
+                    ],
+                },
+            ])
+            wrapper = mount(Cascader, {
+                ...localeProvide,
+                props: { options: changingOptions.value, modelValue: ['root', 'ready'], open: true },
+                attachTo: document.body,
+            })
+            const vm = wrapper.vm as any
+            await nextTick()
+            vm.activeColumnIndex = 1
+            vm.activeItemIndex = 0
+            vm.activePath = ['root', 'ready']
+            await nextTick()
+
+            changingOptions.value[0]!.children![0]!.disabled = true
+            await nextTick()
+
+            const readyOption = Array.from(document.querySelectorAll<HTMLElement>('[role="option"]'))
+                .find((item) => item.textContent?.includes('Ready child'))
+            const activeDescendant = document.getElementById(wrapper.find('[role="combobox"]').attributes('aria-activedescendant')!)
+
+            expect(vm.activeItemIndex).toBe(1)
+            expect(vm.activePath).toEqual(['root', 'next'])
+            expect(readyOption?.getAttribute('aria-disabled')).toBe('true')
+            expect(activeDescendant?.textContent).toContain('Next child')
+            expect(wrapper.props()).toMatchObject({ modelValue: ['root', 'ready'] })
+            expect(wrapper.emitted('update:modelValue')).toBeFalsy()
+        })
+
+        it('keeps enabled descendants reachable beneath a disabled parent', async () => {
+            const changingOptions = ref<CascaderOption[]>([
+                {
+                    value: 'root',
+                    label: 'Root',
+                    children: [{ value: 'ready', label: 'Ready child' }],
+                },
+            ])
+            wrapper = mount(Cascader, {
+                ...localeProvide,
+                props: { options: changingOptions.value, open: true },
+                attachTo: document.body,
+            })
+            const vm = wrapper.vm as any
+            vm.activeColumnIndex = 0
+            vm.activeItemIndex = 0
+            vm.activePath = ['root']
+
+            changingOptions.value[0]!.disabled = true
+            await nextTick()
+
+            expect(vm.activeItemIndex).toBe(-1)
+            expect(vm.activePath).toEqual(['root'])
+            vm.handleKeyDown(({ key: 'ArrowRight', preventDefault: () => {} }) as any)
+            await nextTick()
+            const activeDescendant = document.getElementById(wrapper.find('[role="combobox"]').attributes('aria-activedescendant')!)
+
+            expect(vm.activeColumnIndex).toBe(1)
+            expect(vm.activeItemIndex).toBe(0)
+            expect(vm.activePath).toEqual(['root', 'ready'])
+            expect(activeDescendant?.textContent).toContain('Ready child')
+
+            vm.handleKeyDown(({ key: 'Enter', preventDefault: () => {} }) as any)
+            expect(wrapper.emitted('update:modelValue')?.[0]?.[0]).toEqual(['root', 'ready'])
+        })
+
+        it('keeps empty and all-disabled child columns within navigation bounds', async () => {
+            const nestedOptions: CascaderOption[] = [
+                { value: 'empty', label: 'Empty', children: [] },
+                {
+                    value: 'all-disabled',
+                    label: 'All disabled',
+                    children: [
+                        { value: 'blocked-a', label: 'Blocked A', disabled: true },
+                        { value: 'blocked-b', label: 'Blocked B', disabled: true },
+                    ],
+                },
+            ]
+            wrapper = mount(Cascader, {
+                ...localeProvide,
+                props: { options: nestedOptions },
+                attachTo: document.body,
+            })
+            const vm = wrapper.vm as any
+            vm.open = true
+            await nextTick()
+
+            const key = (k: string) => ({ key: k, preventDefault: () => {} }) as any
+            vm.handleKeyDown(key('ArrowDown'))
+            vm.handleKeyDown(key('ArrowRight'))
+            expect(vm.activeColumnIndex).toBe(0)
+
+            vm.handleKeyDown(key('ArrowDown'))
+            vm.handleKeyDown(key('ArrowRight'))
+            await nextTick()
+            expect(vm.activeColumnIndex).toBe(1)
+            expect(vm.activeItemIndex).toBe(-1)
+            expect(wrapper.find('[role="combobox"]').attributes('aria-activedescendant')).toBeUndefined()
+
+            vm.handleKeyDown(key('ArrowLeft'))
+            expect(vm.activeColumnIndex).toBe(0)
+            expect(vm.activeItemIndex).toBe(1)
+            expect(vm.activePath).toEqual(['all-disabled'])
+        })
+
         it('does not select disabled descendant leaves when checking a parent', async () => {
             const withDisabledLeaf: CascaderOption[] = [
                 {

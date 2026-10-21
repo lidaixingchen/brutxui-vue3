@@ -191,7 +191,9 @@ function handleFocusOut(event: FocusEvent) {
 }
 
 const handleKeydown = (e: KeyboardEvent) => {
-    if (props.disabled) return;
+    const target = e.target
+    if (target instanceof Element && target.closest('[role="treeitem"]') !== e.currentTarget) return;
+    if (props.disabled && (e.key === ' ' || e.key === 'Enter')) return;
     // 仅拦截子控件（Checkbox / 重试按钮）自身消费的 Space/Enter，避免 check/toggle 被二次处理；
     // 导航键（方向键/Home/End）子控件不消费，应继续冒泡到 treeitem 以维持树级键盘导航
     if (e.target !== e.currentTarget && (e.key === ' ' || e.key === 'Enter')) return;
@@ -220,7 +222,7 @@ const handleKeydown = (e: KeyboardEvent) => {
             break;
         case 'ArrowRight':
             e.preventDefault();
-            if (!isLeaf.value && !isExpanded.value) {
+            if (!props.disabled && !isLeaf.value && !isExpanded.value) {
                 emit('toggle', props.node.id);
                 emit('select', props.node);
             } else if (!isLeaf.value && isExpanded.value) {
@@ -229,7 +231,7 @@ const handleKeydown = (e: KeyboardEvent) => {
             break;
         case 'ArrowLeft':
             e.preventDefault();
-            if (!isLeaf.value && isExpanded.value) {
+            if (!props.disabled && !isLeaf.value && isExpanded.value) {
                 emit('toggle', props.node.id);
                 emit('select', props.node);
             } else {

@@ -35,16 +35,34 @@ const subMenuChildren = new Map<string, ReadonlySet<string>>()
 const childToParent = new Map<string, Set<string>>()
 
 function registerItem(entry: MenuItemEntry) {
+    const previous = registeredItems.value.find((item) => item.index === entry.index)
+    const hadFocus = previous ? isElementFocused(previous.el) : false
     const list = registeredItems.value.filter((i) => i.index !== entry.index)
     list.push(entry)
     registeredItems.value = list
+
+    if (entry.disabled && (focusedIndex.value === entry.index || hadFocus)) {
+        const next = getNearestAvailableItem(previous?.el ?? entry.el)
+        focusedIndex.value = next?.index ?? null
+        if (hadFocus && next) focusItem(next.index)
+    }
 }
 
-function unregisterItem(index: string) {
+function unregisterItem(index: string, restoreFocus = true) {
+    const previous = registeredItems.value.find((item) => item.index === index)
+    const hadFocus = previous ? isElementFocused(previous.el) : false
     registeredItems.value = registeredItems.value.filter((i) => i.index !== index)
-    if (focusedIndex.value === index) {
-        focusedIndex.value = null
+
+    if (restoreFocus && (focusedIndex.value === index || hadFocus)) {
+        const next = getNearestAvailableItem(previous?.el)
+        focusedIndex.value = next?.index ?? null
+        if (hadFocus && next) focusItem(next.index)
     }
+}
+
+function isElementFocused(element: HTMLElement): boolean {
+    const activeElement = element.ownerDocument.activeElement
+    return activeElement === element || (activeElement !== null && element.contains(activeElement))
 }
 
 function isItemVisible(index: string): boolean {
@@ -66,9 +84,27 @@ function getAvailableItems(): MenuItemEntry[] {
     return visible
 }
 
-const firstEnabledIndex = computed(() => {
-    const items = getAvailableItems()
-    return items.length > 0 ? items[0].index : null
+function getNearestAvailableItem(anchor?: HTMLElement): MenuItemEntry | undefined {
+    const available = getAvailableItems()
+    if (!anchor) return available[0]
+
+    const next = available.find((item) =>
+        (anchor.compareDocumentPosition(item.el) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0
+    )
+    return next ?? available[available.length - 1]
+}
+
+const firstEnabledIndex = computed(() => getAvailableItems()[0]?.index ?? null)
+
+const tabStopIndex = computed(() => {
+    const available = getAvailableItems()
+    if (focusedIndex.value !== null && available.some((item) => item.index === focusedIndex.value)) {
+        return focusedIndex.value
+    }
+    if (available.some((item) => item.index === activeIndex.value)) {
+        return activeIndex.value
+    }
+    return available[0]?.index ?? null
 })
 
 function focusItem(index: string) {
@@ -217,10 +253,11 @@ function toggleSubMenu(index: string) {
     openedMenus.value = next
 }
 
-provide(MENU_KEY, {
+const menuContext = {
     activeIndex,
     focusedIndex,
     firstEnabledIndex,
+    tabStopIndex,
     mode: computed(() => props.mode),
     router: computed(() => props.router),
     openedMenus,
@@ -237,7 +274,9 @@ provide(MENU_KEY, {
     closeSubMenu,
     registerSubMenu,
     unregisterSubMenu,
-})
+}
+
+provide(MENU_KEY, menuContext)
 
 onMounted(() => {
     if (activeIndex.value) expandActiveSubMenuChain(activeIndex.value)

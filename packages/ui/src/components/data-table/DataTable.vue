@@ -354,6 +354,12 @@ function handleSort(columnId: string) {
     emit('sort', sort.sortState.value.column, sort.sortState.value.direction)
 }
 
+function handleHeaderKeydown(columnId: string, event: KeyboardEvent) {
+    if (event.target !== event.currentTarget) return
+    if (event.key === ' ') event.preventDefault()
+    handleSort(columnId)
+}
+
 function handleToggleRow(row: T) {
     selection.toggleRowSelection(row)
     emit('select', selection.getSelectedRows())
@@ -636,8 +642,8 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                                 :tabindex="sortable && column.sortable !== false ? 0 : undefined"
                                 :aria-sort="sort.sortState.value.column === column.id ? (sort.sortState.value.direction === 'asc' ? 'ascending' : 'descending') : 'none'"
                                 @click="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
-                                @keydown.enter="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
-                                @keydown.space.prevent="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
+                                @keydown.enter="sortable && column.sortable !== false ? handleHeaderKeydown(column.id, $event) : undefined"
+                                @keydown.space="sortable && column.sortable !== false ? handleHeaderKeydown(column.id, $event) : undefined"
                             >
                                 <div class="flex items-center gap-2 w-full" :class="{ 'justify-center': column.align === 'center', 'justify-end': column.align === 'right' }">
                                     <span>{{ getHeaderLabel(column) }}</span>
@@ -825,8 +831,8 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                                         :tabindex="sortable && column.sortable !== false ? 0 : undefined"
                                         :aria-sort="sort.sortState.value.column === column.id ? (sort.sortState.value.direction === 'asc' ? 'ascending' : 'descending') : 'none'"
                                         @click="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
-                                        @keydown.enter="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
-                                        @keydown.space.prevent="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
+                                        @keydown.enter="sortable && column.sortable !== false ? handleHeaderKeydown(column.id, $event) : undefined"
+                                        @keydown.space="sortable && column.sortable !== false ? handleHeaderKeydown(column.id, $event) : undefined"
                                     >
                                         <div class="flex items-center gap-2" :class="{ 'justify-center': column.align === 'center', 'justify-end': column.align === 'right' }">
                                             <span>{{ getHeaderLabel(column) }}</span>
@@ -890,8 +896,8 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
                             :tabindex="sortable && column.sortable !== false ? 0 : undefined"
                             :aria-sort="sort.sortState.value.column === column.id ? (sort.sortState.value.direction === 'asc' ? 'ascending' : 'descending') : 'none'"
                             @click="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
-                            @keydown.enter="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
-                            @keydown.space.prevent="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
+                            @keydown.enter="sortable && column.sortable !== false ? handleHeaderKeydown(column.id, $event) : undefined"
+                            @keydown.space="sortable && column.sortable !== false ? handleHeaderKeydown(column.id, $event) : undefined"
                         >
                             <div class="flex items-center gap-2" :class="{ 'justify-center': column.align === 'center', 'justify-end': column.align === 'right' }">
                                 <span>{{ getHeaderLabel(column) }}</span>

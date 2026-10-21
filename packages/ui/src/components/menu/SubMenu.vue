@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, inject, onMounted, onUnmounted, provide, ref, watch } from 'vue'
+import { computed, inject, onBeforeUnmount, onMounted, onUnmounted, provide, ref, watch } from 'vue'
 import { ChevronDown } from '@lucide/vue'
-import { MENU_KEY, SUB_MENU_HOVER_DELAY_MS } from './menu-types'
+import { MENU_KEY, SUB_MENU_HOVER_DELAY_MS, type MenuRuntimeContext } from './menu-types'
 import { hasDocument, getDocument, matchMedia } from '@/lib/env'
 import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 
@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<SubMenuProps>(), {
     triggerClass: undefined,
 })
 
-const context = inject(MENU_KEY)
+const context = inject(MENU_KEY) as MenuRuntimeContext | undefined
 if (!context) {
     console.warn('[BrutxUI SubMenu] Must be used inside a Menu component.')
 }
@@ -172,7 +172,7 @@ watch(
         if (context) {
             const wasFocused = context.focusedIndex.value === oldIndex
             context.unregisterSubMenu(oldIndex)
-            context.unregisterItem(oldIndex)
+            context.unregisterItem(oldIndex, false)
             context.registerSubMenu(newIndex, childIndices.value)
             registerTrigger()
             if (context.openedMenus.value.has(oldIndex)) {
@@ -191,13 +191,18 @@ watch(
     }
 )
 
+onBeforeUnmount(() => {
+    if (context?.openedMenus.value.has(props.index)) {
+        const opened = new Set(context.openedMenus.value)
+        opened.delete(props.index)
+        context.openedMenus.value = opened
+    }
+    context?.unregisterItem(props.index)
+})
+
 onUnmounted(() => {
     clearHoverTimer()
-    if (!isVertical.value && isOpened.value) {
-        context?.closeSubMenu(props.index)
-    }
     context?.unregisterSubMenu(props.index)
-    context?.unregisterItem(props.index)
     if (parentSubMenu) {
         parentSubMenu.unregisterChild(props.index)
     }
@@ -212,16 +217,13 @@ const isChildActive = computed(() => {
     return childIndices.value.has(context.activeIndex.value)
 })
 
-const isFocused = computed(() => context?.focusedIndex.value === props.index)
-
 const tabIndex = computed(() => {
     if (props.disabled) return -1
+    if (context?.tabStopIndex) return context.tabStopIndex.value === props.index ? 0 : -1
     if (context?.focusedIndex.value != null) {
-        return isFocused.value ? 0 : -1
+        return context.focusedIndex.value === props.index ? 0 : -1
     }
-    if (context?.activeIndex.value) {
-        return isChildActive.value ? 0 : -1
-    }
+    if (context?.activeIndex.value) return isChildActive.value ? 0 : -1
     return context?.firstEnabledIndex.value === props.index ? 0 : -1
 })
 
@@ -280,6 +282,12 @@ function handleTriggerClick() {
         isOpenClick.value = !isOpenClick.value
     }
     context?.focusItem(props.index)
+}
+
+function handleTriggerFocus() {
+    if (!props.disabled && context) {
+        context.focusedIndex.value = props.index
+    }
 }
 
 function handleTriggerKeydown(e: KeyboardEvent) {
@@ -417,6 +425,7 @@ function onAfterLeave(el: Element) {
             :aria-disabled="disabled"
             :class="triggerClasses"
             :tabindex="tabIndex"
+            @focus="handleTriggerFocus"
             @click="handleTriggerClick"
             @keydown="handleTriggerKeydown"
         >

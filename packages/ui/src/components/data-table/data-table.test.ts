@@ -1245,3 +1245,86 @@ describe('DataTable filter UI binding links', () => {
         wrapper.unmount()
     })
 })
+
+describe('DataTable sortable filter keyboard bubbling', () => {
+    const layouts = [
+        { name: 'native table', virtualScroll: undefined },
+        { name: 'virtual table', virtualScroll: { enabled: true, rowHeight: 40 } },
+    ] as const
+    const keys = [
+        { name: 'Enter', key: 'Enter' },
+        { name: 'Space', key: ' ' },
+    ] as const
+
+    it.each(layouts.flatMap(layout => keys.map(key => ({ layout, key }))))(
+        '$layout.name filter button $key.name does not trigger sorting',
+        async ({ layout, key }) => {
+            const columns: DataTableColumn<TestRow>[] = [
+                { id: 'name', header: 'Name', accessorKey: 'name', sortable: true, filterType: 'text' },
+            ]
+            const wrapper = mountDataTable({
+                data: testData,
+                columns: layout.virtualScroll ? columns.map(column => ({ ...column, width: 120 })) : columns,
+                rowKey: 'id',
+                sortable: true,
+                filterable: true,
+                virtualScroll: layout.virtualScroll,
+            })
+            document.body.appendChild(wrapper.element)
+
+            try {
+                const filterButton = wrapper.get<HTMLButtonElement>('[aria-label="Filter name"]').element
+                filterButton.focus()
+                expect(document.activeElement).toBe(filterButton)
+
+                filterButton.dispatchEvent(new KeyboardEvent('keydown', {
+                    key: key.key,
+                    bubbles: true,
+                    cancelable: true,
+                }))
+                await nextTick()
+
+                expect(wrapper.emitted('sort')).toBeUndefined()
+            } finally {
+                wrapper.unmount()
+                wrapper.element.remove()
+            }
+        },
+    )
+
+    it.each(layouts.flatMap(layout => keys.map(key => ({ layout, key }))))(
+        '$layout.name header still sorts on $key.name',
+        async ({ layout, key }) => {
+            const columns: DataTableColumn<TestRow>[] = [
+                { id: 'name', header: 'Name', accessorKey: 'name', sortable: true, filterType: 'text' },
+            ]
+            const wrapper = mountDataTable({
+                data: testData,
+                columns: layout.virtualScroll ? columns.map(column => ({ ...column, width: 120 })) : columns,
+                rowKey: 'id',
+                sortable: true,
+                filterable: true,
+                virtualScroll: layout.virtualScroll,
+            })
+            document.body.appendChild(wrapper.element)
+
+            try {
+                const header = wrapper.get<HTMLElement>('[data-table-width-key="column:name"][aria-sort]').element
+                header.focus()
+                expect(document.activeElement).toBe(header)
+
+                header.dispatchEvent(new KeyboardEvent('keydown', {
+                    key: key.key,
+                    bubbles: true,
+                    cancelable: true,
+                }))
+                await nextTick()
+
+                expect(wrapper.emitted('sort')).toEqual([['name', 'asc']])
+            } finally {
+                wrapper.unmount()
+                wrapper.element.remove()
+            }
+        },
+    )
+})

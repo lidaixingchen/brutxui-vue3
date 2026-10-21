@@ -274,6 +274,84 @@ describe('TreeView - Keyboard Navigation', () => {
         expect(document.activeElement).toBe(firstChild)
     })
 
+    it('skips a disabled first child and continues through visible items', async () => {
+        const nodes: TreeNode[] = [
+            {
+                id: 'branch',
+                label: 'Branch',
+                children: [
+                    { id: 'blocked', label: 'Blocked child', disabled: true },
+                    { id: 'ready', label: 'Ready child' },
+                ],
+            },
+            { id: 'tail', label: 'Tail' },
+        ]
+        const wrapper = mount(TreeView, {
+            props: { nodes, defaultExpanded: ['branch'] },
+            global: { provide: localeProvide },
+            attachTo: document.body,
+        })
+        let branch = wrapper.findAll('[role="treeitem"]')[0]
+        const blocked = wrapper.findAll('[role="treeitem"]')
+            .find((item) => item.text().trim() === 'Blocked child')!
+        ;(blocked.element as HTMLElement).focus()
+        await blocked.trigger('keydown', { key: 'ArrowDown' })
+        const readyAfterBlocked = wrapper.findAll('[role="treeitem"]')
+            .find((item) => item.text().trim() === 'Ready child')!
+        expect(document.activeElement).toBe(readyAfterBlocked.element)
+
+        ;(branch.element as HTMLElement).focus()
+        await branch.trigger('keydown', { key: 'ArrowLeft' })
+        await branch.trigger('keydown', { key: 'ArrowRight' })
+        await nextTick()
+        branch = wrapper.findAll('[role="treeitem"]')[0]
+        await branch.trigger('keydown', { key: 'ArrowRight' })
+
+        const ready = wrapper.findAll('[role="treeitem"]')
+            .find((item) => item.text().trim() === 'Ready child')!
+        expect(document.activeElement).toBe(ready.element)
+
+        await ready.trigger('keydown', { key: 'ArrowDown' })
+        const tail = wrapper.findAll('[role="treeitem"]')
+            .find((item) => item.text().includes('Tail'))!
+        expect(document.activeElement).toBe(tail.element)
+    })
+
+    it('advances from a focused node that becomes disabled in visible order', async () => {
+        const nodes = ref<TreeNode[]>([
+            {
+                id: 'branch',
+                label: 'Branch',
+                children: [{ id: 'ready', label: 'Ready child' }],
+            },
+            { id: 'tail', label: 'Tail' },
+        ])
+        const wrapper = mount(TreeView, {
+            props: { nodes: nodes.value, defaultExpanded: ['branch'] },
+            global: { provide: localeProvide },
+            attachTo: document.body,
+        })
+        const ready = wrapper.findAll('[role="treeitem"]')
+            .find((item) => item.text().trim() === 'Ready child')!
+        ;(ready.element as HTMLElement).focus()
+
+        const updatedNodes: TreeNode[] = [
+            { ...nodes.value[0]!, children: [{ ...nodes.value[0]!.children![0]!, disabled: true }] },
+            nodes.value[1]!,
+        ]
+        await wrapper.setProps({ nodes: updatedNodes })
+        await nextTick()
+        const focusedReady = wrapper.findAll('[role="treeitem"]')
+            .find((item) => item.text().trim() === 'Ready child')!
+        expect(focusedReady.attributes('aria-disabled')).toBe('true')
+        expect(document.activeElement).toBe(focusedReady.element)
+
+        await focusedReady.trigger('keydown', { key: 'ArrowDown' })
+        const tail = wrapper.findAll('[role="treeitem"]')
+            .find((item) => item.text().includes('Tail'))!
+        expect(document.activeElement).toBe(tail.element)
+    })
+
     it('does not navigate when no items exist', async () => {
         const wrapper = mount(TreeView, {
             props: { nodes: [] },

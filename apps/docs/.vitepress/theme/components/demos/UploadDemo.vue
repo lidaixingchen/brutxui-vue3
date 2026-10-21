@@ -116,8 +116,8 @@ onUnmounted(() => {
                 accept="application/pdf,image/*"
                 :max-size="MAX_FILE_SIZE"
             >
-                <template #trigger="{ selectFiles, drag }">
-                    <UploadTrigger :drag="drag" @select="selectFiles" />
+                <template #trigger="{ selectFiles, drag, accept, multiple }">
+                    <UploadTrigger :drag="drag" :accept="accept" :multiple="multiple" @select="selectFiles" />
                 </template>
                 <template #file-list="{ files, remove, retry }">
                     <UploadFileList :files="files" list-type="text" @remove="wrapRemove(remove)" @retry="retry" />
@@ -135,8 +135,8 @@ onUnmounted(() => {
                 accept="image/*"
                 :max-size="MAX_FILE_SIZE"
             >
-                <template #trigger="{ selectFiles, drag }">
-                    <UploadTrigger :drag="drag" @select="selectFiles" />
+                <template #trigger="{ selectFiles, drag, accept, multiple }">
+                    <UploadTrigger :drag="drag" :accept="accept" :multiple="multiple" @select="selectFiles" />
                 </template>
                 <template #file-list="{ files, remove, retry }">
                     <UploadFileList :files="files" list-type="picture" @remove="wrapRemove(remove)" @retry="retry" />
@@ -155,8 +155,8 @@ onUnmounted(() => {
                 accept="image/*"
                 :max-size="MAX_FILE_SIZE"
             >
-                <template #trigger="{ selectFiles }">
-                    <UploadTrigger @select="selectFiles" />
+                <template #trigger="{ selectFiles, drag, accept, multiple }">
+                    <UploadTrigger :drag="drag" :accept="accept" :multiple="multiple" @select="selectFiles" />
                 </template>
                 <template #file-list="{ files, remove }">
                     <UploadFileList :files="files" list-type="picture-card" @remove="wrapRemove(remove)" />

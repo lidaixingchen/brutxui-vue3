@@ -49,17 +49,18 @@ const activeValue = computed<string | undefined>(() => {
     return internalValue.value || props.defaultValue || undefined
 })
 
-// 非受控模式下，当 tabs 变化导致当前 internalValue 已不存在时，把 internalValue 同步为 defaultValue/首项（或空串），
-// 否则 activeValue 仅计算回退、internalValue 仍保留旧值，后续重新加入该 value 时会在无用户操作下自动跳回旧选中项。
-// 受控分支（modelValue 优先）不写 internalValue，避免干扰 v-model 场景
-watch(() => props.tabs, (tabs) => {
-    if (props.modelValue !== undefined) return
-    const current = internalValue.value
-    const exists = current !== '' && !!tabs && tabs.some(tab => tab.value === current)
-    if (!exists) {
-        internalValue.value = props.defaultValue ?? tabs?.[0]?.value ?? ''
-    }
-})
+// 只跟踪 tab value，选项身份变化时同步非受控值，文案更新不会影响当前选择。
+watch(
+    () => props.tabs?.map(tab => tab.value),
+    (values) => {
+        if (props.modelValue !== undefined) return
+        const current = internalValue.value
+        const exists = current !== '' && !!values?.includes(current)
+        if (!exists) {
+            internalValue.value = props.defaultValue ?? props.tabs?.[0]?.value ?? ''
+        }
+    },
+)
 
 function handleUpdateModelValue(value: string) {
     if (props.modelValue === undefined) {

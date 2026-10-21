@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue'
-import { MENU_KEY } from './menu-types'
+import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { MENU_KEY, type MenuRuntimeContext } from './menu-types'
 import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 
 interface MenuItemProps {
@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<MenuItemProps>(), {
     class: undefined,
 })
 
-const context = inject(MENU_KEY)
+const context = inject(MENU_KEY) as MenuRuntimeContext | undefined
 if (!context) {
     console.warn('[BrutxUI MenuItem] Must be used inside a Menu component.')
 }
@@ -69,7 +69,7 @@ watch(
         }
         if (context) {
             const wasFocused = context.focusedIndex.value === oldIndex
-            context.unregisterItem(oldIndex)
+            context.unregisterItem(oldIndex, false)
             registerSelf()
             if (context.activeIndex.value === oldIndex) {
                 context.activeIndex.value = newIndex
@@ -81,7 +81,7 @@ watch(
     }
 )
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
     if (parentSubMenu) {
         parentSubMenu.unregisterChild(props.index)
     }
@@ -91,16 +91,14 @@ onUnmounted(() => {
 })
 
 const isActive = computed(() => context?.activeIndex.value === props.index)
-const isFocused = computed(() => context?.focusedIndex.value === props.index)
 
 const tabIndex = computed(() => {
     if (props.disabled) return -1
+    if (context?.tabStopIndex) return context.tabStopIndex.value === props.index ? 0 : -1
     if (context?.focusedIndex.value != null) {
-        return isFocused.value ? 0 : -1
+        return context.focusedIndex.value === props.index ? 0 : -1
     }
-    if (context?.activeIndex.value) {
-        return isActive.value ? 0 : -1
-    }
+    if (context?.activeIndex.value) return isActive.value ? 0 : -1
     return context?.firstEnabledIndex.value === props.index ? 0 : -1
 })
 
@@ -122,6 +120,12 @@ function handleClick() {
     context?.selectItem(props.index, props.route)
     context?.focusItem(props.index)
     parentSubMenu?.notifyItemSelected()
+}
+
+function handleFocus() {
+    if (!props.disabled && context) {
+        context.focusedIndex.value = props.index
+    }
 }
 
 function handleKeydown(e: KeyboardEvent) {
@@ -175,6 +179,7 @@ function handleKeydown(e: KeyboardEvent) {
         :class="classes"
         :aria-disabled="disabled"
         :tabindex="tabIndex"
+        @focus="handleFocus"
         @click="handleClick"
         @keydown="handleKeydown"
     >

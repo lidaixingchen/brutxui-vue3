@@ -99,6 +99,8 @@ function getOptionId(colIdx: number, itemIdx: number): string {
 
 const activeDescendantId = computed(() => {
     if (!open.value || activeItemIndex.value < 0) return undefined
+    const activeOption = columns.value[activeColumnIndex.value]?.[activeItemIndex.value]
+    if (!activeOption || activeOption.disabled) return undefined
     return getOptionId(activeColumnIndex.value, activeItemIndex.value)
 })
 
@@ -131,11 +133,63 @@ function getOptionPath(option: CascaderOption, colIdx: number): CascaderValue[] 
 // 挂在多个父节点（共享子树）时，各父路径下都能得到正确的完整叶子路径。
 const leafPathsCache = new Map<CascaderOption, CascaderValue[][]>()
 
+function findNearestEnabledIndex(options: CascaderOption[], preferredIndex: number): number {
+    if (options.length === 0) return -1
+    const startIndex = Math.min(Math.max(preferredIndex, 0), options.length - 1)
+    for (let index = startIndex; index < options.length; index++) {
+        if (!options[index]?.disabled) return index
+    }
+    for (let index = startIndex - 1; index >= 0; index--) {
+        if (!options[index]?.disabled) return index
+    }
+    return -1
+}
+
+function reconcileActiveItem() {
+    if (!open.value) return
+    const previousColumnIndex = activeColumnIndex.value
+    const visibleColumns = columns.value
+    const targetColumnIndex = Math.min(previousColumnIndex, Math.max(visibleColumns.length - 1, 0))
+    const targetOptions = visibleColumns[targetColumnIndex] || []
+    const pathValue = activePath.value[targetColumnIndex]
+    const pathIndex = pathValue === undefined
+        ? -1
+        : targetOptions.findIndex((option) => option.value === pathValue)
+    const activeIndex = pathIndex >= 0
+        ? pathIndex
+        : targetColumnIndex === previousColumnIndex
+            ? activeItemIndex.value
+            : -1
+    const activeOption = activeIndex >= 0 ? targetOptions[activeIndex] : undefined
+
+    if (activeOption && !activeOption.disabled) {
+        activeColumnIndex.value = targetColumnIndex
+        activeItemIndex.value = activeIndex
+        if (targetColumnIndex !== previousColumnIndex) {
+            activePath.value = activePath.value.slice(0, targetColumnIndex + 1)
+        }
+        return
+    }
+
+    activeColumnIndex.value = targetColumnIndex
+    if (activeOption?.disabled && activeOption.children && activeOption.children.length > 0) {
+        activeItemIndex.value = -1
+        return
+    }
+
+    const nextIndex = findNearestEnabledIndex(targetOptions, activeIndex)
+    activeItemIndex.value = nextIndex
+    activePath.value = nextIndex >= 0
+        ? [...activePath.value.slice(0, targetColumnIndex), targetOptions[nextIndex]!.value]
+        : activePath.value.slice(0, targetColumnIndex)
+}
+
 // 原地变更（push/splice、修改 children、切换 disabled）不改变 options 引用，
 // 必须深度监听才能让叶子缓存失效。代价是每次嵌套变更会全量遍历一次树，
 // 数据量极大且高频变更时需评估，必要时可改为由调用方以数据版本号主动失效。
 watch(() => props.options, () => {
     leafPathsCache.clear()
+    reconcileActiveItem()
 }, { deep: true })
 
 // 递归计算 option 到其全部叶子后代的相对路径（不含祖先前缀），并在每个 option 上都写缓存：
@@ -492,21 +546,33 @@ function handleKeyDown(e: KeyboardEvent) {
         }
         case 'ArrowRight': {
             e.preventDefault()
+            const activePathValue = activePath.value[activeColumnIndex.value]
             const currentOpt = currentColumnOptions[activeItemIndex.value]
+                ?? currentColumnOptions.find((option) => option.value === activePathValue)
             if (currentOpt && currentOpt.children && currentOpt.children.length > 0) {
-                activeColumnIndex.value += 1
-                activeItemIndex.value = 0
-                activePath.value = [...activePath.value.slice(0, activeColumnIndex.value), currentOpt.children[0].value]
+                const parentColumnIndex = activeColumnIndex.value
+                const childIndex = findNearestEnabledIndex(currentOpt.children, 0)
+                activeColumnIndex.value = parentColumnIndex + 1
+                activeItemIndex.value = childIndex
+                activePath.value = childIndex >= 0
+                    ? [...activePath.value.slice(0, parentColumnIndex), currentOpt.value, currentOpt.children[childIndex]!.value]
+                    : [...activePath.value.slice(0, parentColumnIndex), currentOpt.value]
             }
             break
         }
         case 'ArrowLeft': {
             e.preventDefault()
             if (activeColumnIndex.value > 0) {
-                activeColumnIndex.value -= 1
-                const parentVal = activePath.value[activeColumnIndex.value]
-                const parentColumnOptions = columns.value[activeColumnIndex.value] || []
-                activeItemIndex.value = Math.max(0, parentColumnOptions.findIndex(o => o.value === parentVal))
+                const parentColumnIndex = activeColumnIndex.value - 1
+                const parentVal = activePath.value[parentColumnIndex]
+                const parentColumnOptions = columns.value[parentColumnIndex] || []
+                const parentIndex = parentColumnOptions.findIndex((option) => option.value === parentVal)
+                const nextIndex = findNearestEnabledIndex(parentColumnOptions, parentIndex)
+                activeColumnIndex.value = parentColumnIndex
+                activeItemIndex.value = nextIndex
+                activePath.value = nextIndex >= 0
+                    ? [...activePath.value.slice(0, parentColumnIndex), parentColumnOptions[nextIndex]!.value]
+                    : activePath.value.slice(0, parentColumnIndex)
             }
             break
         }
@@ -529,8 +595,8 @@ function handleKeyDown(e: KeyboardEvent) {
 
 function getItemClasses(option: CascaderOption, colIdx: number) {
     const isSelected = isPathSelected(getOptionPath(option, colIdx))
-    const isActive = activePath.value[colIdx] === option.value && activeColumnIndex.value === colIdx
-    const isTrailActive = activePath.value[colIdx] === option.value
+    const isActive = !option.disabled && activePath.value[colIdx] === option.value && activeColumnIndex.value === colIdx
+    const isTrailActive = !option.disabled && activePath.value[colIdx] === option.value
     const onSelectedTrail = isOnSelectedTrail(option, colIdx)
 
     return cn(
@@ -598,6 +664,7 @@ function getItemClasses(option: CascaderOption, colIdx: number) {
                         :key="option.value"
                         role="option"
                         :aria-selected="isPathSelected(getOptionPath(option, colIdx))"
+                        :aria-disabled="option.disabled ? 'true' : undefined"
                         :class="getItemClasses(option, colIdx)"
                         @mouseenter="handleMouseEnter(option, colIdx)"
                         @click="handleItemClick(option, colIdx)"
