@@ -215,7 +215,7 @@ describe('Descriptions 档案质感', () => {
         expect(wrapper.html()).toContain('bg-pattern-dots')
     })
 
-    it('stamp 插槽渲染于右上角悬浮层', () => {
+    it('stamp 插槽渲染在描述内容之前', () => {
         const wrapper = mount(Descriptions, {
             props: { border: true },
             slots: {
@@ -223,18 +223,18 @@ describe('Descriptions 档案质感', () => {
                 stamp: () => h('span', { class: 'stamp-mark' }, '[ CONFIDENTIAL ]'),
             },
         })
-        const slotWrap = wrapper.find('.absolute.right-4')
-        expect(slotWrap.exists()).toBe(true)
-        expect(slotWrap.find('.stamp-mark').exists()).toBe(true)
+        const stamp = wrapper.find('.stamp-mark')
+        expect(stamp.exists()).toBe(true)
+        expect(stamp.element.compareDocumentPosition(wrapper.find('.grid').element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     })
 
-    it('未提供 stamp 插槽时不渲染悬浮层', () => {
+    it('未提供 stamp 插槽时描述内容直接排布', () => {
         const wrapper = mount(Descriptions, {
             props: { border: true },
             slots: {
                 default: () => h(DescriptionsItem, { label: 'Status' }, { default: () => 'active' }),
             },
         })
-        expect(wrapper.find('.absolute.right-4').exists()).toBe(false)
+        expect(wrapper.find('.grid').element.previousElementSibling).toBeNull()
     })
 })

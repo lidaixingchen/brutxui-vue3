@@ -1042,7 +1042,8 @@
     ],
     "directives": [],
     "lib": [
-      "defaults.ts"
+      "defaults.ts",
+      "env.ts"
     ]
   },
   "slider": {

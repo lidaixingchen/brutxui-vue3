@@ -61,6 +61,10 @@ export const stepperConnectorVariants = cva(
 
 export const stepperStepLabelVariants = cva('', {
     variants: {
+        orientation: {
+            horizontal: 'w-full min-w-0',
+            vertical: '',
+        },
         state: {
             completed: '',
             active: '',
@@ -68,6 +72,7 @@ export const stepperStepLabelVariants = cva('', {
         },
     },
     defaultVariants: {
+        orientation: 'vertical',
         state: 'upcoming',
     },
 });

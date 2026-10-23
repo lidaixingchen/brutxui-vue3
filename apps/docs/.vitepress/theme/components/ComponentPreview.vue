@@ -26,7 +26,7 @@ const containerClass = computed(() =>
 
 const innerClass = computed(() =>
     cn(
-        'w-full gap-2 sm:gap-4',
+        'w-full gap-2 pt-6 sm:gap-4 sm:pt-0',
         props.align === 'center'
             ? 'flex items-center justify-center flex-wrap'
             : 'flex flex-col items-stretch',
@@ -41,7 +41,7 @@ const innerClass = computed(() =>
     >
         <!-- PREVIEW badge -->
         <span
-            class="absolute top-0 left-0 z-20 px-2 py-0.5 text-[0.6rem] font-black uppercase tracking-[0.12em] bg-brutal-accent text-black border-b-2 border-r-2 border-brutal select-none"
+            class="absolute top-0 left-0 z-20 px-2 py-0.5 text-[0.6rem] leading-none font-black uppercase tracking-[0.12em] bg-brutal-accent text-black border-b-2 border-r-2 border-brutal select-none"
         >
             Preview
         </span>

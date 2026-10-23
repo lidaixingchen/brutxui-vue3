@@ -33,7 +33,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
-            "line": 26
+            "line": 27
           },
           "origin": "declared",
           "required": false,
@@ -71,7 +71,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
-            "line": 27
+            "line": 28
           },
           "origin": "declared",
           "required": false,
@@ -103,7 +103,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
-            "line": 28
+            "line": 29
           },
           "origin": "declared",
           "required": false,
@@ -135,7 +135,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
-            "line": 29
+            "line": 30
           },
           "origin": "declared",
           "required": false,
@@ -167,7 +167,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
-            "line": 30
+            "line": 31
           },
           "origin": "declared",
           "required": false,
@@ -202,7 +202,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
-            "line": 31
+            "line": 32
           },
           "origin": "declared",
           "required": false,
@@ -234,7 +234,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
-            "line": 32
+            "line": 33
           },
           "origin": "declared",
           "required": false,
@@ -269,7 +269,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
-            "line": 33
+            "line": 34
           },
           "origin": "declared",
           "required": false,
@@ -301,7 +301,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
-            "line": 34
+            "line": 35
           },
           "origin": "declared",
           "required": false,
@@ -333,7 +333,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
-            "line": 35
+            "line": 36
           },
           "origin": "declared",
           "required": false,
@@ -365,7 +365,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
-            "line": 36
+            "line": 37
           },
           "origin": "declared",
           "required": false,
@@ -403,7 +403,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/sketchy-chart/SketchyChart.vue",
-            "line": 53
+            "line": 55
           },
           "origin": "declared",
           "nullable": false

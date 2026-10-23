@@ -28,7 +28,7 @@ function resetWindow() {
 </script>
 
 <template>
-    <div class="space-y-8">
+    <div class="w-full min-w-0 space-y-8">
         <div>
             <h3 class="text-sm font-black mb-3">交互控制模式（工控实体按钮）</h3>
             <div v-if="!isClosed" class="border-3 border-brutal rounded-brutal bg-brutal-bg shadow-brutal overflow-hidden">

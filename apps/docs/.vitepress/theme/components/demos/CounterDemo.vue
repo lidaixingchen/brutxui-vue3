@@ -31,7 +31,10 @@ onUnmounted(() => {
     <div class="space-y-8">
         <div>
             <h3 class="text-sm font-black mb-3">基础用法</h3>
-            <div class="grid grid-cols-3 gap-4">
+            <div
+                class="grid w-full gap-4"
+                style="grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--container-2xs)), 1fr))"
+            >
                 <div
                     v-for="stat in stats"
                     :key="stat.label"

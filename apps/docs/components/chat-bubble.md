@@ -3,7 +3,7 @@ title: ChatBubble 聊天气泡
 description: 聊天消息气泡组件，支持发送方/接收方/系统消息三种变体，附带头像、姓名、时间戳展示。
 ---
 
-# ChatBubble 聊天气泡
+# <span class="chat-bubble-title__part">ChatBubble</span> <span class="chat-bubble-title__part" lang="zh-CN">聊天气泡</span>
 
 支持三种消息角色变体的聊天 UI 组件，粗边框气泡 + 阴影偏移让对话界面充满个性张力。
 

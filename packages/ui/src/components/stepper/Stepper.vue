@@ -198,6 +198,10 @@ const labelStateClasses = computed(() =>
     stepStates.value.map((state) => stepperStepLabelVariants({ state }))
 )
 
+const horizontalLabelClasses = computed(() =>
+    stepStates.value.map((state) => cn(stepperStepLabelVariants({ state, orientation: 'horizontal' })))
+)
+
 const dotClasses = computed(() =>
     stepStates.value.map((state) => getDotClasses(state))
 )
@@ -247,7 +251,7 @@ const connectorClasses = computed(() =>
                 <div
                     v-if="orientation === 'horizontal'"
                     class="mt-2 text-center px-1"
-                    :class="labelStateClasses[index]"
+                    :class="horizontalLabelClasses[index]"
                 >
                     <p class="text-xs font-black tracking-wide truncate">
 {{ step.title }}

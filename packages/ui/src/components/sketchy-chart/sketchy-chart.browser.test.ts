@@ -8,9 +8,20 @@ import SketchyChart from './SketchyChart.vue'
 import type { ChartDataItem, ChartType } from './sketchy-chart-data'
 
 let mounted: ReturnType<typeof mount> | undefined
-afterEach((): void => {
+let responsiveHost: HTMLDivElement | null = null
+let viewportBefore: { width: number; height: number } | null = null
+let delayedFont: FontFace | null = null
+afterEach(async (): Promise<void> => {
     mounted?.unmount()
     mounted = undefined
+    responsiveHost?.remove()
+    responsiveHost = null
+    if (delayedFont) document.fonts.delete(delayedFont)
+    delayedFont = null
+    if (viewportBefore) {
+        await page.viewport(viewportBefore.width, viewportBefore.height)
+        viewportBefore = null
+    }
 })
 
 describe('图表浏览器读数', (): void => {
@@ -219,6 +230,83 @@ describe('图表浏览器读数', (): void => {
         await expect.element(page.getByRole('cell', { name: '-10', exact: true })).toBeVisible()
         await userEvent.keyboard('{Enter}')
         await expect.element(page.getByRole('table')).not.toBeInTheDocument()
+    })
+
+    it.each([320, 390].flatMap((width: number) => (['line', 'bar'] as const).map(type => ({ width, type }))))('窄屏 $width px 的 $type 图保留可读轴标签和完整数据', async ({ width, type }): Promise<void> => {
+        viewportBefore = { width: window.innerWidth, height: window.innerHeight }
+        await page.viewport(width, 844)
+        responsiveHost = document.createElement('div')
+        Object.assign(responsiveHost.style, {
+            position: 'fixed', left: '16px', top: '16px', width: `${width - 70}px`,
+            padding: '8px', boxSizing: 'border-box',
+        })
+        document.body.appendChild(responsiveHost)
+        mounted = mount(SketchyChart, { props: {
+            title: '季度变化', type,
+            data: [
+                { label: '2026 年第一季度收入', value: -12400.5 },
+                { label: '2026 年第二季度净收入', value: 0 },
+                { label: '2026 年第三季度收入', value: 7800 },
+                { label: '2026 年第四季度净收入', value: -2000 },
+                { label: '2027 年第一季度收入', value: 9200 },
+            ],
+            valueFormatter: (value: number): string => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value),
+        }, attachTo: responsiveHost })
+        await nextTick()
+
+        const graph: SVGSVGElement = responsiveHost.querySelector('svg')!
+        const graphBounds: DOMRect = graph.getBoundingClientRect()
+        const axisLabels: SVGTextElement[] = Array.from(responsiveHost.querySelectorAll('.chart-labels text'))
+        await expect.poll((): number => axisLabels[0]!.getBoundingClientRect().height).toBeGreaterThan(10)
+        expect(graphBounds.width).toBeGreaterThan(width * 0.6)
+
+        const yLabels: SVGTextElement[] = Array.from(responsiveHost.querySelectorAll('.chart-labels text[data-chart-y-tick]'))
+        await expect.poll((): boolean => yLabels.every((label: SVGTextElement): boolean => label.getBoundingClientRect().left >= graphBounds.left - 1)).toBe(true)
+        await expect.poll((): number => responsiveHost!.querySelectorAll('.chart-labels text[data-chart-category]').length).toBeLessThan(5)
+        const categoryLabels: SVGTextElement[] = Array.from(responsiveHost.querySelectorAll('.chart-labels text[data-chart-category]'))
+        expect(categoryLabels.length).toBeGreaterThan(0)
+        const categoryBounds: DOMRect[] = categoryLabels.map((label: SVGTextElement): DOMRect => label.getBoundingClientRect())
+        for (const bounds of categoryBounds) {
+            expect(bounds.left).toBeGreaterThanOrEqual(graphBounds.left - 1)
+            expect(bounds.right).toBeLessThanOrEqual(graphBounds.right + 1)
+        }
+        for (let index = 1; index < categoryBounds.length; index++) {
+            expect(categoryBounds[index]!.left).toBeGreaterThanOrEqual(categoryBounds[index - 1]!.right - 1)
+        }
+
+        const points: SVGGraphicsElement[] = Array.from(responsiveHost.querySelectorAll(type === 'line' ? '.chart-data circle' : '.chart-data g rect[stroke]'))
+        expect(points).toHaveLength(5)
+        const firstPoint: DOMRect = points[0]!.getBoundingClientRect()
+        const lastPoint: DOMRect = points[points.length - 1]!.getBoundingClientRect()
+        const axis: SVGLineElement = responsiveHost.querySelector('.chart-axes line:last-child')!
+        const matrix: DOMMatrix = graph.getScreenCTM()!
+        const plotLeft: number = new DOMPoint(axis.x1.baseVal.value, 0).matrixTransform(matrix).x
+        const plotRight: number = new DOMPoint(axis.x2.baseVal.value, 0).matrixTransform(matrix).x
+        const edgeInset: number = type === 'bar' ? (plotRight - plotLeft) / points.length / 2 : 0
+        expect(firstPoint.left + firstPoint.width / 2).toBeCloseTo(plotLeft + edgeInset, 1)
+        expect(lastPoint.left + lastPoint.width / 2).toBeCloseTo(plotRight - edgeInset, 1)
+    })
+
+    it('字体在挂载后加载时重新测量轴标签留白', async (): Promise<void> => {
+        responsiveHost = document.createElement('div')
+        responsiveHost.style.width = '234px'
+        responsiveHost.style.fontFamily = 'ChartDelayedFont, Arial, sans-serif'
+        document.body.appendChild(responsiveHost)
+        mounted = mount(SketchyChart, { props: {
+            data: [{ label: '第一季度', value: -12400.5 }, { label: '第二季度', value: 9200 }],
+            valueFormatter: (value: number): string => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value),
+        }, attachTo: responsiveHost })
+        const graph: SVGSVGElement = responsiveHost.querySelector('svg')!
+        const labels = (): SVGTextElement[] => Array.from(graph.querySelectorAll('[data-chart-y-tick]'))
+        const withinGraph = (): boolean => labels().every((label: SVGTextElement): boolean => label.getBoundingClientRect().left >= graph.getBoundingClientRect().left)
+        await expect.poll(withinGraph).toBe(true)
+
+        delayedFont = new FontFace('ChartDelayedFont', 'local("Courier New"), local("Liberation Mono"), local("DejaVu Sans Mono")', { weight: '700' })
+        document.fonts.add(delayedFont)
+        await delayedFont.load()
+        await document.fonts.ready
+        await expect.poll((): number => labels()[0]!.getBoundingClientRect().width).toBeGreaterThan(70)
+        await expect.poll(withinGraph).toBe(true)
     })
 
     it('记录三类图表的代表性数据规模与首次渲染耗时', async (): Promise<void> => {

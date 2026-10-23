@@ -587,6 +587,10 @@
     margin-bottom: 2rem;
 }
 
+.vp-doc h1 .chat-bubble-title__part {
+    white-space: nowrap;
+}
+
 .vp-doc h2 {
     font-size: 1.5rem;
     font-weight: 900;
