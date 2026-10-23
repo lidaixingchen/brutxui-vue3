@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch, type ComputedRef, type Ref, type CSSProperties, type VNode } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, useId, watch, type ComputedRef, type Ref, type CSSProperties, type VNode } from 'vue'
 import { CollapsibleRoot, CollapsibleTrigger, CollapsibleContent, TooltipRoot, TooltipProvider, TooltipTrigger } from 'reka-ui'
 import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 import { cancelAnimationFrame, getDocument, getResizeObserverCtor, requestAnimationFrame } from '@/lib/env'
@@ -62,7 +62,6 @@ const DASH_PATTERN: string = '4 4'
 const LABEL_OFFSET: number = 4
 const BAR_GAP_RATIO: number = 0.25
 const MINIMUM_PLOT_SIZE: number = 1
-const CATEGORY_LABEL_SPACING: number = 70
 const CATEGORY_LABEL_GAP_PX: number = 8
 const AXIS_LABEL_FONT_SIZE_PX: number = 12
 const AXIS_LABEL_GAP_PX: number = 12
@@ -78,6 +77,11 @@ const PIE_COLORS: readonly string[] = [
     'var(--brutal-accent, #FFE66D)', 'var(--brutal-info, #4A90D9)',
     'var(--brutal-success, #7FB069)', 'var(--brutal-destructive, #EF476F)',
 ]
+const TABLE_COLUMNS = [
+    { field: 'label', title: 'sketchyChart.categoryHeader' },
+    { field: 'formattedValue', title: 'sketchyChart.valueHeader' },
+    { field: 'formattedPercentage', title: 'sketchyChart.percentageHeader' },
+] as const
 const props = withDefaults(defineProps<SketchyChartProps>(), {
     type: 'line', data: () => [], title: undefined, description: undefined, valueFormatter: undefined,
     sketchiness: DEFAULT_SKETCHINESS, grid: true, interactive: true,
@@ -117,6 +121,7 @@ const readings: ComputedRef<ChartReading[]> = computed((): ChartReading[] => mod
     formattedPercentage: item.percentage === undefined ? t('sketchyChart.unavailablePercentage') : percentageFormat.value.format(item.percentage),
     color: PIE_COLORS[item.index % PIE_COLORS.length]!,
 })))
+const tableColumns = computed(() => props.type === 'pie' ? TABLE_COLUMNS : TABLE_COLUMNS.slice(0, 2))
 const hasRoundingDifference: ComputedRef<boolean> = computed((): boolean => {
     if (props.type !== 'pie' || model.value.state !== 'ready') return false
     const precision: number = PERCENTAGE_MULTIPLIER * 10 ** PERCENTAGE_DECIMAL_PLACES
@@ -152,7 +157,9 @@ const categoryLabelGap: ComputedRef<number> = computed((): number => CATEGORY_LA
 const plotWidth: ComputedRef<number> = computed((): number => Math.max(MINIMUM_PLOT_SIZE, chartWidth.value - chartLeftPadding.value - CHART_PADDING.right))
 const plotHeight: ComputedRef<number> = computed((): number => Math.max(MINIMUM_PLOT_SIZE, chartHeight.value - chartTopPadding.value - chartBottomPadding.value))
 function dataToSvgX(index: number): number {
-    return chartLeftPadding.value + (processedData.value.length <= 1 ? plotWidth.value / 2 : index / (processedData.value.length - 1) * plotWidth.value)
+    const count: number = processedData.value.length
+    const position: number = props.type === 'bar' ? (index + 0.5) / count : count <= 1 ? 0.5 : index / (count - 1)
+    return chartLeftPadding.value + position * plotWidth.value
 }
 function dataToSvgY(value: number): number {
     return chartTopPadding.value + chartYPosition(value, model.value) * plotHeight.value
@@ -164,11 +171,10 @@ const lineAreaPath: ComputedRef<string> = computed((): string => processedData.v
     `${linePath.value} L ${dataToSvgX(processedData.value.length - 1)} ${zeroY.value} L ${dataToSvgX(0)} ${zeroY.value} Z`)
 const barWidth: ComputedRef<number> = computed((): number => processedData.value.length === 0 ? 0 : plotWidth.value / processedData.value.length * (1 - BAR_GAP_RATIO))
 function getBarX(index: number): number {
-    const slotWidth: number = plotWidth.value / processedData.value.length
-    return chartLeftPadding.value + index * slotWidth + (slotWidth - barWidth.value) / 2
+    return dataToSvgX(index) - barWidth.value / 2
 }
 function categoryLabelX(item: ChartDatum): number {
-    const dataPosition: number = props.type === 'line' ? dataToSvgX(item.index) : getBarX(item.index) + barWidth.value / 2
+    const dataPosition: number = dataToSvgX(item.index)
     const width: number = labelMetrics.value.categoryWidths[item.index] ?? 0
     const anchorOffset: number = item.index === 0 ? 0 : item.index === processedData.value.length - 1 ? width : width / 2
     const gutter: number = PLOT_EDGE_GUTTER_PX / graphScale.value
@@ -178,33 +184,29 @@ const pieSlices: ComputedRef<Array<PieGeometry & { color: string }>> = computed(
     createPieGeometry(model.value, chartWidth.value, chartHeight.value).map((slice: PieGeometry): PieGeometry & { color: string } => ({ ...slice, color: PIE_COLORS[slice.index % PIE_COLORS.length]! })))
 const yTicks: ComputedRef<PositionedTick[]> = computed((): PositionedTick[] => model.value.state === 'invalid' || model.value.state === 'empty' ? [] :
     createChartTicks(model.value, formatValue).map((tick: ChartTick): PositionedTick => ({ ...tick, y: chartTopPadding.value + tick.position * plotHeight.value })))
-const categoryLabels: ComputedRef<ChartDatum[]> = computed((): ChartDatum[] => {
+const visibleCategories: ComputedRef<Set<number>> = computed((): Set<number> => {
     const items: ChartDatum[] = processedData.value
-    if (items.length <= 1) return items
+    const selected: Set<number> = new Set(items.slice(0, 1).map(item => item.index))
+    if (items.length <= 1) return selected
     const widths: number[] = labelMetrics.value.categoryWidths
-    if (widths.length !== items.length) {
-        const capacity: number = Math.max(1, Math.floor(plotWidth.value / CATEGORY_LABEL_SPACING))
-        const step: number = Math.max(1, Math.ceil(items.length / capacity))
-        return items.filter((item: ChartDatum): boolean => item.index % step === 0 || item.index === items.length - 1)
-    }
+    if (widths.length !== items.length) return selected
     const first: ChartDatum = items[0]!
     const last: ChartDatum = items[items.length - 1]!
     let occupiedRight: number = categoryLabelX(first) + (widths[first.index] ?? 0)
     const lastLeft: number = categoryLabelX(last) - (widths[last.index] ?? 0)
-    if (lastLeft < occupiedRight + categoryLabelGap.value) return [first]
+    if (lastLeft < occupiedRight + categoryLabelGap.value) return selected
 
-    const selected: ChartDatum[] = [first]
     for (const item of items.slice(1, -1)) {
         const center: number = categoryLabelX(item)
         const halfWidth: number = (widths[item.index] ?? 0) / 2
         const left: number = center - halfWidth
         const right: number = center + halfWidth
         if (left >= occupiedRight + categoryLabelGap.value && right <= lastLeft - categoryLabelGap.value) {
-            selected.push(item)
+            selected.add(item.index)
             occupiedRight = right
         }
     }
-    selected.push(last)
+    selected.add(last.index)
     return selected
 })
 const isEmpty: ComputedRef<boolean> = computed((): boolean => model.value.state !== 'ready')
@@ -263,7 +265,7 @@ const anchorInGraph: ComputedRef<boolean> = computed((): boolean => activeReadin
 const activePoint: ComputedRef<ChartPoint> = computed((): ChartPoint => {
     const item: ChartReading | undefined = activeReading.value
     if (!item) return { x: 0, y: 0 }
-    if (props.type !== 'pie') return { x: props.type === 'line' ? dataToSvgX(item.index) : getBarX(item.index) + barWidth.value / 2, y: dataToSvgY(item.value) }
+    if (props.type !== 'pie') return { x: dataToSvgX(item.index), y: dataToSvgY(item.value) }
     const slice: PieGeometry | undefined = activeSlice.value
     if (!slice) return { x: 0, y: 0 }
     const angle: number = (slice.startFraction + slice.endFraction) / 2 * FULL_TURN + PIE_TOP_ANGLE
@@ -280,18 +282,16 @@ function readingText(index: number): string {
 function updateLabelMetrics(): void {
     const svg: SVGSVGElement | null = graph.value
     if (!svg) return
-    const yAxisWidth: number = Math.max(0, ...Array.from(svg.querySelectorAll<SVGTextElement>('[data-chart-y-probe]'), (label: SVGTextElement): number => label.getComputedTextLength()))
-    const categoryWidths: number[] = Array.from(svg.querySelectorAll<SVGTextElement>('[data-chart-category-probe]'), (label: SVGTextElement): number => label.getComputedTextLength())
+    const yAxisWidth: number = Math.max(0, ...Array.from(svg.querySelectorAll<SVGTextElement>('[data-chart-y-tick]'), (label: SVGTextElement): number => label.getComputedTextLength()))
+    const categoryWidths: number[] = Array.from(svg.querySelectorAll<SVGTextElement>('[data-chart-category]'), (label: SVGTextElement): number => label.getComputedTextLength())
     labelMetrics.value = { yAxisWidth, categoryWidths }
 }
 let labelMeasureFrame: number | null = null
 function scheduleLabelMetrics(): void {
-    void nextTick((): void => {
-        if (!graph.value || labelMeasureFrame !== null) return
-        labelMeasureFrame = requestAnimationFrame((): void => {
-            labelMeasureFrame = null
-            updateLabelMetrics()
-        })
+    if (!graph.value || labelMeasureFrame !== null) return
+    labelMeasureFrame = requestAnimationFrame((): void => {
+        labelMeasureFrame = null
+        updateLabelMetrics()
     })
 }
 watch([yTicks, processedData, axisLabelFontSize], scheduleLabelMetrics, { flush: 'post' })
@@ -301,16 +301,11 @@ onMounted((): void => {
     portalTarget.value = root.value?.closest<HTMLElement>('[role="dialog"], [role="alertdialog"]') ?? root.value?.ownerDocument.body
     const graphElement: SVGSVGElement | null = graph.value
     if (!graphElement) return
-    const updateWidth = (width: number): void => {
-        if (width > 0 && renderedGraphWidth.value !== width) renderedGraphWidth.value = width
-    }
-    updateWidth(graphElement.getBoundingClientRect().width)
+    const updateWidth = (): void => { renderedGraphWidth.value = graphElement.getBoundingClientRect().width }
+    updateWidth()
     const ResizeObserverCtor = getResizeObserverCtor()
     if (ResizeObserverCtor) {
-        graphResizeObserver = new ResizeObserverCtor((entries: ResizeObserverEntry[]): void => {
-            const width: number | undefined = entries[0]?.contentRect.width
-            if (width !== undefined) updateWidth(width)
-        })
+        graphResizeObserver = new ResizeObserverCtor(updateWidth)
         graphResizeObserver.observe(graphElement)
     }
     chartFonts = getDocument()?.fonts ?? null
@@ -508,22 +503,18 @@ onBeforeUnmount((): void => {
 
                 <!-- X 轴刻度标签 -->
                 <text
-                    v-for="d in categoryLabels"
+                    v-for="d in processedData"
                     :key="'lbl-x-' + d.index"
                     :x="categoryLabelX(d)"
                     :y="chartHeight - chartBottomPadding + X_AXIS_LABEL_OFFSET_PX / graphScale"
                     :data-chart-category="d.index"
+                    :visibility="visibleCategories.has(d.index) ? undefined : 'hidden'"
                     :text-anchor="d.index === 0 ? 'start' : d.index === processedData.length - 1 ? 'end' : 'middle'"
                 >
                     {{ d.label }}
                 </text>
             </g>
 
-            <g aria-hidden="true" class="chart-label-probes" visibility="hidden" :font-size="axisLabelFontSize" font-weight="bold">
-                <text v-for="tick in yTicks" :key="'probe-y-' + tick.index" data-chart-y-probe>{{ tick.text }}</text>
-                <text v-for="item in processedData" :key="'probe-x-' + item.index" data-chart-category-probe>{{ item.label }}</text>
-            </g>
-            
             <!-- 暂无数据提示 (Empty State) -->
             <g v-if="isEmpty" :filter="`url(#${filterId})`" class="chart-empty-state">
                 <circle
@@ -629,19 +620,15 @@ v-if="tooltipOpen && tooltipReading" :id="tooltipId" :to="portalTarget" aria-hid
                     <TableCaption>{{ t('sketchyChart.tableCaption', { title: chartTitle }) }}</TableCaption>
                     <TableHeader>
                         <TableRow>
-                            <TableHead scope="col">{{ t('sketchyChart.categoryHeader') }}</TableHead>
-                            <TableHead scope="col">{{ t('sketchyChart.valueHeader') }}</TableHead>
-                            <TableHead v-if="type === 'pie'" scope="col">{{ t('sketchyChart.percentageHeader') }}</TableHead>
+                            <TableHead v-for="column in tableColumns" :key="column.field" scope="col">{{ t(column.title) }}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         <TableRow v-for="item in readings" :key="item.index" :data-active="activeIndex === item.index ? '' : undefined" class="data-active:underline data-active:decoration-2">
-                            <TableCell>{{ item.label }}</TableCell>
-                            <TableCell>{{ item.formattedValue }}</TableCell>
-                            <TableCell v-if="type === 'pie'">{{ item.formattedPercentage }}</TableCell>
+                            <TableCell v-for="column in tableColumns" :key="column.field">{{ item[column.field] }}</TableCell>
                         </TableRow>
                         <TableRow v-if="readings.length === 0">
-                            <TableCell :colspan="type === 'pie' ? 3 : 2">{{ stateText }}</TableCell>
+                            <TableCell :colspan="tableColumns.length">{{ stateText }}</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>

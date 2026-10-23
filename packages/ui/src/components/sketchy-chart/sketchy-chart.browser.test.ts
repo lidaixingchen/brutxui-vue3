@@ -262,8 +262,10 @@ describe('图表浏览器读数', (): void => {
 
         const yLabels: SVGTextElement[] = Array.from(responsiveHost.querySelectorAll('.chart-labels text[data-chart-y-tick]'))
         await expect.poll((): boolean => yLabels.every((label: SVGTextElement): boolean => label.getBoundingClientRect().left >= graphBounds.left - 1)).toBe(true)
-        await expect.poll((): number => responsiveHost!.querySelectorAll('.chart-labels text[data-chart-category]').length).toBeLessThan(5)
-        const categoryLabels: SVGTextElement[] = Array.from(responsiveHost.querySelectorAll('.chart-labels text[data-chart-category]'))
+        const visibleCategoryLabels = (): SVGTextElement[] => Array.from(responsiveHost!.querySelectorAll<SVGTextElement>('.chart-labels text[data-chart-category]'))
+            .filter(label => getComputedStyle(label).visibility !== 'hidden')
+        await expect.poll((): number => visibleCategoryLabels().length).toBeLessThan(5)
+        const categoryLabels: SVGTextElement[] = visibleCategoryLabels()
         expect(categoryLabels.length).toBeGreaterThan(0)
         const categoryBounds: DOMRect[] = categoryLabels.map((label: SVGTextElement): DOMRect => label.getBoundingClientRect())
         for (const bounds of categoryBounds) {
