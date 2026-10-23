@@ -261,10 +261,10 @@ describe('Menu roving focus browser integration', () => {
 
 describe('Menu responsive layout browser integration', () => {
     it('wraps horizontal items before their labels or icons shrink at narrow widths', async () => {
-        const menuSurfaceWidth = '304px'
+        const menuSurfaceWidth = ref('max-content')
         const component = defineComponent({
             setup() {
-                return () => h('div', { style: { width: menuSurfaceWidth } }, [
+                return () => h('div', { style: { width: menuSurfaceWidth.value } }, [
                     h(Menu, { id: 'horizontal-menu', mode: 'horizontal' }, {
                         default: () => [
                             h(MenuItem, { index: 'home', id: 'menu-home' }, {
@@ -300,11 +300,16 @@ describe('Menu responsive layout browser integration', () => {
         const trigger = getElement(submenu, '[aria-haspopup="true"]')
 
         await document.fonts.ready
+        const intrinsicWidths = [...items, trigger].map(item => item.getBoundingClientRect().width)
+        const aboutRect = items[1].getBoundingClientRect()
+        menuSurfaceWidth.value = `${aboutRect.left - menu.getBoundingClientRect().left + aboutRect.width / 2}px`
+        await nextTick()
         const menuRect = menu.getBoundingClientRect()
-        for (const item of [...items, trigger]) {
+        for (const [index, item] of [...items, trigger].entries()) {
             const rect = item.getBoundingClientRect()
             expect(rect.left).toBeGreaterThanOrEqual(menuRect.left)
             expect(rect.right).toBeLessThanOrEqual(menuRect.right)
+            expect(rect.width).toBeCloseTo(intrinsicWidths[index], 1)
         }
         expect(items[1].getBoundingClientRect().top).toBeGreaterThan(items[0].getBoundingClientRect().top)
         for (const label of menu.querySelectorAll('[id$="-label"]')) {

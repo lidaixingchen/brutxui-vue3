@@ -31,14 +31,21 @@ afterEach(async () => {
 })
 
 describe('Stepper horizontal label geometry', () => {
-    it('keeps adjacent descriptions within their step and clips long text', async () => {
+    it.each([
+        { name: '原始描述', fixtureSteps: steps, expectTruncation: false },
+        {
+            name: '长描述',
+            fixtureSteps: steps.map(step => ({ ...step, description: `${step.description} — Complete the account information and verification` })),
+            expectTruncation: true,
+        },
+    ])('$name stays within each step and clips overflowing text', async ({ fixtureSteps, expectTruncation }) => {
         originalViewport = { width: window.innerWidth, height: window.innerHeight }
         await page.viewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT)
         host = document.createElement('div')
         host.style.width = `${STEPPER_CONTENT_WIDTH}px`
         document.body.appendChild(host)
         wrapper = mount(Stepper, {
-            props: { steps, modelValue: 0, orientation: 'horizontal' },
+            props: { steps: fixtureSteps, modelValue: 0, orientation: 'horizontal' },
             attachTo: host,
         })
         await nextTick()
@@ -57,12 +64,14 @@ describe('Stepper horizontal label geometry', () => {
             expect(descriptionRects[index + 1].left).toBeGreaterThanOrEqual(descriptionRects[index].right)
         }
 
-        for (const description of descriptions.slice(0, 3)) {
+        for (const description of descriptions) {
             const style = getComputedStyle(description)
             expect(style.whiteSpace).toBe('nowrap')
             expect(style.overflow).toBe('hidden')
             expect(style.textOverflow).toBe('ellipsis')
-            expect(description.scrollWidth).toBeGreaterThan(description.clientWidth)
+            if (expectTruncation) {
+                expect(description.scrollWidth).toBeGreaterThan(description.clientWidth)
+            }
         }
     })
 })
