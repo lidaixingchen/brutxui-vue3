@@ -34,23 +34,23 @@ const arrayTabs: TabItem[] = [
         <div class="space-y-2">
             <p class="text-sm font-bold tracking-wide">垂直布局</p>
             <Tabs default-value="general" orientation="vertical" class="flex gap-4">
-                <TabsList>
+                <TabsList class="min-w-0 shrink-0">
                     <TabsTrigger value="general">通用</TabsTrigger>
                     <TabsTrigger value="security">安全</TabsTrigger>
                     <TabsTrigger value="notifications">通知</TabsTrigger>
                 </TabsList>
-                <div class="flex-1">
-                    <TabsContent value="general" surface="panel">
+                <div class="flex-1 min-w-0">
+                    <TabsContent value="general" surface="panel" class="p-4">
                         <p class="text-sm font-medium">
                             通用设置选项，包括语言、主题等基础配置。
                         </p>
                     </TabsContent>
-                    <TabsContent value="security" surface="panel">
+                    <TabsContent value="security" surface="panel" class="p-4">
                         <p class="text-sm font-medium">
                             安全设置选项，包括密码、两步验证等。
                         </p>
                     </TabsContent>
-                    <TabsContent value="notifications" surface="panel">
+                    <TabsContent value="notifications" surface="panel" class="p-4">
                         <p class="text-sm font-medium">
                             通知设置选项，包括邮件、推送等提醒方式。
                         </p>
