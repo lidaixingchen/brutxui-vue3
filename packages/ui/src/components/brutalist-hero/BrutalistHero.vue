@@ -104,22 +104,22 @@ const badgeIconClasses = cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
                                 <p class="text-brutal-muted-foreground">
 $ npx brutxui init
 </p>
-                                <p class="text-brutal-success font-bold">
+                                <p class="w-fit max-w-full break-words rounded-brutal bg-brutal-success px-2 py-1 font-bold text-brutal-success-foreground">
 ✓ Project initialized
 </p>
                                 <p class="text-brutal-muted-foreground">
 $ npx brutxui add button
 </p>
-                                <p class="text-brutal-success font-bold">
+                                <p class="w-fit max-w-full break-words rounded-brutal bg-brutal-success px-2 py-1 font-bold text-brutal-success-foreground">
 ✓ Button component added
 </p>
                                 <p class="text-brutal-muted-foreground">
 $ npx brutxui add card dialog
 </p>
-                                <p class="text-brutal-success font-bold">
+                                <p class="w-fit max-w-full break-words rounded-brutal bg-brutal-success px-2 py-1 font-bold text-brutal-success-foreground">
 ✓ 2 components added
 </p>
-                                <p class="text-brutal-accent font-bold motion-safe:animate-pulse">
+                                <p class="text-brutal-fg font-bold motion-safe:animate-pulse">
 █
 </p>
                             </div>

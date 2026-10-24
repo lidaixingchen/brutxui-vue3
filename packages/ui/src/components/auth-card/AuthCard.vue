@@ -176,7 +176,7 @@ function handleSubmit() {
                             class="pl-10"
                         />
                     </div>
-                    <p v-if="emailError" :id="emailErrorId" class="text-sm font-bold text-brutal-destructive">
+                    <p v-if="emailError" :id="emailErrorId" class="w-fit max-w-full break-words rounded-brutal bg-brutal-destructive px-2 py-1 text-sm font-bold text-brutal-destructive-foreground">
 {{ emailError }}
 </p>
                 </div>
@@ -185,7 +185,7 @@ function handleSubmit() {
                         <LabelRoot :for="passwordId">
 {{ resolvedPassword }}
 </LabelRoot>
-                        <Button type="button" variant="link" class="min-w-0 whitespace-normal break-words text-right text-sm font-bold text-brutal-primary" @click="emit('forgot-password')">
+                        <Button type="button" variant="link" class="min-w-0 whitespace-normal break-words text-right text-sm font-bold underline decoration-brutal-primary underline-offset-2" @click="emit('forgot-password')">
 {{ resolvedForgotPassword }}
 </Button>
                     </div>
@@ -204,7 +204,7 @@ function handleSubmit() {
                             class="pl-10"
                         />
                     </div>
-                    <p v-if="passwordError" :id="passwordErrorId" class="text-sm font-bold text-brutal-destructive">
+                    <p v-if="passwordError" :id="passwordErrorId" class="w-fit max-w-full break-words rounded-brutal bg-brutal-destructive px-2 py-1 text-sm font-bold text-brutal-destructive-foreground">
 {{ passwordError }}
 </p>
                 </div>
@@ -216,7 +216,7 @@ function handleSubmit() {
         <CardFooter class="justify-center">
             <p class="flex flex-wrap items-center justify-center gap-1 text-center text-sm font-medium text-brutal-muted-foreground">
                 {{ resolvedNoAccount }}
-                <Button type="button" variant="link" class="min-w-0 whitespace-normal break-words font-bold text-brutal-primary" @click="emit('register-click')">
+                <Button type="button" variant="link" class="min-w-0 whitespace-normal break-words font-bold underline decoration-brutal-primary underline-offset-2" @click="emit('register-click')">
                     {{ resolvedRegister }}
                 </Button>
             </p>

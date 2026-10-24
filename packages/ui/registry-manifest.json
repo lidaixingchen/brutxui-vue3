@@ -880,6 +880,7 @@
   "pricing-section": {
     "files": [
       "PricingSection.vue",
+      "pricing-section-variants.ts",
       "types.ts"
     ],
     "composables": [

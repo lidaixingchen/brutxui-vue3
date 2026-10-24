@@ -214,6 +214,16 @@ describe('PricingSection', () => {
         expect(unavailableFeature.text()).toBe('Priority updates')
     })
 
+    it('renders included and excluded features with distinct markers', () => {
+        const wrapper = mount(PricingSection, {
+            props: { plans: subscriptionPlans, billingMode: 'toggle' },
+            ...localeProvide,
+        })
+        const markers = wrapper.findAll('li > span[aria-hidden="true"]')
+
+        expect(markers.map(marker => marker.text())).toEqual(['✓', '[ ]', '✓', '✓'])
+    })
+
     it('emits plan-select when plan button is clicked', async () => {
         const wrapper = mount(PricingSection, {
             props: { plans: mockPlans },

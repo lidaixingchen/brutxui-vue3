@@ -11,6 +11,7 @@ import CardDescription from '../card/CardDescription.vue'
 import CardFooter from '../card/CardFooter.vue'
 import Badge from '../badge/Badge.vue'
 import Result from '../result/Result.vue'
+import { pricingFeatureMarkerVariants } from './pricing-section-variants'
 import type { PricingFeature, PricingPlan, BrutalistPricingPlan } from './types'
 
 export type { PricingFeature, PricingPlan, BrutalistPricingPlan };
@@ -173,8 +174,20 @@ const annuallyBtnClasses = computed(() =>
 )
 
 const popularBadgeWrapClasses = computed(() =>
-    cn('absolute -top-3 left-1/2 -translate-x-1/2 z-10', !showBillingToggle.value && 'rotate-[1.5deg]')
+    cn('relative z-sticky -mt-8 mb-4 flex justify-center')
 )
+
+const popularBadgeClasses = computed(() =>
+    cn(
+        'max-w-full whitespace-normal break-words text-center animate-pulse',
+        !showBillingToggle.value && 'rotate-[1.5deg]',
+    )
+)
+
+const featureMarkerClasses = computed(() => ({
+    included: cn(pricingFeatureMarkerVariants({ included: true })),
+    excluded: cn(pricingFeatureMarkerVariants({ included: false })),
+}))
 
 function getPlanCardClasses(plan: BrutalistPricingPlan) {
     // 推荐主打卡片：stacked 多重彩虹阴影（twMerge 覆盖 interactive 变体的单层硬投影）；
@@ -280,17 +293,17 @@ function getButtonVariant(plan: BrutalistPricingPlan): ButtonVariant {
 
         <template v-if="resolvedPlans.length > 0">
             <div :class="planGridClasses">
-                <div v-for="(plan, index) in resolvedPlans" :key="plan.name ?? index" class="relative">
-                    <div v-if="plan.popular" :class="popularBadgeWrapClasses">
-                        <Badge variant="primary" class="animate-pulse">
+                <div v-for="(plan, index) in resolvedPlans" :key="plan.name ?? index" class="relative isolate">
+                    <Card :variant="getPlanCardVariant(plan)" :class="getPlanCardClasses(plan)">
+                        <div v-if="plan.popular" :class="popularBadgeWrapClasses">
+                            <Badge variant="primary" :class="popularBadgeClasses">
 {{ resolvedPopularText }}
 </Badge>
-                    </div>
-                    <Card :variant="getPlanCardVariant(plan)" :class="getPlanCardClasses(plan)">
+                        </div>
                         <div
                             v-if="plan.popular"
                             aria-hidden="true"
-                            class="absolute inset-x-0 top-0 z-10 h-2 border-b-3 border-brutal bg-pattern-hazard"
+                            class="absolute inset-x-0 top-0 h-2 border-b-3 border-brutal bg-pattern-hazard"
                         />
                         <CardHeader>
                             <CardTitle class="text-xl">
@@ -305,12 +318,10 @@ function getButtonVariant(plan: BrutalistPricingPlan): ButtonVariant {
                             </div>
                             <ul class="space-y-3">
                                 <li v-for="(feature, fIndex) in plan.features" :key="fIndex" class="flex min-w-0 items-start gap-2">
-                                    <!-- 等宽 ASCII 复选框语言：[✓] 含 / [ ] 未含 -->
                                     <span
                                         aria-hidden="true"
-                                        class="font-mono text-sm font-black"
-                                        :class="isFeatureIncluded(feature) ? 'text-brutal-success' : 'text-brutal-muted-foreground'"
-                                    >{{ isFeatureIncluded(feature) ? '[✓]' : '[ ]' }}</span>
+                                        :class="featureMarkerClasses[isFeatureIncluded(feature) ? 'included' : 'excluded']"
+                                    >{{ isFeatureIncluded(feature) ? '✓' : '[ ]' }}</span>
                                     <span :class="getFeatureClasses(feature)">{{ getFeatureText(feature) }}</span>
                                 </li>
                             </ul>
