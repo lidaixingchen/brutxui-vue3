@@ -358,8 +358,7 @@ describe('ToastContainer', () => {
         const wrapper = mount(ToastContainer, {
             props: { position: 'top-right' },
         })
-        expect(wrapper.classes()).toContain('top-4')
-        expect(wrapper.classes()).toContain('right-4')
+        expect(wrapper.classes()).toEqual(expect.arrayContaining(['top-2', 'md:top-4', 'right-2', 'md:right-4']))
         expect(wrapper.classes()).toContain('items-end')
     })
 
@@ -367,8 +366,7 @@ describe('ToastContainer', () => {
         const wrapper = mount(ToastContainer, {
             props: { position: 'top-left' },
         })
-        expect(wrapper.classes()).toContain('top-4')
-        expect(wrapper.classes()).toContain('left-4')
+        expect(wrapper.classes()).toEqual(expect.arrayContaining(['top-2', 'md:top-4', 'left-2', 'md:left-4']))
         expect(wrapper.classes()).toContain('items-start')
     })
 
@@ -376,8 +374,7 @@ describe('ToastContainer', () => {
         const wrapper = mount(ToastContainer, {
             props: { position: 'bottom-right' },
         })
-        expect(wrapper.classes()).toContain('bottom-4')
-        expect(wrapper.classes()).toContain('right-4')
+        expect(wrapper.classes()).toEqual(expect.arrayContaining(['bottom-2', 'md:bottom-4', 'right-2', 'md:right-4']))
         expect(wrapper.classes()).toContain('items-end')
     })
 
@@ -385,8 +382,7 @@ describe('ToastContainer', () => {
         const wrapper = mount(ToastContainer, {
             props: { position: 'bottom-left' },
         })
-        expect(wrapper.classes()).toContain('bottom-4')
-        expect(wrapper.classes()).toContain('left-4')
+        expect(wrapper.classes()).toEqual(expect.arrayContaining(['bottom-2', 'md:bottom-4', 'left-2', 'md:left-4']))
         expect(wrapper.classes()).toContain('items-start')
     })
 
@@ -394,7 +390,7 @@ describe('ToastContainer', () => {
         const wrapper = mount(ToastContainer, {
             props: { position: 'top-center' },
         })
-        expect(wrapper.classes()).toContain('top-4')
+        expect(wrapper.classes()).toEqual(expect.arrayContaining(['top-2', 'md:top-4']))
         expect(wrapper.classes()).toContain('items-center')
     })
 
@@ -402,7 +398,7 @@ describe('ToastContainer', () => {
         const wrapper = mount(ToastContainer, {
             props: { position: 'bottom-center' },
         })
-        expect(wrapper.classes()).toContain('bottom-4')
+        expect(wrapper.classes()).toEqual(expect.arrayContaining(['bottom-2', 'md:bottom-4']))
         expect(wrapper.classes()).toContain('items-center')
     })
 

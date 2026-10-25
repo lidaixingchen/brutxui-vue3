@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<DropdownMenuSubTriggerProps>(), {
 const classes = computed(() =>
     cn(
         dropdownMenuItemVariants({ inset: props.inset }),
-        'data-[state=open]:bg-brutal-accent data-[state=open]:text-brutal-fg',
+        'data-[state=open]:bg-brutal-accent data-[state=open]:text-brutal-accent-foreground',
         props.class
     )
 )

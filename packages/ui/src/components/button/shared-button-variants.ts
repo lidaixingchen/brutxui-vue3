@@ -67,20 +67,20 @@ export const baseButtonVariants = {
                 brutalHoverLift,
             ],
             outline: [
-                'bg-transparent text-brutal-fg',
+                'bg-transparent text-current border-current',
                 'shadow-brutal',
-                'hover:bg-brutal-fg hover:text-brutal-bg', /* 组件私有：悬浮反色，不抽取 */
+                'hover:bg-brutal-fg hover:text-brutal-bg',
                 brutalHoverLift,
             ],
             /* ghost/link 为低强调变体：刻意不引用 brutalHoverLift（位移+阴影），
                悬浮反馈仅用背景/下划线保持克制，与 outline 的悬浮反色+位移+阴影形成强度梯度 */
             ghost: [
-                'bg-transparent text-brutal-fg border-transparent',
+                'bg-transparent text-current border-transparent',
                 'shadow-none',
-                'hover:bg-brutal-muted hover:border-brutal', /* 组件私有：悬浮灰色背景，不抽取 */
+                'hover:bg-brutal-muted hover:text-brutal-fg hover:border-current',
             ],
             link: [
-                'bg-transparent text-brutal-fg border-transparent',
+                'bg-transparent text-current border-transparent',
                 'shadow-none underline-offset-4',
                 'hover:underline', /* 组件私有：悬浮下划线，不抽取 */
             ],

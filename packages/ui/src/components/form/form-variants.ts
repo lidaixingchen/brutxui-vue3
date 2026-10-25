@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { brutalDestructiveTextClasses } from '@/lib/semantic-text-variants'
 
 export type FormLayoutPosition = 'left' | 'right' | 'top'
 export type FormLayoutSize = 'sm' | 'default' | 'lg'
@@ -90,7 +91,8 @@ export const formDescriptionVariants = cva(
 
 export const formMessageVariants = cva(
     [
-        'font-black text-brutal-destructive',
+        'font-black',
+        brutalDestructiveTextClasses,
     ],
     {
         variants: {

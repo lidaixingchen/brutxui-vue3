@@ -42,10 +42,10 @@ export const hardcoreInputFaceVariants = cva(
             // 不再用 cn() 外部覆盖
             variant: {
                 default: '',
-                success: 'bg-brutal-success border-brutal-success',
+                success: 'bg-brutal-success border-brutal-success text-brutal-accent-foreground',
                 // 动画类（animate-bounce-short）依赖组件内 scoped 关键帧，由消费方在组件内应用，
                 // 避免公共 variants 输出无全局样式支撑的类名
-                error: 'bg-brutal-destructive border-brutal-destructive text-brutal-fg',
+                error: 'bg-brutal-destructive border-brutal-destructive text-brutal-destructive-foreground',
             },
         },
         defaultVariants: {

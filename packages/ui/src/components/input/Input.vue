@@ -4,6 +4,7 @@ import { type VariantProps } from 'class-variance-authority'
 import { Eye, EyeOff, X } from '@lucide/vue'
 import { useSlots } from 'vue'
 import { cn } from '@/lib/utils'
+import { brutalDestructiveTextClasses } from '@/lib/semantic-text-variants'
 import { inputVariants, inputContainerVariants } from './input-variants'
 import { useClearable } from '@/composables/useClearable'
 import { useLocale } from '@/composables/useLocale'
@@ -154,6 +155,10 @@ const showWordCount = computed(() => {
 const currentLength = computed(() => {
     return props.modelValue?.length ?? 0
 })
+
+const errorMessageClasses = computed(() =>
+    cn('text-sm mt-1', brutalDestructiveTextClasses)
+)
 
 // clearable/showPassword 优先于 suffixIcon：后缀图标被隐藏时，padding 计算同步排除，避免右侧多余留白
 const showSuffixIcon = computed(() => props.suffixIcon && !showClear.value && !showPasswordToggle.value)
@@ -328,7 +333,7 @@ defineExpose({
         <p
             v-if="variant === 'error' && errorMessage"
             :id="errorTextId"
-            class="text-sm text-brutal-destructive mt-1"
+            :class="errorMessageClasses"
             role="alert"
         >
             {{ errorMessage }}

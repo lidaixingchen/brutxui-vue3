@@ -612,7 +612,9 @@
       "useLocale.ts"
     ],
     "directives": [],
-    "lib": []
+    "lib": [
+      "semantic-text-variants.ts"
+    ]
   },
   "glitch-text": {
     "files": [
@@ -640,7 +642,8 @@
     ],
     "directives": [],
     "lib": [
-      "defaults.ts"
+      "defaults.ts",
+      "semantic-text-variants.ts"
     ]
   },
   "header-section": {
@@ -705,7 +708,8 @@
     ],
     "directives": [],
     "lib": [
-      "brutal-interaction-variants.ts"
+      "brutal-interaction-variants.ts",
+      "semantic-text-variants.ts"
     ]
   },
   "kanban": {
@@ -1247,6 +1251,7 @@
   "tour": {
     "files": [
       "Tour.vue",
+      "tour-popover-position.ts",
       "types.ts"
     ],
     "composables": [
@@ -1335,7 +1340,9 @@
       "useUpload.ts"
     ],
     "directives": [],
-    "lib": []
+    "lib": [
+      "semantic-text-variants.ts"
+    ]
   },
   "virtual-scroll": {
     "files": [

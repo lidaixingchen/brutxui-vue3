@@ -10,6 +10,7 @@ import FormDescription from './FormDescription.vue'
 import FormMessage from './FormMessage.vue'
 import { formContextKey, formFieldKey, formItemKey } from './form-context'
 import type { FormFieldContext, FormItemContext } from './form-context'
+import { brutalDestructiveTextClasses } from '@/lib/semantic-text-variants'
 
 // Helper component: registers a field with vee-validate via useField
 const RegisteredField = defineComponent({
@@ -837,19 +838,25 @@ describe('FormLabel', () => {
         expect(wrapper.classes()).toContain('custom-label')
     })
 
-    it('shows destructive class when error exists', () => {
+    it('uses semantic destructive text classes when an error exists', () => {
         const wrapper = mountFormLabel({}, 'Required field')
-        expect(wrapper.classes()).toContain('text-brutal-destructive')
+        expect(wrapper.classes()).toEqual(
+            expect.arrayContaining(brutalDestructiveTextClasses.split(' '))
+        )
     })
 
-    it('does not show destructive class when no error', () => {
+    it('does not apply destructive text classes when no error exists', () => {
         const wrapper = mountFormLabel({}, undefined)
-        expect(wrapper.classes()).not.toContain('text-brutal-destructive')
+        expect(wrapper.classes()).not.toEqual(
+            expect.arrayContaining(brutalDestructiveTextClasses.split(' '))
+        )
     })
 
-    it('does not show destructive class for whitespace-only error', () => {
+    it('does not apply destructive text classes for whitespace-only errors', () => {
         const wrapper = mountFormLabel({}, '   ')
-        expect(wrapper.classes()).not.toContain('text-brutal-destructive')
+        expect(wrapper.classes()).not.toEqual(
+            expect.arrayContaining(brutalDestructiveTextClasses.split(' '))
+        )
     })
 
     it('renders as label element', () => {
@@ -1012,9 +1019,11 @@ describe('FormMessage', () => {
         expect(wrapper.find('p').classes()).toContain('custom-msg')
     })
 
-    it('has destructive text class', () => {
+    it('uses semantic destructive text classes', () => {
         const wrapper = mountFormMessage('Error')
-        expect(wrapper.find('p').classes()).toContain('text-brutal-destructive')
+        expect(wrapper.find('p').classes()).toEqual(
+            expect.arrayContaining(brutalDestructiveTextClasses.split(' '))
+        )
     })
 
     it('has alert role', () => {

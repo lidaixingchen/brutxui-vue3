@@ -37,12 +37,12 @@ const props = withDefaults(defineProps<ToastContainerProps>(), {
 type PositionKey = NonNullable<Extract<ToastPosition, string>>
 
 const positionMap: Record<PositionKey, string> = {
-    'top-left': 'top-4 left-4 items-start',
-    'top-center': 'top-4 left-1/2 -translate-x-1/2 items-center',
-    'top-right': 'top-4 right-4 items-end',
-    'bottom-left': 'bottom-4 left-4 items-start',
-    'bottom-center': 'bottom-4 left-1/2 -translate-x-1/2 items-center',
-    'bottom-right': 'bottom-4 right-4 items-end',
+    'top-left': 'top-2 left-2 md:top-4 md:left-4 items-start',
+    'top-center': 'top-2 md:top-4 left-1/2 -translate-x-1/2 items-center',
+    'top-right': 'top-2 right-2 md:top-4 md:right-4 items-end',
+    'bottom-left': 'bottom-2 left-2 md:bottom-4 md:left-4 items-start',
+    'bottom-center': 'bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 items-center',
+    'bottom-right': 'bottom-2 right-2 md:bottom-4 md:right-4 items-end',
 }
 
 const positionClasses = computed(() => {
@@ -89,9 +89,14 @@ const expandDirection = computed(() => {
     return ['up', 'down'].includes(value) ? value : 'down'
 })
 
+const layoutClasses = computed(() => typeof props.position === 'object'
+    ? 'p-4 max-h-[calc(100dvh-2rem)]'
+    : 'p-2 md:p-4 max-h-[calc(100dvh-1rem)] md:max-h-[calc(100dvh-2rem)]')
+
 const classes = computed(() =>
     cn(
-        'fixed z-toast flex flex-col pointer-events-none p-4',
+        'fixed z-toast flex flex-col pointer-events-none overflow-x-hidden overflow-y-auto',
+        layoutClasses.value,
         expandDirection.value === 'up' ? 'flex-col-reverse' : 'flex-col',
         positionClasses.value,
         props.class

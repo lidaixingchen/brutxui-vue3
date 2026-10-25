@@ -774,7 +774,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/upload/UploadFileItem.vue",
-            "line": 24
+            "line": 25
           },
           "origin": "declared",
           "required": true,
@@ -802,7 +802,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/upload/UploadFileItem.vue",
-            "line": 26
+            "line": 27
           },
           "origin": "declared",
           "required": false,
@@ -834,7 +834,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/upload/UploadFileItem.vue",
-            "line": 27
+            "line": 28
           },
           "origin": "declared",
           "required": false,

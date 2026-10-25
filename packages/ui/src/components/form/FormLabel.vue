@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, ref } from 'vue'
 import { cn } from '@/lib/utils'
+import { brutalDestructiveTextClasses } from '@/lib/semantic-text-variants'
 import LabelRoot from '../label/Label.vue'
 import { formContextKey, formFieldKey, formItemKey } from './form-context'
 import { formLabelVariants, type FormLayoutPosition, type FormLayoutSize } from './form-variants'
@@ -34,7 +35,7 @@ if (fieldContext === defaultFieldContext || itemContext === defaultItemContext) 
 
 const classes = computed(() =>
     cn(
-        fieldContext.error.value?.trim() && 'text-brutal-destructive',
+        fieldContext.error.value?.trim() && brutalDestructiveTextClasses,
         formLabelVariants({ labelPosition: labelPosition.value }),
         props.class,
     )

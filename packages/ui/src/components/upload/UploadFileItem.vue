@@ -12,6 +12,7 @@ import {
     RefreshCw,
 } from '@lucide/vue'
 import { cn } from '@/lib/utils'
+import { brutalDestructiveTextClasses } from '@/lib/semantic-text-variants'
 import type { UploadFile } from './upload-types'
 import { Progress } from '@/components/progress'
 import { Button } from '@/components/button'
@@ -105,6 +106,10 @@ const listItemClasses = computed(() =>
         props.class,
     )
 )
+
+const errorMessageClasses = computed(() =>
+    cn('text-sm mt-1', brutalDestructiveTextClasses)
+)
 </script>
 
 <template>
@@ -133,7 +138,7 @@ const listItemClasses = computed(() =>
             class="absolute inset-0 bg-brutal-bg/80 flex flex-col items-center justify-center"
         >
             <Progress :value="file.progress" class="w-16 h-1" />
-            <span class="text-xs mt-1">{{ file.progress }}%</span>
+            <span class="text-xs mt-1 text-brutal-muted-foreground">{{ file.progress }}%</span>
         </div>
 
         <!-- 成功状态 -->
@@ -214,18 +219,18 @@ const listItemClasses = computed(() =>
         <!-- 文件信息 -->
         <div class="flex-1 min-w-0">
             <p class="font-mono font-bold text-brutal-fg truncate">{{ file.name }}</p>
-            <p class="text-sm text-brutal-placeholder font-mono">{{ formatFileSize(file.size) }}</p>
+            <p class="text-sm text-brutal-muted-foreground font-mono">{{ formatFileSize(file.size) }}</p>
 
             <!-- 进度条 -->
             <div v-if="showProgress" class="mt-2">
                 <Progress :value="file.progress" class="h-1.5" />
-                <p class="text-xs text-brutal-placeholder mt-1">{{ file.progress }}%</p>
+                <p class="text-xs text-brutal-muted-foreground mt-1">{{ file.progress }}%</p>
             </div>
 
             <!-- 错误信息 -->
             <p
                 v-if="file.status === 'error' && file.error"
-                class="text-sm text-brutal-destructive mt-1"
+                :class="errorMessageClasses"
             >
                 {{ file.error?.message }}
             </p>

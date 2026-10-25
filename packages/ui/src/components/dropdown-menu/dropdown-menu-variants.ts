@@ -18,7 +18,7 @@ export const dropdownMenuItemVariants = cva(
     [
         'relative flex cursor-pointer select-none items-center px-3 py-2',
         'font-bold transition-all rounded-brutal',
-        'focus:bg-brutal-accent focus:text-brutal-fg',
+        'focus:bg-brutal-accent focus:text-brutal-accent-foreground',
         'hover:shadow-brutal-sm',
         FOCUS_RING_CLASSES,
         brutalPress,

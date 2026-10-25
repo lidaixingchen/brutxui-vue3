@@ -568,7 +568,7 @@
         {
             "name": "main entry (ESM, full)",
             "path": "dist/index.js",
-            "limit": "156 KB",
+            "limit": "157 KB",
             "import": "*"
         },
         {

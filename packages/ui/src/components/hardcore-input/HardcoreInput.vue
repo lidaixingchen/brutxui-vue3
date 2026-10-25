@@ -5,6 +5,7 @@ import { useAudioEngine } from '@/composables/useAudioEngine'
 import { useFormFieldValidation } from '@/composables/useFormFieldValidation'
 import { useLocale } from '@/composables/useLocale'
 import { HARDCORE_INPUT_SHAKE_DELAY_MS, HARDCORE_INPUT_SHAKE_ANIMATION_MS } from '@/lib/defaults'
+import { brutalDestructiveTextClasses } from '@/lib/semantic-text-variants'
 import { hardcoreInputVariants, hardcoreInputFaceVariants } from './hardcore-input-variants'
 import { formFieldKey, type FormFieldContext } from '../form/form-context'
 
@@ -243,6 +244,10 @@ const faceClasses = computed(() =>
         validationState.value === 'error' ? 'animate-bounce-short' : ''
     )
 )
+
+const errorMessageClasses = computed(() =>
+    cn('text-xs font-black tracking-wide animate-fade-in', brutalDestructiveTextClasses)
+)
 </script>
 
 <template>
@@ -302,7 +307,7 @@ const faceClasses = computed(() =>
         <p
             v-if="validationState === 'error' && errorMessage"
             :id="errorId"
-            class="text-xs font-black tracking-wide text-brutal-destructive animate-fade-in"
+            :class="errorMessageClasses"
             aria-live="polite"
         >
             {{ errorMessage }}

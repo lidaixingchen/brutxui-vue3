@@ -721,7 +721,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/form/FormLabel.vue",
-            "line": 9
+            "line": 10
           },
           "origin": "declared",
           "required": false,

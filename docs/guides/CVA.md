@@ -41,16 +41,19 @@ export const buttonVariants = cva(
 
 **base 层必须遵守**：边框 `border-3 border-brutal`（R1）、阴影 `shadow-brutal*`（R2）、圆角 `rounded-brutal`（R3）、按压 `brutalPress`（R4）、焦点 `FOCUS_RING_CLASSES`（R7）、颜色走令牌（R6）。
 
-**前景色令牌对照**（shared-button-variants.ts 的 9 个 variant；键名 `danger` 映射 `brutal-destructive`，勿重命名）：
+**前景色来源对照**（shared-button-variants.ts 的 9 个 variant；键名 `danger` 映射 `brutal-destructive`，勿重命名）：
 
-| variant | 前景令牌 |
+| variant | 前景色来源 |
 | ------- | -------- |
-| default / outline / ghost / link | `text-brutal-fg` |
+| default | `text-brutal-fg` |
+| outline / ghost / link | `text-current`（继承容器文字色） |
 | primary | `text-brutal-primary-foreground` |
 | secondary | `text-brutal-secondary-foreground` |
 | accent | `text-brutal-accent-foreground` |
 | danger | `text-brutal-destructive-foreground` |
 | success | `text-brutal-success-foreground` |
+
+透明变体通过 `text-current` 继承所在容器的文字色，容器可用对应语义色前景令牌设置对比度。`outline` 悬浮时切换为 `brutal-fg` 背景与 `brutal-bg` 文字，`ghost` 悬浮时显式恢复 `brutal-fg` 文字色，`link` 保持继承色并显示下划线。
 
 > [!TIP]
 > **参考源码**

@@ -192,7 +192,7 @@ const progressBarStyle = computed(() => ({
                 <component :is="iconComponent" :class="mainIconClasses" />
             </div>
 
-            <div class="flex-1 min-w-0">
+            <div class="flex-1 min-w-0 break-words">
                 <p v-if="title" class="font-black text-base leading-tight">
                     {{ title }}{{ count && count > 1 ? ` (${count})` : '' }}
                 </p>

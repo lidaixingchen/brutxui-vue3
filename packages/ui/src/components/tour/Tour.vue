@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { brutalFloatingSurfaceClasses } from '@/lib/floating-content-variants'
 import Button from '../button/Button.vue'
 import type { TourProps, TourStep } from './types'
+import { calculateTourPopoverPosition } from './tour-popover-position'
 
 const props = withDefaults(defineProps<TourProps>(), {
     mask: true,
@@ -24,8 +25,6 @@ const currentStep = defineModel<number>('current', { default: 0 })
 const isOpen = defineModel<boolean>('open', { default: true })
 
 const BORDER_WIDTH = 2
-const POPOVER_GAP = 12
-const VIEWPORT_MARGIN = 8
 const BORDER_FALLBACK_COLOR = '#000000'
 const CANVAS_ALPHA_FILL = 'rgba(0, 0, 0, 0.5)'
 const SCROLL_THROTTLE_MS = 100
@@ -35,12 +34,8 @@ const popoverRef = ref<HTMLElement | null>(null)
 const highlightRect = ref<{ left: number; top: number; width: number; height: number } | null>(null)
 
 const popoverStyle = ref<CSSProperties>({
-    position: 'fixed',
-    left: '0px',
-    top: '0px',
     transform: 'translate3d(0px, 0px, 0)',
     visibility: 'hidden',
-    zIndex: Z_INDEX.TOUR_POPOVER,
 })
 
 const { t } = useLocale()
@@ -65,7 +60,7 @@ const showMask = computed(() => {
 
 const popoverClasses = computed(() =>
     cn(
-        'fixed p-5 flex flex-col gap-4 max-w-sm min-w-[280px] select-none',
+        'fixed left-0 top-0 z-tour-popover p-5 flex flex-col gap-4 max-w-[min(24rem,calc(100vw-1rem))] min-w-[min(17.5rem,calc(100vw-1rem))] max-h-[calc(100dvh-1rem)] overflow-x-hidden overflow-y-auto select-none',
         brutalFloatingSurfaceClasses
     )
 )
@@ -152,60 +147,24 @@ const updatePopoverPosition = (): void => {
     }
 
     const step = props.steps[currentStep.value]
-    const placement = step?.placement || 'bottom'
 
     const popoverW = popover.offsetWidth
     const popoverH = popover.offsetHeight
     const { width: viewportWidth, height: viewportHeight } = getViewportSize()
 
-    if (!highlightRect.value) {
-        const left = (viewportWidth - popoverW) / 2
-        const top = (viewportHeight - popoverH) / 2
-        popoverStyle.value = {
-            position: 'fixed',
-            left: '0px',
-            top: '0px',
-            transform: `translate3d(${Math.round(left)}px, ${Math.round(top)}px, 0)`,
-            visibility: 'visible',
-            zIndex: Z_INDEX.TOUR_POPOVER,
-        }
-        return
+    const { left: popoverLeft, top: popoverTop } = highlightRect.value ? calculateTourPopoverPosition({
+        target: highlightRect.value,
+        popover: { width: popoverW, height: popoverH },
+        viewport: { width: viewportWidth, height: viewportHeight },
+        placement: step?.placement,
+    }) : {
+        left: (viewportWidth - popoverW) / 2,
+        top: (viewportHeight - popoverH) / 2,
     }
-
-    const { left: targetL, top: targetT, width: targetW, height: targetH } = highlightRect.value
-
-    let popoverLeft = 0
-    let popoverTop = 0
-
-    switch (placement) {
-        case 'top':
-            popoverLeft = targetL + (targetW - popoverW) / 2
-            popoverTop = targetT - popoverH - POPOVER_GAP
-            break
-        case 'bottom':
-            popoverLeft = targetL + (targetW - popoverW) / 2
-            popoverTop = targetT + targetH + POPOVER_GAP
-            break
-        case 'left':
-            popoverLeft = targetL - popoverW - POPOVER_GAP
-            popoverTop = targetT + (targetH - popoverH) / 2
-            break
-        case 'right':
-            popoverLeft = targetL + targetW + POPOVER_GAP
-            popoverTop = targetT + (targetH - popoverH) / 2
-            break
-    }
-
-    popoverLeft = Math.max(VIEWPORT_MARGIN, Math.min(viewportWidth - popoverW - VIEWPORT_MARGIN, popoverLeft))
-    popoverTop = Math.max(VIEWPORT_MARGIN, Math.min(viewportHeight - popoverH - VIEWPORT_MARGIN, popoverTop))
 
     popoverStyle.value = {
-        position: 'fixed',
-        left: '0px',
-        top: '0px',
         transform: `translate3d(${Math.round(popoverLeft)}px, ${Math.round(popoverTop)}px, 0)`,
         visibility: 'visible',
-        zIndex: Z_INDEX.TOUR_POPOVER,
     }
 }
 
