@@ -105,7 +105,7 @@ async function handleComposableConfirm() {
         <!-- 交互日志回显面板 -->
         <div class="p-3 border-2 border-brutal bg-brutal-muted text-xs font-mono">
             <span class="font-bold mr-2 text-brutal-fg">最新交互状态:</span>
-            <span class="text-brutal-primary font-semibold">{{ lastActionLog }}</span>
+            <span class="text-brutal-muted-foreground font-semibold">{{ lastActionLog }}</span>
         </div>
 
         <!-- 声明式 MessageBox 挂载 -->

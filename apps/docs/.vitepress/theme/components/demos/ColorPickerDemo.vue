@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { ColorPicker } from 'brutx-ui-vue'
+import { Button, ColorPicker } from 'brutx-ui-vue'
 
 const hexColor = ref<string | null>('#EF476F')
 const rgbColor = ref<string | null>(null)
@@ -86,18 +86,20 @@ const presets = [
             </p>
             <div class="flex flex-wrap items-center gap-3">
                 <ColorPicker ref="pickerRef" v-model="programmableColor" :clearable="true" />
-                <button
-                    class="border-3 border-brutal bg-brutal-primary px-3 py-1 text-sm font-black text-brutal-bg shadow-brutal active:translate-y-[2px] active:shadow-none transition-all"
+                <Button
+                    variant="primary"
+                    size="sm"
                     @click="pickerRef && (pickerRef.open = true)"
                 >
                     打开面板
-                </button>
-                <button
-                    class="border-3 border-brutal px-3 py-1 text-sm font-black shadow-brutal active:translate-y-[2px] active:shadow-none transition-all"
+                </Button>
+                <Button
+                    variant="outline"
+                    size="sm"
                     @click="pickerRef && (pickerRef.open = false)"
                 >
                     关闭面板
-                </button>
+                </Button>
             </div>
         </div>
     </div>

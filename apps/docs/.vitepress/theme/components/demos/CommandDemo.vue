@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import {
+    Button,
     Command,
     CommandInput,
     CommandList,
@@ -66,12 +67,13 @@ function setFilter(value: string) {
 
         <div>
             <h3 class="mb-4 text-lg font-black">命令对话框</h3>
-            <button
-                class="border-3 border-brutal bg-brutal-primary px-4 py-2 font-black text-brutal-bg shadow-brutal active:translate-y-[2px] active:shadow-none transition-all"
+            <Button
+                variant="primary"
+                size="sm"
                 @click="dialogOpen = true"
             >
                 打开命令面板
-            </button>
+            </Button>
             <CommandDialog v-model:open="dialogOpen">
                 <CommandInput placeholder="输入命令..." />
                 <CommandList>
@@ -109,24 +111,27 @@ function setFilter(value: string) {
                 通过 ref 写入 <span class="font-mono font-black">filterSearch</span> 可在不操作输入框的情况下触发过滤。
             </p>
             <div class="mb-3 flex flex-wrap gap-2">
-                <button
-                    class="border-3 border-brutal bg-brutal-primary px-3 py-1 text-sm font-black text-brutal-bg shadow-brutal active:translate-y-[2px] active:shadow-none transition-all"
+                <Button
+                    variant="primary"
+                    size="sm"
                     @click="setFilter('cal')"
                 >
                     搜索 "cal"
-                </button>
-                <button
-                    class="border-3 border-brutal bg-brutal-primary px-3 py-1 text-sm font-black text-brutal-bg shadow-brutal active:translate-y-[2px] active:shadow-none transition-all"
+                </Button>
+                <Button
+                    variant="primary"
+                    size="sm"
                     @click="setFilter('设置')"
                 >
                     搜索 "设置"
-                </button>
-                <button
-                    class="border-3 border-brutal px-3 py-1 text-sm font-black shadow-brutal active:translate-y-[2px] active:shadow-none transition-all"
+                </Button>
+                <Button
+                    variant="outline"
+                    size="sm"
                     @click="setFilter('')"
                 >
                     清除
-                </button>
+                </Button>
             </div>
             <Command ref="commandRef" class="w-full max-w-md border-3 border-brutal shadow-brutal">
                 <CommandInput placeholder="输入命令或搜索..." />

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onUnmounted } from 'vue'
-import { Loading, vLoading } from 'brutx-ui-vue'
+import { Button, Loading, vLoading } from 'brutx-ui-vue'
 
 const isLoading1 = ref(false)
 const isLoading2 = ref(false)
@@ -32,12 +32,14 @@ onUnmounted(() => {
             <h3 class="text-sm font-black mb-3">声明式容器加载 Loading</h3>
             <div class="space-y-4">
                 <div class="flex gap-4">
-                    <button
-                        class="inline-flex items-center gap-1.5 text-xs font-bold border-3 border-brutal px-3 py-1.5 rounded-brutal shadow-brutal bg-brutal-yellow transition-all hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-y-[2px] active:shadow-none"
+                    <Button
+                        variant="accent"
+                        size="sm"
+                        class="text-xs"
                         @click="toggleLoading1"
                     >
                         触发容器加载 (2秒自动关闭)
-                    </button>
+                    </Button>
                 </div>
                 
                 <Loading :loading="isLoading1" text="努力加载中...">
@@ -54,12 +56,14 @@ onUnmounted(() => {
             <h3 class="text-sm font-black mb-3">指令式加载 v-loading</h3>
             <div class="space-y-4">
                 <div class="flex gap-4">
-                    <button
-                        class="inline-flex items-center gap-1.5 text-xs font-bold border-3 border-brutal px-3 py-1.5 rounded-brutal shadow-brutal bg-brutal-yellow transition-all hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-y-[2px] active:shadow-none"
+                    <Button
+                        variant="accent"
+                        size="sm"
+                        class="text-xs"
                         @click="toggleLoading2"
                     >
                         触发指令加载 (2秒自动关闭)
-                    </button>
+                    </Button>
                 </div>
                 
                 <ClientOnly>

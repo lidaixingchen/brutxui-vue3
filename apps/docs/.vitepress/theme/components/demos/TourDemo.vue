@@ -30,15 +30,15 @@ const steps: TourStep[] = [
 <template>
     <div class="space-y-8">
         <div class="flex flex-wrap gap-6 p-6 border-2 border-brutal rounded-brutal">
-            <div id="tour-step-1" class="px-4 py-2 border-2 border-brutal rounded-brutal font-black text-sm bg-brutal-primary text-brutal-fg">
+            <Button id="tour-step-1" variant="primary" size="sm">
                 导航
-            </div>
-            <div id="tour-step-2" class="px-4 py-2 border-2 border-brutal rounded-brutal font-black text-sm bg-brutal-accent text-brutal-fg">
+            </Button>
+            <Button id="tour-step-2" variant="accent" size="sm">
                 操作区
-            </div>
-            <div id="tour-step-3" class="ml-auto px-4 py-2 border-2 border-brutal rounded-brutal font-black text-sm bg-brutal-muted">
+            </Button>
+            <Button id="tour-step-3" variant="default" size="sm" class="ml-auto bg-brutal-muted">
                 ⚙ 设置
-            </div>
+            </Button>
         </div>
 
         <div class="flex justify-center">
