@@ -137,9 +137,9 @@ const contentClasses = comboboxContentVariants()
 
 const checkboxSelectedClasses = comboboxCheckboxVariants({ selected: true })
 const checkboxUnselectedClasses = comboboxCheckboxVariants({ selected: false })
-const checkSelectedClasses = cn(iconSizeVariants({ size: 'sm' }), 'stroke-[3] text-brutal-fg')
-const checkUnselectedClasses = cn(iconSizeVariants({ size: 'sm' }), 'opacity-0')
-const checkIconClasses = cn(iconSizeVariants({ size: 'sm' }), 'stroke-[3] text-brutal-fg')
+const checkSelectedClasses = computed(() => cn(iconSizeVariants({ size: 'sm' }), 'stroke-[3]'))
+const checkUnselectedClasses = computed(() => cn(iconSizeVariants({ size: 'sm' }), 'opacity-0'))
+const checkIconClasses = computed(() => cn(iconSizeVariants({ size: 'sm' }), 'stroke-[3]'))
 
 const triggerIconClasses = computed(() =>
     cn('ml-2 shrink-0 opacity-50 stroke-[3]', iconSizeVariants({ size: props.iconSize }))

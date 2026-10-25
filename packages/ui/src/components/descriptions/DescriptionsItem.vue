@@ -152,7 +152,7 @@ const borderlessContainerClasses = computed(() =>
         :class="borderlessContainerClasses"
         :style="spanStyle"
     >
-        <div class="min-w-0 break-words font-medium text-brutal-placeholder text-sm">
+        <div class="min-w-0 break-words font-medium text-brutal-muted-foreground text-sm">
             <slot name="label">
                 {{ label }}
             </slot>

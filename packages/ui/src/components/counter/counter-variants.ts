@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority';
+import { brutalDestructiveTextClasses } from '@/lib/semantic-text-variants'
 
 export const counterVariants = cva(
     [
@@ -16,7 +17,7 @@ export const counterVariants = cva(
                 // 浅色主题下对比度偏低属已知限制（库内 accent 常规用法为表面色 bg-brutal-accent text-brutal-accent-foreground）
                 accent: 'text-brutal-accent',
                 success: 'text-[color-mix(in_srgb,var(--brutal-success)_var(--brutal-counter-color-weight),var(--brutal-fg))]',
-                danger: 'text-brutal-destructive',
+                danger: brutalDestructiveTextClasses,
             },
             size: {
                 sm: 'text-2xl',

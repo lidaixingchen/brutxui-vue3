@@ -31,7 +31,7 @@ export const comboboxCheckboxVariants = cva(
     {
         variants: {
             selected: {
-                true: 'bg-brutal-secondary',
+                true: 'bg-brutal-secondary text-brutal-secondary-foreground',
                 false: 'bg-brutal-bg',
             },
         },

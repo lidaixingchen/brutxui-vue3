@@ -6,7 +6,7 @@ import '../../../dist/styles.css'
 import Counter from './Counter.vue'
 
 const SURFACES = ['bg', 'muted'] as const
-const VARIANTS = ['primary', 'success'] as const
+const VARIANTS = ['primary', 'success', 'danger'] as const
 const MODES = ['light', 'dark'] as const
 const THEME_CASES = MODES.flatMap(mode => [
     { name: `base ${mode}`, tokens: BASE_THEME[mode] },

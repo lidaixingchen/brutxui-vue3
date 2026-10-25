@@ -102,7 +102,7 @@ const iconBoxClasses = computed(() =>
 
         <div 
             v-if="$slots.extra" 
-            class="flex items-center gap-3 mt-2"
+            class="mt-2 flex w-full flex-wrap items-center justify-center gap-3"
         >
             <slot name="extra" />
         </div>

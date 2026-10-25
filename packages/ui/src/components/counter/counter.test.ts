@@ -209,6 +209,8 @@ describe('Counter', () => {
         const wrapper = mount(Counter, {
             props: { to: 100, variant: 'danger' },
         })
-        expect(getDisplaySpan(wrapper).classes()).toContain('text-brutal-destructive')
+        const classes = getDisplaySpan(wrapper).classes()
+        expect(classes).toContain('[--brutal-destructive-text-color-weight:35%]')
+        expect(classes).toContain('text-[color-mix(in_srgb,var(--brutal-destructive)_var(--brutal-destructive-text-color-weight),var(--brutal-fg))]')
     })
 })

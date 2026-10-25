@@ -221,7 +221,7 @@ function getDayEvents(day: { date?: Date; startDate?: Date }) {
 
 <template>
     <!-- card 模式契约要求 w-full 填满父容器，仅默认模式收缩为内容宽度 -->
-    <div :class="props.mode === 'card' ? 'w-full' : 'w-fit'">
+    <div :class="props.mode === 'card' ? 'w-full min-w-0' : 'w-fit min-w-0 max-w-full'">
         <!-- 复古挂历头：双金属打孔环 + 红色粗横条（纯装饰层） -->
         <div v-if="retroHeader" aria-hidden="true" class="relative flex justify-center gap-16 pb-1">
             <span
@@ -457,6 +457,7 @@ function getDayEvents(day: { date?: Date; startDate?: Date }) {
     border-bottom: 3px solid var(--brutal-border-color, #000000);
 }
 
+.brutx-calendar .vc-pane,
 .brutx-calendar .vc-weeks {
     min-width: 0;
 }

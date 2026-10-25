@@ -1,4 +1,4 @@
-@import "tailwindcss/preflight";
+@import "tailwindcss/preflight" layer(base);
 
 @layer base {
     /* Tailwind v4 preflight 已内置 box-sizing/border 重置（*, ::before, ::after { box-sizing: border-box; border: 0 solid; }），此处不再重复声明 */

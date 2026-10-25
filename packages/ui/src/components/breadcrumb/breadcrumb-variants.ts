@@ -35,7 +35,7 @@ export const breadcrumbLinkVariants = cva(
 )
 
 export const breadcrumbPageVariants = cva(
-    'inline-flex items-center justify-center font-black text-brutal-fg bg-brutal-accent px-3 py-1 border-3 border-brutal rounded-brutal shadow-brutal-sm select-none'
+    'inline-flex items-center justify-center font-black text-brutal-accent-foreground bg-brutal-accent px-3 py-1 border-3 border-brutal rounded-brutal shadow-brutal-sm select-none'
 )
 
 export const breadcrumbSeparatorVariants = cva(

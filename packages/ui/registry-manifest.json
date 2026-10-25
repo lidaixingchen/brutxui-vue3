@@ -435,7 +435,8 @@
     ],
     "directives": [],
     "lib": [
-      "env.ts"
+      "env.ts",
+      "semantic-text-variants.ts"
     ]
   },
   "dashboard-shell": {
