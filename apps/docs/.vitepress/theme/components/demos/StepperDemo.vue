@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Stepper } from 'brutx-ui-vue'
+import { Button, Stepper } from 'brutx-ui-vue'
 import type { StepperStep } from 'brutx-ui-vue'
 
 const steps: StepperStep[] = [
@@ -23,21 +23,25 @@ function next() { if (current.value < steps.length - 1) current.value++ }
             <p class="text-xs font-bold opacity-50 mb-4 uppercase tracking-widest">水平</p>
             <Stepper v-model="current" :steps="steps" orientation="horizontal" />
 
-            <div class="mt-6 flex justify-between">
-                <button
+            <div class="mt-6 flex flex-wrap justify-between gap-3">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    type="button"
                     :disabled="current === 0"
-                    class="text-sm font-black border-3 border-brutal px-4 py-1.5 rounded-brutal shadow-brutal bg-brutal-bg transition-all hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-y-[2px] active:shadow-none disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-brutal"
                     @click="prev"
                 >
                     ← 上一步
-                </button>
-                <button
+                </Button>
+                <Button
+                    variant="primary"
+                    size="sm"
+                    type="button"
                     :disabled="current === steps.length - 1"
-                    class="text-sm font-black border-3 border-brutal px-4 py-1.5 rounded-brutal shadow-brutal bg-brutal-primary transition-all hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-y-[2px] active:shadow-none disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-brutal"
                     @click="next"
                 >
                     下一步 →
-                </button>
+                </Button>
             </div>
         </div>
 

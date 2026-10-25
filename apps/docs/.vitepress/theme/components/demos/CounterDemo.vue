@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onUnmounted } from 'vue'
-import { Counter } from 'brutx-ui-vue'
+import { Badge, Counter } from 'brutx-ui-vue'
 import { RotateCcw } from '@lucide/vue'
 
 const RESET_DELAY = 2000
@@ -114,9 +114,9 @@ onUnmounted(() => {
             <h3 class="text-sm font-black mb-3">complete 事件</h3>
             <div class="flex flex-col items-start gap-2">
                 <Counter :key="key" :to="100" size="lg" :duration="RESET_DELAY" @complete="onComplete" />
-                <span v-if="completeMessage" class="text-sm font-black text-brutal-success border-3 border-brutal-success px-3 py-1 rounded-brutal shadow-brutal-sm">
+                <Badge v-if="completeMessage" variant="success" size="sm">
                     {{ completeMessage }}
-                </span>
+                </Badge>
             </div>
         </div>
 

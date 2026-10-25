@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { Button } from 'brutx-ui-vue'
 import {
     DatePicker,
     DatePickerRange,
@@ -35,7 +36,7 @@ const shortcuts = [
 </script>
 
 <template>
-    <div class="space-y-6">
+    <div class="w-full min-w-0 space-y-6">
         <div class="space-y-2">
             <p class="text-sm font-bold tracking-wide">DatePicker 单日期选择</p>
             <div class="flex flex-wrap items-center gap-3">
@@ -84,18 +85,12 @@ const shortcuts = [
             </p>
             <div class="flex flex-wrap items-center gap-3">
                 <DatePicker ref="pickerRef" v-model="programmableDate" :clearable="true" />
-                <button
-                    class="border-3 border-brutal bg-brutal-primary px-3 py-1 text-sm font-black text-brutal-bg shadow-brutal active:translate-y-[2px] active:shadow-none transition-all"
-                    @click="pickerRef && (pickerRef.open = true)"
-                >
+                <Button variant="primary" size="sm" type="button" @click="pickerRef && (pickerRef.open = true)">
                     打开面板
-                </button>
-                <button
-                    class="border-3 border-brutal px-3 py-1 text-sm font-black shadow-brutal active:translate-y-[2px] active:shadow-none transition-all"
-                    @click="pickerRef && (pickerRef.open = false)"
-                >
+                </Button>
+                <Button variant="outline" size="sm" type="button" @click="pickerRef && (pickerRef.open = false)">
                     关闭面板
-                </button>
+                </Button>
             </div>
         </div>
     </div>

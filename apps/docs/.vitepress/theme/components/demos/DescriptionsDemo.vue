@@ -91,7 +91,7 @@ onBeforeUnmount(() => resizeObserver?.disconnect())
             <p class="text-sm font-bold tracking-wide">技术档案印章（stamp 插槽）</p>
             <Descriptions title="机密档案" border :column="basicColumns">
                 <template #stamp>
-                    <span class="inline-block rotate-6 border-3 border-brutal-destructive px-2 py-0.5 font-mono text-xs font-black uppercase text-brutal-destructive bg-brutal-bg">
+                    <span class="inline-block rotate-6 border-3 border-brutal-destructive bg-brutal-destructive px-2 py-0.5 font-mono text-xs font-black uppercase text-brutal-destructive-foreground">
                         [ CONFIDENTIAL ]
                     </span>
                 </template>
