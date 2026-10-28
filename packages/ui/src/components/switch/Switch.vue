@@ -99,6 +99,20 @@ const thumbClasses = computed(() =>
         }),
     ),
 )
+
+const offLabelClasses = computed(() =>
+    cn(
+        'leading-none',
+        currentValue.value ? 'opacity-30 text-current' : 'opacity-0',
+    ),
+)
+
+const onLabelClasses = computed(() =>
+    cn(
+        'leading-none',
+        currentValue.value ? 'opacity-0' : 'opacity-30 text-current',
+    ),
+)
 </script>
 
 <template>
@@ -109,19 +123,24 @@ const thumbClasses = computed(() =>
         :aria-label="resolvedAriaLabel"
         @update:model-value="onUserToggle"
     >
-        <!-- 工控通断铭牌刻印层（纯视觉呈现，打上 aria-hidden） -->
+        <!-- 非活动刻印继承轨道变体前景，活动刻印位于键帽内部 -->
         <span
             v-if="props.showLabels"
             class="pointer-events-none absolute inset-0 flex select-none items-center justify-between px-2 font-mono text-[10px] font-black"
             aria-hidden="true"
         >
-            <span :class="currentValue ? 'opacity-30' : 'opacity-100 text-brutal-fg'">O</span>
-            <span :class="currentValue ? 'opacity-100 text-brutal-primary-foreground' : 'opacity-30'">I</span>
+            <span :class="offLabelClasses">O</span>
+            <span :class="onLabelClasses">I</span>
         </span>
 
         <!-- 3D 机械滑块键帽 -->
         <SwitchThumb :class="thumbClasses">
-            <span class="flex items-center justify-center gap-0.5" aria-hidden="true">
+            <span
+                v-if="props.showLabels"
+                class="font-mono text-[10px] font-black leading-none text-brutal-fg"
+                aria-hidden="true"
+            >{{ currentValue ? 'I' : 'O' }}</span>
+            <span v-else class="flex items-center justify-center gap-0.5" aria-hidden="true">
                 <span class="h-2 w-[1.5px] bg-brutal-border-color/60" />
                 <span class="h-2 w-[1.5px] bg-brutal-border-color/60" />
             </span>

@@ -45,17 +45,17 @@ const resolvedLogoText = computed(() => props.logoText ?? DEFAULT_LOGO_TEXT)
 const resolvedCtaText = computed(() => props.ctaText ?? t('headerSection.defaultCtaText'))
 const menuLabel = computed(() => t('headerSection.menuLabel'))
 
-const mobileMenuOpen = ref(false)
+const navigationDrawerOpen = ref(false)
 
-// 移动端抽屉内的导航/CTA：先关闭抽屉再通知父组件，
+// 抽屉内的导航/CTA：先关闭抽屉再通知父组件，
 // 父级监听器同步抛错也不会让用户卡在打开状态
 function handleNavClick(index: number) {
-    mobileMenuOpen.value = false
+    navigationDrawerOpen.value = false
     emit('nav-click', index)
 }
 
 function handleCtaClick() {
-    mobileMenuOpen.value = false
+    navigationDrawerOpen.value = false
     emit('cta-click')
 }
 
@@ -72,9 +72,9 @@ const menuIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }
 
 <template>
     <header :class="rootClasses">
-        <DialogRoot v-model:open="mobileMenuOpen">
-            <div class="flex h-16 items-center justify-between px-4 md:px-6 max-w-7xl mx-auto">
-                <div class="min-w-0 flex-1">
+        <DialogRoot v-model:open="navigationDrawerOpen">
+            <div class="@container/header-section header-section-inner mx-auto flex min-h-16 w-full max-w-7xl flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2 md:px-6">
+                <div class="header-section-brand min-w-0 flex-1 basis-40 @4xl/header-section:flex-none">
                     <slot name="header">
                         <span class="block truncate text-xl font-black tracking-tight text-brutal-fg">
                             {{ resolvedLogoText }}
@@ -83,14 +83,14 @@ const menuIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }
                 </div>
 
                 <slot>
-                    <nav class="hidden md:flex items-center gap-1">
+                    <nav class="header-section-nav hidden min-w-0 flex-1 flex-wrap items-center justify-center gap-0 @4xl/header-section:flex">
                         <Button
                             v-for="(item, index) in navItems"
                             :key="index"
                             type="button"
                             variant="ghost"
                             size="sm"
-                            class="max-w-full whitespace-normal break-words text-left"
+                            class="h-auto min-h-9 max-w-full shrink-0 whitespace-normal break-words px-1.5 text-left"
                             @click="emit('nav-click', index)"
                         >
                             {{ item.label }}
@@ -98,13 +98,13 @@ const menuIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }
                     </nav>
                 </slot>
 
-                <div class="flex items-center gap-3">
+                <div class="header-section-actions min-w-0 max-w-full flex flex-wrap items-center justify-end gap-3">
                     <slot name="footer">
                         <Button
                             type="button"
                             variant="primary"
                             size="sm"
-                            class="hidden max-w-full whitespace-normal break-words md:inline-flex"
+                            class="header-section-cta h-auto min-h-9 max-w-full min-w-0 whitespace-normal break-words"
                             @click="emit('cta-click')"
                         >
                             {{ resolvedCtaText }}
@@ -117,7 +117,7 @@ const menuIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }
                             type="button"
                             variant="outline"
                             size="sm"
-                            class="md:hidden"
+                            class="header-section-menu-trigger @4xl/header-section:hidden"
                         >
                             <Menu :class="menuIconClasses" />
                             <span class="sr-only">{{ menuLabel }}</span>

@@ -53,8 +53,8 @@ const badgeIconClasses = cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
 
 <template>
     <div :class="rootClasses">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
+        <div class="grid min-w-0 grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="min-w-0">
                 <Badge variant="accent" class="mb-6 gap-2 rotate-[-1deg] font-black">
                     <Sparkles :class="badgeIconClasses" />
                     <span>{{ t('brutalistHero.neoBrutalismUI') }}</span>
@@ -76,7 +76,7 @@ const badgeIconClasses = cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
                 </div>
             </div>
 
-            <div class="relative">
+            <div class="relative mx-5 min-w-0">
                 <!-- 背景水印字符：低透明度等宽符号，纯装饰层 -->
                 <span
                     aria-hidden="true"

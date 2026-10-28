@@ -96,12 +96,36 @@ describe('HeaderSection', () => {
         expect(header.classes()).toContain('border-brutal')
     })
 
+    it('uses available container width for the inline navigation and menu trigger', () => {
+        const wrapper = mount(HeaderSection, {
+            props: { navItems: mockNavItems },
+            ...localeProvide,
+        })
+
+        expect(wrapper.find('.header-section-inner').classes()).toContain('@container/header-section')
+        expect(wrapper.find('.header-section-nav').classes()).toContain('@4xl/header-section:flex')
+        expect(wrapper.find('.header-section-menu-trigger').classes()).toContain('@4xl/header-section:hidden')
+        expect(wrapper.find('.header-section-brand').classes()).toContain('basis-40')
+    })
+
+    it('lets the CTA grow when its text wraps', () => {
+        const wrapper = mount(HeaderSection, {
+            props: { ctaText: '立即开始使用' },
+            ...localeProvide,
+        })
+
+        const cta = wrapper.find('.header-section-cta')
+        expect(cta.classes()).toContain('h-auto')
+        expect(cta.classes()).toContain('min-h-9')
+        expect(cta.classes()).not.toContain('hidden')
+    })
+
     it('opens mobile menu via trigger button (DialogTrigger)', async () => {
         const wrapper = mount(HeaderSection, {
             props: { navItems: mockNavItems },
             ...localeProvide,
         })
-        const trigger = wrapper.find('button.md\\:hidden')
+        const trigger = wrapper.find('button.header-section-menu-trigger')
         await trigger.trigger('click')
         await new Promise(resolve => setTimeout(resolve))
 
@@ -113,7 +137,7 @@ describe('HeaderSection', () => {
             props: { navItems: mockNavItems },
             ...localeProvide,
         })
-        await wrapper.find('button.md\\:hidden').trigger('click')
+        await wrapper.find('button.header-section-menu-trigger').trigger('click')
         await new Promise(resolve => setTimeout(resolve))
 
         const dialog = document.body.querySelector('[role="dialog"]')!

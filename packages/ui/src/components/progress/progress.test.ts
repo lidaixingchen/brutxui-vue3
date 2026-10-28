@@ -16,6 +16,13 @@ describe('Progress', () => {
         expect(classes).toContain('shadow-brutal-inset')
     })
 
+    it('keeps the small track compact when no visible label is rendered', () => {
+        const wrapper = mount(Progress, { props: { size: 'sm' } })
+
+        expect(wrapper.classes()).toContain('h-3')
+        expect(wrapper.classes()).not.toContain('min-h-6')
+    })
+
     it('has progress role and aria attributes', () => {
         const wrapper = mount(Progress, { attachTo: document.body })
         expect(wrapper.attributes('role')).toBe('progressbar')
@@ -132,6 +139,26 @@ describe('Progress', () => {
     })
 
     describe('showLabel', () => {
+        it('gives a small determinate track enough room for its label', () => {
+            const wrapper = mount(Progress, {
+                props: { size: 'sm', showLabel: true, modelValue: 42 },
+            })
+
+            expect(wrapper.classes()).toContain('h-3')
+            expect(wrapper.classes()).toContain('min-h-6')
+            expect(wrapper.find('span.absolute.inset-0').text()).toBe('42%')
+        })
+
+        it('keeps a small indeterminate track compact and hides its label', () => {
+            const wrapper = mount(Progress, {
+                props: { size: 'sm', showLabel: true, indeterminate: true },
+            })
+
+            expect(wrapper.classes()).toContain('h-3')
+            expect(wrapper.classes()).not.toContain('min-h-6')
+            expect(wrapper.find('span.absolute.inset-0').exists()).toBe(false)
+        })
+
         it('renders percentage label when showLabel=true', () => {
             const wrapper = mount(Progress, {
                 props: { showLabel: true, modelValue: 42, max: 100 },

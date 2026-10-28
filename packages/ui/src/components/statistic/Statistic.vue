@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, ref, type CSSProperties } from 'vue'
 import { ArrowUp, ArrowDown } from '@lucide/vue'
 import { cn } from '@/lib/utils'
+import { cancelAnimationFrame, getResizeObserverCtor, requestAnimationFrame } from '@/lib/env'
 import { useLocale } from '@/composables/useLocale'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
 import type { StatisticProps, StatisticValue } from './types'
@@ -41,6 +42,12 @@ defineSlots<{
 }>()
 
 const { locale: currentLocale, t } = useLocale()
+
+const rootRef = ref<HTMLElement | null>(null)
+const contentRef = ref<HTMLElement | null>(null)
+const contentScale = ref(1)
+let resizeObserver: ResizeObserver | null = null
+let contentScaleRafId: number | null = null
 
 const resolvedLocale = computed(() => {
     if (props.locale) return props.locale
@@ -108,37 +115,95 @@ const prefixClasses = computed(() =>
 const suffixClasses = computed(() =>
     cn('text-brutal-muted-foreground font-bold', props.size === 'sm' ? 'text-sm' : props.size === 'lg' ? 'text-xl' : 'text-base')
 )
+
+function updateContentScale() {
+    const content = contentRef.value
+    const viewport = content?.parentElement
+    if (!content || !viewport) return
+
+    const availableWidth = viewport.clientWidth
+    const naturalWidth = content.scrollWidth
+    if (!availableWidth || !naturalWidth) return
+
+    contentScale.value = naturalWidth > availableWidth ? availableWidth / naturalWidth : 1
+}
+
+function scheduleContentScaleUpdate() {
+    if (contentScaleRafId !== null) return
+
+    contentScaleRafId = requestAnimationFrame(() => {
+        contentScaleRafId = null
+        updateContentScale()
+    })
+}
+
+const contentScaleStyle = computed<CSSProperties | undefined>(() => {
+    if (contentScale.value >= 1) return undefined
+
+    return {
+        transform: 'scale(' + contentScale.value + ')',
+        transformOrigin: 'left center',
+    }
+})
+
+onMounted(() => {
+    nextTick(() => {
+        updateContentScale()
+
+        const root = rootRef.value
+        const ResizeObserverCtor = getResizeObserverCtor()
+        if (!root || !ResizeObserverCtor) return
+
+        resizeObserver = new ResizeObserverCtor(scheduleContentScaleUpdate)
+        resizeObserver.observe(root)
+        if (contentRef.value) resizeObserver.observe(contentRef.value)
+    })
+})
+
+onUpdated(scheduleContentScaleUpdate)
+
+onBeforeUnmount(() => {
+    if (contentScaleRafId !== null) {
+        cancelAnimationFrame(contentScaleRafId)
+        contentScaleRafId = null
+    }
+
+    resizeObserver?.disconnect()
+    resizeObserver = null
+})
 </script>
 
 <template>
-    <div :class="classes">
+    <div ref="rootRef" :class="classes">
         <div v-if="title || $slots.title" :class="titleClasses">
             <slot name="title" :title="title">{{ title }}</slot>
         </div>
-        <div :class="contentClasses">
-            <span v-if="prefix || $slots.prefix" :class="prefixClasses">
-                <slot name="prefix" :prefix="prefix">{{ prefix }}</slot>
-            </span>
-            <span v-if="trend && trendPlacement === 'start'" :class="trendClasses">
-                <slot name="trend" :trend="trend" :label="trendLabel">
-                    <component :is="trendIcon" :class="trendIconClasses" aria-hidden="true" />
-                    <span class="sr-only">{{ trendLabel }}</span>
-                </slot>
-            </span>
-            <span :class="valueClasses">
-                <slot :value="value" :formatted-value="formattedValue">
-                    {{ formattedValue }}
-                </slot>
-            </span>
-            <span v-if="trend && trendPlacement === 'end'" :class="trendClasses">
-                <slot name="trend" :trend="trend" :label="trendLabel">
-                    <component :is="trendIcon" :class="trendIconClasses" aria-hidden="true" />
-                    <span class="sr-only">{{ trendLabel }}</span>
-                </slot>
-            </span>
-            <span v-if="suffix || $slots.suffix" :class="suffixClasses">
-                <slot name="suffix" :suffix="suffix">{{ suffix }}</slot>
-            </span>
+        <div class="statistic-content-viewport w-full min-w-0 overflow-hidden">
+            <div ref="contentRef" :class="contentClasses" :style="contentScaleStyle">
+                <span v-if="prefix || $slots.prefix" :class="prefixClasses">
+                    <slot name="prefix" :prefix="prefix">{{ prefix }}</slot>
+                </span>
+                <span v-if="trend && trendPlacement === 'start'" :class="trendClasses">
+                    <slot name="trend" :trend="trend" :label="trendLabel">
+                        <component :is="trendIcon" :class="trendIconClasses" aria-hidden="true" />
+                        <span class="sr-only">{{ trendLabel }}</span>
+                    </slot>
+                </span>
+                <span :class="valueClasses">
+                    <slot :value="value" :formatted-value="formattedValue">
+                        {{ formattedValue }}
+                    </slot>
+                </span>
+                <span v-if="trend && trendPlacement === 'end'" :class="trendClasses">
+                    <slot name="trend" :trend="trend" :label="trendLabel">
+                        <component :is="trendIcon" :class="trendIconClasses" aria-hidden="true" />
+                        <span class="sr-only">{{ trendLabel }}</span>
+                    </slot>
+                </span>
+                <span v-if="suffix || $slots.suffix" :class="suffixClasses">
+                    <slot name="suffix" :suffix="suffix">{{ suffix }}</slot>
+                </span>
+            </div>
         </div>
     </div>
 </template>

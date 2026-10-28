@@ -534,7 +534,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/statistic/Statistic.vue",
-            "line": 36
+            "line": 37
           },
           "origin": "declared",
           "nullable": false
@@ -552,7 +552,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/statistic/Statistic.vue",
-            "line": 37
+            "line": 38
           },
           "origin": "declared",
           "nullable": false
@@ -570,7 +570,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/statistic/Statistic.vue",
-            "line": 38
+            "line": 39
           },
           "origin": "declared",
           "nullable": false
@@ -588,7 +588,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/statistic/Statistic.vue",
-            "line": 39
+            "line": 40
           },
           "origin": "declared",
           "nullable": false
@@ -612,7 +612,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/statistic/Statistic.vue",
-            "line": 40
+            "line": 41
           },
           "origin": "declared",
           "nullable": false

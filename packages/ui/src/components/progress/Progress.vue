@@ -32,7 +32,13 @@ const props = withDefaults(defineProps<ProgressProps>(), {
 })
 
 const classes = computed(() =>
-    cn(progressRootVariants({ size: props.size }), props.class)
+    cn(
+        progressRootVariants({
+            size: props.size,
+            showLabel: props.showLabel && !props.indeterminate,
+        }),
+        props.class,
+    )
 )
 
 const indicatorClasses = computed(() =>

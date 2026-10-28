@@ -450,7 +450,8 @@
     "directives": [],
     "lib": [
       "env.ts",
-      "icon-size-variants.ts"
+      "icon-size-variants.ts",
+      "semantic-text-variants.ts"
     ]
   },
   "data-table": {
@@ -1090,7 +1091,9 @@
     ],
     "directives": [],
     "lib": [
-      "icon-size-variants.ts"
+      "env.ts",
+      "icon-size-variants.ts",
+      "semantic-text-variants.ts"
     ]
   },
   "stepper": {

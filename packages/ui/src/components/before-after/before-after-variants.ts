@@ -9,14 +9,14 @@ import { cva } from 'class-variance-authority'
 
 export const beforeAfterHandleVariants = cva(
     [
-        'absolute h-10 w-10 border-3 border-brutal bg-brutal-primary rounded-brutal shadow-brutal-sm',
+        'absolute [--before-after-handle-size:calc(var(--spacing)*10)] [--before-after-handle-inset:calc(var(--before-after-handle-size)*0.5)] h-[var(--before-after-handle-size)] w-[var(--before-after-handle-size)] border-3 border-brutal bg-brutal-primary rounded-brutal shadow-brutal-sm',
         'flex items-center justify-center pointer-events-none z-20 select-none',
     ],
     {
         variants: {
             orientation: {
-                horizontal: 'top-1/2 -translate-y-1/2 -translate-x-1/2',
-                vertical: 'left-1/2 -translate-x-1/2 -translate-y-1/2',
+                horizontal: 'left-[clamp(min(var(--before-after-handle-inset),50%),var(--before-after-handle-position),max(50%,calc(100%_-_var(--before-after-handle-inset))))] top-1/2 -translate-y-1/2 -translate-x-1/2',
+                vertical: 'left-1/2 top-[clamp(min(var(--before-after-handle-inset),50%),var(--before-after-handle-position),max(50%,calc(100%_-_var(--before-after-handle-inset))))] -translate-x-1/2 -translate-y-1/2',
             },
         },
         defaultVariants: {

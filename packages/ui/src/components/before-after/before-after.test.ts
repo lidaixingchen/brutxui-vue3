@@ -312,3 +312,47 @@ describe('BeforeAfter value normalization', () => {
         expect(classes).toContain('has-[:focus-visible]:outline-hidden')
     })
 })
+
+describe('BeforeAfter endpoint visibility', () => {
+    const baseProps = { before: '/before.jpg', after: '/after.jpg' }
+
+    it.each([
+        { value: 0, expectedClipInset: '100%' },
+        { value: 100, expectedClipInset: '0%' },
+    ])('keeps horizontal image split at $value while clamping the handle', ({ value, expectedClipInset }) => {
+        const wrapper = mount(BeforeAfter, {
+            props: { ...baseProps, modelValue: value },
+            ...localeProvide,
+        })
+        const line = wrapper.find<HTMLElement>('.bg-brutal-fg')
+        const handle = wrapper.find<HTMLElement>('.bg-brutal-primary')
+        const clippedAfterImage = wrapper.findAll('img')[1].element.parentElement
+
+        expect(line.element.style.left).toBe(`${value}%`)
+        expect(handle.element.style.getPropertyValue('--before-after-handle-position')).toBe(`${value}%`)
+        expect(handle.classes().join(' ')).toContain('left-[clamp(')
+        expect(handle.classes()).toContain('h-[var(--before-after-handle-size)]')
+        expect(handle.classes()).toContain('w-[var(--before-after-handle-size)]')
+        expect(clippedAfterImage?.style.clipPath).toContain(`inset(0 ${expectedClipInset} 0 0)`)
+    })
+
+    it.each([
+        { value: 0, expectedClipInset: '100%' },
+        { value: 100, expectedClipInset: '0%' },
+    ])('keeps vertical image split at $value while clamping the handle', ({ value, expectedClipInset }) => {
+        const wrapper = mount(BeforeAfter, {
+            props: { ...baseProps, modelValue: value, orientation: 'vertical' },
+            ...localeProvide,
+        })
+        const line = wrapper.find<HTMLElement>('.bg-brutal-fg')
+        const handle = wrapper.find<HTMLElement>('.bg-brutal-primary')
+        const clippedAfterImage = wrapper.findAll('img')[1].element.parentElement
+
+        expect(line.element.style.top).toBe(`${value}%`)
+        expect(handle.element.style.getPropertyValue('--before-after-handle-position')).toBe(`${value}%`)
+        expect(handle.classes().join(' ')).toContain('top-[clamp(')
+        expect(handle.classes()).toContain('h-[var(--before-after-handle-size)]')
+        expect(handle.classes()).toContain('w-[var(--before-after-handle-size)]')
+        expect(clippedAfterImage?.style.clipPath).toContain(`inset(0 0 ${expectedClipInset} 0)`)
+    })
+})

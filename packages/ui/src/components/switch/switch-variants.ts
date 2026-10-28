@@ -1,5 +1,5 @@
 import { cva } from 'class-variance-authority'
-import { formToggleVariantColors } from '@/lib/form-toggle-base'
+import { formToggleForegroundColors, formToggleVariantColors } from '@/lib/form-toggle-base'
 import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const switchRootVariants = cva(
@@ -11,17 +11,18 @@ export const switchRootVariants = cva(
            禁用处理仍与表单开关族保持一致。Checkbox/Radio/Toggle 的凹槽化不在本变体范围 */
         'border-3 border-brutal transition-all duration-150',
         'shadow-brutal-inset hover:shadow-brutal-inset active:shadow-brutal-inset',
+        'text-brutal-fg',
         FOCUS_RING_CLASSES,
         'disabled:cursor-not-allowed disabled:opacity-50 disabled:select-none',
     ],
     {
         variants: {
             variant: {
-                default: formToggleVariantColors.default,
-                primary: formToggleVariantColors.primary,
-                secondary: formToggleVariantColors.secondary,
-                accent: formToggleVariantColors.accent,
-                danger: formToggleVariantColors.danger,
+                default: `${formToggleVariantColors.default} ${formToggleForegroundColors.default}`,
+                primary: `${formToggleVariantColors.primary} ${formToggleForegroundColors.primary}`,
+                secondary: `${formToggleVariantColors.secondary} ${formToggleForegroundColors.secondary}`,
+                accent: `${formToggleVariantColors.accent} ${formToggleForegroundColors.accent}`,
+                danger: `${formToggleVariantColors.danger} ${formToggleForegroundColors.danger}`,
             },
             shape: {
                 slider: 'rounded-brutal',

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, nextTick, onMounted } from 'vue'
 import Statistic from './Statistic.vue'
 import { provideLocale } from '@/composables/useLocale'
 import { en } from '@/locales/en'
@@ -174,6 +174,25 @@ describe('Statistic', () => {
         expect(wrapper.text()).not.toContain('Prop Suffix')
     })
 
+    it('mounts the value slot once while constraining the rendered content', async () => {
+        let mountedCount = 0
+        const ValueSlot = defineComponent({
+            setup() {
+                onMounted(() => mountedCount++)
+                return () => h('span', { class: 'stateful-value-slot' }, 'Value')
+            },
+        })
+        const wrapper = mount(Statistic, {
+            props: { value: 123456789.5, variant: 'card', size: 'lg' },
+            slots: { default: () => h(ValueSlot) },
+        })
+        await nextTick()
+
+        expect(wrapper.find('.statistic-content-viewport').exists()).toBe(true)
+        expect(wrapper.findAll('.stateful-value-slot')).toHaveLength(1)
+        expect(mountedCount).toBe(1)
+    })
+
     it('renders upward trend with accessible label and icon', () => {
         const wrapper = mount(Statistic, {
             props: {
@@ -185,6 +204,9 @@ describe('Statistic', () => {
         const srOnly = wrapper.find('.sr-only')
         expect(srOnly.exists()).toBe(true)
         expect(srOnly.text()).toBe('上升')
+        expect(srOnly.element.parentElement?.className).toContain(
+            'text-[color-mix(in_srgb,var(--brutal-success)_var(--brutal-counter-color-weight),var(--brutal-fg))]',
+        )
     })
 
     it('renders downward trend with accessible label and icon', () => {
@@ -198,6 +220,9 @@ describe('Statistic', () => {
         const srOnly = wrapper.find('.sr-only')
         expect(srOnly.exists()).toBe(true)
         expect(srOnly.text()).toBe('下降')
+        expect(srOnly.element.parentElement?.className).toContain(
+            'text-[color-mix(in_srgb,var(--brutal-destructive)_var(--brutal-destructive-text-color-weight),var(--brutal-fg))]',
+        )
     })
 
     it('respects provideLocale for trend accessibility text', () => {

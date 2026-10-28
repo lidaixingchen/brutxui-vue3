@@ -97,12 +97,16 @@ const clipStyle = computed(() => {
     return { clipPath: `inset(0 ${100 - sliderVal.value}% 0 0)` }
 })
 
-const sliderStyle = computed(() => {
+const sliderLineStyle = computed(() => {
     if (props.orientation === 'vertical') {
         return { top: `${sliderVal.value}%` }
     }
     return { left: `${sliderVal.value}%` }
 })
+
+const handleStyle = computed(() => ({
+    '--before-after-handle-position': `${sliderVal.value}%`,
+}))
 
 const sliderLineClasses = computed(() =>
     cn(
@@ -181,12 +185,12 @@ const inputStyle = computed(() => {
 
         <div
             :class="sliderLineClasses"
-            :style="sliderStyle"
+            :style="sliderLineStyle"
         />
 
         <div
             :class="handleClasses"
-            :style="sliderStyle"
+            :style="handleStyle"
         >
             <MoveHorizontal :class="iconClasses" />
         </div>

@@ -142,4 +142,17 @@ describe('BrutalistHero', () => {
         })
         expect(wrapper.classes()).toContain('my-hero')
     })
+
+    it('reserves space around decorative artwork inside a shrinkable grid column', () => {
+        const wrapper = mount(BrutalistHero, { ...localeProvide })
+        const grid = wrapper.find('.grid')
+        const visualColumn = grid.element.children[1] as HTMLElement
+        const backing = visualColumn.querySelector('.absolute.inset-0')
+
+        expect(grid.classes()).toContain('min-w-0')
+        expect(visualColumn.classList.contains('mx-5')).toBe(true)
+        expect(visualColumn.classList.contains('min-w-0')).toBe(true)
+        expect(backing?.classList.contains('translate-x-3')).toBe(true)
+        expect(backing?.classList.contains('translate-y-3')).toBe(true)
+    })
 })

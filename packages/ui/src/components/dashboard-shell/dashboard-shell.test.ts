@@ -88,6 +88,8 @@ describe('DashboardShell', () => {
         })
         const signOutButton = wrapper.findAll('button').find(b => b.text() === 'Sign out')
         expect(signOutButton).toBeTruthy()
+        expect(signOutButton!.classes()).toContain('[--brutal-destructive-text-color-weight:35%]')
+        expect(signOutButton!.classes()).toContain('text-[color-mix(in_srgb,var(--brutal-destructive)_var(--brutal-destructive-text-color-weight),var(--brutal-fg))]')
         await signOutButton!.trigger('click')
         expect(wrapper.emitted('sign-out')).toBeTruthy()
         expect(wrapper.emitted('sign-out')!.length).toBe(1)

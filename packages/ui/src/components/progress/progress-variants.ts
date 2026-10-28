@@ -14,9 +14,14 @@ export const progressRootVariants = cva(
                 default: 'h-6',
                 lg: 'h-8',
             },
+            showLabel: {
+                true: 'min-h-6',
+                false: '',
+            },
         },
         defaultVariants: {
             size: 'default',
+            showLabel: false,
         },
     }
 )

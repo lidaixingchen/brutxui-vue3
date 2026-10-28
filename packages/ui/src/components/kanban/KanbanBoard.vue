@@ -340,7 +340,7 @@ defineExpose({
                         <span
                             v-for="tag in card.tags"
                             :key="tag"
-                            class="min-w-0 break-words text-xs font-bold px-1.5 py-0.5 border-3 border-brutal rounded-brutal bg-brutal-accent"
+                            class="min-w-0 break-words text-xs font-bold px-1.5 py-0.5 border-3 border-brutal rounded-brutal bg-brutal-accent text-brutal-accent-foreground"
                         >
                             {{ tag }}
                         </span>

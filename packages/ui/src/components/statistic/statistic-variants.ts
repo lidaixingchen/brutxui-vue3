@@ -1,7 +1,8 @@
 import { cva } from 'class-variance-authority'
+import { brutalDestructiveTextClasses } from '@/lib/semantic-text-variants'
 
 export const statisticVariants = cva(
-    'inline-flex flex-col text-brutal-fg',
+    'inline-flex max-w-full min-w-0 flex-col text-brutal-fg',
     {
         variants: {
             variant: {
@@ -34,7 +35,7 @@ export const statisticTitleVariants = cva(
 )
 
 export const statisticContentVariants = cva(
-    'inline-flex items-baseline gap-1.5 font-bold',
+    'statistic-content inline-flex w-max max-w-none flex-nowrap items-baseline gap-1.5 whitespace-nowrap font-bold',
     {
         variants: {
             size: {
@@ -66,12 +67,12 @@ export const statisticValueVariants = cva(
 )
 
 export const statisticTrendVariants = cva(
-    'inline-flex items-center gap-0.5 font-bold',
+    'statistic-trend inline-flex items-center gap-0.5 font-bold',
     {
         variants: {
             trend: {
-                up: 'text-brutal-success',
-                down: 'text-brutal-destructive',
+                up: '[--brutal-counter-color-weight:35%] text-[color-mix(in_srgb,var(--brutal-success)_var(--brutal-counter-color-weight),var(--brutal-fg))]',
+                down: brutalDestructiveTextClasses,
             },
             size: {
                 sm: 'text-xs',

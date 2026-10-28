@@ -191,10 +191,46 @@ describe('Switch', () => {
             props: { showLabels: true },
             attachTo: document.body,
         })
-        const labelContainer = wrapper.find('[aria-hidden="true"]')
+        const labelContainer = wrapper.find('span.absolute.inset-0')
         expect(labelContainer.exists()).toBe(true)
+        expect(labelContainer.attributes('aria-hidden')).toBe('true')
         expect(labelContainer.text()).toContain('O')
         expect(labelContainer.text()).toContain('I')
+    })
+
+    it.each([
+        { variant: 'default' as const, foreground: 'data-[state=checked]:text-brutal-success-foreground' },
+        { variant: 'primary' as const, foreground: 'data-[state=checked]:text-brutal-primary-foreground' },
+        { variant: 'secondary' as const, foreground: 'data-[state=checked]:text-brutal-secondary-foreground' },
+        { variant: 'accent' as const, foreground: 'data-[state=checked]:text-brutal-accent-foreground' },
+        { variant: 'danger' as const, foreground: 'data-[state=checked]:text-brutal-destructive-foreground' },
+    ])('pairs the active track foreground with the $variant background', ({ variant, foreground }) => {
+        expect(switchRootVariants({ variant }).split(/\s+/)).toContain(foreground)
+    })
+
+    it('renders the active O/I mark inside the thumb with paired keycap colors', async () => {
+        const wrapper = mount(Switch, {
+            props: { showLabels: true, modelValue: false },
+            attachTo: document.body,
+        })
+        const root = wrapper.find('[role="switch"]')
+        const thumb = root.find('.size-5')
+        const labelLayer = root.find('span.absolute.inset-0')
+        const [offLabel, onLabel] = labelLayer.findAll('span')
+        const activeLabel = thumb.find('[aria-hidden="true"]')
+
+        expect(activeLabel.text()).toBe('O')
+        expect(activeLabel.classes()).toContain('text-brutal-fg')
+        expect(offLabel.classes()).toContain('opacity-0')
+        expect(onLabel.classes()).toContain('opacity-30')
+        expect(onLabel.classes()).toContain('text-current')
+
+        await wrapper.setProps({ modelValue: true })
+
+        expect(offLabel.classes()).toContain('opacity-30')
+        expect(offLabel.classes()).toContain('text-current')
+        expect(activeLabel.text()).toBe('I')
+        expect(onLabel.classes()).toContain('opacity-0')
     })
 })
 

@@ -3,6 +3,7 @@ import { computed, nextTick, onMounted, onUnmounted, ref, useId, watch } from 'v
 import { Menu } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
 import { cn } from '@/lib/utils'
+import { brutalDestructiveTextClasses } from '@/lib/semantic-text-variants'
 import { getDocument, isClient, matchMedia } from '@/lib/env'
 import Button from '../button/Button.vue'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
@@ -116,6 +117,10 @@ const mainClasses = computed(() => dashboardMainVariants())
 const iconClasses = computed(() =>
     cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[3]')
 )
+
+const signOutButtonClasses = computed(() =>
+    cn('text-sm font-bold mt-1 hover:no-underline', brutalDestructiveTextClasses)
+)
 </script>
 
 <template>
@@ -138,7 +143,7 @@ const iconClasses = computed(() =>
                     <div v-if="props.userEmail" class="text-sm font-bold truncate">
                         {{ props.userEmail }}
                     </div>
-                    <Button variant="link" class="text-sm font-bold text-brutal-destructive mt-1 hover:no-underline" @click="emit('sign-out')">
+                    <Button variant="link" :class="signOutButtonClasses" @click="emit('sign-out')">
                         {{ t('dashboardShell.signOut') }}
                     </Button>
                 </div>

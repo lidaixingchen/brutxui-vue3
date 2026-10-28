@@ -69,6 +69,11 @@ describe('KanbanBoard', () => {
         const wrapper = createWrapper()
         expect(wrapper.text()).toContain('urgent')
         expect(wrapper.text()).toContain('frontend')
+
+        const urgentTag = wrapper.findAll('span').find((tag) => tag.text() === 'urgent')
+        expect(urgentTag).toBeTruthy()
+        expect(urgentTag!.classes()).toContain('bg-brutal-accent')
+        expect(urgentTag!.classes()).toContain('text-brutal-accent-foreground')
     })
 
     it('renders column color indicator when color is set', () => {
