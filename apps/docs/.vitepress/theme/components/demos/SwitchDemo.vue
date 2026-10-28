@@ -13,7 +13,7 @@ const lgVal = ref(true)
 </script>
 
 <template>
-    <div class="space-y-6">
+    <div class="w-full min-w-0 space-y-6">
         <div>
             <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-brutal-muted-foreground mb-2">基础 3D 机械滑块</h4>
             <div class="flex flex-wrap items-center gap-6">
@@ -52,7 +52,7 @@ const lgVal = ref(true)
 
         <div>
             <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-brutal-muted-foreground mb-2">尺寸矩阵 (sm / default / lg)</h4>
-            <div class="flex items-center gap-6">
+            <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
                 <div class="flex items-center gap-2">
                     <Switch v-model="smVal" size="sm" show-labels />
                     <span class="font-mono text-xs font-bold">SM</span>

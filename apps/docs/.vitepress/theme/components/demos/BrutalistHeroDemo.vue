@@ -3,7 +3,7 @@ import { BrutalistHero } from 'brutx-ui-vue'
 </script>
 
 <template>
-    <div class="w-full overflow-x-auto">
+    <div class="min-w-0 w-full">
         <BrutalistHero />
     </div>
 </template>

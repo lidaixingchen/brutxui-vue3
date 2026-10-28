@@ -10,7 +10,7 @@ import { Marquee } from 'brutx-ui-vue'
             <span>🚀 VUE 3 + TAILWIND</span>
             <span>🔥 受 SHADCN 启发</span>
         </Marquee>
-        <Marquee :speed="25" direction="right" class="bg-brutal-primary text-brutal-fg">
+        <Marquee :speed="25" direction="right" class="bg-brutal-primary text-brutal-primary-foreground">
             <span>💻 代码与 BUG</span>
             <span>🛠️ 从构建到发布</span>
             <span>🌟 开源</span>
