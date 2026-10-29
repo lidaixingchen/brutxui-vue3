@@ -58,7 +58,7 @@ function jumpToEnd() {
                 <template #default="{ item, index }">
                     <div class="flex items-center justify-between px-4 py-3 text-sm">
                         <span class="font-bold">{{ item.name }}</span>
-                        <span class="text-brutal-fg/50">#{{ index + 1 }}</span>
+                        <span class="text-brutal-muted-foreground">#{{ index + 1 }}</span>
                     </div>
                 </template>
             </VirtualScroll>
@@ -78,7 +78,7 @@ function jumpToEnd() {
             <VirtualScroll :items="borderedItems" :item-height="48" variant="bordered" size="sm">
                 <template #default="{ item, index }">
                     <div class="flex items-center gap-3 px-4 py-3 text-sm">
-                        <span class="inline-flex h-6 w-6 items-center justify-center border-2 border-brutal bg-brutal-accent text-xs font-black">
+                        <span class="inline-flex h-6 w-6 items-center justify-center border-2 border-brutal bg-brutal-accent text-brutal-accent-foreground text-xs font-black">
                             {{ index + 1 }}
                         </span>
                         <span class="font-bold">{{ item.name }}</span>

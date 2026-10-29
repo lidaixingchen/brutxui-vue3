@@ -6,7 +6,7 @@ import { CopyToClipboard } from 'brutx-ui-vue'
     <div class="flex flex-col gap-6">
         <div class="flex flex-col gap-3 items-start">
             <CopyToClipboard text="pnpm add brutx-ui-vue" />
-            <CopyToClipboard text="Hello Neo-Brutalism!" class="bg-brutal-accent text-brutal-fg" />
+            <CopyToClipboard text="Hello Neo-Brutalism!" class="bg-brutal-accent text-brutal-accent-foreground" />
         </div>
 
         <div class="flex flex-col gap-3">

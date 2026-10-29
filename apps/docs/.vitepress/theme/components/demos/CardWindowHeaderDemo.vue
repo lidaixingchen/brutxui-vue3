@@ -43,12 +43,12 @@ function resetWindow() {
                     @maximize="handleMaximize"
                 />
                 <div v-show="!isCollapsed" class="p-4 font-mono text-xs font-bold leading-relaxed space-y-2">
-                    <p>&gt; LAST_EVENT: <span class="text-brutal-primary font-black">{{ lastAction }}</span></p>
+                    <p>&gt; LAST_EVENT: <span class="text-brutal-fg font-black">{{ lastAction }}</span></p>
                     <p>&gt; 点击右侧 [ _ ] [ □ ] [ X ] 或左侧红黄绿指示灯可直接触发动作并支持 Tab 聚焦。</p>
                 </div>
             </div>
             <div v-else class="p-4 border-3 border-dashed border-brutal rounded-brutal text-center space-y-2">
-                <p class="font-mono text-xs font-bold text-brutal-destructive">&gt; 窗口已关闭 (CLOSED)</p>
+                <p class="font-mono text-xs font-bold text-brutal-fg">&gt; 窗口已关闭 (CLOSED)</p>
                 <Button size="sm" variant="outline" @click="resetWindow">重新打开窗口</Button>
             </div>
         </div>

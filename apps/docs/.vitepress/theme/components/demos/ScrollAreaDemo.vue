@@ -3,16 +3,16 @@ import { ScrollArea, ScrollBar } from 'brutx-ui-vue'
 import { User, Bell, Mail, Star, Heart, Zap, Shield, Flame, Coffee, Rocket } from '@lucide/vue'
 
 const notifications = [
-    { icon: Bell, name: 'Alice Chen', action: '赞了你的帖子', time: '2 分钟前', accent: 'bg-brutal-primary' },
-    { icon: Mail, name: 'Bob Wang', action: '给你发了消息', time: '5 分钟前', accent: 'bg-brutal-secondary' },
-    { icon: Star, name: 'Carol Li', action: '收藏了你的仓库', time: '12 分钟前', accent: 'bg-brutal-accent' },
-    { icon: Heart, name: 'David Liu', action: '关注了你', time: '30 分钟前', accent: 'bg-brutal-destructive' },
-    { icon: Zap, name: 'Eva Zhang', action: '提到了你', time: '1 小时前', accent: 'bg-brutal-info' },
-    { icon: Shield, name: 'Frank Wu', action: '批准了你的 PR', time: '2 小时前', accent: 'bg-brutal-success' },
-    { icon: Flame, name: 'Grace He', action: '评论了议题', time: '3 小时前', accent: 'bg-brutal-primary' },
-    { icon: Coffee, name: 'Henry Xu', action: '邀请你加入团队', time: '5 小时前', accent: 'bg-brutal-secondary' },
-    { icon: Rocket, name: 'Ivy Zhao', action: '部署到生产环境', time: '8 小时前', accent: 'bg-brutal-accent' },
-    { icon: User, name: 'Jack Sun', action: '审查了你的代码', time: '1 天前', accent: 'bg-brutal-info' },
+    { icon: Bell, name: 'Alice Chen', action: '赞了你的帖子', time: '2 分钟前', accent: 'bg-brutal-primary', foreground: 'text-brutal-primary-foreground' },
+    { icon: Mail, name: 'Bob Wang', action: '给你发了消息', time: '5 分钟前', accent: 'bg-brutal-secondary', foreground: 'text-brutal-secondary-foreground' },
+    { icon: Star, name: 'Carol Li', action: '收藏了你的仓库', time: '12 分钟前', accent: 'bg-brutal-accent', foreground: 'text-brutal-accent-foreground' },
+    { icon: Heart, name: 'David Liu', action: '关注了你', time: '30 分钟前', accent: 'bg-brutal-destructive', foreground: 'text-brutal-destructive-foreground' },
+    { icon: Zap, name: 'Eva Zhang', action: '提到了你', time: '1 小时前', accent: 'bg-brutal-info', foreground: 'text-brutal-info-foreground' },
+    { icon: Shield, name: 'Frank Wu', action: '批准了你的 PR', time: '2 小时前', accent: 'bg-brutal-success', foreground: 'text-brutal-success-foreground' },
+    { icon: Flame, name: 'Grace He', action: '评论了议题', time: '3 小时前', accent: 'bg-brutal-primary', foreground: 'text-brutal-primary-foreground' },
+    { icon: Coffee, name: 'Henry Xu', action: '邀请你加入团队', time: '5 小时前', accent: 'bg-brutal-secondary', foreground: 'text-brutal-secondary-foreground' },
+    { icon: Rocket, name: 'Ivy Zhao', action: '部署到生产环境', time: '8 小时前', accent: 'bg-brutal-accent', foreground: 'text-brutal-accent-foreground' },
+    { icon: User, name: 'Jack Sun', action: '审查了你的代码', time: '1 天前', accent: 'bg-brutal-info', foreground: 'text-brutal-info-foreground' },
 ]
 
 const tags = Array.from({ length: 20 }, (_, i) => [`标签 ${i + 1}`, ['primary', 'secondary', 'accent', 'info', 'success'][i % 5]] as const)
@@ -29,7 +29,7 @@ const tags = Array.from({ length: 20 }, (_, i) => [`标签 ${i + 1}`, ['primary'
                         :key="i"
                         class="flex items-center gap-3 p-3 rounded-brutal hover:bg-brutal-muted transition-colors"
                     >
-                        <div :class="['h-8 w-8 flex items-center justify-center border-2 border-brutal', item.accent]">
+                        <div :class="['h-8 w-8 flex items-center justify-center border-2 border-brutal', item.accent, item.foreground]">
                             <component :is="item.icon" class="h-4 w-4 stroke-[3]" />
                         </div>
                         <div class="flex-1 min-w-0">
@@ -53,11 +53,11 @@ const tags = Array.from({ length: 20 }, (_, i) => [`标签 ${i + 1}`, ['primary'
                         :key="i"
                         :class="[
                             'inline-flex items-center px-3 py-1.5 text-xs font-black border-2 border-brutal whitespace-nowrap',
-                            variant === 'primary' && 'bg-brutal-primary',
-                            variant === 'secondary' && 'bg-brutal-secondary',
-                            variant === 'accent' && 'bg-brutal-accent',
-                            variant === 'info' && 'bg-brutal-info',
-                            variant === 'success' && 'bg-brutal-success',
+                            variant === 'primary' && 'bg-brutal-primary text-brutal-primary-foreground',
+                            variant === 'secondary' && 'bg-brutal-secondary text-brutal-secondary-foreground',
+                            variant === 'accent' && 'bg-brutal-accent text-brutal-accent-foreground',
+                            variant === 'info' && 'bg-brutal-info text-brutal-info-foreground',
+                            variant === 'success' && 'bg-brutal-success text-brutal-success-foreground',
                         ]"
                     >
                         {{ label }}
