@@ -324,7 +324,7 @@ defineExpose({
             v-if="showWordCount"
             class="flex justify-end mt-1"
         >
-            <span class="text-xs text-brutal-placeholder">
+            <span class="text-xs text-brutal-muted-foreground">
                 {{ currentLength }} / {{ maxlength }}
             </span>
         </div>

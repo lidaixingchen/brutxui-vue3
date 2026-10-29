@@ -255,7 +255,7 @@ describe('Input', () => {
                 },
             })
 
-            const wordCount = wrapper.find('.text-xs.text-brutal-placeholder')
+            const wordCount = wrapper.find('.text-xs.text-brutal-muted-foreground')
             expect(wordCount.exists()).toBe(true)
             expect(wordCount.text()).toBe('5 / 100')
         })
@@ -269,7 +269,7 @@ describe('Input', () => {
                 },
             })
 
-            expect(wrapper.find('.text-xs.text-brutal-placeholder').exists()).toBe(false)
+            expect(wrapper.find('.text-xs.text-brutal-muted-foreground').exists()).toBe(false)
         })
 
         it('does not show word count when maxlength is not set', () => {
@@ -280,7 +280,7 @@ describe('Input', () => {
                 },
             })
 
-            expect(wrapper.find('.text-xs.text-brutal-placeholder').exists()).toBe(false)
+            expect(wrapper.find('.text-xs.text-brutal-muted-foreground').exists()).toBe(false)
         })
 
         it('shows 0 / maxlength when modelValue is empty', () => {
@@ -292,7 +292,7 @@ describe('Input', () => {
                 },
             })
 
-            const wordCount = wrapper.find('.text-xs.text-brutal-placeholder')
+            const wordCount = wrapper.find('.text-xs.text-brutal-muted-foreground')
             expect(wordCount.text()).toBe('0 / 50')
         })
     })

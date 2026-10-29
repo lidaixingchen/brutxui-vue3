@@ -79,8 +79,8 @@ function handleCancel() {
                 </div>
 
                 <!-- 内容 -->
-                <div class="flex-1">
-                    <p :id="titleId" class="font-medium text-brutal-fg">
+                <div class="min-w-0 flex-1 wrap-anywhere">
+                    <p :id="titleId" class="font-medium text-brutal-fg wrap-anywhere">
                         {{ title }}
                     </p>
 
@@ -90,11 +90,12 @@ function handleCancel() {
                     </div>
 
                     <!-- 操作按钮 -->
-                    <div class="flex justify-end gap-2 mt-3">
+                    <div class="mt-3 flex min-w-0 flex-wrap justify-end gap-2">
                         <Button
                             v-if="cancelable"
                             variant="outline"
                             size="sm"
+                            class="h-auto min-h-9 min-w-0 whitespace-normal wrap-anywhere"
                             @click="handleCancel"
                         >
                             {{ cancelButtonText || t('popconfirm.cancel') }}
@@ -102,6 +103,7 @@ function handleCancel() {
                         <Button
                             :variant="confirmButtonType === 'destructive' ? 'danger' : 'primary'"
                             size="sm"
+                            class="h-auto min-h-9 min-w-0 whitespace-normal wrap-anywhere"
                             @click="handleConfirm"
                         >
                             {{ confirmButtonText || t('popconfirm.confirm') }}

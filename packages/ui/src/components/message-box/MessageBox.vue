@@ -111,11 +111,19 @@ const iconWrapperClasses = computed(() => messageBoxIconVariants({ type: props.t
 const iconClasses = computed(() => cn(iconSizeVariants({ size: 'md' }), 'stroke-[2.5]'))
 const closeIconClasses = computed(() => cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]'))
 const closeButtonClasses = computed(() => cn(
-    'inline-flex items-center justify-center p-1 text-brutal-fg hover:bg-brutal-muted border-2 border-transparent hover:border-brutal transition-colors',
+    'inline-flex shrink-0 items-center justify-center p-1 text-brutal-fg hover:bg-brutal-muted border-2 border-transparent hover:border-brutal transition-colors',
     FOCUS_RING_CLASSES,
 ))
+const cancelButtonClasses = computed(() => cn(
+    'h-auto min-h-11 min-w-0 py-1.5 whitespace-normal wrap-anywhere',
+    props.cancelButtonClass,
+))
+const confirmButtonClasses = computed(() => cn(
+    'h-auto min-h-11 min-w-0 py-1.5 whitespace-normal wrap-anywhere',
+    props.confirmButtonClass,
+))
 const descriptionClasses = computed(() => props.message
-    ? 'text-sm font-medium text-brutal-muted-foreground leading-relaxed break-words'
+    ? 'text-sm font-medium text-brutal-muted-foreground leading-relaxed wrap-anywhere'
     : 'sr-only'
 )
 
@@ -174,11 +182,11 @@ function handleCancel(): void {
             >
                 <!-- 顶部标题与关闭按钮 -->
                 <div class="flex items-start justify-between gap-3">
-                    <div class="flex items-center gap-3">
+                    <div class="flex min-w-0 items-center gap-3">
                         <div :class="iconWrapperClasses" aria-hidden="true">
                             <component :is="typeIconComponent" :class="iconClasses" />
                         </div>
-                        <DialogTitle class="text-lg font-black tracking-tight text-brutal-fg">
+                        <DialogTitle class="min-w-0 whitespace-normal wrap-anywhere text-lg font-black tracking-tight text-brutal-fg">
                             {{ displayTitle }}
                         </DialogTitle>
                     </div>
@@ -189,7 +197,7 @@ function handleCancel(): void {
                 </div>
 
                 <!-- 消息正文与输入框 -->
-                <div class="flex flex-col gap-4">
+                <div class="flex min-w-0 flex-col gap-4">
                     <DialogDescription :class="descriptionClasses">
                         {{ props.message || displayTitle }}
                     </DialogDescription>
@@ -207,18 +215,18 @@ function handleCancel(): void {
                 </div>
 
                 <!-- 底部操作按钮组 -->
-                <div class="flex justify-end gap-3 mt-2">
+                <div class="mt-2 flex min-w-0 flex-wrap justify-end gap-3">
                     <Button
                         v-if="props.showCancelButton"
                         variant="outline"
-                        :class="props.cancelButtonClass"
+                        :class="cancelButtonClasses"
                         @click="handleCancel"
                     >
                         {{ cancelText }}
                     </Button>
                     <Button
                         variant="default"
-                        :class="props.confirmButtonClass"
+                        :class="confirmButtonClasses"
                         @click="handleConfirm"
                     >
                         {{ confirmText }}

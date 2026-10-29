@@ -174,6 +174,7 @@ describe('CopyToClipboard', () => {
         })
         const button = wrapper.find('button')
         expect(button.classes()).toContain('bg-brutal-success')
+        expect(button.classes()).toContain('text-brutal-success-foreground')
         expect(button.classes()).not.toContain('bg-brutal-primary')
     })
 

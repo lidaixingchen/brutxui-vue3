@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
+import { brutalDestructiveTextClasses } from '@/lib/semantic-text-variants'
 import { Label as LabelRoot } from 'reka-ui'
 import { labelVariants } from './label-variants'
 
@@ -34,6 +35,7 @@ const classes = computed(() =>
         props.class,
     )
 )
+const requiredIndicatorClasses = computed(() => cn(brutalDestructiveTextClasses, 'ml-0.5'))
 </script>
 
 <template>
@@ -43,6 +45,10 @@ const classes = computed(() =>
         :aria-disabled="props.disabled ? 'true' : undefined"
     >
         <slot />
-        <span v-if="required" class="text-brutal-destructive ml-0.5" aria-hidden="true">*</span>
+        <span
+            v-if="required"
+            :class="requiredIndicatorClasses"
+            aria-hidden="true"
+        >*</span>
     </LabelRoot>
 </template>

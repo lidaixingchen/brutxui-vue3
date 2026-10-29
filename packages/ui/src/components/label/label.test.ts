@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { brutalDestructiveTextClasses, brutalSuccessTextClasses } from '@/lib/semantic-text-variants'
 import Label from './Label.vue'
 
 describe('Label', () => {
@@ -34,7 +35,7 @@ describe('Label', () => {
             props: { variant: 'error' },
             attachTo: document.body,
         })
-        expect(wrapper.classes()).toContain('text-brutal-destructive')
+        expect(wrapper.classes()).toEqual(expect.arrayContaining(brutalDestructiveTextClasses.split(' ')))
     })
 
     it('applies success variant classes', () => {
@@ -42,7 +43,7 @@ describe('Label', () => {
             props: { variant: 'success' },
             attachTo: document.body,
         })
-        expect(wrapper.classes()).toContain('text-brutal-success')
+        expect(wrapper.classes()).toEqual(expect.arrayContaining(brutalSuccessTextClasses.split(' ')))
     })
 
     it('applies muted variant classes', () => {
@@ -100,7 +101,7 @@ describe('Label', () => {
 
     it('does not render required indicator by default', () => {
         const wrapper = mount(Label, { attachTo: document.body })
-        expect(wrapper.find('span.text-brutal-destructive').exists()).toBe(false)
+        expect(wrapper.find('span[aria-hidden="true"]').exists()).toBe(false)
     })
 
     it('renders required indicator when required is true', () => {
@@ -108,9 +109,10 @@ describe('Label', () => {
             props: { required: true },
             attachTo: document.body,
         })
-        const indicator = wrapper.find('span.text-brutal-destructive')
+        const indicator = wrapper.find('span[aria-hidden="true"]')
         expect(indicator.exists()).toBe(true)
         expect(indicator.text()).toBe('*')
+        expect(indicator.classes()).toEqual(expect.arrayContaining(brutalDestructiveTextClasses.split(' ')))
     })
 
     it('marks required indicator as aria-hidden', () => {
@@ -118,7 +120,7 @@ describe('Label', () => {
             props: { required: true },
             attachTo: document.body,
         })
-        expect(wrapper.find('span.text-brutal-destructive').attributes('aria-hidden')).toBe('true')
+        expect(wrapper.find('span[aria-hidden="true"]').attributes('aria-hidden')).toBe('true')
     })
 
     // WAI-ARIA：label 角色不支持 aria-required（读屏忽略），必填语义由关联控件承担，

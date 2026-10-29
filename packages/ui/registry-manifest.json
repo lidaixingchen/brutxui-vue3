@@ -750,7 +750,9 @@
     ],
     "composables": [],
     "directives": [],
-    "lib": []
+    "lib": [
+      "semantic-text-variants.ts"
+    ]
   },
   "loading": {
     "files": [

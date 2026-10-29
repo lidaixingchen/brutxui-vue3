@@ -29,7 +29,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/label/Label.vue",
-            "line": 11
+            "line": 12
           },
           "origin": "declared",
           "required": false,
@@ -66,7 +66,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/label/Label.vue",
-            "line": 12
+            "line": 13
           },
           "origin": "declared",
           "required": false,
@@ -101,7 +101,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/label/Label.vue",
-            "line": 13
+            "line": 14
           },
           "origin": "declared",
           "required": false,
@@ -136,7 +136,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/label/Label.vue",
-            "line": 14
+            "line": 15
           },
           "origin": "declared",
           "required": false,
@@ -168,7 +168,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/label/Label.vue",
-            "line": 15
+            "line": 16
           },
           "origin": "declared",
           "required": false,
@@ -200,7 +200,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/label/Label.vue",
-            "line": 16
+            "line": 17
           },
           "origin": "declared",
           "required": false,

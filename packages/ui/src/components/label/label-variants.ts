@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { brutalDestructiveTextClasses, brutalSuccessTextClasses } from '@/lib/semantic-text-variants'
 
 export const labelVariants = cva(
     [
@@ -9,8 +10,8 @@ export const labelVariants = cva(
         variants: {
             variant: {
                 default: 'text-brutal-fg',
-                error: 'text-brutal-destructive',
-                success: 'text-brutal-success',
+                error: brutalDestructiveTextClasses,
+                success: brutalSuccessTextClasses,
                 muted: 'text-brutal-muted-foreground',
             },
             size: {
