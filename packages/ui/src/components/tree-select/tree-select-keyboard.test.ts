@@ -232,6 +232,28 @@ describe('TreeSelect keyboard navigation', () => {
         expect(getTreeItemRow('Current').getAttribute('data-highlighted')).toBe('')
     })
 
+    it('restores keyboard highlight after the pointer leaves a nested selected node', async () => {
+        const currentWrapper = await openTreeSelect(navigationNodes, { modelValue: 'first' })
+        await pressKey(getTreeItem('Root'), 'ArrowRight')
+        await pressKey(getTreeItem('Root'), 'ArrowRight')
+        await pressKey(getTreeItem('First'), 'ArrowDown')
+
+        const selectedRow = getTreeItemRow('First')
+        const currentRow = getTreeItemRow('Branch')
+        selectedRow.dispatchEvent(new Event('pointerenter'))
+        await nextTick()
+        expect(selectedRow.hasAttribute('data-highlighted')).toBe(true)
+        expect(currentRow.hasAttribute('data-highlighted')).toBe(false)
+        expect(getTreeItem('First').getAttribute('aria-selected')).toBe('true')
+
+        selectedRow.dispatchEvent(new Event('pointerleave'))
+        await nextTick()
+        expect(selectedRow.hasAttribute('data-highlighted')).toBe(false)
+        expect(currentRow.hasAttribute('data-highlighted')).toBe(true)
+        expect(document.activeElement).toBe(getTreeItem('Branch'))
+        expect(currentWrapper.emitted('update:modelValue')).toBeUndefined()
+    })
+
     it('keeps the search input focused when opened with every visible node disabled', async () => {
         await openTreeSelect([
             { id: 'disabled-first', label: 'Disabled First', disabled: true },

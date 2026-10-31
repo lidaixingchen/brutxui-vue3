@@ -326,7 +326,7 @@ function revealHashTarget(): boolean {
     if (typeof window === 'undefined' || !window.location.hash) return false
     const hash = decodeHash(window.location.hash)
     const member = anchorableMembers.value.find(item => matchesHash(item.anchorId, hash))
-    const typeReference = anchorableMembers.value.flatMap(item => item.member.type.references.map((reference, index) => ({
+    const typeReference = anchorableMembers.value.flatMap(item => item.member.type.references.map((_, index) => ({
         member: item,
         targetId: getApiTypeReferenceAnchorId(item.anchorId, index),
     }))).find(reference => matchesHash(reference.targetId, hash))
