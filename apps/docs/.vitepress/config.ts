@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { createApiPagePlugin, createApiPageSearchOptions } from './api-page'
 import { generateComponentsSidebar, generateBlocksSidebar } from './theme/lib/sidebar-generator'
 import { createDocsSitePaths } from './site-paths'
+import { markdownTables } from './markdown-tables'
 
 const sitePaths = createDocsSitePaths(Boolean(process.env.VERCEL))
 
@@ -67,7 +68,9 @@ function generateChangelogSidebar(): any[] {
 export default defineConfig({
     lang: 'zh-CN',
     markdown: {
-        config: createApiPagePlugin(apiPageOptions),
+        config(md) {
+            md.use(createApiPagePlugin(apiPageOptions)).use(markdownTables)
+        },
     },
     title: 'BrutxUI',
     locales: {

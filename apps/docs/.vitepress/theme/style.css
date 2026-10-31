@@ -714,15 +714,21 @@
    TABLES — Brutalist data grids
    ============================================ */
 
-.vp-doc table:not(:where(.vp-raw *, [data-brutx-preview] *, [data-brutx-portal] *)) {
-    border: 3px solid var(--brutal-border-color);
-    border-collapse: separate;
-    border-spacing: 0;
-    display: block;
-    width: 100%;
+.vp-doc .vp-doc-table-wrapper:not(:where(.vp-raw *, [data-brutx-preview] *, [data-brutx-portal] *)) {
+    margin-block: calc(var(--spacing) * 5);
     max-inline-size: 100%;
     overflow-x: auto;
-    box-shadow: 4px 4px 0 0 var(--brutal-border-color);
+    border: var(--brutal-border-width) solid var(--brutal-border-color);
+    box-shadow: var(--shadow-brutal);
+}
+
+.vp-doc table:not(:where(.vp-raw *, [data-brutx-preview] *, [data-brutx-portal] *)) {
+    display: table;
+    margin: 0;
+    border: none;
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
 }
 
 .vp-doc table:not(:where(.vp-raw *, [data-brutx-preview] *, [data-brutx-portal] *)) th,
@@ -1046,8 +1052,8 @@
         box-shadow: 3px 3px 0 0 var(--brutal-border-color) !important;
     }
 
-    .vp-doc table:not(:where(.vp-raw *, [data-brutx-preview] *, [data-brutx-portal] *)) {
-        box-shadow: 2px 2px 0 0 var(--brutal-border-color);
+    .vp-doc .vp-doc-table-wrapper:not(:where(.vp-raw *, [data-brutx-preview] *, [data-brutx-portal] *)) {
+        box-shadow: var(--shadow-brutal-sm);
     }
 
     .VPSidebar {

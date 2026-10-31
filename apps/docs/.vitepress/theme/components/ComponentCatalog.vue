@@ -26,25 +26,27 @@ function getStatusText(status: string | undefined, replacement: string | undefin
             class="component-catalog__section"
         >
             <h2>{{ section.title }}</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>{{ t('catalogComponent') }}</th>
-                        <th>{{ t('catalogDescription') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="item in section.items" :key="item.name">
-                        <td>
-                            <a :href="withBase(item.href)">{{ item.title }}</a>
-                            <span v-if="getStatusText(item.status, item.replacement)" class="component-catalog__status">
-                                {{ getStatusText(item.status, item.replacement) }}
-                            </span>
-                        </td>
-                        <td>{{ item.description }}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="vp-doc-table-wrapper" tabindex="0" :aria-label="section.title">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>{{ t('catalogComponent') }}</th>
+                            <th>{{ t('catalogDescription') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in section.items" :key="item.name">
+                            <td>
+                                <a :href="withBase(item.href)">{{ item.title }}</a>
+                                <span v-if="getStatusText(item.status, item.replacement)" class="component-catalog__status">
+                                    {{ getStatusText(item.status, item.replacement) }}
+                                </span>
+                            </td>
+                            <td>{{ item.description }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
     </div>
 </template>
