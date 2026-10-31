@@ -105,6 +105,7 @@ describe('Doctor CI Mode & Exit Code Strategy', () => {
                     cwd: tmpDir,
                     reporter: 'sarif',
                     outputFile,
+                    offline: true,
                 });
             } catch {
                 // Ignore exitCode error since we test report disk output
