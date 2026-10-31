@@ -1,7 +1,7 @@
 import { cva } from 'class-variance-authority'
 
 export const spinnerVariants = cva(
-    ['inline-block rounded-full', 'border-3', 'animate-spin'],
+    ['inline-block rounded-full', 'border-3', 'animate-spin motion-reduce:animate-none'],
     {
         variants: {
             size: {

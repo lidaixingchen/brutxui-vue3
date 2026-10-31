@@ -35,7 +35,7 @@ const classes = computed(() =>
 
 const blockClasses = computed(() =>
     getSpinnerColorClasses(props.color, BLOCK_COUNT).map(blockColor =>
-        cn('border-3 border-brutal', blockColor, 'animate-pulse')
+        cn('border-3 border-brutal', blockColor, 'animate-pulse motion-reduce:animate-none')
     )
 )
 </script>

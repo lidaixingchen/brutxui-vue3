@@ -4,7 +4,7 @@ import { brutalFloatingSurfaceClasses } from '@/lib/floating-content-variants'
 import { collectionItemVariants } from '@/lib/collection-item-variants'
 
 const dropdownMenuContentBaseStyles = [
-    'z-dropdown min-w-[8rem] max-h-[var(--reka-dropdown-menu-content-available-height)] overflow-x-hidden overflow-y-auto p-1',
+    'z-dropdown min-w-[8rem] max-w-[var(--reka-dropdown-menu-content-available-width)] max-h-[var(--reka-dropdown-menu-content-available-height)] overflow-x-hidden overflow-y-auto p-1',
     ...brutalFloatingSurfaceClasses,
     ...floatingContentAnimationClasses,
 ]
@@ -15,7 +15,7 @@ export const dropdownMenuSubContentVariants = cva(dropdownMenuContentBaseStyles)
 
 export const dropdownMenuItemVariants = cva(
     [
-        'relative flex cursor-pointer select-none items-center px-3 py-2',
+        'relative flex min-w-0 max-w-full cursor-pointer select-none items-center px-3 py-2 [overflow-wrap:anywhere]',
         'font-bold rounded-brutal',
         collectionItemVariants({ variant: 'default' }),
     ],

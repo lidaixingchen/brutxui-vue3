@@ -9,11 +9,19 @@ export const codeBlockRootVariants = cva(
 )
 
 export const codeBlockHeaderVariants = cva(
-    'bg-brutal-muted border-b-3 border-brutal flex justify-between items-center px-4 py-2 text-xs font-black select-none'
+    'bg-brutal-muted border-b-3 border-brutal flex flex-wrap justify-between items-center gap-x-3 gap-y-2 px-4 py-2 text-xs font-black select-none'
+)
+
+export const codeBlockHeaderMetadataVariants = cva(
+    'flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1'
+)
+
+export const codeBlockFilenameVariants = cva(
+    'min-w-0 break-words text-brutal-fg/80 font-black'
 )
 
 export const codeBlockLanguageVariants = cva(
-    'bg-brutal-accent text-brutal-accent-foreground border-3 border-brutal rounded-brutal px-1.5 py-0.5 text-[10px] uppercase font-black tracking-wider'
+    'shrink-0 whitespace-nowrap bg-brutal-accent text-brutal-accent-foreground border-3 border-brutal rounded-brutal px-1.5 py-0.5 text-[10px] uppercase font-black tracking-wider'
 )
 
 export const codeBlockBodyVariants = cva(
@@ -30,5 +38,5 @@ export const codeBlockCopyButtonVariants = cva(
     // 窄化 overlay 竞争类：bg/shadow/transition/hover 交还 CopyToClipboard variants 按状态接管，
     // 只保留尺寸/文字/边框，避免 twMerge 击穿 copied/failed 的 bg-brutal-success/destructive、
     // shadow-none 与 transition-none
-    'h-7 px-3 text-xs border-3 border-brutal'
+    'h-7 shrink-0 whitespace-nowrap px-3 text-xs border-3 border-brutal'
 )

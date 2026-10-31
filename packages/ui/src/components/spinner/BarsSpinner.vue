@@ -43,7 +43,7 @@ const barWidthMap: Record<BarsSpinnerSize, string> = {
 
 const barClasses = computed(() =>
     getSpinnerColorClasses(props.color, BAR_COUNT).map(barColor =>
-        cn(barWidthMap[props.size ?? 'default'], 'border-3 border-brutal', barColor, 'animate-pulse origin-bottom')
+        cn(barWidthMap[props.size ?? 'default'], 'border-3 border-brutal', barColor, 'animate-pulse origin-bottom motion-reduce:animate-none')
     )
 )
 </script>

@@ -37,7 +37,7 @@ describe('Loading.vue (声明式组件)', () => {
             props: { loading: true, text: 'Custom Loading Text' },
             global: { provide: localeProvide },
         })
-        const textSpan = wrapper.find('.bg-brutal-yellow')
+        const textSpan = wrapper.find('.bg-brutal-status-warning')
         expect(textSpan.exists()).toBe(true)
         expect(textSpan.text()).toBe('Custom Loading Text')
     })

@@ -84,7 +84,7 @@ const iconBoxClasses = computed(() =>
         <component
             :is="titleAs"
             v-if="title !== undefined || $slots.title" 
-            class="text-2xl font-black text-brutal-fg mb-2 uppercase tracking-wide"
+            class="w-full min-w-0 max-w-full whitespace-normal wrap-anywhere text-2xl font-black text-brutal-fg mb-2 uppercase tracking-wide"
         >
             <slot name="title">
                 {{ title }}
@@ -93,7 +93,7 @@ const iconBoxClasses = computed(() =>
 
         <p 
             v-if="subTitle !== undefined || $slots.subTitle" 
-            class="text-sm font-bold text-brutal-muted-foreground max-w-md mb-6 leading-relaxed"
+            class="w-full min-w-0 max-w-md whitespace-normal wrap-anywhere text-sm font-bold text-brutal-muted-foreground mb-6 leading-relaxed"
         >
             <slot name="subTitle">
                 {{ subTitle }}
