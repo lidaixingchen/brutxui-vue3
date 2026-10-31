@@ -2,6 +2,10 @@
     "extends": "./tsconfig.json",
     "compilerOptions": {
         "noEmit": true,
-        "rootDir": "../.."
+        "rootDir": "../..",
+        "paths": {
+            "@/*": ["./src/*"],
+            "brutx-ui-vue": ["./src/index.ts"]
+        }
     }
 }
