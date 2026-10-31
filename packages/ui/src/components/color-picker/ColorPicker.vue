@@ -166,7 +166,7 @@ const presetsForPanel = computed<string[] | readonly ColorPreset[] | undefined>(
                 <X :class="ICON_SIZE_CLASSES.smallIcon[size]" class="stroke-[3]" />
             </button>
         </div>
-        <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent" align="start">
+        <PopoverContent class="w-auto overflow-visible p-0 border-none shadow-none bg-transparent" align="start">
             <ColorPickerPanel
                 :id="contentId"
                 :model-value="displayValue"

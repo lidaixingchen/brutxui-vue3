@@ -16,7 +16,7 @@ import {
 } from '@/lib/color'
 import { useLocale } from '@/composables/useLocale'
 import { useColorHistory } from '@/composables/useColorHistory'
-import { colorPickerPanelVariants } from './color-picker-variants'
+import { colorPickerBodyVariants, colorPickerPanelVariants } from './color-picker-variants'
 import ColorPickerSwatch from './ColorPickerSwatch.vue'
 import ColorPickerInput from './ColorPickerInput.vue'
 import ColorPickerHistory from './ColorPickerHistory.vue'
@@ -273,7 +273,11 @@ function handleClear() {
     emit('confirm', null)
 }
 
-const panelClasses = computed(() => cn(colorPickerPanelVariants()))
+const hasPresets = computed(() => props.showPresets && normalizedPresets.value.length > 0)
+const hasHistory = computed(() => props.showHistory && history.value.length > 0)
+const hasSwatches = computed(() => hasPresets.value || hasHistory.value)
+const panelClasses = computed(() => cn(colorPickerPanelVariants({ swatches: hasSwatches.value })))
+const bodyClasses = computed(() => cn(colorPickerBodyVariants({ swatches: hasSwatches.value })))
 
 function handleKeydownHue(event: KeyboardEvent) {
     const step = event.shiftKey ? 15 : 1
@@ -317,150 +321,158 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
 
 <template>
     <div :class="panelClasses" role="dialog" :aria-label="t('colorPicker.placeholder')">
-        <div
-            ref="svPadEl"
-            role="slider"
-            tabindex="0"
-            :aria-label="t('colorPicker.saturation')"
-            :aria-valuenow="Math.round(hsv.s)"
-            aria-valuemin="0"
-            aria-valuemax="100"
-            class="relative w-full h-32 border-3 border-brutal cursor-crosshair overflow-hidden"
-            :class="FOCUS_RING_CLASSES"
-            :style="{ backgroundColor: svBackground }"
-            @pointerdown="handlePointerDown('sv', $event)"
-            @pointermove="handlePointerMove"
-            @pointerup="handlePointerUp"
-            @pointercancel="handlePointerCancel"
-            @lostpointercapture="handlePointerCancel"
-            @keydown="handleKeydownSv"
-        >
-            <div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(to right, #fff, rgba(255,255,255,0))" />
-            <div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(to top, #000, rgba(0,0,0,0))" />
-            <div
-                class="absolute w-3 h-3 border-2 border-brutal rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-                :style="{ ...svThumbStyle, backgroundColor: hexPreview || '#fff' }"
-            />
-        </div>
-
-        <div class="mt-3 space-y-2">
-            <div
-                ref="hueSliderEl"
-                role="slider"
-                tabindex="0"
-                :aria-label="t('colorPicker.hue')"
-                :aria-valuenow="hsv.h"
-                aria-valuemin="0"
-                aria-valuemax="360"
-                class="relative h-4 w-full border-3 border-brutal cursor-pointer"
-                :class="FOCUS_RING_CLASSES"
-                style="background: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)"
-                @pointerdown="handlePointerDown('hue', $event)"
-                @pointermove="handlePointerMove"
-                @pointerup="handlePointerUp"
-                @pointercancel="handlePointerCancel"
-                @lostpointercapture="handlePointerCancel"
-                @keydown="handleKeydownHue"
-            >
+        <div :class="bodyClasses">
+            <div class="min-w-0">
                 <div
-                    class="absolute top-1/2 w-2 h-6 border-2 border-brutal bg-brutal-bg -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-                    :style="hueThumbStyle"
-                />
+                    ref="svPadEl"
+                    role="slider"
+                    tabindex="0"
+                    :aria-label="t('colorPicker.saturation')"
+                    :aria-valuenow="Math.round(hsv.s)"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    class="relative w-full h-40 border-3 border-brutal cursor-crosshair overflow-hidden"
+                    :class="FOCUS_RING_CLASSES"
+                    :style="{ backgroundColor: svBackground }"
+                    @pointerdown="handlePointerDown('sv', $event)"
+                    @pointermove="handlePointerMove"
+                    @pointerup="handlePointerUp"
+                    @pointercancel="handlePointerCancel"
+                    @lostpointercapture="handlePointerCancel"
+                    @keydown="handleKeydownSv"
+                >
+                    <div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(to right, #fff, rgba(255,255,255,0))" />
+                    <div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(to top, #000, rgba(0,0,0,0))" />
+                    <div
+                        class="absolute w-3 h-3 border-2 border-brutal rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                        :style="{ ...svThumbStyle, backgroundColor: hexPreview || '#fff' }"
+                    />
+                </div>
+
+                <div class="mt-3 space-y-2">
+                    <div
+                        ref="hueSliderEl"
+                        role="slider"
+                        tabindex="0"
+                        :aria-label="t('colorPicker.hue')"
+                        :aria-valuenow="hsv.h"
+                        aria-valuemin="0"
+                        aria-valuemax="360"
+                        class="relative h-4 w-full border-3 border-brutal cursor-pointer"
+                        :class="FOCUS_RING_CLASSES"
+                        style="background: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)"
+                        @pointerdown="handlePointerDown('hue', $event)"
+                        @pointermove="handlePointerMove"
+                        @pointerup="handlePointerUp"
+                        @pointercancel="handlePointerCancel"
+                        @lostpointercapture="handlePointerCancel"
+                        @keydown="handleKeydownHue"
+                    >
+                        <div
+                            class="absolute top-1/2 w-2 h-6 border-2 border-brutal bg-brutal-bg -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                            :style="hueThumbStyle"
+                        />
+                    </div>
+
+                    <div
+                        v-if="showAlpha"
+                        ref="alphaSliderEl"
+                        role="slider"
+                        tabindex="0"
+                        :aria-label="t('colorPicker.alpha')"
+                        :aria-valuenow="Math.round(hsv.a * 100)"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                        class="relative h-4 w-full border-3 border-brutal cursor-pointer"
+                        :class="FOCUS_RING_CLASSES"
+                        :style="{ background: alphaTrackBackground }"
+                        @pointerdown="handlePointerDown('alpha', $event)"
+                        @pointermove="handlePointerMove"
+                        @pointerup="handlePointerUp"
+                        @pointercancel="handlePointerCancel"
+                        @lostpointercapture="handlePointerCancel"
+                        @keydown="handleKeydownAlpha"
+                    >
+                        <div
+                            class="absolute top-1/2 w-2 h-6 border-2 border-brutal bg-brutal-bg -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                            :style="alphaThumbStyle"
+                        />
+                    </div>
+                </div>
             </div>
 
-            <div
-                v-if="showAlpha"
-                ref="alphaSliderEl"
-                role="slider"
-                tabindex="0"
-                :aria-label="t('colorPicker.alpha')"
-                :aria-valuenow="Math.round(hsv.a * 100)"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                class="relative h-4 w-full border-3 border-brutal cursor-pointer"
-                :class="FOCUS_RING_CLASSES"
-                :style="{ background: alphaTrackBackground }"
-                @pointerdown="handlePointerDown('alpha', $event)"
-                @pointermove="handlePointerMove"
-                @pointerup="handlePointerUp"
-                @pointercancel="handlePointerCancel"
-                @lostpointercapture="handlePointerCancel"
-                @keydown="handleKeydownAlpha"
-            >
-                <div
-                    class="absolute top-1/2 w-2 h-6 border-2 border-brutal bg-brutal-bg -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-                    :style="alphaThumbStyle"
-                />
-            </div>
-        </div>
+            <div v-if="hasSwatches" class="flex min-w-0 flex-col gap-4">
+                <div v-if="hasPresets" class="min-h-0">
+                    <span class="block text-xs font-bold uppercase tracking-tight text-brutal-fg mb-2">
+                        {{ resolvedPresetsLabel }}
+                    </span>
+                    <!-- 色块为原生 button（aria-pressed 表达选中态），容器用 group 而非 listbox，
+                         避免「option 语义但无 listbox 键盘导航」的半吊子实现 -->
+                    <div role="group" :aria-label="resolvedPresetsLabel" class="flex max-h-40 flex-wrap gap-1.5 overflow-y-auto scrollbar-brutal -m-1 p-1">
+                        <ColorPickerSwatch
+                            v-for="preset in normalizedPresets"
+                            :key="preset.value"
+                            :value="preset.value"
+                            :label="preset.label"
+                            :disabled="preset.disabled"
+                            :size="swatchSize"
+                            :selected="preset.value === normalizedModelValue"
+                            @select="handlePresetSelect"
+                        />
+                    </div>
+                </div>
 
-        <div class="mt-3 flex items-center gap-2">
-            <div
-                class="w-10 h-10 border-3 border-brutal shrink-0"
-                :class="!modelValue && 'opacity-50'"
-                :style="previewStyle"
-            />
-            <ColorPickerInput
-                v-if="showInput"
-                :model-value="formattedValue"
-                :format="format"
-                :show-alpha="showAlpha"
-                :aria-label="t('colorPicker.hex')"
-                @update:model-value="handleInputUpdate"
-                @confirm="handleInputConfirm"
-            />
-        </div>
-
-        <ColorPickerHistory
-            v-if="showHistory"
-            class="mt-3"
-            :history="history"
-            :model-value="normalizedModelValue"
-            :size="swatchSize"
-            :aria-label="resolvedHistoryLabel"
-            :clear-label="resolvedClearHistoryLabel"
-            @select="handlePresetSelect"
-            @clear="clearHistory"
-        />
-
-        <div v-if="showPresets && normalizedPresets.length > 0" class="mt-3">
-            <span class="block text-xs font-bold uppercase tracking-tight text-brutal-fg mb-2">
-                {{ resolvedPresetsLabel }}
-            </span>
-            <!-- 色块为原生 button（aria-pressed 表达选中态），容器用 group 而非 listbox，
-                 避免「option 语义但无 listbox 键盘导航」的半吊子实现 -->
-            <div role="group" :aria-label="resolvedPresetsLabel" class="flex flex-wrap gap-1.5">
-                <ColorPickerSwatch
-                    v-for="preset in normalizedPresets"
-                    :key="preset.value"
-                    :value="preset.value"
-                    :label="preset.label"
-                    :disabled="preset.disabled"
+                <ColorPickerHistory
+                    v-if="hasHistory"
+                    :history="history"
+                    :model-value="normalizedModelValue"
                     :size="swatchSize"
-                    :selected="preset.value === normalizedModelValue"
+                    :aria-label="resolvedHistoryLabel"
+                    :clear-label="resolvedClearHistoryLabel"
                     @select="handlePresetSelect"
+                    @clear="clearHistory"
                 />
             </div>
         </div>
 
-        <div v-if="clearable || showInput" class="mt-3 flex items-center justify-end gap-2">
-            <Button
-                v-if="clearable"
-                variant="default"
-                size="sm"
-                type="button"
-                @click="handleClear"
-            >
-                {{ resolvedClearLabel }}
-            </Button>
-            <Button
-                variant="primary"
-                size="sm"
-                type="button"
-                @click="handleConfirm"
-            >
-                {{ resolvedConfirmLabel }}
-            </Button>
+        <div class="flex shrink-0 flex-col gap-3 pt-4 @md/color-picker:flex-row @md/color-picker:items-center">
+            <div class="flex min-w-0 flex-1 items-center gap-2">
+                <div
+                    class="w-10 h-10 border-3 border-brutal shrink-0"
+                    :class="!modelValue && 'opacity-50'"
+                    :style="previewStyle"
+                />
+                <ColorPickerInput
+                    v-if="showInput"
+                    class="min-w-0 flex-1"
+                    :model-value="formattedValue"
+                    :format="format"
+                    :show-alpha="showAlpha"
+                    :aria-label="t('colorPicker.hex')"
+                    @update:model-value="handleInputUpdate"
+                    @confirm="handleInputConfirm"
+                />
+            </div>
+
+            <div v-if="clearable || showInput" class="flex shrink-0 items-center justify-end gap-2">
+                <Button
+                    v-if="clearable"
+                    variant="default"
+                    size="sm"
+                    type="button"
+                    @click="handleClear"
+                >
+                    {{ resolvedClearLabel }}
+                </Button>
+                <Button
+                    variant="primary"
+                    size="sm"
+                    type="button"
+                    @click="handleConfirm"
+                >
+                    {{ resolvedConfirmLabel }}
+                </Button>
+            </div>
         </div>
     </div>
 </template>

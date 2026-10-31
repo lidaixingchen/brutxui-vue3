@@ -60,13 +60,37 @@ export const colorPickerSwatchVariants = cva(
     }
 )
 
-export const colorPickerPanelVariants = cva([
-    'p-4',
-    'border-3 border-brutal rounded-brutal',
-    'bg-brutal-bg',
-    'shadow-brutal-lg',
-    'w-64',
-])
+export const colorPickerPanelVariants = cva(
+    [
+        '@container/color-picker flex min-h-0 max-w-full flex-col p-4',
+        'max-h-[var(--reka-popover-content-available-height)]',
+        'border-3 border-brutal rounded-brutal',
+        'bg-brutal-bg',
+        'shadow-brutal-lg',
+    ],
+    {
+        variants: {
+            swatches: {
+                true: 'w-lg',
+                false: 'w-72',
+            },
+        },
+        defaultVariants: { swatches: true },
+    }
+)
+
+export const colorPickerBodyVariants = cva(
+    'grid min-h-0 grid-cols-1 gap-4 overflow-y-auto scrollbar-brutal -m-1 p-1',
+    {
+        variants: {
+            swatches: {
+                true: '@md/color-picker:grid-cols-2',
+                false: '',
+            },
+        },
+        defaultVariants: { swatches: true },
+    }
+)
 
 export const colorPickerInputVariants = cva(
     [
