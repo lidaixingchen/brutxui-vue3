@@ -188,7 +188,7 @@ const getTabClass = (tab: InstallTab) =>
     cn(
         'relative px-4 py-2 text-sm font-black uppercase tracking-wider border-3 border-brutal transition-all duration-150',
         activeTab.value === tab
-            ? 'bg-brutal-primary text-black shadow-brutal before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-brutal-accent'
+            ? 'bg-brutal-primary text-black before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-brutal-accent'
             : 'bg-brutal-bg text-brutal-fg hover:bg-brutal-muted',
     )
 
