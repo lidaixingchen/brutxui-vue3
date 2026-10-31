@@ -156,6 +156,7 @@ Calendar 升级前，页面可能直接依赖默认语言：
 
 ### 🐛 Bug Fixes
 
+* **ci:** 同步完整入口体积预算 ([1f76692](https://github.com/lidaixingchen/brutxui-vue3/commit/1f76692f3c3e4756dc2863d415613c53038f3796))
 * **ci:** 使用源码解析组件自引用 ([614d9bc](https://github.com/lidaixingchen/brutxui-vue3/commit/614d9bc89a01bf4f54d124d853e853b148f74ee8))
 * **ci:** 完善跨包类型检查与焦点测试 ([3297e90](https://github.com/lidaixingchen/brutxui-vue3/commit/3297e90df86c1b0dbf7bb9895f3b525808333f6b))
 * **build:** 完善跨包类型检查与树节点交互回归 ([17e996d](https://github.com/lidaixingchen/brutxui-vue3/commit/17e996da7d287f3bf11fb27571d0977247dc8537))
@@ -209,6 +210,7 @@ Calendar 升级前，页面可能直接依赖默认语言：
 
 ### 📝 Documentation
 
+* 同步0.11.4最终发布说明 ([a61288c](https://github.com/lidaixingchen/brutxui-vue3/commit/a61288c19f77fefcfc9cfa3c4b643d052de1f665))
 * 同步0.11.4诊断报告验证说明 ([30f3fd0](https://github.com/lidaixingchen/brutxui-vue3/commit/30f3fd04f6393e3635476f38dcb6d601df2f64ce))
 * 更新0.11.4发布说明与版本归档 ([4e72d0e](https://github.com/lidaixingchen/brutxui-vue3/commit/4e72d0e92955500ac6f2c1b5424d7fe4c1d1dad0))
 * **ui:** 补充选择项交互调研报告与索引 ([5d1096f](https://github.com/lidaixingchen/brutxui-vue3/commit/5d1096f0e28edd32722210f3e7f4c06680b6d8e7))
@@ -225,6 +227,7 @@ Calendar 升级前，页面可能直接依赖默认语言：
 
 ### ✅ Tests
 
+* **release:** 同步0.11.4消费者安装锁文件 ([b0d06cc](https://github.com/lidaixingchen/brutxui-vue3/commit/b0d06ccf3dfd720482cbbdb4cfe992de03123ac6))
 * **cli:** 稳定诊断报告文件输出验证 ([48f237c](https://github.com/lidaixingchen/brutxui-vue3/commit/48f237cfabaf6ed6142cacc88f63b51de74ba12c))
 * **cli:** 验证集合组件与共享依赖升级 ([3daa68b](https://github.com/lidaixingchen/brutxui-vue3/commit/3daa68b9862037e55844da487f826adfdb6075be))
 * **ui:** 按实际字宽构建浏览器布局场景 ([8ba02ad](https://github.com/lidaixingchen/brutxui-vue3/commit/8ba02adee682a17cef0fe880a8f251ad4d8722e1))
