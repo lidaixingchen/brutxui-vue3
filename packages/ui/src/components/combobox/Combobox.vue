@@ -126,7 +126,7 @@ const createItemLabel = computed(() =>
 const { triggerClasses } = useSelectableTrigger<string | string[]>({
     modelValue: () => props.modelValue,
     baseClass: ({ hasValue }) => cn(
-        buttonVariants({ variant: 'outline' }),
+        buttonVariants({ variant: 'default' }),
         comboboxTriggerVariants({ hasValue })
     ),
     class: () => props.class,
