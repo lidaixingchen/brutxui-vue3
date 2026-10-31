@@ -4,7 +4,7 @@
 
 ## [Unreleased](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.11.4...HEAD)
 
-## [0.11.4](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.11.3...v0.11.4) - 2026-10-31
+## [0.11.4](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.11.3...v0.11.4) - 2026-11-01
 
 ### 0.11.4 升级迁移
 
@@ -122,7 +122,6 @@ Calendar 升级前，页面可能直接依赖默认语言：
 
 完整指南：[公开 API 迁移指南](https://github.com/lidaixingchen/brutxui-vue3/blob/v0.11.4/docs/guides/API_MIGRATION.md)。
 
-
 ### ⚠️ Breaking Changes
 
 * **ui:** 统一集合选项状态与焦点反馈 ([d3e4818](https://github.com/lidaixingchen/brutxui-vue3/commit/d3e48182dc4f22be8075f807262feacacb035ca3))
@@ -147,7 +146,11 @@ Calendar 升级前，页面可能直接依赖默认语言：
 
 ### 🐛 Bug Fixes
 
+* **ci:** 使用源码解析组件自引用 ([614d9bc](https://github.com/lidaixingchen/brutxui-vue3/commit/614d9bc89a01bf4f54d124d853e853b148f74ee8))
+* **ci:** 完善跨包类型检查与焦点测试 ([3297e90](https://github.com/lidaixingchen/brutxui-vue3/commit/3297e90df86c1b0dbf7bb9895f3b525808333f6b))
 * **build:** 完善跨包类型检查与树节点交互回归 ([17e996d](https://github.com/lidaixingchen/brutxui-vue3/commit/17e996da7d287f3bf11fb27571d0977247dc8537))
+* **docs:** 优化评分轮播与图片底栏排版 ([89aab39](https://github.com/lidaixingchen/brutxui-vue3/commit/89aab395819b9581a937470393506cfbdb43b8a8))
+* **ui:** 完善窄屏布局与主题状态呈现 ([bab5fd5](https://github.com/lidaixingchen/brutxui-vue3/commit/bab5fd557ebb7152a82b5f228b52014207a39968))
 * **ui:** 统一组合框触发器悬浮样式 ([d456733](https://github.com/lidaixingchen/brutxui-vue3/commit/d4567331395c784db3f39b6a481c11713d992eab))
 * **ui:** 同步颜色选择器清除按钮位移 ([b298984](https://github.com/lidaixingchen/brutxui-vue3/commit/b298984b6566293a4b8d0eafae1975c657a9e57f))
 * **docs:** 强化 API 面板色块层级 ([e736a94](https://github.com/lidaixingchen/brutxui-vue3/commit/e736a94808e0de165987edfc78a87dcffe9c2966))
@@ -196,6 +199,8 @@ Calendar 升级前，页面可能直接依赖默认语言：
 
 ### 📝 Documentation
 
+* 同步0.11.4诊断报告验证说明 ([30f3fd0](https://github.com/lidaixingchen/brutxui-vue3/commit/30f3fd04f6393e3635476f38dcb6d601df2f64ce))
+* 更新0.11.4发布说明与版本归档 ([4e72d0e](https://github.com/lidaixingchen/brutxui-vue3/commit/4e72d0e92955500ac6f2c1b5424d7fe4c1d1dad0))
 * **ui:** 补充选择项交互调研报告与索引 ([5d1096f](https://github.com/lidaixingchen/brutxui-vue3/commit/5d1096f0e28edd32722210f3e7f4c06680b6d8e7))
 * **ui:** 完成集合交互说明与方案归档 ([c4f4f20](https://github.com/lidaixingchen/brutxui-vue3/commit/c4f4f204aef970444b17c2f20e1c9cd30207ce93))
 * **form:** 同步字段插槽绑定说明 ([9ea73cf](https://github.com/lidaixingchen/brutxui-vue3/commit/9ea73cf7d04324a37633515ab03fa43ee32ab654))
