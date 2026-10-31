@@ -540,7 +540,7 @@
         "check:class-literals": "tsx scripts/check-class-literals.ts",
         "check:deprecated": "tsx scripts/check-deprecated-utilities.ts",
         "typecheck": "pnpm exec turbo run typecheck:source --filter=brutx-ui-vue",
-        "typecheck:source": "vue-tsc --noEmit",
+        "typecheck:source": "vue-tsc --project tsconfig.typecheck.json --noEmit",
         "test:types": "vue-tsc --project test-d/consumer/tsconfig.json --noEmit",
         "lint": "pnpm exec turbo run lint:source --filter=brutx-ui-vue",
         "lint:source": "eslint src",

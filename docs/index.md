@@ -40,7 +40,7 @@
 
 ## 三、 现行活跃方案（Active Plans）
 
-位于 [`docs/plans/`](plans/)，仅收纳当前正在评审（`draft`）或推进实施（`active`）的方案。落地后即移入归档区：
+活跃方案存放于代码路径 `docs/plans/<领域>/`，仅收纳当前正在评审（`draft`）或推进实施（`active`）的方案。落地后即移入归档区：
 
 <!-- AUTO_ACTIVE_PLANS_START -->
 ### CLI 工具链（CLI）
