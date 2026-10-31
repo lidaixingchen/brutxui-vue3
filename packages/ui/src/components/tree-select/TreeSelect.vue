@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, shallowRef, useId, watch } from 'vue'
 import { ChevronsUpDown, X } from '@lucide/vue'
+import { getDocument } from '@/lib/env'
 import { cn } from '@/lib/utils'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
 import PopoverContent from '../popover/PopoverContent.vue'
@@ -105,6 +106,8 @@ const searchQuery = ref('')
 // 使用 shallowRef 避免对 Set 进行深层响应式转换
 const expandedIds = shallowRef<Set<string>>(new Set())
 const focusedId = ref<string | undefined>(undefined)
+const pointerHighlightedId = ref<string | undefined>(undefined)
+const highlightedId = computed(() => pointerHighlightedId.value ?? focusedId.value)
 
 // 迭代式扁平化所有节点（用于查找）- 避免递归栈溢出
 function flattenNodes(nodes: TreeNode[]): TreeNode[] {
@@ -248,6 +251,21 @@ function getVisibleFocusableNodes(nodes: TreeNode[]): TreeNode[] {
 
 const visibleFocusableNodes = computed(() => getVisibleFocusableNodes(filteredNodes.value))
 
+const contentRef = ref<HTMLElement | null>(null)
+
+watch([open, visibleFocusableNodes], ([isOpen, nodes]) => {
+    if (!isOpen || nodes.length > 0) return
+    const doc = getDocument()
+    const content = contentRef.value
+    const activeItem = doc?.activeElement?.closest('[role="treeitem"]')
+    if (!activeItem || !content?.contains(activeItem)) return
+
+    const focusTarget = props.searchable
+        ? content.querySelector<HTMLInputElement>('input[type="text"]') ?? triggerRef.value
+        : triggerRef.value
+    focusTarget?.focus()
+}, { flush: 'pre' })
+
 watch(searchQuery, (query) => {
     if (query) {
         if (preSearchExpanded === null) {
@@ -272,6 +290,15 @@ watch([open, visibleFocusableNodes], ([isOpen, nodes]) => {
 // 更新焦点节点（roving tabindex）
 function handleNodeFocus(id: string) {
     focusedId.value = id
+    pointerHighlightedId.value = undefined
+}
+
+function handleNodePointerEnter(id: string) {
+    pointerHighlightedId.value = id
+}
+
+function handleNodePointerLeave(id: string) {
+    if (pointerHighlightedId.value === id) pointerHighlightedId.value = undefined
 }
 
 // 切换展开
@@ -335,6 +362,7 @@ watch(open, (isOpen) => {
     if (!isOpen) {
         searchQuery.value = ''
         focusedId.value = undefined
+        pointerHighlightedId.value = undefined
     }
 })
 
@@ -367,6 +395,7 @@ const contentId = `tree-select-content-${useId()}`
     <PopoverRoot v-model:open="open">
         <PopoverTrigger as-child>
             <div
+                ref="triggerRef"
                 role="combobox"
                 :aria-expanded="open"
                 :aria-controls="open ? contentId : undefined"
@@ -401,7 +430,7 @@ const contentId = `tree-select-content-${useId()}`
             </div>
         </PopoverTrigger>
         <PopoverContent class="w-(--reka-popover-trigger-width) p-0" align="start">
-            <div :id="contentId" class="flex flex-col">
+            <div :id="contentId" ref="contentRef" class="flex flex-col">
                 <!-- 搜索框 -->
                 <div v-if="searchable" class="border-b-3 border-brutal p-2">
                     <Input
@@ -421,6 +450,7 @@ const contentId = `tree-select-content-${useId()}`
                     role="tree"
                     :aria-label="ariaLabel"
                     :aria-multiselectable="multiple ? 'true' : undefined"
+                    @pointerleave="pointerHighlightedId = undefined"
                 >
                     <template v-if="filteredNodes.length > 0">
                         <TreeSelectNode
@@ -431,10 +461,13 @@ const contentId = `tree-select-content-${useId()}`
                             :expanded-ids="expandedIds"
                             :multiple="multiple"
                             :focused-id="focusedId"
+                            :highlighted-id="highlightedId"
                             :variant="itemVariant"
                             @toggle="toggleExpand"
                             @select="handleSelect"
                             @focus="handleNodeFocus"
+                            @pointer-enter="handleNodePointerEnter"
+                            @pointer-leave="handleNodePointerLeave"
                         />
                     </template>
                     <div v-else class="px-2 py-4 text-sm text-brutal-muted-foreground text-center">

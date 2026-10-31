@@ -27,7 +27,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/command/Command.vue",
-            "line": 9
+            "line": 10
           },
           "origin": "declared",
           "required": false,
@@ -62,7 +62,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/command/Command.vue",
-            "line": 10
+            "line": 11
           },
           "origin": "declared",
           "required": false,
@@ -111,7 +111,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/command/Command.vue",
-            "line": 79
+            "line": 88
           },
           "origin": "declared",
           "nullable": false,

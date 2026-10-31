@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { nextTick } from 'vue'
+import { defineComponent, h, nextTick, ref } from 'vue'
 import { userEvent } from 'vitest/browser'
 import { mount } from '@/test/browser-mount'
 import TreeSelect from './TreeSelect.vue'
@@ -51,9 +51,128 @@ async function pressKey(item: HTMLElement, key: string): Promise<void> {
     expect(document.activeElement).toBe(item)
     await userEvent.keyboard(`[${key}]`)
     await nextTick()
+    const focused = document.activeElement
+    if (focused?.getAttribute('role') === 'treeitem') {
+        await expect.poll(() => document.querySelectorAll('[role="treeitem"][tabindex="0"]')).toHaveLength(1)
+        await expect.poll(() => document.querySelector('[role="treeitem"][tabindex="0"]')).toBe(focused)
+    }
 }
 
 describe('TreeSelect keyboard browser integration', () => {
+    it('keeps the search input focused when opened with every node disabled', async () => {
+        wrapper = mount(TreeSelect, {
+            props: {
+                nodes: [
+                    { id: 'disabled-first', label: 'Disabled First', disabled: true },
+                    { id: 'disabled-last', label: 'Disabled Last', disabled: true },
+                ],
+            },
+            attachTo: host!,
+        })
+        const trigger = host!.querySelector<HTMLElement>('[role="combobox"]')
+        if (!trigger) throw new Error('TreeSelect trigger not found')
+
+        await userEvent.click(trigger)
+        const searchInput = document.querySelector<HTMLInputElement>('input[type="text"]')
+        if (!searchInput) throw new Error('TreeSelect search input not found')
+
+        await expect.poll(() => document.activeElement).toBe(searchInput)
+        const items = Array.from(document.querySelectorAll<HTMLElement>('[role="treeitem"]'))
+        expect(items).toHaveLength(2)
+        expect(items.every((item) => item.getAttribute('tabindex') === '-1')).toBe(true)
+    })
+
+    it.each([
+        { searchable: true, replaceNodes: false },
+        { searchable: false, replaceNodes: false },
+        { searchable: true, replaceNodes: true },
+        { searchable: false, replaceNodes: true },
+    ])('returns focus to an available control when all nodes become disabled ($searchable, $replaceNodes)', async ({ searchable, replaceNodes }) => {
+        const nodes = ref<TreeNode[]>([
+            { id: 'first', label: 'First Enabled' },
+            { id: 'disabled', label: 'Disabled', disabled: true },
+            { id: 'last', label: 'Last Enabled' },
+        ])
+        const harness = defineComponent({
+            setup() {
+                return () => h(TreeSelect, { nodes: nodes.value, searchable })
+            },
+        })
+        wrapper = mount(harness, { attachTo: host! })
+        const trigger = host!.querySelector<HTMLElement>('[role="combobox"]')
+        if (!trigger) throw new Error('TreeSelect trigger not found')
+
+        await userEvent.click(trigger)
+        const searchInput = document.querySelector<HTMLInputElement>('input[type="text"]')
+        const firstEnabled = getTreeItem('First Enabled')
+        if (searchable) {
+            expect(searchInput).not.toBeNull()
+            await userEvent.tab()
+        }
+        await expect.poll(() => document.activeElement).toBe(firstEnabled)
+        await userEvent.keyboard('[ArrowDown]')
+        const lastEnabled = getTreeItem('Last Enabled')
+        await expect.poll(() => document.activeElement).toBe(lastEnabled)
+
+        nodes.value = nodes.value.map(node => ({
+            ...node,
+            id: replaceNodes ? `disabled-${node.id}` : node.id,
+            disabled: true,
+        }))
+        await nextTick()
+
+        await expect.poll(() => document.activeElement).toBe(searchInput ?? trigger)
+        const items = Array.from(document.querySelectorAll<HTMLElement>('[role="treeitem"]'))
+        expect(items).toHaveLength(nodes.value.length)
+        expect(items.every((item) => item.getAttribute('tabindex') === '-1')).toBe(true)
+    })
+
+    it('moves focus to the trigger when all nodes become disabled as search is hidden', async () => {
+        const nodes = ref<TreeNode[]>([
+            { id: 'first', label: 'First Enabled' },
+            { id: 'last', label: 'Last Enabled' },
+        ])
+        const searchable = ref(true)
+        const harness = defineComponent({
+            setup() {
+                return () => h(TreeSelect, { nodes: nodes.value, searchable: searchable.value })
+            },
+        })
+        wrapper = mount(harness, { attachTo: host! })
+        const trigger = host!.querySelector<HTMLElement>('[role="combobox"]')
+        if (!trigger) throw new Error('TreeSelect trigger not found')
+
+        await userEvent.click(trigger)
+        const searchInput = document.querySelector<HTMLInputElement>('input[type="text"]')
+        if (!searchInput) throw new Error('TreeSelect search input not found')
+        await expect.poll(() => document.activeElement).toBe(searchInput)
+
+        await userEvent.tab()
+        const firstEnabled = getTreeItem('First Enabled')
+        await expect.poll(() => document.activeElement).toBe(firstEnabled)
+        await userEvent.keyboard('[ArrowDown]')
+        const lastEnabled = getTreeItem('Last Enabled')
+        await expect.poll(() => document.activeElement).toBe(lastEnabled)
+        const originalItems = Array.from(document.querySelectorAll<HTMLElement>('[role="treeitem"]'))
+
+        nodes.value = nodes.value.map((node) => ({ ...node, disabled: true }))
+        searchable.value = false
+        await nextTick()
+
+        await expect.poll(() => document.activeElement).toBe(trigger)
+        expect(trigger.getAttribute('aria-expanded')).toBe('true')
+        expect(document.querySelector('input[type="text"]')).toBeNull()
+        const updatedItems = Array.from(document.querySelectorAll<HTMLElement>('[role="treeitem"]'))
+        expect(updatedItems).toHaveLength(nodes.value.length)
+        expect(updatedItems[0]).toBe(originalItems[0])
+        expect(updatedItems[1]).toBe(originalItems[1])
+        expect(updatedItems.map((item) => item.querySelector('span.min-w-0')?.textContent)).toEqual([
+            'First Enabled',
+            'Last Enabled',
+        ])
+        expect(updatedItems.every((item) => item.getAttribute('aria-disabled') === 'true')).toBe(true)
+    })
+
     it('tabs to and selects a matching child below a disabled ancestor', async () => {
         const disabledRootNodes: TreeNode[] = [
             {

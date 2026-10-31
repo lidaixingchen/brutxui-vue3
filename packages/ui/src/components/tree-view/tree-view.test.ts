@@ -398,7 +398,7 @@ describe('TreeViewNode', () => {
         expect(wrapper.attributes('aria-expanded')).toBeUndefined()
     })
 
-    it('applies selected class when selected', () => {
+    it('keeps the single-selection marker visible when selected', () => {
         const wrapper = mount(TreeViewNode, {
             props: {
                 node: { id: 'file.ts', label: 'file.ts' },
@@ -407,12 +407,13 @@ describe('TreeViewNode', () => {
             },
         })
         const inner = wrapper.find('[role="treeitem"] > div')
-        expect(inner.classes()).toContain('bg-brutal-primary')
-        expect(inner.classes()).toContain('border-brutal')
-        expect(inner.classes()).toContain('shadow-brutal')
+        const selectionSlot = inner.element.lastElementChild as HTMLElement
+        expect(wrapper.attributes('aria-selected')).toBe('true')
+        expect(selectionSlot.getAttribute('aria-hidden')).toBe('true')
+        expect(selectionSlot.querySelector('svg')).not.toBeNull()
     })
 
-    it('does not apply selected class when not selected', () => {
+    it('keeps an empty single-selection marker slot when unselected', () => {
         const wrapper = mount(TreeViewNode, {
             props: {
                 node: { id: 'file.ts', label: 'file.ts' },
@@ -421,7 +422,47 @@ describe('TreeViewNode', () => {
             },
         })
         const inner = wrapper.find('[role="treeitem"] > div')
-        expect(inner.classes()).not.toContain('bg-brutal-primary')
+        const selectionSlot = inner.element.lastElementChild as HTMLElement
+        expect(wrapper.attributes('aria-selected')).toBe('false')
+        expect(selectionSlot.getAttribute('aria-hidden')).toBe('true')
+        expect(selectionSlot.childElementCount).toBe(0)
+    })
+
+    it('keeps selection separate from the focused current node', async () => {
+        const wrapper = mount(TreeView, {
+            props: {
+                nodes: [
+                    { id: 'selected', label: 'Selected' },
+                    { id: 'current', label: 'Current' },
+                ],
+                modelValue: 'selected',
+            },
+            global: { provide: localeProvide },
+            attachTo: document.body,
+        })
+        const items = wrapper.findAll('[role="treeitem"]')
+        const selected = items[0]
+        const current = items[1]
+        ;(current.element as HTMLElement).focus()
+        await nextTick()
+
+        const selectedRow = selected.find('div')
+        const currentRow = current.find('div')
+        expect(selected.attributes('aria-selected')).toBe('true')
+        expect(selectedRow.attributes('data-highlighted')).toBeUndefined()
+        expect((selectedRow.element.lastElementChild as HTMLElement).querySelector('svg')).not.toBeNull()
+        expect(current.attributes('aria-selected')).toBe('false')
+        expect(currentRow.attributes('data-highlighted')).toBe('')
+        expect((currentRow.element.lastElementChild as HTMLElement).childElementCount).toBe(0)
+
+        await selectedRow.trigger('pointerenter')
+        expect(selectedRow.attributes('data-highlighted')).toBe('')
+        expect(currentRow.attributes('data-highlighted')).toBeUndefined()
+        expect((selectedRow.element.lastElementChild as HTMLElement).querySelector('svg')).not.toBeNull()
+
+        await selectedRow.trigger('pointerleave')
+        expect(currentRow.attributes('data-highlighted')).toBe('')
+        wrapper.unmount()
     })
 
     it('has role="treeitem"', () => {

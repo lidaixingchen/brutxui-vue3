@@ -8,6 +8,7 @@ import Input from '../input/Input.vue'
 import { ChevronLeft, ChevronRight, Search } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
 import { useTransferPanelSelection } from '@/composables/useTransferPanelSelection'
+import { transferItemVariants } from './transfer-variants'
 import type { TransferDataItem } from './types'
 
 interface TransferProps {
@@ -132,6 +133,12 @@ const rightCheckedSet: ComputedRef<ReadonlySet<TransferDataItem['key']>> = compu
     (): ReadonlySet<TransferDataItem['key']> => new Set<TransferDataItem['key']>(rightChecked.value),
 )
 
+const leftHighlightedKey = ref<TransferDataItem['key']>()
+const rightHighlightedKey = ref<TransferDataItem['key']>()
+const leftFocusVisibleKey = ref<TransferDataItem['key']>()
+const rightFocusVisibleKey = ref<TransferDataItem['key']>()
+const itemClasses = computed(() => cn(transferItemVariants()))
+
 const leftMovableKeys = computed(() => {
     const movableKeys = new Set(sourceData.value.filter(item => !item.disabled).map(item => item.key))
     return leftChecked.value.filter(key => movableKeys.has(key))
@@ -152,6 +159,21 @@ watch(
     },
     { deep: true }
 )
+
+watch([filteredSourceData, filteredTargetData], ([sourceItems, targetItems]) => {
+    if (leftHighlightedKey.value !== undefined && !sourceItems.some(item => item.key === leftHighlightedKey.value)) {
+        leftHighlightedKey.value = undefined
+    }
+    if (rightHighlightedKey.value !== undefined && !targetItems.some(item => item.key === rightHighlightedKey.value)) {
+        rightHighlightedKey.value = undefined
+    }
+    if (leftFocusVisibleKey.value !== undefined && !sourceItems.some(item => item.key === leftFocusVisibleKey.value)) {
+        leftFocusVisibleKey.value = undefined
+    }
+    if (rightFocusVisibleKey.value !== undefined && !targetItems.some(item => item.key === rightFocusVisibleKey.value)) {
+        rightFocusVisibleKey.value = undefined
+    }
+})
 
 // 按钮禁用状态
 const leftToRightDisabled = computed(() => leftMovableKeys.value.length === 0)
@@ -178,12 +200,62 @@ const addToLeft = () => {
     removeRightCheckedKeys(rightChecked.value)
 }
 
-function getItemClass(disabled: boolean | undefined, isChecked: boolean) {
-    return cn(
-        'flex items-center gap-3 px-3 py-2 rounded-brutal border-3 border-transparent select-none cursor-pointer transition-all duration-150',
-        disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'hover:bg-brutal-muted',
-        isChecked && 'bg-brutal-muted border-brutal shadow-brutal-sm'
-    )
+function handleLeftMouseEnter(item: TransferDataItem) {
+    leftHighlightedKey.value = item.disabled ? undefined : item.key
+}
+
+function handleRightMouseEnter(item: TransferDataItem) {
+    rightHighlightedKey.value = item.disabled ? undefined : item.key
+}
+
+function handleLeftMouseLeave(item: TransferDataItem) {
+    if (leftHighlightedKey.value === item.key) leftHighlightedKey.value = undefined
+}
+
+function handleRightMouseLeave(item: TransferDataItem) {
+    if (rightHighlightedKey.value === item.key) rightHighlightedKey.value = undefined
+}
+
+function isLeftHighlighted(item: TransferDataItem): boolean {
+    return !item.disabled
+        && (leftHighlightedKey.value === item.key
+            || (leftHighlightedKey.value === undefined && leftFocusVisibleKey.value === item.key))
+}
+
+function isRightHighlighted(item: TransferDataItem): boolean {
+    return !item.disabled
+        && (rightHighlightedKey.value === item.key
+            || (rightHighlightedKey.value === undefined && rightFocusVisibleKey.value === item.key))
+}
+
+function handleLeftFocusIn(item: TransferDataItem, event: FocusEvent) {
+    const target = event.target
+    if (!item.disabled && target instanceof HTMLElement && target.matches(':focus-visible')) {
+        leftFocusVisibleKey.value = item.key
+    }
+}
+
+function handleRightFocusIn(item: TransferDataItem, event: FocusEvent) {
+    const target = event.target
+    if (!item.disabled && target instanceof HTMLElement && target.matches(':focus-visible')) {
+        rightFocusVisibleKey.value = item.key
+    }
+}
+
+function handleLeftFocusOut(item: TransferDataItem, event: FocusEvent) {
+    if (leftFocusVisibleKey.value !== item.key) return
+    const row = event.currentTarget as HTMLElement
+    const nextTarget = event.relatedTarget
+    if (nextTarget instanceof Node && row.contains(nextTarget)) return
+    leftFocusVisibleKey.value = undefined
+}
+
+function handleRightFocusOut(item: TransferDataItem, event: FocusEvent) {
+    if (rightFocusVisibleKey.value !== item.key) return
+    const row = event.currentTarget as HTMLElement
+    const nextTarget = event.relatedTarget
+    if (nextTarget instanceof Node && row.contains(nextTarget)) return
+    rightFocusVisibleKey.value = undefined
 }
 </script>
 
@@ -228,7 +300,15 @@ function getItemClass(disabled: boolean | undefined, isChecked: boolean) {
                 <div
                     v-for="item in filteredSourceData"
                     :key="item.key"
-                    :class="getItemClass(item.disabled, leftCheckedSet.has(item.key))"
+                    :class="itemClasses"
+                    data-slot="transfer-item"
+                    :data-highlighted="isLeftHighlighted(item) ? '' : undefined"
+                    :data-focus-visible="leftFocusVisibleKey === item.key ? '' : undefined"
+                    :data-disabled="item.disabled ? '' : undefined"
+                    @mouseenter="handleLeftMouseEnter(item)"
+                    @mouseleave="handleLeftMouseLeave(item)"
+                    @focusin="handleLeftFocusIn(item, $event)"
+                    @focusout="handleLeftFocusOut(item, $event)"
                     @click="toggleLeftChecked(item)"
                 >
                     <Checkbox
@@ -314,7 +394,15 @@ function getItemClass(disabled: boolean | undefined, isChecked: boolean) {
                 <div
                     v-for="item in filteredTargetData"
                     :key="item.key"
-                    :class="getItemClass(item.disabled, rightCheckedSet.has(item.key))"
+                    :class="itemClasses"
+                    data-slot="transfer-item"
+                    :data-highlighted="isRightHighlighted(item) ? '' : undefined"
+                    :data-focus-visible="rightFocusVisibleKey === item.key ? '' : undefined"
+                    :data-disabled="item.disabled ? '' : undefined"
+                    @mouseenter="handleRightMouseEnter(item)"
+                    @mouseleave="handleRightMouseLeave(item)"
+                    @focusin="handleRightFocusIn(item, $event)"
+                    @focusout="handleRightFocusOut(item, $event)"
                     @click="toggleRightChecked(item)"
                 >
                     <Checkbox

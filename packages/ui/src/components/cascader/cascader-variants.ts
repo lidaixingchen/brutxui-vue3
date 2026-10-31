@@ -2,6 +2,7 @@ import { cva } from 'class-variance-authority'
 import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
 import { floatingContentAnimationClasses } from '@/lib/floating-animation-classes'
 import { brutalFloatingSurfaceClasses } from '@/lib/floating-content-variants'
+import { collectionItemVariants } from '@/lib/collection-item-variants'
 import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const cascaderTriggerVariants = cva(
@@ -45,29 +46,30 @@ export const cascaderContentVariants = cva(
 
 export const cascaderItemVariants = cva(
     [
-        'flex items-center justify-between w-full cursor-pointer select-none px-3 py-2 text-sm font-semibold rounded-brutal transition-all duration-150',
-        'border-3 border-transparent',
-        'disabled:pointer-events-none disabled:opacity-50',
+        collectionItemVariants({ variant: 'default' }),
+        'flex w-full cursor-pointer items-center justify-between select-none rounded-brutal border-3 border-transparent px-3 py-2 text-sm font-semibold',
     ],
     {
         variants: {
-            active: {
-                true: 'bg-brutal-muted text-brutal-fg border-brutal',
-                false: '',
-            },
-            selected: {
-                true: 'bg-brutal-primary text-brutal-primary-foreground border-brutal shadow-brutal',
-                false: 'hover:bg-brutal-muted hover:text-brutal-fg',
-            },
-            trail: {
-                true: 'bg-brutal-primary/15 font-bold',
-                false: '',
-            },
+            active: { true: '', false: '' },
+            selected: { true: '', false: '' },
+            trail: { true: '', false: '' },
         },
         defaultVariants: {
             active: false,
             selected: false,
             trail: false,
         },
-    }
+    },
+)
+
+export const cascaderSelectionIndicatorVariants = cva(
+    'flex h-4 w-4 shrink-0 items-center justify-center',
+)
+
+export const cascaderPathIndicatorVariants = cva(
+    [
+        'h-4 w-4 shrink-0 stroke-3 transition-transform duration-150 motion-reduce:transition-none',
+        'data-[active-path]:rotate-90 data-[selected-trail]:rotate-90',
+    ],
 )

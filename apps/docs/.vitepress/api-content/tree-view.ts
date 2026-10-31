@@ -42,6 +42,7 @@ const content = {
         },
         TreeViewNode: {
             props: {
+                highlightedId: { zh: '当前指针交互节点的 id，用于统一节点高亮。', en: 'The pointer-interaction node id used to coordinate node highlighting.' },
                 node: { zh: '此行对应的树节点数据。', en: 'The tree node represented by this row.' },
                 selectedId: { zh: '当前选中节点的 id，用于标记此行是否处于选中状态。', en: 'The currently selected node id, used to determine whether this row is selected.' },
                 expandedIds: { zh: '当前已展开节点 id 集合，用于显示此节点的展开状态。', en: 'The set of expanded node ids, used to determine this node’s expanded state.' },
@@ -55,6 +56,8 @@ const content = {
                 select: { zh: '此节点被激活或选中时发出完整节点数据。', en: 'Emits the full node data when this node is activated or selected.' },
                 toggle: { zh: '请求切换展开状态时发出此节点 id。', en: 'Emits this node id when its expanded state should toggle.' },
                 check: { zh: '请求切换复选状态时发出此节点数据。', en: 'Emits this node when its checkbox state should toggle.' },
+                'pointer-enter': { zh: '指针进入节点行时发出节点 id。', en: 'Emits the node id when the pointer enters its row.' },
+                'pointer-leave': { zh: '指针离开节点行时发出节点 id。', en: 'Emits the node id when the pointer leaves its row.' },
                 'focus-prev': { zh: '请求将焦点移动到上一个可见树节点。', en: 'Requests moving focus to the previous visible tree node.' },
                 'focus-next': { zh: '请求将焦点移动到下一个可见树节点。', en: 'Requests moving focus to the next visible tree node.' },
                 'focus-parent': { zh: '请求将焦点移动到父节点。', en: 'Requests moving focus to the parent node.' },

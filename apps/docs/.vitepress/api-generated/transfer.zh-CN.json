@@ -23,7 +23,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/transfer/Transfer.vue",
-            "line": 14
+            "line": 15
           },
           "origin": "declared",
           "required": false,
@@ -55,7 +55,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/transfer/Transfer.vue",
-            "line": 15
+            "line": 16
           },
           "origin": "declared",
           "required": false,
@@ -93,7 +93,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/transfer/Transfer.vue",
-            "line": 16
+            "line": 17
           },
           "origin": "declared",
           "required": false,
@@ -128,7 +128,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/transfer/Transfer.vue",
-            "line": 17
+            "line": 18
           },
           "origin": "declared",
           "required": false,
@@ -166,7 +166,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/transfer/Transfer.vue",
-            "line": 18
+            "line": 19
           },
           "origin": "declared",
           "required": false,
@@ -198,7 +198,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/transfer/Transfer.vue",
-            "line": 19
+            "line": 20
           },
           "origin": "declared",
           "required": false,
@@ -230,7 +230,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/transfer/Transfer.vue",
-            "line": 20
+            "line": 21
           },
           "origin": "declared",
           "required": false,
@@ -262,7 +262,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/transfer/Transfer.vue",
-            "line": 22
+            "line": 23
           },
           "origin": "declared",
           "required": false,
@@ -294,7 +294,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/transfer/Transfer.vue",
-            "line": 24
+            "line": 25
           },
           "origin": "declared",
           "required": false,

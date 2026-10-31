@@ -1,6 +1,7 @@
 import { cva } from 'class-variance-authority'
-import { brutalHoverLiftSm, brutalHoverLiftSmNoX } from '@/lib/brutal-interaction-variants'
-import { treeNodeBaseClasses, treeNodeDisabledClass, treeNodeFocusedClass, treeNodeUnselectedClass } from '@/lib/tree-variants'
+import { brutalHoverLiftSmNoX } from '@/lib/brutal-interaction-variants'
+import { collectionItemVariants } from '@/lib/collection-item-variants'
+import { treeNodeBaseClasses } from '@/lib/tree-variants'
 import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const treeSelectTriggerVariants = cva(
@@ -36,54 +37,17 @@ export const treeSelectTriggerVariants = cva(
 export const treeSelectNodeVariants = cva(
     [
         ...treeNodeBaseClasses,
-        'hover:border-brutal',
-        brutalHoverLiftSm,
     ],
     {
         variants: {
             variant: {
-                default: '',
-                primary: '',
-                secondary: '',
-            },
-            selected: {
-                true: '',
-                false: treeNodeUnselectedClass,
-            },
-            disabled: {
-                true: treeNodeDisabledClass,
-                false: '',
-            },
-            focused: {
-                true: treeNodeFocusedClass,
-                false: '',
+                default: collectionItemVariants({ variant: 'default' }),
+                primary: collectionItemVariants({ variant: 'primary' }),
+                secondary: collectionItemVariants({ variant: 'secondary' }),
             },
         },
-        compoundVariants: [
-            {
-                variant: 'default',
-                selected: true,
-                disabled: false,
-                class: 'bg-brutal-accent text-brutal-accent-foreground border-brutal shadow-brutal',
-            },
-            {
-                variant: 'primary',
-                selected: true,
-                disabled: false,
-                class: 'bg-brutal-primary text-brutal-primary-foreground border-brutal shadow-brutal',
-            },
-            {
-                variant: 'secondary',
-                selected: true,
-                disabled: false,
-                class: 'bg-brutal-secondary text-brutal-secondary-foreground border-brutal shadow-brutal',
-            },
-        ],
         defaultVariants: {
             variant: 'default',
-            selected: false,
-            disabled: false,
-            focused: false,
         },
     }
 )

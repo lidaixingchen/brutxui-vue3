@@ -273,43 +273,22 @@ describe('TreeSelect', () => {
         expect(wrapper.emitted('update:modelValue')).toBeFalsy()
     })
 
-    it('applies default itemVariant highlight (accent yellow) to selected node', async () => {
+    it.each(['default', 'primary', 'secondary'] as const)('keeps the selection mark when another %s item is highlighted', async (itemVariant) => {
         wrapper = mount(TreeSelect, {
             ...localeProvide,
-            props: { nodes, modelValue: '3' },
+            props: { nodes, modelValue: '3', itemVariant },
             attachTo: document.body,
         })
         await openTreeSelect(wrapper)
-        const selectedItem = document.body.querySelector('[role="treeitem"][aria-selected="true"] > div')
+        const selectedItem = document.body.querySelector<HTMLElement>('[role="treeitem"][aria-selected="true"] > div')
+        const otherItem = document.body.querySelector<HTMLElement>('[role="treeitem"][aria-selected="false"] > div')!
         expect(selectedItem).toBeTruthy()
-        expect(selectedItem!.classList.contains('bg-brutal-accent')).toBe(true)
-        expect(selectedItem!.classList.contains('text-brutal-accent-foreground')).toBe(true)
-    })
-
-    it('applies primary itemVariant highlight (primary red/coral) to selected node', async () => {
-        wrapper = mount(TreeSelect, {
-            ...localeProvide,
-            props: { nodes, modelValue: '3', itemVariant: 'primary' },
-            attachTo: document.body,
-        })
-        await openTreeSelect(wrapper)
-        const selectedItem = document.body.querySelector('[role="treeitem"][aria-selected="true"] > div')
-        expect(selectedItem).toBeTruthy()
-        expect(selectedItem!.classList.contains('bg-brutal-primary')).toBe(true)
-        expect(selectedItem!.classList.contains('text-brutal-primary-foreground')).toBe(true)
-    })
-
-    it('applies secondary itemVariant highlight (secondary teal) to selected node', async () => {
-        wrapper = mount(TreeSelect, {
-            ...localeProvide,
-            props: { nodes, modelValue: '3', itemVariant: 'secondary' },
-            attachTo: document.body,
-        })
-        await openTreeSelect(wrapper)
-        const selectedItem = document.body.querySelector('[role="treeitem"][aria-selected="true"] > div')
-        expect(selectedItem).toBeTruthy()
-        expect(selectedItem!.classList.contains('bg-brutal-secondary')).toBe(true)
-        expect(selectedItem!.classList.contains('text-brutal-secondary-foreground')).toBe(true)
+        otherItem.dispatchEvent(new Event('pointerenter'))
+        await nextTick()
+        expect(otherItem.hasAttribute('data-highlighted')).toBe(true)
+        expect(selectedItem!.hasAttribute('data-highlighted')).toBe(false)
+        expect(selectedItem!.querySelector('.lucide-check')).not.toBeNull()
+        expect(wrapper.emitted('update:modelValue')).toBeFalsy()
     })
 
     it('auto-expands ancestors of matched nodes during search', async () => {

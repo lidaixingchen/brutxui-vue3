@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, nextTick, useId, inject, provide, type ComputedRef } from 'vue';
-import { ChevronRight, File, Folder, FolderOpen, Loader2, RotateCw } from '@lucide/vue';
+import { Check, ChevronRight, File, Folder, FolderOpen, Loader2, RotateCw } from '@lucide/vue';
 import { cn } from '@/lib/utils';
+import { iconSizeVariants } from '@/lib/icon-size-variants';
 import { treeItemVariants } from './tree-view-variants';
 import { getCheckStateMap, TREE_CHECK_STATES_KEY } from './tree-view-utils';
 import { INDENT_PER_DEPTH, BASE_INDENT_TREE_VIEW, treeChevronBaseClass, treeChevronExpandedClass, treeLabelBaseClass } from '@/lib/tree-variants';
@@ -22,10 +23,12 @@ interface TreeViewNodeProps {
     selectionMode?: SelectionMode;
     checkedIds?: Set<string>;
     disabled?: boolean;
+    highlightedId?: string;
 }
 
 const props = withDefaults(defineProps<TreeViewNodeProps>(), {
     selectedId: null,
+    highlightedId: undefined,
     depth: 0,
     isFirstRoot: false,
     selectionMode: 'single',
@@ -43,10 +46,17 @@ const emit = defineEmits<{
     'focus-first-child': [];
     'focus-first': [];
     'focus-last': [];
+    'pointer-enter': [id: string];
+    'pointer-leave': [id: string];
 }>();
 
 const treeItemRef = ref<HTMLDivElement | null>(null);
 const isFocused = ref(false);
+const isFocusVisible = ref(false);
+const selectionMarkSizeClasses = iconSizeVariants({ size: 'md' });
+const isHighlighted = computed(() => props.highlightedId === undefined
+    ? isFocused.value
+    : props.highlightedId === props.node.id)
 
 const isLeaf = computed(() => {
     if (props.node.isLeaf !== undefined) return props.node.isLeaf;
@@ -156,12 +166,11 @@ const ariaChecked = computed(() => {
 })
 
 const itemClass = computed(() =>
-    cn(treeItemVariants({
-        selected: isSelected.value,
-        disabled: props.disabled,
-        focused: isFocused.value,
-    }))
+    cn(treeItemVariants())
 );
+
+const selectionMarkSlotClasses = computed(() => cn(selectionMarkSizeClasses, 'flex-shrink-0'));
+const selectionMarkClasses = computed(() => cn(selectionMarkSizeClasses, 'stroke-[3]'));
 
 const chevronClass = computed(() =>
     cn('w-4 h-4', treeChevronBaseClass, isExpanded.value && treeChevronExpandedClass)
@@ -180,6 +189,7 @@ function handleFocusIn(event: FocusEvent) {
     if (!(target instanceof Element)) return
     if (target.closest('[role="treeitem"]') === treeItemRef.value) {
         isFocused.value = true
+        isFocusVisible.value = target.matches(':focus-visible')
     }
 }
 
@@ -187,6 +197,7 @@ function handleFocusOut(event: FocusEvent) {
     const nextTarget = event.relatedTarget
     if (!(nextTarget instanceof Element) || nextTarget.closest('[role="treeitem"]') !== treeItemRef.value) {
         isFocused.value = false
+        isFocusVisible.value = false
     }
 }
 
@@ -296,8 +307,13 @@ defineExpose({ focus, nodeId: props.node.id });
         <div
             :class="[itemClass, dragClasses]"
             :style="indentStyle"
+            :data-highlighted="isHighlighted && !disabled && !isDragOver ? '' : undefined"
+            :data-focus-visible="isFocusVisible ? '' : undefined"
+            :data-disabled="disabled ? '' : undefined"
             :draggable="context?.draggable.value && !disabled"
             @click="handleClick"
+            @pointerenter="emit('pointer-enter', node.id)"
+            @pointerleave="emit('pointer-leave', node.id)"
             @dragstart="handleDragStart"
             @dragover="handleDragOver"
             @dragenter="handleDragEnter"
@@ -325,10 +341,18 @@ defineExpose({ focus, nodeId: props.node.id });
             <template v-else>
                 <FolderOpen v-if="!isLeaf && isExpanded" class="w-4 h-4 flex-shrink-0" />
                 <Folder v-else-if="!isLeaf" class="w-4 h-4 flex-shrink-0" />
-                <File v-else class="w-4 h-4 flex-shrink-0 opacity-60" />
+                <File v-else class="w-4 h-4 flex-shrink-0" />
             </template>
 
             <span :class="treeLabelBaseClass">{{ node.label }}</span>
+
+            <span
+                v-if="!isCheckboxMode"
+                :class="selectionMarkSlotClasses"
+                aria-hidden="true"
+            >
+                <Check v-if="isSelected" :class="selectionMarkClasses" />
+            </span>
 
             <button
                 v-if="showRetry"
@@ -353,6 +377,7 @@ defineExpose({ focus, nodeId: props.node.id });
                     :selection-mode="selectionMode"
                     :checked-ids="checkedIds"
                     :disabled="child.disabled ?? false"
+                    :highlighted-id="highlightedId"
                     @toggle="emit('toggle', $event)"
                     @select="emit('select', $event)"
                     @check="emit('check', $event)"
@@ -362,6 +387,8 @@ defineExpose({ focus, nodeId: props.node.id });
                     @focus-first-child="emit('focus-first-child')"
                     @focus-first="emit('focus-first')"
                     @focus-last="emit('focus-last')"
+                    @pointer-enter="emit('pointer-enter', $event)"
+                    @pointer-leave="emit('pointer-leave', $event)"
                 />
             </div>
         </Transition>

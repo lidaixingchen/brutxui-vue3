@@ -54,6 +54,10 @@ const RING_ALLOWLIST = new Set([
     'ring-brutal-ring',
     'ring-brutal-destructive',
     'ring-brutal-success',
+    'ring-brutal-item-highlight-foreground',
+    'ring-brutal-primary-foreground',
+    'ring-brutal-secondary-foreground',
+    'ring-brutal-destructive-foreground',
     // 偏移与间隙色
     'ring-offset-1',
     'ring-offset-2',

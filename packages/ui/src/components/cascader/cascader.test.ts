@@ -271,7 +271,7 @@ describe('Cascader', () => {
             expect(vm.isOnSelectedTrail(options[1], 0)).toBe(false)
         })
 
-        it('renders trail background class progressively as user navigates', async () => {
+        it('keeps the current item, navigation path, and selected path as separate states', async () => {
             wrapper = mount(Cascader, {
                 ...localeProvide,
                 props: { options, modelValue: ['zh', 'bj', 'hd'] },
@@ -280,17 +280,25 @@ describe('Cascader', () => {
             const vm = wrapper.vm as any
             vm.open = true
             await nextTick()
-
-            // Only first column visible; 'zh' is on the selected trail, 'us' is not
-            expect(vm.getItemClasses(options[0], 0)).toContain('brutal-primary/15')
-            expect(vm.getItemClasses(options[1], 0)).not.toContain('brutal-primary')
-
-            // After user navigates to column 2 (zh -> bj), trail and selected styles appear
             vm.activePath = ['zh', 'bj']
+            vm.activeColumnIndex = 1
+            vm.activeItemIndex = 0
             await nextTick()
-            expect(vm.getItemClasses(options[0]!.children![0], 1)).toContain('brutal-primary/15')
-            expect(vm.getItemClasses(options[0]!.children![0]!.children![0], 2)).toContain('bg-brutal-primary')
-            expect(vm.getItemClasses(options[0]!.children![0]!.children![0], 2)).not.toContain('brutal-primary/15')
+
+            const rows = Array.from(document.querySelectorAll<HTMLElement>('[role="option"]'))
+            const china = rows.find(row => row.textContent?.includes('China'))
+            const beijing = rows.find(row => row.textContent?.includes('Beijing'))
+            const haidian = rows.find(row => row.textContent?.includes('Haidian'))
+
+            expect(china?.getAttribute('data-active-path')).toBe('')
+            expect(china?.getAttribute('data-selected-trail')).toBe('')
+            expect(china?.getAttribute('data-highlighted')).toBeNull()
+            expect(china?.querySelector('svg')?.getAttribute('data-selected-trail')).toBe('')
+            expect(beijing?.getAttribute('data-active-path')).toBe('')
+            expect(beijing?.getAttribute('data-highlighted')).toBe('')
+            expect(haidian?.getAttribute('aria-selected')).toBe('true')
+            expect(haidian?.getAttribute('data-highlighted')).toBeNull()
+            expect(haidian?.querySelector('svg')).not.toBeNull()
         })
     })
 
@@ -313,6 +321,29 @@ describe('Cascader', () => {
             expect(checkboxClass).toContain('data-[state=checked]:bg-brutal-success')
             expect(checkboxClass).toContain('data-[state=checked]:text-brutal-success-foreground')
             expect(checkboxClass).not.toContain('data-[state=checked]:bg-brutal-bg')
+        })
+
+        it('keeps parent aggregate checkbox states independent from the current row', async () => {
+            wrapper = mount(Cascader, {
+                ...localeProvide,
+                props: { options, multiple: true, modelValue: [['zh', 'bj', 'hd']] },
+                attachTo: document.body,
+            })
+            const vm = wrapper.vm as any
+            vm.open = true
+            await nextTick()
+
+            expect(vm.getCheckboxChecked(options[0], 0)).toBe('indeterminate')
+            expect(vm.getCheckboxChecked(options[0]!.children![0], 1)).toBe('indeterminate')
+            expect(vm.getCheckboxChecked(options[0]!.children![0]!.children![0], 2)).toBe(true)
+
+            const china = Array.from(document.querySelectorAll<HTMLElement>('[role="option"]'))
+                .find(row => row.textContent?.includes('China'))
+            const haidian = Array.from(document.querySelectorAll<HTMLElement>('[role="option"]'))
+                .find(row => row.textContent?.includes('Haidian'))
+
+            expect(china?.getAttribute('data-highlighted')).toBeNull()
+            expect(haidian?.getAttribute('data-highlighted')).toBe('')
         })
     })
 
@@ -365,9 +396,7 @@ describe('Cascader', () => {
             expect(vm.activeItemIndex).toBe(-1)
         })
 
-        it('keeps selected style when the selected item is also active', async () => {
-            // 选中项同时处于 active 状态时，应固定显示 selected 高亮（bg-brutal-primary），
-            // 不叠加 active 的 bg-brutal-muted，避免背景色由样式表顺序决定
+        it('keeps the selected marker when the selected item is current', async () => {
             wrapper = mount(Cascader, {
                 ...localeProvide,
                 props: { options, modelValue: ['zh', 'bj', 'hd'] },
@@ -381,9 +410,12 @@ describe('Cascader', () => {
             vm.activeColumnIndex = 2
             await nextTick()
 
-            const classes = vm.getItemClasses(options[0]!.children![0]!.children![0], 2)
-            expect(classes).toContain('bg-brutal-primary')
-            expect(classes).not.toContain('bg-brutal-muted')
+            const haidian = Array.from(document.querySelectorAll<HTMLElement>('[role="option"]'))
+                .find(row => row.textContent?.includes('Haidian'))
+
+            expect(haidian?.getAttribute('aria-selected')).toBe('true')
+            expect(haidian?.getAttribute('data-highlighted')).toBe('')
+            expect(haidian?.querySelector('svg')).not.toBeNull()
         })
     })
 

@@ -107,6 +107,19 @@ const checkStates: ComputedRef<ReadonlyMap<string, CheckState>> = computed((): R
 const firstFocusableRootIndex = computed(() =>
     localNodes.value.findIndex((node) => !node.disabled && !node.hidden)
 )
+const pointerHighlightedId = ref<string | undefined>(undefined)
+
+function handleNodePointerEnter(id: string) {
+    pointerHighlightedId.value = id
+}
+
+function handleNodePointerLeave(id: string) {
+    if (pointerHighlightedId.value === id) pointerHighlightedId.value = undefined
+}
+
+function clearPointerHighlight() {
+    pointerHighlightedId.value = undefined
+}
 
 function toggleExpand(id: string) {
     const node = findNodeById(localNodes.value, id);
@@ -468,7 +481,14 @@ const rootClass = computed(() => cn('flex flex-col gap-0.5', props.class));
 </script>
 
 <template>
-    <div ref="treeRootRef" :class="rootClass" role="tree" :aria-label="t('treeView.fileTree')">
+    <div
+        ref="treeRootRef"
+        :class="rootClass"
+        role="tree"
+        :aria-label="t('treeView.fileTree')"
+        @focusin="clearPointerHighlight"
+        @pointerleave="clearPointerHighlight"
+    >
         <TreeViewNode
             v-for="(node, index) in localNodes"
             :key="node.id"
@@ -480,6 +500,7 @@ const rootClass = computed(() => cn('flex flex-col gap-0.5', props.class));
             :selection-mode="selectionMode"
             :checked-ids="checkedSet"
             :disabled="node.disabled ?? false"
+            :highlighted-id="pointerHighlightedId"
             @toggle="toggleExpand"
             @select="selectNode"
             @check="toggleCheck"
@@ -489,6 +510,8 @@ const rootClass = computed(() => cn('flex flex-col gap-0.5', props.class));
             @focus-first-child="handleFocusFirstChild"
             @focus-first="handleFocusFirst"
             @focus-last="handleFocusLast"
+            @pointer-enter="handleNodePointerEnter"
+            @pointer-leave="handleNodePointerLeave"
         />
     </div>
 </template>

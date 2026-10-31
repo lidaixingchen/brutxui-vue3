@@ -15,9 +15,8 @@ const classes = computed(() =>
         // ms-auto 兼容 RTL，在 CommandItem 的 flex 容器内保持右侧对齐
         'ms-auto inline-flex items-center text-xs font-black tracking-wider',
         'px-2 py-1',
-        'bg-brutal-muted',
-        'border-3 border-brutal',
-        'text-brutal-muted-foreground',
+        'bg-transparent border-3 border-transparent',
+        'text-current',
         props.class
     )
 )

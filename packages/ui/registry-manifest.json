@@ -267,6 +267,7 @@
     "directives": [],
     "lib": [
       "brutal-interaction-variants.ts",
+      "collection-item-variants.ts",
       "floating-animation-classes.ts",
       "floating-content-variants.ts"
     ]
@@ -373,6 +374,7 @@
       "CommandSeparator.vue",
       "CommandShortcut.vue",
       "command-context.ts",
+      "command-focus.ts",
       "command-variants.ts"
     ],
     "composables": [
@@ -380,7 +382,7 @@
     ],
     "directives": [],
     "lib": [
-      "brutal-interaction-variants.ts"
+      "collection-item-variants.ts"
     ]
   },
   "cookie-consent": {
@@ -564,7 +566,7 @@
     "composables": [],
     "directives": [],
     "lib": [
-      "brutal-interaction-variants.ts",
+      "collection-item-variants.ts",
       "floating-animation-classes.ts",
       "floating-content-variants.ts",
       "icon-size-variants.ts",
@@ -989,6 +991,7 @@
     "directives": [],
     "lib": [
       "brutal-interaction-variants.ts",
+      "collection-item-variants.ts",
       "floating-animation-classes.ts",
       "floating-content-variants.ts",
       "icon-size-variants.ts",
@@ -1279,6 +1282,7 @@
   "transfer": {
     "files": [
       "Transfer.vue",
+      "transfer-variants.ts",
       "types.ts"
     ],
     "composables": [
@@ -1286,7 +1290,9 @@
       "useTransferPanelSelection.ts"
     ],
     "directives": [],
-    "lib": []
+    "lib": [
+      "collection-item-variants.ts"
+    ]
   },
   "tree-select": {
     "files": [
@@ -1304,6 +1310,7 @@
     "directives": [],
     "lib": [
       "brutal-interaction-variants.ts",
+      "collection-item-variants.ts",
       "env.ts",
       "icon-size-variants.ts",
       "tree-variants.ts"
@@ -1322,8 +1329,9 @@
     ],
     "directives": [],
     "lib": [
-      "brutal-interaction-variants.ts",
+      "collection-item-variants.ts",
       "env.ts",
+      "icon-size-variants.ts",
       "tree-variants.ts"
     ]
   },

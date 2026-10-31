@@ -29,7 +29,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 23
+            "line": 24
           },
           "origin": "declared",
           "required": true,
@@ -53,7 +53,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 25
+            "line": 26
           },
           "origin": "declared",
           "required": false,
@@ -88,7 +88,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 27
+            "line": 28
           },
           "origin": "declared",
           "required": false,
@@ -123,7 +123,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 29
+            "line": 30
           },
           "origin": "declared",
           "required": false,
@@ -158,7 +158,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 31
+            "line": 32
           },
           "origin": "declared",
           "required": false,
@@ -190,7 +190,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 33
+            "line": 34
           },
           "origin": "declared",
           "required": false,
@@ -222,7 +222,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 35
+            "line": 36
           },
           "origin": "declared",
           "required": false,
@@ -254,7 +254,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 37
+            "line": 38
           },
           "origin": "declared",
           "required": false,
@@ -289,7 +289,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 39
+            "line": 40
           },
           "origin": "declared",
           "required": false,
@@ -324,7 +324,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 41
+            "line": 42
           },
           "origin": "declared",
           "required": false,
@@ -361,7 +361,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 43
+            "line": 44
           },
           "origin": "declared",
           "required": false,
@@ -393,7 +393,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 45
+            "line": 46
           },
           "origin": "declared",
           "required": false,
@@ -425,7 +425,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 47
+            "line": 48
           },
           "origin": "declared",
           "required": false,
@@ -457,7 +457,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 49
+            "line": 50
           },
           "origin": "declared",
           "required": false,
@@ -489,7 +489,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 51
+            "line": 52
           },
           "origin": "declared",
           "required": false,
@@ -521,7 +521,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 53
+            "line": 54
           },
           "origin": "declared",
           "required": false,
@@ -566,7 +566,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 55
+            "line": 56
           },
           "origin": "declared",
           "required": false,
@@ -602,7 +602,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 57
+            "line": 58
           },
           "origin": "declared",
           "required": false,
@@ -714,7 +714,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 357
+            "line": 385
           },
           "origin": "declared",
           "nullable": false,
@@ -739,7 +739,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 358
+            "line": 386
           },
           "origin": "declared",
           "nullable": false,
@@ -758,7 +758,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 359
+            "line": 387
           },
           "origin": "declared",
           "nullable": false,
@@ -777,7 +777,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 360
+            "line": 388
           },
           "origin": "declared",
           "nullable": false,
@@ -991,6 +991,38 @@
           }
         },
         {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-props-highlightedId",
+          "name": "highlightedId",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "当前指针交互节点的 ID，用于呈现当前项高亮。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
           "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-props-variant",
           "name": "variant",
           "kind": "props",
@@ -1003,11 +1035,11 @@
             ],
             "references": []
           },
-          "description": "设置节点选中状态的视觉变体。",
+          "description": "设置节点当前项高亮的颜色变体。",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue",
-            "line": 22
+            "line": 23
           },
           "origin": "declared",
           "required": false,
@@ -1076,6 +1108,40 @@
             "references": []
           },
           "description": "非叶子节点被展开或折叠时发出节点 ID。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-events-pointer_2Denter",
+          "name": "pointer-enter",
+          "kind": "events",
+          "type": {
+            "text": "[id: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "指针进入节点行时发出节点 ID。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelectNode-events-pointer_2Dleave",
+          "name": "pointer-leave",
+          "kind": "events",
+          "type": {
+            "text": "[id: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "指针离开节点行时发出节点 ID。",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelectNode.vue"

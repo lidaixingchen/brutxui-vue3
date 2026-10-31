@@ -77,6 +77,7 @@
 - **盖影语义**：交互元素在按压激活时，必须沿斜向滑到阴影原本的位置（X/Y 偏移量各自等于阴影偏移），同时去除阴影（「落回右下角盖住自己的影子」），按压位移直接派生自 `--brutal-shadow-offset-x/y` 令牌。
 - **代码复用**：完整类名串复用 `@/lib/brutal-interaction-variants` 的 `brutalPress`（遵循完整字面量契约）。
 - **stacked 档位按压**：承载 `shadow-brutal-stacked` 的元素必须复用同文件的 `brutalPressStacked`——位移以 calc 同源派生最外层 1.5x 偏移（`active:translate-x-[calc(var(--brutal-shadow-offset-x,4px)*1.5)]`）并去影；严禁内联手抄像素字面量造成位移与阴影脱同步。
+- **集合选项行**：集合行按压延续当前高亮与选择标记，位置、字重和阴影保持稳定，反馈规则见 R5。
 - **合法例外**：
   - *折叠面板标题*：Accordion 标题栏与外框保持对齐，按压通过颜色和焦点提示反馈；内容展开动画独立控制高度，标题与面板不附加平移。
   - *低强调变体*：`ghost` / `link` 变体豁免位移与阴影（`shadow-none` + 仅背景或下划线悬浮反馈）。
@@ -86,6 +87,7 @@
 
 ### R5 悬停反馈 (Hover Feedback)
 - **核心动作**：`hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5`（微上浮并放大硬阴影）。
+- **集合选项行**：Select、Command、Combobox、Cascader、TreeSelect、TreeView、Transfer 和 DropdownMenu 使用成对高亮色与稳定几何反馈。行的位置、尺寸、边框宽度、字重和阴影在交互中保持稳定；触发器与弹层外壳继续遵循各自规则。
 - **合法例外**：嵌在列表或卡片内部的次级触发器（如 `TabsTrigger`、`AccordionTrigger`）悬停保持位置与阴影稳定，通过背景叠色提供交互提示，悬浮反馈归属于外层卡片整体（如 `AccordionItem` 的 `interactive` 变体）。
 
 - **结构稳定性**：Accordion 与 Breadcrumb 悬停时保持布局位置，通过底色或阴影变化反馈。Breadcrumb 实体标签按压时文字、底色和边框作为整体移动。
@@ -104,6 +106,7 @@
 
 ### R7 焦点指示体系 (Focus Ring)
 - **核心规则**：统一采用 Ring 表达——引用 `@/lib/utils` 的 `FOCUS_RING_CLASSES`（`focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden`）。
+- **集合行焦点**：集合选项变体引用 `@/lib/collection-item-variants`，以行内 Ring 保持滚动边界的焦点完整。真实焦点使用 `:focus-visible`，虚拟焦点或内部控件焦点通过 `data-focus-visible` 投射到行；`data-highlighted` 使用所属颜色变体的前景色绘制焦点，普通行使用 `brutal-ring`。强制颜色模式使用系统色 outline 与行内偏移，保留选择标记形状。共享类及对应颜色白名单由 `check:deprecated` 检查。
 - **机制与 forced-colors 兼容**：
   - 阴影组装化后，`box-shadow` 争用根因消除，Ring 与 brutal 阴影可同元素并存；
   - 配套的 `focus-visible:outline-hidden` 在普通模式下抑制 UA 默认焦点环（避免双环），在 `forced-colors` 高对比度模式下由其自带恢复块配合 UA 强制渲染系统焦点环（满足 WCAG 2.4.7）。

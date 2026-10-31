@@ -803,7 +803,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeView.vue",
-            "line": 463
+            "line": 476
           },
           "origin": "declared",
           "nullable": false,
@@ -822,7 +822,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeView.vue",
-            "line": 464
+            "line": 477
           },
           "origin": "declared",
           "nullable": false,
@@ -856,7 +856,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 17
+            "line": 18
           },
           "origin": "declared",
           "required": true,
@@ -882,7 +882,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 18
+            "line": 19
           },
           "origin": "declared",
           "required": false,
@@ -914,7 +914,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 19
+            "line": 20
           },
           "origin": "declared",
           "required": true,
@@ -938,7 +938,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 20
+            "line": 21
           },
           "origin": "declared",
           "required": false,
@@ -973,7 +973,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 21
+            "line": 22
           },
           "origin": "declared",
           "required": false,
@@ -1014,7 +1014,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 22
+            "line": 23
           },
           "origin": "declared",
           "required": false,
@@ -1046,7 +1046,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 23
+            "line": 24
           },
           "origin": "declared",
           "required": false,
@@ -1081,7 +1081,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 24
+            "line": 25
           },
           "origin": "declared",
           "required": false,
@@ -1097,6 +1097,38 @@
             "resolution": {
               "kind": "resolved",
               "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-props-highlightedId",
+          "name": "highlightedId",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The pointer-interaction node id used to coordinate node highlighting.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-view/TreeViewNode.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
             }
           }
         },
@@ -1133,6 +1165,40 @@
             "references": []
           },
           "description": "Emits this node id when its expanded state should toggle.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-events-pointer_2Denter",
+          "name": "pointer-enter",
+          "kind": "events",
+          "type": {
+            "text": "[id: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the node id when the pointer enters its row.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-view/TreeViewNode.vue"
+          },
+          "origin": "declared",
+          "nullable": false
+        },
+        {
+          "id": "api-component_3Atree_2Dview_2FTreeViewNode-events-pointer_2Dleave",
+          "name": "pointer-leave",
+          "kind": "events",
+          "type": {
+            "text": "[id: string]",
+            "literals": [],
+            "references": []
+          },
+          "description": "Emits the node id when the pointer leaves its row.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue"
@@ -1278,7 +1344,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 276
+            "line": 287
           },
           "origin": "declared",
           "nullable": false,
@@ -1297,7 +1363,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 276
+            "line": 287
           },
           "origin": "declared",
           "nullable": false,

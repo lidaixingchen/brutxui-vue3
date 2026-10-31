@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useId } from 'vue'
+import { computed, ref, useId } from 'vue'
 import { getDocument } from '@/lib/env'
 import { Check, ChevronRight, Folder, FolderOpen } from '@lucide/vue'
 import { cn } from '@/lib/utils'
@@ -19,6 +19,7 @@ interface TreeSelectNodeProps {
     depth?: number
     multiple?: boolean
     focusedId?: string
+    highlightedId?: string
     variant?: 'default' | 'primary' | 'secondary'
 }
 
@@ -26,6 +27,7 @@ const props = withDefaults(defineProps<TreeSelectNodeProps>(), {
     depth: 0,
     multiple: false,
     focusedId: undefined,
+    highlightedId: undefined,
     variant: 'default',
 })
 
@@ -33,19 +35,19 @@ const emit = defineEmits<{
     toggle: [id: string]
     select: [node: TreeNode]
     focus: [id: string]
+    'pointer-enter': [id: string]
+    'pointer-leave': [id: string]
 }>()
 
 const isLeaf = computed(() => !props.node.children || props.node.children.length === 0)
 const isExpanded = computed(() => props.expandedIds.has(props.node.id))
 const isSelected = computed(() => props.selectedIds.has(props.node.id))
+const isFocusVisible = ref(false)
 
 const itemClass = computed(() =>
     cn(
         treeSelectNodeVariants({
-            selected: isSelected.value,
             variant: props.variant,
-            disabled: props.node.disabled ?? false,
-            focused: props.focusedId === props.node.id && !props.node.disabled,
         })
     )
 )
@@ -58,7 +60,8 @@ const chevronClasses = computed(() =>
     cn(ICON_SIZE_CLASSES, treeChevronBaseClass, isExpanded.value && treeChevronExpandedClass)
 )
 const folderClasses = cn(ICON_SIZE_CLASSES, 'flex-shrink-0')
-const checkClasses = cn(ICON_SIZE_CLASSES, 'stroke-[3] flex-shrink-0')
+const checkSlotClasses = computed(() => cn(ICON_SIZE_CLASSES, 'flex-shrink-0'))
+const checkClasses = computed(() => cn(ICON_SIZE_CLASSES, 'stroke-[3]'))
 const spacerClasses = cn(ICON_SIZE_CLASSES, 'flex-shrink-0')
 
 function handleClick() {
@@ -70,44 +73,39 @@ function handleClick() {
     }
 }
 
-function handleFocus() {
+function handleFocus(event: FocusEvent) {
     // 禁用节点不进焦点序列（roving tabindex），点击后也不应获得焦点资格
     if (props.node.disabled) return
+    isFocusVisible.value = event.target instanceof Element && event.target.matches(':focus-visible')
     emit('focus', props.node.id)
 }
 
-function getVisibleTreeItems(): HTMLElement[] {
+function getTreeItems(): HTMLElement[] {
     const doc = getDocument()
     if (!doc) return []
     const tree = doc.activeElement?.closest('[role="tree"]')
     if (!tree) return []
     return Array.from(tree.querySelectorAll<HTMLElement>('[role="treeitem"]'))
-        .filter((item) => item.getAttribute('aria-disabled') !== 'true')
+}
+
+function getNavigableTreeItems(allItems = getTreeItems()): HTMLElement[] {
+    return allItems.filter((item) => item.getAttribute('aria-disabled') !== 'true')
 }
 
 function focusAdjacent(direction: -1 | 1) {
     const doc = getDocument()
     if (!doc) return
-    const tree = doc.activeElement?.closest('[role="tree"]')
-    if (!tree) return
-    const allItems = Array.from(tree.querySelectorAll<HTMLElement>('[role="treeitem"]'))
-    if (allItems.length === 0) return
-    const activeEl = doc.activeElement as HTMLElement | null
-    const currentIndex = activeEl ? allItems.indexOf(activeEl) : -1
-    let nextIndex = currentIndex < 0
-        ? (direction === 1 ? 0 : -1)
-        : currentIndex + direction
-
-    while (
-        nextIndex >= 0 &&
-        nextIndex < allItems.length &&
-        allItems[nextIndex].getAttribute('aria-disabled') === 'true'
-    ) {
-        nextIndex += direction
-    }
-
-    if (nextIndex >= 0 && nextIndex < allItems.length) {
-        allItems[nextIndex].focus()
+    const allItems = getTreeItems()
+    const navigableItems = new Set(getNavigableTreeItems(allItems))
+    const activeEl = doc.activeElement
+    const activeItem = activeEl instanceof HTMLElement ? activeEl.closest<HTMLElement>('[role="treeitem"]') : null
+    const currentIndex = activeItem ? allItems.indexOf(activeItem) : -1
+    for (let index = currentIndex + direction; index >= 0 && index < allItems.length; index += direction) {
+        const item = allItems[index]
+        if (navigableItems.has(item)) {
+            item.focus()
+            return
+        }
     }
 }
 
@@ -191,17 +189,20 @@ function handleKeydown(e: KeyboardEvent) {
             break
         case 'Home': {
             e.preventDefault()
-            const items = getVisibleTreeItems()
-            if (items.length > 0) items[0].focus()
+            getNavigableTreeItems()[0]?.focus()
             break
         }
         case 'End': {
             e.preventDefault()
-            const items = getVisibleTreeItems()
+            const items = getNavigableTreeItems()
             if (items.length > 0) items[items.length - 1].focus()
             break
         }
     }
+}
+
+function handleBlur() {
+    isFocusVisible.value = false
 }
 </script>
 
@@ -214,13 +215,19 @@ function handleKeydown(e: KeyboardEvent) {
         :aria-controls="!isLeaf && isExpanded ? contentId : undefined"
         :aria-selected="isSelected"
         :aria-disabled="node.disabled ? true : undefined"
+        @blur="handleBlur"
         @focus="handleFocus"
         @keydown="handleKeydown"
     >
         <div
             :class="itemClass"
             :style="indentStyle"
+            :data-highlighted="highlightedId === node.id && !node.disabled ? '' : undefined"
+            :data-focus-visible="isFocusVisible ? '' : undefined"
+            :data-disabled="node.disabled ? '' : undefined"
             @click="handleClick"
+            @pointerenter="emit('pointer-enter', node.id)"
+            @pointerleave="emit('pointer-leave', node.id)"
         >
             <ChevronRight
                 v-if="!isLeaf"
@@ -233,10 +240,9 @@ function handleKeydown(e: KeyboardEvent) {
             <span v-else :class="spacerClasses" />
 
             <span :class="[treeLabelBaseClass, 'min-w-0 flex-1']">{{ node.label }}</span>
-            <Check
-                v-if="isSelected"
-                :class="checkClasses"
-            />
+            <span :class="checkSlotClasses" aria-hidden="true">
+                <Check v-if="isSelected" :class="checkClasses" />
+            </span>
         </div>
 
         <div v-if="!isLeaf && isExpanded" :id="contentId" role="group">
@@ -249,10 +255,13 @@ function handleKeydown(e: KeyboardEvent) {
                 :depth="depth + 1"
                 :multiple="multiple"
                 :focused-id="focusedId"
+                :highlighted-id="highlightedId"
                 :variant="variant"
                 @toggle="emit('toggle', $event)"
                 @select="emit('select', $event)"
                 @focus="emit('focus', $event)"
+                @pointer-enter="emit('pointer-enter', $event)"
+                @pointer-leave="emit('pointer-leave', $event)"
             />
         </div>
     </div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, onUpdated, ref, type ComponentPublicInstance } from 'vue'
+import { computed, onBeforeUnmount, onMounted, onUpdated, ref, watch, type ComponentPublicInstance } from 'vue'
 import { ListboxItem, useId } from 'reka-ui'
 import type { ClassValue } from 'clsx'
 import { cn } from '@/lib/utils'
@@ -79,6 +79,24 @@ function syncIndexText() {
 const classes = computed(() =>
     cn(commandItemVariants(), props.class)
 )
+
+const isFocusVisible = computed(() =>
+    rootContext.focusMode.value === 'keyboard'
+    && rootContext.highlightedElement.value === (itemRef.value?.$el as HTMLElement | undefined)
+)
+
+// 原语缓存选项子树，虚拟焦点属性需同步到实际选项元素。
+watch([isFocusVisible, itemRef], ([focusVisible, instance]) => {
+    const element = instance?.$el as HTMLElement | undefined
+    if (!element) return
+
+    if (focusVisible) {
+        element.setAttribute('data-focus-visible', '')
+    }
+    else {
+        element.removeAttribute('data-focus-visible')
+    }
+}, { flush: 'post', immediate: true })
 
 // onMounted 覆盖首次挂载：初始 filterSearch 为空时全部条目可见、itemRef 可用，同步插槽显示文本；
 // 否则索引停留在 setup 的 value 兜底，显示文本与 value 不一致时按显示文本搜索会漏匹配

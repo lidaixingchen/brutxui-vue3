@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, useId, watch } from 'vue'
-import { ChevronsUpDown, ChevronRight, X } from '@lucide/vue'
+import { ChevronsUpDown, ChevronRight, Check, X } from '@lucide/vue'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
 import PopoverContent from '../popover/PopoverContent.vue'
 import Checkbox from '../checkbox/Checkbox.vue'
@@ -9,7 +9,13 @@ import { useLocale } from '@/composables/useLocale'
 import { useClearableSelection } from '@/composables/useClearableSelection'
 import { useSelectableTrigger } from '@/composables/useSelectableTrigger'
 import { useSelectionDisplayText } from '@/composables/useSelectionDisplayText'
-import { cascaderTriggerVariants, cascaderItemVariants, cascaderContentVariants } from './cascader-variants'
+import {
+    cascaderTriggerVariants,
+    cascaderItemVariants,
+    cascaderContentVariants,
+    cascaderSelectionIndicatorVariants,
+    cascaderPathIndicatorVariants,
+} from './cascader-variants'
 import type { CascaderOption, CascaderValue } from './cascader-types'
 
 interface CascaderProps {
@@ -89,6 +95,8 @@ const activePath = ref<CascaderValue[]>([])
 const activeColumnIndex = ref(0)
 // Focused item index inside the active column
 const activeItemIndex = ref(-1)
+const triggerFocusVisible = ref(false)
+const focusVisibleOptionPath = ref<CascaderValue[]>()
 
 const uid = useId()
 const contentId = `${uid}-content`
@@ -103,6 +111,10 @@ const activeDescendantId = computed(() => {
     if (!activeOption || activeOption.disabled) return undefined
     return getOptionId(activeColumnIndex.value, activeItemIndex.value)
 })
+
+const itemClasses = computed(() => cn(cascaderItemVariants()))
+const selectionIndicatorClasses = computed(() => cn(cascaderSelectionIndicatorVariants()))
+const pathIndicatorClasses = computed(() => cn(cascaderPathIndicatorVariants()))
 
 // Compute dynamically displayed columns based on activePath
 const columns = computed(() => {
@@ -124,6 +136,57 @@ const columns = computed(() => {
 // Get full option path up to a column and including the option value
 function getOptionPath(option: CascaderOption, colIdx: number): CascaderValue[] {
     return [...activePath.value.slice(0, colIdx), option.value]
+}
+
+function isActivePath(option: CascaderOption, colIdx: number): boolean {
+    return activePath.value[colIdx] === option.value
+}
+
+function isCurrentOption(option: CascaderOption, colIdx: number, itemIdx: number): boolean {
+    return !option.disabled
+        && activeColumnIndex.value === colIdx
+        && activeItemIndex.value === itemIdx
+}
+
+function isOptionFocusVisible(option: CascaderOption, colIdx: number, itemIdx: number): boolean {
+    const optionPath = getOptionPath(option, colIdx)
+    return (focusVisibleOptionPath.value !== undefined
+        && isPathEqual(focusVisibleOptionPath.value, optionPath))
+        || (triggerFocusVisible.value && isCurrentOption(option, colIdx, itemIdx))
+}
+
+function handleTriggerFocus(event: FocusEvent) {
+    triggerFocusVisible.value = (event.currentTarget as HTMLElement).matches(':focus-visible')
+}
+
+function handleTriggerBlur() {
+    triggerFocusVisible.value = false
+}
+
+function handleTriggerKeyDown(event: KeyboardEvent) {
+    triggerFocusVisible.value = (event.currentTarget as HTMLElement).matches(':focus-visible')
+    handleKeyDown(event)
+}
+
+function handleOptionFocusIn(optionPath: CascaderValue[], event: FocusEvent) {
+    const target = event.target
+    if (target instanceof HTMLElement && target.matches(':focus-visible')) {
+        focusVisibleOptionPath.value = [...optionPath]
+    }
+}
+
+function handleOptionFocusOut(optionPath: CascaderValue[], event: FocusEvent) {
+    if (!focusVisibleOptionPath.value || !isPathEqual(focusVisibleOptionPath.value, optionPath)) return
+    const row = event.currentTarget as HTMLElement
+    const nextTarget = event.relatedTarget
+    if (nextTarget instanceof Node && row.contains(nextTarget)) return
+    focusVisibleOptionPath.value = undefined
+}
+
+function isOptionPathVisible(path: CascaderValue[]): boolean {
+    return columns.value.some((column, colIdx) =>
+        column.some(option => isPathEqual(getOptionPath(option, colIdx), path))
+    )
 }
 
 // 子树叶子路径缓存：同一 option 的叶子集合只依赖其子树，渲染期间稳定。
@@ -190,6 +253,9 @@ function reconcileActiveItem() {
 watch(() => props.options, () => {
     leafPathsCache.clear()
     reconcileActiveItem()
+    if (focusVisibleOptionPath.value && !isOptionPathVisible(focusVisibleOptionPath.value)) {
+        focusVisibleOptionPath.value = undefined
+    }
 }, { deep: true })
 
 // 递归计算 option 到其全部叶子后代的相对路径（不含祖先前缀），并在每个 option 上都写缓存：
@@ -448,6 +514,7 @@ const {
 
 // Synchronize keyboard focus state on popover open state transition
 watch(open, (isOpen) => {
+    focusVisibleOptionPath.value = undefined
     emit('open-change', isOpen)
     if (isOpen) {
         const hasValue = Array.isArray(props.modelValue) && props.modelValue.length > 0
@@ -593,23 +660,6 @@ function handleKeyDown(e: KeyboardEvent) {
     }
 }
 
-function getItemClasses(option: CascaderOption, colIdx: number) {
-    const isSelected = isPathSelected(getOptionPath(option, colIdx))
-    const isActive = !option.disabled && activePath.value[colIdx] === option.value && activeColumnIndex.value === colIdx
-    const isTrailActive = !option.disabled && activePath.value[colIdx] === option.value
-    const onSelectedTrail = isOnSelectedTrail(option, colIdx)
-
-    return cn(
-        cascaderItemVariants({
-            selected: isSelected,
-            // active 与 selected 互斥：选中项固定显示 selected 高亮（bg-brutal-primary），
-            // 避免同元素叠加 active（bg-brutal-muted）导致背景色由样式表顺序决定
-            active: (isActive || isTrailActive) && !isSelected,
-            trail: onSelectedTrail && !isSelected,
-        }),
-        option.disabled && 'opacity-50 pointer-events-none'
-    )
-}
 </script>
 
 <template>
@@ -626,7 +676,9 @@ function getItemClasses(option: CascaderOption, colIdx: number) {
                 :class="triggerClasses"
                 @mouseenter="onClearableMouseEnter"
                 @mouseleave="onClearableMouseLeave"
-                @keydown="handleKeyDown"
+                @focus="handleTriggerFocus"
+                @blur="handleTriggerBlur"
+                @keydown="handleTriggerKeyDown"
             >
                 <span class="truncate">{{ displayText }}</span>
                 <span class="flex items-center gap-1">
@@ -665,9 +717,16 @@ function getItemClasses(option: CascaderOption, colIdx: number) {
                         role="option"
                         :aria-selected="isPathSelected(getOptionPath(option, colIdx))"
                         :aria-disabled="option.disabled ? 'true' : undefined"
-                        :class="getItemClasses(option, colIdx)"
+                        :data-highlighted="isCurrentOption(option, colIdx, optIdx) ? '' : undefined"
+                        :data-focus-visible="isOptionFocusVisible(option, colIdx, optIdx) ? '' : undefined"
+                        :data-disabled="option.disabled ? '' : undefined"
+                        :data-active-path="isActivePath(option, colIdx) ? '' : undefined"
+                        :data-selected-trail="isOnSelectedTrail(option, colIdx) ? '' : undefined"
+                        :class="itemClasses"
                         @mouseenter="handleMouseEnter(option, colIdx)"
                         @click="handleItemClick(option, colIdx)"
+                        @focusin="handleOptionFocusIn(getOptionPath(option, colIdx), $event)"
+                        @focusout="handleOptionFocusOut(getOptionPath(option, colIdx), $event)"
                     >
                         <div class="min-w-0 flex flex-1 items-center gap-2 truncate">
                             <Checkbox
@@ -679,10 +738,24 @@ function getItemClasses(option: CascaderOption, colIdx: number) {
                             />
                             <span class="min-w-0 truncate">{{ option.label }}</span>
                         </div>
-                        <ChevronRight
-                            v-if="option.children && option.children.length > 0"
-                            class="w-4 h-4 shrink-0 stroke-3"
-                        />
+                        <span class="flex h-4 w-8 shrink-0 items-center justify-end gap-1">
+                            <span :class="selectionIndicatorClasses">
+                                <Check
+                                    v-if="!multiple && isPathSelected(getOptionPath(option, colIdx))"
+                                    class="h-4 w-4 stroke-3"
+                                    aria-hidden="true"
+                                />
+                            </span>
+                            <span class="flex h-4 w-4 shrink-0 items-center justify-center">
+                                <ChevronRight
+                                    v-if="option.children && option.children.length > 0"
+                                    :class="pathIndicatorClasses"
+                                    :data-active-path="isActivePath(option, colIdx) ? '' : undefined"
+                                    :data-selected-trail="isOnSelectedTrail(option, colIdx) ? '' : undefined"
+                                    aria-hidden="true"
+                                />
+                            </span>
+                        </span>
                     </div>
                 </div>
             </div>

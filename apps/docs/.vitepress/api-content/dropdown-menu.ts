@@ -4,6 +4,11 @@ const describe = (items: Record<string, [string, string]>) => Object.fromEntries
     Object.entries(items).map(([name, [zh, en]]) => [name, { zh, en }]),
 )
 
+const dangerToneDescription: [string, string] = [
+    '通过 data-tone="danger" 为危险动作指定高亮色对。',
+    'Use data-tone="danger" to apply the destructive highlight color pair.',
+]
+
 const content = {
     complete: true,
     members: {
@@ -18,6 +23,7 @@ const content = {
         },
         DropdownMenuCheckboxItem: {
             props: describe({
+                dataTone: dangerToneDescription,
                 modelValue: ['复选框项的受控选中状态，支持 indeterminate；使用 update:modelValue 事件同步。', 'The controlled checked state of the checkbox item, including indeterminate; synchronize it with update:modelValue.'],
                 defaultChecked: ['未传入 modelValue 时使用的初始选中状态。', 'The initial checked state used when modelValue is not provided.'],
                 class: ['追加到复选框菜单项根元素的 CSS 类。', 'CSS classes added to the checkbox menu item root.'],
@@ -28,6 +34,7 @@ const content = {
         },
         DropdownMenuItem: {
             props: describe({
+                dataTone: dangerToneDescription,
                 inset: ['为菜单项增加缩进，使其与带图标或子菜单触发项对齐。', 'Adds indentation to align the item with icon-bearing items or submenu triggers.'],
                 disabled: ['阻止用户选择此菜单项。', 'Prevents the user from selecting this menu item.'],
                 textValue: ['设置用于键盘类型搜索的文本值；适用于项内容无法直接推断文字时。', 'Sets the text used for keyboard typeahead, especially when the item’s text cannot be inferred from its content.'],
@@ -41,7 +48,7 @@ const content = {
             slots: describe({ default: ['菜单分组或菜单内容的标题。', 'The heading for a menu group or menu content.'] }),
         },
         DropdownMenuRadioItem: {
-            props: describe({ value: ['此单选项在 RadioGroup 中对应的字符串值。', 'The string value represented by this radio item in its RadioGroup.'], class: ['追加到单选菜单项根元素的 CSS 类。', 'CSS classes added to the radio menu item root.'] }),
+            props: describe({ dataTone: dangerToneDescription, value: ['此单选项在 RadioGroup 中对应的字符串值。', 'The string value represented by this radio item in its RadioGroup.'], class: ['追加到单选菜单项根元素的 CSS 类。', 'CSS classes added to the radio menu item root.'] }),
             slots: describe({ default: ['单选菜单项的标签和可选内容。', 'The radio menu item’s label and optional content.'] }),
         },
         DropdownMenuSeparator: {
@@ -57,6 +64,7 @@ const content = {
         },
         DropdownMenuSubTrigger: {
             props: describe({
+                dataTone: dangerToneDescription,
                 inset: ['为子菜单触发项增加缩进，使其与同级菜单项对齐。', 'Adds indentation to align the submenu trigger with sibling menu items.'],
                 disabled: ['阻止打开此子菜单。', 'Prevents this submenu from opening.'],
                 class: ['追加到子菜单触发项根元素的 CSS 类。', 'CSS classes added to the submenu trigger root.'],

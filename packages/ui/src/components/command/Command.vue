@@ -4,6 +4,7 @@ import { ListboxRoot, useFilter } from 'reka-ui'
 import type { ClassValue } from 'clsx'
 import { cn } from '@/lib/utils'
 import { provideCommandRootContext } from './command-context'
+import { useCommandFocus } from './command-focus'
 
 interface CommandProps {
     class?: ClassValue
@@ -18,6 +19,8 @@ const props = withDefaults(defineProps<CommandProps>(), {
 const allItems = ref<Map<string, string>>(new Map())
 const allGroups = ref<Map<string, Set<string>>>(new Map())
 const filterSearch = ref('')
+const highlightedElement = ref<HTMLElement | null>(null)
+const commandFocus = useCommandFocus()
 
 const { contains } = useFilter({ sensitivity: 'base' })
 
@@ -74,7 +77,13 @@ provideCommandRootContext({
     allGroups,
     filterSearch,
     filterState,
+    focusMode: commandFocus.mode,
+    highlightedElement,
 })
+
+function handleHighlight(payload?: { ref: HTMLElement }) {
+    highlightedElement.value = payload?.ref ?? null
+}
 
 defineExpose({ filterSearch })
 
@@ -92,6 +101,9 @@ const classes = computed(() =>
         :class="classes"
         :highlight-on-hover="true"
         as="div"
+        @highlight="handleHighlight"
+        @keydown.capture="commandFocus.handleKeydown"
+        @pointermove.capture="commandFocus.handlePointerMove"
     >
         <slot />
     </ListboxRoot>

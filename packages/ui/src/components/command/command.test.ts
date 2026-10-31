@@ -62,7 +62,9 @@ describe('CommandInput', () => {
         expect(wrapperDiv.classes()).toContain('items-center')
         expect(wrapperDiv.classes()).toContain('border-b-3')
         expect(wrapperDiv.classes()).toContain('border-brutal')
-        expect(wrapperDiv.classes()).toContain('bg-brutal-accent')
+        expect(wrapperDiv.classes()).toContain('bg-brutal-bg')
+        expect(wrapperDiv.classes()).toContain('text-brutal-fg')
+        expect(wrapperDiv.classes()).not.toContain('bg-brutal-accent')
     })
 
     it('has search input placeholder', () => {
@@ -545,6 +547,41 @@ describe('CommandItem', () => {
         expect(item.classes()).toContain('cursor-pointer')
     })
 
+    it('shows virtual focus only on the highlighted item in keyboard mode', async () => {
+        const wrapper = mount(Command, {
+            ...localeProvide,
+            slots: {
+                default: `
+                    <CommandList>
+                        <CommandItem value="first">First</CommandItem>
+                        <CommandItem value="second">Second</CommandItem>
+                    </CommandList>
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandList, CommandItem },
+            },
+        })
+        await nextTick()
+        await nextTick()
+
+        const items = wrapper.findAll('[data-slot="command-item"]')
+        await items[0].trigger('keydown', { key: 'ArrowDown' })
+        await nextTick()
+
+        const focusedItems = items.filter((item) => item.attributes('data-focus-visible') === '')
+        expect(focusedItems).toHaveLength(1)
+        expect(focusedItems[0].attributes('data-highlighted')).toBe('')
+
+        await items[1].trigger('pointermove')
+        await nextTick()
+        expect(items[0].attributes('data-focus-visible')).toBeUndefined()
+        expect(items[1].attributes('data-focus-visible')).toBeUndefined()
+
+        wrapper.unmount()
+    })
+
     it('applies custom class', async () => {
         const wrapper = mount(Command, {
             ...localeProvide,
@@ -829,9 +866,9 @@ describe('CommandShortcut', () => {
         expect(wrapper.classes()).toContain('items-center')
         expect(wrapper.classes()).toContain('text-xs')
         expect(wrapper.classes()).toContain('font-black')
-        expect(wrapper.classes()).toContain('bg-brutal-muted')
+        expect(wrapper.classes()).toContain('bg-transparent')
         expect(wrapper.classes()).toContain('border-3')
-        expect(wrapper.classes()).toContain('border-brutal')
+        expect(wrapper.classes()).toContain('text-current')
     })
 })
 

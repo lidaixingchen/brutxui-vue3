@@ -21,6 +21,14 @@ export default defineConfig({
     test: {
         browser: {
             enabled: true,
+            commands: {
+                async pressPrimaryPointer({ page }) {
+                    await page.mouse.down({ button: 'left' })
+                },
+                async releasePrimaryPointer({ page }) {
+                    await page.mouse.up({ button: 'left' })
+                },
+            },
             provider: playwright({
                 launchOptions: chromiumExecutablePath
                     ? { executablePath: chromiumExecutablePath }

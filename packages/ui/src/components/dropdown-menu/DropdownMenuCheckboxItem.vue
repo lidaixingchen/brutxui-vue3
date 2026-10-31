@@ -11,6 +11,7 @@ import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 
 interface DropdownMenuCheckboxItemProps {
     modelValue?: boolean | 'indeterminate'
+    dataTone?: 'danger'
     /** 非受控模式（不传 modelValue）下的初始选中态 */
     defaultChecked?: boolean | 'indeterminate'
     class?: string
@@ -19,6 +20,7 @@ interface DropdownMenuCheckboxItemProps {
 
 const props = withDefaults(defineProps<DropdownMenuCheckboxItemProps>(), {
     modelValue: undefined,
+    dataTone: undefined,
     defaultChecked: false,
     class: undefined,
     iconSize: 'md',
@@ -49,7 +51,13 @@ function handleCheckedChange(value: boolean | 'indeterminate') {
 const isIndeterminate = computed(() => checked.value === 'indeterminate')
 
 const classes = computed(() =>
-    cn(dropdownMenuItemVariants(), 'pl-8', props.class)
+    cn(
+        dropdownMenuItemVariants({
+            tone: props.dataTone === 'danger' ? 'danger' : 'default',
+        }),
+        'pl-8',
+        props.class
+    )
 )
 
 const iconClasses = computed(() =>
@@ -58,8 +66,13 @@ const iconClasses = computed(() =>
 </script>
 
 <template>
-    <DropdownMenuCheckboxItemPrimitive :checked="checked" :class="classes" @update:checked="handleCheckedChange">
-        <span class="absolute left-2 flex h-4 w-4 items-center justify-center" aria-hidden="true">
+    <DropdownMenuCheckboxItemPrimitive
+        :checked="checked"
+        :class="classes"
+        :data-tone="props.dataTone"
+        @update:checked="handleCheckedChange"
+    >
+        <span class="absolute left-2 flex h-4 w-4 shrink-0 items-center justify-center" aria-hidden="true">
             <!-- 未选中态常驻空复选框边框：与选中/半选的图标反馈对称 -->
             <span v-if="checked === false || checked === undefined" class="h-3 w-3 border-2 border-brutal" />
             <DropdownMenuItemIndicatorPrimitive>

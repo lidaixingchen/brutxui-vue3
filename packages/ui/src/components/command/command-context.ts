@@ -1,5 +1,6 @@
 import type { ComputedRef, Ref } from 'vue'
 import { createContext } from 'reka-ui'
+import type { CommandFocusMode } from './command-focus'
 
 export type CommandRootContext = {
     allItems: Ref<Map<string, string>>
@@ -10,6 +11,8 @@ export type CommandRootContext = {
         items: Map<string, number>
         groups: Set<string>
     }>
+    focusMode: Readonly<Ref<CommandFocusMode>>
+    highlightedElement: Ref<HTMLElement | null>
 }
 
 /**

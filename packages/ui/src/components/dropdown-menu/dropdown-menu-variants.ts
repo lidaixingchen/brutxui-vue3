@@ -1,8 +1,7 @@
 import { cva } from 'class-variance-authority'
-import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { floatingContentAnimationClasses } from '@/lib/floating-animation-classes'
 import { brutalFloatingSurfaceClasses } from '@/lib/floating-content-variants'
-import { FOCUS_RING_CLASSES } from '@/lib/utils'
+import { collectionItemVariants } from '@/lib/collection-item-variants'
 
 const dropdownMenuContentBaseStyles = [
     'z-dropdown min-w-[8rem] max-h-[var(--reka-dropdown-menu-content-available-height)] overflow-x-hidden overflow-y-auto p-1',
@@ -17,15 +16,15 @@ export const dropdownMenuSubContentVariants = cva(dropdownMenuContentBaseStyles)
 export const dropdownMenuItemVariants = cva(
     [
         'relative flex cursor-pointer select-none items-center px-3 py-2',
-        'font-bold transition-all rounded-brutal',
-        'focus:bg-brutal-accent focus:text-brutal-accent-foreground',
-        'hover:shadow-brutal-sm',
-        FOCUS_RING_CLASSES,
-        brutalPress,
-        'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+        'font-bold rounded-brutal',
+        collectionItemVariants({ variant: 'default' }),
     ],
     {
         variants: {
+            tone: {
+                default: '',
+                danger: collectionItemVariants({ variant: 'danger' }),
+            },
             inset: {
                 true: 'pl-8',
                 false: '',
@@ -33,6 +32,7 @@ export const dropdownMenuItemVariants = cva(
         },
         defaultVariants: {
             inset: false,
+            tone: 'default',
         },
     }
 )

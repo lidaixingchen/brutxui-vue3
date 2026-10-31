@@ -9,6 +9,7 @@ import DropdownMenuSeparator from './DropdownMenuSeparator.vue'
 import DropdownMenuShortcut from './DropdownMenuShortcut.vue'
 import DropdownMenuSubTrigger from './DropdownMenuSubTrigger.vue'
 import DropdownMenuSubContent from './DropdownMenuSubContent.vue'
+import { collectionItemVariants } from '@/lib/collection-item-variants'
 
 vi.mock('reka-ui', async (importOriginal) => {
     const primitives = await importOriginal<typeof import('reka-ui')>()
@@ -257,12 +258,33 @@ describe('DropdownMenu features and edge cases', () => {
         expect(wrapper.classes()).not.toContain('pl-8')
     })
 
+    it('item: uses the shared default collection feedback', () => {
+        const wrapper = mount(DropdownMenuItem, {
+            global: { stubs: { DropdownMenuItem: primitiveStub } },
+        })
+
+        expect(wrapper.classes()).toEqual(
+            expect.arrayContaining(collectionItemVariants({ variant: 'default' }).split(/\s+/))
+        )
+    })
+
     it('item: disabled passes through to the primitive', () => {
         const wrapper = mount(DropdownMenuItem, {
             props: { disabled: true },
             global: { stubs: { DropdownMenuItem: primitiveStub } },
         })
         expect(wrapper.attributes('disabled')).toBeDefined()
+    })
+
+    it('item: explicit danger tone uses the danger collection variant', () => {
+        const wrapper = mount(DropdownMenuItem, {
+            props: { dataTone: 'danger' },
+            global: { stubs: { DropdownMenuItem: primitiveStub } },
+        })
+        const dangerClasses = collectionItemVariants({ variant: 'danger' }).split(/\s+/)
+
+        expect(wrapper.attributes('data-tone')).toBe('danger')
+        expect(wrapper.classes()).toEqual(expect.arrayContaining(dangerClasses))
     })
 
     it('label: applies inset class only when inset is true', () => {
@@ -306,6 +328,7 @@ describe('DropdownMenu features and edge cases', () => {
         })
         const indicator = wrapper.find('span[aria-hidden="true"]')
         expect(indicator.exists()).toBe(true)
+        expect(indicator.classes()).toEqual(expect.arrayContaining(['absolute', 'left-2', 'w-4', 'shrink-0']))
     })
 
     it('checkbox item: unchecked state renders a persistent empty checkbox frame', () => {
@@ -367,6 +390,28 @@ describe('DropdownMenu features and edge cases', () => {
         })
         const indicator = wrapper.find('span[aria-hidden="true"]')
         expect(indicator.exists()).toBe(true)
+        expect(indicator.classes()).toEqual(expect.arrayContaining(['absolute', 'left-2', 'w-4', 'shrink-0']))
+    })
+
+    it('checkbox, radio, and submenu items use the explicit danger collection variant', () => {
+        const checkbox = mount(DropdownMenuCheckboxItem, {
+            props: { dataTone: 'danger' },
+            global: { stubs: { DropdownMenuCheckboxItem: primitiveStub, DropdownMenuItemIndicator: primitiveStub } },
+        })
+        const radio = mount(DropdownMenuRadioItem, {
+            props: { value: 'option-1', dataTone: 'danger' },
+            global: { stubs: { DropdownMenuRadioItem: primitiveStub, DropdownMenuItemIndicator: primitiveStub } },
+        })
+        const submenu = mount(DropdownMenuSubTrigger, {
+            props: { dataTone: 'danger' },
+            global: { stubs: { DropdownMenuSubTrigger: primitiveStub } },
+        })
+        const dangerClasses = collectionItemVariants({ variant: 'danger' }).split(/\s+/)
+
+        for (const wrapper of [checkbox, radio, submenu]) {
+            expect(wrapper.attributes('data-tone')).toBe('danger')
+            expect(wrapper.classes()).toEqual(expect.arrayContaining(dangerClasses))
+        }
     })
 
     it('separator: thickness follows --brutal-border-width token', () => {
@@ -390,6 +435,16 @@ describe('DropdownMenu features and edge cases', () => {
             global: { stubs: { DropdownMenuSubTrigger: primitiveStub } },
         })
         expect(wrapper.classes()).toContain('pl-8')
+    })
+
+    it('sub trigger: reserves a trailing arrow slot', () => {
+        const wrapper = mount(DropdownMenuSubTrigger, {
+            global: { stubs: { DropdownMenuSubTrigger: primitiveStub } },
+        })
+        const arrow = wrapper.find('svg')
+
+        expect(arrow.exists()).toBe(true)
+        expect(arrow.classes()).toEqual(expect.arrayContaining(['ml-auto', 'shrink-0']))
     })
 
     it('content: forwards extra attrs to the content primitive', () => {

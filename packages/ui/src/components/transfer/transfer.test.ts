@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import Transfer from './Transfer.vue'
 import Button from '../button/Button.vue'
 import Checkbox from '../checkbox/Checkbox.vue'
@@ -63,6 +64,42 @@ describe('Transfer', () => {
         await leftAllCheckbox.vm.$emit('update:checked', true)
         // 启用项是 Item 1 和 Item 3（共 2 个），被选中的 key 应为 [1, 3]
         expect(wrapper.text()).toContain('2/3')
+    })
+
+    it('projects pointer and visible checkbox focus onto rows independently of selection', async () => {
+        const wrapper = mount(Transfer, {
+            props: { data: mockData, modelValue: [4, 5] },
+            attachTo: document.body,
+        })
+        const rows = wrapper.findAll('.cursor-pointer').filter(row => row.text().includes('Item'))
+        const item1 = rows.find(row => row.text().includes('Item 1'))!
+        const disabledItem = rows.find(row => row.text().includes('Item 2'))!
+
+        await item1.trigger('mouseenter')
+        expect(item1.attributes('data-highlighted')).toBe('')
+        await item1.trigger('mouseleave')
+        expect(item1.attributes('data-highlighted')).toBeUndefined()
+
+        await item1.trigger('click')
+        expect(item1.findComponent(Checkbox).props('checked')).toBe(true)
+        expect(item1.attributes('data-highlighted')).toBeUndefined()
+
+        const visibleTarget = document.createElement('button')
+        Object.defineProperty(visibleTarget, 'matches', {
+            value: (selector: string) => selector === ':focus-visible',
+        })
+        item1.element.appendChild(visibleTarget)
+        visibleTarget.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
+        await nextTick()
+        expect(item1.attributes('data-focus-visible')).toBe('')
+        expect(item1.attributes('data-highlighted')).toBe('')
+
+        visibleTarget.dispatchEvent(new FocusEvent('focusout', { bubbles: true }))
+        await nextTick()
+        expect(item1.attributes('data-focus-visible')).toBeUndefined()
+        expect(item1.attributes('data-highlighted')).toBeUndefined()
+        expect(disabledItem.attributes('data-disabled')).toBe('')
+        wrapper.unmount()
     })
 
     it('moves items from left to right', async () => {

@@ -2,6 +2,7 @@ import { cva } from 'class-variance-authority'
 import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
 import { floatingContentAnimationClasses } from '@/lib/floating-animation-classes'
 import { brutalFloatingSurfaceClasses } from '@/lib/floating-content-variants'
+import { collectionItemVariants } from '@/lib/collection-item-variants'
 import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const selectTriggerVariants = cva(
@@ -49,18 +50,15 @@ export const selectContentVariants = cva(
 export const selectItemVariants = cva(
     [
         'relative flex w-full cursor-pointer select-none items-center py-2 pl-8 pr-3',
-        // listbox 项不可聚焦（高亮由 reka Listbox 键盘导航管理），不携带 outline-none
+        // Reka 管理选项导航，共享行样式读取其高亮与真实可见焦点状态
         'font-bold',
-        brutalHoverLift,
-        brutalPress,
-        'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
     ],
     {
         variants: {
             variant: {
-                default: 'data-[highlighted]:bg-brutal-accent data-[highlighted]:text-brutal-accent-foreground',
-                primary: 'data-[highlighted]:bg-brutal-primary data-[highlighted]:text-brutal-primary-foreground',
-                secondary: 'data-[highlighted]:bg-brutal-secondary data-[highlighted]:text-brutal-secondary-foreground',
+                default: collectionItemVariants(),
+                primary: collectionItemVariants({ variant: 'primary' }),
+                secondary: collectionItemVariants({ variant: 'secondary' }),
             },
         },
         defaultVariants: {
