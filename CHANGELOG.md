@@ -2,7 +2,245 @@
 
 根 `CHANGELOG.md` 仅保留**最近 3 个版本**的完整变更记录，历史版本详见[归档版本](#归档版本)。
 
-## [Unreleased](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.11.3...HEAD)
+## [Unreleased](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.11.4...HEAD)
+
+## [0.11.4](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.11.3...v0.11.4) - 2026-10-31
+
+### 0.11.4 升级迁移
+
+UI 包 `brutx-ui-vue` 与 CLI 包 `brutx-vue` 同步使用 `0.11.4`。本轮包含以下主题、状态与首帧行为调整，升级时应按实际使用方式迁移。
+
+#### 自定义主题高亮色
+
+**影响范围**：手工构造完整 `ThemeTokens` 对象的工具，以及覆盖集合选项高亮颜色的自定义主题。内置主题预设已提供新增字段。
+
+**变更原因**：集合选项使用独立的背景、前景色对，使鼠标当前项与键盘焦点在亮暗主题中保持清晰。
+
+升级前，自定义主题仅包含既有字段：
+
+```ts
+const tokens = { ...customTokens }
+```
+
+升级后，完整对象补齐两项高亮令牌；以下示例复用自定义主题的强调色对：
+
+```ts
+const tokens = {
+  ...customTokens,
+  itemHighlight: customTokens.accent,
+  itemHighlightForeground: customTokens.accentForeground,
+}
+```
+
+直接覆盖 CSS 变量时，升级前的强调色仍控制原有强调区域：
+
+```css
+.theme-custom {
+  --brutal-accent: var(--app-accent);
+  --brutal-accent-foreground: var(--app-accent-foreground);
+}
+```
+
+升级后，集合选项的高亮色单独配置：
+
+```css
+.theme-custom {
+  --brutal-accent: var(--app-accent);
+  --brutal-accent-foreground: var(--app-accent-foreground);
+  --brutal-item-highlight: var(--app-accent);
+  --brutal-item-highlight-foreground: var(--app-accent-foreground);
+}
+```
+
+**自动迁移可行性**：可以为完整令牌对象和自定义 CSS 主题批量补齐字段；具体色值需结合各主题的前景对比度审查。
+
+#### 集合选项样式
+
+**影响范围**：Select、Command、Combobox、Cascader、TreeSelect、TreeView、Transfer 与 DropdownMenu 的自定义选项行样式。值绑定和选择事件沿用各组件原有契约。
+
+**变更原因**：当前项高亮、业务选中与键盘可见焦点分别表达，交互期间保持行位置、字重、边框宽度和投影稳定。
+
+升级前，应用可能按旧高亮色和交互字重覆盖 CommandItem：
+
+```vue
+<CommandItem value="settings" class="data-[highlighted]:bg-brutal-secondary data-[highlighted]:font-black">
+  设置
+</CommandItem>
+```
+
+升级后，使用配对的集合高亮令牌，字重由普通行样式统一提供：
+
+```vue
+<CommandItem value="settings" class="data-[highlighted]:bg-brutal-item-highlight data-[highlighted]:text-brutal-item-highlight-foreground">
+  设置
+</CommandItem>
+```
+
+自定义焦点样式应同时考虑真实焦点的 `:focus-visible` 与虚拟焦点的 `data-focus-visible`。业务选中状态仍依据各原语的选中属性和独立标记判断。CLI 源码安装用户通过 `brutx-vue update` 审查组件及共享依赖的差异。
+
+**自动迁移可行性**：可以统一替换已知高亮类；自定义位移、字重、选中判断和焦点选择器需要人工审查。
+
+#### Countdown 首帧与 Calendar 语言
+
+**影响范围**：Countdown 自定义默认插槽，以及依赖 Calendar 默认语言的页面。
+
+**变更原因**：Countdown 在挂载后按当前时钟计算剩余时间，首帧显示占位状态；Calendar 默认沿用提供的语言包。
+
+Countdown 升级前，自定义插槽直接展示数值：
+
+```vue
+<Countdown :value="targetTime" v-slot="{ remaining }">
+  {{ remaining }}
+</Countdown>
+```
+
+升级后，通过 `isReady` 区分占位状态和已计算值：
+
+```vue
+<Countdown :value="targetTime" v-slot="{ remaining, isReady }">
+  {{ isReady ? remaining : '正在准备倒计时' }}
+</Countdown>
+```
+
+Calendar 升级前，页面可能直接依赖默认语言：
+
+```vue
+<Calendar v-model="date" />
+```
+
+需要固定中文的页面在升级后显式指定语言：
+
+```vue
+<Calendar v-model="date" locale="zh-CN" />
+```
+
+**自动迁移可行性**：Calendar 的固定语言可以批量补充；Countdown 的占位文案与业务数值分支需要按页面语义审查。
+
+#### 开发环境
+
+仓库开发和构建要求 Node.js `^22.13.0 || ^24.0.0 || >=26.0.0`。维护本仓库的开发与发布流水线时，按该范围选择运行时并重新安装依赖。
+
+完整指南：[公开 API 迁移指南](https://github.com/lidaixingchen/brutxui-vue3/blob/v0.11.4/docs/guides/API_MIGRATION.md)。
+
+
+### ⚠️ Breaking Changes
+
+* **ui:** 统一集合选项状态与焦点反馈 ([d3e4818](https://github.com/lidaixingchen/brutxui-vue3/commit/d3e48182dc4f22be8075f807262feacacb035ca3))
+* **theme:** 新增集合选项高亮色对 ([d82eb96](https://github.com/lidaixingchen/brutxui-vue3/commit/d82eb96ea22920b50e6d8d2ae4a9f1f4a59ca440))
+* **ui:** 完善组件水合与层级覆盖 ([51929d3](https://github.com/lidaixingchen/brutxui-vue3/commit/51929d39db14f005c4598f38bdb1663abe911fa8))
+* **deps:** 修复依赖安全告警并升级发布工具链 (#119) ([36e9c83](https://github.com/lidaixingchen/brutxui-vue3/commit/36e9c830995f043cfbfcc9526cc9ce572366361e))
+* **deps:** 修复依赖安全告警并升级发布工具链 ([789a88c](https://github.com/lidaixingchen/brutxui-vue3/commit/789a88ca42b42eca470f08b561ee1f0c34770c1b))
+
+### ✨ Features
+
+* **sketchy-chart:** 重构数据契约、等价数据表与全通道读数交互 ([5426af2](https://github.com/lidaixingchen/brutxui-vue3/commit/5426af2a86658fe137e2a598a2b368f0a068864b))
+* **slider:** 扩展无障碍外部标签与自定义可读值格式化 ([4345a03](https://github.com/lidaixingchen/brutxui-vue3/commit/4345a03f6e353d6398e43e49a71ea3be627fdf72))
+* **tabs:** 解耦 Tabs 内容区外壳并完善公开类型分发契约 ([c75297a](https://github.com/lidaixingchen/brutxui-vue3/commit/c75297afe216258e8f7b1bd1a2850aa55788d208))
+* **accordion:** 重塑折叠面板视觉层级、消除展开布局跳动并解耦分隔线 ([35ad2a5](https://github.com/lidaixingchen/brutxui-vue3/commit/35ad2a566c37a04915e2f3fdd01182683809a552))
+
+### ♻️ Code Refactoring
+
+* **ci:** 合并工作流工具与交付文件清理 (#118) ([5e5cd27](https://github.com/lidaixingchen/brutxui-vue3/commit/5e5cd27426c9b8b308e7e412547f76f73bc2e1c3))
+* **ci:** 收敛门禁工具与分发解析 ([4b53a86](https://github.com/lidaixingchen/brutxui-vue3/commit/4b53a86b7370e08a43a5c252561118d5d36c83e1))
+* **ci:** 精简消费者产物验收回执 ([690e6e6](https://github.com/lidaixingchen/brutxui-vue3/commit/690e6e63e4e838d49350ecd1d0ea537ae60f62ba))
+* **ci:** 收敛生成与语义门禁 ([42f740a](https://github.com/lidaixingchen/brutxui-vue3/commit/42f740a3387fa388bc4c6c0540e3d24a8844d28a))
+
+### 🐛 Bug Fixes
+
+* **build:** 完善跨包类型检查与树节点交互回归 ([17e996d](https://github.com/lidaixingchen/brutxui-vue3/commit/17e996da7d287f3bf11fb27571d0977247dc8537))
+* **ui:** 统一组合框触发器悬浮样式 ([d456733](https://github.com/lidaixingchen/brutxui-vue3/commit/d4567331395c784db3f39b6a481c11713d992eab))
+* **ui:** 同步颜色选择器清除按钮位移 ([b298984](https://github.com/lidaixingchen/brutxui-vue3/commit/b298984b6566293a4b8d0eafae1975c657a9e57f))
+* **docs:** 强化 API 面板色块层级 ([e736a94](https://github.com/lidaixingchen/brutxui-vue3/commit/e736a94808e0de165987edfc78a87dcffe9c2966))
+* **docs:** 修复 API 分类栏按压位移与边框叠加 ([4a1e98c](https://github.com/lidaixingchen/brutxui-vue3/commit/4a1e98cc8914af53325ad48e83c770c13388d034))
+* **docs:** 修复安装页签阴影重叠 ([4e4bf52](https://github.com/lidaixingchen/brutxui-vue3/commit/4e4bf525d073c2b6fbe6d64cb3923b15329efbda))
+* **ui:** 优化颜色选择器响应式双栏布局 ([650f27b](https://github.com/lidaixingchen/brutxui-vue3/commit/650f27bfafb8a63009d9fe2897a50c88b6b19693))
+* **docs:** 修复文档表格宽度与滚动布局 ([11dd4b4](https://github.com/lidaixingchen/brutxui-vue3/commit/11dd4b409f27647dc6a41ab031c7793a9e82aebf))
+* **docs:** 改善时间线日期文字可读性 ([73176c7](https://github.com/lidaixingchen/brutxui-vue3/commit/73176c78f9dc4d6815c5a4f7dd465084be8281a3))
+* **ui:** 完善日期选择布局与状态前景 ([83ee71e](https://github.com/lidaixingchen/brutxui-vue3/commit/83ee71ec4cf2ffd1b8b83613f1df57c0e2548acd))
+* **docs:** 完善组件示例的主题前景配色 ([c3bca5c](https://github.com/lidaixingchen/brutxui-vue3/commit/c3bca5c056d308b67874d8cbc9569ee49b6ffde0))
+* **ui:** 完善确认操作布局与状态可读性 ([ae78f15](https://github.com/lidaixingchen/brutxui-vue3/commit/ae78f15bb7d04d4af5c3339947523ec8bae5303e))
+* **docs:** 完善窄屏示例与主题配色 ([3a29069](https://github.com/lidaixingchen/brutxui-vue3/commit/3a29069b684fd4b5929a0ff18571696666b08e3c))
+* **ui:** 改善组件布局与主题可读性 ([4d13e6a](https://github.com/lidaixingchen/brutxui-vue3/commit/4d13e6a6b53626d77f3afc8b4298906b861230a2))
+* **docs:** 隔离预览排版并统一示例视觉 ([af7d6b2](https://github.com/lidaixingchen/brutxui-vue3/commit/af7d6b22ea429bc25d8baf903751f2670ec628ef))
+* **ui:** 修复样式层级与窄屏组件布局 ([adb8c35](https://github.com/lidaixingchen/brutxui-vue3/commit/adb8c3568ed5090c6681da977ffd7e41c769ed34))
+* **docs:** 统一组件示例的语义配色 ([869f725](https://github.com/lidaixingchen/brutxui-vue3/commit/869f72586d8d7dbe4329313274cb5fc297768f63))
+* **ui:** 修复浮层布局与组件状态配色 ([9855461](https://github.com/lidaixingchen/brutxui-vue3/commit/9855461d69b33bb386cb601842b064d15393c448))
+* **docs:** 改善窄屏组件示例展示布局 ([93220d8](https://github.com/lidaixingchen/brutxui-vue3/commit/93220d8267f2da38a32ddca284cc7b3c92c1eb86))
+* **ui:** 修复区块文字对比度与推荐徽标布局 ([f12ee73](https://github.com/lidaixingchen/brutxui-vue3/commit/f12ee7319647c8652ecf7f05f2e407ef1e634edd))
+* **ui:** 修复组件与文档的响应式视觉布局 ([03a8925](https://github.com/lidaixingchen/brutxui-vue3/commit/03a89253402ff549cb60570d4b2d7174ef352845))
+* **ui:** 修复组件布局与主题视觉效果 ([4888f11](https://github.com/lidaixingchen/brutxui-vue3/commit/4888f11d2f4f1927748d68de16d2cc6911b7ea00))
+* **ui:** 修复组件键盘导航与动态状态 ([0f9317c](https://github.com/lidaixingchen/brutxui-vue3/commit/0f9317cc5419e26c61f7d5bdc2e04d4f4f559fbc))
+* **ui:** 修复组件动态状态与键盘交互 ([80f9de9](https://github.com/lidaixingchen/brutxui-vue3/commit/80f9de9e2b490a545454987b2a3ec4fd7ca6c425))
+* **ui:** 修复组件视觉状态与浮层交互 ([8a782a2](https://github.com/lidaixingchen/brutxui-vue3/commit/8a782a22ca8b5ffcacff405c6d2d4bda7bdc73cd))
+* 修复配置分发与异步状态一致性 (#121) ([a123b5e](https://github.com/lidaixingchen/brutxui-vue3/commit/a123b5eeafe667db79ed3770e0c767303fa2e41a))
+* 完善别名解析与浏览器验证契约 ([0da9ad9](https://github.com/lidaixingchen/brutxui-vue3/commit/0da9ad9ed447895b28da183d59139916a5ae6e2b))
+* 修复配置分发与异步状态一致性 ([b385b08](https://github.com/lidaixingchen/brutxui-vue3/commit/b385b08c3b86e30b5a6bec036037b9d86c57187a))
+* 修复组件交互与分发发布缺陷 (#120) ([308ae54](https://github.com/lidaixingchen/brutxui-vue3/commit/308ae54f8a4702d403f6a2311e2e696b9f750273))
+* 修复组件交互与分发发布缺陷 ([4c36e41](https://github.com/lidaixingchen/brutxui-vue3/commit/4c36e4161431c1c8988fb56cc8d9105b31613300))
+* **ui:** 对齐样式审计与自动修复的例外值判断 ([0130f77](https://github.com/lidaixingchen/brutxui-vue3/commit/0130f771db82a9422e8b1ba5477537ef61bb7f09))
+* **build:** 传递文档构建的平台环境变量 ([f29df84](https://github.com/lidaixingchen/brutxui-vue3/commit/f29df848099bad94fc55e3e2c4e2d3ee02bce3d0))
+* **docs:** 完善API目录缓存更新与错误恢复 ([23458e6](https://github.com/lidaixingchen/brutxui-vue3/commit/23458e6ba31301baecb0ace2a298d4be5ee82ef8))
+* **cli:** 修复依赖图解析与并发请求隔离 ([75ad115](https://github.com/lidaixingchen/brutxui-vue3/commit/75ad11554b4499ec5caf8d206b086e21fb9cf97f))
+* **cli:** 完善响应体接收的超时与取消处理 ([af896f5](https://github.com/lidaixingchen/brutxui-vue3/commit/af896f5f9b3599402ae11c6c064712e434723f36))
+* **cli:** 完善组件事务报告与更新快照复用 ([cf1184b](https://github.com/lidaixingchen/brutxui-vue3/commit/cf1184b38d83392a0218b479644147962d427b33))
+* **ui:** 修复组件生命周期与派生状态同步 ([d465a9f](https://github.com/lidaixingchen/brutxui-vue3/commit/d465a9ff8c2b77e48e29ca39e83bfa4f16d98b3c))
+* **docs:** 补齐图表手动安装依赖与复制说明 ([ad90da9](https://github.com/lidaixingchen/brutxui-vue3/commit/ad90da9f1ba6ead32971122254277978ec0a557b))
+* **ui:** 统一饼图扇区绘制与读数命中范围 ([ebcf994](https://github.com/lidaixingchen/brutxui-vue3/commit/ebcf994d390a7c20a03ddde7803bbfe7de56a6fa))
+* **docs:** 合并组件API排版与响应式布局修复 (#115) ([64943ff](https://github.com/lidaixingchen/brutxui-vue3/commit/64943ffb56ea6205c45ca542280137cebefc7cd7))
+* **docs:** 支持类型代码区域键盘滚动 ([a4a02e1](https://github.com/lidaixingchen/brutxui-vue3/commit/a4a02e195a0980d29d71643818bc62b9dd42de15))
+* **docs:** 完善文档表格与导航响应式布局 ([32c7a95](https://github.com/lidaixingchen/brutxui-vue3/commit/32c7a95b443bf114deedf787b969b3e4835c0c53))
+* **docs:** 优化组件API主表与详情排版 ([9d59231](https://github.com/lidaixingchen/brutxui-vue3/commit/9d59231f2a37a98c2d7b721f1763e6b4476ffd9c))
+* **docs:** 生成语义等价的API类型摘要 ([b4ac39d](https://github.com/lidaixingchen/brutxui-vue3/commit/b4ac39dc359db3e8630fc4f007fbd29bdcdfc975))
+* **menu:** 采用环境检测模块获取 matchMedia 以保证 SSR 安全 ([df0834f](https://github.com/lidaixingchen/brutxui-vue3/commit/df0834fd1dcb7e58604af6a60daabebad152c320))
+* **menu:** 完善 SubMenu 横向浮层过渡、上下文同步与无障碍支持 ([8cdb0c3](https://github.com/lidaixingchen/brutxui-vue3/commit/8cdb0c34e3ee8697ecb39851c84e4130908baa23))
+
+### 📝 Documentation
+
+* **ui:** 补充选择项交互调研报告与索引 ([5d1096f](https://github.com/lidaixingchen/brutxui-vue3/commit/5d1096f0e28edd32722210f3e7f4c06680b6d8e7))
+* **ui:** 完成集合交互说明与方案归档 ([c4f4f20](https://github.com/lidaixingchen/brutxui-vue3/commit/c4f4f204aef970444b17c2f20e1c9cd30207ce93))
+* **form:** 同步字段插槽绑定说明 ([9ea73cf](https://github.com/lidaixingchen/brutxui-vue3/commit/9ea73cf7d04324a37633515ab03fa43ee32ab654))
+* **ci:** 清理工作流审计记录并统一操作说明 ([98f2394](https://github.com/lidaixingchen/brutxui-vue3/commit/98f239410f7a95eb97972f79b6bd6acd3511defd))
+* **ci:** 记录门禁优化实测验收 ([662f82d](https://github.com/lidaixingchen/brutxui-vue3/commit/662f82d516fbac63cca9127dc90eb17e20bc453e))
+* **ci:** 对齐静态契约命令职责 ([b403975](https://github.com/lidaixingchen/brutxui-vue3/commit/b403975a3af39b1b99bdc062123b5cb852bf57c8))
+* **ci:** 保存工作流耗时与测试覆盖证据 ([e240c07](https://github.com/lidaixingchen/brutxui-vue3/commit/e240c07191ad58ad85d3904d12c5f0676b16fb9a))
+* **ci:** 记录门禁冗余与性能基线 ([7c7c4d8](https://github.com/lidaixingchen/brutxui-vue3/commit/7c7c4d83e5dd349fc057dea97c2ce84e2ef24670))
+* **ui:** 补充图表数据契约与读数交互示例 ([032191f](https://github.com/lidaixingchen/brutxui-vue3/commit/032191f60e2c59ca6b987a83e998388b9e9f4b65))
+* **sketchy-chart:** 补充图表读数原型、验收记录并归档数据契约方案 ([f1fdf03](https://github.com/lidaixingchen/brutxui-vue3/commit/f1fdf03d66098d3cb9605ff689c4516f86e8d6db))
+* 同步 Tabs 与 Accordion 文档示例并归档视觉层级改造方案 ([078b410](https://github.com/lidaixingchen/brutxui-vue3/commit/078b410caad48b12787ec40ec44add9640bb3c84))
+
+### ✅ Tests
+
+* **cli:** 验证集合组件与共享依赖升级 ([3daa68b](https://github.com/lidaixingchen/brutxui-vue3/commit/3daa68b9862037e55844da487f826adfdb6075be))
+* **ui:** 按实际字宽构建浏览器布局场景 ([8ba02ad](https://github.com/lidaixingchen/brutxui-vue3/commit/8ba02adee682a17cef0fe880a8f251ad4d8722e1))
+* **ui:** 同步安全升级后的成本测试依赖 ([20baad2](https://github.com/lidaixingchen/brutxui-vue3/commit/20baad2b5ffaf1014d6856b959822d6c8dbc5642))
+* **release:** 验证主分支验收等待流程 ([6282349](https://github.com/lidaixingchen/brutxui-vue3/commit/628234983116a718ea0aa451e2293ea5c3173e39))
+* **ci:** 精简任务图验证并核对生成输入 ([f3fe8b0](https://github.com/lidaixingchen/brutxui-vue3/commit/f3fe8b02978d05e98a751a720598faa94c13a757))
+* **ui:** 配置 vitest 别名直连源码以支持独立测试与覆盖率采集 ([5bbfe26](https://github.com/lidaixingchen/brutxui-vue3/commit/5bbfe26caea92a8b1a26f76a6e23781d99feeed6))
+* **release:** 同步0.11.3消费者锁文件 ([4f7f5b6](https://github.com/lidaixingchen/brutxui-vue3/commit/4f7f5b655f51f84d96b841296630561ea6344d71))
+
+### ⚡ Performance
+
+* **ui:** 复用图表布局与文本测量 ([d602dbd](https://github.com/lidaixingchen/brutxui-vue3/commit/d602dbd46d03bd6c7cb62b2d6251d85eb0016828))
+* **registry:** 复用编译会话的AST依赖分析 ([6beec49](https://github.com/lidaixingchen/brutxui-vue3/commit/6beec49bd6717b30d4ad3a463abed475c6c07f90))
+* **ci:** 优化流水线关键路径并解除单测构建依赖 ([6ea7001](https://github.com/lidaixingchen/brutxui-vue3/commit/6ea70013c17ea464ab9eea8b4477c5b3b0c277dc))
+
+### 🔧 CI
+
+* 合并工作流门禁优化 (#116) ([90ffdb3](https://github.com/lidaixingchen/brutxui-vue3/commit/90ffdb349f82240b1bc1c0427785ae6fa0fcd6bd))
+* 按构建领域恢复任务缓存 ([c2ab45f](https://github.com/lidaixingchen/brutxui-vue3/commit/c2ab45f1f10e918715576eaa6f9265a752af7189))
+* 并行分片 UI 测试并汇总覆盖率 ([598b219](https://github.com/lidaixingchen/brutxui-vue3/commit/598b219cb3dfe51e0d62dfee4110c44667315758))
+* **release:** 衔接同提交的主分支验收 ([51665b3](https://github.com/lidaixingchen/brutxui-vue3/commit/51665b3758da410e8d3f7afc6744f36523c5e56a))
+* 对齐源码测试缓存与任务图检查范围 ([9f81857](https://github.com/lidaixingchen/brutxui-vue3/commit/9f81857779906aeb3ede0317b975a28d71efe327))
+* 提供按提交范围的耗时复测入口 ([ab4f033](https://github.com/lidaixingchen/brutxui-vue3/commit/ab4f033d9f99cacc03520283f7fda8c9e0424ca0))
+* 完善产物与站点的依赖闭包 ([8ecb63e](https://github.com/lidaixingchen/brutxui-vue3/commit/8ecb63ed014657d824e8ab03af3eccb8bab7f6b9))
+* 优化任务依赖与变更领域调度 ([e286013](https://github.com/lidaixingchen/brutxui-vue3/commit/e286013e49a3070a8bee8643623dcdfdc648a170))
+* 在 coverage 任务中补全组件索引与样式生成前置步骤 ([40b3e91](https://github.com/lidaixingchen/brutxui-vue3/commit/40b3e914daeb94a8b19150467a83a97f27f1fe9a))
+* 将单测覆盖率提取为独立任务并校准流水线契约 ([b9e20f1](https://github.com/lidaixingchen/brutxui-vue3/commit/b9e20f153977a636ed722a33aaf68091fffa8be2))
+* 增加门禁聚合任务并完善交互单测与过渡断言 ([eba49c8](https://github.com/lidaixingchen/brutxui-vue3/commit/eba49c85abc8866f38cfebcc4066bdaece8ce739))
+
+### 🎨 Styles
+
+* **tokens:** 迁移 border-brutal 至 @utility 并扩充嵌入式触发器视觉规范 ([e348448](https://github.com/lidaixingchen/brutxui-vue3/commit/e3484489600d5465ecb7f66d5af5fae381670480))
 
 ## [0.11.3](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.11.2...v0.11.3) - 2026-09-28
 
@@ -327,108 +565,12 @@ dialog.close({ action: 'confirm' })
 
 * **deps:** bump actions/deploy-pages in the actions-official group (#110) ([446a123](https://github.com/lidaixingchen/brutxui-vue3/commit/446a1235f886ff322fda0cca7cb16e081013eb0a))
 
-## [0.11.1](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.11.0...v0.11.1) - 2026-08-24
-
-### ✨ Features
-
-* **slider:** 调音台立体推子键帽与工控指示刻槽重塑 ([9f6d8c6](https://github.com/lidaixingchen/brutxui-vue3/commit/9f6d8c68a0d39f2883a0d41ecc70fd31f4121ec3))
-* **scroll-area:** 重塑纯色实体滑块与工控金属导轨 ([585b073](https://github.com/lidaixingchen/brutxui-vue3/commit/585b0736394dc9f49035eb3158d6fe7af29dac8b))
-* **ui:** remodel Switch keycap and IO label marks ([95e7e87](https://github.com/lidaixingchen/brutxui-vue3/commit/95e7e87c325c07235a9893c69f46f3f8ef7b33e2))
-* **ui:** upgrade CardWindowHeader interactivity ([c32c631](https://github.com/lidaixingchen/brutxui-vue3/commit/c32c631730b0df2215e5c65d5f009f4d78526f25))
-* **docs:** 粗野主义图表主题 JSON 生成器与设计范式页 ([3d6c733](https://github.com/lidaixingchen/brutxui-vue3/commit/3d6c7336eef7af926ad136798965459288e89b12))
-* **nav:** 滚动条防滑纹理、打卡槽页码、档案插片面包屑与工牌吊孔 ([ede97b3](https://github.com/lidaixingchen/brutxui-vue3/commit/ede97b39be14b92955c01e1b119b1a6721c9283e))
-* **timeline,calendar:** LED 脉冲节点、PCB 双总线与复古挂历头 ([4a416c9](https://github.com/lidaixingchen/brutxui-vue3/commit/4a416c928d7e4bf3cac98a40d9f9836c761f6e47))
-* **dialog,tour:** 百叶窗入场、点阵遮罩与 HUD 取景步骤指示 ([d25088f](https://github.com/lidaixingchen/brutxui-vue3/commit/d25088fe513b2d9a0566cf4632136288089d1d75))
-* **table,data-table:** 表头底纹、荧光框选与蓝图空状态 ([8b4d202](https://github.com/lidaixingchen/brutxui-vue3/commit/8b4d20223630137372117bb1075dd80ceeb798c1))
-* **accordion,tabs:** 展开态分层换色与打卡机插片变体 ([b71a04b](https://github.com/lidaixingchen/brutxui-vue3/commit/b71a04bcdc09653c24b0d358d7bc02cb40859b57))
-* **tags-input,upload:** 便签贴纸标签与软盘档案化上传 ([cd7a3c5](https://github.com/lidaixingchen/brutxui-vue3/commit/cd7a3c5d060334f2c1751a082c5091bb0e6a393f))
-* **display:** 展示组件仪表化——凹槽底槽、分段斜纹、扫描线骨架与钢印水印 ([4e7e7a7](https://github.com/lidaixingchen/brutxui-vue3/commit/4e7e7a74224518170bccd43f3450e5bc3ac70e0d))
-* **number-input:** 步进机械键帽、Drum Ticker 翻页动效与 click 音效 ([e704b7e](https://github.com/lidaixingchen/brutxui-vue3/commit/e704b7e237d82aa11d048356e7764248a0eb9a2a))
-* **switch,slider:** 轨道凹槽化、翘板吸合动效、防滑纹理与 snap 音效 ([f32652b](https://github.com/lidaixingchen/brutxui-vue3/commit/f32652be47c10b1e013a7176b215bbe8829f4a3c))
-* **input,kbd:** 新增 inset 冲压凹槽变体与 3D 机械键帽 ([ae7fb43](https://github.com/lidaixingchen/brutxui-vue3/commit/ae7fb4377c2d4cc0430fd775b069ba526ad73d92))
-* **rate:** 接入 BrutalShape 图腾图标与 Stamp Impact 敲印动效 ([d02ba81](https://github.com/lidaixingchen/brutxui-vue3/commit/d02ba81a23888b13bc04c7f76f8a1f5a526ed140))
-* **blocks:** BrutalistHero 与 PricingSection 融合工控场景版式 ([4b691fd](https://github.com/lidaixingchen/brutxui-vue3/commit/4b691fdbc130d2bf14b9507177ed85effcc4645c))
-* **card:** 新增 CardWindowHeader 复合组件与 HUD 准星及纹理变体 ([5abe026](https://github.com/lidaixingchen/brutxui-vue3/commit/5abe026ac99575d7d31c90f3963c70f134b03251))
-* **card:** 新增 CardWindowHeader 复合组件与 HUD 准星及纹理变体 ([a4a75c5](https://github.com/lidaixingchen/brutxui-vue3/commit/a4a75c5157eb7f756919de3e9c8fe2899a2b8126))
-* **button:** 新增 stacked/hazard/ticket 装饰形态变体与同源盖影按压契约 ([daedf78](https://github.com/lidaixingchen/brutxui-vue3/commit/daedf78d1898a315bbd1c773d62e0784c71567e3))
-* **ui:** 新增 BrutalShape 粗野图腾矢量组件库 ([812263e](https://github.com/lidaixingchen/brutxui-vue3/commit/812263effc2908543cc3ba82a7f23343725c7ea9))
-* **ui:** 扩展音效引擎机械触觉配方并新增 useBrutalHaptics 门面 ([95c97e5](https://github.com/lidaixingchen/brutxui-vue3/commit/95c97e5ec26ef2d408eaf747a64119418fba18b4))
-* **ui:** 新增 ImageCard 拍立得相框卡片组件 ([899ab7c](https://github.com/lidaixingchen/brutxui-vue3/commit/899ab7c9f589c98b771672dfb987c9bfa45ffff0))
-* **tokens:** 新增 stacked/inset 阴影档位与纹理工具类 CLI 分发闭环 ([fd5c60c](https://github.com/lidaixingchen/brutxui-vue3/commit/fd5c60c59f3037846443fc903e336bbd636810a2))
-* **ui:** 治理Tabs双轨受控与非受控对称性并支持defaultValue与异步数据流 (#48) ([33f0a38](https://github.com/lidaixingchen/brutxui-vue3/commit/33f0a387a76447fa3e85692c85c8e0f31c9f2131))
-* **ui:** useMessage接入复合生命周期与活跃消息守卫 (#46) ([58e28e3](https://github.com/lidaixingchen/brutxui-vue3/commit/58e28e33a7d50b2abe2698bddf84e5ebc8668bb6))
-* **shared:** 下沉色彩通道解析、Alpha混合与WCAG对比度算法至shared单一信源 (#45) ([e497f52](https://github.com/lidaixingchen/brutxui-vue3/commit/e497f52c6e48d039e4b8bb60a657d1eedf219d0f))
-* **cli:** 升级 doctor 结构规则与 utils 诊断自愈 (#41) ([0ba3f8f](https://github.com/lidaixingchen/brutxui-vue3/commit/0ba3f8f9e8dca794277587118ab1c0351841ad50))
-* **tokens:** TokenStyleCompiler 拓展与 UI/CLI 模板自动注入管线 (#40) ([6dc1209](https://github.com/lidaixingchen/brutxui-vue3/commit/6dc1209897fc0bfbbf54b004ee4fcd20e2b0f887))
-* **shared:** 纯函数式派生并导出 BRUTAL_COLOR_NAMES (#39) ([5449944](https://github.com/lidaixingchen/brutxui-vue3/commit/54499449c952b26cc162fdfe3413687918e2a71a))
-
-### ♻️ Code Refactoring
-
-* **ui:** 重构useDialogGeometry空间几何控制器与beforeClose控制流解耦 (#47) ([519ad18](https://github.com/lidaixingchen/brutxui-vue3/commit/519ad18a43018e0741be7e5f60831129b08df8c0))
-* **arch:** unify tree model and z-index scale (#43) ([dcc449d](https://github.com/lidaixingchen/brutxui-vue3/commit/dcc449d692f07e711350ace896bbbd567f9fde86))
-* **ui:** 移除废弃的私有扫描清单脚本并精简预扫描 ([45e43e5](https://github.com/lidaixingchen/brutxui-vue3/commit/45e43e539536295eb22c74964e59300d2caef6c7))
-* **registry:** 统一排除清单类型并消除跨包私有脚本引用 ([2ae6dfc](https://github.com/lidaixingchen/brutxui-vue3/commit/2ae6dfce66fbb1718fd37dc82a5383d604e91037))
-* **shared:** 下沉扫描排除清单与覆盖规则为单一信源 ([622054b](https://github.com/lidaixingchen/brutxui-vue3/commit/622054bdf5c6f4184b15a952cc603465203f8171))
-* **ui:** 增加 debug 开关并收敛 devtools 控制台日志 ([1a28720](https://github.com/lidaixingchen/brutxui-vue3/commit/1a2872042f988fcf875f140cf6b8a2d62d998e5f))
-* **tokens:** 强化 check-twmerge-colors 针对 CLI 双模板的门禁校验 ([d79da1f](https://github.com/lidaixingchen/brutxui-vue3/commit/d79da1f0d9c30033e3e1a6e288a301c5bf9581ee))
-
-### 🐛 Bug Fixes
-
-* **slider:** 导出 SliderThumbNotchVariantProps 类型声明 ([776fb74](https://github.com/lidaixingchen/brutxui-vue3/commit/776fb742de90140b40bc3f9643c602eafba47fa8))
-* **ui:** optimize CardWindowHeader click handlers ([94026a3](https://github.com/lidaixingchen/brutxui-vue3/commit/94026a35cfc5e6ab1517c8d800d5f0447adde2e1))
-* **ui:** 门禁白名单放行 ring-inset 位置变体 ([fe0bfe4](https://github.com/lidaixingchen/brutxui-vue3/commit/fe0bfe46bb5f8a13a7a93ab381bed0e0d1bfdb65))
-* **ui:** 图腾与评分令牌引用补齐主题 fallback ([75556c7](https://github.com/lidaixingchen/brutxui-vue3/commit/75556c7539cbb2d939381276c649d3e6e57e701c))
-* **number-input:** Drum Ticker 兜底定时器生命周期与测试隔离补全 ([f3fa738](https://github.com/lidaixingchen/brutxui-vue3/commit/f3fa73821951e0651c043b2cbaa69cb48739d13d))
-* **ui:** 终审修复——ECharts 键名、准星伪元素化与变体契约补全 ([ff86ff8](https://github.com/lidaixingchen/brutxui-vue3/commit/ff86ff8da085d4a542245ef58e4d32dffb9b9bfa))
-* **cli:** 优化 remove-service 变量作用域 ([d01131a](https://github.com/lidaixingchen/brutxui-vue3/commit/d01131addea2c76d360beb5cc6d9dbc31c6e65c7))
-* **shared:** 修复 ESLint 校验与类型声明 ([8168609](https://github.com/lidaixingchen/brutxui-vue3/commit/816860945d013b7204b264bd7f596533ccc8e02a))
-* **ui:** 修复 useDialogGeometry 与 useMessage ([94bb5ad](https://github.com/lidaixingchen/brutxui-vue3/commit/94bb5ad4dd6aba8e8677198840a7ebaf1055b224))
-* **shared:** 增强 parseColorChannels 对 NaN 与非法对象色彩的校验防御 ([a78b6c9](https://github.com/lidaixingchen/brutxui-vue3/commit/a78b6c95f1e5b3196a254e2e496eef7fcf239299))
-* **scaffold:** fix tail insertion and escape strings ([089d33a](https://github.com/lidaixingchen/brutxui-vue3/commit/089d33a21817cef0a4f3eff3311bbf3dce76b288))
-* **cli:** runProcess 异常提示补充命中元字符的参数详情 ([5a9758d](https://github.com/lidaixingchen/brutxui-vue3/commit/5a9758d7d87f629efb397b7439ccbec91f8d4438))
-* **cli:** runProcess 增加 Shell 元字符拦截防护与安全单测 ([7317b10](https://github.com/lidaixingchen/brutxui-vue3/commit/7317b10ff568bc465781018264d36129f979b9e0))
-
-### 📝 Documentation
-
-* **plans:** 将滑块与滚动条重塑方案标记为 done ([f36b8e6](https://github.com/lidaixingchen/brutxui-vue3/commit/f36b8e61314b7c0ae52b02cd3a05d90f1ed81bdc))
-* **demos:** enhance SwitchDemo with 3D mechanical features ([636c9a7](https://github.com/lidaixingchen/brutxui-vue3/commit/636c9a72fd5858ce55035f23abde5a0211868b42))
-* update CardWindowHeader and Switch demos and docs ([12fe258](https://github.com/lidaixingchen/brutxui-vue3/commit/12fe258dd218273d065b966808e3f973ff4e0cb6))
-* **demos:** 组件演示覆盖视觉深化批次新增变体 ([f949746](https://github.com/lidaixingchen/brutxui-vue3/commit/f9497462b281c8da03b51926eeec287423be13b4))
-* **docs:** 同步视觉深化批次新增变体至组件文档 ([2e96899](https://github.com/lidaixingchen/brutxui-vue3/commit/2e96899537d0fe30543009fb698c207a0d4d7ac2))
-* **docs:** 补充图表设计范式英文指南 ([9c2f834](https://github.com/lidaixingchen/brutxui-vue3/commit/9c2f834c14f128e77c58f82137d52b04368fb8ea))
-* **docs:** 补齐三组件文档页与演示组件 ([67918d7](https://github.com/lidaixingchen/brutxui-vue3/commit/67918d7b0beeb8add55a9b1c2ffcf8b632538197))
-* **plans:** 视觉深化方案实施完成归档（19/19 tickets 交付） ([1f0141b](https://github.com/lidaixingchen/brutxui-vue3/commit/1f0141bd6136da62891f36b6613674ea94237c74))
-* **plans:** 组件视觉深化方案落地审查修订 ([b686ff4](https://github.com/lidaixingchen/brutxui-vue3/commit/b686ff42b37ecdffaf8437fa84748a226947b06a))
-* 同步更新 Tabs、Message、DialogGeometry 与色彩系统文档 ([a8711f4](https://github.com/lidaixingchen/brutxui-vue3/commit/a8711f4d13332cbe1abaee15bf18e5a37b4713b4))
-* **guides:** sync z-index, tree model & scaffold docs ([810c552](https://github.com/lidaixingchen/brutxui-vue3/commit/810c552ff25e991632614f1379f4b52663d701ed))
-* 更新代码质量与性能改进方案及设计令牌层级说明 ([afca817](https://github.com/lidaixingchen/brutxui-vue3/commit/afca81786e3f385aeab1054e3a29ef5e82505389))
-* 更新方案状态索引与视觉系统层级指南 ([b9d2d13](https://github.com/lidaixingchen/brutxui-vue3/commit/b9d2d13082366760377152cec46688a1e2bbc9bd))
-* 状态生命周期色彩与组件双轨治理方案落地归档 ([bdf8a51](https://github.com/lidaixingchen/brutxui-vue3/commit/bdf8a519bfb509603053ea183f60ae0fd0c661cb))
-* 更新编译扫描排除清单与覆盖规则下沉方案为完成态 ([5d05258](https://github.com/lidaixingchen/brutxui-vue3/commit/5d052587b11759a125cc4598e9c73df558652a29))
-* 登记编译扫描排除清单与覆盖规则下沉方案 ([03a2256](https://github.com/lidaixingchen/brutxui-vue3/commit/03a22563d9a6e4abc660f16f2ede7b5b2dd85af5))
-* 更新颜色双轨单一信源方案与机制指南 ([0439076](https://github.com/lidaixingchen/brutxui-vue3/commit/04390761afcaf569dc5cfcdfebc78ac6fee3a4e4))
-
-### ✅ Tests
-
-* **ui:** 编译器补丁测试覆盖 pattern-utilities 第四标记区间 ([cd57f64](https://github.com/lidaixingchen/brutxui-vue3/commit/cd57f64127f5b09e7e4a79c814d428a8b9d5e5b4))
-* **shared:** 为 registry.ts 增加 schema 校验与完整性断言单测 ([184a928](https://github.com/lidaixingchen/brutxui-vue3/commit/184a92822548ca145d246053305f3dbc4d9b4b14))
-* **tokens:** 重构 check-twmerge-colors 门禁与契约 (#42) ([6f19f11](https://github.com/lidaixingchen/brutxui-vue3/commit/6f19f110bc8c8d223a3efcad1f53f1ad1c78647e))
-
-### ⚡ Performance
-
-* **cli:** FileTransaction 支持并发快照并并行化孤立文件与组件移除 ([9688e8e](https://github.com/lidaixingchen/brutxui-vue3/commit/9688e8efe77f656c6b11141441984f952e88a834))
-
-### 📦 Build
-
-* **ui:** Button 体积门禁上调至 22KB ([578661e](https://github.com/lidaixingchen/brutxui-vue3/commit/578661e99fca373598a26b01a0bad7607e07f63e))
-* **ui:** 将 prebuild:exports 纳入 typecheck 与 lint 前置调用链路 ([ac4ce00](https://github.com/lidaixingchen/brutxui-vue3/commit/ac4ce000da328203f4ded8cf98edc4d222b35dcf))
-* **ui:** 同步 exports 映射（新增 useDialogGeometry） ([045b0cd](https://github.com/lidaixingchen/brutxui-vue3/commit/045b0cdb6a8f4608b0a88ce349c592d28addb812))
-
 
 ## 归档版本
 
 > 以下版本已归档至 [apps/docs/changelog/](apps/docs/changelog/)，点击版本号查看完整变更记录：
 
+* **[0.11.1](apps/docs/changelog/v0.11.1.md)** - 2026-08-24
 * **[0.11.0](apps/docs/changelog/v0.11.0.md)** - 2026-08-19
 * **[0.10.2](apps/docs/changelog/v0.10.2.md)** - 2026-08-13
 * **[0.10.1](apps/docs/changelog/v0.10.1.md)** - 2026-08-11
