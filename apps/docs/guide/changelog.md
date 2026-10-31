@@ -220,6 +220,7 @@ Calendar 升级前，页面可能直接依赖默认语言：
 
 ### ✅ Tests
 
+* **cli:** 稳定诊断报告文件输出验证 ([48f237c](https://github.com/lidaixingchen/brutxui-vue3/commit/48f237cfabaf6ed6142cacc88f63b51de74ba12c))
 * **cli:** 验证集合组件与共享依赖升级 ([3daa68b](https://github.com/lidaixingchen/brutxui-vue3/commit/3daa68b9862037e55844da487f826adfdb6075be))
 * **ui:** 按实际字宽构建浏览器布局场景 ([8ba02ad](https://github.com/lidaixingchen/brutxui-vue3/commit/8ba02adee682a17cef0fe880a8f251ad4d8722e1))
 * **ui:** 同步安全升级后的成本测试依赖 ([20baad2](https://github.com/lidaixingchen/brutxui-vue3/commit/20baad2b5ffaf1014d6856b959822d6c8dbc5642))
