@@ -8,6 +8,10 @@ translated: true
 
 A neo-brutalist style dropdown menu built on reka-ui's DropdownMenu primitive, supporting menu items, checkboxes, radio groups, submenus, and keyboard shortcuts.
 
+## Item interaction
+
+Regular items execute actions; checkbox and radio items retain their indicators. Use `data-tone="danger"` for destructive actions. Disabled items follow the primitive navigation and activation rules. Classic uses lemon yellow with black text; other presets retain their own highlight pairs. See [theme customization](/en/guide/theme#collection-item-highlighting).
+
 ## Demo
 
 <ComponentPreview>

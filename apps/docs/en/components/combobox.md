@@ -8,6 +8,10 @@ translated: true
 
 A neo-brutalist style searchable select component. Toggle between single-select and multi-select modes via the `multiple` prop.
 
+## Item interaction
+
+Result highlighting is separate from single or multiple selection marks. Confirmation updates the value; search, composition, and creation retain their established behavior. Classic uses lemon yellow with black text; other presets retain their own highlight pairs. See [theme customization](/en/guide/theme#collection-item-highlighting).
+
 ## Demo
 
 <ComponentPreview>

@@ -7,6 +7,10 @@ description: A Neo-Brutalist transfer component to move items between double col
 
 A double-column transfer selector featuring thick borders, hard shadow offsets, and active press feedback characteristic of Neo-Brutalist design.
 
+## Item interaction
+
+Row checkboxes represent pending transfer choices; `modelValue` determines target-panel membership. Checking a row does not transfer it. Headers retain checked and indeterminate states. Classic uses lemon yellow with black text; other presets retain their own highlight pairs. See [theme customization](/en/guide/theme#collection-item-highlighting).
+
 ## Preview
 
 <ComponentPreview>

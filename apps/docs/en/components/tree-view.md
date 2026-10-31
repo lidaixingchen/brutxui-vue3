@@ -8,6 +8,10 @@ translated: true
 
 A recursive expandable hierarchical data visualization component with built-in folder/file icons, supporting keyboard navigation and controlled single/checkbox selection states.
 
+## Item interaction
+
+Selection, current-item highlighting, and drop targets are distinct. Single-select checkmark slots stay fixed. Arrow-key branch expansion and collapse retain the existing node selection behavior. Classic uses lemon yellow with black text; other presets retain their own highlight pairs. See [theme customization](/en/guide/theme#collection-item-highlighting).
+
 ## Demo
 
 <ComponentPreview>

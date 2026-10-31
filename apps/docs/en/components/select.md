@@ -8,6 +8,10 @@ translated: true
 
 A neo-brutalist style dropdown select built on top of reka-ui's Select primitive, with full sub-component support.
 
+## Item interaction
+
+Highlight identifies the current item; the checkmark identifies the selected value. Arrow keys navigate and confirmation commits the value. Explicit `itemVariant` colors remain available. Classic uses lemon yellow with black text; other presets retain their own highlight pairs. See [theme customization](/en/guide/theme#collection-item-highlighting).
+
 ## Demo
 
 <ComponentPreview>

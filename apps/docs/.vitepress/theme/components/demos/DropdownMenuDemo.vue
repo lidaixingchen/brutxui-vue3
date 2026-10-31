@@ -22,7 +22,7 @@ import { DropdownMenuRoot as DropdownMenu, DropdownMenuTrigger, DropdownMenuGrou
                 <DropdownMenuItem>编辑</DropdownMenuItem>
                 <DropdownMenuItem>复制</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem class="bg-brutal-destructive-subtle text-brutal-fg">
+                <DropdownMenuItem data-tone="danger">
                     删除
                 </DropdownMenuItem>
             </DropdownMenuGroup>

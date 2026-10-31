@@ -7,6 +7,10 @@ description: A Neo-Brutalist cascading selection component for multi-level hiera
 
 A Neo-Brutalist styled cascading dropdown selection component. It displays multi-level hierarchical options in grid-cascaded panels, supporting path binding (single/multiple select), parent-child relation control, and complete keyboard interactions.
 
+## Item interaction
+
+The current item, navigation ancestors, selected paths, and aggregate parent checkbox states are distinct. Ancestor arrows retain the path cue while the current item receives the full-row highlight. Classic uses lemon yellow with black text; other presets retain their own highlight pairs. See [theme customization](/en/guide/theme#collection-item-highlighting).
+
 ## Preview
 
 <ComponentPreview>

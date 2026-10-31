@@ -7,6 +7,10 @@ description: 递归节点组件 TreeSelectNode 配合 Popover 的树形下拉选
 
 新粗野主义风格的树形下拉选择组件，使用递归节点组件 `TreeSelectNode` 展示层级结构，配合 `Popover` 实现下拉交互。支持单选、多选、搜索过滤，适用于文件选择、分类选择、组织架构等场景。
 
+## 选项交互
+
+节点勾选与当前项高亮分别呈现，缩进和标记槽位固定。相邻导航及 Home/End 跳过禁用节点。 默认 Classic 使用柠檬黄配黑字，其他主题使用各自高亮色对。详见[主题定制](/guide/theme#集合选项高亮)。
+
 ## 预览
 
 <ComponentPreview>

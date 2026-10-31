@@ -8,6 +8,10 @@ translated: true
 
 A neo-brutalist style tree dropdown select component that uses the recursive `TreeSelectNode` component to render hierarchical structures, combined with `Popover` for dropdown interaction. Supports single-select, multi-select, and search filtering. Ideal for file selection, category selection, organization charts, and similar scenarios.
 
+## Item interaction
+
+Node selection marks are separate from current-item highlighting, with stable indentation and marker slots. Adjacent navigation and Home/End skip disabled nodes. Classic uses lemon yellow with black text; other presets retain their own highlight pairs. See [theme customization](/en/guide/theme#collection-item-highlighting).
+
 ## Demo
 
 <ComponentPreview>

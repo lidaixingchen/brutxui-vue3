@@ -8,6 +8,10 @@ translated: true
 
 A neo-brutalist style command palette component for search and navigation. Built on reka-ui's Listbox primitive with built-in search filtering.
 
+## Item interaction
+
+Result highlighting is separate from command execution. While the search input owns focus, keyboard navigation gives the current result an inset focus indicator. Confirmation runs the command. Classic uses lemon yellow with black text; other presets retain their own highlight pairs. See [theme customization](/en/guide/theme#collection-item-highlighting).
+
 ## Demo
 
 <ComponentPreview>
