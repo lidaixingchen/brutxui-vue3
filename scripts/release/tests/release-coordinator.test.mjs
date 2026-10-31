@@ -218,6 +218,30 @@ writeFileSync(path.join(destination, pkg.name + '-' + pkg.version + '.tgz'), pkg
     }
 });
 
+it('DefaultReleaseAdapter 将 pnpm JSON 错误识别为未发布版本', async () => {
+    const fixtureRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'brutx-release-query-'));
+    const binDir = path.join(fixtureRoot, 'bin');
+    const previousPath = process.env.PATH;
+    try {
+        fs.mkdirSync(binDir);
+        installFakePnpm(binDir, `
+console.log(JSON.stringify({
+    error: { code: 'ERR_PNPM_PACKAGE_NOT_FOUND', message: 'No matching version found' },
+}));
+`);
+        process.env.PATH = `${binDir}${path.delimiter}${previousPath ?? ''}`;
+        const adapter = new DefaultReleaseAdapter({ rootDir: fixtureRoot });
+
+        assert.deepEqual(await adapter.getNpmPackageInfo('brutx-ui-vue', '0.2.1'), {
+            published: false,
+            distTags: {},
+        });
+    } finally {
+        process.env.PATH = previousPath;
+        fs.rmSync(fixtureRoot, { recursive: true, force: true });
+    }
+});
+
 describe('ReleaseCoordinator 状态机与故障恢复测试', () => {
     it('全流程干净稳定版本发布：完整阶段流转并正确推进 latest 指针', async () => {
         const adapter = new MockReleaseAdapter({ uiVersion: '0.2.0', cliVersion: '0.2.0' });

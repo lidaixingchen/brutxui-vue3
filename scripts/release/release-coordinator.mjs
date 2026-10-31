@@ -317,6 +317,9 @@ export class DefaultReleaseAdapter {
 
         try {
             const data = JSON.parse(res.stdout);
+            if (data.error) {
+                return { published: false, distTags: {} };
+            }
             const distTagsRes = spawnSync('pnpm', ['view', pkgName, 'dist-tags', '--json'], {
                 cwd: this.rootDir,
                 encoding: 'utf-8',
@@ -373,7 +376,7 @@ export class DefaultReleaseAdapter {
             shell: isWin,
         });
         if (res.status !== 0) {
-            throw new Error(`Failed to advance dist-tag ${distTag} for ${pkgName}@${version}: ${res.stderr}`);
+            throw new Error(`Failed to advance dist-tag ${distTag} for ${pkgName}@${version}: ${res.stdout}\n${res.stderr}`);
         }
     }
 }
