@@ -45,9 +45,9 @@ import { ImageCard } from 'brutx-ui-vue'
         <div>
             <h3 class="text-sm font-black mb-3">自定义底栏插槽</h3>
             <ImageCard class="max-w-xs" src="https://picsum.photos/seed/brutx-imagecard-slot/640/480" alt="自定义底栏插槽示例">
-                <div class="flex items-center justify-between gap-2 font-mono text-xs font-bold uppercase tracking-widest">
-                    <span>Archive / 1998</span>
-                    <span>[ CONFIDENTIAL ]</span>
+                <div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-2 font-mono text-xs font-bold uppercase tracking-widest">
+                    <span class="whitespace-nowrap">Archive / 1998</span>
+                    <span class="whitespace-nowrap">[ CONFIDENTIAL ]</span>
                 </div>
             </ImageCard>
         </div>
