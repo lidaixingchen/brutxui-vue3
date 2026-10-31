@@ -492,13 +492,16 @@ const HASH_TARGET_SCROLL_THRESHOLD_PX = 4
                             type="button"
                             size="sm"
                             variant="ghost"
-                            class="component-api-kind-toggle !h-auto w-full justify-between rounded-brutal border-b-2 border-brutal bg-brutal-muted px-4 py-2 text-left font-bold shadow-none transition-colors hover:bg-brutal-secondary sm:px-5"
+                            class="component-api-kind-toggle !h-auto w-full justify-between rounded-brutal border-b-2 border-brutal bg-brutal-secondary px-4 py-3 text-left text-base font-black text-brutal-secondary-foreground shadow-none transition-colors hover:bg-brutal-secondary hover:text-brutal-secondary-foreground motion-reduce:transition-none sm:px-5"
                             :aria-expanded="isSectionExpanded(kindSection.sectionId)"
                             :aria-controls="kindSection.tableId"
                             :disabled="!isHydrated"
                             @click="toggleSection(kindSection.sectionId)"
                         >
-                            <span>{{ labels.kinds[kindSection.kind] }} ({{ kindSection.members.length }})</span>
+                            <span class="flex items-center gap-2">
+                                <span>{{ labels.kinds[kindSection.kind] }}</span>
+                                <span class="component-api-kind-count font-mono text-xs font-bold">{{ kindSection.members.length }}</span>
+                            </span>
                             <span v-if="isHydrated" aria-hidden="true">{{ isSectionExpanded(kindSection.sectionId) ? '−' : '+' }}</span>
                         </Button>
                         <table
@@ -507,7 +510,7 @@ const HASH_TARGET_SCROLL_THRESHOLD_PX = 4
                             :class="['component-api-table w-full text-left', kindSection.kind === 'props' ? 'component-api-table--props' : 'component-api-table--members']"
                         >
                             <caption class="sr-only">{{ section.component.name }} — {{ labels.kinds[kindSection.kind] }}</caption>
-                            <thead class="bg-brutal-bg text-sm font-bold">
+                            <thead class="bg-brutal-muted text-sm font-bold">
                                 <tr>
                                     <th scope="col">{{ labels.nameColumn }}</th>
                                     <th scope="col">{{ kindSection.kind === 'props' ? labels.typeColumn : labels.signatureColumn }}</th>
@@ -541,6 +544,7 @@ const HASH_TARGET_SCROLL_THRESHOLD_PX = 4
 <style scoped>
 .component-api-root {
     --vp-code-color: var(--brutal-fg);
+    --component-api-kind-hover-background: color-mix(in srgb, var(--brutal-secondary) 88%, var(--brutal-bg));
     container-name: component-api;
     container-type: inline-size;
     font-size: 0.875rem;
@@ -597,6 +601,10 @@ const HASH_TARGET_SCROLL_THRESHOLD_PX = 4
 .component-api-kind-toggle {
     border-block-start-width: 0;
     border-inline-width: 0;
+}
+
+.component-api-kind-toggle:hover {
+    background-color: var(--component-api-kind-hover-background);
 }
 
 .component-api-kind + .component-api-kind {
