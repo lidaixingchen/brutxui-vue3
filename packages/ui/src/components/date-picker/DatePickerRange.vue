@@ -4,6 +4,7 @@ import { type VariantProps } from 'class-variance-authority'
 import { Calendar as CalendarIcon, ChevronDown, X } from '@lucide/vue'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { cn } from '@/lib/utils'
+import { brutalDestructiveHoverTextClasses } from '@/lib/semantic-text-variants'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 import { formatDate } from '@/lib/date'
@@ -129,7 +130,11 @@ const clearPlaceholderClasses = computed(() =>
     props.size === 'sm' ? 'w-4 h-4' : 'w-5 h-5'
 )
 const clearButtonClasses = computed(() =>
-    props.size === 'sm' ? 'right-8 w-4 h-4' : 'right-10 w-5 h-5'
+    cn(
+        'text-brutal-fg transition-colors',
+        brutalDestructiveHoverTextClasses,
+        props.size === 'sm' ? 'right-8 w-4 h-4' : 'right-10 w-5 h-5'
+    )
 )
 
 function handlePanelUpdate(value: DateRange | null) {
@@ -199,7 +204,7 @@ function handleTriggerKeydown(event: KeyboardEvent) {
                     />
                     <span class="flex-1 text-left truncate font-mono text-sm flex items-center gap-1.5 min-w-0">
                         <span class="truncate">{{ formattedStart || resolvedStartPlaceholder }}</span>
-                        <span class="shrink-0 opacity-60 font-bold">{{ resolvedSeparator }}</span>
+                        <span class="shrink-0 text-brutal-muted-foreground font-bold">{{ resolvedSeparator }}</span>
                         <span class="truncate">{{ formattedEnd || resolvedEndPlaceholder }}</span>
                     </span>
                     <span class="flex items-center gap-1 shrink-0">
@@ -218,7 +223,7 @@ function handleTriggerKeydown(event: KeyboardEvent) {
             <button
                 v-if="clearable && hasValue && !disabled && !readonly"
                 type="button"
-                class="absolute top-1/2 z-10 -translate-y-1/2 inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors"
+                class="absolute top-1/2 z-10 -translate-y-1/2 inline-flex items-center justify-center"
                 :class="clearButtonClasses"
                 :aria-label="t('datePicker.clear')"
                 @pointerdown.stop

@@ -22,7 +22,7 @@ import { cn } from '@/lib/utils'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { useLocale } from '@/composables/useLocale'
 import { getWeekStartDate } from '@/lib/date'
-import { datePickerPanelVariants, datePickerShortcutVariants } from './date-picker-variants'
+import { datePickerPanelVariants, datePickerShortcutListVariants, datePickerShortcutVariants } from './date-picker-variants'
 import { type DatePickerShortcut } from './types'
 import { isDateWithinBounds, resolveShortcutValue } from './date-picker-utils'
 import DatePickerPanelFooter from './DatePickerPanelFooter.vue'
@@ -64,6 +64,7 @@ const resolvedShortcutsLabel = computed(() => t('datePicker.shortcuts'))
 const hasShortcuts = computed(() => props.shortcuts.length > 0)
 
 const panelClasses = computed(() => cn(datePickerPanelVariants()))
+const shortcutListClasses = computed(() => cn(datePickerShortcutListVariants()))
 
 const vCalendarFirstDayOfWeek = computed<1 | 2>(() => (props.weekStartsOn === 0 ? 1 : 2))
 
@@ -156,7 +157,7 @@ function getShortcutClasses(shortcut: DatePickerShortcut): string {
             v-if="hasShortcuts"
             role="listbox"
             :aria-label="resolvedShortcutsLabel"
-            class="flex flex-col gap-1 p-2 border-r-3 border-brutal min-w-[8rem]"
+            :class="shortcutListClasses"
         >
             <button
                 v-for="(shortcut, index) in shortcuts"

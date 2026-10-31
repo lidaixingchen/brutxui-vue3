@@ -506,7 +506,8 @@
     "lib": [
       "brutal-interaction-variants.ts",
       "date.ts",
-      "icon-size-variants.ts"
+      "icon-size-variants.ts",
+      "semantic-text-variants.ts"
     ]
   },
   "descriptions": {
@@ -842,7 +843,8 @@
     ],
     "directives": [],
     "lib": [
-      "icon-size-variants.ts"
+      "icon-size-variants.ts",
+      "semantic-text-variants.ts"
     ]
   },
   "pagination": {
@@ -990,7 +992,8 @@
       "floating-animation-classes.ts",
       "floating-content-variants.ts",
       "icon-size-variants.ts",
-      "overlay-layer.ts"
+      "overlay-layer.ts",
+      "semantic-text-variants.ts"
     ]
   },
   "separator": {
@@ -1183,7 +1186,9 @@
       "useLocale.ts"
     ],
     "directives": [],
-    "lib": []
+    "lib": [
+      "semantic-text-variants.ts"
+    ]
   },
   "timeline": {
     "files": [

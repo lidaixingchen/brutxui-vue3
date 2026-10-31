@@ -4,6 +4,7 @@ import { type VariantProps } from 'class-variance-authority'
 import { SelectTrigger as SelectTriggerPrimitive, SelectIcon as SelectIconPrimitive } from 'reka-ui'
 import { ChevronDown, X } from '@lucide/vue'
 import { cn } from '@/lib/utils'
+import { brutalDestructiveTextClasses } from '@/lib/semantic-text-variants'
 import { selectTriggerVariants } from './select-variants'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import { useClearable } from '@/composables/useClearable'
@@ -72,6 +73,8 @@ const clearIconClasses = computed(() =>
     cn(iconSizeVariants({ size: 'sm' }), 'stroke-[3]')
 )
 
+const errorMessageClasses = computed(() => cn('text-sm mt-1', brutalDestructiveTextClasses))
+
 const hasValue = computed(() => {
     const value = props.modelValue
     if (value === null || value === undefined || value === '') return false
@@ -132,7 +135,7 @@ function handleKeyDown(e: KeyboardEvent) {
         <p
             v-if="variant === 'error' && errorMessage"
             :id="id ? `${id}-error` : undefined"
-            class="text-sm text-brutal-destructive mt-1"
+            :class="errorMessageClasses"
             role="alert"
         >
             {{ errorMessage }}

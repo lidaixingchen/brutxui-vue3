@@ -35,10 +35,15 @@ export const datePickerTriggerVariants = cva(
 )
 
 export const datePickerPanelVariants = cva([
-    'flex max-w-[100vw] overflow-x-auto',
+    'flex flex-col sm:flex-row max-w-[100vw] overflow-x-auto',
     'border-3 border-brutal rounded-brutal',
     'bg-brutal-bg',
     'shadow-brutal-lg',
+])
+
+export const datePickerShortcutListVariants = cva([
+    'flex w-full shrink-0 flex-row gap-1 overflow-x-auto overflow-y-hidden p-2 border-b-3 border-brutal',
+    'sm:w-auto sm:min-h-0 sm:flex-col sm:overflow-x-hidden sm:overflow-y-auto sm:border-b-0 sm:border-r-3 sm:min-w-[8rem]',
 ])
 
 export const dateTimePickerPanelVariants = cva([
@@ -48,7 +53,8 @@ export const dateTimePickerPanelVariants = cva([
 
 export const datePickerShortcutVariants = cva(
     [
-        'w-full px-3 py-2 text-left text-sm font-semibold',
+        'w-auto shrink-0 whitespace-nowrap px-3 py-2 text-left text-sm font-semibold',
+        'sm:w-full sm:whitespace-normal',
         'text-brutal-fg',
         'cursor-pointer',
         'transition-all duration-100',

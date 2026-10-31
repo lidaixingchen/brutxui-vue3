@@ -23,7 +23,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 11
+            "line": 12
           },
           "origin": "declared",
           "required": false,
@@ -60,7 +60,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 12
+            "line": 13
           },
           "origin": "declared",
           "required": false,
@@ -97,7 +97,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 13
+            "line": 14
           },
           "origin": "declared",
           "required": false,
@@ -135,7 +135,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 14
+            "line": 15
           },
           "origin": "declared",
           "required": false,
@@ -170,7 +170,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 15
+            "line": 16
           },
           "origin": "declared",
           "required": false,
@@ -205,7 +205,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 16
+            "line": 17
           },
           "origin": "declared",
           "required": false,
@@ -237,7 +237,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 17
+            "line": 18
           },
           "origin": "declared",
           "required": false,
@@ -270,7 +270,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 19
+            "line": 20
           },
           "origin": "declared",
           "required": false,
@@ -302,7 +302,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 21
+            "line": 22
           },
           "origin": "declared",
           "required": false,
@@ -334,7 +334,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 23
+            "line": 24
           },
           "origin": "declared",
           "required": false,
@@ -366,7 +366,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 25
+            "line": 26
           },
           "origin": "declared",
           "required": false,
@@ -401,7 +401,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 27
+            "line": 28
           },
           "origin": "declared",
           "required": false,
@@ -433,7 +433,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 29
+            "line": 30
           },
           "origin": "declared",
           "required": false,
@@ -468,7 +468,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 31
+            "line": 32
           },
           "origin": "declared",
           "required": false,
@@ -500,7 +500,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 32
+            "line": 33
           },
           "origin": "declared",
           "required": false,
@@ -549,7 +549,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 84
+            "line": 86
           },
           "origin": "declared",
           "nullable": false,
@@ -568,7 +568,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 85
+            "line": 87
           },
           "origin": "declared",
           "nullable": false,
@@ -587,7 +587,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 86
+            "line": 88
           },
           "origin": "declared",
           "nullable": false,

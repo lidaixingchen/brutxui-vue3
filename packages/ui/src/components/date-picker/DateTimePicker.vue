@@ -4,6 +4,7 @@ import { type VariantProps } from 'class-variance-authority'
 import { Calendar as CalendarIcon, ChevronDown, X } from '@lucide/vue'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { cn } from '@/lib/utils'
+import { brutalDestructiveHoverTextClasses } from '@/lib/semantic-text-variants'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
 import { formatDate } from '@/lib/date'
 import { useLocale } from '@/composables/useLocale'
@@ -102,7 +103,11 @@ const clearPlaceholderClasses = computed(() =>
     props.size === 'sm' ? 'w-4 h-4' : 'w-5 h-5'
 )
 const clearButtonClasses = computed(() =>
-    props.size === 'sm' ? 'right-8 w-4 h-4' : 'right-10 w-5 h-5'
+    cn(
+        'text-brutal-fg transition-colors',
+        brutalDestructiveHoverTextClasses,
+        props.size === 'sm' ? 'right-8 w-4 h-4' : 'right-10 w-5 h-5'
+    )
 )
 
 defineExpose({ open })
@@ -148,7 +153,7 @@ defineExpose({ open })
             <button
                 v-if="clearable && modelValue && !disabled && !readonly"
                 type="button"
-                class="absolute top-1/2 z-10 -translate-y-1/2 inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors"
+                class="absolute top-1/2 z-10 -translate-y-1/2 inline-flex items-center justify-center"
                 :class="clearButtonClasses"
                 :aria-label="t('datePicker.clear')"
                 @pointerdown.stop

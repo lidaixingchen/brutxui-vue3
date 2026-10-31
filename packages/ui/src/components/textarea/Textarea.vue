@@ -2,6 +2,7 @@
 import { computed, ref, useId } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
+import { brutalDestructiveTextClasses } from '@/lib/semantic-text-variants'
 import { textareaVariants } from './textarea-variants'
 import { useLocale } from '@/composables/useLocale'
 
@@ -66,6 +67,7 @@ const resolvedAriaErrormessage = computed(() => props.ariaErrormessage ?? (hasEr
 const resolvedAriaDescribedby = computed(() => props.ariaDescribedby ?? (hasError.value ? resolvedErrorId.value : undefined))
 
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('textarea.placeholder'))
+const errorMessageClasses = computed(() => cn('text-sm font-bold mt-1', brutalDestructiveTextClasses))
 
 const classes = computed(() =>
     cn(
@@ -136,7 +138,7 @@ function handleCompositionCancel() {
         <p
             v-if="hasError"
             :id="resolvedErrorId"
-            class="text-sm font-bold text-brutal-destructive mt-1"
+            :class="errorMessageClasses"
             role="alert"
         >
             {{ errorMessage }}

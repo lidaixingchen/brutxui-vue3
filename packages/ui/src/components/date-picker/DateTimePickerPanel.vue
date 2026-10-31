@@ -21,7 +21,7 @@ import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { useLocale } from '@/composables/useLocale'
-import { dateTimePickerPanelVariants, datePickerShortcutVariants, datePickerFooterVariants } from './date-picker-variants'
+import { dateTimePickerPanelVariants, datePickerShortcutListVariants, datePickerShortcutVariants, datePickerFooterVariants } from './date-picker-variants'
 import { type DatePickerShortcut } from './types'
 import { resolveShortcutValue } from './date-picker-utils'
 import TimePicker from './TimePicker.vue'
@@ -66,6 +66,7 @@ const resolvedShortcutsLabel = computed(() => t('datePicker.shortcuts'))
 const hasShortcuts = computed(() => props.shortcuts.length > 0)
 
 const panelClasses = computed(() => cn(dateTimePickerPanelVariants()))
+const shortcutListClasses = computed(() => cn(datePickerShortcutListVariants()))
 
 // 合并后的结果收敛到 [minDate, maxDate]：日历禁用日期但时间部分可能绕过边界。
 // 天粒度边界（maxDate 时分秒为 00:00）时按"日"钳制：仅日期跨界才收敛到边界日，
@@ -200,7 +201,7 @@ function getShortcutClasses(shortcut: DatePickerShortcut): string {
             v-if="hasShortcuts"
             role="listbox"
             :aria-label="resolvedShortcutsLabel"
-            class="flex min-h-0 flex-col gap-1 overflow-y-auto p-2 border-r-3 border-brutal min-w-[8rem]"
+            :class="shortcutListClasses"
         >
             <button
                 v-for="(shortcut, index) in shortcuts"

@@ -1331,7 +1331,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectTrigger.vue",
-            "line": 14
+            "line": 15
           },
           "origin": "declared",
           "required": false,
@@ -1368,7 +1368,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectTrigger.vue",
-            "line": 15
+            "line": 16
           },
           "origin": "declared",
           "required": false,
@@ -1400,7 +1400,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectTrigger.vue",
-            "line": 16
+            "line": 17
           },
           "origin": "declared",
           "required": false,
@@ -1435,7 +1435,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectTrigger.vue",
-            "line": 17
+            "line": 18
           },
           "origin": "declared",
           "required": false,
@@ -1467,7 +1467,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectTrigger.vue",
-            "line": 18
+            "line": 19
           },
           "origin": "declared",
           "required": false,
@@ -1502,7 +1502,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectTrigger.vue",
-            "line": 20
+            "line": 21
           },
           "origin": "declared",
           "required": false,
@@ -1534,7 +1534,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectTrigger.vue",
-            "line": 22
+            "line": 23
           },
           "origin": "declared",
           "required": false,
@@ -1566,7 +1566,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectTrigger.vue",
-            "line": 23
+            "line": 24
           },
           "origin": "declared",
           "required": false,
@@ -1598,7 +1598,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectTrigger.vue",
-            "line": 24
+            "line": 25
           },
           "origin": "declared",
           "required": false,

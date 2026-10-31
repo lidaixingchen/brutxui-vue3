@@ -94,7 +94,8 @@ describe('Stepper', () => {
         const buttons = wrapper.findAll('button')
         const upcomingButton = buttons[2]
         expect(upcomingButton.classes()).toContain('bg-brutal-bg')
-        expect(upcomingButton.classes()).toContain('opacity-60')
+        expect(upcomingButton.classes()).toContain('text-brutal-muted-foreground')
+        expect(upcomingButton.classes()).not.toContain('opacity-60')
     })
 
     it('applies completed state classes to completed steps', () => {
@@ -456,24 +457,25 @@ describe('Stepper', () => {
             expect(wrapper.text()).toContain('Set up your profile')
         })
 
-        it('applies opacity-50 to upcoming step label in vertical layout', () => {
+        it('uses the muted foreground for upcoming step labels in vertical layout', () => {
             const wrapper = mount(Stepper, {
                 props: { steps, modelValue: 0, orientation: 'vertical' },
                 global: { provide: localeProvide },
             })
             const listItems = wrapper.findAll('[role="listitem"]')
             const upcomingLabel = listItems[2].find('.pb-6')
-            expect(upcomingLabel.classes()).toContain('opacity-50')
+            expect(upcomingLabel.classes()).toContain('text-brutal-muted-foreground')
+            expect(upcomingLabel.classes()).not.toContain('opacity-50')
         })
 
-        it('does not apply opacity-50 to active step label in vertical layout', () => {
+        it('keeps active step labels distinct from the upcoming foreground in vertical layout', () => {
             const wrapper = mount(Stepper, {
                 props: { steps, modelValue: 0, orientation: 'vertical' },
                 global: { provide: localeProvide },
             })
             const listItems = wrapper.findAll('[role="listitem"]')
             const activeLabel = listItems[0].find('.pb-6')
-            expect(activeLabel.classes()).not.toContain('opacity-50')
+            expect(activeLabel.classes()).not.toContain('text-brutal-muted-foreground')
         })
 
         it('renders content slot for active vertical step', () => {
@@ -531,25 +533,26 @@ describe('Stepper', () => {
         })
     })
 
-    describe('horizontal upcoming opacity on label', () => {
-        it('applies opacity-50 to upcoming step label in horizontal layout', () => {
+    describe('horizontal upcoming foreground on label', () => {
+        it('uses the muted foreground for upcoming step labels in horizontal layout', () => {
             const wrapper = mount(Stepper, {
                 props: { steps, modelValue: 0 },
                 global: { provide: localeProvide },
             })
             const listItems = wrapper.findAll('[role="listitem"]')
             const upcomingLabel = listItems[2].find('.mt-2.text-center')
-            expect(upcomingLabel.classes()).toContain('opacity-50')
+            expect(upcomingLabel.classes()).toContain('text-brutal-muted-foreground')
+            expect(upcomingLabel.classes()).not.toContain('opacity-50')
         })
 
-        it('does not apply opacity-50 to active step label in horizontal layout', () => {
+        it('keeps active step labels distinct from the upcoming foreground in horizontal layout', () => {
             const wrapper = mount(Stepper, {
                 props: { steps, modelValue: 0 },
                 global: { provide: localeProvide },
             })
             const listItems = wrapper.findAll('[role="listitem"]')
             const activeLabel = listItems[0].find('.mt-2.text-center')
-            expect(activeLabel.classes()).not.toContain('opacity-50')
+            expect(activeLabel.classes()).not.toContain('text-brutal-muted-foreground')
         })
     })
 
@@ -739,8 +742,8 @@ describe('Stepper', () => {
         })
     })
 
-    describe('horizontal description opacity', () => {
-        it('applies opacity-50 to upcoming step description in horizontal layout', () => {
+    describe('horizontal description foreground', () => {
+        it('uses a readable muted foreground for upcoming descriptions', () => {
             const stepsWithDesc = [
                 { id: 's1', title: 'A', description: 'Desc A' },
                 { id: 's2', title: 'B', description: 'Desc B' },
@@ -752,7 +755,10 @@ describe('Stepper', () => {
             })
             const listItems = wrapper.findAll('[role="listitem"]')
             const upcomingLabel = listItems[2].find('.mt-2.text-center')
-            expect(upcomingLabel.classes()).toContain('opacity-50')
+            const description = upcomingLabel.findAll('p')[1]
+            expect(upcomingLabel.classes()).toContain('text-brutal-muted-foreground')
+            expect(description.classes()).toContain('text-brutal-muted-foreground')
+            expect(description.classes()).not.toContain('opacity-60')
         })
 
         it('does not render description paragraph when step has no description', () => {

@@ -256,7 +256,7 @@ const connectorClasses = computed(() =>
                     <p class="text-xs font-black tracking-wide truncate">
 {{ step.title }}
 </p>
-                    <p v-if="step.description" class="text-xs font-medium opacity-60 mt-0.5 truncate">
+                    <p v-if="step.description" class="text-xs font-medium text-brutal-muted-foreground mt-0.5 truncate">
                         {{ step.description }}
                     </p>
                 </div>
@@ -293,7 +293,7 @@ const connectorClasses = computed(() =>
                         <p class="text-sm font-black tracking-wide">
 {{ step.title }}
 </p>
-                        <p v-if="step.description" class="text-xs font-medium opacity-60 mt-0.5">
+                        <p v-if="step.description" class="text-xs font-medium text-brutal-muted-foreground mt-0.5">
                             {{ step.description }}
                         </p>
                         <!-- Content slot for active vertical step -->

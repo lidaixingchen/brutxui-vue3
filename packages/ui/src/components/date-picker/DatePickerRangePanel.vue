@@ -21,7 +21,7 @@ import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { useLocale } from '@/composables/useLocale'
-import { datePickerPanelVariants, datePickerShortcutVariants } from './date-picker-variants'
+import { datePickerPanelVariants, datePickerShortcutListVariants, datePickerShortcutVariants } from './date-picker-variants'
 import { type DatePickerRangeShortcut, type DateRange } from './types'
 import { isDateWithinBounds, resolveRangeShortcutValue } from './date-picker-utils'
 import DatePickerPanelFooter from './DatePickerPanelFooter.vue'
@@ -61,6 +61,7 @@ const resolvedShortcutsLabel = computed(() => t('datePicker.shortcuts'))
 const hasShortcuts = computed(() => props.shortcuts.length > 0)
 
 const panelClasses = computed(() => cn(datePickerPanelVariants()))
+const shortcutListClasses = computed(() => cn(datePickerShortcutListVariants()))
 
 interface DateRangeValue {
     start: Date
@@ -205,7 +206,7 @@ function getShortcutClasses(shortcut: DatePickerRangeShortcut): string {
             v-if="hasShortcuts"
             role="listbox"
             :aria-label="resolvedShortcutsLabel"
-            class="flex flex-col gap-1 p-2 border-r-3 border-brutal min-w-[8rem]"
+            :class="shortcutListClasses"
         >
             <button
                 v-for="(shortcut, index) in shortcuts"

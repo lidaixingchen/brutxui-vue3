@@ -57,7 +57,6 @@ const indentStyle = computed(() => ({
 const chevronClasses = computed(() =>
     cn(ICON_SIZE_CLASSES, treeChevronBaseClass, isExpanded.value && treeChevronExpandedClass)
 )
-const folderOpenClasses = cn(ICON_SIZE_CLASSES, 'flex-shrink-0 text-brutal-primary')
 const folderClasses = cn(ICON_SIZE_CLASSES, 'flex-shrink-0')
 const checkClasses = cn(ICON_SIZE_CLASSES, 'stroke-[3] flex-shrink-0')
 const spacerClasses = cn(ICON_SIZE_CLASSES, 'flex-shrink-0')
@@ -229,7 +228,7 @@ function handleKeydown(e: KeyboardEvent) {
             />
             <span v-else :class="spacerClasses" />
 
-            <FolderOpen v-if="!isLeaf && isExpanded" :class="folderOpenClasses" />
+            <FolderOpen v-if="!isLeaf && isExpanded" :class="folderClasses" />
             <Folder v-else-if="!isLeaf" :class="folderClasses" />
             <span v-else :class="spacerClasses" />
 

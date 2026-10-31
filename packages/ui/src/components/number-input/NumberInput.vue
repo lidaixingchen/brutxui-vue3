@@ -11,6 +11,7 @@ import {
 } from 'reka-ui'
 import { Plus, Minus, ChevronUp, ChevronDown } from '@lucide/vue'
 import { cn } from '@/lib/utils'
+import { brutalDestructiveTextClasses } from '@/lib/semantic-text-variants'
 import { numberInputRootVariants, numberInputButtonVariants, numberInputFieldVariants } from './number-input-variants'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
@@ -67,6 +68,7 @@ const errorId = useId()
 const errorTextId = computed(() =>
     props.variant === 'error' && props.errorMessage ? `number-input-error-${errorId}` : undefined
 )
+const errorMessageClasses = computed(() => cn('text-sm mt-1', brutalDestructiveTextClasses))
 
 const DELEGATED_OMIT_KEYS = new Set([
     'class',
@@ -168,7 +170,7 @@ const iconClasses = computed(() =>
         <p
             v-if="variant === 'error' && errorMessage"
             :id="errorTextId"
-            class="text-sm text-brutal-destructive mt-1"
+            :class="errorMessageClasses"
             role="alert"
         >
             {{ errorMessage }}

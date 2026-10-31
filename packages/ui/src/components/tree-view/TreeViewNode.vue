@@ -321,9 +321,9 @@ defineExpose({ focus, nodeId: props.node.id });
                 @update:checked="handleCheckboxUpdate"
             />
 
-            <Loader2 v-if="isLoading" class="w-4 h-4 animate-spin flex-shrink-0 text-brutal-primary" />
+            <Loader2 v-if="isLoading" class="w-4 h-4 animate-spin flex-shrink-0" />
             <template v-else>
-                <FolderOpen v-if="!isLeaf && isExpanded" class="w-4 h-4 flex-shrink-0 text-brutal-primary" />
+                <FolderOpen v-if="!isLeaf && isExpanded" class="w-4 h-4 flex-shrink-0" />
                 <Folder v-else-if="!isLeaf" class="w-4 h-4 flex-shrink-0" />
                 <File v-else class="w-4 h-4 flex-shrink-0 opacity-60" />
             </template>

@@ -17,7 +17,7 @@ export const stepperDotVariants = cva(
             state: {
                 completed: 'bg-brutal-success text-brutal-success-foreground shadow-brutal',
                 active: 'shadow-brutal-lg', /* 组件私有：特定激活状态投影，不抽取 */
-                upcoming: 'bg-brutal-bg text-brutal-fg shadow-brutal-sm opacity-60',
+                upcoming: 'bg-brutal-bg text-brutal-muted-foreground shadow-brutal-sm',
             },
             size: {
                 sm: 'w-6 h-6 text-xs',
@@ -68,7 +68,7 @@ export const stepperStepLabelVariants = cva('', {
         state: {
             completed: '',
             active: '',
-            upcoming: 'opacity-50',
+            upcoming: 'text-brutal-muted-foreground',
         },
     },
     defaultVariants: {
