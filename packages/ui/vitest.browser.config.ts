@@ -10,6 +10,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': resolve(__dirname, 'src'),
+            'brutx-ui-vue': resolve(__dirname, 'src/test/component-api-primitives.ts'),
             'vitepress': resolve(__dirname, 'src/test/vitepress-stub.ts'),
         },
         dedupe: ['vue', '@vue/runtime-core', '@vue/runtime-dom', '@vue/reactivity'],

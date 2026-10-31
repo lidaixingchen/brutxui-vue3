@@ -589,6 +589,20 @@ const HASH_TARGET_SCROLL_THRESHOLD_PX = 4
     line-height: 1.5;
 }
 
+.component-api-category-button,
+.component-api-kind-toggle {
+    translate: none;
+}
+
+.component-api-kind-toggle {
+    border-block-start-width: 0;
+    border-inline-width: 0;
+}
+
+.component-api-kind + .component-api-kind {
+    border-block-start: var(--brutal-border-width) solid var(--brutal-border-color);
+}
+
 .component-api-category-button[aria-pressed='true'] {
     background: var(--brutal-secondary);
     color: var(--brutal-secondary-foreground);

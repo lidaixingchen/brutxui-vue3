@@ -1,0 +1,6 @@
+export { default as Button } from '../components/button/Button.vue'
+export { default as Input } from '../components/input/Input.vue'
+export { default as Select } from '../components/select/Select.vue'
+export { default as SelectContent } from '../components/select/SelectContent.vue'
+export { default as SelectItem } from '../components/select/SelectItem.vue'
+export { default as SelectTrigger } from '../components/select/SelectTrigger.vue'
