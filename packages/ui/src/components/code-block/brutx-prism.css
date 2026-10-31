@@ -1,8 +1,7 @@
 /**
  * BrutxUI Prism Theme — Neo-Brutalist Syntax Highlighting
  *
- * 使用专用 --brutal-code-* 变量控制 token 颜色，
- * 与 --brutal-primary 等设计令牌解耦，确保所有主题下对比度达标。
+ * 使用专用 --brutal-code-* 变量控制 token 颜色，关键词默认色从主题语义令牌派生。
  * 消费者可通过覆盖 --brutal-code-* 变量自定义高亮配色。
  */
 
@@ -20,8 +19,6 @@ pre[class*="language-"] {
 }
 
 /* --- Token 颜色映射 --- */
-/* 所有颜色均通过 --brutal-code-* 变量；默认值仅面向纯白/纯黑背景近似达标（如
-   #00838f 白底约 4.52:1），实际 WCAG AA 对比度随 --brutal-bg 变化，请结合背景色校准。 */
 
 .token.comment,
 .token.prolog,
@@ -63,7 +60,9 @@ pre[class*="language-"] {
 .token.atrule,
 .token.attr-value,
 .token.keyword {
-    color: var(--brutal-code-keyword, #00838f);
+    --brutal-code-keyword-secondary-weight: 35%;
+    /* 关键词以次级语义色混合正文前景色，保留高亮色相并适配主题背景。 */
+    color: var(--brutal-code-keyword, color-mix(in srgb, var(--brutal-secondary) var(--brutal-code-keyword-secondary-weight), var(--brutal-fg)));
 }
 
 .token.function,

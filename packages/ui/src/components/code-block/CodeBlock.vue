@@ -4,7 +4,7 @@ import CopyToClipboard from '../copy-to-clipboard/CopyToClipboard.vue'
 import Button from '../button/Button.vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
-import { CODE_BLOCK_LINE_HEIGHT_REM, codeBlockRootVariants, codeBlockHeaderVariants, codeBlockLanguageVariants, codeBlockBodyVariants, codeBlockLineNumbersVariants, codeBlockCopyButtonVariants } from './code-block-variants'
+import { CODE_BLOCK_LINE_HEIGHT_REM, codeBlockRootVariants, codeBlockHeaderVariants, codeBlockHeaderMetadataVariants, codeBlockFilenameVariants, codeBlockLanguageVariants, codeBlockBodyVariants, codeBlockLineNumbersVariants, codeBlockCopyButtonVariants } from './code-block-variants'
 import { Prism, resolveLanguage, loadLanguage, isLanguageLoaded, getGrammar } from './prism-languages'
 
 const slots = useSlots()
@@ -42,6 +42,8 @@ const rootClasses = computed(() =>
 )
 
 const headerClasses = computed(() => codeBlockHeaderVariants())
+const headerMetadataClasses = computed(() => codeBlockHeaderMetadataVariants())
+const filenameClasses = computed(() => codeBlockFilenameVariants())
 const languageClasses = computed(() => codeBlockLanguageVariants())
 const copyButtonClasses = computed(() => codeBlockCopyButtonVariants())
 const bodyClasses = computed(() => codeBlockBodyVariants())
@@ -150,11 +152,11 @@ function escapeHtml(str: string): string {
 <template>
     <div :class="rootClasses">
         <div :class="headerClasses">
-            <div class="flex items-center gap-2">
+            <div :class="headerMetadataClasses">
                 <span :class="languageClasses">
                     {{ resolvedLanguage }}
                 </span>
-                <span v-if="resolvedFilename" class="text-brutal-fg/80 font-black">
+                <span v-if="resolvedFilename" :class="filenameClasses">
                     {{ resolvedFilename }}
                 </span>
             </div>

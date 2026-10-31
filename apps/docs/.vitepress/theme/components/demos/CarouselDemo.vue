@@ -16,9 +16,9 @@ const carouselRef = ref()
     <div class="w-full max-w-xl mx-auto space-y-6">
         <Carousel :loop="true" :autoplay="true" :autoplay-delay="2500" size="md">
             <CarouselItem v-for="slide in slides" :key="slide.label">
-                <div :class="['w-full h-full flex flex-col items-center justify-center gap-2 border-3 border-brutal', slide.bg, slide.foreground]">
-                    <p class="text-2xl font-black tracking-tight">{{ slide.label }}</p>
-                    <p class="text-sm font-bold">{{ slide.desc }}</p>
+                <div :class="['w-full h-full flex flex-col items-center justify-center gap-2 border-3 border-brutal px-12', slide.bg, slide.foreground]">
+                    <p class="w-full text-balance text-center break-words text-xl font-black tracking-tight sm:text-2xl">{{ slide.label }}</p>
+                    <p class="w-full text-balance text-center break-words text-xs font-bold sm:text-sm">{{ slide.desc }}</p>
                 </div>
             </CarouselItem>
         </Carousel>
@@ -27,9 +27,9 @@ const carouselRef = ref()
             <p class="text-sm font-bold tracking-wide">程序化控制</p>
             <Carousel ref="carouselRef" :loop="true" size="md">
                 <CarouselItem v-for="(slide, i) in slides" :key="slide.label">
-                    <div :class="['w-full h-full flex flex-col items-center justify-center gap-2 border-3 border-brutal', slide.bg, slide.foreground]">
-                        <p class="text-2xl font-black tracking-tight">{{ i + 1 }} / {{ slides.length }}</p>
-                        <p class="text-sm font-bold">{{ slide.label }}</p>
+                    <div :class="['w-full h-full flex flex-col items-center justify-center gap-2 border-3 border-brutal px-12', slide.bg, slide.foreground]">
+                        <p class="w-full text-balance text-center break-words text-xl font-black tracking-tight sm:text-2xl">{{ i + 1 }} / {{ slides.length }}</p>
+                        <p class="w-full text-balance text-center break-words text-xs font-bold sm:text-sm">{{ slide.label }}</p>
                     </div>
                 </CarouselItem>
             </Carousel>

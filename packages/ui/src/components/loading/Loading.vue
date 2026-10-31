@@ -113,7 +113,7 @@ const maskClasses = computed(() =>
                     <Spinner size="lg" variant="default" />
                     <span 
                         v-if="text" 
-                        class="text-sm font-black text-brutal-fg uppercase tracking-wider bg-brutal-yellow px-2 py-0.5 border border-brutal shadow-brutal-sm"
+                        class="text-sm font-black uppercase tracking-wider bg-brutal-status-warning text-brutal-status-warning-foreground px-2 py-0.5 border border-brutal shadow-brutal-sm"
                     >
                         {{ text }}
                     </span>

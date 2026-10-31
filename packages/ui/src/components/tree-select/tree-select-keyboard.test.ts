@@ -168,6 +168,44 @@ describe('TreeSelect keyboard navigation', () => {
         await expectRovingFocus(getTreeItem('Root'))
     })
 
+    it('returns focus past a disabled ancestor and forwards nested pointer highlighting', async () => {
+        const nodes: TreeNode[] = [
+            {
+                id: 'root',
+                label: 'Root',
+                children: [
+                    {
+                        id: 'disabled-parent',
+                        label: 'Disabled Parent',
+                        disabled: true,
+                        children: [{ id: 'leaf', label: 'Leaf' }],
+                    },
+                ],
+            },
+        ]
+        await openTreeSelect(nodes, { searchable: true })
+
+        const searchInput = document.body.querySelector<HTMLInputElement>('input[type="text"]')
+        if (!searchInput) throw new Error('TreeSelect search input not found')
+        searchInput.value = 'Leaf'
+        searchInput.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        await nextTick()
+
+        const leaf = getTreeItem('Leaf')
+        const leafRow = getTreeItemRow('Leaf')
+        leafRow.dispatchEvent(new Event('pointerenter'))
+        await nextTick()
+        expect(leafRow.getAttribute('data-highlighted')).toBe('')
+
+        leafRow.dispatchEvent(new Event('pointerleave'))
+        await nextTick()
+        expect(leafRow.hasAttribute('data-highlighted')).toBe(false)
+
+        await pressKey(leaf, 'ArrowLeft')
+        await expectRovingFocus(getTreeItem('Root'))
+    })
+
     it('moves Home and End focus to the first and last visible enabled nodes', async () => {
         await openTreeSelect()
 

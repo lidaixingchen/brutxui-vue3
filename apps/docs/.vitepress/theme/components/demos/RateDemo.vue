@@ -22,7 +22,7 @@ const iconStarVal = ref(5)
 
         <div>
             <h3 class="text-lg font-bold mb-3">关联外部标签</h3>
-            <div class="flex items-center gap-4">
+            <div class="flex flex-wrap items-center gap-4">
                 <span id="rating-label" class="text-sm font-medium">商品评分</span>
                 <Rate v-model="val1" aria-labelledby="rating-label" />
             </div>
@@ -49,15 +49,15 @@ const iconStarVal = ref(5)
         <div>
             <h3 class="text-lg font-bold mb-3">自定义图腾图标 (icon)</h3>
             <div class="flex flex-col gap-3">
-                <div class="flex items-center gap-4">
+                <div class="flex flex-wrap items-center gap-4">
                     <span class="w-24 text-sm text-brutal-muted-foreground">heart:</span>
                     <Rate v-model="iconHeartVal" icon="heart" />
                 </div>
-                <div class="flex items-center gap-4">
+                <div class="flex flex-wrap items-center gap-4">
                     <span class="w-24 text-sm text-brutal-muted-foreground">lightning:</span>
                     <Rate v-model="iconBoltVal" icon="lightning" />
                 </div>
-                <div class="flex items-center gap-4">
+                <div class="flex flex-wrap items-center gap-4">
                     <span class="w-24 text-sm text-brutal-muted-foreground">star-8:</span>
                     <Rate v-model="iconStarVal" icon="star-8" />
                 </div>
@@ -67,15 +67,15 @@ const iconStarVal = ref(5)
         <div>
             <h3 class="text-lg font-bold mb-3">不同的尺寸</h3>
             <div class="flex flex-col gap-3">
-                <div class="flex items-center gap-4">
+                <div class="flex flex-wrap items-center gap-4">
                     <span class="w-16 text-sm text-brutal-muted-foreground">小 (sm):</span>
                     <Rate v-model="sizeVal" size="sm" />
                 </div>
-                <div class="flex items-center gap-4">
+                <div class="flex flex-wrap items-center gap-4">
                     <span class="w-16 text-sm text-brutal-muted-foreground">中 (md):</span>
                     <Rate v-model="sizeVal" size="md" />
                 </div>
-                <div class="flex items-center gap-4">
+                <div class="flex flex-wrap items-center gap-4">
                     <span class="w-16 text-sm text-brutal-muted-foreground">大 (lg):</span>
                     <Rate v-model="sizeVal" size="lg" />
                 </div>
