@@ -22,7 +22,38 @@ const localRegistryDir = path.join(repoRoot, 'packages/registry/registry');
 
 const ALL_CONSUMER_IDS = Object.freeze(['U1', 'C1', 'C3']);
 const DEFAULT_CONSUMER_IDS = Object.freeze(['U1', 'C1']);
-const C1_COMPONENT_NAMES = Object.freeze(['popconfirm', 'button', 'combobox', 'tree-select', 'transfer']);
+const COLLECTION_COMPONENT_NAMES = Object.freeze([
+    'select',
+    'command',
+    'combobox',
+    'cascader',
+    'tree-select',
+    'tree-view',
+    'transfer',
+    'dropdown-menu',
+]);
+const C1_COMPONENT_NAMES = Object.freeze([
+    'popconfirm',
+    'button',
+    ...COLLECTION_COMPONENT_NAMES,
+]);
+const C1_UPDATE_TARGET_FILES = Object.freeze({
+    button: 'components/ui/button/Button.vue',
+    select: 'components/ui/select/SelectItem.vue',
+    command: 'components/ui/command/CommandItem.vue',
+    combobox: 'components/ui/combobox/Combobox.vue',
+    cascader: 'components/ui/cascader/Cascader.vue',
+    'tree-select': 'components/ui/tree-select/TreeSelectNode.vue',
+    'tree-view': 'components/ui/tree-view/TreeViewNode.vue',
+    transfer: 'components/ui/transfer/Transfer.vue',
+    'dropdown-menu': 'components/ui/dropdown-menu/DropdownMenuItem.vue',
+});
+const C1_UPDATE_COMPONENT_NAMES = Object.freeze(Object.keys(C1_UPDATE_TARGET_FILES));
+const C1_PROJECTION_FILENAME = 'candidate-project-projection.json';
+const C1_BASELINE_SHARED_MODULE_PATH = 'lib/collection-item-variants.ts';
+const C1_BASELINE_SHARED_MODULE_MARKER = '/* consumer-registry-baseline */\n';
+const C1_BASELINE_MISSING_MODULE_COMPONENT = 'transfer';
+const C1_BASELINE_MISSING_MODULE_PATH = 'components/ui/transfer/transfer-variants.ts';
 const PUBLIC_COMPONENT_INDEX_FILENAME = 'index.ts';
 const COMPOSABLE_MODULE_PREFIX = 'composable:';
 const SIGNAL_EXIT_CODES = Object.freeze({
@@ -232,7 +263,29 @@ export function selectConsumerTests(args = []) {
     return [...parseConsumerArguments(args).tests];
 }
 
-export { parseConsumerArguments };
+export {
+    parseConsumerArguments,
+    COLLECTION_COMPONENT_NAMES,
+    C1_COMPONENT_NAMES,
+    C1_UPDATE_COMPONENT_NAMES,
+    C1_UPDATE_TARGET_FILES,
+    C1_BASELINE_SHARED_MODULE_PATH,
+    C1_BASELINE_SHARED_MODULE_MARKER,
+    C1_BASELINE_MISSING_MODULE_COMPONENT,
+    C1_BASELINE_MISSING_MODULE_PATH,
+};
+
+export function assertC1UpdateDifferences(differences) {
+    const outdatedComponents = new Set(
+        differences
+            .filter(result => result.integrityStatus === 'outdated')
+            .map(result => result.component)
+    );
+    const missingComponents = C1_UPDATE_COMPONENT_NAMES.filter(name => !outdatedComponents.has(name));
+    if (missingComponents.length > 0) {
+        throw new Error(`diff 未识别 ${missingComponents.join(', ')} 的快照变化`);
+    }
+}
 
 function registryUrl(directory = localRegistryDir) {
     return `file://${directory.replace(/\\/g, '/')}`;
@@ -351,7 +404,7 @@ function runU1NegativeImports(tempConsumerDir) {
     );
 }
 
-function writeU1Consumer(tempConsumerDir) {
+export function writeU1Consumer(tempConsumerDir) {
     const srcDir = path.join(tempConsumerDir, 'src');
     fs.mkdirSync(srcDir, { recursive: true });
 
@@ -392,7 +445,18 @@ createApp(App).mount('#app');
     );
     writeText(
         path.join(srcDir, 'consumer-types.ts'),
-        `import { Button, Loading } from 'brutx-ui-vue';
+        `import {
+    Button,
+    Loading,
+    Select,
+    Command,
+    Combobox,
+    Cascader,
+    TreeSelect,
+    TreeView,
+    Transfer,
+    DropdownMenuItem,
+} from 'brutx-ui-vue';
 import type {
     CascaderOption,
     ComboboxOption,
@@ -402,14 +466,18 @@ import type {
 } from 'brutx-ui-vue';
 import { Button as ButtonFromSubpath } from 'brutx-ui-vue/button';
 import { Loading as LoadingFromSubpath } from 'brutx-ui-vue/loading';
-import { Combobox } from 'brutx-ui-vue/combobox';
+import { Select as SelectFromSubpath } from 'brutx-ui-vue/select';
+import { Command as CommandFromSubpath } from 'brutx-ui-vue/command';
+import { Combobox as ComboboxFromSubpath } from 'brutx-ui-vue/combobox';
 import type { ComboboxOption as ComboboxOptionFromSubpath } from 'brutx-ui-vue/combobox';
-import { Cascader } from 'brutx-ui-vue/cascader';
+import { Cascader as CascaderFromSubpath } from 'brutx-ui-vue/cascader';
 import type { CascaderOption as CascaderOptionFromSubpath } from 'brutx-ui-vue/cascader';
-import { TreeSelect } from 'brutx-ui-vue/tree-select';
+import { TreeSelect as TreeSelectFromSubpath } from 'brutx-ui-vue/tree-select';
 import type { TreeNode as TreeNodeFromSubpath } from 'brutx-ui-vue/tree-select';
-import { Transfer } from 'brutx-ui-vue/transfer';
+import { TreeView as TreeViewFromSubpath } from 'brutx-ui-vue/tree-view';
+import { Transfer as TransferFromSubpath } from 'brutx-ui-vue/transfer';
 import type { TransferDataItem as TransferDataItemFromSubpath } from 'brutx-ui-vue/transfer';
+import { DropdownMenuItem as DropdownMenuItemFromSubpath } from 'brutx-ui-vue/dropdown-menu';
 import { useLocale } from 'brutx-ui-vue/useLocale';
 import { useTheme } from 'brutx-ui-vue/useTheme';
 import { useToast } from 'brutx-ui-vue/useToast';
@@ -433,41 +501,105 @@ const subpathTransferData: TransferDataItemFromSubpath[] = rootTransferData;
 
 type ButtonProps = ComponentProps<typeof Button>;
 type LoadingProps = ComponentProps<typeof Loading>;
+type SelectProps = ComponentProps<typeof Select>;
+type CommandProps = ComponentProps<typeof Command>;
 type ComboboxProps = ComponentProps<typeof Combobox>;
+type ComboboxSubpathProps = ComponentProps<typeof ComboboxFromSubpath>;
 type CascaderProps = ComponentProps<typeof Cascader>;
+type CascaderSubpathProps = ComponentProps<typeof CascaderFromSubpath>;
 type TreeSelectProps = ComponentProps<typeof TreeSelect>;
+type TreeSelectSubpathProps = ComponentProps<typeof TreeSelectFromSubpath>;
+type TreeViewProps = ComponentProps<typeof TreeView>;
 type TransferProps = ComponentProps<typeof Transfer>;
+type TransferSubpathProps = ComponentProps<typeof TransferFromSubpath>;
+type DropdownMenuItemProps = ComponentProps<typeof DropdownMenuItem>;
 
 const buttonProps: Partial<ButtonProps> = { variant: 'default', loading: false };
 const loadingProps: Partial<LoadingProps> = { loading: true, text: 'Loading' };
+const selectProps: Partial<SelectProps> = { options: [{ value: 'one', label: 'One' }] };
+const commandProps: Partial<CommandProps> = { disableFilter: false };
 const comboboxProps: Partial<ComboboxProps> = { options: subpathComboboxOptions };
+const comboboxSubpathProps: Partial<ComboboxSubpathProps> = { options: subpathComboboxOptions };
 const cascaderProps: Partial<CascaderProps> = { options: subpathCascaderOptions };
+const cascaderSubpathProps: Partial<CascaderSubpathProps> = { options: subpathCascaderOptions };
 const treeSelectProps: Partial<TreeSelectProps> = { nodes: subpathTreeNodes };
+const treeSelectSubpathProps: Partial<TreeSelectSubpathProps> = { nodes: subpathTreeNodes };
+const treeViewProps: Partial<TreeViewProps> = { nodes: rootTreeNodes };
 const transferProps: Partial<TransferProps> = { data: subpathTransferData, modelValue: ['one'] };
+const transferSubpathProps: Partial<TransferSubpathProps> = { data: subpathTransferData, modelValue: ['one'] };
+const dropdownMenuItemProps: Partial<DropdownMenuItemProps> = { dataTone: 'danger' };
 
 export const consumerTypeProbe = {
     ButtonFromSubpath,
     LoadingFromSubpath,
+    SelectFromSubpath,
+    CommandFromSubpath,
+    ComboboxFromSubpath,
+    CascaderFromSubpath,
+    TreeSelectFromSubpath,
+    TreeViewFromSubpath,
+    TransferFromSubpath,
+    DropdownMenuItemFromSubpath,
     useLocale,
     useTheme,
     useToast,
     buttonProps,
     loadingProps,
+    selectProps,
+    commandProps,
     comboboxProps,
+    comboboxSubpathProps,
     cascaderProps,
+    cascaderSubpathProps,
     treeSelectProps,
+    treeSelectSubpathProps,
+    treeViewProps,
     transferProps,
+    transferSubpathProps,
+    dropdownMenuItemProps,
 };
 `
     );
     writeText(
         path.join(srcDir, 'App.vue'),
         `<script setup lang="ts">
-import { Button, Loading } from 'brutx-ui-vue';
+import { ref } from 'vue';
+import {
+    Button,
+    Loading,
+    Select,
+    Command,
+    CommandInput,
+    CommandList,
+    CommandItem,
+    Combobox,
+    Cascader,
+    TreeSelect,
+    TreeView,
+    Transfer,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuCheckboxItem,
+    DropdownMenuRadioItem,
+    DropdownMenuSubTrigger,
+    DropdownMenuSubContent,
+} from 'brutx-ui-vue';
 import { Button as ButtonFromSubpath } from 'brutx-ui-vue/button';
 import { Loading as LoadingFromSubpath } from 'brutx-ui-vue/loading';
+import {
+    DropdownMenuRoot,
+    DropdownMenuTrigger,
+    DropdownMenuRadioGroup,
+    DropdownMenuSub,
+} from 'reka-ui';
 
 const isLoading = false;
+const selectedOption = ref('one');
+const selectedRadio = ref('one');
+const options = [{ value: 'one', label: 'One' }];
+const treeNodes = [{ id: 'root', label: 'Root' }];
+const transferData = [{ key: 'one', label: 'One' }];
+const selectedTransfer = ref<(string | number)[]>(['one']);
 </script>
 
 <template>
@@ -476,6 +608,37 @@ const isLoading = false;
         <ButtonFromSubpath variant="primary">Subpath Button</ButtonFromSubpath>
         <Loading :loading="isLoading" />
         <LoadingFromSubpath :loading="isLoading" />
+        <Select v-model="selectedOption" :options="options" />
+        <Command>
+            <CommandInput placeholder="Search" />
+            <CommandList>
+                <CommandItem value="one">One</CommandItem>
+            </CommandList>
+        </Command>
+        <Combobox :options="options" />
+        <Cascader :options="options" />
+        <TreeSelect :nodes="treeNodes" />
+        <TreeView :nodes="treeNodes" />
+        <Transfer :data="transferData" v-model="selectedTransfer" />
+        <DropdownMenuRoot>
+            <DropdownMenuTrigger as-child>
+                <Button>Open menu</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+                <DropdownMenuItem>Standard action</DropdownMenuItem>
+                <DropdownMenuItem data-tone="danger">Delete</DropdownMenuItem>
+                <DropdownMenuCheckboxItem>Enabled</DropdownMenuCheckboxItem>
+                <DropdownMenuRadioGroup v-model="selectedRadio">
+                    <DropdownMenuRadioItem value="one">One</DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+                <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>More</DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
+                        <DropdownMenuItem>Nested action</DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                </DropdownMenuSub>
+            </DropdownMenuContent>
+        </DropdownMenuRoot>
     </main>
 </template>
 `
@@ -586,7 +749,7 @@ export default defineConfig({
     );
 }
 
-function writeC1Source(tempConsumerDir) {
+export function writeC1Source(tempConsumerDir) {
     const srcDir = path.join(tempConsumerDir, 'src');
     fs.mkdirSync(srcDir, { recursive: true });
     writeJson(path.join(tempConsumerDir, 'tsconfig.json'), {
@@ -620,16 +783,38 @@ createApp(App).mount('#app');
     writeText(
         path.join(srcDir, 'App.vue'),
         `<script setup lang="ts">
+import { ref } from 'vue';
 import { Button } from '@/components/ui/button';
+import { Select } from '@/components/ui/select';
+import { Command, CommandInput, CommandList, CommandItem } from '@/components/ui/command';
 import { Combobox } from '@/components/ui/combobox';
+import { Cascader } from '@/components/ui/cascader';
 import { Popconfirm } from '@/components/ui/popconfirm';
 import { TreeSelect } from '@/components/ui/tree-select';
+import { TreeView } from '@/components/ui/tree-view';
 import { Transfer } from '@/components/ui/transfer';
+import {
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuCheckboxItem,
+    DropdownMenuRadioItem,
+    DropdownMenuSubTrigger,
+    DropdownMenuSubContent,
+} from '@/components/ui/dropdown-menu';
+import {
+    DropdownMenuRoot,
+    DropdownMenuTrigger,
+    DropdownMenuRadioGroup,
+    DropdownMenuSub,
+} from 'reka-ui';
 
+const selectedOption = ref('one');
+const selectedRadio = ref('one');
 const comboboxOptions = [{ value: 'one', label: 'One' }];
+const cascaderOptions = [{ value: 'root', label: 'Root', children: [{ value: 'child', label: 'Child' }] }];
 const treeNodes = [{ id: 'root', label: 'Root' }];
 const transferData = [{ key: 'one', label: 'One' }];
-const selectedTransfer = ['one'];
+const selectedTransfer = ref<(string | number)[]>(['one']);
 </script>
 
 <template>
@@ -638,9 +823,36 @@ const selectedTransfer = ['one'];
         <Popconfirm title="确认操作">
             <Button>确认</Button>
         </Popconfirm>
+        <Select v-model="selectedOption" :options="comboboxOptions" />
+        <Command>
+            <CommandInput placeholder="Search" />
+            <CommandList>
+                <CommandItem value="one">One</CommandItem>
+            </CommandList>
+        </Command>
         <Combobox :options="comboboxOptions" />
+        <Cascader :options="cascaderOptions" />
         <TreeSelect :nodes="treeNodes" />
+        <TreeView :nodes="treeNodes" />
         <Transfer :data="transferData" :model-value="selectedTransfer" />
+        <DropdownMenuRoot>
+            <DropdownMenuTrigger as-child>
+                <Button>Open menu</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+                <DropdownMenuItem data-tone="danger">Delete</DropdownMenuItem>
+                <DropdownMenuCheckboxItem>Enabled</DropdownMenuCheckboxItem>
+                <DropdownMenuRadioGroup v-model="selectedRadio">
+                    <DropdownMenuRadioItem value="one">One</DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+                <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>More</DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
+                        <DropdownMenuItem>Nested action</DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                </DropdownMenuSub>
+            </DropdownMenuContent>
+        </DropdownMenuRoot>
     </main>
 </template>
 `
@@ -648,12 +860,17 @@ const selectedTransfer = ['one'];
     writeText(
         path.join(srcDir, 'helper-types.ts'),
         `import { buttonVariants } from '@/components/ui/button';
+import { Select } from '@/components/ui/select';
+import { Command } from '@/components/ui/command';
 import { Combobox } from '@/components/ui/combobox';
 import type { ComboboxOption } from '@/components/ui/combobox';
+import { Cascader } from '@/components/ui/cascader';
 import { TreeSelect } from '@/components/ui/tree-select';
 import type { SelectionMode, TreeNode } from '@/components/ui/tree-select';
+import { TreeView } from '@/components/ui/tree-view';
 import { Transfer } from '@/components/ui/transfer';
 import type { TransferDataItem } from '@/components/ui/transfer';
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 
 type ComponentProps<C> = C extends new (...args: any[]) => any
     ? InstanceType<C>['$props']
@@ -664,9 +881,14 @@ export const buttonClass = buttonVariants({ variant: 'default' });
 export const treeNodes: TreeNode[] = [{ id: 'root', label: 'Root' }];
 export const transferData: TransferDataItem[] = [{ key: 'one', label: 'One' }];
 export const selectionMode: SelectionMode = 'single';
+export const selectProps: Partial<ComponentProps<typeof Select>> = { options: [{ value: 'one', label: 'One' }] };
+export const commandProps: Partial<ComponentProps<typeof Command>> = { disableFilter: false };
 export type PublicComboboxProps = ComponentProps<typeof Combobox>;
+export type PublicCascaderProps = ComponentProps<typeof Cascader>;
 export type PublicTreeSelectProps = ComponentProps<typeof TreeSelect>;
+export type PublicTreeViewProps = ComponentProps<typeof TreeView>;
 export type PublicTransferProps = ComponentProps<typeof Transfer>;
+export type PublicDropdownMenuItemProps = ComponentProps<typeof DropdownMenuItem>;
 `
     );
     writeText(
@@ -675,15 +897,121 @@ export type PublicTransferProps = ComponentProps<typeof Transfer>;
     );
 }
 
-function readRegistryPublicIndex(registryDirectory, componentName) {
+function readRegistryItem(registryDirectory, componentName) {
     const itemPath = path.join(registryDirectory, `${componentName}.json`);
     assertFile(itemPath, `Expected Registry item was not found: ${itemPath}`);
-    const item = JSON.parse(fs.readFileSync(itemPath, 'utf-8'));
+    return JSON.parse(fs.readFileSync(itemPath, 'utf-8'));
+}
+
+function readRegistryPublicIndex(registryDirectory, componentName) {
+    const itemPath = path.join(registryDirectory, `${componentName}.json`);
+    const item = readRegistryItem(registryDirectory, componentName);
     const indexFile = item.files?.find(file => file.path === `components/ui/${componentName}/${PUBLIC_COMPONENT_INDEX_FILENAME}`);
     if (!indexFile) {
         throw new Error(`Registry item ${itemPath} does not contain a public component index.`);
     }
     return indexFile.content;
+}
+
+function projectC1Components(tempConsumerDir) {
+    const projectionPath = path.join(tempConsumerDir, C1_PROJECTION_FILENAME);
+    execFileSync('pnpm', [
+        'exec',
+        'tsx',
+        path.join(__dirname, 'fixtures/consumer-project-projection.ts'),
+        tempConsumerDir,
+        localRegistryDir,
+        JSON.stringify(C1_UPDATE_COMPONENT_NAMES),
+        projectionPath,
+    ], {
+        cwd: cliPackageRoot,
+        env: consumerEnv(),
+        encoding: 'utf8',
+        stdio: 'pipe',
+    });
+    return JSON.parse(fs.readFileSync(projectionPath, 'utf8'));
+}
+
+export function assertC1BaselineDependencies(projectedComponents) {
+    const sharedModuleCopies = projectedComponents.flatMap(component =>
+        component.files
+            .filter(file => file.path === C1_BASELINE_SHARED_MODULE_PATH)
+            .map(file => ({ component: component.name, file }))
+    );
+    if (sharedModuleCopies.length < 2) {
+        throw new Error(`C1 基线未覆盖多个组件共用的 ${C1_BASELINE_SHARED_MODULE_PATH}`);
+    }
+
+    const sharedModulePaths = new Set(sharedModuleCopies.map(copy => copy.file.targetPath));
+    if (sharedModulePaths.size !== 1) {
+        throw new Error(`C1 投影未将共享私有模块 ${C1_BASELINE_SHARED_MODULE_PATH} 映射到同一消费文件`);
+    }
+    const candidateSharedContent = sharedModuleCopies[0].file.content;
+    if (!sharedModuleCopies.every(copy => copy.file.content === candidateSharedContent)) {
+        throw new Error(`候选 Registry 对共享私有模块 ${C1_BASELINE_SHARED_MODULE_PATH} 的内容不一致`);
+    }
+
+    const sharedModulePath = sharedModuleCopies[0].file.targetPath;
+    assertFile(sharedModulePath, `C1 add 未写入基线共享私有模块：${sharedModulePath}`);
+    const baselineSharedContent = fs.readFileSync(sharedModulePath, 'utf8');
+    const expectedBaselineContent = `${C1_BASELINE_SHARED_MODULE_MARKER}${candidateSharedContent}`;
+    if (baselineSharedContent !== expectedBaselineContent) {
+        throw new Error(`C1 add 未保留共享私有模块 ${C1_BASELINE_SHARED_MODULE_PATH} 的旧基线内容`);
+    }
+
+    const missingModule = projectedComponents
+        .find(component => component.name === C1_BASELINE_MISSING_MODULE_COMPONENT)
+        ?.files.find(file => file.path === C1_BASELINE_MISSING_MODULE_PATH);
+    if (!missingModule) {
+        throw new Error(`候选 Registry 缺少待更新新增模块 ${C1_BASELINE_MISSING_MODULE_PATH}`);
+    }
+    if (fs.existsSync(missingModule.targetPath)) {
+        throw new Error(`C1 add 意外写入基线中尚不存在的模块：${missingModule.targetPath}`);
+    }
+}
+
+function assertC1UpdatedFiles(tempConsumerDir, localMarker) {
+    const verifiedTargetFiles = [];
+    const verifiedPrivateDependencies = new Set();
+    const projectedComponents = projectC1Components(tempConsumerDir);
+
+    for (const item of projectedComponents) {
+        const componentName = item.name;
+        const targetFilePath = C1_UPDATE_TARGET_FILES[componentName];
+        const targetFile = item.files?.find(file => file.path === targetFilePath);
+        if (!targetFile) {
+            throw new Error(`Registry item ${componentName} does not contain its C1 update target ${targetFilePath}.`);
+        }
+
+        for (const file of item.files) {
+            const consumerPath = file.targetPath;
+            assertFile(consumerPath, `Expected updated Registry source was not found: ${consumerPath}`);
+            let actual = fs.readFileSync(consumerPath, 'utf-8');
+
+            if (file.path === C1_UPDATE_TARGET_FILES.button) {
+                const localChange = `    ${localMarker}\n`;
+                if (!actual.includes(localMarker)) {
+                    throw new Error('CLI update did not preserve the local Button modification.');
+                }
+                actual = actual.replace(localChange, '');
+            }
+
+            if (actual !== file.content) {
+                throw new Error(`Updated source ${file.path} does not match the current Registry content.`);
+            }
+
+            if (!file.path.startsWith('components/ui/')) {
+                verifiedPrivateDependencies.add(file.path);
+            }
+        }
+
+        verifiedTargetFiles.push(targetFilePath);
+    }
+
+    return {
+        targetFiles: verifiedTargetFiles,
+        privateDependencies: [...verifiedPrivateDependencies].sort(),
+    };
 }
 
 function assertC1PublicIndexes(tempConsumerDir) {
@@ -708,7 +1036,14 @@ async function runC1(manifest, artifactSummary) {
     const baselineRegistry = path.join(tempConsumerDir, 'registry-baseline');
 
     try {
-        execFileSync('pnpm', ['exec', 'tsx', path.join(__dirname, 'fixtures/consumer-registry.ts'), localRegistryDir, baselineRegistry], {
+        execFileSync('pnpm', [
+            'exec',
+            'tsx',
+            path.join(__dirname, 'fixtures/consumer-registry.ts'),
+            localRegistryDir,
+            baselineRegistry,
+            JSON.stringify(C1_UPDATE_TARGET_FILES),
+        ], {
             cwd: cliPackageRoot,
             env: consumerEnv(),
             stdio: 'pipe',
@@ -766,6 +1101,7 @@ async function runC1(manifest, artifactSummary) {
             });
         }
 
+        assertC1BaselineDependencies(projectC1Components(tempConsumerDir));
         const treeIndexPath = path.join(tempConsumerDir, 'src/components/ui/tree-select/index.ts');
         assertContains(fs.readFileSync(treeIndexPath, 'utf8'), 'useSelectableTrigger', '基线快照缺少预期的旧公开入口');
         const buttonPath = path.join(tempConsumerDir, 'src/components/ui/button/Button.vue');
@@ -778,17 +1114,14 @@ async function runC1(manifest, artifactSummary) {
         }
         writeText(buttonPath, buttonBeforeUpdate.replace('</template>', `    ${localMarker}\n</template>`));
         const candidateRegistryUrl = registryUrl();
-        const diffOutput = execWithLogging(`pnpm exec brutx-vue diff button tree-select --json --no-cache --registry "${candidateRegistryUrl}"`, {
+        const updateComponents = C1_UPDATE_COMPONENT_NAMES.join(' ');
+        const diffOutput = execWithLogging(`pnpm exec brutx-vue diff ${updateComponents} --json --no-cache --registry "${candidateRegistryUrl}"`, {
             cwd: tempConsumerDir,
             env: consumerEnv(),
         });
         const differences = JSON.parse(diffOutput);
-        for (const name of ['button', 'tree-select']) {
-            if (!differences.some(result => result.component === name && result.integrityStatus === 'outdated')) {
-                throw new Error(`diff 未识别 ${name} 的快照变化`);
-            }
-        }
-        execWithLogging(`pnpm exec brutx-vue update button tree-select --yes --no-cache --registry "${candidateRegistryUrl}"`, {
+        assertC1UpdateDifferences(differences);
+        execWithLogging(`pnpm exec brutx-vue update ${updateComponents} --yes --no-cache --registry "${candidateRegistryUrl}"`, {
             cwd: tempConsumerDir,
             env: consumerEnv(),
         });
@@ -797,6 +1130,7 @@ async function runC1(manifest, artifactSummary) {
         if (buttonAfterUpdate.includes('<<<<<<<') || buttonAfterUpdate.includes('>>>>>>>')) {
             throw new Error('CLI update left conflict markers in the locally modified Button.');
         }
+        const updatedFiles = assertC1UpdatedFiles(tempConsumerDir, localMarker);
         assertC1PublicIndexes(tempConsumerDir);
         const replayEvidence = path.join(process.env.BRUTX_CONSUMER_EVIDENCE_DIR
             ?? path.join(path.dirname(manifest.packages['brutx-ui-vue'].tarballPath), 'consumers'), 'C1');
@@ -804,6 +1138,9 @@ async function runC1(manifest, artifactSummary) {
             baselineDigest: JSON.parse(fs.readFileSync(path.join(baselineRegistry, 'registry-manifest.json'), 'utf8')).digest,
             candidateDigest: JSON.parse(fs.readFileSync(path.join(localRegistryDir, 'registry-manifest.json'), 'utf8')).digest,
             differences,
+            updateTargets: C1_UPDATE_COMPONENT_NAMES,
+            updatedTargetFiles: updatedFiles.targetFiles,
+            privateDependenciesVerified: updatedFiles.privateDependencies,
             localModificationPreserved: true,
             publicProjectionUpdated: true,
         });
@@ -821,10 +1158,10 @@ async function runC1(manifest, artifactSummary) {
         assertNonEmptyFile(path.join(tempConsumerDir, 'dist', 'index.html'));
 
         const durationMs = Date.now() - startTime;
-        console.log(`✓ C1 (CLI tarball source add, public indexes, update protection, typecheck, build) passed in ${durationMs}ms`);
+        console.log(`✓ C1 (CLI tarball source add, collection updates, public indexes, update protection, typecheck, build) passed in ${durationMs}ms`);
         return {
             id: 'C1',
-            description: 'CLI tarball source add, public indexes, update protection, typecheck, build',
+            description: 'CLI tarball source add, collection updates, public indexes, update protection, typecheck, build',
             durationMs,
             success: true,
             artifactSummary,
