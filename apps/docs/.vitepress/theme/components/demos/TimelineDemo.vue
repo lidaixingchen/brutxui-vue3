@@ -84,7 +84,7 @@ import { Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnect
                     </TimelineSeparator>
                     <TimelineContent class="text-center">
                         <div class="font-black text-sm">需求分析</div>
-                        <div class="text-xs text-brutal-fg/60 mt-1">2026-06-01</div>
+                        <div class="text-xs text-brutal-muted-foreground mt-1">2026-06-01</div>
                     </TimelineContent>
                 </TimelineItem>
 
@@ -95,7 +95,7 @@ import { Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnect
                     </TimelineSeparator>
                     <TimelineContent class="text-center">
                         <div class="font-black text-sm">设计开发</div>
-                        <div class="text-xs text-brutal-fg/60 mt-1">2026-06-15</div>
+                        <div class="text-xs text-brutal-muted-foreground mt-1">2026-06-15</div>
                     </TimelineContent>
                 </TimelineItem>
 
@@ -106,7 +106,7 @@ import { Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnect
                     </TimelineSeparator>
                     <TimelineContent class="text-center">
                         <div class="font-black text-sm">测试发布</div>
-                        <div class="text-xs text-brutal-fg/60 mt-1">2026-07-01</div>
+                        <div class="text-xs text-brutal-muted-foreground mt-1">2026-07-01</div>
                     </TimelineContent>
                 </TimelineItem>
 
@@ -116,7 +116,7 @@ import { Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnect
                     </TimelineSeparator>
                     <TimelineContent class="text-center">
                         <div class="font-black text-sm">迭代优化</div>
-                        <div class="text-xs text-brutal-fg/60 mt-1">2026-07-15</div>
+                        <div class="text-xs text-brutal-muted-foreground mt-1">2026-07-15</div>
                     </TimelineContent>
                 </TimelineItem>
             </Timeline>
