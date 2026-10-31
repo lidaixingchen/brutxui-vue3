@@ -1,16 +1,27 @@
 import { cva } from 'class-variance-authority'
-import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
+import { brutalControlMovement } from '@/lib/brutal-interaction-variants'
 import { FOCUS_RING_CLASSES } from '@/lib/utils'
+
+export const colorPickerControlVariants = cva(
+    'group/color-picker relative w-full transition-transform duration-150 motion-reduce:transition-none',
+    {
+        variants: {
+            disabled: {
+                true: 'pointer-events-none',
+                false: brutalControlMovement,
+            },
+        },
+        defaultVariants: { disabled: false },
+    }
+)
 
 export const colorPickerTriggerVariants = cva(
     [
         'flex items-center gap-2 w-full',
         'border-3 border-brutal rounded-brutal',
         'bg-brutal-bg text-brutal-fg',
-        'shadow-brutal',
-        'transition-all duration-150',
-        brutalHoverLift,
-        brutalPress,
+        'shadow-brutal group-hover/color-picker:shadow-brutal-lg group-active/color-picker:shadow-none',
+        'transition-all duration-150 motion-reduce:transition-none',
         FOCUS_RING_CLASSES,
         'disabled:opacity-50 disabled:pointer-events-none',
     ],

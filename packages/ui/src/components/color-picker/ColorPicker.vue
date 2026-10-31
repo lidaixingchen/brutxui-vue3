@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { type ColorPreset } from '@/lib/default-presets'
 import PopoverContent from '../popover/PopoverContent.vue'
-import { colorPickerTriggerVariants } from './color-picker-variants'
+import { colorPickerControlVariants, colorPickerTriggerVariants } from './color-picker-variants'
 import ColorPickerPanel from './ColorPickerPanel.vue'
 import { type ColorPickerEmits, type ColorPickerProps } from './types'
 import { useColorPicker } from '@/composables/useColorPicker'
@@ -78,6 +78,8 @@ const triggerClasses = computed(() =>
     )
 )
 
+const controlClasses = computed(() => cn(colorPickerControlVariants({ disabled: props.disabled })))
+
 const ICON_SIZE_CLASSES = {
     swatch: { sm: 'w-4 h-4', default: 'w-5 h-5', lg: 'w-7 h-7' },
     clearButton: { sm: 'w-4 h-4', default: 'w-5 h-5', lg: 'w-5 h-5' },
@@ -108,7 +110,7 @@ const presetsForPanel = computed<string[] | readonly ColorPreset[] | undefined>(
          渲染隐藏 input 携带当前颜色值，值随 modelValue 变化同步 -->
     <input v-if="name" type="hidden" :name="name" :value="modelValue ?? ''" :disabled="disabled">
     <PopoverRoot v-model:open="open">
-        <div class="relative w-full">
+        <div :class="controlClasses">
             <PopoverTrigger as-child>
                 <button
                     :id="id"

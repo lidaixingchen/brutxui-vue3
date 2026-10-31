@@ -40,6 +40,9 @@ const brutalHighlightLift = 'data-[highlighted]:shadow-brutal-lg data-[highlight
 
 export const brutalPress = `${pressX} ${pressY} active:shadow-none`
 
+/** 复合控件的公共外壳承载位移，内部交互元素独立绘制阴影与焦点。 */
+export const brutalControlMovement = `hover:-translate-x-0.5 hover:-translate-y-0.5 ${pressX} ${pressY}`
+
 // stacked 档位（shadow-brutal-stacked）最外层阴影偏移为 1.5x 刻度：
 // 盖影按压位移必须同源 calc 派生 1.5x，严禁内联手抄像素字面量造成位移与阴影脱同步
 const pressStackedX = 'active:translate-x-[calc(var(--brutal-shadow-offset-x,4px)*1.5)]'
