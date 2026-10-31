@@ -18,6 +18,8 @@ const BRUTAL_COLOR_NAMES = [
     'brutal-info',
     'brutal-info-foreground',
     'brutal-info-subtle',
+    'brutal-item-highlight',
+    'brutal-item-highlight-foreground',
     'brutal-muted',
     'brutal-muted-foreground',
     'brutal-overlay',

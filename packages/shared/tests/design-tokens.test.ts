@@ -27,16 +27,16 @@ describe('design-tokens: BRUTAL_COLOR_NAMES 纯函数派生', () => {
         expect(NON_COLOR_TOKEN_KEYS.has('radius')).toBe(true);
     });
 
-    it('BRUTAL_COLOR_NAMES 派生出 36 个颜色且为冻结已排序数组', () => {
+    it('BRUTAL_COLOR_NAMES 派生出 38 个颜色且为冻结已排序数组', () => {
         expect(Array.isArray(BRUTAL_COLOR_NAMES)).toBe(true);
         expect(Object.isFrozen(BRUTAL_COLOR_NAMES)).toBe(true);
 
         const baseKeys = (Object.keys(TOKEN_TO_CSS_VAR) as Array<keyof ThemeTokens>).filter(
             k => !NON_COLOR_TOKEN_KEYS.has(k),
         );
-        expect(baseKeys.length).toBe(30);
+        expect(baseKeys.length).toBe(32);
         expect(SUBTLE_COLOR_DEFS.length).toBe(6);
-        expect(BRUTAL_COLOR_NAMES.length).toBe(36);
+        expect(BRUTAL_COLOR_NAMES.length).toBe(38);
 
         // 验证数组已升序排序
         const sortedCopy = [...BRUTAL_COLOR_NAMES].sort();
@@ -57,6 +57,8 @@ describe('design-tokens: BRUTAL_COLOR_NAMES 纯函数派生', () => {
         expect(BRUTAL_COLOR_NAMES).toContain('brutal-primary');
         expect(BRUTAL_COLOR_NAMES).toContain('brutal-primary-foreground');
         expect(BRUTAL_COLOR_NAMES).toContain('brutal-accent');
+        expect(BRUTAL_COLOR_NAMES).toContain('brutal-item-highlight');
+        expect(BRUTAL_COLOR_NAMES).toContain('brutal-item-highlight-foreground');
 
         // subtle 衍生色抽样
         expect(BRUTAL_COLOR_NAMES).toContain('brutal-primary-subtle');
@@ -73,6 +75,7 @@ const SEMANTIC_COLOR_PAIRS: ReadonlyArray<readonly [keyof ThemeTokens, keyof The
     ['primary', 'primaryForeground'],
     ['secondary', 'secondaryForeground'],
     ['accent', 'accentForeground'],
+    ['itemHighlight', 'itemHighlightForeground'],
     ['destructive', 'destructiveForeground'],
     ['success', 'successForeground'],
     ['info', 'infoForeground'],
@@ -106,6 +109,24 @@ describe('design-tokens: 主题颜色对比度', () => {
             });
         }
     }
+});
+
+describe('design-tokens: 集合选项高亮色对', () => {
+    it('Classic 明暗模式使用柠檬黄与黑色前景', () => {
+        for (const mode of ['light', 'dark'] as const) {
+            expect(BASE_THEME[mode].itemHighlight).toBe('#FFE600');
+            expect(BASE_THEME[mode].itemHighlightForeground).toBe('#000000');
+        }
+    });
+
+    it('Pastel、Mono 与 Warm 沿用各自的强调色对', () => {
+        for (const preset of Object.values(THEME_PRESETS)) {
+            for (const mode of ['light', 'dark'] as const) {
+                expect(preset[mode].itemHighlight).toBe(preset[mode].accent);
+                expect(preset[mode].itemHighlightForeground).toBe(preset[mode].accentForeground);
+            }
+        }
+    });
 });
 
 /** 将阴影值按层拆分（括号感知：var()/calc() 内部的逗号不分层），返回每层的空白分隔 token 序列 */

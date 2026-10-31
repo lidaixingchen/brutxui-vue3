@@ -8,7 +8,7 @@ import {
     THEME_END,
     PATTERN_UTILITIES,
 } from '../../src/tokens/index.js';
-import { BASE_THEME, BRUTAL_COLOR_NAMES } from '../../src/design-tokens.js';
+import { BASE_THEME, BRUTAL_COLOR_NAMES, THEME_PRESETS } from '../../src/design-tokens.js';
 
 describe('TokenStyleCompiler', () => {
     const compiler = new TokenStyleCompiler();
@@ -24,6 +24,10 @@ describe('TokenStyleCompiler', () => {
         expect(result).toContain('.dark {');
         expect(result).toContain(`--brutal-primary: ${BASE_THEME.light.primary};`);
         expect(result).toContain(`--brutal-primary: ${BASE_THEME.dark.primary};`);
+        expect(result).toContain(`--brutal-item-highlight: ${BASE_THEME.light.itemHighlight};`);
+        expect(result).toContain(`--brutal-item-highlight-foreground: ${BASE_THEME.light.itemHighlightForeground};`);
+        expect(result).toContain(`--brutal-item-highlight: ${BASE_THEME.dark.itemHighlight};`);
+        expect(result).toContain(`--brutal-item-highlight-foreground: ${BASE_THEME.dark.itemHighlightForeground};`);
         expect(result).toContain('--shadow-brutal:');
         expect(result).toContain('--z-index-dialog:');
     });
@@ -31,6 +35,8 @@ describe('TokenStyleCompiler', () => {
     it('compileThemeBlock 生成符合 Tailwind v4 规范的 @theme 声明', () => {
         const result = compiler.compileThemeBlock();
         expect(result).toContain('--color-brutal-primary: var(--brutal-primary, #FF6B6B);');
+        expect(result).toContain(`--color-brutal-item-highlight: var(--brutal-item-highlight, ${BASE_THEME.light.itemHighlight});`);
+        expect(result).toContain(`--color-brutal-item-highlight-foreground: var(--brutal-item-highlight-foreground, ${BASE_THEME.light.itemHighlightForeground});`);
         expect(result).toContain('--default-font-family:');
         expect(result).toContain('--shadow-brutal:');
         expect(result).toContain('--ease-brutal-snap:');
@@ -42,6 +48,12 @@ describe('TokenStyleCompiler', () => {
         expect(result).toContain('.dark .theme-pastel, .theme-pastel.dark {');
         expect(result).toContain('.theme-mono {');
         expect(result).toContain('.theme-warm {');
+        for (const preset of Object.values(THEME_PRESETS)) {
+            expect(result).toContain(`--brutal-item-highlight: ${preset.light.itemHighlight};`);
+            expect(result).toContain(`--brutal-item-highlight-foreground: ${preset.light.itemHighlightForeground};`);
+            expect(result).toContain(`--brutal-item-highlight: ${preset.dark.itemHighlight};`);
+            expect(result).toContain(`--brutal-item-highlight-foreground: ${preset.dark.itemHighlightForeground};`);
+        }
     });
 
     it('compileFontStackBlock 生成规范字体栈声明', () => {

@@ -17,6 +17,7 @@ const SEMANTIC_COLOR_PAIRS: ColorPairKey[] = [
     ['primary', 'primaryForeground'],
     ['secondary', 'secondaryForeground'],
     ['accent', 'accentForeground'],
+    ['itemHighlight', 'itemHighlightForeground'],
     ['destructive', 'destructiveForeground'],
     ['success', 'successForeground'],
     ['info', 'infoForeground'],

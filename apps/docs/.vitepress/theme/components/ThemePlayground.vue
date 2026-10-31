@@ -58,6 +58,7 @@ const swatchRoles = [
     { bgKey: 'primary', fgKey: 'primaryForeground', label: 'Primary' },
     { bgKey: 'secondary', fgKey: 'secondaryForeground', label: 'Secondary' },
     { bgKey: 'accent', fgKey: 'accentForeground', label: 'Accent' },
+    { bgKey: 'itemHighlight', fgKey: 'itemHighlightForeground', label: 'Item highlight' },
     { bgKey: 'destructive', fgKey: 'destructiveForeground', label: 'Destructive' },
     { bgKey: 'success', fgKey: 'successForeground', label: 'Success' },
     { bgKey: 'info', fgKey: 'infoForeground', label: 'Info' },

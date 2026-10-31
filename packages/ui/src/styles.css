@@ -18,6 +18,8 @@
     --color-brutal-secondary-foreground: var(--brutal-secondary-foreground, #000000);
     --color-brutal-accent: var(--brutal-accent, #FFE66D);
     --color-brutal-accent-foreground: var(--brutal-accent-foreground, #000000);
+    --color-brutal-item-highlight: var(--brutal-item-highlight, #FFE600);
+    --color-brutal-item-highlight-foreground: var(--brutal-item-highlight-foreground, #000000);
     --color-brutal-destructive: var(--brutal-destructive, #EF476F);
     --color-brutal-destructive-foreground: var(--brutal-destructive-foreground, #000000);
     --color-brutal-success: var(--brutal-success, #7FB069);
@@ -119,6 +121,8 @@
         --brutal-secondary-foreground: #000000;
         --brutal-accent: #FFE66D;
         --brutal-accent-foreground: #000000;
+        --brutal-item-highlight: #FFE600;
+        --brutal-item-highlight-foreground: #000000;
         --brutal-destructive: #EF476F;
         --brutal-destructive-foreground: #000000;
         --brutal-success: #7FB069;
@@ -187,6 +191,8 @@
         --brutal-secondary-foreground: #000000;
         --brutal-accent: #FFE66D;
         --brutal-accent-foreground: #000000;
+        --brutal-item-highlight: #FFE600;
+        --brutal-item-highlight-foreground: #000000;
         --brutal-destructive: #EF476F;
         --brutal-destructive-foreground: #000000;
         --brutal-success: #7FB069;
@@ -250,6 +256,8 @@
         --brutal-secondary-foreground: #1e1e24;
         --brutal-accent: #fbe3b5;
         --brutal-accent-foreground: #1e1e24;
+        --brutal-item-highlight: #fbe3b5;
+        --brutal-item-highlight-foreground: #1e1e24;
         --brutal-destructive: #f3b0b0;
         --brutal-destructive-foreground: #1e1e24;
         --brutal-success: #cce2cb;
@@ -278,6 +286,8 @@
         --brutal-secondary-foreground: #16161e;
         --brutal-accent: #9ac4b6;
         --brutal-accent-foreground: #16161e;
+        --brutal-item-highlight: #9ac4b6;
+        --brutal-item-highlight-foreground: #16161e;
         --brutal-destructive: #db6e60;
         --brutal-destructive-foreground: #16161e;
         --brutal-success: #7cbfa0;
@@ -308,6 +318,8 @@
         --brutal-secondary-foreground: #000000;
         --brutal-accent: #707070;
         --brutal-accent-foreground: #ffffff;
+        --brutal-item-highlight: #707070;
+        --brutal-item-highlight-foreground: #ffffff;
         --brutal-destructive: #333333;
         --brutal-destructive-foreground: #ffffff;
         --brutal-success: #dddddd;
@@ -336,6 +348,8 @@
         --brutal-secondary-foreground: #ffffff;
         --brutal-accent: #888888;
         --brutal-accent-foreground: #000000;
+        --brutal-item-highlight: #888888;
+        --brutal-item-highlight-foreground: #000000;
         --brutal-destructive: #cccccc;
         --brutal-destructive-foreground: #000000;
         --brutal-success: #222222;
@@ -366,6 +380,8 @@
         --brutal-secondary-foreground: #fff8f0;
         --brutal-accent: #f2c078;
         --brutal-accent-foreground: #2d1810;
+        --brutal-item-highlight: #f2c078;
+        --brutal-item-highlight-foreground: #2d1810;
         --brutal-destructive: #c0392b;
         --brutal-destructive-foreground: #fff8f0;
         --brutal-success: #82943e;
@@ -394,6 +410,8 @@
         --brutal-secondary-foreground: #1a1410;
         --brutal-accent: #ffd89b;
         --brutal-accent-foreground: #1a1410;
+        --brutal-item-highlight: #ffd89b;
+        --brutal-item-highlight-foreground: #1a1410;
         --brutal-destructive: #e74c3c;
         --brutal-destructive-foreground: #1a1410;
         --brutal-success: #a3b556;

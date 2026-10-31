@@ -20,6 +20,7 @@ export type ThemeMode = 'light' | 'dark';
  */
 const PALETTE_BLACK = '#000000';
 const PALETTE_YELLOW = '#FFE66D';
+const PALETTE_LEMON_YELLOW = '#FFE600';
 
 export interface ThemeTokens {
     borderWidth: string;
@@ -36,6 +37,8 @@ export interface ThemeTokens {
     secondaryForeground: string;
     accent: string;
     accentForeground: string;
+    itemHighlight: string;
+    itemHighlightForeground: string;
     destructive: string;
     destructiveForeground: string;
     success: string;
@@ -76,6 +79,8 @@ export const BASE_THEME: Readonly<Record<ThemeMode, Readonly<ThemeTokens>>> = Ob
         secondaryForeground: PALETTE_BLACK,
         accent: PALETTE_YELLOW,
         accentForeground: PALETTE_BLACK,
+        itemHighlight: PALETTE_LEMON_YELLOW,
+        itemHighlightForeground: PALETTE_BLACK,
         destructive: '#EF476F',
         destructiveForeground: PALETTE_BLACK,
         success: '#7FB069',
@@ -117,6 +122,8 @@ export const BASE_THEME: Readonly<Record<ThemeMode, Readonly<ThemeTokens>>> = Ob
         secondaryForeground: PALETTE_BLACK,
         accent: PALETTE_YELLOW,
         accentForeground: PALETTE_BLACK,
+        itemHighlight: PALETTE_LEMON_YELLOW,
+        itemHighlightForeground: PALETTE_BLACK,
         destructive: '#EF476F',
         destructiveForeground: PALETTE_BLACK,
         success: '#7FB069',
@@ -160,6 +167,8 @@ export const TOKEN_TO_CSS_VAR: Record<keyof ThemeTokens, string> = {
     secondaryForeground: 'brutal-secondary-foreground',
     accent: 'brutal-accent',
     accentForeground: 'brutal-accent-foreground',
+    itemHighlight: 'brutal-item-highlight',
+    itemHighlightForeground: 'brutal-item-highlight-foreground',
     destructive: 'brutal-destructive',
     destructiveForeground: 'brutal-destructive-foreground',
     success: 'brutal-success',
@@ -191,6 +200,21 @@ export interface ThemePresetOverrides {
     dark: Partial<ThemeTokens>;
 }
 
+const PRESET_ACCENT_PALETTE = {
+    pastel: {
+        light: { background: '#fbe3b5', foreground: '#1e1e24' },
+        dark: { background: '#9ac4b6', foreground: '#16161e' },
+    },
+    mono: {
+        light: { background: '#707070', foreground: '#ffffff' },
+        dark: { background: '#888888', foreground: '#000000' },
+    },
+    warm: {
+        light: { background: '#f2c078', foreground: '#2d1810' },
+        dark: { background: '#ffd89b', foreground: '#1a1410' },
+    },
+} as const;
+
 export const THEME_PRESETS: Readonly<Record<string, Readonly<ThemePresetOverrides>>> = Object.freeze({
     pastel: Object.freeze({
         name: 'pastel',
@@ -208,8 +232,10 @@ export const THEME_PRESETS: Readonly<Record<string, Readonly<ThemePresetOverride
             primaryForeground: '#1e1e24',
             secondary: '#c5ded9',
             secondaryForeground: '#1e1e24',
-            accent: '#fbe3b5',
-            accentForeground: '#1e1e24',
+            accent: PRESET_ACCENT_PALETTE.pastel.light.background,
+            accentForeground: PRESET_ACCENT_PALETTE.pastel.light.foreground,
+            itemHighlight: PRESET_ACCENT_PALETTE.pastel.light.background,
+            itemHighlightForeground: PRESET_ACCENT_PALETTE.pastel.light.foreground,
             destructive: '#f3b0b0',
             destructiveForeground: '#1e1e24',
             success: '#cce2cb',
@@ -235,8 +261,10 @@ export const THEME_PRESETS: Readonly<Record<string, Readonly<ThemePresetOverride
             primaryForeground: '#16161e',
             secondary: '#e0b8b0',
             secondaryForeground: '#16161e',
-            accent: '#9ac4b6',
-            accentForeground: '#16161e',
+            accent: PRESET_ACCENT_PALETTE.pastel.dark.background,
+            accentForeground: PRESET_ACCENT_PALETTE.pastel.dark.foreground,
+            itemHighlight: PRESET_ACCENT_PALETTE.pastel.dark.background,
+            itemHighlightForeground: PRESET_ACCENT_PALETTE.pastel.dark.foreground,
             destructive: '#db6e60',
             destructiveForeground: '#16161e',
             success: '#7cbfa0',
@@ -266,8 +294,10 @@ export const THEME_PRESETS: Readonly<Record<string, Readonly<ThemePresetOverride
             primaryForeground: '#ffffff',
             secondary: '#ffffff',
             secondaryForeground: '#000000',
-            accent: '#707070',
-            accentForeground: '#ffffff',
+            accent: PRESET_ACCENT_PALETTE.mono.light.background,
+            accentForeground: PRESET_ACCENT_PALETTE.mono.light.foreground,
+            itemHighlight: PRESET_ACCENT_PALETTE.mono.light.background,
+            itemHighlightForeground: PRESET_ACCENT_PALETTE.mono.light.foreground,
             destructive: '#333333',
             destructiveForeground: '#ffffff',
             success: '#dddddd',
@@ -293,8 +323,10 @@ export const THEME_PRESETS: Readonly<Record<string, Readonly<ThemePresetOverride
             primaryForeground: '#000000',
             secondary: '#000000',
             secondaryForeground: '#ffffff',
-            accent: '#888888',
-            accentForeground: '#000000',
+            accent: PRESET_ACCENT_PALETTE.mono.dark.background,
+            accentForeground: PRESET_ACCENT_PALETTE.mono.dark.foreground,
+            itemHighlight: PRESET_ACCENT_PALETTE.mono.dark.background,
+            itemHighlightForeground: PRESET_ACCENT_PALETTE.mono.dark.foreground,
             destructive: '#cccccc',
             destructiveForeground: '#000000',
             success: '#222222',
@@ -324,8 +356,10 @@ export const THEME_PRESETS: Readonly<Record<string, Readonly<ThemePresetOverride
             primaryForeground: '#2d1810',
             secondary: '#856a44',
             secondaryForeground: '#fff8f0',
-            accent: '#f2c078',
-            accentForeground: '#2d1810',
+            accent: PRESET_ACCENT_PALETTE.warm.light.background,
+            accentForeground: PRESET_ACCENT_PALETTE.warm.light.foreground,
+            itemHighlight: PRESET_ACCENT_PALETTE.warm.light.background,
+            itemHighlightForeground: PRESET_ACCENT_PALETTE.warm.light.foreground,
             destructive: '#c0392b',
             destructiveForeground: '#fff8f0',
             success: '#82943e',
@@ -351,8 +385,10 @@ export const THEME_PRESETS: Readonly<Record<string, Readonly<ThemePresetOverride
             primaryForeground: '#1a1410',
             secondary: '#b8956a',
             secondaryForeground: '#1a1410',
-            accent: '#ffd89b',
-            accentForeground: '#1a1410',
+            accent: PRESET_ACCENT_PALETTE.warm.dark.background,
+            accentForeground: PRESET_ACCENT_PALETTE.warm.dark.foreground,
+            itemHighlight: PRESET_ACCENT_PALETTE.warm.dark.background,
+            itemHighlightForeground: PRESET_ACCENT_PALETTE.warm.dark.foreground,
             destructive: '#e74c3c',
             destructiveForeground: '#1a1410',
             success: '#a3b556',

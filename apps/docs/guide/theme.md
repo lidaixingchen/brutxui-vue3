@@ -33,6 +33,8 @@ BrutxUI 使用 CSS 自定义属性（设计令牌）来控制新粗野主义系�
 | `--brutal-secondary-foreground` | `#000000` | `#000000` | 辅助色前景文字（高对比黑字） |
 | `--brutal-accent` | `#FFE66D` | `#FFE66D` | 强调色（黄色） |
 | `--brutal-accent-foreground` | `#000000` | `#000000` | 强调色前景文字（高对比黑字） |
+| `--brutal-item-highlight` | `#FFE600` | `#FFE600` | 集合当前项高亮 |
+| `--brutal-item-highlight-foreground` | `#000000` | `#000000` | 集合高亮前景 |
 | `--brutal-destructive` | `#EF476F` | `#EF476F` | 危险/错误颜色 |
 | `--brutal-destructive-foreground` | `#000000` | `#000000` | 危险色前景文字（高对比黑字） |
 | `--brutal-success` | `#7FB069` | `#7FB069` | 成功颜色 |
@@ -57,6 +59,31 @@ BrutxUI 使用 CSS 自定义属性（设计令牌）来控制新粗野主义系�
 | `--brutal-yellow` | `#FFE66D` | `#FFE66D` | 品牌标准黄色 |
 
 ---
+
+## 集合选项高亮
+
+Select、Command、Combobox、Cascader、TreeSelect、TreeView、Transfer 与 DropdownMenu 的当前项使用独立高亮色对。Classic 明暗模式默认均为 `#FFE600` 配 `#000000`；Pastel、Mono、Warm 分别使用自身强调色对。选择标记与键盘焦点分别表达，高亮保持行位置和字重稳定。
+
+通过以下变量让集合高亮跟随自定义强调色：
+
+```css
+.theme-custom {
+    --brutal-item-highlight: var(--brutal-accent);
+    --brutal-item-highlight-foreground: var(--brutal-accent-foreground);
+}
+```
+
+也可以通过公开主题接口配置：
+
+```ts
+import { useTheme } from 'brutx-ui-vue'
+
+const { setCustomVariable } = useTheme()
+setCustomVariable('--brutal-item-highlight', 'var(--brutal-accent)')
+setCustomVariable('--brutal-item-highlight-foreground', 'var(--brutal-accent-foreground)')
+```
+
+已有主题只覆盖 `accent` 时，应同时配置上述新色对；内部完整 `ThemeTokens` 对象需提供 `itemHighlight` 与 `itemHighlightForeground` 字段。文字对比度至少为 4.5:1，并在主题实验室分别核验明暗模式。
 
 ## 主题预设
 

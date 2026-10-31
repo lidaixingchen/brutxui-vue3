@@ -24,6 +24,8 @@ export type ColorTokenKey = Extract<
     | 'secondaryForeground'
     | 'accent'
     | 'accentForeground'
+    | 'itemHighlight'
+    | 'itemHighlightForeground'
     | 'destructive'
     | 'destructiveForeground'
     | 'success'
@@ -130,6 +132,14 @@ const contrastPairs: ContrastPair[] = [
         usage: 'accentForeground / accent',
         foregroundToken: 'accentForeground',
         backgroundToken: 'accent',
+        threshold: CONTRAST_RATIO_THRESHOLDS.AA,
+    },
+    {
+        id: 'item-highlight',
+        label: '集合项高亮文本',
+        usage: 'itemHighlightForeground / itemHighlight',
+        foregroundToken: 'itemHighlightForeground',
+        backgroundToken: 'itemHighlight',
         threshold: CONTRAST_RATIO_THRESHOLDS.AA,
     },
     {
@@ -251,6 +261,8 @@ export const colorControls: { key: ColorTokenKey; label: string }[] = [
     { key: 'secondaryForeground', label: 'Secondary FG' },
     { key: 'accent', label: 'Accent' },
     { key: 'accentForeground', label: 'Accent FG' },
+    { key: 'itemHighlight', label: 'Item highlight' },
+    { key: 'itemHighlightForeground', label: 'Item highlight FG' },
     { key: 'destructive', label: 'Destructive' },
     { key: 'destructiveForeground', label: 'Destructive FG' },
     { key: 'success', label: 'Success' },

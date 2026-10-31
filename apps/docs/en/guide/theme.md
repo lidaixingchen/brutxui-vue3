@@ -33,6 +33,8 @@ All foundational design tokens are prefixed with `--brutal-` and defined uniform
 | `--brutal-secondary-foreground` | `#000000` | `#000000` | Secondary foreground text (High-contrast black) |
 | `--brutal-accent` | `#FFE66D` | `#FFE66D` | Accent color (Yellow) |
 | `--brutal-accent-foreground` | `#000000` | `#000000` | Accent foreground text (High-contrast black) |
+| `--brutal-item-highlight` | `#FFE600` | `#FFE600` | Current collection item |
+| `--brutal-item-highlight-foreground` | `#000000` | `#000000` | Highlighted item foreground |
 | `--brutal-destructive` | `#EF476F` | `#EF476F` | Destructive / error color |
 | `--brutal-destructive-foreground` | `#000000` | `#000000` | Destructive foreground text (High-contrast black) |
 | `--brutal-success` | `#7FB069` | `#7FB069` | Success color |
@@ -57,6 +59,31 @@ All foundational design tokens are prefixed with `--brutal-` and defined uniform
 | `--brutal-yellow` | `#FFE66D` | `#FFE66D` | Brand pure yellow |
 
 ---
+
+## Collection item highlighting
+
+Select, Command, Combobox, Cascader, TreeSelect, TreeView, Transfer, and DropdownMenu use a dedicated current-item color pair. Classic defaults to `#FFE600` with `#000000` in both modes. Pastel, Mono, and Warm use their own accent pairs. Selection marks and keyboard focus remain distinct, and highlighting preserves geometry and font weight.
+
+To make collection highlights follow your custom accent:
+
+```css
+.theme-custom {
+    --brutal-item-highlight: var(--brutal-accent);
+    --brutal-item-highlight-foreground: var(--brutal-accent-foreground);
+}
+```
+
+You can also configure the pair through the public theme API:
+
+```ts
+import { useTheme } from 'brutx-ui-vue'
+
+const { setCustomVariable } = useTheme()
+setCustomVariable('--brutal-item-highlight', 'var(--brutal-accent)')
+setCustomVariable('--brutal-item-highlight-foreground', 'var(--brutal-accent-foreground)')
+```
+
+Themes that customize only `accent` should also configure this new pair. Complete internal `ThemeTokens` objects must provide `itemHighlight` and `itemHighlightForeground`. Keep text contrast at least 4.5:1 and verify both modes in the Theme Playground.
 
 ## Theme Presets
 
