@@ -303,8 +303,7 @@ jobs:
               with:
                   node-version: 22
                   cache: pnpm
-            - run: pnpm install --frozen-lockfile --prefer-offline
-            - run: pnpm --filter brutx-ui-vue generate
+            - run: pnpm --filter brutx-ui-vue... install --frozen-lockfile --prefer-offline
             - name: Download source coverage measurements
               uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
               with:
@@ -355,6 +354,7 @@ jobs:
         env:
             TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
             TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+            TURBO_CACHE_POLICY: ${{ secrets.TURBO_TOKEN != '' && vars.TURBO_TEAM != '' && 'remote:rw' || 'local:rw' }}
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
@@ -373,6 +373,7 @@ jobs:
             - run: pnpm install --frozen-lockfile --prefer-offline
 
             - name: Cache turbo local build cache
+              if: env.TURBO_CACHE_POLICY == 'local:rw'
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
                   path: .turbo/cache
@@ -403,7 +404,7 @@ jobs:
               run: pnpm --filter brutx-ui-vue exec playwright install-deps chromium
 
             - name: Build UI artifact for browser and resource checks
-              run: pnpm exec turbo run build:artifact --filter=brutx-ui-vue
+              run: pnpm exec turbo run build:artifact --filter=brutx-ui-vue --cache="$TURBO_CACHE_POLICY"
 
             - name: Browser tests
               if: needs.changes.outputs.browser == 'true'
