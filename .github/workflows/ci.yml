@@ -158,15 +158,17 @@ jobs:
               if: needs.changes.outputs.generated == 'true'
               run: pnpm check:generated
 
+            - name: Prepare generated inputs for source checks
+              if: needs.changes.outputs.ui == 'true' || needs.changes.outputs.cli == 'true' || needs.changes.outputs.registry == 'true' || needs.changes.outputs.tooling == 'true' || needs.changes.outputs.generated == 'true'
+              run: pnpm --filter brutx-ui-vue generate
+
             - name: Verify code and spec contracts (parallel)
               if: needs.changes.outputs.ui == 'true' || needs.changes.outputs.cli == 'true' || needs.changes.outputs.registry == 'true'
               run: pnpm check:contracts
 
             - name: Test current generation and tooling contracts
               if: needs.changes.outputs.tooling == 'true' || needs.changes.outputs.generated == 'true' || needs.changes.outputs.ui == 'true'
-              run: |
-                  pnpm --filter brutx-ui-vue generate
-                  pnpm test:tooling
+              run: pnpm test:tooling
 
             - name: Verify documentation integrity (parallel)
               if: needs.changes.outputs.docs == 'true'
