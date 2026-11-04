@@ -1,5 +1,4 @@
 import { config } from '@vue/test-utils'
-import axeCore from 'axe-core'
 import type { AxeResults } from 'axe-core'
 import { afterAll, vi } from 'vitest'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
@@ -63,6 +62,7 @@ const AXE_OPTIONS = {
  * 降低 axe 误报。注意克隆检测的 nodes[].target 指向克隆节点，断言定位需按 html 匹配。
  */
 export async function axe(element: Element): Promise<AxeResults> {
+    const axeCore = (await import('axe-core')).default
     if (document.contains(element)) {
         return axeCore.run(element, AXE_OPTIONS)
     }

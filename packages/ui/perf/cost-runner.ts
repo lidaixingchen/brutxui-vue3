@@ -891,11 +891,20 @@ async function serveDirectory(root: string): Promise<{ server: ReturnType<typeof
             response.writeHead(404).end('not found')
         }
     })
-    server.listen(MEASUREMENT_PROFILE.serverPort, '127.0.0.1')
-    await once(server, 'listening')
-    const address = server.address()
-    if (!address || typeof address === 'string') throw new Error('无法获取成本 fixture HTTP 端口')
-    return { server, url: `http://127.0.0.1:${address.port}` }
+    try {
+        server.listen(MEASUREMENT_PROFILE.serverPort, '127.0.0.1')
+        await once(server, 'listening')
+        const address = server.address()
+        if (!address || typeof address === 'string') throw new Error('无法获取成本 fixture HTTP 端口')
+        return { server, url: `http://127.0.0.1:${address.port}` }
+    } catch (error) {
+        if (server.listening) {
+            await new Promise<void>((resolve, reject) => {
+                server.close(closeError => closeError ? reject(closeError) : resolve())
+            })
+        }
+        throw error
+    }
 }
 
 function isZeroResourceSnapshot(snapshot: ResourceSnapshot): boolean {
@@ -966,13 +975,13 @@ async function removeFixturePath(filePath: string): Promise<void> {
 }
 
 async function measureBrowserProfile(
+    browser: Awaited<ReturnType<typeof chromium.launch>>,
     baseUrl: string,
     profile: BrowserProfile,
 ): Promise<BrowserRecord> {
-    const executablePath = browserExecutablePath()
-    const browser = await chromium.launch({ headless: true, executablePath })
+    const context = await browser.newContext()
     try {
-        const page = await browser.newPage()
+        const page = await context.newPage()
         await page.emulateMedia({ reducedMotion: profile.reducedMotion })
         const url = `${baseUrl}/?effect=${profile.effect}&trigger=${profile.trigger}&lifecycle=${profile.lifecycle}&interval=${MEASUREMENT_PROFILE.autoplayIntervalMs}`
         await page.goto(url, { waitUntil: 'load' })
@@ -1071,7 +1080,7 @@ async function measureBrowserProfile(
             },
         }
     } finally {
-        await browser.close()
+        await context.close()
     }
 }
 
@@ -1094,6 +1103,7 @@ async function main(): Promise<void> {
     await mkdir(join(outputDir, 'build-logs'), { recursive: true })
     const fixture = await createFixture(artifactPath, outputDir)
     let server: ReturnType<typeof createServer> | undefined
+    let browser: Awaited<ReturnType<typeof chromium.launch>> | undefined
     try {
         const bundles: BundleRecord[] = []
         for (const scenario of scenarios) {
@@ -1115,9 +1125,10 @@ async function main(): Promise<void> {
         if (!options.skipBrowser && browserServer) {
             const served = await serveDirectory(browserServer.outDir)
             server = served.server
+            browser = await chromium.launch({ headless: true, executablePath: browserExecutable })
             for (const profile of BROWSER_PROFILES) {
                 console.log(`[cost] browser ${profile.id}`)
-                browserRecords.push(await measureBrowserProfile(served.url, profile))
+                browserRecords.push(await measureBrowserProfile(browser, served.url, profile))
             }
         }
 
@@ -1200,8 +1211,20 @@ async function main(): Promise<void> {
             throw new Error('浏览器资源断言失败，全部样本已保存在成本结果中')
         }
     } finally {
-        server?.close()
-        if (!options.keepFixture) await removeFixturePath(fixture.root)
+        try {
+            await browser?.close()
+        } finally {
+            try {
+                const activeServer = server
+                if (activeServer?.listening) {
+                    await new Promise<void>((resolve, reject) => {
+                        activeServer.close(error => error ? reject(error) : resolve())
+                    })
+                }
+            } finally {
+                if (!options.keepFixture) await removeFixturePath(fixture.root)
+            }
+        }
     }
 }
 
