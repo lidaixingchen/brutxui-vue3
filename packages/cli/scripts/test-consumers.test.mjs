@@ -56,6 +56,19 @@ test('consumer selector keeps artifact input separate from matrix selection', ()
     assert.deepEqual(parsed.tests, ['C1']);
 });
 
+test('parallel consumer selection preserves default and all matrix semantics', () => {
+    assert.equal(parseConsumerArguments([]).parallel, false);
+
+    const defaultParallel = parseConsumerArguments(['--parallel']);
+    assert.equal(defaultParallel.parallel, true);
+    assert.deepEqual(defaultParallel.tests, ['U1', 'C1']);
+
+    const allParallel = parseConsumerArguments(['--parallel', '--all', '--artifacts', '/tmp/candidate']);
+    assert.equal(allParallel.parallel, true);
+    assert.deepEqual(allParallel.tests, ['U1', 'C1', 'C3']);
+    assert.equal(allParallel.artifactsPath, '/tmp/candidate');
+});
+
 test('private consumer type checks derive composables from the API contract', () => {
     const privateComposableNames = readPrivateComposableNames();
 
@@ -134,6 +147,10 @@ const invalidSelectorCases = [
     {
         args: ['--all', '--all'],
         message: /Duplicate --all option/,
+    },
+    {
+        args: ['--parallel', '--parallel'],
+        message: /Duplicate --parallel option/,
     },
     {
         args: ['--artifacts'],

@@ -63,6 +63,7 @@ jobs:
     quality:
         name: Quality (build + typecheck + lint + validate)
         needs: changes
+        if: needs.changes.outputs.ui == 'true' || needs.changes.outputs.cli == 'true' || needs.changes.outputs.registry == 'true' || needs.changes.outputs.tooling == 'true'
         runs-on: ubuntu-latest
         env:
             TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
@@ -70,21 +71,7 @@ jobs:
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
-                  # Changeset 与提交规范检查需要 PR 提交范围。
-                  fetch-depth: 0
-
-            - name: Check changeset presence (PR only)
-              if: github.event_name == 'pull_request' && !contains(github.event.pull_request.title, '[no-changeset]')
-              run: |
-                  base="origin/${{ github.base_ref }}"
-                  git fetch origin "${{ github.base_ref }}" --depth=1 || true
-                  added=$(git diff --name-only "$base...HEAD" -- '.changeset/*.md' ':!.changeset/README.md' | wc -l)
-                  code_changed=$(git diff --name-only "$base...HEAD" -- 'packages/ui/src/' 'packages/cli/src/' 'packages/ui/package.json' 'packages/cli/package.json' | wc -l)
-                  if [ "$code_changed" -gt 0 ] && [ "$added" -eq 0 ]; then
-                    echo "::error::代码变更未声明 changeset。请运行 'pnpm changeset' 生成变更说明；纯文档/CI 改动请在 PR 标题加 '[no-changeset]'。"
-                    exit 1
-                  fi
-                  echo "✓ Changeset 检查通过（$added 个新增 changeset）"
+                  fetch-depth: 1
 
             - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
 
@@ -108,10 +95,6 @@ jobs:
                       ${{ runner.os }}-turbo-node22-quality-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
                       ${{ runner.os }}-turbo-node22-quality-
 
-            - name: Verify all generated and mixed files (read-only)
-              if: needs.changes.outputs.generated == 'true'
-              run: pnpm check:generated
-
             - name: Build and verify selected package graph
               env:
                   UI: ${{ needs.changes.outputs.ui }}
@@ -127,6 +110,54 @@ jobs:
                     pnpm exec turbo run build:artifact typecheck:source lint:source validate "${filters[@]}"
                   fi
 
+            - name: Public type consumer check
+              if: needs.changes.outputs.ui == 'true'
+              run: pnpm --filter brutx-ui-vue test:types
+
+            - name: Verify bundle isolation
+              if: needs.changes.outputs.ui == 'true'
+              run: pnpm --filter brutx-ui-vue check:isolation
+
+            - name: Package smoke test (exports subpaths + consumer resolution)
+              if: needs.changes.outputs.ui == 'true'
+              run: pnpm --filter brutx-ui-vue test:package
+
+            - name: Report bundle sizes and check tree-shaken budget
+              if: needs.changes.outputs.ui == 'true'
+              run: pnpm --filter brutx-ui-vue size
+
+    tooling:
+        name: Tooling and documentation checks
+        needs: changes
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 0
+            - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+            - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+              with:
+                  node-version: 22
+                  cache: pnpm
+            - run: pnpm install --frozen-lockfile --prefer-offline
+
+            - name: Check changeset presence (PR only)
+              if: github.event_name == 'pull_request' && !contains(github.event.pull_request.title, '[no-changeset]')
+              run: |
+                  base="origin/${{ github.base_ref }}"
+                  git fetch origin "${{ github.base_ref }}" --depth=1 || true
+                  added=$(git diff --name-only "$base...HEAD" -- '.changeset/*.md' ':!.changeset/README.md' | wc -l)
+                  code_changed=$(git diff --name-only "$base...HEAD" -- 'packages/ui/src/' 'packages/cli/src/' 'packages/ui/package.json' 'packages/cli/package.json' | wc -l)
+                  if [ "$code_changed" -gt 0 ] && [ "$added" -eq 0 ]; then
+                    echo "::error::代码变更未声明 changeset。请运行 'pnpm changeset' 生成变更说明；纯文档/CI 改动请在 PR 标题加 '[no-changeset]'。"
+                    exit 1
+                  fi
+                  echo "✓ Changeset 检查通过（$added 个新增 changeset）"
+
+            - name: Verify all generated and mixed files (read-only)
+              if: needs.changes.outputs.generated == 'true'
+              run: pnpm check:generated
+
             - name: Verify code and spec contracts (parallel)
               if: needs.changes.outputs.ui == 'true' || needs.changes.outputs.cli == 'true' || needs.changes.outputs.registry == 'true'
               run: pnpm check:contracts
@@ -137,29 +168,13 @@ jobs:
                   pnpm --filter brutx-ui-vue generate
                   pnpm test:tooling
 
-            - name: Public type consumer check
-              if: needs.changes.outputs.ui == 'true'
-              run: pnpm --filter brutx-ui-vue test:types
-
-            - name: Verify bundle isolation
-              if: needs.changes.outputs.ui == 'true'
-              run: pnpm --filter brutx-ui-vue check:isolation
-
             - name: Verify documentation integrity (parallel)
               if: needs.changes.outputs.docs == 'true'
               run: pnpm check:docs
 
-            - name: Package smoke test (exports subpaths + consumer resolution)
-              if: needs.changes.outputs.ui == 'true'
-              run: pnpm --filter brutx-ui-vue test:package
-
             - name: Release verification and coordinator tests
               if: needs.changes.outputs.release == 'true'
               run: pnpm test:release
-
-            - name: Report bundle sizes and check tree-shaken budget
-              if: needs.changes.outputs.ui == 'true'
-              run: pnpm --filter brutx-ui-vue size
 
             - name: Commitlint on PR commits
               if: github.event_name == 'pull_request'
@@ -535,7 +550,7 @@ jobs:
               run: node --input-type=module -e "import { packCandidateArtifacts } from './scripts/testing/consumer-artifacts.mjs'; packCandidateArtifacts(process.env.RUNNER_TEMP + '/brutx-consumers')"
 
             - name: Run consumer matrix tests
-              run: pnpm test:consumers --all --artifacts "$RUNNER_TEMP/brutx-consumers"
+              run: pnpm test:consumers --parallel --all --artifacts "$RUNNER_TEMP/brutx-consumers"
 
             - name: Upload consumer evidence
               if: always()
@@ -574,10 +589,29 @@ jobs:
             - name: Build and typecheck docs
               run: pnpm exec turbo run build:artifact typecheck:source --filter=docs
 
+            - name: Prepare documentation deployment artifact
+              if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+              id: docs-artifact
+              run: |
+                  node --input-type=module <<'NODE'
+                  import { appendFileSync } from 'node:fs'
+                  import { DOCS_SITE_ARTIFACT_NAME } from './scripts/ci/docs-deployment.mjs'
+                  appendFileSync(process.env.GITHUB_OUTPUT, `name=${DOCS_SITE_ARTIFACT_NAME}\n`)
+                  NODE
+            - name: Upload documentation site for deployment
+              if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+              uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+              with:
+                  name: ${{ steps.docs-artifact.outputs.name }}
+                  path: apps/docs/.vitepress/dist
+                  include-hidden-files: true
+                  if-no-files-found: error
+                  overwrite: true
+
     ci-gate:
         name: ${{ github.event_name == 'workflow_dispatch' && 'CI Timing (selected checks)' || 'CI Gate (all checks passed)' }}
         if: always()
-        needs: [changes, quality, test, ui-test, coverage-shard, coverage, browser, integration, consumers, site]
+        needs: [changes, quality, tooling, test, ui-test, coverage-shard, coverage, browser, integration, consumers, site]
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -588,15 +622,9 @@ jobs:
                   CLASSIFICATION_RESULT: ${{ needs.changes.result }}
               run: |
                   node --input-type=module <<'NODE'
-                  import { evaluateGate } from './scripts/ci/evaluate-gate.mjs'
+                  import { evaluateGate, selectCiChecks } from './scripts/ci/evaluate-gate.mjs'
                   const flags = JSON.parse(process.env.FLAGS || '{}')
-                  const selected = ['quality']
-                  if (flags.ui || flags.cli || flags.registry || flags.tooling) selected.push('test')
-                  if (flags.ui) selected.push('ui-test', 'coverage-shard', 'coverage')
-                  if (flags.browser || flags.cost) selected.push('browser')
-                  if (flags.cli) selected.push('integration')
-                  if (flags.consumers) selected.push('consumers')
-                  if (flags.site) selected.push('site')
+                  const selected = selectCiChecks(flags)
                   const result = evaluateGate({ classificationResult: process.env.CLASSIFICATION_RESULT, selected, needs: JSON.parse(process.env.RESULTS) })
                   console.log(JSON.stringify(result, null, 2))
                   if (!result.passed) process.exitCode = 1

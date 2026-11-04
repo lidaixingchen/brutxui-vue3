@@ -13,6 +13,12 @@ import {
     rmWithRetry,
     summarizeCandidateArtifacts,
 } from '../../../scripts/testing/consumer-artifacts.mjs';
+import {
+    CONSUMER_RESULTS_PATH_ENV,
+    MAX_CONSUMER_CONCURRENCY,
+    registerConsumerMatrixSignalHandlers,
+    runConsumerMatrix,
+} from '../../../scripts/testing/consumer-matrix.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -56,10 +62,6 @@ const C1_BASELINE_MISSING_MODULE_COMPONENT = 'transfer';
 const C1_BASELINE_MISSING_MODULE_PATH = 'components/ui/transfer/transfer-variants.ts';
 const PUBLIC_COMPONENT_INDEX_FILENAME = 'index.ts';
 const COMPOSABLE_MODULE_PREFIX = 'composable:';
-const SIGNAL_EXIT_CODES = Object.freeze({
-    SIGINT: 130,
-    SIGTERM: 143,
-});
 const CONSUMER_VERSIONS = Object.freeze({
     vue: '3.5.35',
     classVarianceAuthority: '0.7.1',
@@ -86,15 +88,7 @@ const CONSUMER_VERSIONS = Object.freeze({
 const CONSUMER_NPMRC = 'ignore-scripts=true\nconfirmModulesPurge=false\nlink-workspace-packages=false\nprefer-workspace-packages=false\n';
 
 const processManager = new ProcessTreeManager();
-
-process.on('SIGINT', async () => {
-    await processManager.cleanupAll();
-    process.exit(SIGNAL_EXIT_CODES.SIGINT);
-});
-process.on('SIGTERM', async () => {
-    await processManager.cleanupAll();
-    process.exit(SIGNAL_EXIT_CODES.SIGTERM);
-});
+registerConsumerMatrixSignalHandlers(processManager);
 
 function consumerEnv(overrides = {}) {
     return {
@@ -193,11 +187,20 @@ function parseConsumerArguments(args = []) {
     }
 
     let runAll = false;
+    let parallel = false;
     let filter;
     let artifactsPath;
 
     for (let index = 0; index < args.length; index += 1) {
         const argument = args[index];
+        if (argument === '--parallel') {
+            if (parallel) {
+                throw new Error('Duplicate --parallel option.');
+            }
+            parallel = true;
+            continue;
+        }
+
         if (argument === '--all') {
             if (runAll) {
                 throw new Error('Duplicate --all option.');
@@ -253,6 +256,7 @@ function parseConsumerArguments(args = []) {
 
     return Object.freeze({
         runAll,
+        parallel,
         filter,
         artifactsPath,
         tests: Object.freeze(tests),
@@ -1260,6 +1264,52 @@ export default defineConfig({
     );
 }
 
+function readParallelResult(outcome, artifactSummary) {
+    let result;
+    if (outcome.resultsPath && fs.existsSync(outcome.resultsPath)) {
+        try {
+            const report = JSON.parse(fs.readFileSync(outcome.resultsPath, 'utf-8'));
+            result = report.results?.find(candidate => candidate.id === outcome.id);
+        } catch (error) {
+            return {
+                id: outcome.id,
+                description: 'Isolated consumer process result could not be read.',
+                durationMs: 0,
+                success: false,
+                artifactSummary,
+                started: outcome.started,
+                exitCode: outcome.exitCode,
+                signal: outcome.signal,
+                error: error.message,
+            };
+        }
+    }
+
+    if (result && result.success && outcome.exitCode === 0) {
+        return {
+            ...result,
+            started: outcome.started,
+            exitCode: outcome.exitCode,
+            signal: outcome.signal,
+        };
+    }
+
+    return {
+        ...(result ?? {}),
+        id: outcome.id,
+        description: result?.description ?? 'Isolated consumer process did not complete successfully.',
+        durationMs: result?.durationMs ?? 0,
+        success: false,
+        artifactSummary,
+        started: outcome.started,
+        exitCode: outcome.exitCode,
+        signal: outcome.signal,
+        error: outcome.error ?? (outcome.started
+            ? `Consumer process exited with code ${outcome.exitCode ?? 'unknown'}${outcome.signal ? ` (${outcome.signal})` : ''}.`
+            : 'Consumer process was not started after another matrix failed.'),
+    };
+}
+
 async function main() {
     const options = parseConsumerArguments(process.argv.slice(2));
     console.log('=== [test-consumers] Starting Real Consumer Matrix Verification ===');
@@ -1281,14 +1331,39 @@ async function main() {
         console.log(`[test-consumers] Shared candidate summary: ${JSON.stringify(artifactSummary)}`);
         console.log(`[test-consumers] Selected consumer matrices: ${options.tests.join(', ')}`);
 
-        const runners = { U1: runU1, C1: runC1, C3: runC3 };
-        const results = [];
-        for (const testId of options.tests) {
-            results.push(await runners[testId](manifest, artifactSummary));
+        let results;
+        if (options.parallel) {
+            const parallelOutputDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'brutx-consumer-parallel-'));
+            try {
+                const evidenceDirectory = process.env.BRUTX_CONSUMER_EVIDENCE_DIR
+                    ?? path.join(path.dirname(manifest.packages['brutx-ui-vue'].tarballPath), 'consumers');
+                console.log(`[test-consumers] Running isolated consumer processes (max concurrency ${MAX_CONSUMER_CONCURRENCY})...`);
+                const outcomes = await runConsumerMatrix({
+                    tests: options.tests,
+                    scriptPath: __filename,
+                    artifactsPath: manifest.manifestPath ?? artifactsDir,
+                    evidenceDirectory,
+                    resultsDirectory: path.join(parallelOutputDirectory, 'results'),
+                    processManager,
+                });
+                results = outcomes.map(outcome => readParallelResult(outcome, artifactSummary));
+            } finally {
+                await rmWithRetry(parallelOutputDirectory);
+            }
+        } else {
+            const runners = { U1: runU1, C1: runC1, C3: runC3 };
+            results = [];
+            for (const testId of options.tests) {
+                results.push(await runners[testId](manifest, artifactSummary));
+            }
         }
 
         const totalDuration = Date.now() - startTime;
-        writeJson(path.join(path.dirname(manifest.packages['brutx-ui-vue'].tarballPath), 'consumer-results.json'), {
+        const canonicalResultsPath = path.join(path.dirname(manifest.packages['brutx-ui-vue'].tarballPath), 'consumer-results.json');
+        const resultsPath = options.parallel
+            ? canonicalResultsPath
+            : process.env[CONSUMER_RESULTS_PATH_ENV] ?? canonicalResultsPath;
+        writeJson(resultsPath, {
             artifactSummary,
             results,
             totalDurationMs: totalDuration,

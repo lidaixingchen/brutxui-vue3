@@ -46,7 +46,7 @@ git push origin main → 等待同一提交 CI 成功 → git push origin v<vers
 | `pnpm changelog` | 单独生成根 `CHANGELOG.md` 最新版本段（`release:prepare` 已内置，通常无需手动） | 根目录 |
 | `pnpm changelog:dry` | 预览即将生成的 changelog 内容，不写入文件 | 根目录 |
 | `pnpm test:release` | 发布状态机协调器与 provenance 演练测试 | 根目录 |
-| `pnpm test:consumers` | 真实消费者安装构建矩阵：默认 U1/C1；`--all` 运行 U1/C1/C3；`--filter U1` 聚焦场景 | 根目录 |
+| `pnpm test:consumers` | 真实消费者安装构建矩阵：默认 U1/C1；`--all` 运行 U1/C1/C3；`--filter U1` 聚焦场景；`--parallel --all` 共用候选包并以最多两个子进程并发运行 | 根目录 |
 
 详细发布规范参见 [发布流程与 Changelog 指南](RELEASE.md)。
 
