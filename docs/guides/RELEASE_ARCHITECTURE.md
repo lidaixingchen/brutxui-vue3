@@ -32,7 +32,7 @@ GitHub Release、npm 包与渠道更新分别提交；协调器按远端状态�
 ### 工作原理
 
 1. **声明变更**：PR 时通过 `pnpm changeset` 交互式生成 `.changeset/*.md` 文件，描述变更类型（major/minor/patch）和变更内容
-2. **版本提升**：合并 PR 后运行 `pnpm release:prepare`（底层调用 `changeset version`），读取 `.changeset/*.md`，自动 bump 受影响包版本号并生成各包 CHANGELOG；配置了 `"commit"` 时自动生成 `RELEASING` commit（`skipCI` 已配置为 `false`）
+2. **版本提升**：合并 PR 后运行 `pnpm release:prepare`（底层调用 `changeset version`），读取 `.changeset/*.md`，自动 bump 受影响包版本号并生成各包 CHANGELOG；由项目提交信息生成器自动提交 `chore(release): 更新工作区版本`，正文列出本次变更包与目标版本
 3. **门禁与发布**：本地运行 `pnpm release:check` 验证全部契约，打 tag 推送后由 CI 状态机协调器完成发布
 
 `release:prepare` 的 CHANGELOG 提交只包含根 `CHANGELOG.md`、本次新生成的版本归档文件、随归档更新的索引页，以及文档站版本历史页。归档目录中的其他本地文件保持未提交。
@@ -41,7 +41,9 @@ GitHub Release、npm 包与渠道更新分别提交；协调器按远端状态�
 
 > [!NOTE]
 > **Changeset Commit 配置契约**
-> 工程在 `.changeset/config.json` 中配置了 `"commit": ["@changesets/cli/commit", { "skipCI": false }]`，确保 `pnpm release:prepare` 生成的提交不包含 `[skip ci]`，从而保障推送 `v*` 对应 Tag 时正常触发云端 CI 发布流水线。发布后需核对 GitHub Actions 的 Publish run 成功与 npm 产物发布状态。
+> 工程在 [.changeset/config.json](../../.changeset/config.json) 中配置了 `"commit": "../scripts/release/changeset-commit.mjs"`，路径相对配置文件解析。[提交信息生成器](../../scripts/release/changeset-commit.mjs)为变更声明使用 `docs(changeset): 记录版本变更`，为版本提升使用 `chore(release): 更新工作区版本`。完整摘要与包版本清单放在正文，标题长度与发布包数量解耦；生成器不追加 `[skip ci]`，提交继续触发正常 CI。
+
+`pnpm test:release` 包含生成消息的 commitlint 验证，并在隔离 Git 工作区运行实际 Changesets 版本提升与提交钩子，验证配置加载、版本更新和自动提交链路。发布后仍需核对 Publish run 与 npm 产物状态。
 
 ### Commit 格式要求
 

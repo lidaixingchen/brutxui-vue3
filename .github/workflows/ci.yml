@@ -157,7 +157,7 @@ jobs:
               if: needs.changes.outputs.release == 'true'
               run: pnpm test:release
 
-            - name: Check bundle size limits
+            - name: Report bundle sizes and check tree-shaken budget
               if: needs.changes.outputs.ui == 'true'
               run: pnpm --filter brutx-ui-vue size
 

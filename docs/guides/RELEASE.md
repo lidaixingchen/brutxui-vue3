@@ -42,7 +42,8 @@ git push origin v<version>         # ⑥ 推送 tag 后自动发布
 
 2. **`pnpm release:prepare`**：一条命令完成版本准备
    - 守卫：工作区干净 + 存在待发布 changeset
-   - `pnpm version-packages`（changeset）→ bump 版本、生成各包 CHANGELOG、自动生成 `RELEASING` commit（`[skip ci]` 已配置关闭）
+   - `pnpm version-packages`（changeset）→ bump 版本、生成各包 CHANGELOG、自动提交 `chore(release): 更新工作区版本`，正文列出本次变更包与目标版本
+   - Changesets 的变更声明与版本提交均由[项目提交信息生成器](../../scripts/release/changeset-commit.mjs)生成，遵循中文 Conventional Commits 格式并通过同一套 commitlint 校验；生成器不追加 `[skip ci]`
    - `pnpm changelog` → 更新根 CHANGELOG + 自动归档旧版本
    - 自动提交根 CHANGELOG（`docs: 更新根 CHANGELOG 至 <version>[并归档 ...]`）
 
@@ -64,13 +65,28 @@ git push origin v<version>         # ⑥ 推送 tag 后自动发布
 - tag 已打但发布失败 / 需补修：提交修复 commit → `pnpm release:tag --force` 重打 tag（指向最新 commit）→ 重新推送
 - 同一 tag 重跑或重推时，CI 发布状态机协调器自动执行幂等恢复：核验既有资产与已发布 npm 版本的 shasum，仅补齐未完成阶段，不篡改不可变资产。
 
+## 体积报告与按需导入预算
+
+云端 CI 在 UI 检查中执行 `pnpm --filter brutx-ui-vue size`。本地检查前先完成 UI 生产构建：
+
+```bash
+pnpm --filter brutx-ui-vue build:artifact
+pnpm --filter brutx-ui-vue size
+```
+
+- **完整 ESM 入口与全量 CSS**：持续输出压缩体积，审查变更带来的增长；这两项不设置固定体积上限。
+- **按需导入入口**：保留硬预算，目前覆盖从根入口引入 Button 的摇树结果。超过预算会使命令与 CI 检查失败。
+- **构建或测量失败**：继续按错误处理，不能用体积报告策略忽略产物缺失、解析失败等问题。
+
+检查项与按需导入预算以 [UI 包的 `size-limit` 配置](../../packages/ui/package.json)为准；使用 `pnpm --filter brutx-ui-vue size:why` 分析增长来源。
+
 ## 防坑 Checklist
 
 - [ ] 工作区干净（有未提交改动时 `release:prepare` 会中止）
 - [ ] 四处一致：ui / shared / registry / cli 的源码、元数据、构建脚本、CLI 复制逻辑
 - [ ] lockfile 已同步（依赖变更时）
 - [ ] 严禁本地直接向 npm 发布：统一由 CI 发布状态机协调器完成，确保产物密封封存、SHA256SUMS 与 provenance 证据一致。
-- [ ] Windows 下 `changeset version` 的 RELEASING commit 会因反斜杠 pathspec 报错（`fatal: pathspec '.changeset\xxx.md' did not match any files`）——属已知无害现象：版本 bump / 包 CHANGELOG / changeset 删除均已生效，改动随 prepare 后续 docs 提交一并入库，无需处理
+- [ ] 自动版本提交已通过 commitlint；提交失败时先修复原因，确认版本、包 CHANGELOG 与 Changeset 消费结果已提交后再进入后续步骤
 - [ ] 发布后核对 Publish run 与 npm 版本
 
 ## Changelog 体系概览

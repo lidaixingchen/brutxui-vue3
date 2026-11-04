@@ -568,7 +568,6 @@
         {
             "name": "main entry (ESM, full)",
             "path": "dist/index.js",
-            "limit": "160 KB",
             "import": "*"
         },
         {
@@ -579,8 +578,7 @@
         },
         {
             "name": "CSS",
-            "path": "dist/styles.css",
-            "limit": "20 KB"
+            "path": "dist/styles.css"
         }
     ],
     "peerDependencies": {

@@ -99,8 +99,8 @@ Bench 要求两份结果包含同一组有效测量；缺失、损坏或测试�
 
 | 指令 | 说明 | 执行位置 |
 | --- | --- | --- |
-| `pnpm --filter brutx-ui-vue size` | 校验核心入口（ESM 全量、Button 摇树、CSS）体积是否超标 | 根目录 |
-| `pnpm --filter brutx-ui-vue size:why` | 打开可视化打包分析器，定位体积超限的具体模块与依赖 | 根目录 |
+| `pnpm --filter brutx-ui-vue size` | 输出完整 ESM、Button 按需入口与 CSS 体积，仅按需入口检查硬预算 | 根目录 |
+| `pnpm --filter brutx-ui-vue size:why` | 打开可视化打包分析器，定位体积增长的具体模块与依赖 | 根目录 |
 | `pnpm --filter brutx-ui-vue check:isolation` | 检查产物依赖隔离性，防止未外部化的重型库被打包进 dist | 根目录 |
 | `pnpm --filter brutx-ui-vue test:package` | 冒烟测试：模拟纯 ESM 消费端环境，测试 120+ 子路径解析 | 根目录 |
 

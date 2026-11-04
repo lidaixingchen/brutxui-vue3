@@ -4,7 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 // 发布准备一体化脚本：
-//   prepare 模式：守卫（工作区/待发布 changeset）→ pnpm version-packages（bump + 包 CHANGELOG + RELEASING commit）
+//   prepare 模式：守卫（工作区/待发布 changeset）→ pnpm version-packages（bump + 包 CHANGELOG + 版本提交）
 //                 → pnpm changelog（根 CHANGELOG + 自动归档）→ 自动提交根 CHANGELOG
 //   --tag 模式：  读取 ui 版本自动打 annotated tag `v<version>`；--force 覆盖已存在 tag（发布后补修重打场景）
 //
@@ -114,7 +114,7 @@ function prepare(dryRun) {
     step(`检测到 ${changesets.length} 个待发布 changeset`);
 
     if (dryRun) {
-        step('[dry-run] 将执行: pnpm version-packages（bump 版本 + 生成包 CHANGELOG + RELEASING commit）');
+        step('[dry-run] 将执行: pnpm version-packages（bump 版本 + 生成包 CHANGELOG + 版本提交）');
         step('[dry-run] 将执行: pnpm changelog（更新根 CHANGELOG + 自动归档）');
         step('[dry-run] 将自动提交根 CHANGELOG（docs: 更新根 CHANGELOG 至 <新版本>[并归档 ...]）');
         logNext('门禁与发布', 'pnpm release');
@@ -123,7 +123,7 @@ function prepare(dryRun) {
 
     const archivedBefore = archivedVersions();
 
-    step('执行 pnpm version-packages（bump 版本 + 生成包 CHANGELOG + RELEASING commit）');
+    step('执行 pnpm version-packages（bump 版本 + 生成包 CHANGELOG + 版本提交）');
     pnpm(['version-packages']);
 
     const version = uiVersion();
