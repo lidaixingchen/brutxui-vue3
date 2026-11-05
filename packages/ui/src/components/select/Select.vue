@@ -18,6 +18,8 @@ const {
     required = false,
     name = undefined,
     id = undefined,
+    ariaLabelledby = undefined,
+    ariaLabel = undefined,
     size = 'default',
     variant = 'default',
     errorMessage = undefined,
@@ -114,6 +116,9 @@ const triggerClasses = computed(() => cn(className, triggerClass))
             <SelectTrigger
                 v-else
                 :id="id"
+                :title="computedPlaceholder"
+                :aria-labelledby="ariaLabelledby?.trim() || undefined"
+                :aria-label="ariaLabelledby?.trim() ? undefined : ariaLabel?.trim() || undefined"
                 :size="size"
                 :variant="variant"
                 :error-message="errorMessage"

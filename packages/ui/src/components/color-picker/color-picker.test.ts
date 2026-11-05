@@ -1,5 +1,7 @@
 import { mount } from '@vue/test-utils'
-import { nextTick } from 'vue'
+import { computeAccessibleName } from 'dom-accessibility-api'
+import { renderToString } from '@vue/server-renderer'
+import { createSSRApp, h, nextTick } from 'vue'
 import ColorPicker from './ColorPicker.vue'
 import ColorPickerSwatch from './ColorPickerSwatch.vue'
 import ColorPickerInput from './ColorPickerInput.vue'
@@ -20,6 +22,7 @@ afterEach(() => {
     if (typeof localStorage !== 'undefined' && localStorage && typeof localStorage.clear === 'function') {
         localStorage.clear()
     }
+    document.body.innerHTML = ''
 })
 
 async function openPanel(w: ReturnType<typeof mount>) {
@@ -30,6 +33,99 @@ async function openPanel(w: ReturnType<typeof mount>) {
 }
 
 describe('ColorPicker', () => {
+    it('uses an associated label and follows its updated text', () => {
+        wrapper = mount(ColorPicker, {
+            ...localeProvide,
+            props: { id: 'color-label-target' },
+            attachTo: document.body,
+        })
+        const trigger = wrapper.get('button').element
+        const label = document.createElement('label')
+        label.htmlFor = 'color-label-target'
+        label.textContent = 'Brand color'
+        document.body.prepend(label)
+
+        expect(label.control).toBe(trigger)
+        expect(computeAccessibleName(trigger)).toBe('Brand color')
+
+        label.textContent = 'Theme color'
+        expect(computeAccessibleName(trigger)).toBe('Theme color')
+    })
+
+    it('uses a wrapping label as the trigger name', () => {
+        const label = document.createElement('label')
+        label.append('Brand color')
+        document.body.append(label)
+        wrapper = mount(ColorPicker, { ...localeProvide, attachTo: label })
+
+        expect(computeAccessibleName(wrapper.get('button').element)).toBe('Brand color')
+    })
+
+    it('prefers ariaLabel over an associated label', () => {
+        const label = document.createElement('label')
+        label.htmlFor = 'color-explicit-name-target'
+        label.textContent = 'Visible color label'
+        document.body.append(label)
+        wrapper = mount(ColorPicker, {
+            ...localeProvide,
+            props: { id: 'color-explicit-name-target', ariaLabel: 'Explicit color name' },
+            attachTo: document.body,
+        })
+
+        expect(computeAccessibleName(wrapper.get('button').element)).toBe('Explicit color name')
+        expect(wrapper.get('button').attributes('title')).toBeUndefined()
+    })
+
+    it('prefers aria-labelledby over ariaLabel and an associated label', () => {
+        const referencedName = document.createElement('span')
+        referencedName.id = 'color-referenced-name'
+        referencedName.textContent = 'Referenced color name'
+        const label = document.createElement('label')
+        label.htmlFor = 'color-named-trigger'
+        label.textContent = 'Visible color label'
+        document.body.append(referencedName, label)
+
+        wrapper = mount(ColorPicker, {
+            ...localeProvide,
+            props: {
+                id: 'color-named-trigger',
+                ariaLabel: 'Explicit color name',
+                ariaLabelledby: 'color-referenced-name',
+            },
+            attachTo: document.body,
+        })
+
+        const trigger = wrapper.get('button')
+        expect(computeAccessibleName(trigger.element)).toBe('Referenced color name')
+        expect(trigger.attributes('title')).toBeUndefined()
+    })
+
+    it('uses the localized accessible name without a label', () => {
+        wrapper = mount(ColorPicker, { ...localeProvide, attachTo: document.body })
+
+        const trigger = wrapper.get('button')
+        expect(computeAccessibleName(trigger.element)).toBe('Pick a color')
+        expect(trigger.attributes('title')).toBe('Pick a color')
+    })
+
+    it('renders fallback naming content in SSR without a default aria-label', async () => {
+        const app = createSSRApp({
+            render: () => h('label', { for: 'color-ssr-trigger' }, [
+                'Brand color',
+                h(ColorPicker, { id: 'color-ssr-trigger' }),
+            ]),
+        })
+        app.provide(LOCALE_INJECTION_KEY, en)
+
+        const html = await renderToString(app)
+        const trigger = html.match(/<button[^>]*id="color-ssr-trigger"[^>]*>/)?.[0]
+
+        expect(trigger).toBeDefined()
+        expect(trigger).not.toContain('aria-label=')
+        expect(trigger).toContain('title="Pick a color"')
+        expect(html).not.toContain('class="sr-only"')
+    })
+
     it('renders trigger with combobox role', () => {
         wrapper = mount(ColorPicker, { ...localeProvide, attachTo: document.body })
         const trigger = wrapper.find('[role="combobox"]')

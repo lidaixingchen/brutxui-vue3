@@ -140,6 +140,9 @@ import type { CascaderOption, CascaderValue } from 'brutx-ui-vue'
 
 ## 可访问性
 
+- **清除操作**：触发器与清除按钮为独立按钮，共享外壳位移，在悬浮和按压时保持相对位置。 键盘聚焦触发器时显示清除按钮，可通过 Tab 到达；执行清除后焦点返回触发器。
+
+
 - **键盘操作**：
   - `ArrowDown` / `ArrowUp`：在当前选项列中上下移动聚焦，自动跳过 `disabled` 选项
   - `ArrowRight`：展开当前选项的子菜单列并聚焦首项
@@ -147,5 +150,6 @@ import type { CascaderOption, CascaderValue } from 'brutx-ui-vue'
   - `Enter` / `Space`：确认选择或在多选下切换 Checkbox 勾选
   - `Escape`：关闭级联选择器下拉面板
 - **ARIA 属性**：触发器使用 `role="combobox"` 配合 `aria-expanded` 与 `aria-disabled` 声明状态。下拉列表项设置 `role="menuitem"`
+- **名称关联**：原生触发按钮支持通过 `id` 与 `Label` 的 `for` 关联。名称优先级为 `ariaLabelledby`、`ariaLabel`、关联的可见 `Label`、当前占位文案。占位文案通过原生 `title` 提供名称回退，也会显示浏览器悬停提示。
 - **焦点管理**：展开时焦点自动流转至已选路径的最末一级选项；无选中值时不高亮任何项（`aria-activedescendant` 保持未定义），直到用户开始键盘导航，避免焦点仍在触发器时误报首个选项
 - **动效降级**：下拉弹窗面板的过渡效果支持 `prefers-reduced-motion` 系统降级，在低动效设备上自动简化动效

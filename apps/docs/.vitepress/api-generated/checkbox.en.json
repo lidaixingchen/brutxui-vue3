@@ -234,11 +234,75 @@
             "literals": [],
             "references": []
           },
-          "description": "The checkbox accessible name; localized default text is used when omitted.",
+          "description": "Explicit accessible name; takes precedence over visible `Label` text, with localized fallback text used when no other name is available.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/checkbox/Checkbox.vue",
             "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The control ID used to associate a visible name through a `Label` `for` attribute.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-ariaLabelledby",
+          "name": "ariaLabelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "IDs of elements that provide the accessible name; takes precedence over `ariaLabel` and visible `Label` text.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 29
           },
           "origin": "declared",
           "required": false,
@@ -270,7 +334,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/checkbox/Checkbox.vue",
-            "line": 27
+            "line": 31
           },
           "origin": "declared",
           "required": false,
@@ -304,7 +368,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/checkbox/Checkbox.vue",
-            "line": 29
+            "line": 33
           },
           "origin": "declared",
           "required": false,
@@ -339,7 +403,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/checkbox/Checkbox.vue",
-            "line": 31
+            "line": 35
           },
           "origin": "declared",
           "required": false,

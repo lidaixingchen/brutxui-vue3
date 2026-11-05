@@ -4,7 +4,8 @@ import { Check, ChevronsUpDown } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '../button/button-variants'
 import { comboboxTriggerVariants, comboboxContentVariants, comboboxCheckboxVariants } from './combobox-variants'
-import { PopoverRoot, PopoverTrigger } from 'reka-ui'
+import { PopoverRoot } from 'reka-ui'
+import PopoverTrigger from '../popover/PopoverTrigger.vue'
 import PopoverContent from '../popover/PopoverContent.vue'
 import Command from '../command/Command.vue'
 import CommandInput from '../command/CommandInput.vue'
@@ -32,7 +33,9 @@ interface ComboboxProps {
     loading?: boolean
     creative?: boolean
     maxDisplay?: number
+    id?: string
     ariaLabel?: string
+    ariaLabelledby?: string
     class?: string
     iconSize?: IconSize
 }
@@ -48,12 +51,20 @@ const props = withDefaults(defineProps<ComboboxProps>(), {
     loading: false,
     creative: false,
     maxDisplay: 3,
+    id: undefined,
     ariaLabel: undefined,
+    ariaLabelledby: undefined,
     class: undefined,
     iconSize: 'md',
 })
 
 const { t } = useLocale()
+
+const resolvedAriaLabelledby = computed(() => props.ariaLabelledby?.trim() || undefined)
+const resolvedAriaLabel = computed(() => resolvedAriaLabelledby.value
+    ? undefined
+    : props.ariaLabel?.trim() || undefined
+)
 
 const resolvedPlaceholder = computed(() =>
     props.placeholder ?? (props.multiple ? t('combobox.multiPlaceholder') : t('combobox.placeholder'))
@@ -132,6 +143,7 @@ const { triggerClasses } = useSelectableTrigger<string | string[]>({
     class: () => props.class,
     emptyClass: false,
 })
+const triggerIdAttrs = computed(() => props.id?.trim() ? { id: props.id.trim() } : {})
 
 const contentClasses = comboboxContentVariants()
 
@@ -189,6 +201,10 @@ watch(open, (isOpen) => {
 
 const triggerRef = ref<HTMLElement | null>(null)
 
+function focusTrigger(): void {
+    triggerRef.value?.focus()
+}
+
 defineExpose({
     open,
     searchQuery,
@@ -199,18 +215,22 @@ defineExpose({
 
 <template>
     <PopoverRoot v-model:open="open">
-        <PopoverTrigger as-child>
+        <PopoverTrigger :id="id" as-child>
             <button
                 ref="triggerRef"
+                v-bind="triggerIdAttrs"
                 type="button"
                 role="combobox"
                 :aria-expanded="open"
                 :aria-controls="open ? contentId : undefined"
-                :aria-label="ariaLabel"
+                :title="resolvedAriaLabelledby || resolvedAriaLabel ? undefined : resolvedPlaceholder"
+                :aria-labelledby="resolvedAriaLabelledby"
+                :aria-label="resolvedAriaLabel"
                 :aria-multiselectable="multiple || undefined"
                 aria-haspopup="listbox"
                 :disabled="disabled"
                 :class="triggerClasses"
+                @click="focusTrigger"
             >
                 <span class="min-w-0 flex-1 truncate">{{ displayText }}</span>
                 <ChevronsUpDown :class="triggerIconClasses" />

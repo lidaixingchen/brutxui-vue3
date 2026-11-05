@@ -139,6 +139,9 @@ import type { CascaderOption, CascaderValue } from 'brutx-ui-vue'
 
 ## Accessibility
 
+- **Clear action**: The trigger and clear action are separate buttons that share shell movement, keeping their relative positions during hover and press. Focusing the trigger reveals the clear button for Tab navigation; clearing returns focus to the trigger.
+
+
 - **Keyboard Interaction**:
   - `ArrowDown` / `ArrowUp`: Move focus up and down within the active column, skipping `disabled` options
   - `ArrowRight`: Expand the focused option's sub-column and focus the first item
@@ -146,6 +149,7 @@ import type { CascaderOption, CascaderValue } from 'brutx-ui-vue'
   - `Enter` / `Space`: Select option, or toggle Checkbox state in multi-select mode
   - `Escape`: Close dropdown panel
 - **ARIA Attributes**: The trigger has `role="combobox"`, `aria-expanded` and `aria-disabled` indicators. Option items have `role="menuitem"`
+- **Name association**: The native trigger button supports a visible `Label` associated through `id` and `for`. Name priority is `ariaLabelledby`, `ariaLabel`, associated visible `Label`, then the current placeholder. The placeholder is exposed through the native `title` fallback, which also shows the browser hover tooltip.
 - **Focus Management**: Upon opening, focus moves to the last selected value's option item; with no selected value no item is highlighted (`aria-activedescendant` stays undefined) until keyboard navigation begins, avoiding misreporting the first option while focus is still on the trigger
 - **Reduced Motion**: Transition animations support `prefers-reduced-motion` settings and automatically downgrade (if applicable)
 

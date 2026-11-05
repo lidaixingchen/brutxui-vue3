@@ -2,7 +2,8 @@
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { Calendar as CalendarIcon, ChevronDown, X } from '@lucide/vue'
-import { PopoverRoot, PopoverTrigger } from 'reka-ui'
+import { PopoverRoot } from 'reka-ui'
+import PopoverTrigger from '../popover/PopoverTrigger.vue'
 import { cn } from '@/lib/utils'
 import { brutalDestructiveHoverTextClasses } from '@/lib/semantic-text-variants'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
@@ -40,6 +41,7 @@ const props = withDefaults(defineProps<Props>(), {
     name: undefined,
     id: undefined,
     ariaLabel: undefined,
+    ariaLabelledby: undefined,
     class: undefined,
 })
 
@@ -53,7 +55,17 @@ const resolvedDisplayFormat = computed(() =>
     props.displayFormat ?? (props.showSeconds ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD HH:mm')
 )
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('datePicker.dateTimePlaceholder'))
-const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('datePicker.dateTimePlaceholder'))
+const triggerIdAttrs = computed(() => props.id?.trim() ? { id: props.id.trim() } : {})
+const resolvedAriaLabelledby = computed(() => props.ariaLabelledby?.trim() || undefined)
+const resolvedAriaLabel = computed(() => resolvedAriaLabelledby.value
+    ? undefined
+    : props.ariaLabel?.trim() || undefined
+)
+const resolvedTitle = computed(() => resolvedAriaLabel.value || resolvedAriaLabelledby.value
+    ? undefined
+    : t('datePicker.dateTimePlaceholder')
+)
+const resolvedPanelAriaLabel = computed(() => props.ariaLabel?.trim() || t('datePicker.dateTimePlaceholder'))
 
 // 原生表单集成：name 经 hidden input 随表单提交；
 // DateTimePicker 的值含时分（及秒），序列化需保留时间部分，避免静默丢失
@@ -117,14 +129,16 @@ defineExpose({ open })
     <PopoverRoot v-model:open="open">
         <input v-if="hiddenInputValue !== undefined" type="hidden" :name="name" :value="hiddenInputValue" :disabled="disabled">
         <div class="relative w-full">
-            <PopoverTrigger as-child>
+            <PopoverTrigger :id="id" as-child>
                 <button
-                    :id="id"
+                    v-bind="triggerIdAttrs"
                     type="button"
                     :name="name"
                     role="combobox"
                     :aria-expanded="open"
+                    :aria-labelledby="resolvedAriaLabelledby"
                     :aria-label="resolvedAriaLabel"
+                    :title="resolvedTitle"
                     aria-haspopup="dialog"
                     :disabled="disabled"
                     :class="triggerClasses"
@@ -162,7 +176,7 @@ defineExpose({ open })
                 <X :class="smallIconClasses" class="stroke-[3]" />
             </button>
         </div>
-        <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent overflow-visible" align="start" :aria-label="resolvedAriaLabel">
+        <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent overflow-visible" align="start" :aria-label="resolvedPanelAriaLabel">
             <DateTimePickerPanel
                 :model-value="displayValue"
                 :min-date="minDate"
@@ -171,7 +185,7 @@ defineExpose({ open })
                 :clearable="clearable"
                 :show-seconds="showSeconds"
                 :time-step="timeStep"
-                :aria-label="resolvedAriaLabel"
+                :aria-label="resolvedPanelAriaLabel"
                 @update:model-value="handlePanelUpdate"
                 @confirm="handlePanelConfirm"
                 @clear="handlePanelClear"

@@ -20,9 +20,11 @@ const content = {
                 size: ['设置触发器按钮的尺寸变体。', 'Sets the trigger button size variant.'],
                 placeholder: ['未选择路径时触发器显示的文字。', 'Text shown in the trigger when no path is selected.'],
                 disabled: ['禁用选择器及下拉面板的用户交互。', 'Disables user interaction with the select trigger and dropdown panel.'],
+                id: ['原生触发按钮的 DOM ID，可通过 Label 的 for 属性关联可见名称。', 'The DOM ID of the native trigger button, allowing a visible label to be associated through its for attribute.'],
                 dropdownClass: ['追加到级联下拉面板的 CSS 类。', 'CSS classes added to the cascader dropdown panel.'],
                 class: ['追加到选择器触发按钮的 CSS 类。', 'CSS classes added to the select trigger button.'],
-                ariaLabel: ['设置选择器触发器的无障碍标签。', 'Sets the accessible label for the select trigger.'],
+                ariaLabelledby: ['关联名称元素的 ID；优先于 ariaLabel、可见 Label 和占位文案回退。', 'The ID of the associated name element; it takes precedence over ariaLabel, a visible label, and the placeholder fallback.'],
+                ariaLabel: ['触发器的显式无障碍名称；ariaLabelledby 优先，其次为关联的可见 Label，最后使用占位文案回退。', 'The explicit accessible name of the trigger; ariaLabelledby takes precedence, followed by an associated visible label, then the placeholder fallback.'],
             }),
             events: describe({
                 'update:modelValue': ['选择路径变化时发出新的路径值；配合 v-model 更新受控值。', 'Emits the updated path value when selection changes, for synchronizing the controlled value with v-model.'],

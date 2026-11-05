@@ -40,6 +40,17 @@ const date = ref(null)
 </template>
 ```
 
+### 触发器无障碍名称
+
+`DatePicker` 和 `DateTimePicker` 的触发按钮按 `ariaLabelledby`、显式 `ariaLabel`、关联的原生 `<label>`、本地化 `title` 回退的顺序确定名称。未设置两个 ARIA 名称属性时，`title` 使用对应的本地化名称；没有原生 Label 时，它可作为无障碍名称，浏览器也可能显示原生悬停提示。关联 Label 仍是名称来源。可见占位文本与日期值不参与回退名称。`ariaLabelledby` 只命名触发按钮；`ariaLabel` 同时命名触发按钮和弹出的日期面板。
+
+```vue
+<template>
+    <label for="departure-date">出发日期</label>
+    <DatePicker id="departure-date" v-model="date" />
+</template>
+```
+
 ### 带快捷选项
 
 ```vue

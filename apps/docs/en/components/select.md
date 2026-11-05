@@ -185,3 +185,9 @@ The unified Select props, events, and slots are listed above. When composing ato
 - **Keyboard**: Supports `Space` / `Enter` to open the dropdown, `Escape` to close, and arrow keys to navigate options
 - **ARIA Attributes**: Automatically manages `aria-expanded`, `aria-haspopup`, `aria-activedescendant`, etc.
 - **Focus Management**: Focus is trapped within the dropdown when open; focus returns to the trigger when closed
+- **Name association**: Use `id` to associate the built-in trigger with a `Label` `for` attribute. Name priority is `ariaLabelledby`, `ariaLabel`, associated visible `Label`, then the current placeholder. The placeholder is exposed through the native `title` fallback, which also shows the browser hover tooltip. With a custom `trigger` slot, bind the ID and ARIA naming attributes on the slot content.
+
+```vue
+<Label for="country-select">Country or region</Label>
+<Select id="country-select" :options="countries" />
+```

@@ -36,6 +36,17 @@ const color = ref(null)
 </template>
 ```
 
+### 触发按钮无障碍名称
+
+触发按钮的名称优先级为 `ariaLabelledby`、显式 `ariaLabel`、关联的原生 `<label>`，最后是本地化 `title` 回退。未设置两个 ARIA 名称属性时，组件会将本地化占位文案设为 `title`；没有原生 Label 时它可作为无障碍名称，浏览器也可能显示原生悬停提示。关联的 Label 仍作为名称来源，`title` 与可见占位文本或颜色值分开。`ariaLabelledby` 只作用于触发按钮。
+
+```vue
+<template>
+    <label for="brand-color">品牌颜色</label>
+    <ColorPicker id="brand-color" v-model="color" />
+</template>
+```
+
 ### 指定颜色格式
 
 支持 `hex`（默认）、`rgb`、`hsl` 三种格式，`modelValue` 会以对应格式输出：

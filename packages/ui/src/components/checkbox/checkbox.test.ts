@@ -1,6 +1,10 @@
-import { mount } from '@vue/test-utils'
+import { createSSRApp, h, ref } from 'vue'
+import { flushPromises, mount } from '@vue/test-utils'
+import { computeAccessibleName } from 'dom-accessibility-api'
+import { renderToString } from 'vue/server-renderer'
 import Checkbox from './Checkbox.vue'
 import { Minus } from '@lucide/vue'
+import Label from '../label/Label.vue'
 
 describe('Checkbox', () => {
     it('renders with checkbox role', () => {
@@ -69,11 +73,13 @@ describe('Checkbox', () => {
         }
     })
 
-    it('provides default aria-label from locale', () => {
+    it('uses locale text only as the fallback accessible name', () => {
         const wrapper = mount(Checkbox, {
             attachTo: document.body,
         })
-        expect(wrapper.find('[role="checkbox"]').attributes('aria-label')).toBe('复选框')
+        const checkbox = wrapper.get('[role="checkbox"]')
+        expect(checkbox.attributes('aria-label')).toBeUndefined()
+        expect(computeAccessibleName(checkbox.element)).toBe('复选框')
     })
 
     it('uses custom ariaLabel when provided', () => {
@@ -82,6 +88,105 @@ describe('Checkbox', () => {
             attachTo: document.body,
         })
         expect(wrapper.find('[role="checkbox"]').attributes('aria-label')).toBe('同意条款')
+    })
+
+    it('uses an associated visible Label when no explicit accessible name is provided', () => {
+        const wrapper = mount({
+            render: () => h('div', [
+                h(Label, { for: 'terms-checkbox' }, () => '接受使用条款'),
+                h(Checkbox, { id: 'terms-checkbox' }),
+            ]),
+        }, { attachTo: document.body })
+
+        expect(computeAccessibleName(wrapper.get('[role="checkbox"]').element)).toBe('接受使用条款')
+        wrapper.unmount()
+    })
+
+    it('prioritizes explicit ariaLabel over an associated visible Label', () => {
+        const wrapper = mount({
+            render: () => h('div', [
+                h(Label, { for: 'explicit-checkbox' }, () => '可见标签'),
+                h(Checkbox, { id: 'explicit-checkbox', ariaLabel: '显式名称' }),
+            ]),
+        }, { attachTo: document.body })
+
+        expect(computeAccessibleName(wrapper.get('[role="checkbox"]').element)).toBe('显式名称')
+        wrapper.unmount()
+    })
+
+    it('activates when its associated visible Label is clicked', async () => {
+        const wrapper = mount({
+            render: () => h('div', [
+                h(Label, { for: 'click-checkbox' }, () => '启用功能'),
+                h(Checkbox, { id: 'click-checkbox' }),
+            ]),
+        }, { attachTo: document.body })
+
+        await wrapper.get('label').trigger('click')
+        expect(wrapper.get('[role="checkbox"]').attributes('aria-checked')).toBe('true')
+        wrapper.unmount()
+    })
+
+    it('uses a wrapping Label without requiring an id', () => {
+        const wrapper = mount({
+            render: () => h(Label, {}, () => ['允许通知', h(Checkbox)]),
+        }, { attachTo: document.body })
+
+        expect(computeAccessibleName(wrapper.get('[role="checkbox"]').element)).toBe('允许通知')
+        wrapper.unmount()
+    })
+
+    it('prioritizes aria-labelledby over ariaLabel and native Label', () => {
+        const wrapper = mount({
+            render: () => h('div', [
+                h('span', { id: 'checkbox-title' }, 'ARIA 标题'),
+                h(Label, { for: 'priority-checkbox' }, () => '可见标签'),
+                h(Checkbox, {
+                    id: 'priority-checkbox',
+                    ariaLabel: '显式名称',
+                    ariaLabelledby: 'checkbox-title',
+                }),
+            ]),
+        }, { attachTo: document.body })
+
+        expect(computeAccessibleName(wrapper.get('[role="checkbox"]').element)).toBe('ARIA 标题')
+        wrapper.unmount()
+    })
+
+    it('updates the accessible name when a visible Label is added and changed', async () => {
+        const isVisible = ref(false)
+        const labelText = ref('初始名称')
+        const wrapper = mount({
+            render: () => h('div', [
+                isVisible.value ? h(Label, { for: 'dynamic-checkbox' }, () => labelText.value) : null,
+                h(Checkbox, { id: 'dynamic-checkbox' }),
+            ]),
+        }, { attachTo: document.body })
+
+        isVisible.value = true
+        await flushPromises()
+        const checkbox = wrapper.get('[role="checkbox"]')
+        expect(computeAccessibleName(checkbox.element)).toBe('初始名称')
+
+        labelText.value = '更新后的名称'
+        await flushPromises()
+        expect(computeAccessibleName(checkbox.element)).toBe('更新后的名称')
+        wrapper.unmount()
+    })
+
+    it('uses the visible Label as the accessible name in server-rendered HTML', async () => {
+        const html = await renderToString(createSSRApp({
+            render: () => h('div', [
+                h(Label, { for: 'ssr-checkbox' }, () => '服务条款'),
+                h(Checkbox, { id: 'ssr-checkbox' }),
+            ]),
+        }))
+        const host = document.createElement('div')
+        host.innerHTML = html
+        document.body.append(host)
+
+        expect(computeAccessibleName(host.querySelector('[role="checkbox"]')!)).toBe('服务条款')
+        host.remove()
     })
 
     it('renders Minus icon when indeterminate', () => {

@@ -1,9 +1,35 @@
 import { cva } from 'class-variance-authority'
-import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
+import { brutalControlMovement, brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
 import { floatingContentAnimationClasses } from '@/lib/floating-animation-classes'
 import { brutalFloatingSurfaceClasses } from '@/lib/floating-content-variants'
 import { collectionItemVariants } from '@/lib/collection-item-variants'
 import { FOCUS_RING_CLASSES } from '@/lib/utils'
+
+export const cascaderControlVariants = cva(
+    'group/cascader relative w-full transition-transform duration-150 motion-reduce:transition-none',
+    {
+        variants: {
+            disabled: {
+                false: `${brutalControlMovement} focus-within:-translate-x-0.5 focus-within:-translate-y-0.5`,
+                true: 'cursor-not-allowed',
+            },
+        },
+        defaultVariants: { disabled: false },
+    },
+)
+
+export const cascaderControlTriggerVariants = cva(
+    'hover:translate-x-0 hover:translate-y-0 focus:translate-x-0 focus:translate-y-0 active:translate-x-0 active:translate-y-0 motion-reduce:transition-none',
+    {
+        variants: {
+            disabled: {
+                false: 'group-hover/cascader:shadow-brutal-lg group-focus-within/cascader:shadow-brutal-lg group-active/cascader:shadow-none',
+                true: '',
+            },
+        },
+        defaultVariants: { disabled: false },
+    },
+)
 
 export const cascaderTriggerVariants = cva(
     [

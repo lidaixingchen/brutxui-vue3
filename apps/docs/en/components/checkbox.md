@@ -23,15 +23,15 @@ Neobrutalist-styled checkbox built on reka-ui's CheckboxRoot primitive, with a c
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { Checkbox } from 'brutx-ui-vue'
+import { Checkbox, Label } from 'brutx-ui-vue'
 
 const checked = ref(false)
 </script>
 
 <template>
     <div class="flex items-center gap-3">
-        <Checkbox v-model:checked="checked" />
-        <span class="text-sm font-bold">Accept terms</span>
+        <Checkbox v-model:checked="checked" id="accept-terms" />
+        <Label for="accept-terms">Accept terms</Label>
     </div>
 </template>
 ```
@@ -113,7 +113,7 @@ import { Checkbox } from 'brutx-ui-vue'
 ## Accessibility
 
 - **Keyboard**: Supports `Space` key to toggle checked state
-- **ARIA attributes**: Checkbox provides `aria-label` via locale by default. Falls back to `t('checkbox.check')` when not provided. Can be omitted when adjacent visible text already describes the purpose; otherwise, provide a more specific description via `ariaLabel`
+- **Accessible name priority**: `ariaLabelledby` takes precedence over `ariaLabel`, followed by visible text from an associated or wrapping `Label`. Locale fallback text is visually hidden and used only when no other name is provided.
 - **Focus management**: Uses `--brutal-ring` token for visible focus ring
 
 ```vue
@@ -126,7 +126,7 @@ const checked = ref(false)
 
 <template>
     <div class="flex items-center gap-3">
-        <Checkbox v-model:checked="checked" id="marketing" ariaLabel="Receive marketing emails" />
+        <Checkbox v-model:checked="checked" id="marketing" />
         <Label for="marketing">Receive marketing emails</Label>
     </div>
 </template>

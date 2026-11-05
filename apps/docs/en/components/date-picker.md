@@ -41,6 +41,17 @@ const date = ref(null)
 </template>
 ```
 
+### Trigger Accessible Names
+
+`DatePicker` and `DateTimePicker` triggers resolve their names in this order: `ariaLabelledby`, explicit `ariaLabel`, an associated native `<label>`, then the localized `title` fallback. When both ARIA name props are unset, `title` uses the localized name for that picker. It can supply the accessible name when no native label is associated, and the browser may show its native tooltip. An associated label remains the name source. The visible placeholder and date value are separate from the fallback name. `ariaLabelledby` names only the trigger; `ariaLabel` also names the trigger and popup date panel.
+
+```vue
+<template>
+    <label for="departure-date">Departure date</label>
+    <DatePicker id="departure-date" v-model="date" />
+</template>
+```
+
 ### With Shortcuts
 
 ```vue

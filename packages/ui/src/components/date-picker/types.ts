@@ -26,6 +26,7 @@ export interface DatePickerProps extends DatePickerBaseProps {
     modelValue?: Date | null
     placeholder?: string
     shortcuts?: DatePickerShortcut[]
+    ariaLabelledby?: string
 }
 
 export interface DatePickerEmits {
@@ -67,6 +68,7 @@ export interface DateTimePickerProps extends DatePickerBaseProps {
     timeStep?: { hour?: number; minute?: number; second?: number }
     placeholder?: string
     shortcuts?: DatePickerShortcut[]
+    ariaLabelledby?: string
 }
 
 export interface DateTimePickerEmits {

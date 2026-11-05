@@ -1,9 +1,11 @@
 import { mount } from '@vue/test-utils'
-import { nextTick, ref } from 'vue'
+import { computeAccessibleName } from 'dom-accessibility-api'
+import { defineComponent, h, nextTick, ref } from 'vue'
 import Cascader from './Cascader.vue'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import type { CascaderOption } from './cascader-types'
+import Label from '../label/Label.vue'
 
 const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
@@ -47,6 +49,72 @@ afterEach(() => {
 })
 
 describe('Cascader', () => {
+    it('associates a visible label with the trigger and prioritizes a live aria-labelledby name', async () => {
+        const alternateName = ref('Alternate cascader name')
+        const Host = defineComponent({
+            setup: () => () => h('div', [
+                h(Label, { for: 'cascader-name-trigger' }, () => 'Visible cascader label'),
+                h('span', { id: 'cascader-alternate-name' }, alternateName.value),
+                h(Cascader, {
+                    options,
+                    id: 'cascader-name-trigger',
+                    ariaLabel: 'Explicit cascader name',
+                    ariaLabelledby: 'cascader-alternate-name',
+                }),
+            ]),
+        })
+        wrapper = mount(Host, { ...localeProvide, attachTo: document.body })
+        const trigger = document.body.querySelector<HTMLButtonElement>('#cascader-name-trigger')
+        const label = document.body.querySelector<HTMLLabelElement>('label[for="cascader-name-trigger"]')
+
+        expect(trigger).not.toBeNull()
+        expect(computeAccessibleName(trigger!)).toBe('Alternate cascader name')
+        label?.click()
+        expect(document.activeElement).toBe(trigger)
+
+        alternateName.value = 'Updated cascader name'
+        await nextTick()
+        expect(computeAccessibleName(trigger!)).toBe('Updated cascader name')
+
+        if (trigger?.getAttribute('aria-expanded') !== 'true') {
+            trigger?.click()
+            await nextTick()
+            await nextTick()
+        }
+        const dialog = document.body.querySelector<HTMLElement>('[role="dialog"]')
+        const dialogLabelId = dialog?.getAttribute('aria-labelledby')
+        expect(dialogLabelId).toBe(trigger?.id)
+        expect(document.getElementById(dialogLabelId!)).toBe(trigger)
+    })
+
+    it('uses ariaLabel before the visible label and the visible label before trigger content', () => {
+        const ExplicitHost = defineComponent({
+            setup: () => () => h('div', [
+                h(Label, { for: 'cascader-name-trigger' }, () => 'Visible cascader label'),
+                h(Cascader, { options, id: 'cascader-name-trigger', ariaLabel: 'Explicit cascader name' }),
+            ]),
+        })
+        wrapper = mount(ExplicitHost, { ...localeProvide, attachTo: document.body })
+        expect(computeAccessibleName(document.body.querySelector('#cascader-name-trigger')!)).toBe('Explicit cascader name')
+        wrapper.unmount()
+
+        const LabelHost = defineComponent({
+            setup: () => () => h('div', [
+                h(Label, { for: 'cascader-name-trigger' }, () => 'Visible cascader label'),
+                h(Cascader, { options, id: 'cascader-name-trigger' }),
+            ]),
+        })
+        wrapper = mount(LabelHost, { ...localeProvide, attachTo: document.body })
+        const trigger = document.body.querySelector<HTMLButtonElement>('#cascader-name-trigger')
+        expect(computeAccessibleName(trigger!)).toBe('Visible cascader label')
+        wrapper.unmount()
+
+        wrapper = mount(Cascader, { ...localeProvide, props: { options }, attachTo: document.body })
+        const fallbackTrigger = document.body.querySelector<HTMLButtonElement>('[role="combobox"]')
+        expect(fallbackTrigger?.getAttribute('title')).toBe('Select path...')
+        expect(computeAccessibleName(fallbackTrigger!)).toBe('Select path...')
+    })
+
     it('renders with options prop', () => {
         wrapper = mount(Cascader, {
             ...localeProvide,
@@ -98,13 +166,12 @@ describe('Cascader', () => {
             props: { options, modelValue: ['zh', 'bj', 'hd'], clearable: true },
             attachTo: document.body,
         })
-        const trigger = wrapper.find('[role="combobox"]')
-        expect(wrapper.find('[role="button"]').exists()).toBe(false)
+        expect(wrapper.find('button[aria-label="Clear"]').exists()).toBe(false)
 
-        await trigger.trigger('mouseenter')
+        await wrapper.get('.relative.w-full').trigger('mouseenter')
         await nextTick()
 
-        const clearButton = wrapper.find('[role="button"]')
+        const clearButton = wrapper.find('button[aria-label="Clear"]')
         expect(clearButton.exists()).toBe(true)
         await clearButton.trigger('click')
         expect(wrapper.emitted('update:modelValue')?.[0]?.[0]).toEqual([])
@@ -317,7 +384,7 @@ describe('Cascader', () => {
             expect(checkbox.exists()).toBe(true)
             // Default variant 的绿色选中背景与匹配前景色都来自 Checkbox 组件自身；
             // Cascader 不应以自定义颜色类覆盖它们。
-            const checkboxClass = checkbox.classes().join(' ')
+            const checkboxClass = checkbox.get('[role="checkbox"]').classes().join(' ')
             expect(checkboxClass).toContain('data-[state=checked]:bg-brutal-success')
             expect(checkboxClass).toContain('data-[state=checked]:text-brutal-success-foreground')
             expect(checkboxClass).not.toContain('data-[state=checked]:bg-brutal-bg')

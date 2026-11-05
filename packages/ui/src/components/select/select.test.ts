@@ -1,5 +1,7 @@
 import { vi } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { computeAccessibleName } from 'dom-accessibility-api'
+import { defineComponent, h, nextTick, ref } from 'vue'
 import Select from './Select.vue'
 import type { SelectOption } from './types'
 import SelectTrigger from './SelectTrigger.vue'
@@ -9,6 +11,7 @@ import SelectLabel from './SelectLabel.vue'
 import SelectSeparator from './SelectSeparator.vue'
 import SelectScrollUpButton from './SelectScrollUpButton.vue'
 import SelectScrollDownButton from './SelectScrollDownButton.vue'
+import Label from '../label/Label.vue'
 
 vi.mock('reka-ui', async (importOriginal) => {
     const primitives = await importOriginal<typeof import('reka-ui')>()
@@ -168,6 +171,78 @@ describe('SelectTrigger', () => {
         })
         await emptyWrapper.find('[aria-haspopup="listbox"]').trigger('keydown', { key: 'Backspace' })
         expect(emptyWrapper.emitted('clear')).toBeFalsy()
+    })
+})
+
+describe('Select accessible name', () => {
+    it('uses a live aria-labelledby name before ariaLabel and the associated visible label', async () => {
+        const alternateName = ref('Alternate select name')
+        const Host = defineComponent({
+            setup: () => () => h('div', [
+                h(Label, { for: 'select-name-trigger' }, () => 'Visible select label'),
+                h('span', { id: 'select-alternate-name' }, alternateName.value),
+                h(Select, {
+                    id: 'select-name-trigger',
+                    options: [{ value: 'a', label: 'Option A' }],
+                    ariaLabel: 'Explicit select name',
+                    ariaLabelledby: 'select-alternate-name',
+                }),
+            ]),
+        })
+        const wrapper = mount(Host, { attachTo: document.body })
+        const trigger = document.body.querySelector<HTMLButtonElement>('#select-name-trigger')
+        const label = document.body.querySelector<HTMLLabelElement>('label[for="select-name-trigger"]')
+
+        expect(trigger).not.toBeNull()
+        expect(computeAccessibleName(trigger!)).toBe('Alternate select name')
+        label?.click()
+        expect(document.activeElement).toBe(trigger)
+
+        alternateName.value = 'Updated select name'
+        await nextTick()
+        expect(computeAccessibleName(trigger!)).toBe('Updated select name')
+        wrapper.unmount()
+    })
+
+    it('uses ariaLabel before the visible label and uses the visible label when no explicit name is provided', () => {
+        const Host = defineComponent({
+            setup: () => () => h('div', [
+                h(Label, { for: 'select-name-trigger' }, () => 'Visible select label'),
+                h(Select, {
+                    id: 'select-name-trigger',
+                    options: [{ value: 'a', label: 'Option A' }],
+                    ariaLabel: 'Explicit select name',
+                }),
+            ]),
+        })
+        const wrapper = mount(Host, { attachTo: document.body })
+        const trigger = document.body.querySelector<HTMLButtonElement>('#select-name-trigger')
+
+        expect(computeAccessibleName(trigger!)).toBe('Explicit select name')
+        wrapper.unmount()
+
+        const LabelOnlyHost = defineComponent({
+            setup: () => () => h('div', [
+                h(Label, { for: 'select-name-trigger' }, () => 'Visible select label'),
+                h(Select, {
+                    id: 'select-name-trigger',
+                    options: [{ value: 'a', label: 'Option A' }],
+                }),
+            ]),
+        })
+        const labelOnlyWrapper = mount(LabelOnlyHost, { attachTo: document.body })
+        const labelOnlyTrigger = document.body.querySelector<HTMLButtonElement>('#select-name-trigger')
+        expect(computeAccessibleName(labelOnlyTrigger!)).toBe('Visible select label')
+        labelOnlyWrapper.unmount()
+
+        const fallbackWrapper = mount(Select, {
+            props: { options: [{ value: 'a', label: 'Option A' }] },
+            attachTo: document.body,
+        })
+        const fallbackTrigger = document.body.querySelector<HTMLButtonElement>('[role="combobox"]')
+        expect(fallbackTrigger?.getAttribute('title')).toBe('请选择')
+        expect(computeAccessibleName(fallbackTrigger!)).toBe('请选择')
+        fallbackWrapper.unmount()
     })
 })
 

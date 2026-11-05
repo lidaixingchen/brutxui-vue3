@@ -3,14 +3,15 @@ import { computed, ref, shallowRef, useId, watch } from 'vue'
 import { ChevronsUpDown, X } from '@lucide/vue'
 import { getDocument } from '@/lib/env'
 import { cn } from '@/lib/utils'
-import { PopoverRoot, PopoverTrigger } from 'reka-ui'
+import { PopoverRoot } from 'reka-ui'
+import PopoverTrigger from '../popover/PopoverTrigger.vue'
 import PopoverContent from '../popover/PopoverContent.vue'
 import Input from '../input/Input.vue'
 import { useLocale } from '@/composables/useLocale'
 import { useClearableSelection } from '@/composables/useClearableSelection'
 import { useSelectableTrigger } from '@/composables/useSelectableTrigger'
 import { useSelectionDisplayText } from '@/composables/useSelectionDisplayText'
-import { treeSelectTriggerVariants } from './tree-select-variants'
+import { treeSelectControlVariants, treeSelectControlTriggerVariants, treeSelectTriggerVariants } from './tree-select-variants'
 import { type TreeNode } from './tree-select-types'
 import { type VariantProps } from 'class-variance-authority'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
@@ -42,8 +43,12 @@ interface TreeSelectProps {
     disabled?: boolean
     /** 尺寸 */
     size?: NonNullable<TreeSelectVariantProps['size']>
+    /** 触发器 ID，用于关联可见 Label。 */
+    id?: string
     /** ARIA 标签 */
     ariaLabel?: string
+    /** 关联名称元素的 ID，优先于 ariaLabel。 */
+    ariaLabelledby?: string
     /** 最多显示标签数（多选模式） */
     maxDisplay?: number
     /** 下拉列表最大高度（CSS 值） */
@@ -69,7 +74,9 @@ const props = withDefaults(defineProps<TreeSelectProps>(), {
     clearable: false,
     disabled: false,
     size: 'default',
+    id: undefined,
     ariaLabel: undefined,
+    ariaLabelledby: undefined,
     maxDisplay: 3,
     maxHeight: '15rem',
     dropdownClass: undefined,
@@ -83,6 +90,11 @@ const { t } = useLocale()
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('treeSelect.placeholder'))
 const resolvedSearchPlaceholder = computed(() => props.searchPlaceholder ?? t('treeSelect.searchPlaceholder'))
 const resolvedEmptyText = computed(() => props.emptyText ?? t('treeSelect.emptyText'))
+const resolvedAriaLabelledby = computed(() => props.ariaLabelledby?.trim() || undefined)
+const resolvedAriaLabel = computed(() => resolvedAriaLabelledby.value
+    ? undefined
+    : props.ariaLabel?.trim() || undefined
+)
 
 const emit = defineEmits<{
     'update:modelValue': [value: string | string[] | undefined]
@@ -346,6 +358,8 @@ const {
     handleClear,
     onMouseEnter: onClearableMouseEnter,
     onMouseLeave: onClearableMouseLeave,
+    onFocus: onClearableFocus,
+    onBlur: onClearableBlur,
 } = useClearableSelection<TreeSelectModelValue>({
     modelValue: () => props.modelValue,
     clearable: () => props.clearable,
@@ -368,17 +382,34 @@ watch(open, (isOpen) => {
 
 const { triggerClasses } = useSelectableTrigger<TreeSelectModelValue>({
     modelValue: () => props.modelValue,
-    baseClass: () => treeSelectTriggerVariants({ size: props.size, disabled: props.disabled }),
+    baseClass: () => cn(treeSelectTriggerVariants({ size: props.size, disabled: props.disabled }), treeSelectControlTriggerVariants({ disabled: props.disabled })),
     class: () => props.class,
 })
+const triggerIdAttrs = computed(() => props.id?.trim() ? { id: props.id.trim() } : {})
+const controlClasses = computed(() => cn(treeSelectControlVariants({ disabled: props.disabled })))
 
 const triggerIconClasses = computed(() =>
     cn('shrink-0 opacity-50 stroke-3', iconSizeVariants({ size: props.iconSize }))
 )
+const triggerTextClasses = computed(() => cn('min-w-0 flex-1 truncate', showClear.value && 'pr-6'))
 
 const clearIconClasses = cn(iconSizeVariants({ size: 'sm' }), 'stroke-3')
 
 const triggerRef = ref<HTMLElement | null>(null)
+
+function handleControlFocusOut(event: FocusEvent): void {
+    const control = event.currentTarget as HTMLElement
+    if (!control.contains(event.relatedTarget as Node | null)) onClearableBlur()
+}
+
+function handleClearAndFocus(event: Event): void {
+    handleClear(event)
+    focusTrigger()
+}
+
+function focusTrigger(): void {
+    triggerRef.value?.focus()
+}
 
 defineExpose({
     open,
@@ -393,42 +424,49 @@ const contentId = `tree-select-content-${useId()}`
 
 <template>
     <PopoverRoot v-model:open="open">
-        <PopoverTrigger as-child>
-            <div
-                ref="triggerRef"
-                role="combobox"
-                :aria-expanded="open"
-                :aria-controls="open ? contentId : undefined"
-                :aria-label="ariaLabel"
-                aria-haspopup="tree"
-                :tabindex="disabled ? -1 : 0"
-                :aria-disabled="disabled"
-                :class="triggerClasses"
-                @mouseenter="onClearableMouseEnter"
-                @mouseleave="onClearableMouseLeave"
-                @keydown.enter="!disabled && (open = !open)"
-                @keydown.space.prevent="!disabled && (open = !open)"
-                @keydown.escape="open = false"
-            >
-                <span class="truncate">{{ displayText }}</span>
-                <span class="flex items-center gap-1">
-                    <!-- 清除按钮使用 span + role="button" -->
-                    <span
-                        v-if="showClear"
-                        role="button"
-                        :tabindex="disabled ? -1 : 0"
-                        class="p-0.5 hover:bg-brutal-muted rounded-brutal focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden"
-                        :aria-label="t('treeSelect.clear')"
-                        @click.stop="handleClear"
-                        @keydown.enter.stop="handleClear"
-                        @keydown.space.prevent.stop="handleClear"
-                    >
-                        <X :class="clearIconClasses" />
-                    </span>
+        <div
+            :class="controlClasses"
+            @mouseenter="onClearableMouseEnter"
+            @mouseleave="onClearableMouseLeave"
+            @focusin="onClearableFocus"
+            @focusout="handleControlFocusOut"
+        >
+            <PopoverTrigger :id="id" as-child>
+                <button
+                    ref="triggerRef"
+                    type="button"
+                    v-bind="triggerIdAttrs"
+                    role="combobox"
+                    :aria-expanded="open"
+                    :aria-controls="open ? contentId : undefined"
+                    :title="resolvedAriaLabelledby || resolvedAriaLabel ? undefined : resolvedPlaceholder"
+                    :aria-labelledby="resolvedAriaLabelledby"
+                    :aria-label="resolvedAriaLabel"
+                    aria-haspopup="tree"
+                    :tabindex="disabled ? -1 : undefined"
+                    :disabled="disabled"
+                    :aria-disabled="disabled ? 'true' : undefined"
+                    :class="triggerClasses"
+                    @click="focusTrigger"
+                    @keydown.enter.prevent="!disabled && (open = !open)"
+                    @keydown.space.prevent="!disabled && (open = !open)"
+                    @keydown.escape="open = false"
+                >
+                    <span :class="triggerTextClasses">{{ displayText }}</span>
                     <ChevronsUpDown :class="triggerIconClasses" />
-                </span>
-            </div>
-        </PopoverTrigger>
+                </button>
+            </PopoverTrigger>
+            <button
+                v-if="showClear"
+                type="button"
+                :disabled="disabled"
+                class="absolute right-8 top-1/2 -translate-y-1/2 p-0.5 hover:bg-brutal-muted rounded-brutal focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden"
+                :aria-label="t('treeSelect.clear')"
+                @click.stop="handleClearAndFocus"
+            >
+                <X :class="clearIconClasses" />
+            </button>
+        </div>
         <PopoverContent class="w-(--reka-popover-trigger-width) p-0" align="start">
             <div :id="contentId" ref="contentRef" class="flex flex-col">
                 <!-- 搜索框 -->

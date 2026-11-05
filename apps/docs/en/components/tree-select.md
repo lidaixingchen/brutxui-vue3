@@ -188,8 +188,12 @@ interface TreeSelectLocale {
 
 ## Accessibility
 
+- **Clear action**: The trigger and clear action are separate buttons that share shell movement, keeping their relative positions during hover and press. Focusing the trigger reveals the clear button for Tab navigation; clearing returns focus to the trigger.
+
+
 - **Keyboard**: Nodes support `Arrow Up` / `Arrow Down` navigation; non-leaf nodes support `Arrow Right` to expand / `Arrow Left` to collapse; `Home` / `End` keys jump to the first/last node; the clear button supports `Enter` / `Space` activation
 - **ARIA Attributes**: The trigger uses `role="combobox"` and `aria-expanded`; the dropdown list uses `role="tree"` and `role="treeitem"`; multi-select mode adds `aria-multiselectable`; disabled state uses `aria-disabled`
+- **Name association**: The native trigger button supports a visible `Label` associated through `id` and `for`. Name priority is `ariaLabelledby`, `ariaLabel`, associated visible `Label`, then the current placeholder. The placeholder is exposed through the native `title` fallback, which also shows the browser hover tooltip. The search field inside the panel keeps its own accessible name.
 - **Focus Management**: Uses roving tabindex for focus management; disabled nodes have `tabindex="-1"`
 
 ## FAQ

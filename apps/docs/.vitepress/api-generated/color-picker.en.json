@@ -26,7 +26,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/ColorPicker.vue",
-            "line": 18
+            "line": 19
           },
           "origin": "declared",
           "required": false,
@@ -63,7 +63,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/ColorPicker.vue",
-            "line": 19
+            "line": 20
           },
           "origin": "declared",
           "required": false,
@@ -435,7 +435,7 @@
             "literals": [],
             "references": []
           },
-          "description": "Placeholder text shown when there is no valid color; it is also the localized fallback for the accessible name.",
+          "description": "Placeholder text shown when there is no valid color. The localized fallback for the trigger accessible name is independent of this visible text.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/types.ts",
@@ -601,11 +601,43 @@
             "literals": [],
             "references": []
           },
-          "description": "The accessible name of the trigger; localized placeholder text is used when omitted.",
+          "description": "Explicitly sets the trigger accessible name, taking precedence over an associated native label and following `ariaLabelledby`. When both `ariaLabel` and `ariaLabelledby` are unset, the trigger uses a localized native `title` as its name fallback; the browser may show its native tooltip.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/types.ts",
             "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-props-ariaLabelledby",
+          "name": "ariaLabelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "References the trigger accessible name by element ID and takes precedence over `ariaLabel`. This prop applies only to the trigger.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/types.ts",
+            "line": 25
           },
           "origin": "declared",
           "required": false,
@@ -641,7 +673,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/types.ts",
-            "line": 27
+            "line": 28
           },
           "origin": "declared",
           "required": false,

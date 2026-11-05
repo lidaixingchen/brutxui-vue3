@@ -29,7 +29,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/combobox/Combobox.vue",
-            "line": 24
+            "line": 25
           },
           "origin": "declared",
           "required": true,
@@ -53,7 +53,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/combobox/Combobox.vue",
-            "line": 25
+            "line": 26
           },
           "origin": "declared",
           "required": false,
@@ -88,7 +88,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/combobox/Combobox.vue",
-            "line": 26
+            "line": 27
           },
           "origin": "declared",
           "required": false,
@@ -123,7 +123,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/combobox/Combobox.vue",
-            "line": 27
+            "line": 28
           },
           "origin": "declared",
           "required": false,
@@ -155,7 +155,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/combobox/Combobox.vue",
-            "line": 28
+            "line": 29
           },
           "origin": "declared",
           "required": false,
@@ -187,7 +187,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/combobox/Combobox.vue",
-            "line": 29
+            "line": 30
           },
           "origin": "declared",
           "required": false,
@@ -219,7 +219,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/combobox/Combobox.vue",
-            "line": 30
+            "line": 31
           },
           "origin": "declared",
           "required": false,
@@ -254,7 +254,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/combobox/Combobox.vue",
-            "line": 31
+            "line": 32
           },
           "origin": "declared",
           "required": false,
@@ -289,7 +289,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/combobox/Combobox.vue",
-            "line": 32
+            "line": 33
           },
           "origin": "declared",
           "required": false,
@@ -324,7 +324,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/combobox/Combobox.vue",
-            "line": 33
+            "line": 34
           },
           "origin": "declared",
           "required": false,
@@ -356,7 +356,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/combobox/Combobox.vue",
-            "line": 34
+            "line": 35
           },
           "origin": "declared",
           "required": false,
@@ -376,6 +376,38 @@
           }
         },
         {
+          "id": "api-component_3Acombobox_2FCombobox-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The DOM ID of the native trigger button, allowing a visible label to be associated through its for attribute.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
           "id": "api-component_3Acombobox_2FCombobox-props-ariaLabel",
           "name": "ariaLabel",
           "kind": "props",
@@ -384,11 +416,43 @@
             "literals": [],
             "references": []
           },
-          "description": "Sets the accessible name of the combobox trigger.",
+          "description": "The explicit accessible name of the trigger; ariaLabelledby takes precedence, followed by an associated visible label, then the placeholder fallback.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/combobox/Combobox.vue",
-            "line": 35
+            "line": 37
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/combobox/Combobox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acombobox_2FCombobox-props-ariaLabelledby",
+          "name": "ariaLabelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The ID of the associated name element; it takes precedence over ariaLabel, a visible label, and the placeholder fallback.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/combobox/Combobox.vue",
+            "line": 38
           },
           "origin": "declared",
           "required": false,
@@ -420,7 +484,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/combobox/Combobox.vue",
-            "line": 36
+            "line": 39
           },
           "origin": "declared",
           "required": false,
@@ -465,7 +529,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/combobox/Combobox.vue",
-            "line": 37
+            "line": 40
           },
           "origin": "declared",
           "required": false,
@@ -551,7 +615,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/combobox/Combobox.vue",
-            "line": 194
+            "line": 210
           },
           "origin": "declared",
           "nullable": false,
@@ -570,7 +634,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/combobox/Combobox.vue",
-            "line": 195
+            "line": 211
           },
           "origin": "declared",
           "nullable": false,
@@ -589,7 +653,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/combobox/Combobox.vue",
-            "line": 196
+            "line": 212
           },
           "origin": "declared",
           "nullable": false,

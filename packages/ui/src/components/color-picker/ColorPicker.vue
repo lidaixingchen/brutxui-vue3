@@ -2,7 +2,8 @@
 import { computed, useId } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { ChevronDown, X } from '@lucide/vue'
-import { PopoverRoot, PopoverTrigger } from 'reka-ui'
+import { PopoverRoot } from 'reka-ui'
+import PopoverTrigger from '../popover/PopoverTrigger.vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { type ColorPreset } from '@/lib/default-presets'
@@ -38,6 +39,7 @@ const props = withDefaults(defineProps<ColorPickerRootProps>(), {
     name: undefined,
     id: undefined,
     ariaLabel: undefined,
+    ariaLabelledby: undefined,
     class: undefined,
 })
 
@@ -48,7 +50,16 @@ const emit = defineEmits<ColorPickerEmits & {
 const { t } = useLocale()
 
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('colorPicker.placeholder'))
-const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('colorPicker.placeholder'))
+const triggerIdAttrs = computed(() => props.id?.trim() ? { id: props.id.trim() } : {})
+const resolvedAriaLabelledby = computed(() => props.ariaLabelledby?.trim() || undefined)
+const resolvedAriaLabel = computed(() => resolvedAriaLabelledby.value
+    ? undefined
+    : props.ariaLabel?.trim() || undefined
+)
+const resolvedTitle = computed(() => resolvedAriaLabel.value || resolvedAriaLabelledby.value
+    ? undefined
+    : t('colorPicker.placeholder')
+)
 
 const {
     open,
@@ -111,14 +122,16 @@ const presetsForPanel = computed<string[] | readonly ColorPreset[] | undefined>(
     <input v-if="name" type="hidden" :name="name" :value="modelValue ?? ''" :disabled="disabled">
     <PopoverRoot v-model:open="open">
         <div :class="controlClasses">
-            <PopoverTrigger as-child>
+            <PopoverTrigger :id="id" as-child>
                 <button
-                    :id="id"
+                    v-bind="triggerIdAttrs"
                     type="button"
                     role="combobox"
                     :aria-expanded="open"
                     :aria-controls="open ? contentId : undefined"
+                    :aria-labelledby="resolvedAriaLabelledby"
                     :aria-label="resolvedAriaLabel"
+                    :title="resolvedTitle"
                     aria-haspopup="dialog"
                     :disabled="disabled"
                     :class="triggerClasses"

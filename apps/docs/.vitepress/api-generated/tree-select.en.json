@@ -29,7 +29,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 24
+            "line": 25
           },
           "origin": "declared",
           "required": true,
@@ -53,7 +53,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 26
+            "line": 27
           },
           "origin": "declared",
           "required": false,
@@ -88,7 +88,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 28
+            "line": 29
           },
           "origin": "declared",
           "required": false,
@@ -123,7 +123,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 30
+            "line": 31
           },
           "origin": "declared",
           "required": false,
@@ -158,7 +158,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 32
+            "line": 33
           },
           "origin": "declared",
           "required": false,
@@ -190,7 +190,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 34
+            "line": 35
           },
           "origin": "declared",
           "required": false,
@@ -222,7 +222,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 36
+            "line": 37
           },
           "origin": "declared",
           "required": false,
@@ -254,7 +254,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 38
+            "line": 39
           },
           "origin": "declared",
           "required": false,
@@ -289,7 +289,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 40
+            "line": 41
           },
           "origin": "declared",
           "required": false,
@@ -324,7 +324,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 42
+            "line": 43
           },
           "origin": "declared",
           "required": false,
@@ -361,7 +361,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 44
+            "line": 45
           },
           "origin": "declared",
           "required": false,
@@ -381,6 +381,38 @@
           }
         },
         {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The DOM ID of the native trigger button, allowing a visible label to be associated through its for attribute.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 47
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
           "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-ariaLabel",
           "name": "ariaLabel",
           "kind": "props",
@@ -389,11 +421,43 @@
             "literals": [],
             "references": []
           },
-          "description": "Sets the trigger’s accessible label.",
+          "description": "The explicit accessible name of the trigger; ariaLabelledby takes precedence, followed by an associated visible label, then the placeholder fallback.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 46
+            "line": 49
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/tree-select/TreeSelect.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atree_2Dselect_2FTreeSelect-props-ariaLabelledby",
+          "name": "ariaLabelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The ID of the associated name element; it takes precedence over ariaLabel, a visible label, and the placeholder fallback.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
+            "line": 51
           },
           "origin": "declared",
           "required": false,
@@ -425,7 +489,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 48
+            "line": 53
           },
           "origin": "declared",
           "required": false,
@@ -457,7 +521,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 50
+            "line": 55
           },
           "origin": "declared",
           "required": false,
@@ -489,7 +553,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 52
+            "line": 57
           },
           "origin": "declared",
           "required": false,
@@ -521,7 +585,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 54
+            "line": 59
           },
           "origin": "declared",
           "required": false,
@@ -566,7 +630,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 56
+            "line": 61
           },
           "origin": "declared",
           "required": false,
@@ -602,7 +666,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 58
+            "line": 63
           },
           "origin": "declared",
           "required": false,
@@ -714,7 +778,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 385
+            "line": 416
           },
           "origin": "declared",
           "nullable": false,
@@ -739,7 +803,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 386
+            "line": 417
           },
           "origin": "declared",
           "nullable": false,
@@ -758,7 +822,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 387
+            "line": 418
           },
           "origin": "declared",
           "nullable": false,
@@ -777,7 +841,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-select/TreeSelect.vue",
-            "line": 388
+            "line": 419
           },
           "origin": "declared",
           "nullable": false,

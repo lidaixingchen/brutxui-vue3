@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, useId, watch } from 'vue'
 import { ChevronsUpDown, ChevronRight, Check, X } from '@lucide/vue'
-import { PopoverRoot, PopoverTrigger } from 'reka-ui'
+import { PopoverRoot } from 'reka-ui'
+import PopoverTrigger from '../popover/PopoverTrigger.vue'
 import PopoverContent from '../popover/PopoverContent.vue'
 import Checkbox from '../checkbox/Checkbox.vue'
 import { cn } from '@/lib/utils'
@@ -10,6 +11,8 @@ import { useClearableSelection } from '@/composables/useClearableSelection'
 import { useSelectableTrigger } from '@/composables/useSelectableTrigger'
 import { useSelectionDisplayText } from '@/composables/useSelectionDisplayText'
 import {
+    cascaderControlVariants,
+    cascaderControlTriggerVariants,
     cascaderTriggerVariants,
     cascaderItemVariants,
     cascaderContentVariants,
@@ -47,6 +50,10 @@ interface CascaderProps {
     class?: string
     /** ARIA Label for accessibility */
     ariaLabel?: string
+    /** 触发器 ID，用于关联可见 Label。 */
+    id?: string
+    /** 关联名称元素的 ID，优先于 ariaLabel。 */
+    ariaLabelledby?: string
 }
 
 const props = withDefaults(defineProps<CascaderProps>(), {
@@ -63,6 +70,8 @@ const props = withDefaults(defineProps<CascaderProps>(), {
     dropdownClass: undefined,
     class: undefined,
     ariaLabel: undefined,
+    id: undefined,
+    ariaLabelledby: undefined,
 })
 
 const emit = defineEmits<{
@@ -76,6 +85,11 @@ const { t } = useLocale()
 
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('cascader.placeholder'))
 const resolvedEmptyText = computed(() => t('cascader.emptyText'))
+const resolvedAriaLabelledby = computed(() => props.ariaLabelledby?.trim() || undefined)
+const resolvedAriaLabel = computed(() => resolvedAriaLabelledby.value
+    ? undefined
+    : props.ariaLabel?.trim() || undefined
+)
 
 const internalOpen = ref(false)
 const open = computed<boolean>({
@@ -97,9 +111,24 @@ const activeColumnIndex = ref(0)
 const activeItemIndex = ref(-1)
 const triggerFocusVisible = ref(false)
 const focusVisibleOptionPath = ref<CascaderValue[]>()
+const triggerRef = ref<HTMLButtonElement | null>(null)
 
 const uid = useId()
 const contentId = `${uid}-content`
+
+function handleControlFocusOut(event: FocusEvent): void {
+    const control = event.currentTarget as HTMLElement
+    if (!control.contains(event.relatedTarget as Node | null)) onClearableBlur()
+}
+
+function handleClearAndFocus(event: Event): void {
+    handleClear(event)
+    focusTrigger()
+}
+
+function focusTrigger(): void {
+    triggerRef.value?.focus()
+}
 
 function getOptionId(colIdx: number, itemIdx: number): string {
     return `${uid}-col-${colIdx}-item-${itemIdx}`
@@ -444,13 +473,16 @@ const selectedDisplayPaths = computed(() => {
 
 const { hasValue, triggerClasses } = useSelectableTrigger<CascaderValue[] | CascaderValue[][]>({
     modelValue: () => props.modelValue,
-    baseClass: () => cascaderTriggerVariants({ size: props.size }),
+    baseClass: () => cn(cascaderTriggerVariants({ size: props.size }), cascaderControlTriggerVariants({ disabled: props.disabled })),
     class: () => props.class,
 })
+const triggerIdAttrs = computed(() => props.id?.trim() ? { id: props.id.trim() } : {})
+const controlClasses = computed(() => cn(cascaderControlVariants({ disabled: props.disabled })))
 
 const contentClasses = computed(() =>
     cn(cascaderContentVariants(), 'p-0 !w-auto max-w-[100vw]', props.dropdownClass)
 )
+const triggerTextClasses = computed(() => cn('min-w-0 flex-1 truncate', showClear.value && 'pr-6'))
 
 const displayText = useSelectionDisplayText({
     selectedItems: selectedDisplayPaths,
@@ -500,6 +532,8 @@ const {
     handleClear,
     onMouseEnter: onClearableMouseEnter,
     onMouseLeave: onClearableMouseLeave,
+    onFocus: onClearableFocus,
+    onBlur: onClearableBlur,
 } = useClearableSelection<CascaderValue[] | CascaderValue[][]>({
     modelValue: () => props.modelValue,
     clearable: () => props.clearable,
@@ -664,41 +698,49 @@ function handleKeyDown(e: KeyboardEvent) {
 
 <template>
     <PopoverRoot v-model:open="open">
-        <PopoverTrigger as-child>
-            <div
-                role="combobox"
-                :aria-expanded="open"
-                :aria-label="ariaLabel"
-                :tabindex="disabled ? -1 : 0"
-                :aria-disabled="disabled"
-                :aria-controls="open ? contentId : undefined"
-                :aria-activedescendant="activeDescendantId"
-                :class="triggerClasses"
-                @mouseenter="onClearableMouseEnter"
-                @mouseleave="onClearableMouseLeave"
-                @focus="handleTriggerFocus"
-                @blur="handleTriggerBlur"
-                @keydown="handleTriggerKeyDown"
-            >
-                <span class="truncate">{{ displayText }}</span>
-                <span class="flex items-center gap-1">
-                    <!-- 与 lib/utils FOCUS_RING_CLASSES 保持一致 -->
-                    <span
-                        v-if="showClear"
-                        role="button"
-                        :tabindex="disabled ? -1 : 0"
-                        :aria-label="t('cascader.clear')"
-                        class="p-0.5 hover:bg-brutal-muted rounded-brutal focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden"
-                        @click="handleClear"
-                        @keydown.enter="handleClear"
-                        @keydown.space.prevent="handleClear"
-                    >
-                        <X class="w-3.5 h-3.5 stroke-3" />
-                    </span>
+        <div
+            :class="controlClasses"
+            @mouseenter="onClearableMouseEnter"
+            @mouseleave="onClearableMouseLeave"
+            @focusin="onClearableFocus"
+            @focusout="handleControlFocusOut"
+        >
+            <PopoverTrigger :id="id" as-child>
+                <button
+                    v-bind="triggerIdAttrs"
+                    ref="triggerRef"
+                    type="button"
+                    role="combobox"
+                    :aria-expanded="open"
+                    :title="resolvedAriaLabelledby || resolvedAriaLabel ? undefined : resolvedPlaceholder"
+                    :aria-labelledby="resolvedAriaLabelledby"
+                    :aria-label="resolvedAriaLabel"
+                    :tabindex="disabled ? -1 : undefined"
+                    :disabled="disabled"
+                    :aria-disabled="disabled ? 'true' : undefined"
+                    :aria-controls="open ? contentId : undefined"
+                    :aria-activedescendant="activeDescendantId"
+                    :class="triggerClasses"
+                    @click="focusTrigger"
+                    @focus="handleTriggerFocus"
+                    @blur="handleTriggerBlur"
+                    @keydown="handleTriggerKeyDown"
+                >
+                    <span :class="triggerTextClasses">{{ displayText }}</span>
                     <ChevronsUpDown class="shrink-0 opacity-50 stroke-3 w-4 h-4" />
-                </span>
-            </div>
-        </PopoverTrigger>
+                </button>
+            </PopoverTrigger>
+            <button
+                v-if="showClear"
+                type="button"
+                :disabled="disabled"
+                :aria-label="t('cascader.clear')"
+                class="absolute right-8 top-1/2 -translate-y-1/2 p-0.5 hover:bg-brutal-muted rounded-brutal focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden"
+                @click.stop="handleClearAndFocus"
+            >
+                <X class="w-3.5 h-3.5 stroke-3" />
+            </button>
+        </div>
         <PopoverContent :class="contentClasses" align="start">
             <div v-if="options.length === 0" class="px-4 py-6 text-sm text-brutal-muted-foreground text-center">
                 {{ resolvedEmptyText }}
@@ -736,7 +778,7 @@ function handleKeyDown(e: KeyboardEvent) {
                                 @update:checked="(checked) => toggleCheckbox(option, colIdx, checked)"
                                 @click.stop
                             />
-                            <span class="min-w-0 truncate">{{ option.label }}</span>
+                            <span data-slot="cascader-option-label" class="min-w-0 truncate">{{ option.label }}</span>
                         </div>
                         <span class="flex h-4 w-8 shrink-0 items-center justify-end gap-1">
                             <span :class="selectionIndicatorClasses">

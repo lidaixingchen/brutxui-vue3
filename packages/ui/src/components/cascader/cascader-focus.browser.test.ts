@@ -21,7 +21,7 @@ afterEach(() => {
 
 function findRow(label: string): HTMLElement {
     const row = Array.from(document.querySelectorAll<HTMLElement>('[role="option"]'))
-        .find(option => option.querySelector('span')?.textContent?.trim() === label)
+        .find(option => option.querySelector('[data-slot="cascader-option-label"]')?.textContent?.trim() === label)
     if (!row) throw new Error(`找不到选项行：${label}`)
     return row
 }

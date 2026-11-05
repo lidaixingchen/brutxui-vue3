@@ -53,6 +53,10 @@ import { PopoverContent, Button } from 'brutx-ui-vue'
 | `PopoverContent` | 弹出层内容面板 |
 | `PopoverAnchor` | 用于定位的锚点元素 |
 
+### 触发器标识
+
+通过 `PopoverTrigger` 的 `id` 指定触发器标识；弹出内容的名称引用使用相同 ID。省略时自动生成。
+
 ## API 参考
 
 <span id="popover-根组件"></span>

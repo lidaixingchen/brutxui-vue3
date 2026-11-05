@@ -26,7 +26,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/ColorPicker.vue",
-            "line": 18
+            "line": 19
           },
           "origin": "declared",
           "required": false,
@@ -63,7 +63,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/ColorPicker.vue",
-            "line": 19
+            "line": 20
           },
           "origin": "declared",
           "required": false,
@@ -435,7 +435,7 @@
             "literals": [],
             "references": []
           },
-          "description": "没有有效颜色时显示的占位文本，同时作为无障碍名称的本地化回退来源。",
+          "description": "没有有效颜色时显示的占位文本；触发器无障碍名称的本地化回退独立于此显示文本。",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/types.ts",
@@ -601,11 +601,43 @@
             "literals": [],
             "references": []
           },
-          "description": "触发按钮的无障碍名称；未提供时回退到本地化占位文本。",
+          "description": "显式设置触发按钮的无障碍名称，优先于关联的原生 Label，并低于 `ariaLabelledby`。未设置 `ariaLabel` 和 `ariaLabelledby` 时，触发器以本地化文案作为原生 `title` 名称回退；浏览器可能显示原生悬停提示。",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/types.ts",
             "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/color-picker/ColorPicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acolor_2Dpicker_2FColorPicker-props-ariaLabelledby",
+          "name": "ariaLabelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "通过元素 ID 引用触发按钮的无障碍名称，优先于 `ariaLabel`；此属性仅作用于触发按钮。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/color-picker/types.ts",
+            "line": 25
           },
           "origin": "declared",
           "required": false,
@@ -641,7 +673,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/color-picker/types.ts",
-            "line": 27
+            "line": 28
           },
           "origin": "declared",
           "required": false,

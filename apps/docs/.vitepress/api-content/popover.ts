@@ -25,6 +25,7 @@ const content = {
         },
         PopoverTrigger: {
             props: {
+                id: { zh: '触发器 ID，同时作为弹出内容的名称引用；省略时自动生成。', en: 'The trigger ID, also used to label the popover content. An ID is generated when omitted.' },
                 asChild: { zh: '将触发器的属性和交互行为合并到唯一子元素上。', en: 'Merges the trigger props and interaction behavior into its single child element.' },
                 as: { zh: '选择触发器渲染的 HTML 标签或组件；`asChild` 启用时由子元素决定渲染目标。', en: 'Selects the HTML tag or component rendered as the trigger; the child determines the target when `asChild` is enabled.' },
             },

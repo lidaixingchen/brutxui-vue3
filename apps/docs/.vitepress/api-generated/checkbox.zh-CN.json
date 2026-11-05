@@ -234,11 +234,75 @@
             "literals": [],
             "references": []
           },
-          "description": "复选框的无障碍名称；未提供时使用本地化默认文案。",
+          "description": "显式无障碍名称；优先于可见 `Label` 文本，缺少其他名称时使用本地化回退文案。",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/checkbox/Checkbox.vue",
             "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "控件 ID，可供 `Label` 的 `for` 属性关联可见名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/checkbox/Checkbox.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acheckbox_2FCheckbox-props-ariaLabelledby",
+          "name": "ariaLabelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "关联名称元素的 ID 列表；优先于 `ariaLabel` 和可见 `Label` 文本。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/checkbox/Checkbox.vue",
+            "line": 29
           },
           "origin": "declared",
           "required": false,
@@ -270,7 +334,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/checkbox/Checkbox.vue",
-            "line": 27
+            "line": 31
           },
           "origin": "declared",
           "required": false,
@@ -304,7 +368,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/checkbox/Checkbox.vue",
-            "line": 29
+            "line": 33
           },
           "origin": "declared",
           "required": false,
@@ -339,7 +403,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/checkbox/Checkbox.vue",
-            "line": 31
+            "line": 35
           },
           "origin": "declared",
           "required": false,

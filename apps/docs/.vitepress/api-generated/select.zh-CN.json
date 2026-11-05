@@ -279,6 +279,70 @@
           }
         },
         {
+          "id": "api-component_3Aselect_2FSelect-props-ariaLabelledby",
+          "name": "ariaLabelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "默认触发器关联名称元素的 ID；优先于 ariaLabel。自定义 trigger 插槽时由插槽内容自行绑定。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 18
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelect-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "默认触发器的显式无障碍名称；ariaLabelledby 优先，其次为关联的可见 Label，最后使用当前占位文案回退。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/types.ts",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/Select.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
           "id": "api-component_3Aselect_2FSelect-props-size",
           "name": "size",
           "kind": "props",
@@ -295,7 +359,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/types.ts",
-            "line": 17
+            "line": 21
           },
           "origin": "declared",
           "required": false,
@@ -331,7 +395,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/types.ts",
-            "line": 18
+            "line": 22
           },
           "origin": "declared",
           "required": false,
@@ -363,7 +427,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/types.ts",
-            "line": 19
+            "line": 23
           },
           "origin": "declared",
           "required": false,
@@ -398,7 +462,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/types.ts",
-            "line": 20
+            "line": 24
           },
           "origin": "declared",
           "required": false,
@@ -433,7 +497,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/types.ts",
-            "line": 21
+            "line": 25
           },
           "origin": "declared",
           "required": false,
@@ -465,7 +529,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/types.ts",
-            "line": 22
+            "line": 26
           },
           "origin": "declared",
           "required": false,
@@ -489,7 +553,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/types.ts",
-            "line": 23
+            "line": 27
           },
           "origin": "declared",
           "required": false,
@@ -521,7 +585,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/types.ts",
-            "line": 24
+            "line": 28
           },
           "origin": "declared",
           "required": false,
@@ -557,7 +621,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/types.ts",
-            "line": 25
+            "line": 29
           },
           "origin": "declared",
           "required": false,
@@ -1331,7 +1395,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectTrigger.vue",
-            "line": 15
+            "line": 16
           },
           "origin": "declared",
           "required": false,
@@ -1368,7 +1432,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectTrigger.vue",
-            "line": 16
+            "line": 17
           },
           "origin": "declared",
           "required": false,
@@ -1400,7 +1464,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectTrigger.vue",
-            "line": 17
+            "line": 18
           },
           "origin": "declared",
           "required": false,
@@ -1435,7 +1499,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectTrigger.vue",
-            "line": 18
+            "line": 19
           },
           "origin": "declared",
           "required": false,
@@ -1467,7 +1531,103 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectTrigger.vue",
-            "line": 19
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-props-title",
+          "name": "title",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "触发器的悬停提示；未提供显式 ARIA 名称时，默认使用当前语言的 select.placeholder 文案作为无障碍名称回退。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-props-ariaLabelledby",
+          "name": "ariaLabelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "关联名称元素的 ID；优先于 ariaLabel、可见 Label 和 title 回退。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/select/SelectTrigger.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aselect_2FSelectTrigger-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "触发器的显式无障碍名称；未设置或为空时使用关联的可见 Label 或 title 回退。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/select/SelectTrigger.vue",
+            "line": 23
           },
           "origin": "declared",
           "required": false,
@@ -1502,7 +1662,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectTrigger.vue",
-            "line": 21
+            "line": 25
           },
           "origin": "declared",
           "required": false,
@@ -1534,7 +1694,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectTrigger.vue",
-            "line": 23
+            "line": 27
           },
           "origin": "declared",
           "required": false,
@@ -1566,7 +1726,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectTrigger.vue",
-            "line": 24
+            "line": 28
           },
           "origin": "declared",
           "required": false,
@@ -1598,7 +1758,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectTrigger.vue",
-            "line": 25
+            "line": 29
           },
           "origin": "declared",
           "required": false,

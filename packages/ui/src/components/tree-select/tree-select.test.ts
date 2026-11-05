@@ -1,9 +1,11 @@
 import { mount } from '@vue/test-utils'
-import { nextTick } from 'vue'
+import { computeAccessibleName } from 'dom-accessibility-api'
+import { defineComponent, h, nextTick, ref } from 'vue'
 import TreeSelect from './TreeSelect.vue'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import type { TreeNode } from './tree-select-types'
+import Label from '../label/Label.vue'
 
 const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
@@ -50,6 +52,71 @@ async function openTreeSelect(w: ReturnType<typeof mount>) {
 }
 
 describe('TreeSelect', () => {
+    it('associates a visible label with the trigger and keeps the search name independent', async () => {
+        const alternateName = ref('Alternate tree name')
+        const Host = defineComponent({
+            setup: () => () => h('div', [
+                h(Label, { for: 'tree-name-trigger' }, () => 'Visible tree label'),
+                h('span', { id: 'tree-alternate-name' }, alternateName.value),
+                h(TreeSelect, {
+                    nodes,
+                    id: 'tree-name-trigger',
+                    ariaLabel: 'Explicit tree name',
+                    ariaLabelledby: 'tree-alternate-name',
+                }),
+            ]),
+        })
+        wrapper = mount(Host, { ...localeProvide, attachTo: document.body })
+        const trigger = document.body.querySelector<HTMLButtonElement>('#tree-name-trigger')
+        const label = document.body.querySelector<HTMLLabelElement>('label[for="tree-name-trigger"]')
+
+        expect(trigger).not.toBeNull()
+        expect(computeAccessibleName(trigger!)).toBe('Alternate tree name')
+        label?.click()
+        expect(document.activeElement).toBe(trigger)
+
+        alternateName.value = 'Updated tree name'
+        await nextTick()
+        expect(computeAccessibleName(trigger!)).toBe('Updated tree name')
+
+        if (trigger?.getAttribute('aria-expanded') !== 'true') await openTreeSelect(wrapper)
+        const search = document.body.querySelector<HTMLInputElement>('input[type="text"]')
+        expect(search).not.toBeNull()
+        expect(computeAccessibleName(search!)).toBe('Search nodes')
+        const dialog = document.body.querySelector<HTMLElement>('[role="dialog"]')
+        const dialogLabelId = dialog?.getAttribute('aria-labelledby')
+        expect(dialogLabelId).toBe(trigger?.id)
+        expect(document.getElementById(dialogLabelId!)).toBe(trigger)
+    })
+
+    it('uses ariaLabel before the visible label and the visible label before trigger content', () => {
+        const ExplicitHost = defineComponent({
+            setup: () => () => h('div', [
+                h(Label, { for: 'tree-name-trigger' }, () => 'Visible tree label'),
+                h(TreeSelect, { nodes, id: 'tree-name-trigger', ariaLabel: 'Explicit tree name' }),
+            ]),
+        })
+        wrapper = mount(ExplicitHost, { ...localeProvide, attachTo: document.body })
+        expect(computeAccessibleName(document.body.querySelector('#tree-name-trigger')!)).toBe('Explicit tree name')
+        wrapper.unmount()
+
+        const LabelHost = defineComponent({
+            setup: () => () => h('div', [
+                h(Label, { for: 'tree-name-trigger' }, () => 'Visible tree label'),
+                h(TreeSelect, { nodes, id: 'tree-name-trigger' }),
+            ]),
+        })
+        wrapper = mount(LabelHost, { ...localeProvide, attachTo: document.body })
+        const trigger = document.body.querySelector<HTMLButtonElement>('#tree-name-trigger')
+        expect(computeAccessibleName(trigger!)).toBe('Visible tree label')
+        wrapper.unmount()
+
+        wrapper = mount(TreeSelect, { ...localeProvide, props: { nodes }, attachTo: document.body })
+        const fallbackTrigger = document.body.querySelector<HTMLButtonElement>('[role="combobox"]')
+        expect(fallbackTrigger?.getAttribute('title')).toBe('Select node...')
+        expect(computeAccessibleName(fallbackTrigger!)).toBe('Select node...')
+    })
+
     it('renders with nodes prop', () => {
         wrapper = mount(TreeSelect, {
             ...localeProvide,
@@ -162,13 +229,12 @@ describe('TreeSelect', () => {
             props: { nodes, modelValue: '1-1', clearable: true },
             attachTo: document.body,
         })
-        const trigger = wrapper.find('[role="combobox"]')
-        expect(wrapper.find('[role="button"][aria-label="Clear"]').exists()).toBe(false)
+        expect(wrapper.find('button[aria-label="Clear"]').exists()).toBe(false)
 
-        await trigger.trigger('mouseenter')
+        await wrapper.get('.relative.w-full').trigger('mouseenter')
         await nextTick()
 
-        const clearButton = wrapper.find('[role="button"][aria-label="Clear"]')
+        const clearButton = wrapper.find('button[aria-label="Clear"]')
         expect(clearButton.exists()).toBe(true)
         await clearButton.trigger('click')
         expect(wrapper.emitted('update:modelValue')).toBeTruthy()
@@ -191,13 +257,12 @@ describe('TreeSelect', () => {
             props: { nodes, multiple: true, modelValue: ['1-1', '1-2'], clearable: true },
             attachTo: document.body,
         })
-        const trigger = wrapper.find('[role="combobox"]')
-        expect(wrapper.find('[role="button"][aria-label="Clear"]').exists()).toBe(false)
+        expect(wrapper.find('button[aria-label="Clear"]').exists()).toBe(false)
 
-        await trigger.trigger('mouseenter')
+        await wrapper.get('.relative.w-full').trigger('mouseenter')
         await nextTick()
 
-        const clearButton = wrapper.find('[role="button"][aria-label="Clear"]')
+        const clearButton = wrapper.find('button[aria-label="Clear"]')
         expect(clearButton.exists()).toBe(true)
         await clearButton.trigger('click')
         expect(wrapper.emitted('update:modelValue')).toBeTruthy()

@@ -29,7 +29,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/cascader/Cascader.vue",
-            "line": 23
+            "line": 26
           },
           "origin": "declared",
           "required": true,
@@ -59,7 +59,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/cascader/Cascader.vue",
-            "line": 25
+            "line": 28
           },
           "origin": "declared",
           "required": false,
@@ -94,7 +94,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/cascader/Cascader.vue",
-            "line": 27
+            "line": 30
           },
           "origin": "declared",
           "required": false,
@@ -129,7 +129,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/cascader/Cascader.vue",
-            "line": 29
+            "line": 32
           },
           "origin": "declared",
           "required": false,
@@ -164,7 +164,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/cascader/Cascader.vue",
-            "line": 31
+            "line": 34
           },
           "origin": "declared",
           "required": false,
@@ -199,7 +199,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/cascader/Cascader.vue",
-            "line": 33
+            "line": 36
           },
           "origin": "declared",
           "required": false,
@@ -231,7 +231,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/cascader/Cascader.vue",
-            "line": 35
+            "line": 38
           },
           "origin": "declared",
           "required": false,
@@ -263,7 +263,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/cascader/Cascader.vue",
-            "line": 37
+            "line": 40
           },
           "origin": "declared",
           "required": false,
@@ -299,7 +299,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/cascader/Cascader.vue",
-            "line": 39
+            "line": 42
           },
           "origin": "declared",
           "required": false,
@@ -331,7 +331,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/cascader/Cascader.vue",
-            "line": 41
+            "line": 44
           },
           "origin": "declared",
           "required": false,
@@ -366,7 +366,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/cascader/Cascader.vue",
-            "line": 43
+            "line": 46
           },
           "origin": "declared",
           "required": false,
@@ -398,7 +398,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/cascader/Cascader.vue",
-            "line": 45
+            "line": 48
           },
           "origin": "declared",
           "required": false,
@@ -430,7 +430,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/cascader/Cascader.vue",
-            "line": 47
+            "line": 50
           },
           "origin": "declared",
           "required": false,
@@ -458,11 +458,75 @@
             "literals": [],
             "references": []
           },
-          "description": "Sets the accessible label for the select trigger.",
+          "description": "The explicit accessible name of the trigger; ariaLabelledby takes precedence, followed by an associated visible label, then the placeholder fallback.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/cascader/Cascader.vue",
-            "line": 49
+            "line": 52
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The DOM ID of the native trigger button, allowing a visible label to be associated through its for attribute.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 54
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/cascader/Cascader.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Acascader_2FCascader-props-ariaLabelledby",
+          "name": "ariaLabelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The ID of the associated name element; it takes precedence over ariaLabel, a visible label, and the placeholder fallback.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/cascader/Cascader.vue",
+            "line": 56
           },
           "origin": "declared",
           "required": false,

@@ -156,7 +156,12 @@ interface ComboboxOption {
 ## Accessibility
 
 - **Keyboard**: Supports `Arrow Up` / `Arrow Down` to move focus, `Enter` to select the current item, `Escape` to close the dropdown
-- **ARIA Attributes**: Provides accessibility label via the `ariaLabel` prop
+- **Name association**: Use `id` to associate the native trigger button with a visible `Label` `for` attribute. Name priority is `ariaLabelledby`, `ariaLabel`, associated visible `Label`, then the current placeholder. The placeholder is exposed through the native `title` fallback, which also shows the browser hover tooltip. The search field inside the panel keeps its own accessible name.
+
+```vue
+<Label for="framework-select">Framework</Label>
+<Combobox id="framework-select" :options="options" />
+```
 
 
 ## FAQ

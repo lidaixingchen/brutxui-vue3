@@ -1,5 +1,7 @@
 import { mount } from '@vue/test-utils'
-import { nextTick } from 'vue'
+import { computeAccessibleName } from 'dom-accessibility-api'
+import { renderToString } from '@vue/server-renderer'
+import { createSSRApp, h, nextTick } from 'vue'
 import DatePicker from './DatePicker.vue'
 import DatePickerPanel from './DatePickerPanel.vue'
 import { en } from '@/locales/en'
@@ -26,6 +28,100 @@ async function openPanel(w: ReturnType<typeof mount>) {
 }
 
 describe('DatePicker', () => {
+    it('uses an associated label and follows its updated text', () => {
+        wrapper = mount(DatePicker, {
+            ...localeProvide,
+            props: { id: 'date-label-target' },
+            attachTo: document.body,
+        })
+        const trigger = wrapper.get('button').element
+        const label = document.createElement('label')
+        label.htmlFor = 'date-label-target'
+        label.textContent = 'Departure date'
+        document.body.prepend(label)
+
+        expect(label.control).toBe(trigger)
+        expect(computeAccessibleName(trigger)).toBe('Departure date')
+
+        label.textContent = 'Return date'
+        expect(computeAccessibleName(trigger)).toBe('Return date')
+    })
+
+    it('uses a wrapping label as the trigger name', () => {
+        const label = document.createElement('label')
+        label.append('Departure date')
+        document.body.append(label)
+        wrapper = mount(DatePicker, { ...localeProvide, attachTo: label })
+
+        expect(computeAccessibleName(wrapper.get('button').element)).toBe('Departure date')
+    })
+
+    it('prefers ariaLabel over an associated label', () => {
+        const label = document.createElement('label')
+        label.htmlFor = 'date-explicit-name-target'
+        label.textContent = 'Visible date label'
+        document.body.append(label)
+        wrapper = mount(DatePicker, {
+            ...localeProvide,
+            props: { id: 'date-explicit-name-target', ariaLabel: 'Explicit date name' },
+            attachTo: document.body,
+        })
+
+        const trigger = wrapper.get('button')
+        expect(computeAccessibleName(trigger.element)).toBe('Explicit date name')
+        expect(trigger.attributes('title')).toBeUndefined()
+    })
+
+    it('prefers aria-labelledby over ariaLabel and an associated label', () => {
+        const referencedName = document.createElement('span')
+        referencedName.id = 'date-referenced-name'
+        referencedName.textContent = 'Referenced date name'
+        const label = document.createElement('label')
+        label.htmlFor = 'date-named-trigger'
+        label.textContent = 'Visible date label'
+        document.body.append(referencedName, label)
+
+        wrapper = mount(DatePicker, {
+            ...localeProvide,
+            props: {
+                id: 'date-named-trigger',
+                ariaLabel: 'Explicit date name',
+                ariaLabelledby: 'date-referenced-name',
+            },
+            attachTo: document.body,
+        })
+
+        const trigger = wrapper.get('button')
+        expect(computeAccessibleName(trigger.element)).toBe('Referenced date name')
+        expect(trigger.attributes('title')).toBeUndefined()
+    })
+
+    it('uses the localized accessible name without a label', () => {
+        wrapper = mount(DatePicker, { ...localeProvide, attachTo: document.body })
+
+        const trigger = wrapper.get('button')
+        expect(computeAccessibleName(trigger.element)).toBe('Pick a date')
+        expect(trigger.attributes('title')).toBe('Pick a date')
+    })
+
+    it('renders fallback naming content in SSR without a default aria-label', async () => {
+        const app = createSSRApp({
+            render: () => h('label', { for: 'date-ssr-trigger' }, [
+                'Departure date',
+                h(DatePicker, { id: 'date-ssr-trigger' }),
+            ]),
+        })
+        app.provide(LOCALE_INJECTION_KEY, en)
+
+        const html = await renderToString(app)
+        const trigger = html.match(/<button[^>]*id="date-ssr-trigger"[^>]*>/)?.[0]
+
+        expect(trigger).toBeDefined()
+        expect(trigger).not.toContain('aria-label=')
+        expect(trigger).toContain('title="Pick a date"')
+        expect(html).not.toContain('class="sr-only"')
+    })
+
     it('renders trigger with combobox role', () => {
         wrapper = mount(DatePicker, { ...localeProvide, attachTo: document.body })
         const trigger = wrapper.find('[role="combobox"]')

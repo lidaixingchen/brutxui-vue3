@@ -4,6 +4,10 @@ const dateLabelFallback = {
     'zh-CN': '为 undefined 或 null 时读取 datePicker.placeholder，简体中文文案为“请选择日期”。',
     en: 'When undefined or null, uses datePicker.placeholder, whose English text is “Pick a date”.',
 }
+const dateTriggerNameFallback = {
+    'zh-CN': '若 ariaLabel 和 ariaLabelledby 均未设置，且未由关联原生 Label 命名，触发按钮的 title 使用 datePicker.placeholder 的本地化文案作为无障碍名称回退；浏览器可能显示原生悬停提示。日期面板的本地化回退仍为“请选择日期”。',
+    en: 'When ariaLabel and ariaLabelledby are unset and no associated native label names the trigger, its title uses the localized datePicker.placeholder as the accessible-name fallback; the browser may show its native tooltip. The date panel keeps its localized fallback name.',
+}
 const rangeLabelFallback = {
     'zh-CN': '为 undefined 或 null 时读取 datePicker.rangeLabel，简体中文文案为“日期范围”。',
     en: 'When undefined or null, uses datePicker.rangeLabel, whose English text is “Date range”.',
@@ -11,6 +15,10 @@ const rangeLabelFallback = {
 const dateTimeLabelFallback = {
     'zh-CN': '为 undefined 或 null 时读取 datePicker.dateTimePlaceholder，简体中文文案为“选择日期时间”。',
     en: 'When undefined or null, uses datePicker.dateTimePlaceholder, whose English text is “Select date and time”.',
+}
+const dateTimeTriggerNameFallback = {
+    'zh-CN': '若 ariaLabel 和 ariaLabelledby 均未设置，且未由关联原生 Label 命名，触发按钮的 title 使用 datePicker.dateTimePlaceholder 的本地化文案作为无障碍名称回退；浏览器可能显示原生悬停提示。日期时间面板的本地化回退仍为“选择日期时间”。',
+    en: 'When ariaLabel and ariaLabelledby are unset and no associated native label names the trigger, its title uses the localized datePicker.dateTimePlaceholder as the accessible-name fallback; the browser may show its native tooltip. The datetime panel keeps its localized fallback name.',
 }
 const timeLabelFallback = {
     'zh-CN': '为 undefined 或 null 时读取 datePicker.timePlaceholder，简体中文文案为“选择时间”。',
@@ -219,7 +227,8 @@ const content = {
                 placeholder: { zh: '没有可显示日期时呈现在触发按钮中的占位文本。', en: 'Placeholder text in the trigger when there is no date to display.', fallback: dateLabelFallback },
                 shortcuts: { zh: '日期面板中的快捷选项；每项提供显示标签和 Date 值或返回 Date 的函数，选择后仍需遵守日期上下界。', en: 'Shortcut options in the date panel. Each supplies a label and a Date or function returning a Date; selected shortcuts must satisfy the date bounds.' },
                 name: { zh: '原生表单字段名。提供后创建隐藏字段，以 YYYY-MM-DD 提交日期；空值提交空字符串，禁用时不提交。', en: 'The native form field name. When provided, a hidden field submits the date as YYYY-MM-DD, an empty string for an empty value, and nothing when disabled.' },
-                ariaLabel: { zh: '日期触发按钮和日期面板的无障碍名称。', en: 'The accessible name for the date trigger and date panel.', fallback: dateLabelFallback },
+                ariaLabel: { zh: '显式设置日期触发按钮和日期面板的无障碍名称；触发器优先级低于 `ariaLabelledby`，高于关联原生 Label。', en: 'Explicitly sets the accessible name of the date trigger and panel. For the trigger, it follows `ariaLabelledby` and takes precedence over an associated native label.', fallback: dateTriggerNameFallback },
+                ariaLabelledby: { zh: '通过元素 ID 引用日期触发按钮的无障碍名称，优先于 `ariaLabel`；此属性只作用于触发按钮，面板名称仍由 `ariaLabel` 或本地化文案提供。', en: 'References the date trigger accessible name by element ID and takes precedence over `ariaLabel`. It applies only to the trigger; the panel name still comes from `ariaLabel` or its localized fallback.' },
             },
             events: pickerEvents,
             exposes: pickerExposes,
@@ -300,7 +309,8 @@ const content = {
                 displayFormat: { ...triggerProps.displayFormat, fallback: { 'zh-CN': '为 undefined 或 null 时，showSeconds 为真使用 YYYY-MM-DD HH:mm:ss，否则使用 YYYY-MM-DD HH:mm。', en: 'When undefined or null, uses YYYY-MM-DD HH:mm:ss when showSeconds is true, or YYYY-MM-DD HH:mm otherwise.' } },
                 clearable: { zh: '显示面板清除按钮；有值且未禁用、未只读时也显示触发器清除按钮。面板确认按钮始终显示。', en: 'Shows the panel Clear button and, when a value exists and the trigger is neither disabled nor read-only, its clear button. The panel Confirm button is always shown.' },
                 name: { zh: '原生隐藏表单字段名；按 showSeconds 提交 YYYY-MM-DD HH:mm 或 YYYY-MM-DD HH:mm:ss，与 displayFormat 独立。空值提交空字符串，禁用时不提交。', en: 'The native hidden form field name. It submits YYYY-MM-DD HH:mm or YYYY-MM-DD HH:mm:ss according to showSeconds, independently of displayFormat. Empty values submit an empty string; disabled fields are omitted.' },
-                ariaLabel: { zh: '日期时间触发按钮及弹出日期时间面板的无障碍名称。', en: 'The accessible name of the datetime trigger and popup datetime panel.', fallback: dateTimeLabelFallback },
+                ariaLabel: { zh: '显式设置日期时间触发按钮和弹出面板的无障碍名称；触发器优先级低于 `ariaLabelledby`，高于关联原生 Label。', en: 'Explicitly sets the accessible name of the datetime trigger and popup panel. For the trigger, it follows `ariaLabelledby` and takes precedence over an associated native label.', fallback: dateTimeTriggerNameFallback },
+                ariaLabelledby: { zh: '通过元素 ID 引用日期时间触发按钮的无障碍名称，优先于 `ariaLabel`；此属性只作用于触发按钮，面板名称仍由 `ariaLabel` 或本地化文案提供。', en: 'References the datetime trigger accessible name by element ID and takes precedence over `ariaLabel`. It applies only to the trigger; the panel name still comes from `ariaLabel` or its localized fallback.' },
             },
             events: pickerEvents,
             exposes: pickerExposes,

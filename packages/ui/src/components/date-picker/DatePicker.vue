@@ -2,7 +2,8 @@
 import { computed, useId } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { Calendar as CalendarIcon, ChevronDown, X } from '@lucide/vue'
-import { PopoverRoot, PopoverTrigger } from 'reka-ui'
+import { PopoverRoot } from 'reka-ui'
+import PopoverTrigger from '../popover/PopoverTrigger.vue'
 import { cn } from '@/lib/utils'
 import { brutalDestructiveHoverTextClasses } from '@/lib/semantic-text-variants'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
@@ -38,6 +39,7 @@ const props = withDefaults(defineProps<DatePickerRootProps>(), {
     name: undefined,
     id: undefined,
     ariaLabel: undefined,
+    ariaLabelledby: undefined,
     class: undefined,
 })
 
@@ -48,7 +50,17 @@ const emit = defineEmits<DatePickerEmits & {
 const { t } = useLocale()
 
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('datePicker.placeholder'))
-const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('datePicker.placeholder'))
+const triggerIdAttrs = computed(() => props.id?.trim() ? { id: props.id.trim() } : {})
+const resolvedAriaLabelledby = computed(() => props.ariaLabelledby?.trim() || undefined)
+const resolvedAriaLabel = computed(() => resolvedAriaLabelledby.value
+    ? undefined
+    : props.ariaLabel?.trim() || undefined
+)
+const resolvedTitle = computed(() => resolvedAriaLabel.value || resolvedAriaLabelledby.value
+    ? undefined
+    : t('datePicker.placeholder')
+)
+const resolvedPanelAriaLabel = computed(() => props.ariaLabel?.trim() || t('datePicker.placeholder'))
 
 const {
     open,
@@ -113,15 +125,17 @@ defineExpose({ open })
     <PopoverRoot v-model:open="open">
         <input v-if="hiddenInputValue !== undefined" type="hidden" :name="name" :value="hiddenInputValue" :disabled="disabled">
         <div class="relative w-full">
-            <PopoverTrigger as-child>
+            <PopoverTrigger :id="id" as-child>
                 <button
-                    :id="id"
+                    v-bind="triggerIdAttrs"
                     type="button"
                     :name="name"
                     role="combobox"
                     :aria-expanded="open"
                     :aria-controls="open ? contentId : undefined"
+                    :aria-labelledby="resolvedAriaLabelledby"
                     :aria-label="resolvedAriaLabel"
+                    :title="resolvedTitle"
                     aria-haspopup="dialog"
                     :disabled="disabled"
                     :aria-disabled="readonly"
@@ -168,7 +182,7 @@ defineExpose({ open })
                 :max-date="maxDate"
                 :shortcuts="shortcuts"
                 :clearable="clearable"
-                :aria-label="resolvedAriaLabel"
+                :aria-label="resolvedPanelAriaLabel"
                 @update:model-value="handlePanelUpdate"
                 @confirm="handlePanelConfirm"
                 @clear="handlePanelClear"

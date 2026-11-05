@@ -188,8 +188,12 @@ interface TreeSelectLocale {
 
 ## 可访问性
 
+- **清除操作**：触发器与清除按钮为独立按钮，共享外壳位移，在悬浮和按压时保持相对位置。 键盘聚焦触发器时显示清除按钮，可通过 Tab 到达；执行清除后焦点返回触发器。
+
+
 - **键盘操作**：节点支持 `ArrowUp` / `ArrowDown` 导航；非叶节点支持 `ArrowRight` 展开 / `ArrowLeft` 折叠；`Home` / `End` 键跳转至首尾节点；清除按钮支持 `Enter` / `Space` 操作
 - **ARIA 属性**：触发器使用 `role="combobox"` 和 `aria-expanded`；下拉列表使用 `role="tree"` 和 `role="treeitem"`；多选模式下添加 `aria-multiselectable`；禁用状态下使用 `aria-disabled`
+- **名称关联**：原生触发按钮支持通过 `id` 与 `Label` 的 `for` 关联。名称优先级为 `ariaLabelledby`、`ariaLabel`、关联的可见 `Label`、当前占位文案。占位文案通过原生 `title` 提供名称回退，也会显示浏览器悬停提示；面板内搜索框使用独立名称。
 - **焦点管理**：使用 roving tabindex 管理焦点；禁用节点设置 `tabindex="-1"`
 
 ## 通过 ref 使用组件状态

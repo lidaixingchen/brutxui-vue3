@@ -165,7 +165,12 @@ interface ComboboxOption {
 ## 可访问性
 
 - **键盘操作**：支持 `↑` / `↓` 上下移动焦点，`Enter` 选中当前项，`Escape` 关闭下拉
-- **ARIA 属性**：通过 `ariaLabel` 属性提供无障碍标签
+- **名称关联**：使用 `id` 将原生触发按钮与可见 `Label` 的 `for` 关联。名称优先级为 `ariaLabelledby`、`ariaLabel`、关联的可见 `Label`、当前占位文案。占位文案通过原生 `title` 提供名称回退，也会显示浏览器悬停提示；面板内搜索框使用独立名称。
+
+```vue
+<Label for="framework-select">框架</Label>
+<Combobox id="framework-select" :options="options" />
+```
 
 ## 程序化控制
 

@@ -205,3 +205,9 @@ const selectedFruit = ref('')
 - **键盘操作**：支持 `Space` / `Enter` 打开下拉，`Escape` 关闭，方向键导航选项
 - **ARIA 属性**：自动管理 `aria-expanded`、`aria-haspopup`、`aria-activedescendant` 等
 - **焦点管理**：打开时焦点锁定在下拉列表内，关闭时恢复焦点到触发器
+- **名称关联**：一体化触发器可用 `id` 关联 `Label` 的 `for`；名称优先级为 `ariaLabelledby`、`ariaLabel`、关联的可见 `Label`、当前占位文案。占位文案通过原生 `title` 提供名称回退，也会显示浏览器悬停提示。自定义 `trigger` 插槽时，请在插槽内容上绑定 `id` 与 ARIA 名称属性。
+
+```vue
+<Label for="country-select">国家或地区</Label>
+<Select id="country-select" :options="countries" />
+```

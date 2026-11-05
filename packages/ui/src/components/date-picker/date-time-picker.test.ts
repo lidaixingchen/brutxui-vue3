@@ -1,5 +1,7 @@
 import { mount } from '@vue/test-utils'
-import { nextTick } from 'vue'
+import { computeAccessibleName } from 'dom-accessibility-api'
+import { renderToString } from '@vue/server-renderer'
+import { createSSRApp, h, nextTick } from 'vue'
 import DateTimePicker from './DateTimePicker.vue'
 import DateTimePickerPanel from './DateTimePickerPanel.vue'
 import { en } from '@/locales/en'
@@ -26,6 +28,100 @@ async function openPanel(w: ReturnType<typeof mount>) {
 }
 
 describe('DateTimePicker', () => {
+    it('uses an associated label and follows its updated text', () => {
+        wrapper = mount(DateTimePicker, {
+            ...localeProvide,
+            props: { id: 'datetime-label-target' },
+            attachTo: document.body,
+        })
+        const trigger = wrapper.get('button').element
+        const label = document.createElement('label')
+        label.htmlFor = 'datetime-label-target'
+        label.textContent = 'Appointment time'
+        document.body.prepend(label)
+
+        expect(label.control).toBe(trigger)
+        expect(computeAccessibleName(trigger)).toBe('Appointment time')
+
+        label.textContent = 'Follow-up time'
+        expect(computeAccessibleName(trigger)).toBe('Follow-up time')
+    })
+
+    it('uses a wrapping label as the trigger name', () => {
+        const label = document.createElement('label')
+        label.append('Appointment time')
+        document.body.append(label)
+        wrapper = mount(DateTimePicker, { ...localeProvide, attachTo: label })
+
+        expect(computeAccessibleName(wrapper.get('button').element)).toBe('Appointment time')
+    })
+
+    it('prefers ariaLabel over an associated label', () => {
+        const label = document.createElement('label')
+        label.htmlFor = 'datetime-explicit-name-target'
+        label.textContent = 'Visible datetime label'
+        document.body.append(label)
+        wrapper = mount(DateTimePicker, {
+            ...localeProvide,
+            props: { id: 'datetime-explicit-name-target', ariaLabel: 'Explicit datetime name' },
+            attachTo: document.body,
+        })
+
+        const trigger = wrapper.get('button')
+        expect(computeAccessibleName(trigger.element)).toBe('Explicit datetime name')
+        expect(trigger.attributes('title')).toBeUndefined()
+    })
+
+    it('prefers aria-labelledby over ariaLabel and an associated label', () => {
+        const referencedName = document.createElement('span')
+        referencedName.id = 'datetime-referenced-name'
+        referencedName.textContent = 'Referenced datetime name'
+        const label = document.createElement('label')
+        label.htmlFor = 'datetime-named-trigger'
+        label.textContent = 'Visible datetime label'
+        document.body.append(referencedName, label)
+
+        wrapper = mount(DateTimePicker, {
+            ...localeProvide,
+            props: {
+                id: 'datetime-named-trigger',
+                ariaLabel: 'Explicit datetime name',
+                ariaLabelledby: 'datetime-referenced-name',
+            },
+            attachTo: document.body,
+        })
+
+        const trigger = wrapper.get('button')
+        expect(computeAccessibleName(trigger.element)).toBe('Referenced datetime name')
+        expect(trigger.attributes('title')).toBeUndefined()
+    })
+
+    it('uses the localized accessible name without a label', () => {
+        wrapper = mount(DateTimePicker, { ...localeProvide, attachTo: document.body })
+
+        const trigger = wrapper.get('button')
+        expect(computeAccessibleName(trigger.element)).toBe('Select date and time')
+        expect(trigger.attributes('title')).toBe('Select date and time')
+    })
+
+    it('renders fallback naming content in SSR without a default aria-label', async () => {
+        const app = createSSRApp({
+            render: () => h('label', { for: 'datetime-ssr-trigger' }, [
+                'Appointment time',
+                h(DateTimePicker, { id: 'datetime-ssr-trigger' }),
+            ]),
+        })
+        app.provide(LOCALE_INJECTION_KEY, en)
+
+        const html = await renderToString(app)
+        const trigger = html.match(/<button[^>]*id="datetime-ssr-trigger"[^>]*>/)?.[0]
+
+        expect(trigger).toBeDefined()
+        expect(trigger).not.toContain('aria-label=')
+        expect(trigger).toContain('title="Select date and time"')
+        expect(html).not.toContain('class="sr-only"')
+    })
+
     it('renders trigger with combobox role', () => {
         wrapper = mount(DateTimePicker, { ...localeProvide, attachTo: document.body })
         const trigger = wrapper.find('[role="combobox"]')

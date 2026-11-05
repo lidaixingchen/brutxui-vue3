@@ -8,6 +8,7 @@ import { brutalDestructiveTextClasses } from '@/lib/semantic-text-variants'
 import { selectTriggerVariants } from './select-variants'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import { useClearable } from '@/composables/useClearable'
+import { useLocale } from '@/composables/useLocale'
 
 type SelectTriggerVariantProps = VariantProps<typeof selectTriggerVariants>
 
@@ -17,6 +18,9 @@ interface SelectTriggerProps {
     errorMessage?: string
     disabled?: boolean
     id?: string
+    title?: string
+    ariaLabelledby?: string
+    ariaLabel?: string
     /** 是否可清除 */
     clearable?: boolean
     /** 当前选中的值 */
@@ -31,11 +35,20 @@ const props = withDefaults(defineProps<SelectTriggerProps>(), {
     errorMessage: undefined,
     disabled: false,
     id: undefined,
+    title: undefined,
+    ariaLabelledby: undefined,
+    ariaLabel: undefined,
     clearable: false,
     modelValue: undefined,
     class: undefined,
     iconClass: undefined,
 })
+
+const { t } = useLocale()
+const resolvedTitle = computed(() => props.ariaLabelledby?.trim() || props.ariaLabel?.trim()
+    ? undefined
+    : props.title ?? t('select.placeholder')
+)
 
 const emit = defineEmits<{
     clear: []
@@ -107,8 +120,11 @@ function handleKeyDown(e: KeyboardEvent) {
     >
         <SelectTriggerPrimitive
             :id="id"
+            :title="resolvedTitle"
             :class="classes"
             :disabled="disabled"
+            :aria-labelledby="ariaLabelledby?.trim() || undefined"
+            :aria-label="ariaLabelledby?.trim() ? undefined : ariaLabel?.trim() || undefined"
             :aria-invalid="variant === 'error' && !!errorMessage ? 'true' : undefined"
             :aria-describedby="variant === 'error' && errorMessage && id ? `${id}-error` : undefined"
             aria-haspopup="listbox"

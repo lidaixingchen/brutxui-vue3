@@ -1,9 +1,11 @@
 import { mount } from '@vue/test-utils'
-import { nextTick } from 'vue'
+import { computeAccessibleName } from 'dom-accessibility-api'
+import { defineComponent, h, nextTick, ref } from 'vue'
 import Combobox from './Combobox.vue'
 import type { ComboboxOption } from './combobox-types'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
+import Label from '../label/Label.vue'
 
 const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
@@ -31,6 +33,71 @@ async function openCombobox(w: ReturnType<typeof mount>) {
 }
 
 describe('Combobox', () => {
+    it('forwards trigger id and uses a live aria-labelledby name without relabelling search', async () => {
+        const alternateName = ref('Alternate combobox name')
+        const Host = defineComponent({
+            setup: () => () => h('div', [
+                h(Label, { for: 'combobox-name-trigger' }, () => 'Visible combobox label'),
+                h('span', { id: 'combobox-alternate-name' }, alternateName.value),
+                h(Combobox, {
+                    options,
+                    id: 'combobox-name-trigger',
+                    ariaLabel: 'Explicit combobox name',
+                    ariaLabelledby: 'combobox-alternate-name',
+                }),
+            ]),
+        })
+        wrapper = mount(Host, { ...localeProvide, attachTo: document.body })
+        const trigger = document.body.querySelector<HTMLButtonElement>('#combobox-name-trigger')
+        const label = document.body.querySelector<HTMLLabelElement>('label[for="combobox-name-trigger"]')
+
+        expect(trigger).not.toBeNull()
+        expect(computeAccessibleName(trigger!)).toBe('Alternate combobox name')
+        label?.click()
+        expect(document.activeElement).toBe(trigger)
+
+        alternateName.value = 'Updated combobox name'
+        await nextTick()
+        expect(computeAccessibleName(trigger!)).toBe('Updated combobox name')
+
+        if (trigger?.getAttribute('aria-expanded') !== 'true') await openCombobox(wrapper)
+        const search = document.body.querySelector<HTMLElement>('[role="searchbox"]')
+        expect(search).not.toBeNull()
+        expect(computeAccessibleName(search!)).toBe('Search commands')
+        const dialog = document.body.querySelector<HTMLElement>('[role="dialog"]')
+        const dialogLabelId = dialog?.getAttribute('aria-labelledby')
+        expect(dialogLabelId).toBe(trigger?.id)
+        expect(document.getElementById(dialogLabelId!)).toBe(trigger)
+    })
+
+    it('uses ariaLabel before the visible label and the visible label before trigger content', () => {
+        const ExplicitHost = defineComponent({
+            setup: () => () => h('div', [
+                h(Label, { for: 'combobox-name-trigger' }, () => 'Visible combobox label'),
+                h(Combobox, { options, id: 'combobox-name-trigger', ariaLabel: 'Explicit combobox name' }),
+            ]),
+        })
+        wrapper = mount(ExplicitHost, { ...localeProvide, attachTo: document.body })
+        expect(computeAccessibleName(document.body.querySelector('#combobox-name-trigger')!)).toBe('Explicit combobox name')
+        wrapper.unmount()
+
+        const LabelHost = defineComponent({
+            setup: () => () => h('div', [
+                h(Label, { for: 'combobox-name-trigger' }, () => 'Visible combobox label'),
+                h(Combobox, { options, id: 'combobox-name-trigger' }),
+            ]),
+        })
+        wrapper = mount(LabelHost, { ...localeProvide, attachTo: document.body })
+        const trigger = document.body.querySelector<HTMLButtonElement>('#combobox-name-trigger')
+        expect(computeAccessibleName(trigger!)).toBe('Visible combobox label')
+        wrapper.unmount()
+
+        wrapper = mount(Combobox, { ...localeProvide, props: { options }, attachTo: document.body })
+        const fallbackTrigger = document.body.querySelector<HTMLButtonElement>('[role="combobox"]')
+        expect(fallbackTrigger?.getAttribute('title')).toBe('Select option...')
+        expect(computeAccessibleName(fallbackTrigger!)).toBe('Select option...')
+    })
+
     it('renders with options prop', () => {
         wrapper = mount(Combobox, {
             ...localeProvide,

@@ -4,6 +4,32 @@ import { collectionItemVariants } from '@/lib/collection-item-variants'
 import { treeNodeBaseClasses } from '@/lib/tree-variants'
 import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
+export const treeSelectControlVariants = cva(
+    'group/tree-select relative w-full transition-transform duration-150 motion-reduce:transition-none',
+    {
+        variants: {
+            disabled: {
+                false: 'hover:-translate-y-0.5',
+                true: 'cursor-not-allowed',
+            },
+        },
+        defaultVariants: { disabled: false },
+    },
+)
+
+export const treeSelectControlTriggerVariants = cva(
+    'hover:translate-y-0 motion-reduce:transition-none',
+    {
+        variants: {
+            disabled: {
+                false: 'group-hover/tree-select:shadow-brutal',
+                true: '',
+            },
+        },
+        defaultVariants: { disabled: false },
+    },
+)
+
 export const treeSelectTriggerVariants = cva(
     [
         'flex items-center justify-between w-full',

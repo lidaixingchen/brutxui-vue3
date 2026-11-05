@@ -22,6 +22,7 @@ export interface ColorPickerProps {
     name?: string
     id?: string
     ariaLabel?: string
+    ariaLabelledby?: string
     // 放宽为 ClassValue：Vue 中 class 是特殊 prop，声明后不再自动透传，
     // 组件内部手动绑定到根元素（triggerClasses）；ClassValue 支持数组/对象绑定
     class?: ClassValue

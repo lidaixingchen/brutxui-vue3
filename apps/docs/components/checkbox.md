@@ -22,15 +22,15 @@ description: 复选框组件，带有厚边框和鲜明勾选图标，实现完�
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { Checkbox } from 'brutx-ui-vue'
+import { Checkbox, Label } from 'brutx-ui-vue'
 
 const checked = ref(false)
 </script>
 
 <template>
     <div class="flex items-center gap-3">
-        <Checkbox v-model:checked="checked" />
-        <span class="text-sm font-bold">Accept terms</span>
+        <Checkbox v-model:checked="checked" id="accept-terms" />
+        <Label for="accept-terms">Accept terms</Label>
     </div>
 </template>
 ```
@@ -114,7 +114,7 @@ import { Checkbox } from 'brutx-ui-vue'
 ## 可访问性
 
 - **键盘操作**：支持 `Space` 键切换选中状态
-- **ARIA 属性**：Checkbox 默认通过 locale 提供 `aria-label`（中文为"复选框"），未提供时回退到 `t('checkbox.check')`。当毗邻可见文本已能描述用途时可省略，否则建议通过 `ariaLabel` 提供更具体的描述
+- **名称优先级**：`ariaLabelledby` 优先于 `ariaLabel`，之后使用通过 `Label for` 关联或包裹复选框的可见文本；未提供名称时才使用 locale 屏幕阅读器回退文本
 - **焦点管理**：使用 `--brutal-ring` 令牌显示可见聚焦环
 
 ```vue
@@ -127,7 +127,7 @@ const checked = ref(false)
 
 <template>
     <div class="flex items-center gap-3">
-        <Checkbox v-model:checked="checked" id="marketing" ariaLabel="接收营销邮件" />
+        <Checkbox v-model:checked="checked" id="marketing" />
         <Label for="marketing">接收营销邮件</Label>
     </div>
 </template>

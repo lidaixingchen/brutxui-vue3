@@ -26,7 +26,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/DatePicker.vue",
-            "line": 20
+            "line": 21
           },
           "origin": "declared",
           "required": false,
@@ -64,7 +64,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/DatePicker.vue",
-            "line": 21
+            "line": 22
           },
           "origin": "declared",
           "required": false,
@@ -101,7 +101,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/DatePicker.vue",
-            "line": 22
+            "line": 23
           },
           "origin": "declared",
           "required": false,
@@ -222,6 +222,38 @@
             "resolution": {
               "kind": "resolved",
               "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDatePicker-props-ariaLabelledby",
+          "name": "ariaLabelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "References the date trigger accessible name by element ID and takes precedence over `ariaLabel`. It applies only to the trigger; the panel name still comes from `ariaLabel` or its localized fallback.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 29
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DatePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
             }
           }
         },
@@ -499,7 +531,7 @@
             "literals": [],
             "references": []
           },
-          "description": "The accessible name for the date trigger and date panel.",
+          "description": "Explicitly sets the accessible name of the date trigger and panel. For the trigger, it follows `ariaLabelledby` and takes precedence over an associated native label.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
@@ -520,7 +552,7 @@
               "kind": "resolved",
               "text": "undefined"
             },
-            "fallback": "When undefined or null, uses datePicker.placeholder, whose English text is “Pick a date”."
+            "fallback": "When ariaLabel and ariaLabelledby are unset and no associated native label names the trigger, its title uses the localized datePicker.placeholder as the accessible-name fallback; the browser may show its native tooltip. The date panel keeps its localized fallback name."
           }
         },
         {
@@ -1184,7 +1216,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
-            "line": 48
+            "line": 49
           },
           "origin": "declared",
           "required": false,
@@ -1216,7 +1248,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
-            "line": 49
+            "line": 50
           },
           "origin": "declared",
           "required": false,
@@ -1249,7 +1281,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
-            "line": 50
+            "line": 51
           },
           "origin": "declared",
           "required": false,
@@ -1282,7 +1314,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
-            "line": 51
+            "line": 52
           },
           "origin": "declared",
           "required": false,
@@ -1321,7 +1353,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
-            "line": 52
+            "line": 53
           },
           "origin": "declared",
           "required": false,
@@ -2065,7 +2097,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/DateTimePicker.vue",
-            "line": 20
+            "line": 21
           },
           "origin": "declared",
           "required": false,
@@ -2103,7 +2135,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/DateTimePicker.vue",
-            "line": 21
+            "line": 22
           },
           "origin": "declared",
           "required": false,
@@ -2140,7 +2172,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/DateTimePicker.vue",
-            "line": 22
+            "line": 23
           },
           "origin": "declared",
           "required": false,
@@ -2174,7 +2206,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
-            "line": 65
+            "line": 66
           },
           "origin": "declared",
           "required": false,
@@ -2209,7 +2241,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
-            "line": 66
+            "line": 67
           },
           "origin": "declared",
           "required": false,
@@ -2241,7 +2273,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
-            "line": 67
+            "line": 68
           },
           "origin": "declared",
           "required": false,
@@ -2274,7 +2306,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
-            "line": 68
+            "line": 69
           },
           "origin": "declared",
           "required": false,
@@ -2313,7 +2345,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
-            "line": 69
+            "line": 70
           },
           "origin": "declared",
           "required": false,
@@ -2329,6 +2361,38 @@
             "resolution": {
               "kind": "resolved",
               "text": "[]"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Adate_2Dpicker_2FDateTimePicker-props-ariaLabelledby",
+          "name": "ariaLabelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "References the datetime trigger accessible name by element ID and takes precedence over `ariaLabel`. It applies only to the trigger; the panel name still comes from `ariaLabel` or its localized fallback.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/date-picker/types.ts",
+            "line": 71
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/date-picker/DateTimePicker.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
             }
           }
         },
@@ -2607,7 +2671,7 @@
             "literals": [],
             "references": []
           },
-          "description": "The accessible name of the datetime trigger and popup datetime panel.",
+          "description": "Explicitly sets the accessible name of the datetime trigger and popup panel. For the trigger, it follows `ariaLabelledby` and takes precedence over an associated native label.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
@@ -2628,7 +2692,7 @@
               "kind": "resolved",
               "text": "undefined"
             },
-            "fallback": "When undefined or null, uses datePicker.dateTimePlaceholder, whose English text is “Select date and time”."
+            "fallback": "When ariaLabel and ariaLabelledby are unset and no associated native label names the trigger, its title uses the localized datePicker.dateTimePlaceholder as the accessible-name fallback; the browser may show its native tooltip. The datetime panel keeps its localized fallback name."
           }
         },
         {
@@ -3246,7 +3310,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
-            "line": 98
+            "line": 100
           },
           "origin": "declared",
           "required": false,
@@ -3278,7 +3342,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
-            "line": 99
+            "line": 101
           },
           "origin": "declared",
           "required": false,
@@ -4338,7 +4402,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
-            "line": 82
+            "line": 84
           },
           "origin": "declared",
           "required": false,
@@ -4373,7 +4437,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
-            "line": 83
+            "line": 85
           },
           "origin": "declared",
           "required": false,
@@ -4405,7 +4469,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
-            "line": 84
+            "line": 86
           },
           "origin": "declared",
           "required": false,
@@ -4444,7 +4508,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
-            "line": 85
+            "line": 87
           },
           "origin": "declared",
           "required": false,
@@ -5343,7 +5407,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
-            "line": 112
+            "line": 114
           },
           "origin": "declared",
           "required": false,
@@ -5375,7 +5439,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/types.ts",
-            "line": 113
+            "line": 115
           },
           "origin": "declared",
           "required": false,

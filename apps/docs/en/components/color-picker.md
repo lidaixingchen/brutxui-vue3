@@ -37,6 +37,17 @@ const color = ref(null)
 </template>
 ```
 
+### Trigger Accessible Name
+
+The trigger name follows this precedence: `ariaLabelledby`, explicit `ariaLabel`, an associated native `<label>`, then a localized `title` fallback. When both ARIA name props are unset, the component sets `title` to the localized placeholder text. It can supply the accessible name when no native label is associated, and the browser may show its native tooltip. An associated label remains the name source; `title` is separate from the visible placeholder or color value. `ariaLabelledby` applies only to the trigger.
+
+```vue
+<template>
+    <label for="brand-color">Brand color</label>
+    <ColorPicker id="brand-color" v-model="color" />
+</template>
+```
+
 ### Specifying Color Format
 
 Supports `hex` (default), `rgb`, and `hsl` formats. `modelValue` outputs in the corresponding format:

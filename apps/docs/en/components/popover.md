@@ -54,6 +54,10 @@ import { PopoverContent, Button } from 'brutx-ui-vue'
 | `PopoverContent` | Popover content panel |
 | `PopoverAnchor` | Anchor element for positioning |
 
+### Trigger identity
+
+Set `id` on `PopoverTrigger` to identify the trigger. The popover content uses the same ID for its accessible naming reference. An ID is generated when omitted.
+
 ## API Reference
 
 <span id="popover-root-component"></span>
