@@ -3,7 +3,7 @@ export const COST_PROFILE_VERSION = 'button-cost-v1'
 export const CONSUMER_TOOLCHAIN_PACKAGES = {
     '@tailwindcss/vite': '4.3.0',
     '@vitejs/plugin-vue': '6.0.7',
-    vite: '8.0.16',
+    vite: '8.1.6',
     vue: '3.5.43',
 } as const
 
