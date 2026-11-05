@@ -1,6 +1,27 @@
 import { mount } from '@vue/test-utils'
 import { describe, it, expect, vi } from 'vitest'
+import { computeAccessibleName } from 'dom-accessibility-api'
+import { nextTick } from 'vue'
 import HardcoreInput from './HardcoreInput.vue'
+
+it('合并外部描述与校验错误描述，并在描述更新时同步', async () => {
+    const wrapper = mount(HardcoreInput, {
+        props: { modelValue: '', sound: false, rules: [() => '必填'] },
+        attrs: { 'aria-describedby': 'field-help' },
+    })
+    try {
+        const input = wrapper.get('input')
+        expect(input.attributes('aria-describedby')).toBe('field-help')
+        wrapper.vm.validate()
+        await nextTick()
+        expect(input.attributes('aria-describedby')?.split(' ')).toContain('field-help')
+        expect(input.attributes('aria-describedby')?.split(' ').length).toBe(2)
+        await wrapper.setProps({ ariaDescribedby: 'updated-help' })
+        expect(input.attributes('aria-describedby')?.split(' ')).toContain('updated-help')
+    } finally {
+        wrapper.unmount()
+    }
+})
 
 interface HardcoreInputExposed {
     validationState: 'default' | 'success' | 'error'
@@ -242,5 +263,38 @@ describe('HardcoreInput', () => {
 
             expect(wrapper.emitted('update:modelValue')![0]).toEqual(['hello'])
         })
+    })
+})
+
+describe('HardcoreInput native form attributes', () => {
+    it('forwards id, name, required, and native attributes to the input', () => {
+        const form = document.createElement('form')
+        const label = document.createElement('label')
+        label.htmlFor = 'account-name'
+        label.textContent = 'Account name'
+        document.body.append(form, label)
+
+        const wrapper = mount(HardcoreInput, {
+            attachTo: form,
+            props: { id: 'account-name', name: 'accountName', required: true },
+            attrs: { inputmode: 'text', 'aria-keyshortcuts': 'Alt+A' },
+        })
+        const input = wrapper.find('input').element
+
+        expect(input.id).toBe('account-name')
+        expect(input.name).toBe('accountName')
+        expect(input.required).toBe(true)
+        expect(input.getAttribute('inputmode')).toBe('text')
+        expect(input.getAttribute('aria-keyshortcuts')).toBe('Alt+A')
+        expect(computeAccessibleName(input)).toBe('Account name')
+        expect(new FormData(form).get('accountName')).toBe('')
+        expect(form.checkValidity()).toBe(false)
+
+        input.value = 'codex'
+        expect(form.checkValidity()).toBe(true)
+
+        wrapper.unmount()
+        form.remove()
+        label.remove()
     })
 })

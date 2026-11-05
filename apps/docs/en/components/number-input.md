@@ -78,6 +78,7 @@ Set different border styles via the `variant` prop for form validation state fee
 
 - **Keyboard**: Input supports Tab focus, increment/decrement buttons support Enter/Space trigger, Up/Down arrow keys adjust the value
 - **ARIA attributes**: Increment/decrement buttons automatically set `aria-label` (e.g. "Increase"/"Decrease"), input sets `aria-valuemin`, `aria-valuemax`, `aria-valuenow` attributes
+- **Accessible name**: Name the numeric input with a native label associated through `id`, `aria-label`, or `aria-labelledby`. When both `aria-label` and `aria-labelledby` are provided, `aria-labelledby` takes precedence. Other ARIA and native input attributes reach the numeric control
 - **Form integration**: Supports `name`, `required`, `disabled`, `readonly` and other native form attributes, compatible with form validation
 - **Focus management**: `focusOnChange` prop controls whether to auto-focus on value change; all interaction is disabled in `disabled` state
 - **Motion & sound degradation**: The Drum Ticker micro-animation on value change is disabled automatically under `prefers-reduced-motion`; the `sound` effect follows the browser autoplay policy and stays silent before user interaction

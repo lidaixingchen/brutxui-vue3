@@ -46,10 +46,12 @@ const email = ref('')
 <template>
     <div class="space-y-2">
         <Label for="email">Email</Label>
-        <Input id="email" v-model="email" type="email" placeholder="you@example.com" />
+        <Input id="email" name="email" v-model="email" type="email" required placeholder="you@example.com" />
     </div>
 </template>
 ```
+
+`id`, `name`, and `required` are forwarded to the native `<input>`: `id` associates a visible label, `name` becomes the form submission field name, and `required` enables native browser validation. Other native and ARIA attributes also reach the input control.
 
 ### Disabled State
 

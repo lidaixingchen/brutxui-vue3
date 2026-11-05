@@ -40,6 +40,26 @@ const hasNumber = (val) => /\d/.test(val) || '必须包含数字'
 </template>
 ```
 
+### 可见标签与原生表单校验
+
+`id`、`name` 和 `required` 会传给原生输入框。可通过 `Label` 的 `for` 关联可见名称；`name` 用作表单提交字段名，`required` 启用浏览器原生必填校验，其他原生和 ARIA 属性也会传给输入框。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { HardcoreInput, Label } from 'brutx-ui-vue'
+
+const username = ref('')
+</script>
+
+<template>
+    <form>
+        <Label for="username">用户名</Label>
+        <HardcoreInput id="username" name="username" v-model="username" required />
+    </form>
+</template>
+```
+
 ### 校验触发时机
 
 | 模式 | 说明 |
@@ -180,6 +200,8 @@ function onBlur() {
 ## 程序化控制
 
 通过组件 ref 可主动调用校验并读取当前校验状态与错误文案；成员类型和行为见 API 参考。
+
+传入的 `aria-describedby` 保留外部描述引用，并与内部校验错误描述合并。
 
 ## API 参考
 

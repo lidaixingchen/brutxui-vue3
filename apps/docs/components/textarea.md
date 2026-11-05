@@ -45,10 +45,12 @@ const bio = ref('')
 <template>
     <div class="space-y-2">
         <Label for="bio">Bio</Label>
-        <Textarea id="bio" v-model="bio" placeholder="Tell us about yourself..." />
+        <Textarea id="bio" name="bio" v-model="bio" required placeholder="Tell us about yourself..." />
     </div>
 </template>
 ```
+
+`id`、`name` 和 `required` 会传给原生 `<textarea>`，因此可见标签、表单提交字段名和浏览器必填校验都直接关联到文本域。其他原生属性和 ARIA 属性也会传给文本域。
 
 ### 禁用状态
 

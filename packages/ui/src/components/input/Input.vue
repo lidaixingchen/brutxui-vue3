@@ -61,6 +61,10 @@ interface InputProps {
     errorMessage?: string
     /** 控件 ID（外部未传入时自动生成唯一 ID） */
     id?: string
+    /** 表单字段名 */
+    name?: string
+    /** 是否为必填字段 */
+    required?: boolean
     /** 无障碍标签 */
     ariaLabel?: string
     /** 关联的标签元素 ID */
@@ -75,6 +79,8 @@ interface InputProps {
     ariaRequired?: boolean
     class?: string
 }
+
+defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<InputProps>(), {
     type: 'text',
@@ -93,6 +99,8 @@ const props = withDefaults(defineProps<InputProps>(), {
     suffixIcon: undefined,
     errorMessage: undefined,
     id: undefined,
+    name: undefined,
+    required: false,
     ariaLabel: undefined,
     ariaLabelledby: undefined,
     ariaDescribedby: undefined,
@@ -257,11 +265,14 @@ defineExpose({
                 </div>
 
                 <input
+                    v-bind="$attrs"
                     :id="inputId"
                     ref="inputRef"
+                    :name="name"
                     :type="actualType"
                     :value="modelValue"
                     :disabled="disabled"
+                    :required="required"
                     :readonly="readonly"
                     :placeholder="placeholder"
                     :maxlength="maxlength"

@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { computeAccessibleName } from 'dom-accessibility-api'
 import Textarea from './Textarea.vue'
 
 describe('Textarea', () => {
@@ -179,5 +180,37 @@ describe('Textarea', () => {
 
             expect(wrapper.emitted('update:modelValue')![0]).toEqual(['hello'])
         })
+    })
+})
+
+describe('Textarea native form attributes', () => {
+    it('forwards id, name, required, and other native attributes to the textarea', () => {
+        const form = document.createElement('form')
+        const label = document.createElement('label')
+        label.htmlFor = 'message'
+        label.textContent = 'Message'
+        document.body.append(form, label)
+
+        const wrapper = mount(Textarea, {
+            attachTo: form,
+            props: { id: 'message', name: 'message', required: true },
+            attrs: { 'aria-keyshortcuts': 'Alt+M' },
+        })
+        const textarea = wrapper.find('textarea').element
+
+        expect(textarea.id).toBe('message')
+        expect(textarea.name).toBe('message')
+        expect(textarea.required).toBe(true)
+        expect(textarea.getAttribute('aria-keyshortcuts')).toBe('Alt+M')
+        expect(computeAccessibleName(textarea)).toBe('Message')
+        expect(new FormData(form).get('message')).toBe('')
+        expect(form.checkValidity()).toBe(false)
+
+        textarea.value = 'Hello'
+        expect(form.checkValidity()).toBe(true)
+
+        wrapper.unmount()
+        form.remove()
+        label.remove()
     })
 })

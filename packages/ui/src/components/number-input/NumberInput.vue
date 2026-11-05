@@ -23,6 +23,8 @@ interface NumberInputProps extends NumberFieldRootProps {
     variant?: 'default' | 'error' | 'success'
     errorMessage?: string
     placeholder?: string
+    ariaLabel?: string
+    ariaLabelledby?: string
     class?: string
     iconSize?: IconSize
     /** 显式开启步进按键的机械 click 音效；默认静音 */
@@ -34,10 +36,14 @@ const props = withDefaults(defineProps<NumberInputProps>(), {
     variant: 'default',
     errorMessage: undefined,
     placeholder: undefined,
+    ariaLabel: undefined,
+    ariaLabelledby: undefined,
     class: undefined,
     iconSize: 'md',
     sound: false,
 })
+
+defineOptions({ inheritAttrs: false })
 
 const emit = defineEmits<NumberFieldRootEmits>()
 
@@ -76,6 +82,8 @@ const DELEGATED_OMIT_KEYS = new Set([
     'variant',
     'errorMessage',
     'placeholder',
+    'ariaLabel',
+    'ariaLabelledby',
     'iconSize',
     'sound',
 ])
@@ -124,9 +132,12 @@ const iconClasses = computed(() =>
                 </NumberFieldDecrement>
 
                 <NumberFieldInput
+                    v-bind="$attrs"
                     :placeholder="resolvedPlaceholder"
-                    :aria-invalid="variant === 'error' ? true : undefined"
-                    :aria-describedby="errorMessage ? errorTextId : undefined"
+                    :aria-label="ariaLabelledby ? undefined : ariaLabel"
+                    :aria-labelledby="ariaLabelledby"
+                    :aria-invalid="variant === 'error' ? true : $attrs['aria-invalid']"
+                    :aria-describedby="errorMessage ? [errorTextId, $attrs['aria-describedby']].filter(Boolean).join(' ') : $attrs['aria-describedby']"
                     :class="fieldClasses"
                     @animationend="isDrumming = false"
                 />
@@ -142,9 +153,12 @@ const iconClasses = computed(() =>
 
             <template v-else>
                 <NumberFieldInput
+                    v-bind="$attrs"
                     :placeholder="resolvedPlaceholder"
-                    :aria-invalid="variant === 'error' ? true : undefined"
-                    :aria-describedby="errorMessage ? errorTextId : undefined"
+                    :aria-label="ariaLabelledby ? undefined : ariaLabel"
+                    :aria-labelledby="ariaLabelledby"
+                    :aria-invalid="variant === 'error' ? true : $attrs['aria-invalid']"
+                    :aria-describedby="errorMessage ? [errorTextId, $attrs['aria-describedby']].filter(Boolean).join(' ') : $attrs['aria-describedby']"
                     :class="fieldClasses"
                     @animationend="isDrumming = false"
                 />

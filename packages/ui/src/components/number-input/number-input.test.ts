@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { computeAccessibleName } from 'dom-accessibility-api'
 import { vi, beforeEach } from 'vitest'
 import NumberInput from './NumberInput.vue'
 
@@ -165,6 +166,69 @@ describe('NumberInput', () => {
         const root = wrapper.find('[role="group"]')
         expect(root.attributes('iconsize')).toBeUndefined()
         expect(root.attributes('iconSize')).toBeUndefined()
+    })
+})
+
+describe('NumberInput accessible name attributes', () => {
+    it('uses a native label for the spinbutton when no ARIA name is provided', () => {
+        const label = document.createElement('label')
+        label.htmlFor = 'quantity'
+        label.textContent = 'Quantity'
+        document.body.append(label)
+
+        const wrapper = mount(NumberInput, {
+            props: { id: 'quantity' },
+            attachTo: document.body,
+        })
+        const input = wrapper.find('[role="spinbutton"]').element
+
+        expect(input.id).toBe('quantity')
+        expect(computeAccessibleName(input)).toBe('Quantity')
+
+        wrapper.unmount()
+        label.remove()
+    })
+
+    it('forwards ARIA attributes to the spinbutton and prioritizes aria-labelledby', async () => {
+        const labelledby = document.createElement('span')
+        labelledby.id = 'quantity-label'
+        labelledby.textContent = 'Preferred quantity'
+        const updatedLabel = document.createElement('span')
+        updatedLabel.id = 'updated-quantity-label'
+        updatedLabel.textContent = 'Updated quantity'
+        const description = document.createElement('span')
+        description.id = 'quantity-help'
+        description.textContent = 'Choose a quantity'
+        document.body.append(labelledby, updatedLabel, description)
+
+        const wrapper = mount(NumberInput, {
+            attrs: {
+                'aria-label': 'Fallback quantity',
+                'aria-labelledby': 'quantity-label',
+                'aria-describedby': 'quantity-help',
+                'aria-keyshortcuts': 'Alt+Q',
+            },
+            attachTo: document.body,
+        })
+        const input = wrapper.find('[role="spinbutton"]')
+
+        expect(input.attributes('aria-label')).toBeUndefined()
+        expect(input.attributes('aria-labelledby')).toBe('quantity-label')
+        expect(input.attributes('aria-describedby')).toBe('quantity-help')
+        expect(input.attributes('aria-keyshortcuts')).toBe('Alt+Q')
+        expect(computeAccessibleName(input.element)).toBe('Preferred quantity')
+
+        await wrapper.setProps({ ariaLabelledby: 'updated-quantity-label' })
+        expect(computeAccessibleName(input.element)).toBe('Updated quantity')
+        await wrapper.setProps({ ariaLabelledby: undefined })
+        expect(input.attributes('aria-labelledby')).toBeUndefined()
+        expect(input.attributes('aria-label')).toBe('Fallback quantity')
+        expect(computeAccessibleName(input.element)).toBe('Fallback quantity')
+
+        wrapper.unmount()
+        labelledby.remove()
+        updatedLabel.remove()
+        description.remove()
     })
 })
 

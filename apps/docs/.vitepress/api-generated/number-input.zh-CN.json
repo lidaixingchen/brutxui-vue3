@@ -146,6 +146,70 @@
           }
         },
         {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-ariaLabel",
+          "name": "ariaLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传给内部数值输入控件的无障碍名称；若同时提供 ariaLabelledby，则以 ariaLabelledby 为准。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue",
+            "line": 26
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/number-input/NumberInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-ariaLabelledby",
+          "name": "ariaLabelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "传给内部数值输入控件的标签元素 ID；优先级高于 ariaLabel。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/number-input/NumberInput.vue",
+            "line": 27
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/number-input/NumberInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
           "id": "api-component_3Anumber_2Dinput_2FNumberInput-props-class",
           "name": "class",
           "kind": "props",
@@ -158,7 +222,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/number-input/NumberInput.vue",
-            "line": 26
+            "line": 28
           },
           "origin": "declared",
           "required": false,
@@ -203,7 +267,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/number-input/NumberInput.vue",
-            "line": 27
+            "line": 29
           },
           "origin": "declared",
           "required": false,
@@ -238,7 +302,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/number-input/NumberInput.vue",
-            "line": 29
+            "line": 31
           },
           "origin": "declared",
           "required": false,

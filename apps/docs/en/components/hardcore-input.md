@@ -41,6 +41,26 @@ const hasNumber = (val) => /\d/.test(val) || 'Must contain a number'
 </template>
 ```
 
+### Visible Labels and Native Form Validation
+
+`id`, `name`, and `required` are forwarded to the native input. Associate a visible name with `Label` and `for`; `name` becomes the form submission field name, and `required` enables native browser validation. Other native and ARIA attributes also reach the input.
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { HardcoreInput, Label } from 'brutx-ui-vue'
+
+const username = ref('')
+</script>
+
+<template>
+    <form>
+        <Label for="username">Username</Label>
+        <HardcoreInput id="username" name="username" v-model="username" required />
+    </form>
+</template>
+```
+
 ### Validation Trigger Modes
 
 | Mode | Description |
@@ -181,6 +201,8 @@ function onBlur() {
 ## Programmatic Control
 
 Use the component ref to trigger validation and read the current validation state and error message; see API Reference for member types and behavior.
+
+An external `aria-describedby` reference is preserved and merged with the internal validation error description.
 
 ## API Reference
 

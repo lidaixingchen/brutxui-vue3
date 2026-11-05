@@ -10,6 +10,9 @@ type TextareaVariantProps = VariantProps<typeof textareaVariants>
 
 interface TextareaProps {
     modelValue?: string
+    id?: string
+    name?: string
+    required?: boolean
     variant?: NonNullable<TextareaVariantProps['variant']>
     size?: NonNullable<TextareaVariantProps['size']>
     resize?: NonNullable<TextareaVariantProps['resize']>
@@ -33,8 +36,13 @@ interface TextareaProps {
     class?: string
 }
 
+defineOptions({ inheritAttrs: false })
+
 const props = withDefaults(defineProps<TextareaProps>(), {
     modelValue: undefined,
+    id: undefined,
+    name: undefined,
+    required: false,
     variant: 'default',
     size: 'default',
     resize: 'none',
@@ -118,7 +126,11 @@ function handleCompositionCancel() {
 <template>
     <div class="w-full">
         <textarea
+            v-bind="$attrs"
+            :id="id"
             ref="textareaRef"
+            :name="name"
+            :required="required"
             :value="modelValue"
             :disabled="disabled"
             :readonly="readonly"

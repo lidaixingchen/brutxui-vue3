@@ -79,6 +79,7 @@ NumberInput 提供两种按钮排版形态，通过 `layout` 属性配置：
 
 - **键盘操作**：输入框支持 Tab 键聚焦，加减按钮支持 Enter/Space 键触发，支持方向键 Up/Down 微调数值
 - **ARIA 属性**：加减按钮自动设置 `aria-label`（如"增加"/"减少"），输入框设置 `aria-valuemin`、`aria-valuemax`、`aria-valuenow` 属性
+- **可访问名称**：可用关联 `id` 的原生标签、`aria-label` 或 `aria-labelledby` 命名数值输入框；同时提供 `aria-label` 和 `aria-labelledby` 时，以 `aria-labelledby` 为准。其他 ARIA 和原生输入属性会传给数值输入控件
 - **表单集成**：支持 `name`、`required`、`disabled`、`readonly` 等原生表单属性，与表单验证兼容
 - **焦点管理**：`focusOnChange` 属性控制值变化时是否自动聚焦，`disabled` 状态下禁止所有交互
 - **动效与音效降级**：数值变化触发的 Drum Ticker 滚轮微动效在 `prefers-reduced-motion` 下自动停用；`sound` 音效遵循浏览器自动播放策略，未交互前不发声

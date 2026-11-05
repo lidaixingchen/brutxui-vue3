@@ -29,6 +29,26 @@ const content = {
                     "zh": "输入框为空时显示的原生 placeholder 文本。",
                     "en": "The native placeholder text shown when the input is empty."
                 },
+                "id": {
+                    "zh": "传给原生输入框的 ID，可用于关联可见标签。",
+                    "en": "The ID passed to the native input, used to associate a visible label."
+                },
+                "name": {
+                    "zh": "原生输入框的表单字段名，用于表单提交。",
+                    "en": "The native input name used as the field name in form submission."
+                },
+                "required": {
+                    "zh": "将原生输入框标记为必填字段，启用浏览器原生表单校验。",
+                    "en": "Marks the native input as required and enables browser form validation."
+                },
+                "ariaInvalid": {
+                    "zh": "传给原生输入框的无效状态；内部校验失败时为 true。",
+                    "en": "The invalid state of the native input. Internal validation errors set it to true."
+                },
+                "ariaDescribedby": {
+                    "zh": "外部描述元素的 ID，内部校验失败时与错误描述 ID 合并。",
+                    "en": "External description element IDs, merged with the error description ID when internal validation fails."
+                },
                 "disabled": {
                     "zh": "设置原生输入框为禁用状态。",
                     "en": "Disables the native input element."

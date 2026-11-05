@@ -46,10 +46,12 @@ const bio = ref('')
 <template>
     <div class="space-y-2">
         <Label for="bio">Bio</Label>
-        <Textarea id="bio" v-model="bio" placeholder="Tell us about yourself..." />
+        <Textarea id="bio" name="bio" v-model="bio" required placeholder="Tell us about yourself..." />
     </div>
 </template>
 ```
+
+`id`, `name`, and `required` are forwarded to the native `<textarea>`, so visible labels, form submission names, and browser required validation apply to the field itself. Other native and ARIA attributes are forwarded to the textarea as well.
 
 ### Disabled State
 

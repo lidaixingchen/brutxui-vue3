@@ -45,10 +45,12 @@ const email = ref('')
 <template>
     <div class="space-y-2">
         <Label for="email">Email</Label>
-        <Input id="email" v-model="email" type="email" placeholder="you@example.com" />
+        <Input id="email" name="email" v-model="email" type="email" required placeholder="you@example.com" />
     </div>
 </template>
 ```
+
+`id`、`name` 和 `required` 会传给原生 `<input>`：`id` 用于关联可见标签，`name` 用作表单提交字段名，`required` 启用浏览器原生必填校验。其他原生属性和 ARIA 属性也会落到输入控件。
 
 ### 禁用状态
 

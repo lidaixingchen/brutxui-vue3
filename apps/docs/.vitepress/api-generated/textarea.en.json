@@ -43,6 +43,105 @@
           }
         },
         {
+          "id": "api-component_3Atextarea_2FTextarea-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The ID passed to the native textarea, used to associate a visible label.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 13
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The native textarea name used as the field name in form submission.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atextarea_2FTextarea-props-required",
+          "name": "required",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Marks the native textarea as required and enables browser form validation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/textarea/Textarea.vue",
+            "line": 15
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/textarea/Textarea.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
           "id": "api-component_3Atextarea_2FTextarea-props-variant",
           "name": "variant",
           "kind": "props",
@@ -60,7 +159,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 13
+            "line": 16
           },
           "origin": "declared",
           "required": false,
@@ -97,7 +196,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 14
+            "line": 17
           },
           "origin": "declared",
           "required": false,
@@ -135,7 +234,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 15
+            "line": 18
           },
           "origin": "declared",
           "required": false,
@@ -170,7 +269,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 16
+            "line": 19
           },
           "origin": "declared",
           "required": false,
@@ -205,7 +304,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 17
+            "line": 20
           },
           "origin": "declared",
           "required": false,
@@ -237,7 +336,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 18
+            "line": 21
           },
           "origin": "declared",
           "required": false,
@@ -270,7 +369,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 20
+            "line": 23
           },
           "origin": "declared",
           "required": false,
@@ -302,7 +401,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 22
+            "line": 25
           },
           "origin": "declared",
           "required": false,
@@ -334,7 +433,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 24
+            "line": 27
           },
           "origin": "declared",
           "required": false,
@@ -366,7 +465,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 26
+            "line": 29
           },
           "origin": "declared",
           "required": false,
@@ -401,7 +500,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 28
+            "line": 31
           },
           "origin": "declared",
           "required": false,
@@ -433,7 +532,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 30
+            "line": 33
           },
           "origin": "declared",
           "required": false,
@@ -468,7 +567,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 32
+            "line": 35
           },
           "origin": "declared",
           "required": false,
@@ -500,7 +599,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 33
+            "line": 36
           },
           "origin": "declared",
           "required": false,
@@ -549,7 +648,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 86
+            "line": 94
           },
           "origin": "declared",
           "nullable": false,
@@ -568,7 +667,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 87
+            "line": 95
           },
           "origin": "declared",
           "nullable": false,
@@ -587,7 +686,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/textarea/Textarea.vue",
-            "line": 88
+            "line": 96
           },
           "origin": "declared",
           "nullable": false,

@@ -9,6 +9,8 @@ const content = {
                 variant: { zh: '设置默认、成功或错误边框状态。', en: 'Sets the default, success, or error border state.' },
                 errorMessage: { zh: '错误变体下显示并关联到输入控件的错误说明。', en: 'Error text shown and associated with the input in the error variant.' },
                 placeholder: { zh: '输入值为空时显示的占位文本；未提供时使用当前语言的默认文案。', en: 'Placeholder shown when the input is empty; the current locale text is used when omitted.' },
+                ariaLabel: { zh: '传给内部数值输入控件的无障碍名称；若同时提供 ariaLabelledby，则以 ariaLabelledby 为准。', en: 'The accessible name passed to the internal numeric input. When ariaLabelledby is also provided, ariaLabelledby takes precedence.' },
+                ariaLabelledby: { zh: '传给内部数值输入控件的标签元素 ID；优先级高于 ariaLabel。', en: 'The ID of the label element passed to the internal numeric input; it takes precedence over ariaLabel.' },
                 class: { zh: '追加到数字输入组件容器的自定义 CSS 类。', en: 'Custom CSS classes added to the number input container.' },
                 iconSize: { zh: '设置加号和减号图标的尺寸。', en: 'Sets the size of the increment and decrement icons.' },
                 sound: { zh: '启用步进操作时由 Web Audio 合成的点击音效。', en: 'Enables a Web Audio click sound when a step control is activated.' },

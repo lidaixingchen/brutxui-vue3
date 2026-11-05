@@ -16,11 +16,18 @@ interface HardcoreInputProps {
     shakeOnError?: boolean
     type?: string
     placeholder?: string
+    id?: string
+    name?: string
+    required?: boolean
+    ariaInvalid?: boolean | 'grammar' | 'spelling'
+    ariaDescribedby?: string
     disabled?: boolean
     readonly?: boolean
     validateOn?: 'input' | 'blur' | 'submit'
     class?: string
 }
+
+defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<HardcoreInputProps>(), {
     modelValue: undefined,
@@ -29,6 +36,11 @@ const props = withDefaults(defineProps<HardcoreInputProps>(), {
     shakeOnError: true,
     type: 'text',
     placeholder: undefined,
+    id: undefined,
+    name: undefined,
+    required: false,
+    ariaInvalid: undefined,
+    ariaDescribedby: undefined,
     disabled: false,
     readonly: false,
     validateOn: 'blur',
@@ -254,14 +266,18 @@ const errorMessageClasses = computed(() =>
     <div :class="containerClasses">
         <div class="relative flex items-center w-full">
             <input
+                v-bind="$attrs"
+                :id="id"
                 :type="type"
+                :name="name"
                 :value="modelValue"
                 :disabled="disabled"
+                :required="required"
                 :readonly="readonly"
                 :placeholder="placeholder"
                 :class="inputClasses"
-                :aria-invalid="validationState === 'error'"
-                :aria-describedby="errorMessage ? errorId : undefined"
+                :aria-invalid="validationState === 'error' ? true : ariaInvalid"
+                :aria-describedby="errorMessage ? [errorId, ariaDescribedby].filter(Boolean).join(' ') : ariaDescribedby"
                 @input="onInput"
                 @blur="onBlur"
                 @animationend="onAnimationEnd"

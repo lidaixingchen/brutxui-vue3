@@ -21,6 +21,8 @@ const content = {
                 suffixIcon: { zh: '在输入控件后方渲染的图标组件。', en: 'An icon component rendered after the input control.' },
                 errorMessage: { zh: '错误态下显示的错误文本，并作为错误提示内容提供给辅助技术。', en: 'Error text shown in the error state and exposed as the error description for assistive technology.' },
                 id: { zh: '原生输入控件的 ID；未提供时由 useId 为实例生成唯一 ID。', en: 'The native input ID. When omitted, useId generates a unique ID for the instance.' },
+                name: { zh: '原生输入控件的表单字段名，用于表单提交。', en: 'The native input name used as the field name in form submission.' },
+                required: { zh: '将原生输入控件标记为必填字段，启用浏览器原生表单校验。', en: 'Marks the native input as required and enables browser form validation.' },
                 ariaLabel: { zh: '传递给原生输入控件的无障碍名称。', en: 'The accessible name passed to the native input.' },
                 ariaLabelledby: { zh: '传递给原生输入控件的标签元素 ID。', en: 'The ID of the label element passed to the native input.' },
                 ariaDescribedby: { zh: '传递给原生输入控件的描述元素 ID。', en: 'The ID of a descriptive element passed to the native input.' },

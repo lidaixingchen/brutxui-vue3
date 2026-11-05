@@ -11,6 +11,9 @@ const content = {
                 resize: { zh: '浏览器允许用户拖动调整文本域尺寸的方向。', en: 'The directions in which the browser allows the user to resize the textarea.' },
                 disabled: { zh: '禁用原生文本域，阻止聚焦和编辑。', en: 'Disables the native textarea, preventing focus and editing.' },
                 readonly: { zh: '保留聚焦、文本选择与复制能力，同时阻止用户编辑。', en: 'Prevents editing while retaining focus, text selection, and copying.' },
+                id: { zh: '传给原生 textarea 的 ID，可用于关联可见标签。', en: 'The ID passed to the native textarea, used to associate a visible label.' },
+                name: { zh: '原生 textarea 的表单字段名，用于表单提交。', en: 'The native textarea name used as the field name in form submission.' },
+                required: { zh: '将原生 textarea 标记为必填字段，启用浏览器原生表单校验。', en: 'Marks the native textarea as required and enables browser form validation.' },
                 placeholder: {
                     zh: '文本域为空时显示的提示文本。', en: 'Hint text displayed when the textarea is empty.',
                     fallback: { 'zh-CN': '未提供时使用 textarea.placeholder 语言文案。', en: 'Uses the localized textarea.placeholder message when omitted.' },

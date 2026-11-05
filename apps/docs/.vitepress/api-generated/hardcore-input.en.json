@@ -209,6 +209,174 @@
           }
         },
         {
+          "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The ID passed to the native input, used to associate a visible label.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
+            "line": 19
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The native input name used as the field name in form submission.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
+            "line": 20
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-props-required",
+          "name": "required",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Marks the native input as required and enables browser form validation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
+            "line": 21
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-props-ariaInvalid",
+          "name": "ariaInvalid",
+          "kind": "props",
+          "type": {
+            "text": "boolean | \"grammar\" | \"spelling\" | undefined",
+            "literals": [
+              "\"grammar\"",
+              "\"spelling\"",
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "The invalid state of the native input. Internal validation errors set it to true.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-props-ariaDescribedby",
+          "name": "ariaDescribedby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "External description element IDs, merged with the error description ID when internal validation fails.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
           "id": "api-component_3Ahardcore_2Dinput_2FHardcoreInput-props-disabled",
           "name": "disabled",
           "kind": "props",
@@ -224,7 +392,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
-            "line": 19
+            "line": 24
           },
           "origin": "declared",
           "required": false,
@@ -259,7 +427,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
-            "line": 20
+            "line": 25
           },
           "origin": "declared",
           "required": false,
@@ -295,7 +463,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
-            "line": 21
+            "line": 26
           },
           "origin": "declared",
           "required": false,
@@ -327,7 +495,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
-            "line": 22
+            "line": 27
           },
           "origin": "declared",
           "required": false,
@@ -416,7 +584,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
-            "line": 223
+            "line": 235
           },
           "origin": "declared",
           "nullable": false,
@@ -445,7 +613,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
-            "line": 224
+            "line": 236
           },
           "origin": "declared",
           "nullable": false,
@@ -464,7 +632,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/hardcore-input/HardcoreInput.vue",
-            "line": 225
+            "line": 237
           },
           "origin": "declared",
           "nullable": false,

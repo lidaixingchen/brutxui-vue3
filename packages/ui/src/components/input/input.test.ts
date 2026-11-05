@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { Mail } from '@lucide/vue'
+import { computeAccessibleName } from 'dom-accessibility-api'
 import Input from './Input.vue'
 
 describe('Input', () => {
@@ -542,5 +543,49 @@ describe('Input', () => {
             expect(alert.attributes('id')).toBe('field-1-error')
             expect(alert.text()).toBe('请输入正确格式')
         })
+    })
+})
+
+describe('Input native form attributes', () => {
+    it('forwards name and required to the native input', () => {
+        const form = document.createElement('form')
+        document.body.append(form)
+        const wrapper = mount(Input, {
+            attachTo: form,
+            props: { name: 'email', required: true },
+        })
+
+        const input = wrapper.find('input').element
+        expect(input.name).toBe('email')
+        expect(input.required).toBe(true)
+        expect(new FormData(form).get('email')).toBe('')
+        expect(form.checkValidity()).toBe(false)
+
+        wrapper.unmount()
+        form.remove()
+    })
+
+    it('forwards native ARIA attributes to the input', () => {
+        const label = document.createElement('span')
+        label.id = 'email-label'
+        label.textContent = 'Email address'
+        document.body.append(label)
+        const wrapper = mount(Input, {
+            attachTo: document.body,
+            attrs: {
+                'aria-labelledby': 'email-label',
+                'aria-label': 'Fallback name',
+                inputmode: 'email',
+            },
+        })
+
+        const input = wrapper.find('input')
+        expect(input.attributes('aria-labelledby')).toBe('email-label')
+        expect(input.attributes('aria-label')).toBe('Fallback name')
+        expect(input.attributes('inputmode')).toBe('email')
+        expect(computeAccessibleName(input.element)).toBe('Email address')
+
+        wrapper.unmount()
+        label.remove()
     })
 })

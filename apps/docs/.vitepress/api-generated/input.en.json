@@ -578,6 +578,73 @@
           }
         },
         {
+          "id": "api-component_3Ainput_2FInput-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "The native input name used as the field name in form submission.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 65
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Ainput_2FInput-props-required",
+          "name": "required",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Marks the native input as required and enables browser form validation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/input/Input.vue",
+            "line": 67
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/input/Input.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
           "id": "api-component_3Ainput_2FInput-props-ariaLabel",
           "name": "ariaLabel",
           "kind": "props",
@@ -590,7 +657,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/input/Input.vue",
-            "line": 65
+            "line": 69
           },
           "origin": "declared",
           "required": false,
@@ -622,7 +689,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/input/Input.vue",
-            "line": 67
+            "line": 71
           },
           "origin": "declared",
           "required": false,
@@ -654,7 +721,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/input/Input.vue",
-            "line": 69
+            "line": 73
           },
           "origin": "declared",
           "required": false,
@@ -689,7 +756,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/input/Input.vue",
-            "line": 71
+            "line": 75
           },
           "origin": "declared",
           "required": false,
@@ -721,7 +788,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/input/Input.vue",
-            "line": 73
+            "line": 77
           },
           "origin": "declared",
           "required": false,
@@ -756,7 +823,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/input/Input.vue",
-            "line": 75
+            "line": 79
           },
           "origin": "declared",
           "required": false,
@@ -788,7 +855,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/input/Input.vue",
-            "line": 76
+            "line": 80
           },
           "origin": "declared",
           "required": false,
@@ -888,7 +955,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/input/Input.vue",
-            "line": 224
+            "line": 232
           },
           "origin": "declared",
           "nullable": false,
@@ -907,7 +974,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/input/Input.vue",
-            "line": 225
+            "line": 233
           },
           "origin": "declared",
           "nullable": false,
@@ -926,7 +993,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/input/Input.vue",
-            "line": 226
+            "line": 234
           },
           "origin": "declared",
           "nullable": false,
