@@ -13,7 +13,7 @@ function resultOf(entry) {
 export function selectCiChecks(flags) {
     const selected = ['tooling']
     if (flags.ui || flags.cli || flags.registry || flags.tooling) selected.push('quality', 'test')
-    if (flags.ui) selected.push('ui-test', 'coverage-shard', 'coverage')
+    if (flags.ui) selected.push('coverage-shard', 'coverage')
     if (flags.browser || flags.cost) selected.push('browser')
     if (flags.cli) selected.push('integration')
     if (flags.consumers) selected.push('consumers')

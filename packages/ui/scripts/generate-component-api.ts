@@ -107,12 +107,10 @@ function serializeGroup(group: CatalogGroup, locale: ApiLocale, components: ApiC
     }
 }
 
-async function extractGroup(
+function extractGroupComponents(
     extractor: ReturnType<typeof createApiExtractor>,
     group: CatalogGroup,
-    content: ApiContent | undefined,
-    locale: ApiLocale,
-): Promise<ApiGroup> {
+): ApiComponent[] {
     const components = group.members
         .filter((member): member is CatalogMember & { classification: 'component' } => member.classification === 'component')
         .map(member => {
@@ -125,6 +123,15 @@ async function extractGroup(
         })
     const uniqueIds = new Set(components.map(component => component.id))
     if (uniqueIds.size !== components.length) throw new Error(`API_COMPONENT_ID_DUPLICATE ${group.id}`)
+    return components
+}
+
+function mergeGroupContent(
+    group: CatalogGroup,
+    components: ApiComponent[],
+    content: ApiContent | undefined,
+    locale: ApiLocale,
+): ApiGroup {
     return serializeGroup(group, locale, mergeApiContent(components, content, locale))
 }
 
@@ -157,8 +164,9 @@ export async function collectComponentApiOutputs(
             if (group.pages.some(page => page.migration === 'complete') && !content?.complete) {
                 throw new Error(`API_MIGRATION_CONTENT_INCOMPLETE ${group.slug}`)
             }
+            const components = extractGroupComponents(extractor, group)
             for (const locale of locales) {
-                const apiGroup = await extractGroup(extractor, group, content, locale)
+                const apiGroup = mergeGroupContent(group, components, content, locale)
                 outputs.push({
                     relativePath: repositoryRelativePath(repositoryRoot, path.join(directory, `${group.slug}.${locale}.json`)),
                     content: serializeApiGroup(apiGroup),

@@ -81,6 +81,22 @@ test('package and tooling changes retain the build and test chains', () => {
     assert.deepEqual(selectCiChecks({ cost: true }), ['tooling', 'browser'])
 })
 
+test('UI changes require source coverage and script contracts in the single-runtime gate', () => {
+    const selected = selectCiChecks({ ui: true })
+    assert.deepEqual(selected, ['tooling', 'quality', 'test', 'coverage-shard', 'coverage'])
+    const needs = Object.fromEntries(selected.map(job => [job, { result: 'success' }]))
+    assert.equal(evaluateGate({ classificationResult: 'success', selected, needs }).passed, true)
+    for (const job of ['tooling', 'coverage-shard', 'coverage']) {
+        for (const result of ['failure', 'cancelled', 'skipped']) {
+            assert.equal(evaluateGate({
+                classificationResult: 'success',
+                selected,
+                needs: { ...needs, [job]: { result } },
+            }).passed, false, `${job}: ${result}`)
+        }
+    }
+})
+
 test('both independent quality chains must pass when selected', () => {
     const flags = { ui: true, cli: true, registry: true, tooling: true, browser: true, cost: true, consumers: true, site: true }
     const selected = selectCiChecks(flags)
