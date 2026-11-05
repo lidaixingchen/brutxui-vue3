@@ -350,7 +350,7 @@ jobs:
         name: Browser tests (Vitest + Playwright)
         needs: changes
         if: needs.changes.outputs.browser == 'true' || needs.changes.outputs.cost == 'true'
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         env:
             TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
             TURBO_TEAM: ${{ vars.TURBO_TEAM }}
@@ -387,8 +387,8 @@ jobs:
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
                   path: ~/.cache/ms-playwright
-                  key: ${{ runner.os }}-playwright-${{ hashFiles('**/pnpm-lock.yaml') }}
-                  restore-keys: ${{ runner.os }}-playwright-
+                  key: ${{ runner.os }}-${{ runner.arch }}-playwright-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: ${{ runner.os }}-${{ runner.arch }}-playwright-
 
             - name: Clean up problematic APT repositories
               run: |
