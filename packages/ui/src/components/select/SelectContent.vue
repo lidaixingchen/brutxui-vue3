@@ -9,7 +9,11 @@ import {
 import { cn } from '@/lib/utils'
 import SelectScrollUpButton from './SelectScrollUpButton.vue'
 import SelectScrollDownButton from './SelectScrollDownButton.vue'
-import { selectContentVariants } from './select-variants'
+import {
+    selectContentVariants,
+    selectContentPositionVariants,
+    selectViewportPositionVariants,
+} from './select-variants'
 import { useFloatingOverlayLayer } from '@/lib/overlay-layer'
 
 defineOptions({ inheritAttrs: false })
@@ -29,6 +33,7 @@ const { style: overlayLayerStyle, ref: floatingLayerRef } = useFloatingOverlayLa
 const contentClasses = computed(() =>
     cn(
         selectContentVariants(),
+        selectContentPositionVariants({ position: props.position }),
         props.position === 'popper' &&
             'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
         props.class
@@ -38,8 +43,9 @@ const contentClasses = computed(() =>
 const viewportClasses = computed(() =>
     cn(
         'p-1',
+        selectViewportPositionVariants({ position: props.position }),
         props.position === 'popper' &&
-            'h-[var(--reka-select-trigger-height,auto)] w-full min-w-[var(--reka-select-trigger-width,auto)]'
+            'h-[var(--reka-select-trigger-height,auto)] w-full'
     )
 )
 </script>

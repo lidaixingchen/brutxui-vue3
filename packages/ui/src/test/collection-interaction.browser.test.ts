@@ -79,7 +79,11 @@ afterEach(() => {
 })
 
 function findRow(selector: string, label = labels[1]): HTMLElement {
-    const row = Array.from(document.querySelectorAll<HTMLElement>(selector)).find(element => element.textContent?.trim() === label)
+    const row = Array.from(document.querySelectorAll<HTMLElement>(selector)).find(element => {
+        const visibleContent = element.cloneNode(true) as HTMLElement
+        visibleContent.querySelectorAll('.sr-only').forEach(node => node.remove())
+        return visibleContent.textContent?.trim() === label
+    })
     if (!row) throw new Error(`找不到选项行：${label}`)
     return row
 }
@@ -93,9 +97,11 @@ function geometry(row: HTMLElement) {
     range.selectNodeContents(text)
     const rowRect = row.getBoundingClientRect()
     const textRect = range.getBoundingClientRect()
+    // 以所属列表为坐标基准，区分浮层定位与选项自身的交互位移。
+    const parentRect = row.parentElement!.getBoundingClientRect()
     return {
-        row: [rowRect.x, rowRect.y, rowRect.width, rowRect.height],
-        text: [textRect.x, textRect.y, textRect.width, textRect.height],
+        row: [rowRect.x - parentRect.x, rowRect.y - parentRect.y, rowRect.width, rowRect.height],
+        text: [textRect.x - parentRect.x, textRect.y - parentRect.y, textRect.width, textRect.height],
         weight: getComputedStyle(text.parentElement!).fontWeight,
     }
 }

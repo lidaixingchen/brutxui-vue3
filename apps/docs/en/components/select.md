@@ -12,6 +12,8 @@ A neo-brutalist style dropdown select built on top of reka-ui's Select primitive
 
 Highlight identifies the current item; the checkmark identifies the selected value. Arrow keys navigate and confirmation commits the value. Explicit `itemVariant` colors remain available. Classic uses lemon yellow with black text; other presets retain their own highlight pairs. See [theme customization](/en/guide/theme#collection-item-highlighting).
 
+With the default `position="popper"`, the panel is constrained to the viewport's available width and height. Long options are visually truncated on narrow screens while their full accessible names are preserved.
+
 ## Demo
 
 <ComponentPreview>

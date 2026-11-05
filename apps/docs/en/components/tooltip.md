@@ -155,7 +155,7 @@ Trigger component that opens the tooltip on hover or focus.
 
 ### TooltipContent
 
-Tooltip content panel with neo-brutalist styling. Rendered via Portal to `body` by default.
+Tooltip content panel with neo-brutalist styling. Rendered via Portal to `body` by default. Its height adapts to the available viewport space on the current side of the trigger, with overflow scrolling inside the panel. Collision handling still adjusts the placement when space is limited, while short content keeps its natural height.
 
 ## Reka UI Primitive Events
 

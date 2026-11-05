@@ -47,6 +47,32 @@ export const selectContentVariants = cva(
     ]
 )
 
+export const selectContentPositionVariants = cva('', {
+    variants: {
+        position: {
+            popper: [
+                'max-w-[var(--reka-select-content-available-width)]',
+                'min-w-[min(var(--reka-select-trigger-width),var(--reka-select-content-available-width))]',
+                'max-h-[min(var(--reka-select-content-available-height),calc(var(--spacing)*96))]',
+            ],
+            'item-aligned': '',
+        },
+    },
+})
+
+export const selectViewportPositionVariants = cva('', {
+    variants: {
+        position: {
+            popper: [
+                'max-w-[var(--reka-select-content-available-width)]',
+                'min-w-[min(var(--reka-select-trigger-width),var(--reka-select-content-available-width))]',
+                'max-h-[var(--reka-select-content-available-height)]',
+            ],
+            'item-aligned': '',
+        },
+    },
+})
+
 export const selectItemVariants = cva(
     [
         'relative flex w-full cursor-pointer select-none items-center py-2 pl-8 pr-3',

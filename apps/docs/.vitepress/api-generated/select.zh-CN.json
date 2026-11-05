@@ -739,7 +739,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectContent.vue",
-            "line": 18
+            "line": 22
           },
           "origin": "declared",
           "required": false,
@@ -771,7 +771,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/select/SelectContent.vue",
-            "line": 19
+            "line": 23
           },
           "origin": "declared",
           "required": false,
