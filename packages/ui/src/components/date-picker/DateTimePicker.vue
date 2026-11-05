@@ -11,7 +11,11 @@ import { formatDate } from '@/lib/date'
 import { useLocale } from '@/composables/useLocale'
 import { useDatePicker } from '@/composables/useDatePicker'
 import PopoverContent from '../popover/PopoverContent.vue'
-import { datePickerTriggerVariants } from './date-picker-variants'
+import {
+    datePickerControlTriggerVariants,
+    datePickerControlVariants,
+    datePickerTriggerVariants,
+} from './date-picker-variants'
 import DateTimePickerPanel from './DateTimePickerPanel.vue'
 import { type DateTimePickerEmits, type DateTimePickerProps } from './types'
 
@@ -100,9 +104,14 @@ const {
 const triggerClasses = computed(() =>
     cn(
         datePickerTriggerVariants({ size: props.size, variant: props.variant }),
+        datePickerControlTriggerVariants(),
         !props.modelValue && 'text-brutal-muted-foreground',
         props.class
     )
+)
+
+const controlClasses = computed(() =>
+    cn(datePickerControlVariants({ disabled: props.disabled }))
 )
 
 const calendarIconClasses = computed(() =>
@@ -128,7 +137,7 @@ defineExpose({ open })
 <template>
     <PopoverRoot v-model:open="open">
         <input v-if="hiddenInputValue !== undefined" type="hidden" :name="name" :value="hiddenInputValue" :disabled="disabled">
-        <div class="relative w-full">
+        <div :class="controlClasses">
             <PopoverTrigger :id="id" as-child>
                 <button
                     v-bind="triggerIdAttrs"

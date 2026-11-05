@@ -204,6 +204,8 @@ const year = ref(null)
 </template>
 ```
 
+启用 `clearable` 且已有日期时，`DatePicker` 和 `DateTimePicker` 的触发器与独立清除按钮在悬停和按压时作为一个整体移动，清除图标会保持在触发器预留的位置。设置 `disabled` 或 `readonly` 时，清除按钮隐藏。
+
 ### 日期范围限制
 
 ```vue

@@ -1,6 +1,25 @@
 import { cva } from 'class-variance-authority'
-import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
+import { brutalControlMovement, brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
 import { FOCUS_RING_CLASSES } from '@/lib/utils'
+
+export const datePickerControlVariants = cva(
+    'group/date-picker relative w-full transition-transform duration-150 motion-reduce:transition-none',
+    {
+        variants: {
+            disabled: {
+                false: brutalControlMovement,
+                true: 'pointer-events-none',
+            },
+        },
+        defaultVariants: { disabled: false },
+    },
+)
+
+export const datePickerControlTriggerVariants = cva([
+    'hover:translate-x-0 hover:translate-y-0 active:translate-x-0 active:translate-y-0',
+    'group-hover/date-picker:shadow-brutal-lg group-active/date-picker:shadow-none',
+    'motion-reduce:transition-none',
+])
 
 export const datePickerTriggerVariants = cva(
     [

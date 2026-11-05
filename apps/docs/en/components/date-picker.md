@@ -205,6 +205,8 @@ const year = ref(null)
 </template>
 ```
 
+When `clearable` is enabled and a date is selected, the `DatePicker` and `DateTimePicker` trigger and separate clear button move together on hover and press. The clear icon stays aligned with the space reserved in the trigger. The clear button is hidden when `disabled` or `readonly` is set.
+
 ### Date Range Constraints
 
 ```vue
