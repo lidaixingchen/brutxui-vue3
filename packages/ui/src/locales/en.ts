@@ -399,6 +399,8 @@ export const en: Locale = {
     },
     switch: {
         toggle: 'Toggle',
+        checkedLabel: 'I',
+        uncheckedLabel: 'O',
     },
     checkbox: {
         check: 'Checkbox',

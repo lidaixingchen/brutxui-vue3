@@ -1,5 +1,31 @@
 # 公开 API 迁移指南
 
+## Switch 开关参数与表单接入
+
+**影响范围**：Switch 的初始值配置、形态参数、关联标签，以及使用变体函数组合外观的调用方。
+
+Switch 通过 `v-model` 管理受控状态，通过 `defaultValue` 设置非受控初值。`defaultChecked` 统一迁移为 `defaultValue`；外观统一为滑动开关，删除调用中的 `shape` 参数。
+
+升级前：
+
+```vue
+<Switch default-checked shape="rocker" />
+```
+
+升级后：
+
+```vue
+<Switch :default-value="true" aria-label="接收通知" />
+```
+
+自定义组合使用 `switchRootVariants({ variant, size })` 设置颜色与尺寸，滑钮使用 `switchThumbVariants()`。滑钮尺寸和行程由轨道尺寸、边框及间距派生。
+
+可见名称通过 `id` 与 `Label for` 关联，或使用包裹式 Label；默认 locale 名称只在缺少显式名称和关联标签时生效。`ariaLabelledby` 可引用其他名称元素。需要原生表单提交时设置 `name`，通过 `value` 指定开启时的提交值（默认 `on`），通过 `required` 参与必填校验。
+
+非受控开关随所属表单重置到挂载时的初值。受控状态由绑定值决定，应用在表单 `reset` 处理器中更新绑定值。
+
+**自动迁移可行性**：可将 `default-checked` 替换为 `default-value`，删除 `shape` 和滑钮变体函数的尺寸参数；标签名称及受控表单的重置方式按业务语义确认。
+
 ## 0.11.4 升级迁移
 
 UI 包 `brutx-ui-vue` 与 CLI 包 `brutx-vue` 同步使用 `0.11.4`。本轮包含以下主题、状态与首帧行为调整，升级时应按实际使用方式迁移。

@@ -6,11 +6,12 @@ export const switchRootVariants = cva(
     [
         'peer relative inline-flex shrink-0 cursor-pointer items-center',
         'rounded-brutal',
-        /* 轨道是冲压凹槽本体：刻意不走 formToggleBaseClasses 的外凸投影/悬浮/按压反馈
-           （那是按钮语言，与「沉入外壳」的凹槽物理语义矛盾）；边框、过渡、焦点环、
-           禁用处理仍与表单开关族保持一致。Checkbox/Radio/Toggle 的凹槽化不在本变体范围 */
-        'border-3 border-brutal transition-all duration-150',
-        'shadow-brutal-inset hover:shadow-brutal-inset active:shadow-brutal-inset',
+        '[--switch-track-duration:120ms] [--switch-thumb-duration:180ms]',
+        '[--switch-thumb-gap:calc(var(--spacing)*0.5)]',
+        '[--switch-thumb-size:calc(var(--switch-track-height)-var(--brutal-border-width)*2-var(--switch-thumb-gap)*2)]',
+        'h-[var(--switch-track-height)] w-[var(--switch-track-width)]',
+        'border-3 border-brutal shadow-brutal-sm',
+        'transition-[background-color,color] duration-[var(--switch-track-duration)] ease-out motion-reduce:transition-none',
         'text-brutal-fg',
         FOCUS_RING_CLASSES,
         'disabled:cursor-not-allowed disabled:opacity-50 disabled:select-none',
@@ -24,19 +25,14 @@ export const switchRootVariants = cva(
                 accent: `${formToggleVariantColors.accent} ${formToggleForegroundColors.accent}`,
                 danger: `${formToggleVariantColors.danger} ${formToggleForegroundColors.danger}`,
             },
-            shape: {
-                slider: 'rounded-brutal',
-                rocker: 'rounded-brutal',
-            },
             size: {
-                sm: 'h-6 w-11',
-                default: 'h-7.5 w-14',
-                lg: 'h-9.5 w-18',
+                sm: '[--switch-track-height:calc(var(--spacing)*6)] [--switch-track-width:calc(var(--spacing)*11)]',
+                default: '[--switch-track-height:calc(var(--spacing)*7.5)] [--switch-track-width:calc(var(--spacing)*14)]',
+                lg: '[--switch-track-height:calc(var(--spacing)*9.5)] [--switch-track-width:calc(var(--spacing)*18)]',
             },
         },
         defaultVariants: {
             variant: 'default',
-            shape: 'slider',
             size: 'default',
         },
     }
@@ -45,27 +41,27 @@ export const switchRootVariants = cva(
 export const switchThumbVariants = cva(
     [
         'pointer-events-none flex items-center justify-center',
-        'bg-brutal-bg border-2 border-brutal rounded-brutal',
-        'shadow-[1px_1px_0px_0px_var(--brutal-border-color,#000000)]',
-        // 翘板吸合：bounce 缓动超调回弹，120ms 模拟工业磁吸继电器的干脆闭合
-        'transition-transform duration-[120ms] ease-brutal-bounce',
+        'size-[var(--switch-thumb-size)] bg-current rounded-brutal',
+        'data-[state=unchecked]:translate-x-[var(--switch-thumb-gap)]',
+        'data-[state=checked]:translate-x-[calc(var(--switch-track-width)-var(--switch-thumb-size)-var(--brutal-border-width)*2-var(--switch-thumb-gap))]',
+        'transition-[translate] duration-[var(--switch-thumb-duration)] ease-brutal-snap motion-reduce:transition-none',
     ],
+)
+
+export const switchLabelVariants = cva(
+    'font-mono text-[10px] font-black leading-none',
     {
         variants: {
-            shape: {
-                slider: 'rounded-brutal',
-                rocker: 'rounded-brutal',
-            },
-            size: {
-                sm: 'size-3.5 data-[state=checked]:translate-x-[20px] data-[state=unchecked]:translate-x-[2px]',
-                default: 'size-5 data-[state=checked]:translate-x-[26px] data-[state=unchecked]:translate-x-[2px]',
-                lg: 'size-7 data-[state=checked]:translate-x-[34px] data-[state=unchecked]:translate-x-[2px]',
+            variant: {
+                unchecked: 'text-brutal-bg',
+                default: 'text-brutal-success',
+                primary: 'text-brutal-primary',
+                secondary: 'text-brutal-secondary',
+                accent: 'text-brutal-accent',
+                danger: 'text-brutal-destructive',
             },
         },
-        defaultVariants: {
-            shape: 'slider',
-            size: 'default',
-        },
-    }
+        defaultVariants: { variant: 'unchecked' },
+    },
 )
 

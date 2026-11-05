@@ -1,10 +1,7 @@
 import { FOCUS_RING_CLASSES } from '@/lib/utils'
 import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
 
-// 交互位移说明：brutalHoverLift（悬停上移）与 brutalPress（按下下移）是组件库统一的
-// neo-brutalism 按压反馈语言，与按钮等交互元素保持一致。
-// reka-ui Switch/Checkbox 的滑块位移由 checked 状态常驻驱动（非 active 触发），
-// 不与按下位移叠加；若后续需要更克制的表单反馈，可单独定义不带位移的开关交互变体。
+// 外框承担反馈的表单控件共享悬浮和盖影按压；Switch 的状态反馈由独立的滑钮变体管理。
 export const formToggleBaseClasses = [
     'border-3 border-brutal',
     'transition-all duration-150',

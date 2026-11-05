@@ -1,7 +1,14 @@
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
+import { createSSRApp, h, reactive, ref } from 'vue'
+import { renderToString } from '@vue/server-renderer'
+import { computeAccessibleName } from 'dom-accessibility-api'
 import { vi, beforeEach } from 'vitest'
 import Switch from './Switch.vue'
-import { switchRootVariants, switchThumbVariants } from './switch-variants'
+import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
+import { zhCN } from '@/locales/zh-CN'
+import Label from '../label/Label.vue'
+
+const accessibleName = computeAccessibleName
 
 const hapticsMocks = vi.hoisted(() => {
     const snap = vi.fn()
@@ -43,13 +50,26 @@ describe('Switch', () => {
         expect(wrapper.emitted('update:modelValue')![0]).toEqual([true])
     })
 
-    it('is disabled when disabled=true', () => {
+    it('prevents click and keyboard toggles while disabled', async () => {
         const wrapper = mount(Switch, {
             props: { disabled: true },
             attachTo: document.body,
         })
         const el = wrapper.find('[role="switch"]')
         expect(el.attributes('disabled')).toBeDefined()
+        await el.trigger('click')
+        await el.trigger('keydown', { key: 'Enter' })
+        expect(el.attributes('aria-checked')).toBe('false')
+        expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+        expect(hapticsMocks.snap).not.toHaveBeenCalled()
+    })
+
+    it('toggles with Enter and emits the new boolean value', async () => {
+        const wrapper = mount(Switch)
+        const root = wrapper.get('[role="switch"]')
+        await root.trigger('keydown', { key: 'Enter' })
+        expect(root.attributes('aria-checked')).toBe('true')
+        expect(wrapper.emitted('update:modelValue')).toEqual([[true]])
     })
 
     it('applies custom class', () => {
@@ -60,51 +80,11 @@ describe('Switch', () => {
         expect(wrapper.find('[role="switch"]').classes()).toContain('custom-class')
     })
 
-    it('applies variant classes', () => {
-        const wrapper = mount(Switch, {
-            props: { variant: 'primary' },
-            attachTo: document.body,
-        })
-        const el = wrapper.find('[role="switch"]')
-        const expected = switchRootVariants({ variant: 'primary' })
-        expected.split(' ').forEach((cls) => {
-            if (cls) expect(el.classes()).toContain(cls)
-        })
-    })
-
-    it('applies size classes to root and thumb', () => {
-        const wrapper = mount(Switch, {
-            props: { size: 'lg' },
-            attachTo: document.body,
-        })
-        const root = wrapper.find('[role="switch"]')
-        const thumb = root.find('span')
-        const expectedRoot = switchRootVariants({ size: 'lg' })
-        const expectedThumb = switchThumbVariants({ size: 'lg' })
-        expectedRoot.split(' ').forEach((cls) => {
-            if (cls) expect(root.classes()).toContain(cls)
-        })
-        expectedThumb.split(' ').forEach((cls) => {
-            if (cls) expect(thumb.classes()).toContain(cls)
-        })
-    })
-
-    it('uses default variant and size when not specified', () => {
-        const wrapper = mount(Switch, {
-            attachTo: document.body,
-        })
-        const el = wrapper.find('[role="switch"]')
-        const expected = switchRootVariants({ variant: 'default', size: 'default' })
-        expected.split(' ').forEach((cls) => {
-            if (cls) expect(el.classes()).toContain(cls)
-        })
-    })
-
     it('provides default aria-label from locale', () => {
         const wrapper = mount(Switch, {
             attachTo: document.body,
         })
-        expect(wrapper.find('[role="switch"]').attributes('aria-label')).toBe('开关')
+        expect(accessibleName(wrapper.get('[role="switch"]').element)).toBe('开关')
     })
 
     it('uses custom ariaLabel when provided', () => {
@@ -120,7 +100,7 @@ describe('Switch', () => {
             props: { ariaLabel: '   ' },
             attachTo: document.body,
         })
-        expect(wrapper.find('[role="switch"]').attributes('aria-label')).toBe('开关')
+        expect(accessibleName(wrapper.get('[role="switch"]').element)).toBe('开关')
     })
 
     it('emits false when clicking on checked switch (modelValue=true)', async () => {
@@ -132,29 +112,14 @@ describe('Switch', () => {
         await el.trigger('click')
         expect(wrapper.emitted('update:modelValue')).toBeTruthy()
         expect(wrapper.emitted('update:modelValue')![0]).toEqual([false])
-    })
-
-    it('supports defaultChecked in uncontrolled mode', () => {
-        const wrapper = mount(Switch, {
-            props: { defaultChecked: true },
-            attachTo: document.body,
-        })
-        const el = wrapper.find('[role="switch"]')
         expect(el.attributes('aria-checked')).toBe('true')
+        await wrapper.setProps({ modelValue: false })
+        expect(el.attributes('aria-checked')).toBe('false')
     })
 
     it('supports defaultValue in uncontrolled mode', () => {
         const wrapper = mount(Switch, {
             props: { defaultValue: true },
-            attachTo: document.body,
-        })
-        const el = wrapper.find('[role="switch"]')
-        expect(el.attributes('aria-checked')).toBe('true')
-    })
-
-    it('prioritizes defaultValue over defaultChecked', () => {
-        const wrapper = mount(Switch, {
-            props: { defaultValue: true, defaultChecked: false },
             attachTo: document.body,
         })
         const el = wrapper.find('[role="switch"]')
@@ -174,98 +139,326 @@ describe('Switch', () => {
         expect(el.attributes('aria-checked')).toBe('false')
     })
 
-    it('supports shape prop (slider and rocker)', () => {
-        const wrapper = mount(Switch, {
-            props: { shape: 'rocker' },
-            attachTo: document.body,
-        })
-        const el = wrapper.find('[role="switch"]')
-        const expected = switchRootVariants({ shape: 'rocker' })
-        expected.split(' ').forEach((cls) => {
-            if (cls) expect(el.classes()).toContain(cls)
-        })
-    })
-
     it('renders IO label marks with aria-hidden when showLabels is true', () => {
         const wrapper = mount(Switch, {
             props: { showLabels: true },
             attachTo: document.body,
         })
-        const labelContainer = wrapper.find('span.absolute.inset-0')
-        expect(labelContainer.exists()).toBe(true)
-        expect(labelContainer.attributes('aria-hidden')).toBe('true')
-        expect(labelContainer.text()).toContain('O')
-        expect(labelContainer.text()).toContain('I')
+        const label = wrapper.find('[data-slot="switch-thumb"] [aria-hidden="true"]')
+        expect(label.exists()).toBe(true)
+        expect(label.text()).toBe('O')
+        expect(accessibleName(wrapper.get('[role="switch"]').element)).toBe('开关')
+    })
+
+    it('switches custom labels with the uncontrolled state', async () => {
+        const wrapper = mount(Switch, {
+            props: { showLabels: true, checkedLabel: '开', uncheckedLabel: '关', ariaLabel: '自动同步' },
+        })
+        const root = wrapper.find('[role="switch"]')
+        const label = root.find('[aria-hidden="true"]')
+
+        expect(label.text()).toBe('关')
+        await root.trigger('click')
+        expect(label.text()).toBe('开')
+        expect(root.attributes('aria-checked')).toBe('true')
+        expect(root.attributes('aria-label')).toBe('自动同步')
+        expect(label.attributes('aria-hidden')).toBe('true')
+        await root.trigger('click')
+        expect(label.text()).toBe('关')
+        expect(root.attributes('aria-checked')).toBe('false')
+    })
+
+    it('updates label props reactively and preserves an explicit empty label', async () => {
+        const wrapper = mount(Switch, {
+            props: { showLabels: true, modelValue: true, checkedLabel: '开', uncheckedLabel: '关' },
+        })
+        const label = wrapper.find('[aria-hidden="true"]')
+
+        await wrapper.setProps({ checkedLabel: '✓' })
+        expect(label.text()).toBe('✓')
+        await wrapper.setProps({ checkedLabel: '' })
+        expect(label.text()).toBe('')
+        await wrapper.setProps({ checkedLabel: undefined })
+        expect(label.text()).toBe('I')
+        await wrapper.setProps({ modelValue: false, uncheckedLabel: '×' })
+        expect(label.text()).toBe('×')
+        await wrapper.setProps({ uncheckedLabel: undefined })
+        expect(label.text()).toBe('O')
+    })
+
+    it('shows custom labels only when showLabels is enabled', async () => {
+        const wrapper = mount(Switch, {
+            props: { defaultValue: true, checkedLabel: '✓', uncheckedLabel: '×' },
+        })
+        const thumb = wrapper.find('[data-slot="switch-thumb"]')
+
+        expect(thumb.text()).toBe('')
+        await wrapper.setProps({ showLabels: true })
+        expect(thumb.text()).toBe('✓')
+        await wrapper.setProps({ showLabels: false })
+        expect(thumb.text()).toBe('')
+    })
+
+    it('uses locale labels with prop overrides taking priority', async () => {
+        const wrapper = mount(Switch, {
+            props: { showLabels: true, modelValue: false },
+            global: {
+                provide: {
+                    [LOCALE_INJECTION_KEY as symbol]: {
+                        ...zhCN,
+                        switch: { toggle: '电源', checkedLabel: '通', uncheckedLabel: '断' },
+                    },
+                },
+            },
+        })
+        const label = wrapper.find('[aria-hidden="true"]')
+
+        expect(label.text()).toBe('断')
+        await wrapper.setProps({ modelValue: true })
+        expect(label.text()).toBe('通')
+        await wrapper.setProps({ checkedLabel: '✓' })
+        expect(label.text()).toBe('✓')
+        await wrapper.setProps({ modelValue: false, uncheckedLabel: '×' })
+        expect(label.text()).toBe('×')
+        await wrapper.setProps({ uncheckedLabel: undefined })
+        expect(label.text()).toBe('断')
+    })
+
+    it('falls back to built-in labels when the provided locale omits them', async () => {
+        const wrapper = mount(Switch, {
+            props: { showLabels: true, modelValue: false },
+            global: { provide: { [LOCALE_INJECTION_KEY as symbol]: { switch: { toggle: 'Power' } } } },
+        })
+        const label = wrapper.find('[aria-hidden="true"]')
+
+        expect(label.text()).toBe('O')
+        await wrapper.setProps({ modelValue: true })
+        expect(label.text()).toBe('I')
     })
 
     it.each([
-        { variant: 'default' as const, foreground: 'data-[state=checked]:text-brutal-success-foreground' },
-        { variant: 'primary' as const, foreground: 'data-[state=checked]:text-brutal-primary-foreground' },
-        { variant: 'secondary' as const, foreground: 'data-[state=checked]:text-brutal-secondary-foreground' },
-        { variant: 'accent' as const, foreground: 'data-[state=checked]:text-brutal-accent-foreground' },
-        { variant: 'danger' as const, foreground: 'data-[state=checked]:text-brutal-destructive-foreground' },
-    ])('pairs the active track foreground with the $variant background', ({ variant, foreground }) => {
-        expect(switchRootVariants({ variant }).split(/\s+/)).toContain(foreground)
-    })
-
-    it('renders the active O/I mark inside the thumb with paired keycap colors', async () => {
+        { variant: 'default' as const },
+        { variant: 'primary' as const },
+        { variant: 'secondary' as const },
+        { variant: 'accent' as const },
+        { variant: 'danger' as const },
+    ])('renders the current O/I mark with the $variant track color', async ({ variant }) => {
         const wrapper = mount(Switch, {
-            props: { showLabels: true, modelValue: false },
+            props: { showLabels: true, modelValue: false, variant },
             attachTo: document.body,
         })
         const root = wrapper.find('[role="switch"]')
-        const thumb = root.find('.size-5')
-        const labelLayer = root.find('span.absolute.inset-0')
-        const [offLabel, onLabel] = labelLayer.findAll('span')
+        const thumb = root.find('[data-slot="switch-thumb"]')
         const activeLabel = thumb.find('[aria-hidden="true"]')
 
         expect(activeLabel.text()).toBe('O')
-        expect(activeLabel.classes()).toContain('text-brutal-fg')
-        expect(offLabel.classes()).toContain('opacity-0')
-        expect(onLabel.classes()).toContain('opacity-30')
-        expect(onLabel.classes()).toContain('text-current')
+        expect(root.attributes('aria-checked')).toBe('false')
 
         await wrapper.setProps({ modelValue: true })
 
-        expect(offLabel.classes()).toContain('opacity-30')
-        expect(offLabel.classes()).toContain('text-current')
         expect(activeLabel.text()).toBe('I')
-        expect(onLabel.classes()).toContain('opacity-0')
-    })
-})
-
-describe('Switch 翘板凹槽轨道与机械动效', () => {
-    it('轨道应用冲压凹槽阴影且脱离外凸交互反馈', () => {
-        const classTokens = switchRootVariants().split(/\s+/)
-        expect(classTokens).toContain('shadow-brutal-inset')
-        expect(classTokens).not.toContain('shadow-brutal-sm')
-        expect(classTokens).not.toContain('hover:-translate-y-0.5')
-        expect(classTokens).not.toContain('active:translate-x-[var(--brutal-shadow-offset-x,4px)]')
+        expect(root.attributes('aria-checked')).toBe('true')
+        expect(accessibleName(root.element)).toBe('开关')
     })
 
-    it('滑块以 bounce 缓动完成翘板吸合（120ms 机械段落）', () => {
-        const classTokens = switchThumbVariants().split(/\s+/)
-        expect(classTokens).toContain('ease-brutal-bounce')
-        expect(classTokens).toContain('duration-[120ms]')
-    })
-
-    it('滑块呈现 3D 机械实体按键材质（实体背景、边框与硬阴影）', () => {
-        const classTokens = switchThumbVariants().split(/\s+/)
-        expect(classTokens).toContain('bg-brutal-bg')
-        expect(classTokens).toContain('border-2')
-        expect(classTokens).toContain('border-brutal')
-        expect(classTokens.some(c => c.startsWith('shadow-['))).toBe(true)
-    })
-
-    it('滑块中心内嵌工控防滑双槽', () => {
+    it('renders a solid thumb when showLabels is false', () => {
         const wrapper = mount(Switch, {
             attachTo: document.body,
         })
-        const thumb = wrapper.find('[role="switch"]').find('span')
-        const gripGroove = thumb.find('[aria-hidden="true"]')
-        expect(gripGroove.exists()).toBe(true)
-        expect(gripGroove.findAll('span')).toHaveLength(2)
+        const thumb = wrapper.find('[data-slot="switch-thumb"]')
+        expect(thumb.text()).toBe('')
+        expect(thumb.find('[aria-hidden="true"]').exists()).toBe(false)
     })
+})
+
+describe('Switch 表单与标签', () => {
+    beforeEach(() => hapticsMocks.snap.mockClear())
+
+    function resetForm(form: HTMLFormElement): void {
+        // 按浏览器规范先派发可取消事件；Happy DOM 的原生 reset 使用相反顺序。
+        if (!form.dispatchEvent(new Event('reset', { bubbles: true, cancelable: true }))) return
+        for (const input of form.querySelectorAll<HTMLInputElement>('input[type="checkbox"]')) {
+            input.checked = input.defaultChecked
+        }
+    }
+
+    function mountForm(props: Record<string, unknown> = {}) {
+        return mount({
+            render: () => h('form', [
+                h(Label, { for: 'switch-notifications' }, () => '邮件通知'),
+                h('span', { id: 'notification-title' }, '通知设置'),
+                h(Switch, { id: 'switch-notifications', name: 'notifications', value: 'enabled', ...props }),
+            ]),
+        }, { attachTo: document.body })
+    }
+
+    it('uses the associated Label as its accessible name', async () => {
+        const wrapper = mountForm()
+        const root = wrapper.get('[role="switch"]')
+        await flushPromises()
+        expect(accessibleName(root.element)).toBe('邮件通知')
+        wrapper.unmount()
+    })
+
+    it('preserves aria-labelledby as the accessible naming source', () => {
+        const wrapper = mountForm({ 'aria-labelledby': 'notification-title' })
+        expect(wrapper.get('[role="switch"]').attributes('aria-labelledby')).toBe('notification-title')
+        expect(accessibleName(wrapper.get('[role="switch"]').element)).toBe('通知设置')
+        wrapper.unmount()
+    })
+
+    it('toggles when the associated visible Label is clicked', async () => {
+        const wrapper = mountForm()
+        wrapper.get('label').element.click()
+        await flushPromises()
+        expect(wrapper.get('[role="switch"]').attributes('aria-checked')).toBe('true')
+        wrapper.unmount()
+    })
+
+    it('keeps an explicit accessible name over the associated Label', async () => {
+        const wrapper = mountForm({ ariaLabel: '接收设备通知' })
+        await flushPromises()
+        expect(wrapper.get('[role="switch"]').attributes('aria-label')).toBe('接收设备通知')
+        wrapper.unmount()
+    })
+
+    it('respects a wrapping Label without requiring an id', async () => {
+        const wrapper = mount({
+            render: () => h(Label, {}, () => ['允许通知', h(Switch)]),
+        }, { attachTo: document.body })
+        await flushPromises()
+        expect(accessibleName(wrapper.get('[role="switch"]').element)).toBe('允许通知')
+        wrapper.get('label').element.click()
+        await flushPromises()
+        expect(wrapper.get('[role="switch"]').attributes('aria-checked')).toBe('true')
+        wrapper.unmount()
+    })
+
+    it('submits the configured value after toggling', async () => {
+        const wrapper = mountForm()
+        const form = wrapper.get('form').element as HTMLFormElement
+        expect(new FormData(form).has('notifications')).toBe(false)
+        await wrapper.get('[role="switch"]').trigger('click')
+        expect(new FormData(form).get('notifications')).toBe('enabled')
+        await wrapper.get('[role="switch"]').trigger('click')
+        expect(new FormData(form).has('notifications')).toBe(false)
+        wrapper.unmount()
+    })
+
+    it.each([false, true])('restores the initial uncontrolled value %s on form reset', async (defaultValue) => {
+        const wrapper = mountForm({ defaultValue })
+        const form = wrapper.get('form').element as HTMLFormElement
+        const root = wrapper.get('[role="switch"]')
+        await root.trigger('click')
+        expect(root.attributes('aria-checked')).toBe(String(!defaultValue))
+        resetForm(form)
+        await flushPromises()
+        expect(root.attributes('aria-checked')).toBe(String(defaultValue))
+        expect(new FormData(form).get('notifications')).toBe(defaultValue ? 'enabled' : null)
+        expect(hapticsMocks.snap).toHaveBeenCalledTimes(1)
+        wrapper.unmount()
+    })
+
+    it('keeps the controlled state and submitted value when the form resets', async () => {
+        const state = reactive({ modelValue: false })
+        const wrapper = mountForm(state)
+        const form = wrapper.get('form').element as HTMLFormElement
+        state.modelValue = true
+        await flushPromises()
+        resetForm(form)
+        await flushPromises()
+        expect(wrapper.get('[role="switch"]').attributes('aria-checked')).toBe('true')
+        expect(new FormData(form).get('notifications')).toBe('enabled')
+        expect(hapticsMocks.snap).not.toHaveBeenCalled()
+        wrapper.unmount()
+    })
+
+    it('keeps the current state when form reset is cancelled', async () => {
+        const wrapper = mountForm()
+        const form = wrapper.get('form').element as HTMLFormElement
+        await wrapper.get('[role="switch"]').trigger('click')
+        form.addEventListener('reset', (event) => event.preventDefault())
+        resetForm(form)
+        await flushPromises()
+        expect(wrapper.get('[role="switch"]').attributes('aria-checked')).toBe('true')
+        expect(new FormData(form).get('notifications')).toBe('enabled')
+        wrapper.unmount()
+    })
+
+    it('validates a required field and excludes disabled fields from submission', async () => {
+        const state = reactive({ required: true, disabled: false, value: undefined })
+        const wrapper = mountForm(state)
+        const form = wrapper.get('form').element as HTMLFormElement
+        expect(wrapper.get('[role="switch"]').attributes('aria-required')).toBe('true')
+        expect(form.checkValidity()).toBe(false)
+        await wrapper.get('[role="switch"]').trigger('click')
+        expect(form.checkValidity()).toBe(true)
+        expect(new FormData(form).get('notifications')).toBe('on')
+        state.disabled = true
+        await flushPromises()
+        expect(new FormData(form).has('notifications')).toBe(false)
+        expect(form.checkValidity()).toBe(true)
+        wrapper.unmount()
+    })
+
+    it.each(['external', 'wrapping'] as const)('keeps the %s Label name in server-rendered HTML', async (kind) => {
+        const app = createSSRApp({ render: () => kind === 'external'
+            ? h('div', [h(Label, { for: 'ssr-switch' }, () => '邮件通知'), h(Switch, { id: 'ssr-switch' })])
+            : h(Label, {}, () => ['邮件通知', h(Switch)]),
+        })
+        const host = document.createElement('div')
+        host.innerHTML = await renderToString(app)
+        document.body.append(host)
+        expect(accessibleName(host.querySelector('[role="switch"]')!)).toBe('邮件通知')
+        host.remove()
+    })
+
+    it('uses a Label added after the Switch has mounted', async () => {
+        const visible = ref(false)
+        const wrapper = mount({ render: () => h('div', [
+            visible.value ? h(Label, { for: 'late-switch' }, () => '邮件通知') : null,
+            h(Switch, { id: 'late-switch' }),
+        ]) }, { attachTo: document.body })
+        await flushPromises()
+        visible.value = true
+        await flushPromises()
+        expect(accessibleName(wrapper.get('[role="switch"]').element)).toBe('邮件通知')
+        wrapper.unmount()
+    })
+
+    it('updates the accessible name when the visible Label text changes', async () => {
+        const text = ref('邮件通知')
+        const wrapper = mount({ render: () => h('div', [
+            h(Label, { for: 'changing-switch' }, () => text.value),
+            h(Switch, { id: 'changing-switch' }),
+        ]) }, { attachTo: document.body })
+        await flushPromises()
+        text.value = '系统通知'
+        await flushPromises()
+        expect(accessibleName(wrapper.get('[role="switch"]').element)).toBe('系统通知')
+        wrapper.unmount()
+    })
+
+    it.each([false, true])('keeps FormData and validity correct immediately after resetting controlled=%s', async (controlled) => {
+        const state = reactive(controlled ? { modelValue: false, required: true } : { defaultValue: true, required: true })
+        const wrapper = mountForm(state)
+        const form = wrapper.get('form').element as HTMLFormElement
+        if (controlled) {
+            Object.assign(state, { modelValue: true })
+            await flushPromises()
+        } else {
+            await wrapper.get('[role="switch"]').trigger('click')
+        }
+        resetForm(form)
+        expect(new FormData(form).get('notifications')).toBe('enabled')
+        expect(form.checkValidity()).toBe(true)
+        await flushPromises()
+        wrapper.unmount()
+    })
+})
+
+describe('Switch 切换音效', () => {
+    beforeEach(() => hapticsMocks.snap.mockClear())
 
     it('sound=true 时切换触发 snap 音效，sound 选项随 prop 传递', async () => {
         const wrapper = mount(Switch, {

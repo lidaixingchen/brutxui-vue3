@@ -90,46 +90,11 @@
             ],
             "references": []
           },
-          "description": "The initial state used when modelValue is omitted; it takes precedence over defaultChecked when both are provided.",
+          "description": "The initial uncontrolled state at mount, restored when the owning native form resets.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
             "line": 21
-          },
-          "origin": "declared",
-          "required": false,
-          "nullable": false,
-          "default": {
-            "declaration": {
-              "kind": "value",
-              "text": "undefined",
-              "source": {
-                "file": "packages/ui/src/components/switch/Switch.vue"
-              }
-            },
-            "resolution": {
-              "kind": "resolved",
-              "text": "undefined"
-            }
-          }
-        },
-        {
-          "id": "api-component_3Aswitch_2FSwitch-props-defaultChecked",
-          "name": "defaultChecked",
-          "kind": "props",
-          "type": {
-            "text": "boolean | undefined",
-            "literals": [
-              "false",
-              "true"
-            ],
-            "references": []
-          },
-          "description": "An alias for the initial state in uncontrolled mode; overridden when defaultValue is also provided.",
-          "notes": [],
-          "source": {
-            "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 25
           },
           "origin": "declared",
           "required": false,
@@ -164,7 +129,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 26
+            "line": 22
           },
           "origin": "declared",
           "required": false,
@@ -203,7 +168,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 27
+            "line": 23
           },
           "origin": "declared",
           "required": false,
@@ -219,42 +184,6 @@
             "resolution": {
               "kind": "resolved",
               "text": "\"default\""
-            }
-          }
-        },
-        {
-          "id": "api-component_3Aswitch_2FSwitch-props-shape",
-          "name": "shape",
-          "kind": "props",
-          "type": {
-            "text": "NonNullable<\"slider\" | \"rocker\" | null | undefined> | undefined",
-            "displayText": "\"rocker\" | \"slider\" | undefined",
-            "literals": [
-              "\"rocker\"",
-              "\"slider\""
-            ],
-            "references": []
-          },
-          "description": "Sets the mechanical appearance to a sliding or rocker-style switch.",
-          "notes": [],
-          "source": {
-            "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 28
-          },
-          "origin": "declared",
-          "required": false,
-          "nullable": false,
-          "default": {
-            "declaration": {
-              "kind": "value",
-              "text": "'slider'",
-              "source": {
-                "file": "packages/ui/src/components/switch/Switch.vue"
-              }
-            },
-            "resolution": {
-              "kind": "resolved",
-              "text": "\"slider\""
             }
           }
         },
@@ -276,7 +205,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 29
+            "line": 24
           },
           "origin": "declared",
           "required": false,
@@ -307,11 +236,11 @@
             ],
             "references": []
           },
-          "description": "Shows O/I markings for off and on inside the track; the markings are decorative and hidden from the accessibility tree.",
+          "description": "Shows the current state label inside the thumb, configured with checkedLabel and uncheckedLabel; labels are decorative and hidden from the accessibility tree.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 31
+            "line": 26
           },
           "origin": "declared",
           "required": false,
@@ -331,6 +260,233 @@
           }
         },
         {
+          "id": "api-component_3Aswitch_2FSwitch-props-checkedLabel",
+          "name": "checkedLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Label for the on state, shown only when showLabels is true; falls back to the locale text, I by default. A single character is recommended.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-uncheckedLabel",
+          "name": "uncheckedLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Label for the off state, shown only when showLabels is true; falls back to the locale text, O by default. A single character is recommended.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 30
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Control ID, linked to a visible name through a Label’s for attribute.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Form field name, submitted with the owning native form when on and enabled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "String value submitted when on; the primitive defaults to on when omitted.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-required",
+          "name": "required",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Requires the switch to be on for native form validation; also set name.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 38
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-ariaLabelledby",
+          "name": "ariaLabelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "ID of the naming element, used as the preferred accessible naming source.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 40
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
           "id": "api-component_3Aswitch_2FSwitch-props-ariaLabel",
           "name": "ariaLabel",
           "kind": "props",
@@ -339,11 +495,11 @@
             "literals": [],
             "references": []
           },
-          "description": "Sets the switch’s accessible name; the current locale’s default text is used when omitted.",
+          "description": "Explicit accessible name; the locale default is used only without an explicit name or associated Label.",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 33
+            "line": 42
           },
           "origin": "declared",
           "required": false,
@@ -378,7 +534,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 35
+            "line": 44
           },
           "origin": "declared",
           "required": false,

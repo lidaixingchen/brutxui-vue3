@@ -90,46 +90,11 @@
             ],
             "references": []
           },
-          "description": "未传入 modelValue 时使用的初始状态；同时传入 defaultChecked 时以 defaultValue 为准。",
+          "description": "非受控模式的挂载初值；所属原生表单重置时恢复此值。",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
             "line": 21
-          },
-          "origin": "declared",
-          "required": false,
-          "nullable": false,
-          "default": {
-            "declaration": {
-              "kind": "value",
-              "text": "undefined",
-              "source": {
-                "file": "packages/ui/src/components/switch/Switch.vue"
-              }
-            },
-            "resolution": {
-              "kind": "resolved",
-              "text": "undefined"
-            }
-          }
-        },
-        {
-          "id": "api-component_3Aswitch_2FSwitch-props-defaultChecked",
-          "name": "defaultChecked",
-          "kind": "props",
-          "type": {
-            "text": "boolean | undefined",
-            "literals": [
-              "false",
-              "true"
-            ],
-            "references": []
-          },
-          "description": "非受控模式下的初始状态别名；同时提供 defaultValue 时被其覆盖。",
-          "notes": [],
-          "source": {
-            "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 25
           },
           "origin": "declared",
           "required": false,
@@ -164,7 +129,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 26
+            "line": 22
           },
           "origin": "declared",
           "required": false,
@@ -203,7 +168,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 27
+            "line": 23
           },
           "origin": "declared",
           "required": false,
@@ -219,42 +184,6 @@
             "resolution": {
               "kind": "resolved",
               "text": "\"default\""
-            }
-          }
-        },
-        {
-          "id": "api-component_3Aswitch_2FSwitch-props-shape",
-          "name": "shape",
-          "kind": "props",
-          "type": {
-            "text": "NonNullable<\"slider\" | \"rocker\" | null | undefined> | undefined",
-            "displayText": "\"rocker\" | \"slider\" | undefined",
-            "literals": [
-              "\"rocker\"",
-              "\"slider\""
-            ],
-            "references": []
-          },
-          "description": "设置滑块的机械外观为常规滑动式或摇杆式。",
-          "notes": [],
-          "source": {
-            "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 28
-          },
-          "origin": "declared",
-          "required": false,
-          "nullable": false,
-          "default": {
-            "declaration": {
-              "kind": "value",
-              "text": "'slider'",
-              "source": {
-                "file": "packages/ui/src/components/switch/Switch.vue"
-              }
-            },
-            "resolution": {
-              "kind": "resolved",
-              "text": "\"slider\""
             }
           }
         },
@@ -276,7 +205,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 29
+            "line": 24
           },
           "origin": "declared",
           "required": false,
@@ -307,11 +236,11 @@
             ],
             "references": []
           },
-          "description": "在轨道内显示表示关闭和开启的 O/I 铭牌；标签仅为装饰并从无障碍树中隐藏。",
+          "description": "在滑钮内显示当前状态标签，内容由 checkedLabel 和 uncheckedLabel 设置；标签仅为装饰并从无障碍树中隐藏。",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 31
+            "line": 26
           },
           "origin": "declared",
           "required": false,
@@ -331,6 +260,233 @@
           }
         },
         {
+          "id": "api-component_3Aswitch_2FSwitch-props-checkedLabel",
+          "name": "checkedLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "开启状态标签，仅在 showLabels 为 true 时显示；未提供时使用 locale 文案，内置默认为 I。建议使用单字符。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 28
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-uncheckedLabel",
+          "name": "uncheckedLabel",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "关闭状态标签，仅在 showLabels 为 true 时显示；未提供时使用 locale 文案，内置默认为 O。建议使用单字符。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 30
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-id",
+          "name": "id",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "控件 ID，通过 Label 的 for 属性关联可见名称。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 32
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "表单字段名；开启且未禁用时随所属原生 form 提交。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 34
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-value",
+          "name": "value",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "开启时提交的字符串值；未提供时使用原语默认值 on。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 36
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-required",
+          "name": "required",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "要求开关开启后才能通过所属原生表单的必填校验；需同时设置 name。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 38
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Aswitch_2FSwitch-props-ariaLabelledby",
+          "name": "ariaLabelledby",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "关联名称元素的 ID，作为优先的无障碍名称来源。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/switch/Switch.vue",
+            "line": 40
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/switch/Switch.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
           "id": "api-component_3Aswitch_2FSwitch-props-ariaLabel",
           "name": "ariaLabel",
           "kind": "props",
@@ -339,11 +495,11 @@
             "literals": [],
             "references": []
           },
-          "description": "设置开关的无障碍名称；未提供时使用当前语言的默认文案。",
+          "description": "显式设置无障碍名称；缺少显式名称和关联 Label 时才使用当前语言的默认文案。",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 33
+            "line": 42
           },
           "origin": "declared",
           "required": false,
@@ -378,7 +534,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 35
+            "line": 44
           },
           "origin": "declared",
           "required": false,

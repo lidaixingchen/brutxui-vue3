@@ -466,6 +466,8 @@ export interface VirtualScrollLocale {
 
 export interface SwitchLocale {
     toggle: string
+    checkedLabel: string
+    uncheckedLabel: string
 }
 
 export interface CheckboxLocale {

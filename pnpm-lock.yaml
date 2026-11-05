@@ -313,6 +313,9 @@ importers:
       brutx-shared-vue:
         specifier: workspace:*
         version: link:../shared
+      dom-accessibility-api:
+        specifier: ^0.7.1
+        version: 0.7.1
       embla-carousel:
         specifier: 8.6.0
         version: 8.6.0
@@ -2602,6 +2605,9 @@ packages:
   diff@8.0.4:
     resolution: {integrity: sha512-DPi0FmjiSU5EvQV0++GFDOJ9ASQUVFh5kD+OzOnYdi7n3Wpm9hWWGfB/O2blfHcMVTL5WkQXSnRiK9makhrcnw==}
     engines: {node: '>=0.3.1'}
+
+  dom-accessibility-api@0.7.1:
+    resolution: {integrity: sha512-vdnCeZD+3wZ+8h8xXL/ZtBlvvoobOFyPzSiIfO6sGOZDqjFx4aLMAjZhl4rawj5xYz3UwP6Tgvyh0iH4IOCVnQ==}
 
   dot-prop@5.1.1:
     resolution: {integrity: sha512-QCHI6Lkf+9fJMpwfAFsTvbiSh6ujoPmhCLiDvD/n4dGtLvHfhuBwPdN6z2x4YSOwwtTcLoO/LP70xELWGF/JVA==}
@@ -6547,6 +6553,8 @@ snapshots:
       dequal: 2.0.3
 
   diff@8.0.4: {}
+
+  dom-accessibility-api@0.7.1: {}
 
   dot-prop@5.1.1:
     dependencies:

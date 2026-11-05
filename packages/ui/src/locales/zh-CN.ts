@@ -399,6 +399,8 @@ export const zhCN: Locale = {
     },
     switch: {
         toggle: '开关',
+        checkedLabel: 'I',
+        uncheckedLabel: 'O',
     },
     checkbox: {
         check: '复选框',

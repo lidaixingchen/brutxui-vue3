@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, ref, type VNode } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
-import { SwitchRoot, SwitchThumb } from 'reka-ui'
-import { switchRootVariants, switchThumbVariants } from './switch-variants'
+import { Primitive, SwitchRoot, SwitchThumb, useForwardExpose } from 'reka-ui'
+import { switchLabelVariants, switchRootVariants, switchThumbVariants } from './switch-variants'
 import { useLocale } from '@/composables/useLocale'
 import { useBrutalHaptics } from '@/composables/useBrutalHaptics'
 
@@ -16,20 +16,29 @@ export interface SwitchProps {
      */
     modelValue?: boolean | null
     /**
-     * 非受控模式下的初始选中状态；优先级高于 defaultChecked。
+     * 非受控模式下的初始状态，也是所属表单重置时恢复的状态。
      */
     defaultValue?: boolean
-    /**
-     * 非受控模式下的初始选中状态（defaultValue 的别名）。
-     */
-    defaultChecked?: boolean
     disabled?: boolean
     variant?: NonNullable<SwitchRootVariantProps['variant']>
-    shape?: NonNullable<SwitchRootVariantProps['shape']>
     size?: NonNullable<SwitchRootVariantProps['size']>
-    /** 是否在轨道内呈现工控 I / O 通断铭牌刻印（纯视觉层，零 a11y 负担） */
+    /** 是否在滑钮内显示当前状态标签；标签仅用于装饰。 */
     showLabels?: boolean
-    /** 无障碍标签，未提供时使用 locale 默认值 */
+    /** 开启状态的标签，未提供时使用 locale 默认值 I；建议使用单字符。 */
+    checkedLabel?: string
+    /** 关闭状态的标签，未提供时使用 locale 默认值 O；建议使用单字符。 */
+    uncheckedLabel?: string
+    /** 控件 ID，用于通过 Label 的 for 属性关联可见名称。 */
+    id?: string
+    /** 表单字段名；选中且未禁用时随所属 form 提交。 */
+    name?: string
+    /** 选中时提交的字段值；未提供时使用原语默认值 on。 */
+    value?: string
+    /** 所属原生表单要求此开关开启。 */
+    required?: boolean
+    /** 关联名称元素的 ID，优先于其他无障碍名称。 */
+    ariaLabelledby?: string
+    /** 显式无障碍名称；缺少显式名称和关联 Label 时使用 locale 默认值。 */
     ariaLabel?: string
     /** 显式开启切换时的继电器吸合音效（snap）；默认静音 */
     sound?: boolean
@@ -38,12 +47,17 @@ export interface SwitchProps {
 const props = withDefaults(defineProps<SwitchProps>(), {
     modelValue: undefined,
     defaultValue: undefined,
-    defaultChecked: undefined,
     disabled: false,
     variant: 'default',
-    shape: 'slider',
     size: 'default',
     showLabels: false,
+    checkedLabel: undefined,
+    uncheckedLabel: undefined,
+    id: undefined,
+    name: undefined,
+    value: undefined,
+    required: false,
+    ariaLabelledby: undefined,
     class: undefined,
     ariaLabel: undefined,
     sound: false,
@@ -57,9 +71,20 @@ const { t } = useLocale()
 
 const haptics = useBrutalHaptics({ sound: () => props.sound })
 
-const resolvedAriaLabel = computed(() => props.ariaLabel?.trim() || t('switch.toggle'))
+const { forwardRef, currentElement } = useForwardExpose()
+const rootElement = computed(() => currentElement.value as HTMLButtonElement | undefined)
+const resolvedAriaLabel = computed(() => props.ariaLabelledby?.trim()
+    ? undefined
+    : props.ariaLabel?.trim() || undefined,
+)
+const showFallbackName = computed(() => !resolvedAriaLabel.value && !props.ariaLabelledby?.trim())
 
-const internalValue = ref(props.defaultValue ?? props.defaultChecked ?? false)
+function bindRoot(vnode: VNode): void {
+    forwardRef(vnode.el as HTMLButtonElement)
+}
+
+const initialValue = props.defaultValue ?? false
+const internalValue = ref(initialValue)
 const isControlled = computed(() => props.modelValue !== undefined)
 const currentValue = computed({
     get: () => (isControlled.value ? Boolean(props.modelValue) : internalValue.value),
@@ -71,9 +96,8 @@ const currentValue = computed({
     },
 })
 
-/** 用户切换入口：音效副作用在此处只触发一次（computed setter 可能被响应式链路重入多次） */
-function onUserToggle(val: boolean | string | number): void {
-    const next = Boolean(val)
+/** 用户切换播放音效；程序化更新与表单重置仅同步状态。 */
+function onUserToggle(next: boolean): void {
     if (next !== currentValue.value) {
         haptics.snap()
     }
@@ -84,7 +108,6 @@ const classes = computed(() =>
     cn(
         switchRootVariants({
             variant: props.variant,
-            shape: props.shape,
             size: props.size,
         }),
         props.class,
@@ -93,58 +116,79 @@ const classes = computed(() =>
 
 const thumbClasses = computed(() =>
     cn(
-        switchThumbVariants({
-            shape: props.shape,
-            size: props.size,
-        }),
+        switchThumbVariants(),
     ),
 )
 
-const offLabelClasses = computed(() =>
+const labelClasses = computed(() =>
     cn(
-        'leading-none',
-        currentValue.value ? 'opacity-30 text-current' : 'opacity-0',
+        switchLabelVariants({ variant: currentValue.value ? props.variant : 'unchecked' }),
     ),
 )
 
-const onLabelClasses = computed(() =>
-    cn(
-        'leading-none',
-        currentValue.value ? 'opacity-0' : 'opacity-30 text-current',
-    ),
+const statusLabel = computed(() => currentValue.value
+    ? (props.checkedLabel ?? t('switch.checkedLabel'))
+    : (props.uncheckedLabel ?? t('switch.uncheckedLabel')),
 )
+
+let ownerForm: HTMLFormElement | null = null
+
+function onFormReset(event: Event): void {
+    const input = props.name ? rootElement.value?.nextElementSibling as HTMLInputElement | null : null
+    // 浏览器在 reset 事件之后读取 defaultChecked，保证同步读取表单时即得到重置值。
+    if (input) {
+        const checked = input.checked
+        input.defaultChecked = isControlled.value ? currentValue.value : initialValue
+        input.checked = checked
+    }
+    void nextTick(() => {
+        if (event.defaultPrevented) return
+        if (!isControlled.value) internalValue.value = initialValue
+        if (input) input.checked = currentValue.value
+    })
+}
+
+function syncFormOwner(): void {
+    const element = rootElement.value
+    const form = element?.form ?? null
+    if (form === ownerForm) return
+    ownerForm?.removeEventListener('reset', onFormReset)
+    ownerForm = form
+    ownerForm?.addEventListener('reset', onFormReset)
+}
+
+onMounted(syncFormOwner)
+onUpdated(syncFormOwner)
+onBeforeUnmount(() => ownerForm?.removeEventListener('reset', onFormReset))
 </script>
 
 <template>
     <SwitchRoot
+        as-child
         :class="classes"
         :model-value="currentValue"
         :disabled="disabled"
-        :aria-label="resolvedAriaLabel"
+        :name="name"
+        :value="value"
+        :required="required"
         @update:model-value="onUserToggle"
     >
-        <!-- 非活动刻印继承轨道变体前景，活动刻印位于键帽内部 -->
-        <span
-            v-if="props.showLabels"
-            class="pointer-events-none absolute inset-0 flex select-none items-center justify-between px-2 font-mono text-[10px] font-black"
-            aria-hidden="true"
+        <Primitive
+            :id="id"
+            as="button"
+            :aria-labelledby="ariaLabelledby"
+            :aria-label="resolvedAriaLabel"
+            @vue:mounted="bindRoot"
         >
-            <span :class="offLabelClasses">O</span>
-            <span :class="onLabelClasses">I</span>
-        </span>
-
-        <!-- 3D 机械滑块键帽 -->
-        <SwitchThumb :class="thumbClasses">
-            <span
-                v-if="props.showLabels"
-                class="font-mono text-[10px] font-black leading-none text-brutal-fg"
-                aria-hidden="true"
-            >{{ currentValue ? 'I' : 'O' }}</span>
-            <span v-else class="flex items-center justify-center gap-0.5" aria-hidden="true">
-                <span class="h-2 w-[1.5px] bg-brutal-border-color/60" />
-                <span class="h-2 w-[1.5px] bg-brutal-border-color/60" />
-            </span>
-        </SwitchThumb>
+            <SwitchThumb data-slot="switch-thumb" :class="thumbClasses">
+                <span
+                    v-if="props.showLabels"
+                    :class="labelClasses"
+                    aria-hidden="true"
+                >{{ statusLabel }}</span>
+            </SwitchThumb>
+            <span v-if="showFallbackName" class="sr-only">{{ t('switch.toggle') }}</span>
+        </Primitive>
     </SwitchRoot>
 </template>
 
