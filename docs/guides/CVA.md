@@ -39,9 +39,11 @@ export const buttonVariants = cva(
 )
 ```
 
-**base 层必须遵守**：边框 `border-3 border-brutal`（R1）、阴影 `shadow-brutal*`（R2）、圆角 `rounded-brutal`（R3）、按压 `brutalPress`（R4）、焦点 `FOCUS_RING_CLASSES`（R7）、颜色走令牌（R6）。
+**base 层必须遵守**：边框 `border-3 border-brutal`（R1）、阴影 `shadow-brutal*`（R2）、圆角 `rounded-brutal`（R3）、按压遵循 R4 的 `brutalPress` 或组件例外规则、焦点 `FOCUS_RING_CLASSES`（R7）、颜色走令牌（R6）。
 
 集合选项行的 base 层引用 `collectionItemVariants()`，按视觉系统 R4、R5、R7 的集合行规则保持几何稳定、绘制行内焦点。组件所属变体继续管理密度、缩进、选择标记与业务状态。
+
+Switch 的私有变体按 R4、R5 保持外框与硬阴影固定，由内部滑钮位移和轨道变色承担状态反馈。
 
 **前景色来源对照**（shared-button-variants.ts 的 9 个 variant；键名 `danger` 映射 `brutal-destructive`，勿重命名）：
 

@@ -66,7 +66,7 @@
   - *标度外偏移逃生口*：偏移不在 sm/base/lg/xl 档位时，使用 `shadow-brutal [--brutal-shadow-offset-x:Npx] [--brutal-shadow-offset-y:Npx]` 本地覆盖；若手写偏移数字，颜色必须走 `var(--brutal-shadow-color, #000000)` 以跟随主题。
   - *危险态半透明红阴影*：统一使用 `shadow-brutal-destructive`（引用 `--brutal-destructive` 30% 透明 `color-mix` 派生，随主题预设联动）。
 - **stacked 多层彩虹投影**：三层刻度为 0.25x/1x/1.5x（默认偏移 1px/4px/6px），近层采用较细刻度以平衡与边框相连后的视觉厚度；全部经 `--brutal-shadow-offset-x/y` 运行时变量 calc 派生、随主题偏移覆盖联动；三明治配色仅中间层引用 `--brutal-primary`，两侧边框层恒为 `--brutal-border-color`，亮暗预设下层次对比恒定。用于核心 CTA 与推荐卡等需强实体突起的场景，禁止大面积滥用。
-- **inset 冲压凹槽**：凹槽深度取 0.5x 刻度与 sm 档系数同源派生。专用于表达「冲压进外壳」的物理纵深语义：输入类控件内槽、Switch/Slider 轨道、Progress 底槽、Kbd 按压态；严禁作为普通容器的默认阴影形态。
+- **inset 冲压凹槽**：凹槽深度取 0.5x 刻度与 sm 档系数同源派生。专用于表达「冲压进外壳」的物理纵深语义：输入类控件内槽、Slider 轨道、Progress 底槽、Kbd 按压态；严禁作为普通容器的默认阴影形态。
 - **防回潮守卫**：源码内新增 `shadow-[*rgba*]` 任意值由 CI 门禁 `check:deprecated` 拦截；新增档位经 `SHADOW_DEFINITIONS` 单一数据源注册后由生成器同步至 CLI 直挂区，完备性由 `check:generated` 门禁校验。
 
 ### R3 圆角体系 (Radius)
@@ -79,6 +79,7 @@
 - **stacked 档位按压**：承载 `shadow-brutal-stacked` 的元素必须复用同文件的 `brutalPressStacked`——位移以 calc 同源派生最外层 1.5x 偏移（`active:translate-x-[calc(var(--brutal-shadow-offset-x,4px)*1.5)]`）并去影；严禁内联手抄像素字面量造成位移与阴影脱同步。
 - **集合选项行**：集合行按压延续当前高亮与选择标记，位置、字重和阴影保持稳定，反馈规则见 R5。
 - **合法例外**：
+  - *内部滑钮开关*：Switch 通过滑钮的横向位移和轨道变色表达状态；外框与 `shadow-brutal-sm` 在悬停、按住及选中态保持固定，焦点指示独立即时显示。
   - *折叠面板标题*：Accordion 标题栏与外框保持对齐，按压通过颜色和焦点提示反馈；内容展开动画独立控制高度，标题与面板不附加平移。
   - *低强调变体*：`ghost` / `link` 变体豁免位移与阴影（`shadow-none` + 仅背景或下划线悬浮反馈）。
   - *分段选择与嵌入式触发器*：分段选择控件（`TabsTrigger`）以及外壳由父级 Item/容器承担的触发器（`AccordionTrigger`）豁免瞬态按压物理位移与去影，使用稳定几何位置的成对背景色/前景色与边框反馈，避免容器内相对晃动或与展开动效冲突。
@@ -89,6 +90,7 @@
 - **核心动作**：`hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5`（微上浮并放大硬阴影）。
 - **集合选项行**：Select、Command、Combobox、Cascader、TreeSelect、TreeView、Transfer 和 DropdownMenu 使用成对高亮色与稳定几何反馈。行的位置、尺寸、边框宽度、字重和阴影在交互中保持稳定；触发器与弹层外壳继续遵循各自规则。
 - **合法例外**：嵌在列表或卡片内部的次级触发器（如 `TabsTrigger`、`AccordionTrigger`）悬停保持位置与阴影稳定，通过背景叠色提供交互提示，悬浮反馈归属于外层卡片整体（如 `AccordionItem` 的 `interactive` 变体）。
+- **内部滑钮开关**：Switch 悬停时沿用 R4 的固定外框与阴影，通过滑钮和轨道表达状态。
 
 - **结构稳定性**：Accordion 与 Breadcrumb 悬停时保持布局位置，通过底色或阴影变化反馈。Breadcrumb 实体标签按压时文字、底色和边框作为整体移动。
 
@@ -175,7 +177,7 @@
 | **阴影** | `shadow-md`、`shadow-lg`、`shadow-[4px_4px_0_0_#000]` | `shadow-brutal` 系工具类 | 软模糊阴影违背新粗野主义风格；任意值字面量破坏主题响应 |
 | **圆角** | 默认写死 `rounded-md`、`rounded-lg` | `rounded-brutal` 或 `rounded-none` | 圆角应通过主题令牌控制，不应内联硬编码 |
 | **边框** | 浅灰细边框（如 `border-slate-200`、`border`） | `border-3 border-brutal` | 主边框必须保持粗重鲜明（Transfer 等占位指示除外） |
-| **按压** | 点击无位移或缺少去影 | 复用 `brutalPress`（位移 + 去影） | 缺少按压反馈会导致交互迟钝无生气 |
+| **按压** | 外框承载按压反馈时，位移与去影脱节 | 按 R4 复用 `brutalPress` 或采用对应的组件例外规则 | 按压反馈须与组件的运动主体保持一致 |
 | **前景** | `text-white`、`text-black` 硬编码 | `text-brutal-*-foreground` | 破坏暗色模式与自定义主题下的文本对比度 |
 | **焦点** | 在承载焦点元素上使用 `outline-none` | `FOCUS_RING_CLASSES` | 缺少 forced-colors 恢复块且抑制焦点环渲染 |
 | **层级** | `z-50`、`z-[9999]` 等非标硬编码层级 | `z-dialog`、`z-popover` 等语义工具类 | 破坏 5 级全局层级秩序，引发不同浮层遮挡错乱与去重失效 |

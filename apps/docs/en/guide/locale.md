@@ -246,7 +246,8 @@ const pageInfo = t('pagination.page', { number: 3 })         // "Page 3"
 | **ColorModeSwitcher**| `colorModeSwitcher.*`| `light`, `dark`, `system`, `toggleTheme` |
 | **Input / NumberInput / Textarea** | `input.*` / `numberInput.*` / `textarea.*` | `placeholder` |
 | **VirtualScroll / InfiniteScroll** | `virtualScroll.*` / `infiniteScroll.*` | `emptyText` / `loading` |
-| **Switch / Checkbox**| `switch.*` / `checkbox.*` | `checked`, `unchecked` |
+| **Switch** | `switch.*` | `toggle`, `checkedLabel`, `uncheckedLabel` |
+| **Checkbox** | `checkbox.*` | `check` |
 | **TagsInput** | `tagsInput.*` | `placeholder`, `remove` |
 | **Badge / Alert** | `badge.*` / `alert.*` | `close` |
 | **Popconfirm** | `popconfirm.*` | `confirm`, `cancel` |

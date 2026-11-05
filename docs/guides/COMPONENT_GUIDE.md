@@ -65,7 +65,7 @@
 
 - **完整类名字面量（@source 扫描）**：禁止在类名内部动态插值（如 ``active:translate-x-[${val}]``），每个完整类名必须是可静态扫描的字面量（机制见 [TAILWIND_V4_MECHANISMS.md](TAILWIND_V4_MECHANISMS.md) §4）。
 - **状态语义分界**：
-  - *瞬态按压反馈*（点击即走）：统一复用 `brutalPress`（位移 + 去影）；
+  - *瞬态按压反馈*（点击即走）：外框承担按压反馈时复用 `brutalPress`（位移 + 去影）；Switch 等组件按 [视觉系统 R4](VISUAL_SYSTEM.md#r4-按压反馈-press-feedback) 的例外规则处理；
   - *持久激活态*（如 `data-[state=on]` / selected）：统一复用 `brutalPressedState` 或 `brutalPressedStateOn`，严禁在组件内手抄内联 fallback 字面量；
   - *高亮项按压反馈*（如 command / select 选项）：使用复合变体 `brutalHighlightPress`（特异度 `(0,3,0)` 压过持久态以保持点击反馈）。
 
