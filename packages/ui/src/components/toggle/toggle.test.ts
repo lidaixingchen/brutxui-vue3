@@ -1,4 +1,5 @@
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
+import { h } from 'vue'
 import Toggle from './Toggle.vue'
 import { Loader2 } from '@lucide/vue'
 
@@ -108,5 +109,45 @@ describe('Toggle', () => {
         })
         expect(wrapper.findComponent(Loader2).exists()).toBe(false)
         expect(wrapper.text()).toContain('Bold')
+    })
+
+    it('submits the pressed value and omits the field when toggled off', async () => {
+        const wrapper = mount({
+            render: () => h('form', [
+                h(Toggle, { name: 'bold', required: true, defaultValue: false }, () => 'Bold'),
+            ]),
+        }, { attachTo: document.body })
+        const form = wrapper.get('form').element as HTMLFormElement
+        const button = wrapper.get('button')
+
+        expect(new FormData(form).has('bold')).toBe(false)
+        expect(form.checkValidity()).toBe(false)
+        await button.trigger('click')
+        await flushPromises()
+        expect(button.attributes('aria-pressed')).toBe('true')
+        expect(new FormData(form).get('bold')).toBe('true')
+        expect(form.checkValidity()).toBe(true)
+
+        await button.trigger('click')
+        await flushPromises()
+        expect(button.attributes('aria-pressed')).toBe('false')
+        expect(new FormData(form).has('bold')).toBe(false)
+        expect(form.checkValidity()).toBe(false)
+        wrapper.unmount()
+    })
+
+    it('excludes disabled and required toggles from submission and validation', () => {
+        const wrapper = mount({
+            render: () => h('form', [
+                h(Toggle, { name: 'bold', modelValue: true, disabled: true, required: true }, () => 'Bold'),
+            ]),
+        }, { attachTo: document.body })
+        const form = wrapper.get('form').element as HTMLFormElement
+
+        expect(wrapper.get('button').attributes('disabled')).toBeDefined()
+        expect(wrapper.get('button').attributes('aria-pressed')).toBe('true')
+        expect(new FormData(form).has('bold')).toBe(false)
+        expect(form.checkValidity()).toBe(true)
+        wrapper.unmount()
     })
 })

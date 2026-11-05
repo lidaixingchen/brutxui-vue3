@@ -48,6 +48,22 @@ const underline = ref(false)
 </template>
 ```
 
+### Native Form
+
+When `name` is provided, a pressed Toggle submits the value `true`; an unpressed Toggle omits the field. `required` requires the Toggle to be pressed. Disabled and loading Toggles are excluded from submission and required validation. Use `defaultValue` to set the initial state in uncontrolled mode.
+
+```vue
+<script setup>
+import { Toggle } from 'brutx-ui-vue'
+</script>
+
+<template>
+    <form>
+        <Toggle name="bold" required ariaLabel="Bold">Bold</Toggle>
+    </form>
+</template>
+```
+
 ### Loading State
 
 Display a loading indicator (`Loader2` spinning icon) via the `loading` prop. The button is automatically disabled and sets `aria-busy="true"`, suitable for async operation scenarios. During loading, the original slot content is replaced with the spinning icon.
@@ -99,6 +115,8 @@ const bold = ref(false)
 | `sm` | `h-8` | `min-w-8` | `text-xs` |
 | `default` | `h-10` | `min-w-10` | `text-sm` |
 | `lg` | `h-12` | `min-w-12` | `text-sm` |
+
+`required` participates in native validation even without `name`; only enabled fields with a `name` are included in native form submission.
 
 ## API Reference
 

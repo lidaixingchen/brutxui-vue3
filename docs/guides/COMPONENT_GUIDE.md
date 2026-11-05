@@ -6,6 +6,8 @@
 
 - **Props 声明**：统一采用 `<script setup lang="ts">` 配合 `defineProps<T>()` + `withDefaults()`。
 - **无障碍原语**：始终使用 `reka-ui` 实现无障碍无头原语。
+- **原生字段属性**：包含输入控件的包装组件将 `id`、`name`、`required` 及原生和 ARIA 属性绑定到实际交互控件；外壳样式由组件的 `class` 管理。通过 `FormData`、原生必填校验及实际计算名称验证属性传递。
+- **名称来源优先级**：`aria-labelledby`、显式 `aria-label`、原生关联或包裹式 Label、默认文案依次生效。允许从内容命名的角色可使用隐藏文本回退；`combobox` 等要求作者提供名称的角色使用低优先级 `title` 回退，并在文档说明其原生悬停提示。表单隐藏字段须与选中值、禁用状态同步。
 - **统一导出与生成**：在 `packages/ui/api-contract.ts` 登记公开符号、子路径、模块归属与安装关联，通过 `pnpm --filter brutx-ui-vue generate` 生成根入口、组件入口及 exports。源码扫描负责依赖闭包，公开选择由契约负责。测试文件遵循 `${kebabName}.test.ts` 命名规范，迁移与消费方式见 [公开 API 迁移指南](API_MIGRATION.md)。
 - **树结构统一模型**：涉及树形数据结构的组件（如 TreeView、TreeSelect）必须统一使用 `@/types/tree` 的 `TreeNode<T>` 与 `SelectionMode`，严禁在组件内部发明私有树节点接口或重复定义 `TreeSelectTreeNode` 等历史别名。
 - **优先复用库内组件**：创建或修改组件时，优先复用现有 BrutxUI 组件，禁止用 native HTML 元素替代已有组件（如用 `Button` 而非 `<button>`、`Select` 系列而非 `<select>`/`<option>`、`Badge` 而非手写 badge `<div>`、`Input` 而非 `<input>`），防止重复造轮子；仅在特殊 ARIA 角色、内联图标切换等无对应组件的场景下方可使用 native 元素。

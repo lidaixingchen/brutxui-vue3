@@ -1,5 +1,13 @@
 # 公开 API 迁移指南
 
+## 表单字段与可见名称接入
+
+Input、Textarea 和 HardcoreInput 将原生表单属性传给实际输入控件。传入 `name` 后字段进入原生表单提交；传入 `required` 后参与浏览器必填校验。`v-model` 继续负责应用中的状态绑定。
+
+NumberInput、Checkbox 及选择器支持通过 `ariaLabelledby` 引用名称元素。名称优先级为 `ariaLabelledby`、显式 `ariaLabel`、关联或包裹式 Label、默认文案。Combobox、Cascader、TreeSelect 的 `id` 绑定到触发器；PopoverTrigger 的 `id` 同时用于弹出内容的名称引用。保留 `combobox` 角色的触发器以本地化 `title` 提供默认名称，并带有浏览器原生悬停提示。
+
+Toggle 仅在开启且可交互时提交已命名字段，提交值为字符串 `true`；ToggleGroup 保持单选和多选的既有值序列化，禁用时省略字段。Toggle 和 ToggleGroup 的非受控初始值通过 `defaultValue` 设置。
+
 ## Switch 开关参数与表单接入
 
 **影响范围**：Switch 的初始值配置、形态参数、关联标签，以及使用变体函数组合外观的调用方。

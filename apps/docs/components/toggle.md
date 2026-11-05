@@ -47,6 +47,22 @@ const underline = ref(false)
 </template>
 ```
 
+### 原生表单
+
+提供 `name` 后，按下状态会提交字段值 `true`，未按下时不提交该字段。`required` 要求 Toggle 处于按下状态；禁用或加载中的 Toggle 不参与提交和必填校验。非受控模式可通过 `defaultValue` 设置初始状态。
+
+```vue
+<script setup>
+import { Toggle } from 'brutx-ui-vue'
+</script>
+
+<template>
+    <form>
+        <Toggle name="bold" required ariaLabel="加粗">加粗</Toggle>
+    </form>
+</template>
+```
+
 ### Loading 状态
 
 通过 `loading` prop 显示加载指示器（`Loader2` 旋转图标），此时按钮会自动禁用并设置 `aria-busy="true"`，适合异步操作场景。loading 期间原插槽内容会被替换为旋转图标。
@@ -98,6 +114,8 @@ const bold = ref(false)
 | `sm` | `h-8` | `min-w-8` | `text-xs` |
 | `default` | `h-10` | `min-w-10` | `text-sm` |
 | `lg` | `h-12` | `min-w-12` | `text-sm` |
+
+`required` 在未设置 `name` 时仍参与原生必填校验；只有设置了 `name` 的可用字段才随原生表单提交。
 
 ## API 参考
 

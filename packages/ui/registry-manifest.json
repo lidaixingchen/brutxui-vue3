@@ -1247,7 +1247,9 @@
     ],
     "composables": [],
     "directives": [],
-    "lib": []
+    "lib": [
+      "selection-value.ts"
+    ]
   },
   "tooltip": {
     "files": [

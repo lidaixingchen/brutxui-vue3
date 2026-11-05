@@ -97,6 +97,25 @@ const styles = ref([])
 </template>
 ```
 
+### Native Form
+
+When `name` is provided, a single-selection group submits the selected item as `name=value`. A multiple-selection group submits each value under keys such as `name[0]` and `name[1]`. `required` requires at least one selected item. A disabled group is omitted from submission and required validation. Use `defaultValue` to set the initial selection in uncontrolled mode.
+
+```vue
+<script setup>
+import { ToggleGroup, ToggleGroupItem } from 'brutx-ui-vue'
+</script>
+
+<template>
+    <form>
+        <ToggleGroup type="single" name="alignment" required>
+            <ToggleGroupItem value="left">Left</ToggleGroupItem>
+            <ToggleGroupItem value="center">Center</ToggleGroupItem>
+        </ToggleGroup>
+    </form>
+</template>
+```
+
 ## Variants
 
 | Variant | Description |
@@ -120,6 +139,8 @@ Variants are set on `ToggleGroup` and distributed to all `ToggleGroupItem` child
 | --- | --- |
 | `ToggleGroup` | Root component, manages selected state and group configuration |
 | `ToggleGroupItem` | Child item button, inherits variant and size from parent |
+
+`required` participates in native validation even without `name`; only enabled fields with a `name` are included in native form submission.
 
 ## API Reference
 

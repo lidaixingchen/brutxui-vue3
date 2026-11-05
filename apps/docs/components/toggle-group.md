@@ -96,6 +96,25 @@ const styles = ref([])
 </template>
 ```
 
+### 原生表单
+
+提供 `name` 后，单选组按 `name=value` 提交选中项；多选组使用 `name[0]`、`name[1]` 等字段名提交各项。`required` 要求至少选择一项；禁用整组时不提交字段，也不参与必填校验。非受控模式可用 `defaultValue` 设置初始选项。
+
+```vue
+<script setup>
+import { ToggleGroup, ToggleGroupItem } from 'brutx-ui-vue'
+</script>
+
+<template>
+    <form>
+        <ToggleGroup type="single" name="alignment" required>
+            <ToggleGroupItem value="left">左对齐</ToggleGroupItem>
+            <ToggleGroupItem value="center">居中</ToggleGroupItem>
+        </ToggleGroup>
+    </form>
+</template>
+```
+
 ## 变体
 
 | 变体 | 说明 |
@@ -119,6 +138,8 @@ const styles = ref([])
 |------|------|
 | `ToggleGroup` | 根组件，管理选中状态和组配置 |
 | `ToggleGroupItem` | 子项按钮，继承父组件的变体和尺寸 |
+
+`required` 在未设置 `name` 时仍参与原生必填校验；只有设置了 `name` 的可用字段才随原生表单提交。
 
 ## API 参考
 

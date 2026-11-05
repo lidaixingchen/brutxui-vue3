@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Toggle } from 'reka-ui'
+import { Toggle as TogglePrimitive, VisuallyHidden } from 'reka-ui'
 import { type VariantProps } from 'class-variance-authority'
 import { Loader2 } from '@lucide/vue'
 import { cn } from '@/lib/utils'
@@ -11,6 +11,7 @@ type ToggleVariantProps = VariantProps<typeof toggleVariants>
 
 interface ToggleProps {
     modelValue?: boolean
+    defaultValue?: boolean
     variant?: NonNullable<ToggleVariantProps['variant']>
     size?: NonNullable<ToggleVariantProps['size']>
     disabled?: boolean
@@ -18,15 +19,23 @@ interface ToggleProps {
     class?: string
     /** 无障碍标签 */
     ariaLabel?: string
+    /** 表单字段名；仅在按下且未禁用时提交。 */
+    name?: string
+    /** 要求此切换处于按下状态。 */
+    required?: boolean
 }
 
 const props = withDefaults(defineProps<ToggleProps>(), {
+    modelValue: undefined,
+    defaultValue: undefined,
     variant: 'default',
     size: 'default',
     disabled: false,
     loading: false,
     class: undefined,
     ariaLabel: undefined,
+    name: undefined,
+    required: false,
 })
 
 const emit = defineEmits<{ 'update:modelValue': [value: boolean] }>()
@@ -57,9 +66,13 @@ const loaderClasses = computed(() =>
 </script>
 
 <template>
-    <Toggle
+    <TogglePrimitive
+        v-slot="{ pressed }"
         :model-value="modelValue"
+        :default-value="defaultValue"
         :disabled="isDisabled"
+        :name="undefined"
+        :required="false"
         :class="classes"
         :aria-label="ariaLabel"
         :aria-busy="loading || undefined"
@@ -70,5 +83,16 @@ const loaderClasses = computed(() =>
         </span>
         <slot v-else />
         <Loader2 v-if="loading" :class="loaderClasses" aria-hidden="true" />
-    </Toggle>
+        <VisuallyHidden
+            v-if="name || required"
+            as="input"
+            feature="fully-hidden"
+            type="checkbox"
+            :name="name"
+            :checked="pressed"
+            :value="pressed"
+            :required="required"
+            :disabled="isDisabled"
+        />
+    </TogglePrimitive>
 </template>

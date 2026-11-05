@@ -1,5 +1,5 @@
-import { mount } from '@vue/test-utils'
-import { h } from 'vue'
+import { flushPromises, mount } from '@vue/test-utils'
+import { h, reactive } from 'vue'
 import ToggleGroup from './ToggleGroup.vue'
 import ToggleGroupItem from './ToggleGroupItem.vue'
 
@@ -138,5 +138,73 @@ describe('ToggleGroupItem', () => {
 
         await buttons[0].trigger('click')
         expect(wrapper.emitted('update:modelValue')?.[1]).toEqual([[]])
+    })
+
+    it('omits a disabled required group and restores it when enabled', async () => {
+        const state = reactive({ disabled: true, modelValue: '' })
+        const wrapper = mount({
+            render: () => h('form', [
+                h(ToggleGroup, {
+                    type: 'single',
+                    modelValue: state.modelValue,
+                    name: 'alignment',
+                    required: true,
+                    disabled: state.disabled,
+                    'onUpdate:modelValue': (value: string | string[]) => { state.modelValue = value as string },
+                }, {
+                    default: () => h(ToggleGroupItem, { value: 'center' }, () => 'Center'),
+                }),
+            ]),
+        }, { attachTo: document.body })
+        const form = wrapper.get('form').element as HTMLFormElement
+
+        expect(wrapper.get('button').attributes('disabled')).toBeDefined()
+        expect(new FormData(form).has('alignment')).toBe(false)
+        expect(form.checkValidity()).toBe(true)
+
+        state.disabled = false
+        await flushPromises()
+        expect(new FormData(form).get('alignment')).toBe('')
+        expect(form.checkValidity()).toBe(false)
+
+        await wrapper.get('button').trigger('click')
+        await flushPromises()
+        expect(new FormData(form).get('alignment')).toBe('center')
+        expect(form.checkValidity()).toBe(true)
+
+        state.disabled = true
+        await flushPromises()
+        expect(new FormData(form).has('alignment')).toBe(false)
+        expect(form.checkValidity()).toBe(true)
+        wrapper.unmount()
+    })
+
+    it('serializes single and multiple group values through the group name', () => {
+        const single = mount({
+            render: () => h('form', [h(ToggleGroup, {
+                type: 'single',
+                modelValue: 'center',
+                name: 'alignment',
+            }, { default: () => h(ToggleGroupItem, { value: 'center' }, () => 'Center') })]),
+        }, { attachTo: document.body })
+        const singleForm = single.get('form').element as HTMLFormElement
+        expect(new FormData(singleForm).get('alignment')).toBe('center')
+        single.unmount()
+
+        const multiple = mount({
+            render: () => h('form', [h(ToggleGroup, {
+                type: 'multiple',
+                modelValue: ['bold', 'italic'],
+                name: 'styles',
+            }, { default: () => [
+                h(ToggleGroupItem, { value: 'bold' }, () => 'Bold'),
+                h(ToggleGroupItem, { value: 'italic' }, () => 'Italic'),
+            ] })]),
+        }, { attachTo: document.body })
+        const multipleForm = multiple.get('form').element as HTMLFormElement
+        const data = new FormData(multipleForm)
+        expect(data.get('styles[0]')).toBe('bold')
+        expect(data.get('styles[1]')).toBe('italic')
+        multiple.unmount()
     })
 })

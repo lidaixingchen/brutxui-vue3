@@ -26,7 +26,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue",
-            "line": 12
+            "line": 13
           },
           "origin": "declared",
           "required": false,
@@ -58,7 +58,39 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue",
-            "line": 13
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2Dgroup_2FToggleGroup-props-defaultValue",
+          "name": "defaultValue",
+          "kind": "props",
+          "type": {
+            "text": "string | string[] | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "非受控模式的初始选中值；值的形状由 type 决定。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue",
+            "line": 15
           },
           "origin": "declared",
           "required": false,
@@ -94,7 +126,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue",
-            "line": 14
+            "line": 16
           },
           "origin": "declared",
           "required": false,
@@ -131,7 +163,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue",
-            "line": 15
+            "line": 17
           },
           "origin": "declared",
           "required": false,
@@ -166,7 +198,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue",
-            "line": 16
+            "line": 18
           },
           "origin": "declared",
           "required": false,
@@ -197,11 +229,11 @@
             ],
             "references": []
           },
-          "description": "禁用整个切换组并向子项提供禁用状态。",
+          "description": "禁用整个切换组并向子项提供禁用状态；禁用时不提交表单字段，也不参与必填校验。",
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue",
-            "line": 17
+            "line": 19
           },
           "origin": "declared",
           "required": false,
@@ -233,7 +265,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue",
-            "line": 18
+            "line": 20
           },
           "origin": "declared",
           "required": false,
@@ -249,6 +281,73 @@
             "resolution": {
               "kind": "resolved",
               "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2Dgroup_2FToggleGroup-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "原生表单字段名；单选组提交一个值，多选组按索引字段名提交各值。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue",
+            "line": 22
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2Dgroup_2FToggleGroup-props-required",
+          "name": "required",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "要求至少选择一个子项。",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue",
+            "line": 24
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/toggle-group/ToggleGroup.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
             }
           }
         },

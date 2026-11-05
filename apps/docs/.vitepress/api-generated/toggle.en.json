@@ -33,7 +33,50 @@
           "nullable": false,
           "default": {
             "declaration": {
-              "kind": "absent"
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/toggle/Toggle.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2FToggle-props-defaultValue",
+          "name": "defaultValue",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "The initial pressed state in uncontrolled mode.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle/Toggle.vue",
+            "line": 14
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/toggle/Toggle.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
             }
           }
         },
@@ -54,7 +97,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/toggle/Toggle.vue",
-            "line": 14
+            "line": 15
           },
           "origin": "declared",
           "required": false,
@@ -91,7 +134,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/toggle/Toggle.vue",
-            "line": 15
+            "line": 16
           },
           "origin": "declared",
           "required": false,
@@ -126,7 +169,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/toggle/Toggle.vue",
-            "line": 16
+            "line": 17
           },
           "origin": "declared",
           "required": false,
@@ -161,7 +204,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/toggle/Toggle.vue",
-            "line": 17
+            "line": 18
           },
           "origin": "declared",
           "required": false,
@@ -193,7 +236,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/toggle/Toggle.vue",
-            "line": 18
+            "line": 19
           },
           "origin": "declared",
           "required": false,
@@ -225,7 +268,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/toggle/Toggle.vue",
-            "line": 20
+            "line": 21
           },
           "origin": "declared",
           "required": false,
@@ -241,6 +284,73 @@
             "resolution": {
               "kind": "resolved",
               "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2FToggle-props-name",
+          "name": "name",
+          "kind": "props",
+          "type": {
+            "text": "string | undefined",
+            "literals": [],
+            "references": []
+          },
+          "description": "Native form field name; submits the value `true` while pressed and enabled.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle/Toggle.vue",
+            "line": 23
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "undefined",
+              "source": {
+                "file": "packages/ui/src/components/toggle/Toggle.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "undefined"
+            }
+          }
+        },
+        {
+          "id": "api-component_3Atoggle_2FToggle-props-required",
+          "name": "required",
+          "kind": "props",
+          "type": {
+            "text": "boolean | undefined",
+            "literals": [
+              "false",
+              "true"
+            ],
+            "references": []
+          },
+          "description": "Requires the Toggle to be pressed; disabled or loading Toggles are excluded from form validation.",
+          "notes": [],
+          "source": {
+            "file": "packages/ui/src/components/toggle/Toggle.vue",
+            "line": 25
+          },
+          "origin": "declared",
+          "required": false,
+          "nullable": false,
+          "default": {
+            "declaration": {
+              "kind": "value",
+              "text": "false",
+              "source": {
+                "file": "packages/ui/src/components/toggle/Toggle.vue"
+              }
+            },
+            "resolution": {
+              "kind": "resolved",
+              "text": "false"
             }
           }
         },

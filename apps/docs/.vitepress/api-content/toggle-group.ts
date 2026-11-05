@@ -13,6 +13,10 @@ const content = {
                     "zh": "当前选中值，支持 v-model；值的形状由 type 决定。",
                     "en": "The current selected value, available through v-model. Its shape is determined by type."
                 },
+                "defaultValue": {
+                    "zh": "非受控模式的初始选中值；值的形状由 type 决定。",
+                    "en": "The initial selection in uncontrolled mode. Its shape is determined by type."
+                },
                 "variant": {
                     "zh": "选择传递给未单独覆盖子项的默认视觉变体。",
                     "en": "Selects the default visual variant passed to items that do not override it."
@@ -26,8 +30,16 @@ const content = {
                     "en": "Selects horizontal or vertical layout. Vertical mode uses a column flex container and is passed to the Reka UI primitive."
                 },
                 "disabled": {
-                    "zh": "禁用整个切换组并向子项提供禁用状态。",
-                    "en": "Disables the entire toggle group and provides the disabled state to its items."
+                    "zh": "禁用整个切换组并向子项提供禁用状态；禁用时不提交表单字段，也不参与必填校验。",
+                    "en": "Disables the entire toggle group and its items; the form field is omitted and excluded from required validation while disabled."
+                },
+                "name": {
+                    "zh": "原生表单字段名；单选组提交一个值，多选组按索引字段名提交各值。",
+                    "en": "Native form field name; single groups submit one value and multiple groups submit values under indexed field names."
+                },
+                "required": {
+                    "zh": "要求至少选择一个子项。",
+                    "en": "Requires at least one selected item."
                 },
                 "class": {
                     "zh": "追加到 ToggleGroup 根容器的自定义 CSS 类。",
