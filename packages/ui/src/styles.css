@@ -5,8 +5,8 @@
 @source "../**/*.vue";
 @source "../**/*.ts";
 
-@theme {
-    /* @brutx:theme-tokens:start */
+/* @brutx:theme-tokens:start */
+@theme inline {
     /* Dynamic color tokens derived from design-tokens.ts:
        Resolve at runtime via --brutal-* for dark mode and theme presets support.
        Fallbacks sourced from BASE_THEME.light. */
@@ -50,7 +50,9 @@
     --color-brutal-destructive-subtle: var(--brutal-destructive-subtle, color-mix(in srgb, var(--brutal-destructive, #EF476F) 12%, var(--brutal-bg, #ffffff)));
     --color-brutal-success-subtle: var(--brutal-success-subtle, color-mix(in srgb, var(--brutal-success, #7FB069) 12%, var(--brutal-bg, #ffffff)));
     --color-brutal-info-subtle: var(--brutal-info-subtle, color-mix(in srgb, var(--brutal-info, #4A90D9) 12%, var(--brutal-bg, #ffffff)));
+}
 
+@theme {
     /* Dynamic: border/radius use --brutal-* for theme support */
     --border-width-3: var(--brutal-border-width, 3px);
     --radius-brutal: var(--brutal-radius, 0px);
@@ -88,8 +90,8 @@
     --z-index-loading: 9200;
     --z-index-toast: 10010;
     --z-index-message: 10010;
-    /* @brutx:theme-tokens:end */
 }
+/* @brutx:theme-tokens:end */
 
 @layer base {
 
@@ -269,6 +271,12 @@
         --brutal-info-foreground: #1e1e24;
         --brutal-overlay: rgba(0, 0, 0, 0.4);
         --brutal-placeholder: #74717c;
+        --brutal-primary-subtle: color-mix(in srgb, var(--brutal-primary, #FF6B6B) 12%, var(--brutal-bg, #ffffff));
+        --brutal-secondary-subtle: color-mix(in srgb, var(--brutal-secondary, #4ECDC4) 12%, var(--brutal-bg, #ffffff));
+        --brutal-accent-subtle: color-mix(in srgb, var(--brutal-accent, #FFE66D) 20%, var(--brutal-bg, #ffffff));
+        --brutal-destructive-subtle: color-mix(in srgb, var(--brutal-destructive, #EF476F) 12%, var(--brutal-bg, #ffffff));
+        --brutal-success-subtle: color-mix(in srgb, var(--brutal-success, #7FB069) 12%, var(--brutal-bg, #ffffff));
+        --brutal-info-subtle: color-mix(in srgb, var(--brutal-info, #4A90D9) 12%, var(--brutal-bg, #ffffff));
     }
 
     .dark .theme-pastel, .theme-pastel.dark {
@@ -299,6 +307,12 @@
         --brutal-info-foreground: #16161e;
         --brutal-overlay: rgba(0, 0, 0, 0.6);
         --brutal-placeholder: #7e7e90;
+        --brutal-primary-subtle: color-mix(in srgb, var(--brutal-primary, #FF6B6B) 20%, var(--brutal-bg, #141414));
+        --brutal-secondary-subtle: color-mix(in srgb, var(--brutal-secondary, #4ECDC4) 20%, var(--brutal-bg, #141414));
+        --brutal-accent-subtle: color-mix(in srgb, var(--brutal-accent, #FFE66D) 20%, var(--brutal-bg, #141414));
+        --brutal-destructive-subtle: color-mix(in srgb, var(--brutal-destructive, #EF476F) 20%, var(--brutal-bg, #141414));
+        --brutal-success-subtle: color-mix(in srgb, var(--brutal-success, #7FB069) 20%, var(--brutal-bg, #141414));
+        --brutal-info-subtle: color-mix(in srgb, var(--brutal-info, #3B82F6) 20%, var(--brutal-bg, #141414));
     }
 
     /* Mono theme: 纯粹黑白、4px 粗边框与 5px 大阴影 */
@@ -331,6 +345,12 @@
         --brutal-info-foreground: #ffffff;
         --brutal-overlay: rgba(0, 0, 0, 0.5);
         --brutal-placeholder: #767676;
+        --brutal-primary-subtle: color-mix(in srgb, var(--brutal-primary, #FF6B6B) 12%, var(--brutal-bg, #ffffff));
+        --brutal-secondary-subtle: color-mix(in srgb, var(--brutal-secondary, #4ECDC4) 12%, var(--brutal-bg, #ffffff));
+        --brutal-accent-subtle: color-mix(in srgb, var(--brutal-accent, #FFE66D) 20%, var(--brutal-bg, #ffffff));
+        --brutal-destructive-subtle: color-mix(in srgb, var(--brutal-destructive, #EF476F) 12%, var(--brutal-bg, #ffffff));
+        --brutal-success-subtle: color-mix(in srgb, var(--brutal-success, #7FB069) 12%, var(--brutal-bg, #ffffff));
+        --brutal-info-subtle: color-mix(in srgb, var(--brutal-info, #4A90D9) 12%, var(--brutal-bg, #ffffff));
     }
 
     .dark .theme-mono, .theme-mono.dark {
@@ -361,6 +381,12 @@
         --brutal-info-foreground: #000000;
         --brutal-overlay: rgba(0, 0, 0, 0.7);
         --brutal-placeholder: #777777;
+        --brutal-primary-subtle: color-mix(in srgb, var(--brutal-primary, #FF6B6B) 20%, var(--brutal-bg, #141414));
+        --brutal-secondary-subtle: color-mix(in srgb, var(--brutal-secondary, #4ECDC4) 20%, var(--brutal-bg, #141414));
+        --brutal-accent-subtle: color-mix(in srgb, var(--brutal-accent, #FFE66D) 20%, var(--brutal-bg, #141414));
+        --brutal-destructive-subtle: color-mix(in srgb, var(--brutal-destructive, #EF476F) 20%, var(--brutal-bg, #141414));
+        --brutal-success-subtle: color-mix(in srgb, var(--brutal-success, #7FB069) 20%, var(--brutal-bg, #141414));
+        --brutal-info-subtle: color-mix(in srgb, var(--brutal-info, #3B82F6) 20%, var(--brutal-bg, #141414));
     }
 
     /* Warm Brutalism theme: raw/原始感与温暖的视觉体验 */
@@ -393,6 +419,12 @@
         --brutal-info-foreground: #2d1810;
         --brutal-overlay: rgba(45, 24, 16, 0.5);
         --brutal-placeholder: #846f5b;
+        --brutal-primary-subtle: color-mix(in srgb, var(--brutal-primary, #FF6B6B) 12%, var(--brutal-bg, #ffffff));
+        --brutal-secondary-subtle: color-mix(in srgb, var(--brutal-secondary, #4ECDC4) 12%, var(--brutal-bg, #ffffff));
+        --brutal-accent-subtle: color-mix(in srgb, var(--brutal-accent, #FFE66D) 20%, var(--brutal-bg, #ffffff));
+        --brutal-destructive-subtle: color-mix(in srgb, var(--brutal-destructive, #EF476F) 12%, var(--brutal-bg, #ffffff));
+        --brutal-success-subtle: color-mix(in srgb, var(--brutal-success, #7FB069) 12%, var(--brutal-bg, #ffffff));
+        --brutal-info-subtle: color-mix(in srgb, var(--brutal-info, #4A90D9) 12%, var(--brutal-bg, #ffffff));
     }
 
     .dark .theme-warm, .theme-warm.dark {
@@ -423,6 +455,12 @@
         --brutal-info-foreground: #1a1410;
         --brutal-overlay: rgba(0, 0, 0, 0.7);
         --brutal-placeholder: #8e7c6d;
+        --brutal-primary-subtle: color-mix(in srgb, var(--brutal-primary, #FF6B6B) 20%, var(--brutal-bg, #141414));
+        --brutal-secondary-subtle: color-mix(in srgb, var(--brutal-secondary, #4ECDC4) 20%, var(--brutal-bg, #141414));
+        --brutal-accent-subtle: color-mix(in srgb, var(--brutal-accent, #FFE66D) 20%, var(--brutal-bg, #141414));
+        --brutal-destructive-subtle: color-mix(in srgb, var(--brutal-destructive, #EF476F) 20%, var(--brutal-bg, #141414));
+        --brutal-success-subtle: color-mix(in srgb, var(--brutal-success, #7FB069) 20%, var(--brutal-bg, #141414));
+        --brutal-info-subtle: color-mix(in srgb, var(--brutal-info, #3B82F6) 20%, var(--brutal-bg, #141414));
     }
     /* @brutx:theme-presets:end */
 }

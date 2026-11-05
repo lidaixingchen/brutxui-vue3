@@ -11,6 +11,7 @@ import {
     TokenStyleCompiler,
     PATTERN_UTILITIES,
     replaceBetweenMarkers,
+    replaceThemeBlock,
     THEME_START,
     THEME_END,
     ROOT_START,
@@ -117,7 +118,7 @@ export function compileCliUtilsTemplate(): string {
 
 export function patchBrutalistCss(content: string, compiler: TokenStyleCompiler): string {
     let current = content;
-    current = replaceBetweenMarkers(current, THEME_START, THEME_END, compiler.compileThemeBlock(), 'brutalist.css');
+    current = replaceThemeBlock(current, THEME_START, THEME_END, compiler.compileThemeBlock(), 'brutalist.css');
     current = replaceBetweenMarkers(current, ROOT_START, ROOT_END, compiler.compileRootBlock(INDENT_SPACES_ROOT), 'brutalist.css');
     current = replaceBetweenMarkers(current, PRESETS_START, PRESETS_END, compiler.compileThemePresetsBlock(INDENT_SPACES_PRESETS), 'brutalist.css');
     current = replaceBetweenMarkers(

@@ -6,6 +6,7 @@ import {
     ROOT_END,
     THEME_START,
     THEME_END,
+    replaceThemeBlock,
     PATTERN_UTILITIES,
 } from '../../src/tokens/index.js';
 import { BASE_THEME, BRUTAL_COLOR_NAMES, THEME_PRESETS } from '../../src/design-tokens.js';
@@ -34,12 +35,23 @@ describe('TokenStyleCompiler', () => {
 
     it('compileThemeBlock 生成符合 Tailwind v4 规范的 @theme 声明', () => {
         const result = compiler.compileThemeBlock();
-        expect(result).toContain('--color-brutal-primary: var(--brutal-primary, #FF6B6B);');
-        expect(result).toContain(`--color-brutal-item-highlight: var(--brutal-item-highlight, ${BASE_THEME.light.itemHighlight});`);
-        expect(result).toContain(`--color-brutal-item-highlight-foreground: var(--brutal-item-highlight-foreground, ${BASE_THEME.light.itemHighlightForeground});`);
-        expect(result).toContain('--default-font-family:');
-        expect(result).toContain('--shadow-brutal:');
-        expect(result).toContain('--ease-brutal-snap:');
+        const standardThemeStart = result.indexOf('\n\n@theme {');
+        const inlineTheme = result.slice(0, standardThemeStart);
+        const standardTheme = result.slice(standardThemeStart + 2);
+
+        expect(result.match(/@theme(?: inline)? \{/g)).toHaveLength(2);
+        expect(inlineTheme).toContain('@theme inline {');
+        expect(inlineTheme).toContain('--color-brutal-primary: var(--brutal-primary, #FF6B6B);');
+        expect(inlineTheme).toContain(`--color-brutal-item-highlight: var(--brutal-item-highlight, ${BASE_THEME.light.itemHighlight});`);
+        expect(inlineTheme).toContain(`--color-brutal-item-highlight-foreground: var(--brutal-item-highlight-foreground, ${BASE_THEME.light.itemHighlightForeground});`);
+        expect(inlineTheme).toContain('--color-brutal-primary-subtle: var(--brutal-primary-subtle,');
+        expect(inlineTheme).not.toContain('--shadow-brutal:');
+        expect(standardTheme).toContain('@theme {');
+        expect(standardTheme).toContain('--default-font-family:');
+        expect(standardTheme).toContain('--shadow-brutal:');
+        expect(standardTheme).toContain('--ease-brutal-snap:');
+        expect(standardTheme).toContain('--border-width-3:');
+        expect(standardTheme).not.toContain('--color-brutal-');
     });
 
     it('compileThemePresetsBlock 生成主题预设区块', () => {
@@ -54,6 +66,19 @@ describe('TokenStyleCompiler', () => {
             expect(result).toContain(`--brutal-item-highlight: ${preset.dark.itemHighlight};`);
             expect(result).toContain(`--brutal-item-highlight-foreground: ${preset.dark.itemHighlightForeground};`);
         }
+        expect(result.match(/--brutal-primary-subtle: color-mix/g) ?? []).toHaveLength(Object.values(THEME_PRESETS).length * 2);
+    });
+
+    it('预设派生色读取运行时变量并保留基础主题 fallback', () => {
+        const result = compiler.compileThemePresetsBlock();
+        const warmLight = result.slice(result.indexOf('.theme-warm {'), result.indexOf('.dark .theme-warm'));
+        const warmDark = result.slice(result.indexOf('.dark .theme-warm'));
+        expect(warmLight).toContain(`--brutal-primary: ${THEME_PRESETS.warm.light.primary};`);
+        expect(warmLight).toContain(`var(--brutal-primary, ${BASE_THEME.light.primary})`);
+        expect(warmLight).toContain(`var(--brutal-bg, ${BASE_THEME.light.bg})`);
+        expect(warmDark).toContain(`--brutal-primary: ${THEME_PRESETS.warm.dark.primary};`);
+        expect(warmDark).toContain(`var(--brutal-primary, ${BASE_THEME.dark.primary})`);
+        expect(warmDark).toContain(`var(--brutal-bg, ${BASE_THEME.dark.bg})`);
     });
 
     it('compileFontStackBlock 生成规范字体栈声明', () => {
@@ -144,5 +169,20 @@ describe('replaceBetweenMarkers', () => {
         expect(() => {
             replaceBetweenMarkers(invalidInverted, THEME_START, THEME_END, 'replacement');
         }).toThrow('无法找到注入标记');
+    });
+});
+
+describe('replaceThemeBlock', () => {
+    it('moves legacy theme markers around complete inline and standard theme blocks idempotently', () => {
+        const compiler = new TokenStyleCompiler();
+        const initial = `@theme {\n    ${THEME_START}\n    old generated declarations\n    ${THEME_END}\n}\nbody { color: var(--brutal-fg); }`;
+        const replacement = compiler.compileThemeBlock();
+        const patched = replaceThemeBlock(initial, THEME_START, THEME_END, replacement, 'styles.css');
+
+        expect(patched).toBe(`${THEME_START}\n${replacement}\n${THEME_END}\nbody { color: var(--brutal-fg); }`);
+        expect(patched).toContain('@theme inline {');
+        expect(patched).toContain('\n@theme {');
+        expect(patched).not.toContain('@theme {\n    @theme inline {');
+        expect(replaceThemeBlock(patched, THEME_START, THEME_END, replacement, 'styles.css')).toBe(patched);
     });
 });

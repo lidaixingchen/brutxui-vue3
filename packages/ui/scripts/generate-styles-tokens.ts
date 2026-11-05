@@ -10,6 +10,7 @@ import {
 import {
     TokenStyleCompiler,
     replaceBetweenMarkers,
+    replaceThemeBlock,
     THEME_START,
     THEME_END,
     ROOT_START,
@@ -36,7 +37,7 @@ const INDENT_SPACES_PATTERNS = 0;
 
 export function patchStylesCss(content: string, compiler: TokenStyleCompiler): string {
     let current = content;
-    current = replaceBetweenMarkers(current, THEME_START, THEME_END, compiler.compileThemeBlock(), 'styles.css');
+    current = replaceThemeBlock(current, THEME_START, THEME_END, compiler.compileThemeBlock(), 'styles.css');
     current = replaceBetweenMarkers(current, ROOT_START, ROOT_END, compiler.compileRootBlock(INDENT_SPACES_ROOT), 'styles.css');
     current = replaceBetweenMarkers(current, PRESETS_START, PRESETS_END, compiler.compileThemePresetsBlock(INDENT_SPACES_PRESETS), 'styles.css');
     current = replaceBetweenMarkers(

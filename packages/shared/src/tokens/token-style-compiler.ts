@@ -43,9 +43,9 @@ const SHADOW_ENTRIES: ThemeEntry[] = SHADOW_DEFINITIONS.map(def => ({
 const SUBTLE_ENTRIES: SubtleEntry[] = SUBTLE_COLOR_DEFS.map(({ key, lightPct, darkPct }) => ({
     varName: `brutal-${key}-subtle`,
     buildLight: (l: ThemeTokens): string =>
-        `color-mix(in srgb, var(--brutal-${key}, ${l[key]}) ${lightPct}%, var(--brutal-bg, #ffffff))`,
+        `color-mix(in srgb, var(--brutal-${key}, ${l[key]}) ${lightPct}%, var(--brutal-bg, ${l.bg}))`,
     buildDark: (d: ThemeTokens): string =>
-        `color-mix(in srgb, var(--brutal-${key}, ${d[key]}) ${darkPct}%, var(--brutal-bg, #141414))`,
+        `color-mix(in srgb, var(--brutal-${key}, ${d[key]}) ${darkPct}%, var(--brutal-bg, ${d.bg}))`,
 }));
 
 const EASING_ENTRIES: ThemeEntry[] = Object.entries(EASING_TOKENS).map(([key, val]) => ({
@@ -70,7 +70,7 @@ const DYNAMIC_COLOR_ENTRIES: ThemeEntry[] = (
         };
     });
 
-const THEME_GROUPS: ThemeGroup[] = [
+const INLINE_THEME_GROUPS: ThemeGroup[] = [
     {
         comment:
             'Dynamic color tokens derived from design-tokens.ts:\n       Resolve at runtime via --brutal-* for dark mode and theme presets support.\n       Fallbacks sourced from BASE_THEME.light.',
@@ -83,6 +83,9 @@ const THEME_GROUPS: ThemeGroup[] = [
             build: (l: ThemeTokens): string => `var(--${e.varName}, ${e.buildLight(l)})`,
         })),
     },
+];
+
+const THEME_GROUPS: ThemeGroup[] = [
     {
         comment: 'Dynamic: border/radius use --brutal-* for theme support',
         entries: [
@@ -161,18 +164,26 @@ export class TokenStyleCompiler {
 
     public compileThemeBlock(): string {
         const light: ThemeTokens = BASE_THEME.light;
-        const lines: string[] = [];
-        for (let gi: number = 0; gi < THEME_GROUPS.length; gi++) {
-            const group: ThemeGroup = THEME_GROUPS[gi];
-            lines.push(`    /* ${group.comment} */`);
-            for (const entry of group.entries) {
-                lines.push(`    ${entry.themeVar}: ${entry.build(light)};`);
+        const compileGroups = (directive: string, groups: ThemeGroup[]): string => {
+            const lines: string[] = [`${directive} {`];
+            for (let gi: number = 0; gi < groups.length; gi++) {
+                const group: ThemeGroup = groups[gi];
+                lines.push(`    /* ${group.comment} */`);
+                for (const entry of group.entries) {
+                    lines.push(`    ${entry.themeVar}: ${entry.build(light)};`);
+                }
+                if (gi < groups.length - 1) {
+                    lines.push('');
+                }
             }
-            if (gi < THEME_GROUPS.length - 1) {
-                lines.push('');
-            }
-        }
-        return lines.join('\n');
+            lines.push('}');
+            return lines.join('\n');
+        };
+
+        return [
+            compileGroups('@theme inline', INLINE_THEME_GROUPS),
+            compileGroups('@theme', THEME_GROUPS),
+        ].join('\n\n');
     }
 
     public collectPresetVars(
@@ -205,9 +216,15 @@ export class TokenStyleCompiler {
             const darkSelector: string = `.dark .theme-${preset.name}, .theme-${preset.name}.dark`;
 
             const lightVars: Record<string, string> = this.collectPresetVars(preset.light, preset.name);
+            for (const entry of SUBTLE_ENTRIES) {
+                lightVars[entry.varName] = entry.buildLight(BASE_THEME.light);
+            }
             blocks.push(this.formatVarsBlock(selector, lightVars, indentSpaces));
 
             const darkVars: Record<string, string> = this.collectPresetVars(preset.dark, preset.name);
+            for (const entry of SUBTLE_ENTRIES) {
+                darkVars[entry.varName] = entry.buildDark(BASE_THEME.dark);
+            }
             blocks.push(this.formatVarsBlock(darkSelector, darkVars, indentSpaces));
         }
         return blocks.join('\n\n');

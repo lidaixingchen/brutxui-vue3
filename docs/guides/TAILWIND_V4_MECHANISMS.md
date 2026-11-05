@@ -79,11 +79,13 @@ node --input-type=module -e "import { twMerge } from 'tailwind-merge'; console.l
 全库设计令牌（颜色、阴影、层级 Z-Index、动效缓动、字体栈、预设值）唯一事实来源为 `packages/shared/src/design-tokens.ts`（严格保持 0 外部依赖）。
 
 **自动化派生流向**：
-- `packages/ui/src/styles.css`：自动生成 `@theme`（包含 `--color-brutal-*` 与 `--z-index-*`）、`:root/.dark` 基础运行时变量与主题预设（`.theme-*`）；
+- `packages/ui/src/styles.css`：自动生成 `@theme inline` 颜色映射与普通 `@theme` 声明、`:root/.dark` 基础运行时变量及主题预设（`.theme-*`）；
 - `packages/ui/src/preflight.css`：自动生成 body 字体栈回退；
 - `packages/ui/src/lib/utils.ts`：自动生成并注入 `BRUTAL_COLOR_NAMES` 与 `BRUTAL_Z_INDEX_NAMES` 冻结常量，驱动 `extendTailwindMerge` 注册自定义粗野主义颜色与 Z-Index 组；
 - `packages/cli/src/styles/brutalist.css`：通过注释标记（Marker Injection）自动同步注入 `@theme` 与 `:root/.dark` 令牌及主题预设，并保护后方 650+ 行面向非 Tailwind v4 项目的静态工具类；
 - `packages/cli/src/lib/constants.ts`：通过注释标记自动同步生成分发给终端用户的 `UTILS_TEMPLATE` 与 `CN_FUNCTION_BODY_TEMPLATE` 模板块。
+
+`--color-brutal-*` 颜色与微妙背景映射使用 `@theme inline`，让工具类在元素所在作用域读取运行时 `--brutal-*` 值，支持局部 `.dark`、主题预设和动态令牌更新。字体、层级、阴影及其他非颜色声明保留普通 `@theme`，避免改变 Tailwind 阴影与焦点环的组合方式。颜色标记包围完整的 inline 与普通主题区块，由 UI 与 CLI 生成器共同规范化。
 
 **开发期规则**：
 - 严禁手动修改 `styles.css`、`brutalist.css`、`utils.ts` 或 `constants.ts` 中的令牌与模板声明；

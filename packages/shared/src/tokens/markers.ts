@@ -17,6 +17,23 @@ export const PATTERN_UTILS_END: string = '/* @brutx:pattern-utilities:end */';
 export const CLI_UTIL_RULES_START: string = '/* @brutx:utility-rules:start */';
 export const CLI_UTIL_RULES_END: string = '/* @brutx:utility-rules:end */';
 
+function findMarkerRange(
+    content: string,
+    startMarker: string,
+    endMarker: string,
+    sourceLabel?: string,
+): { startIdx: number; endIdx: number } {
+    const startIdx: number = content.indexOf(startMarker);
+    const endIdx: number = content.indexOf(endMarker);
+    if (startIdx === -1 || endIdx === -1 || endIdx < startIdx) {
+        const target: string = sourceLabel ? `在 ${sourceLabel} 中` : '';
+        throw new Error(
+            `无法${target}找到注入标记。请确认存在 "${startMarker}" 与 "${endMarker}"。`,
+        );
+    }
+    return { startIdx, endIdx };
+}
+
 /**
  * 纯内存文本区间打补丁工具函数
  */
@@ -27,17 +44,41 @@ export function replaceBetweenMarkers(
     replacement: string,
     sourceLabel?: string,
 ): string {
-    const startIdx: number = content.indexOf(startMarker);
-    const endIdx: number = content.indexOf(endMarker);
-    if (startIdx === -1 || endIdx === -1 || endIdx < startIdx) {
-        const target: string = sourceLabel ? `在 ${sourceLabel} 中` : '';
-        throw new Error(
-            `无法${target}找到注入标记。请确认存在 "${startMarker}" 与 "${endMarker}"。`,
-        );
-    }
+    const { startIdx, endIdx } = findMarkerRange(content, startMarker, endMarker, sourceLabel);
     const startLineStart: number = content.lastIndexOf('\n', startIdx) + 1;
     const indent: string = content.slice(startLineStart, startIdx);
     const before: string = content.slice(0, startIdx + startMarker.length);
     const after: string = content.slice(endIdx);
     return `${before}\n${replacement}\n${indent}${after}`;
+}
+
+/** 主题标记覆盖完整规则；包裹标记的单一 @theme 外壳由区块统一提供。 */
+export function replaceThemeBlock(
+    content: string,
+    startMarker: string,
+    endMarker: string,
+    replacement: string,
+    sourceLabel?: string,
+): string {
+    const { startIdx, endIdx } = findMarkerRange(content, startMarker, endMarker, sourceLabel);
+    const endAfterMarker: number = endIdx + endMarker.length;
+    const themeDirectiveIdx: number = content.lastIndexOf('@theme', startIdx);
+    const openBraceIdx: number = themeDirectiveIdx === -1 ? -1 : content.indexOf('{', themeDirectiveIdx);
+    const closeBraceIdx: number = content.indexOf('}', endAfterMarker);
+
+    if (
+        openBraceIdx !== -1
+        && openBraceIdx < startIdx
+        && closeBraceIdx !== -1
+        && content.slice(themeDirectiveIdx, openBraceIdx).trim() === '@theme'
+        && content.slice(openBraceIdx + 1, startIdx).trim() === ''
+        && content.slice(endAfterMarker, closeBraceIdx).trim() === ''
+    ) {
+        const blockLineStart: number = content.lastIndexOf('\n', themeDirectiveIdx) + 1;
+        const indent: string = content.slice(blockLineStart, themeDirectiveIdx);
+        const afterBlock: string = content.slice(closeBraceIdx + 1);
+        return `${content.slice(0, blockLineStart)}${indent}${startMarker}\n${replacement}\n${indent}${endMarker}${afterBlock}`;
+    }
+
+    return replaceBetweenMarkers(content, startMarker, endMarker, replacement, sourceLabel);
 }

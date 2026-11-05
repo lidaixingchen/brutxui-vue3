@@ -5,7 +5,7 @@ description: Understand BrutxUI's CSS variable tokens, presets, and pattern util
 
 # Themes & Tokens
 
-BrutxUI uses CSS custom properties (design tokens) to control every visual aspect of the neo-brutalist system. Customizing your design system is as simple as overriding a CSS variable.
+BrutxUI uses CSS custom properties (design tokens) to control every visual aspect of the neo-brutalist system. Customizing your design system is as simple as overriding a CSS variable. Color utilities read runtime `--brutal-*` tokens in the element's scope, so local `.dark` scopes, theme presets, and live token updates also apply inside containers.
 
 For interactive visual tuning before copying CSS variables, check out the [Theme Playground](/en/guide/theme-playground). It features live component matrices, contrast checks, and token coverage inspection.
 

@@ -24,6 +24,7 @@ export {
     CLI_UTIL_RULES_START,
     CLI_UTIL_RULES_END,
     replaceBetweenMarkers,
+    replaceThemeBlock,
 } from './markers.js';
 
 export { TokenStyleCompiler } from './token-style-compiler.js';
