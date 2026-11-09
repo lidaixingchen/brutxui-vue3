@@ -69,14 +69,14 @@
           "default": {
             "declaration": {
               "kind": "value",
-              "text": "undefined",
+              "text": "false",
               "source": {
                 "file": "packages/ui/src/components/toggle/Toggle.vue"
               }
             },
             "resolution": {
               "kind": "resolved",
-              "text": "undefined"
+              "text": "false"
             }
           }
         },

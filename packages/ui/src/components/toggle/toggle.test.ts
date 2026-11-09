@@ -9,6 +9,21 @@ describe('Toggle', () => {
             attachTo: document.body,
         })
         expect(wrapper.find('button').exists()).toBe(true)
+        expect(wrapper.get('button').attributes('aria-pressed')).toBe('false')
+    })
+
+    it.each([false, true])('initializes uncontrolled state from defaultValue=%s', async (defaultValue) => {
+        const wrapper = mount(Toggle, {
+            props: { defaultValue },
+            attachTo: document.body,
+        })
+        const button = wrapper.get('button')
+
+        expect(button.attributes('aria-pressed')).toBe(String(defaultValue))
+        await button.trigger('click')
+        expect(button.attributes('aria-pressed')).toBe(String(!defaultValue))
+        expect(wrapper.emitted('update:modelValue')).toEqual([[!defaultValue]])
+        wrapper.unmount()
     })
 
     it('applies variant classes', async () => {

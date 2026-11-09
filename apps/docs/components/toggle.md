@@ -49,7 +49,7 @@ const underline = ref(false)
 
 ### 原生表单
 
-提供 `name` 后，按下状态会提交字段值 `true`，未按下时不提交该字段。`required` 要求 Toggle 处于按下状态；禁用或加载中的 Toggle 不参与提交和必填校验。非受控模式可通过 `defaultValue` 设置初始状态。
+提供 `name` 后，按下状态会提交字段值 `true`，未按下时不提交该字段。`required` 要求 Toggle 处于按下状态；禁用或加载中的 Toggle 不参与提交和必填校验。非受控模式默认未按下（`aria-pressed="false"`），可通过 `defaultValue` 设置初始状态。
 
 ```vue
 <script setup>

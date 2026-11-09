@@ -1252,8 +1252,9 @@ describe('TreeViewNode checkbox mode', () => {
                 checkedIds: emptyCheckedIds,
             },
         })
-        const checkbox = wrapper.findComponent({ name: 'Checkbox' })
+        const checkbox = wrapper.get('[role="checkbox"]')
         await checkbox.trigger('click')
+        expect(wrapper.emitted('check')).toEqual([[{ id: 'file.ts', label: 'file.ts' }]])
         expect(wrapper.emitted('select')).toBeFalsy()
         expect(wrapper.emitted('toggle')).toBeFalsy()
     })
