@@ -71,10 +71,10 @@ function handleClose(id: string): void {
                     </div>
 
                     <div class="flex-1 min-w-0">
-                        <p v-if="msg.title" class="font-black text-base leading-tight">
+                        <p v-if="msg.title" class="font-black text-base leading-tight wrap-anywhere">
                             {{ msg.title }}
                         </p>
-                        <p v-if="msg.description" class="text-sm font-medium mt-1 leading-snug">
+                        <p v-if="msg.description" class="text-sm font-medium mt-1 leading-snug wrap-anywhere">
                             {{ msg.description }}
                         </p>
                     </div>

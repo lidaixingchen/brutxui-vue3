@@ -102,6 +102,10 @@ function close() {
 </template>
 ```
 
+### Long Text Wrapping
+
+Titles and descriptions wrap within the available message width, including long words without spaces. The full text remains available, and the close button stays usable.
+
 <span id="props"></span>
 
 ## API Reference
