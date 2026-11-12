@@ -9,6 +9,8 @@ import { useDataTablePipeline } from './useDataTablePipeline'
 import {
     dataTableRootVariants,
     dataTableHeaderVariants,
+    dataTableTitleVariants,
+    dataTableDescriptionVariants,
     dataTableHeadVariants,
     dataTableRowVariants,
     dataTableCellVariants,
@@ -470,6 +472,8 @@ const rootStyle = computed(() => {
 
 const toolbarClasses = computed(() => cn(dataTableToolbarVariants()))
 const headerClasses = computed(() => cn(dataTableHeaderVariants()))
+const titleClasses = computed(() => cn(dataTableTitleVariants()))
+const descriptionClasses = computed(() => cn(dataTableDescriptionVariants()))
 const stickyHeaderClasses = computed(() => cn(dataTableHeaderVariants(), props.stickyHeader && 'sticky top-0 z-sticky'))
 const emptyClasses = computed(() => cn(dataTableEmptyVariants()))
 const paginationClasses = computed(() => cn(dataTablePaginationVariants()))
@@ -567,10 +571,10 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
     <div ref="rootRef" :class="rootClasses" :style="rootStyle" role="grid" :aria-label="t('dataTable.label')">
         <slot name="header">
             <div v-if="title || description" class="border-b-3 border-brutal px-6 py-4">
-                <h2 v-if="title" class="text-3xl font-black tracking-tight">
+                <h2 v-if="title" :class="titleClasses">
                     {{ title }}
                 </h2>
-                <p v-if="description" class="mt-1 text-sm font-medium text-brutal-muted-foreground">
+                <p v-if="description" :class="descriptionClasses">
                     {{ description }}
                 </p>
             </div>

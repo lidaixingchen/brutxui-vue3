@@ -79,6 +79,10 @@ const data = ref<User[]>([
 </template>
 ```
 
+### Titles and Descriptions
+
+Use `title` and `description` to label the table. Long Chinese text wraps at natural line breaks, and unbroken English text wraps when needed, keeping the full copy within the table width. Wide table content remains horizontally scrollable within the table body.
+
 ### Enabling Sorting
 
 ```vue
