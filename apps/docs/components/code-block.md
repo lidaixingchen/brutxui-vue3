@@ -82,6 +82,7 @@ console.log(sorted)`
 ## 功能特性
 
 - **语法高亮**：内置 Prism 语法高亮引擎，支持 JavaScript、TypeScript、Python、Rust、Go 等 20+ 种语言。语言语法按需加载，未使用的语言零体积。
+- **文件名对比度**：顶栏文件名使用完整的 `brutal-fg` 语义前景色；自定义主题应确保 `--brutal-fg` 与 `--brutal-muted` 的对比度满足 WCAG AA。
 - **一键复制**：右上角无缝集成了 `CopyToClipboard` 按钮，并在复制成功后提供触感物理动画及文本反馈。
 - **行号支持**：配置 `show-line-numbers` 属性为 `true` 后，会自动在左侧展示行号列表，且行号栏伴有经典的右侧实心线条分割。
 - **折叠展开**：通过 `maxLines` 属性限制代码区域可见行数，超出部分自动裁剪并提供"展开"/"收起"按钮，适合在有限空间内展示长代码。
