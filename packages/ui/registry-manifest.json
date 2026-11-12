@@ -886,7 +886,8 @@
     "lib": [
       "floating-animation-classes.ts",
       "floating-content-variants.ts",
-      "overlay-layer.ts"
+      "overlay-layer.ts",
+      "portal-theme.ts"
     ]
   },
   "pricing-section": {
@@ -996,6 +997,7 @@
       "floating-content-variants.ts",
       "icon-size-variants.ts",
       "overlay-layer.ts",
+      "portal-theme.ts",
       "semantic-text-variants.ts"
     ]
   },

@@ -264,9 +264,14 @@ export function useFloatingOverlayLayer(
     token: FloatingLayerToken,
     open?: Readonly<Ref<boolean>>,
     itemAligned: () => boolean = () => false,
-): { style: ComputedRef<StyleValue>; ref: ReturnType<typeof useForwardExpose>['forwardRef'] } {
+): { style: ComputedRef<StyleValue>; ref: ReturnType<typeof useForwardExpose>['forwardRef']; element: ComputedRef<HTMLElement | null> } {
     const modalLayer = inject(modalLayerKey, null)
     const { forwardRef, currentRef } = useForwardExpose()
+    const element = computed(() => {
+        // Presence 切换时组件实例保持不变，需在开关变化后重新读取实际 DOM。
+        void open?.value
+        return resolveHTMLElement(currentRef.value)
+    })
     let observedElement: HTMLElement | null = null
     let observer: MutationObserver | null = null
     let stopViewportObservation: (() => void) | null = null
@@ -339,5 +344,5 @@ export function useFloatingOverlayLayer(
         stopViewportObservation?.()
     })
 
-    return { style, ref: forwardRef }
+    return { style, ref: forwardRef, element }
 }

@@ -285,6 +285,12 @@ Earthy warm palette with organic retro tactility. Espresso borders, burnt orange
 
 ---
 
+## Scoped Themes for Portals
+
+`PopoverContent` and `SelectContent` inherit the trigger scope's theme preset classes, `.dark`, and `--brutal-*` runtime tokens when portalled to `body`. Ancestor theme class and inline token changes update open content. Nested portals inherit through their own triggers, and multiple theme scopes can coexist. Components built on Popover, including ColorPicker, inherit this behavior.
+
+Use the content panel's own `class` or inline `style` to override inherited tokens. Theme inheritance preserves Portal positioning, stacking, and keyboard focus behavior.
+
 ## Custom Tokens
 
 Override tokens at the `:root` level for global changes:

@@ -44,6 +44,12 @@ import { PopoverContent, Button } from 'brutx-ui-vue'
 </template>
 ```
 
+## 局部主题
+
+`PopoverContent` 默认传送到 `body`，并继承触发器所在作用域的主题预设、暗色模式和 `--brutal-*` 令牌。弹层打开期间，祖先的主题类名或内联令牌变化也会同步。嵌套 Popover 与基于 Popover 的 ColorPicker 同样遵循此规则。
+
+内容面板自身的 `class` 和内联令牌可进一步覆盖继承值。详见[主题与令牌](/guide/theme#弹层的局部主题)。
+
 ## 子组件
 
 | 组件 | 说明 |

@@ -9,7 +9,7 @@ vi.mock('reka-ui', async (importOriginal) => {
     const { ref } = await import('vue')
     return {
         ...primitives,
-        injectSelectRootContext: () => ({ open: ref(false) }),
+        injectSelectRootContext: () => ({ open: ref(false), triggerElement: ref<HTMLElement>() }),
     }
 })
 
