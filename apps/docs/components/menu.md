@@ -7,6 +7,8 @@ description: 导航菜单组件，支持水平/垂直模式、子菜单嵌套、
 
 用于网站顶部或侧边的导航栏，支持 `mode: 'horizontal' | 'vertical'` 布局、多级嵌套 `SubMenu` 折叠动画以及与 `vue-router` 联动路由跳转。
 
+垂直模式下，长菜单项文本会在菜单项宽度内自然换行，完整文本仍作为菜单项的无障碍名称。
+
 ## 预览
 
 <ComponentPreview>

@@ -9,11 +9,11 @@ export const menuLayoutVariants = cva('', {
     },
 })
 
-export const menuItemLayoutVariants = cva('', {
+export const menuItemLayoutVariants = cva('[&>svg]:shrink-0', {
     variants: {
         horizontal: {
             true: 'min-w-0 max-w-full shrink-0 [overflow-wrap:anywhere]',
-            false: '',
+            false: 'min-w-0 max-w-full [overflow-wrap:anywhere]',
         },
     },
 })
