@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { Calendar as CalendarIcon, ChevronDown, X } from '@lucide/vue'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
-import { cn } from '@/lib/utils'
+import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 import { brutalDestructiveHoverTextClasses } from '@/lib/semantic-text-variants'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 import { formatDate } from '@/lib/date'
 import PopoverContent from '../popover/PopoverContent.vue'
-import { datePickerTriggerVariants } from './date-picker-variants'
+import {
+    datePickerControlTriggerVariants,
+    datePickerControlVariants,
+    datePickerTriggerVariants,
+} from './date-picker-variants'
 import DatePickerRangePanel from './DatePickerRangePanel.vue'
 import { type DatePickerRangeEmits, type DatePickerRangeProps, type DateRange } from './types'
 
@@ -52,6 +56,7 @@ const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('datePicker.rangeL
 
 const open = ref(false)
 const displayValue = ref<DateRange | null>(props.modelValue)
+const triggerRef = ref<HTMLButtonElement | null>(null)
 
 // readonly 时拒绝打开（与 useDatePicker 的 setter 拦截语义一致）
 const openModel = computed<boolean>({
@@ -115,9 +120,14 @@ const hasValue = computed(() => Boolean(props.modelValue && props.modelValue.len
 const triggerClasses = computed(() =>
     cn(
         datePickerTriggerVariants({ size: props.size, variant: props.variant }),
+        datePickerControlTriggerVariants(),
         !hasValue.value && 'text-brutal-muted-foreground',
         props.class
     )
+)
+
+const controlClasses = computed(() =>
+    cn(datePickerControlVariants({ disabled: props.disabled }))
 )
 
 const calendarIconClasses = computed(() =>
@@ -132,6 +142,7 @@ const clearPlaceholderClasses = computed(() =>
 const clearButtonClasses = computed(() =>
     cn(
         'text-brutal-fg transition-colors',
+        FOCUS_RING_CLASSES,
         brutalDestructiveHoverTextClasses,
         props.size === 'sm' ? 'right-8 w-4 h-4' : 'right-10 w-5 h-5'
     )
@@ -170,12 +181,14 @@ function handleClearClick(event: Event) {
     displayValue.value = null
     emit('update:modelValue', null)
     emit('change', null)
+    void nextTick(() => triggerRef.value?.focus())
 }
 
 function handleTriggerKeydown(event: KeyboardEvent) {
-    // 键盘激活移交 reka-ui PopoverTrigger 原生处理（Enter/Space 打开）；
-    // 此处仅拦截 disabled/readonly 场景，避免打开后由 open 拒绝造成状态回弹
-    if (props.disabled || props.readonly) {
+    if (
+        (props.disabled || props.readonly)
+        && (event.key === 'Enter' || event.key === ' ')
+    ) {
         event.preventDefault()
     }
 }
@@ -183,10 +196,11 @@ function handleTriggerKeydown(event: KeyboardEvent) {
 
 <template>
     <PopoverRoot v-model:open="openModel">
-        <div class="relative w-full">
+        <div :class="controlClasses">
             <PopoverTrigger as-child>
                 <button
                     :id="id"
+                    ref="triggerRef"
                     type="button"
                     :name="name"
                     role="combobox"

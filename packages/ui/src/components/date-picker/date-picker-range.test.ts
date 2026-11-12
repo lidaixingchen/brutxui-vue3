@@ -136,6 +136,37 @@ describe('DatePickerRange', () => {
         expect(trigger.attributes('aria-haspopup')).toBe('dialog')
     })
 
+    it('allows Tab navigation in readonly mode while blocking activation keys', async () => {
+        wrapper = mount(DatePickerRange, {
+            ...localeProvide,
+            props: { readonly: true },
+            attachTo: document.body,
+        })
+        const trigger = wrapper.find('[role="combobox"]')
+
+        const tabEvent = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true })
+        trigger.element.dispatchEvent(tabEvent)
+        expect(tabEvent.defaultPrevented).toBe(false)
+
+        const shiftTabEvent = new KeyboardEvent('keydown', {
+            key: 'Tab',
+            shiftKey: true,
+            bubbles: true,
+            cancelable: true,
+        })
+        trigger.element.dispatchEvent(shiftTabEvent)
+        expect(shiftTabEvent.defaultPrevented).toBe(false)
+
+        const enterEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })
+        trigger.element.dispatchEvent(enterEvent)
+        expect(enterEvent.defaultPrevented).toBe(true)
+
+        const spaceEvent = new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true })
+        trigger.element.dispatchEvent(spaceEvent)
+        expect(spaceEvent.defaultPrevented).toBe(true)
+        expect(trigger.attributes('aria-expanded')).toBe('false')
+    })
+
     it('is disabled when disabled prop is true', () => {
         wrapper = mount(DatePickerRange, {
             ...localeProvide,

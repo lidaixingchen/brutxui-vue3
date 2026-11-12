@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, useId } from 'vue'
+import { computed, nextTick, ref, useId } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { Calendar as CalendarIcon, ChevronDown, X } from '@lucide/vue'
 import { PopoverRoot } from 'reka-ui'
 import PopoverTrigger from '../popover/PopoverTrigger.vue'
-import { cn } from '@/lib/utils'
+import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 import { brutalDestructiveHoverTextClasses } from '@/lib/semantic-text-variants'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
 import { formatDate } from '@/lib/date'
@@ -73,7 +73,7 @@ const {
     handlePanelUpdate,
     handlePanelConfirm,
     handlePanelClear,
-    handleClearClick,
+    handleClearClick: clearDatePicker,
     handleTriggerKeydown,
 } = useDatePicker({
     modelValue: () => props.modelValue,
@@ -121,11 +121,20 @@ const clearPlaceholderClasses = computed(() =>
 const clearButtonClasses = computed(() =>
     cn(
         'text-brutal-fg transition-colors',
+        FOCUS_RING_CLASSES,
         brutalDestructiveHoverTextClasses,
         props.size === 'sm' ? 'right-8' : 'right-10',
         iconSizeVariants({ size: props.size === 'sm' ? 'md' : 'lg' })
     )
 )
+
+const triggerRef = ref<HTMLButtonElement | null>(null)
+
+function handleClearClick(event: Event) {
+    clearDatePicker(event)
+    if (props.disabled) return
+    void nextTick(() => triggerRef.value?.focus())
+}
 
 defineExpose({ open })
 </script>
@@ -136,6 +145,7 @@ defineExpose({ open })
         <div :class="controlClasses">
             <PopoverTrigger :id="id" as-child>
                 <button
+                    ref="triggerRef"
                     v-bind="triggerIdAttrs"
                     type="button"
                     :name="name"

@@ -204,7 +204,9 @@ const year = ref(null)
 </template>
 ```
 
-启用 `clearable` 且已有日期时，`DatePicker` 和 `DateTimePicker` 的触发器与独立清除按钮在悬停和按压时作为一个整体移动，清除图标会保持在触发器预留的位置。设置 `disabled` 或 `readonly` 时，清除按钮隐藏。
+启用 `clearable` 且已有值时，`DatePicker`、`DatePickerRange`、`DateTimePicker`、`MonthPicker`、`WeekPicker` 和 `YearPicker` 的触发器与独立清除按钮在悬停和按压时作为一个整体移动，清除图标会保持在触发器预留的位置。使用键盘清除时，值更新并移除清除按钮后，焦点返回实际触发器；清除按钮也使用统一的键盘焦点环。设置 `disabled` 或 `readonly` 时，清除按钮隐藏。
+
+`DatePickerRange` 处于只读状态时，Enter 和 Space 不会打开面板，Tab 与 Shift+Tab 仍可移出触发器。
 
 ### 日期范围限制
 

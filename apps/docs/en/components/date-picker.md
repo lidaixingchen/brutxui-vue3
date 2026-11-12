@@ -205,7 +205,9 @@ const year = ref(null)
 </template>
 ```
 
-When `clearable` is enabled and a date is selected, the `DatePicker` and `DateTimePicker` trigger and separate clear button move together on hover and press. The clear icon stays aligned with the space reserved in the trigger. The clear button is hidden when `disabled` or `readonly` is set.
+When `clearable` is enabled and a value is selected, the `DatePicker`, `DatePickerRange`, `DateTimePicker`, `MonthPicker`, `WeekPicker`, and `YearPicker` trigger and separate clear button move together on hover and press. The clear icon stays aligned with the space reserved in the trigger. After keyboard clearing updates the value and removes the clear button, focus returns to the actual trigger. The clear button uses the shared keyboard focus ring. The clear button is hidden when `disabled` or `readonly` is set.
+
+For a read-only `DatePickerRange`, Enter and Space do not open the panel, while Tab and Shift+Tab can still move focus away from the trigger.
 
 ### Date Range Constraints
 
