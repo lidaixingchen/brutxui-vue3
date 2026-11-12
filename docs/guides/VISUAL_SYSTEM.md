@@ -156,9 +156,9 @@
   - *前景家族*：`text-brutal-primary-foreground`、`text-brutal-secondary-foreground`、`text-brutal-accent-foreground`、`text-brutal-destructive-foreground`、`text-brutal-success-foreground`、`text-brutal-info-foreground`、`text-brutal-muted-foreground`
   - *状态色家族*：`bg-brutal-status-success`、`bg-brutal-status-success-foreground`、`bg-brutal-status-warning`、`bg-brutal-status-warning-foreground`、`bg-brutal-status-info`、`bg-brutal-status-info-foreground`、`bg-brutal-status-error`、`bg-brutal-status-error-foreground`
 - **变体支持差异**：
-  - `shadow-brutal*`、`z-*` 与 `bg/text/border-brutal-*` 均经 `@theme` 派生，原生支持 `hover:`、`focus:`、`data-[...]:` 等变体；
+  - `shadow-brutal*`、`z-*`、`border-3`、`rounded-brutal` 与 `bg/text/border-brutal-*` 经 `@theme` 派生，原生支持 `hover:`、`focus:`、`data-[...]:` 等变体；边框宽度、圆角和颜色映射使用 `@theme inline` 在消费元素所在作用域解析运行时令牌；
   - 纹理类经 `@utility` 指令声明（非裸 `@layer utilities`），同样支持 `hover:bg-pattern-*`、`dark:bg-pattern-*`、`md:bg-pattern-*` 等变体修饰符派生；
-  - 手写 `@layer utilities` 类（`border-3`、`border-brutal`、`border-brutal-dashed`）**不带变体支持**（如 `hover:border-brutal` 会被静默丢弃，机制见 [TAILWIND_V4_MECHANISMS.md](TAILWIND_V4_MECHANISMS.md) §3）。
+  - `border-brutal`、`border-brutal-dashed` 经 `@utility` 注册，支持变体；手写 `@layer utilities` 类不带变体支持（机制见 [TAILWIND_V4_MECHANISMS.md](TAILWIND_V4_MECHANISMS.md) §3）。
 
 ### 主题预设
 

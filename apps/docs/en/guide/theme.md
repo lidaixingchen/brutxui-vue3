@@ -5,7 +5,7 @@ description: Understand BrutxUI's CSS variable tokens, presets, and pattern util
 
 # Themes & Tokens
 
-BrutxUI uses CSS custom properties (design tokens) to control every visual aspect of the neo-brutalist system. Customizing your design system is as simple as overriding a CSS variable. Color utilities read runtime `--brutal-*` tokens in the element's scope, so local `.dark` scopes, theme presets, and live token updates also apply inside containers.
+BrutxUI uses CSS custom properties (design tokens) to control every visual aspect of the neo-brutalist system. Customizing your design system is as simple as overriding a CSS variable. Color, border, radius, and shadow utilities read runtime `--brutal-*` tokens in the component's scope, so `.dark`, theme presets, container overrides, and component-level tokens drive the rendered result. Configured transitions complete over the component's own duration.
 
 For interactive visual tuning before copying CSS variables, check out the [Theme Playground](/en/guide/theme-playground). It features live component matrices, contrast checks, and token coverage inspection.
 
@@ -306,6 +306,8 @@ Or scope them to specific subtrees:
 }
 ```
 
+`border-3`, `rounded-brutal`, and `shadow-brutal*` read border width, radius, and shadow tokens from the component's scope. Use a container override or the component's inline style for live geometry adjustments; the `border-3` and `rounded-brutal` Tailwind utilities resolve their tokens on the element that uses them.
+
 You can also customize values in the [Theme Playground](/en/guide/theme-playground) and export ready-to-use CSS directly.
 
 ---
@@ -318,9 +320,9 @@ BrutxUI registers utility classes referencing design token variables:
 
 | Utility | Maps to | Description |
 | :--- | :--- | :--- |
-| `border-3` | `border-width: var(--brutal-border-width)` | Standard neo-brutalist border width |
+| `border-3` | `border-width: var(--brutal-border-width)` | Resolves the standard neo-brutalist border width in the consuming element's scope |
 | `border-brutal` | `border-color: var(--brutal-border-color)` | Primary border stroke color |
-| `rounded-brutal` | `border-radius: var(--brutal-radius)` | Physical border radius |
+| `rounded-brutal` | `border-radius: var(--brutal-radius)` | Resolves the radius in the consuming element's scope |
 
 ### Shadows
 

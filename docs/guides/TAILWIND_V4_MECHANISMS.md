@@ -60,7 +60,7 @@ node --input-type=module -e "import { twMerge } from 'tailwind-merge'; console.l
 
 **规则**：需要变体支持的自定义工具类必须用 `@utility` 或 `@theme` 派生；禁止写带变体的手写 `@layer utilities` 类。
 
-**现状**：`shadow-brutal*` 经 `@theme` 派生（单变量复合投影），进入 Tailwind v4 阴影组装通道（分层支持 `--tw-ring-shadow` 共存），变体按需生成；`.border-3`、`.border-brutal` 为手写 `@layer utilities` 类，不带变体支持。
+**现状**：`shadow-brutal*` 经普通 `@theme` 派生为单变量复合投影，进入 Tailwind v4 阴影组装通道（分层支持 `--tw-ring-shadow` 共存），变体按需生成；`border-3` 与 `rounded-brutal` 经 `@theme inline` 注册，并在使用元素上解析当前作用域的 `--brutal-border-width` 和 `--brutal-radius`；`border-brutal`、`border-brutal-dashed` 经 `@utility` 注册，支持变体。
 
 ## §4 @source 静态扫描字面量要求
 
@@ -79,13 +79,15 @@ node --input-type=module -e "import { twMerge } from 'tailwind-merge'; console.l
 全库设计令牌（颜色、阴影、层级 Z-Index、动效缓动、字体栈、预设值）唯一事实来源为 `packages/shared/src/design-tokens.ts`（严格保持 0 外部依赖）。
 
 **自动化派生流向**：
-- `packages/ui/src/styles.css`：自动生成 `@theme inline` 颜色映射与普通 `@theme` 声明、`:root/.dark` 基础运行时变量及主题预设（`.theme-*`）；
+- `packages/ui/src/styles.css`：自动生成 `@theme inline` 颜色、边框宽度与圆角映射，以及普通 `@theme` 声明、`:root/.dark` 基础运行时变量及主题预设（`.theme-*`）；
 - `packages/ui/src/preflight.css`：自动生成 body 字体栈回退；
 - `packages/ui/src/lib/utils.ts`：自动生成并注入 `BRUTAL_COLOR_NAMES` 与 `BRUTAL_Z_INDEX_NAMES` 冻结常量，驱动 `extendTailwindMerge` 注册自定义粗野主义颜色与 Z-Index 组；
 - `packages/cli/src/styles/brutalist.css`：通过注释标记（Marker Injection）自动同步注入 `@theme` 与 `:root/.dark` 令牌及主题预设，并保护后方 650+ 行面向非 Tailwind v4 项目的静态工具类；
 - `packages/cli/src/lib/constants.ts`：通过注释标记自动同步生成分发给终端用户的 `UTILS_TEMPLATE` 与 `CN_FUNCTION_BODY_TEMPLATE` 模板块。
 
-`--color-brutal-*` 颜色与微妙背景映射使用 `@theme inline`，让工具类在元素所在作用域读取运行时 `--brutal-*` 值，支持局部 `.dark`、主题预设和动态令牌更新。字体、层级、阴影及其他非颜色声明保留普通 `@theme`，避免改变 Tailwind 阴影与焦点环的组合方式。颜色标记包围完整的 inline 与普通主题区块，由 UI 与 CLI 生成器共同规范化。
+CLI 的扁平阴影工具类及其悬停、焦点和激活态规则由 `SHADOW_DEFINITIONS` 统一生成，直接在消费元素上读取 `--brutal-*` 令牌，使局部主题与组件级偏移覆盖作用于同一份阴影定义。
+
+`--color-brutal-*` 颜色、`--border-width-3` 与 `--radius-brutal` 使用 `@theme inline`，让生成的工具类在消费元素所在作用域读取运行时令牌，支持局部 `.dark`、主题预设、组件级覆盖和动态更新。字体、层级、阴影、缓动等声明保留普通 `@theme`；阴影类继续进入 Tailwind 的标准阴影组装通道，使硬投影与焦点 ring 保持分层共存。颜色标记包围完整的 inline 与普通主题区块，由 UI 与 CLI 生成器共同规范化。CLI 面向非 Tailwind 项目的手写 `border-3` / `rounded-brutal` 工具类直接引用相同的 `--brutal-*` 令牌与基础主题 fallback。
 
 **开发期规则**：
 - 严禁手动修改 `styles.css`、`brutalist.css`、`utils.ts` 或 `constants.ts` 中的令牌与模板声明；

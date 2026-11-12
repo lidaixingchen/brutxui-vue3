@@ -9,7 +9,7 @@ import {
     replaceThemeBlock,
     PATTERN_UTILITIES,
 } from '../../src/tokens/index.js';
-import { BASE_THEME, BRUTAL_COLOR_NAMES, THEME_PRESETS } from '../../src/design-tokens.js';
+import { BASE_THEME, BRUTAL_COLOR_NAMES, SHADOW_DEFINITIONS, THEME_PRESETS } from '../../src/design-tokens.js';
 
 describe('TokenStyleCompiler', () => {
     const compiler = new TokenStyleCompiler();
@@ -45,12 +45,15 @@ describe('TokenStyleCompiler', () => {
         expect(inlineTheme).toContain(`--color-brutal-item-highlight: var(--brutal-item-highlight, ${BASE_THEME.light.itemHighlight});`);
         expect(inlineTheme).toContain(`--color-brutal-item-highlight-foreground: var(--brutal-item-highlight-foreground, ${BASE_THEME.light.itemHighlightForeground});`);
         expect(inlineTheme).toContain('--color-brutal-primary-subtle: var(--brutal-primary-subtle,');
+        expect(inlineTheme).toContain(`--border-width-3: var(--brutal-border-width, ${BASE_THEME.light.borderWidth});`);
+        expect(inlineTheme).toContain(`--radius-brutal: var(--brutal-radius, ${BASE_THEME.light.radius});`);
         expect(inlineTheme).not.toContain('--shadow-brutal:');
         expect(standardTheme).toContain('@theme {');
         expect(standardTheme).toContain('--default-font-family:');
         expect(standardTheme).toContain('--shadow-brutal:');
         expect(standardTheme).toContain('--ease-brutal-snap:');
-        expect(standardTheme).toContain('--border-width-3:');
+        expect(standardTheme).not.toContain('--border-width-3:');
+        expect(standardTheme).not.toContain('--radius-brutal:');
         expect(standardTheme).not.toContain('--color-brutal-');
     });
 
@@ -99,6 +102,13 @@ describe('TokenStyleCompiler', () => {
     it('compileCliUtilityRules 展开工具类为扁平直挂规则', () => {
         const result = compiler.compileCliUtilityRules();
         expect(result).toContain('.shadow-brutal {');
+        expect(result).toContain(String.raw`.hover\:shadow-brutal:hover {`);
+        expect(result).toContain(String.raw`.focus\:shadow-brutal-lg:focus {`);
+        expect(result).toContain(String.raw`.data-\[state\=active\]\:shadow-brutal-sm[data-state="active"] {`);
+        for (const def of SHADOW_DEFINITIONS) {
+            expect(result).toContain(`box-shadow: ${def.build(BASE_THEME.light)};`);
+        }
+        expect(result).not.toContain('box-shadow: var(--shadow-brutal');
         expect(result).toContain('.bg-pattern-dots {');
         expect(result).toContain('.scrollbar-brutal::-webkit-scrollbar {');
         expect(result).toContain('.hud-crosshairs::before {');
