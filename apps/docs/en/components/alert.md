@@ -33,6 +33,10 @@ import { Alert, AlertTitle, AlertDescription } from 'brutx-ui-vue'
 </template>
 ```
 
+## Long Content
+
+`AlertTitle` and `AlertDescription` wrap within the available width, including long words, uninterrupted strings, and link text, while retaining the full content. With `closable`, text continues to reserve space for the close button. With an icon, text is indented while the close button retains its own size and position. `AlertTitle` supports `as` / `asChild`, and description associations and close events remain composable.
+
 ## Variants
 
 | Variant | Description |

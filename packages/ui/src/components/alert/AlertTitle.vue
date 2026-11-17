@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<AlertTitleProps>(), {
 })
 
 const classes = computed(() =>
-    cn('mb-1 font-black tracking-tight leading-none', props.class)
+    cn('mb-1 break-words font-black tracking-tight leading-none', props.class)
 )
 </script>
 
