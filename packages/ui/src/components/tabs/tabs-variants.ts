@@ -3,7 +3,7 @@ import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const tabsListVariants = cva(
     [
-        'inline-flex justify-center p-1 gap-1',
+        'inline-flex p-1 gap-1',
         'bg-brutal-bg border-3 border-brutal shadow-brutal-sm rounded-brutal',
     ],
     {
@@ -14,8 +14,8 @@ export const tabsListVariants = cva(
                 lg: '',
             },
             orientation: {
-                horizontal: 'items-center max-w-full overflow-x-auto',
-                vertical: 'flex-col items-stretch w-fit max-w-full overflow-x-auto',
+                horizontal: 'items-center [justify-content:safe_center] max-w-full overflow-x-auto',
+                vertical: 'flex-col items-stretch justify-center w-fit max-w-full overflow-x-auto',
             },
         },
         compoundVariants: [
