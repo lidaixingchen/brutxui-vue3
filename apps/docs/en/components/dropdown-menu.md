@@ -168,6 +168,12 @@ import { Button } from 'brutx-ui-vue'
 </template>
 ```
 
+## Scoped Themes
+
+The main menu inherits the root trigger's theme preset, dark mode, and `--brutal-*` tokens. Submenus inherit through their own triggers, so local token overrides on a parent menu panel also reach its submenus. Ancestor theme class and inline token changes update open panels.
+
+Each content panel's own `class` and inline tokens can override inherited values. Theme inheritance preserves Portal positioning, arrow-key navigation, and focus restoration after Escape. See [theme tokens](/en/guide/theme#scoped-themes-for-portals).
+
 ## Sub-components
 
 | Component | Description |

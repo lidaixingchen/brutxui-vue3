@@ -212,6 +212,7 @@ describe('scoped theme geometry utilities', () => {
         })
 
         const button = findSurface(wrapper.element as HTMLElement, 'focusable')
+        await userEvent.unhover(button)
         await userEvent.tab()
         button.focus()
 
