@@ -22,6 +22,7 @@ const scopes = [
     { id: 'mono', className: 'theme-mono' },
 ]
 const panelBackgroundOverride = 'rgb(12, 34, 56)'
+const scopeLayout = { display: 'flex', alignItems: 'flex-start', gap: '4rem', padding: '2rem' }
 
 const tooltipOpen = ref(false)
 const dropdownOpen = ref(false)
@@ -35,6 +36,7 @@ const submenuOpen = ref(false)
             v-for="scope in scopes"
             :key="scope.id"
             :class="scope.className"
+            :style="scopeLayout"
             :data-testid="`${scope.id}-scope`"
         >
             <TooltipRoot :default-open="true">
@@ -72,7 +74,7 @@ const submenuOpen = ref(false)
             </DropdownMenuRoot>
         </div>
 
-        <div class="theme-pastel dark" data-testid="interactive-scope">
+        <div class="theme-pastel dark" :style="scopeLayout" data-testid="interactive-scope">
             <TooltipRoot v-model:open="tooltipOpen">
                 <TooltipTrigger as-child>
                     <Button data-testid="interactive-tooltip-trigger">Interactive tooltip</Button>

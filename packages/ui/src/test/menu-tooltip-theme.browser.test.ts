@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { userEvent } from 'vitest/browser'
+import { page, userEvent } from 'vitest/browser'
 import '../../dist/styles.css'
 import { mount } from '@/test/browser-mount'
 import MenuTooltipThemeTestFixture from '@/test/fixtures/MenuTooltipThemeTestFixture.vue'
@@ -13,10 +13,12 @@ const MUTATED_SCOPE_STYLE = {
     '--brutal-radius': '8px',
 }
 const PANEL_BACKGROUND_OVERRIDE = 'rgb(12, 34, 56)'
+const THEME_VIEWPORT = { width: 1280, height: 900 }
 
 let mounted: ReturnType<typeof mount> | undefined
 let originalDocumentClass = ''
 let originalDocumentStyle: string | null = null
+let originalViewport: { width: number; height: number } | null = null
 
 function visiblePanels(testId: string): HTMLElement[] {
     return Array.from(document.querySelectorAll<HTMLElement>(`[data-testid="${testId}"]`)).filter((element) => {
@@ -73,25 +75,31 @@ async function waitForPanel(testId: string): Promise<HTMLElement> {
     return visiblePanels(testId)[0]!
 }
 
-function mountFixture() {
+async function mountFixture() {
     originalDocumentClass = document.documentElement.className
     originalDocumentStyle = document.documentElement.getAttribute('style')
+    originalViewport = { width: window.innerWidth, height: window.innerHeight }
+    await page.viewport(THEME_VIEWPORT.width, THEME_VIEWPORT.height)
     mounted = mount(MenuTooltipThemeTestFixture)
     return mounted
 }
 
-afterEach(() => {
+afterEach(async () => {
     mounted?.unmount()
     mounted = undefined
     document.documentElement.className = originalDocumentClass
     if (originalDocumentStyle === null) document.documentElement.removeAttribute('style')
     else document.documentElement.setAttribute('style', originalDocumentStyle)
     originalDocumentStyle = null
+    if (originalViewport) {
+        await page.viewport(originalViewport.width, originalViewport.height)
+        originalViewport = null
+    }
 })
 
 describe('Tooltip 与 DropdownMenu 浮层的局部主题继承', () => {
     it('默认、局部 pastel dark 与 mono 主题在并存 Portal 中保持各自外观', async () => {
-        mountFixture()
+        await mountFixture()
 
         for (const scopeId of scopes) {
             const scope = document.querySelector<HTMLElement>(`[data-testid="${scopeId}-scope"]`)!
@@ -136,7 +144,7 @@ describe('Tooltip 与 DropdownMenu 浮层的局部主题继承', () => {
     })
 
     it('祖先 class 与 style 更新会同步到 Tooltip、主菜单和嵌套子菜单', async () => {
-        mountFixture()
+        await mountFixture()
         const scope = document.querySelector<HTMLElement>('[data-testid="pastel-dark-scope"]')!
         const tooltip = await waitForPanel('pastel-dark-tooltip-content')
         const dropdownTrigger = document.querySelector<HTMLElement>('[data-testid="pastel-dark-dropdown-trigger"]')!
@@ -165,7 +173,7 @@ describe('Tooltip 与 DropdownMenu 浮层的局部主题继承', () => {
     })
 
     it('首次打开与重开继承局部主题，子菜单 Escape 后焦点返回根触发器', async () => {
-        mountFixture()
+        await mountFixture()
 
         const tooltipTrigger = document.querySelector<HTMLElement>('[data-testid="interactive-tooltip-trigger"]')!
         tooltipTrigger.focus()
