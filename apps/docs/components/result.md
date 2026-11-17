@@ -59,6 +59,8 @@ import { Result } from 'brutx-ui-vue'
 
 `Result` 支持 `status="empty"`，可作为空状态的推荐入口。
 
+空状态图标使用 `--brutal-accent` 背景与 `--brutal-accent-foreground` 前景配对，随明暗预设和局部主题覆盖同步变化。自定义强调色时，请同时配置对应前景色，以保持图标清晰可辨。
+
 ```vue
 <template>
     <Result
