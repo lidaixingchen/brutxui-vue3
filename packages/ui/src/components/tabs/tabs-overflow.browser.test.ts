@@ -16,7 +16,7 @@ const LAYOUT_TOLERANCE_PX = 1
 const viewportWidths = [COMPACT_VIEWPORT_WIDTH_PX, NARROW_VIEWPORT_WIDTH_PX] as const
 const tabs = [
     { label: '账户信息安全验证与通知偏好配置', value: 'account' },
-    { label: 'ProjectConfigurationAndNotificationPreferences', value: 'configuration' },
+    { label: 'ProjectConfigurationAndNotificationPreferencesForWorkspaceAdministrators', value: 'configuration' },
     { label: '通知', value: 'notifications' },
 ]
 
@@ -106,6 +106,11 @@ describe.each(viewportWidths)('Tabs horizontal overflow at %spx viewport', (view
 
         list!.scrollLeft = 0
         expectTextFullyVisible(list!, renderedTabs[0]!)
+
+        renderedTabs[0]!.focus()
+        await userEvent.keyboard('{ArrowRight}')
+        await expect.poll(() => document.activeElement).toBe(renderedTabs[1])
+        expectTextFullyVisible(list!, renderedTabs[1]!)
 
         list!.scrollLeft = list!.scrollWidth
         expect(list!.scrollLeft).toBeGreaterThan(0)

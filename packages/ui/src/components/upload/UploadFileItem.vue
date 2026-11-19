@@ -182,7 +182,7 @@ const errorMessageClasses = computed(() =>
 
         <!-- 文件名提示 -->
         <div class="absolute bottom-0 left-0 right-0 bg-brutal-bg/80 px-1 py-0.5">
-            <p class="text-xs truncate text-brutal-fg">{{ file.name }}</p>
+            <p :title="file.name" class="text-xs truncate text-brutal-fg">{{ file.name }}</p>
         </div>
     </div>
 
@@ -218,7 +218,7 @@ const errorMessageClasses = computed(() =>
 
         <!-- 文件信息 -->
         <div class="flex-1 min-w-0">
-            <p class="font-mono font-bold text-brutal-fg truncate">{{ file.name }}</p>
+            <p class="font-mono font-bold text-brutal-fg wrap-anywhere">{{ file.name }}</p>
             <p class="text-sm text-brutal-muted-foreground font-mono">{{ formatFileSize(file.size) }}</p>
 
             <!-- 进度条 -->

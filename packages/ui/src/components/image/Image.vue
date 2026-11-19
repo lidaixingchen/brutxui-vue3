@@ -425,8 +425,8 @@ const imageClasses = computed(() =>
 
         <!-- 错误状态 -->
         <slot v-if="hasError" name="error">
-            <div class="absolute inset-0 flex items-center justify-center w-full h-full font-bold select-none border-3 border-brutal-destructive" style="background: repeating-linear-gradient(45deg, color-mix(in srgb, var(--brutal-destructive, #EF476F) 10%, transparent), color-mix(in srgb, var(--brutal-destructive, #EF476F) 10%, transparent) 6px, var(--brutal-bg, #ffffff) 6px, var(--brutal-bg, #ffffff) 12px)">
-                <span class="bg-brutal-bg px-2 py-0.5 border-2 border-brutal-destructive text-brutal-destructive shadow-brutal-destructive">{{ t('image.loadFailed') }}</span>
+            <div class="flex min-h-full w-full items-center justify-center border-3 border-brutal-destructive p-3 font-bold select-none" style="background: repeating-linear-gradient(45deg, color-mix(in srgb, var(--brutal-destructive, #EF476F) 10%, transparent), color-mix(in srgb, var(--brutal-destructive, #EF476F) 10%, transparent) 6px, var(--brutal-bg, #ffffff) 6px, var(--brutal-bg, #ffffff) 12px)">
+                <span class="min-w-0 wrap-anywhere bg-brutal-status-error px-2 py-0.5 border-2 border-brutal text-brutal-status-error-foreground shadow-brutal-destructive">{{ t('image.loadFailed') }}</span>
             </div>
         </slot>
     </div>

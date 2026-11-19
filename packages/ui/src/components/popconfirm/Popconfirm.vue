@@ -71,10 +71,9 @@ function handleCancel() {
                 <!-- 图标 -->
                 <div class="flex-shrink-0">
                     <slot name="icon">
-                        <component
-                            :is="icon || TriangleAlert"
-                            class="h-5 w-5 text-brutal-accent"
-                        />
+                        <span class="inline-flex items-center justify-center rounded-brutal bg-brutal-status-warning p-1 text-brutal-status-warning-foreground">
+                            <component :is="icon || TriangleAlert" class="h-5 w-5" />
+                        </span>
                     </slot>
                 </div>
 

@@ -226,8 +226,7 @@ const hasCustomPrefix = computed(() => !!props.prefixComponent);
 const hasCustomSuffix = computed(() => !!props.suffixComponent);
 const hasContainer = computed(() => props.card || !!props.title || !!slots.title);
 
-// scale 仅做视觉缩放；布局盒由外层 max-w-full 约束到容器宽，
-// 且缩放后视觉宽度 = naturalWidth * scaleFactor = 容器宽，布局盒与视觉宽度一致，无需额外设置 width
+// 保留数字的固有宽度后再缩放，外层负责约束布局宽度和裁剪测量内容。
 const scaleStyle = computed(() => {
     if (scaleFactor.value >= 1) return undefined;
     return {
@@ -237,12 +236,14 @@ const scaleStyle = computed(() => {
 });
 
 const classes = computed(() =>
-    cn(counterVariants({ variant: props.variant, size: props.size }), !hasContainer.value && props.class)
+    cn(counterVariants({ variant: props.variant, size: props.size }), 'shrink-0 max-w-none', !hasContainer.value && props.class)
 );
 
 const measureClasses = computed(() =>
     cn(counterVariants({ variant: props.variant, size: props.size }), !hasContainer.value && props.class, 'absolute invisible whitespace-nowrap !max-w-none')
 );
+
+const valueContainerClasses = 'relative inline-flex max-w-full min-w-0 items-center overflow-clip';
 
 const containerClasses = computed(() =>
     cn(
@@ -261,7 +262,7 @@ const titleClasses = 'text-xs font-bold text-brutal-muted-foreground uppercase t
             <slot name="title">{{ title }}</slot>
         </span>
 
-        <span class="relative inline-flex max-w-full min-w-0 items-center" :style="valueStyle">
+        <span :class="valueContainerClasses" :style="valueStyle">
             <span ref="measureRef" :class="measureClasses" aria-hidden="true">
                 <span v-if="animatePrefix && hasCustomPrefix" class="inline-flex">
                     <component :is="prefixComponent" />
@@ -287,7 +288,7 @@ const titleClasses = 'text-xs font-bold text-brutal-muted-foreground uppercase t
         </span>
     </div>
 
-    <span v-else class="relative inline-flex max-w-full min-w-0 items-center" :style="valueStyle">
+    <span v-else :class="valueContainerClasses" :style="valueStyle">
         <span ref="measureRef" :class="measureClasses" aria-hidden="true">
             <span v-if="animatePrefix && hasCustomPrefix" class="inline-flex">
                 <component :is="prefixComponent" />
