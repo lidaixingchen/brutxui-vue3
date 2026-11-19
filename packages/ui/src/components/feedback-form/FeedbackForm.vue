@@ -2,6 +2,7 @@
 import { computed, nextTick, ref, reactive, useId, watch } from 'vue'
 import { Send } from '@lucide/vue'
 import { cn } from '@/lib/utils'
+import { brutalDestructiveTextClasses } from '@/lib/semantic-text-variants'
 import { useLocale } from '@/composables/useLocale'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import Card from '../card/Card.vue'
@@ -65,6 +66,7 @@ const subject = ref('')
 const message = ref('')
 
 const rootClasses = computed(() => cn('w-full max-w-2xl mx-auto', props.class))
+const errorClasses = computed(() => cn('text-sm font-medium', brutalDestructiveTextClasses))
 
 const iconClasses = computed(() =>
     cn(iconSizeVariants({ size: props.iconSize }), 'mr-2')
@@ -198,7 +200,7 @@ function handleSuccessConfirm() {
                                     :aria-errormessage="errors.name ? fieldId('name-error') : undefined"
                                     :aria-required="true"
                                 />
-                                <p v-if="errors.name" :id="fieldId('name-error')" class="text-sm text-brutal-destructive font-medium" role="alert">
+                                <p v-if="errors.name" :id="fieldId('name-error')" :class="errorClasses" role="alert">
                                     {{ errors.name }}
                                 </p>
                             </div>
@@ -217,7 +219,7 @@ function handleSuccessConfirm() {
                                     :aria-errormessage="errors.email ? fieldId('email-error') : undefined"
                                     :aria-required="true"
                                 />
-                                <p v-if="errors.email" :id="fieldId('email-error')" class="text-sm text-brutal-destructive font-medium" role="alert">
+                                <p v-if="errors.email" :id="fieldId('email-error')" :class="errorClasses" role="alert">
                                     {{ errors.email }}
                                 </p>
                             </div>
@@ -241,7 +243,7 @@ function handleSuccessConfirm() {
                                     :aria-errormessage="errors.message ? fieldId('message-error') : undefined"
                                     :aria-required="true"
                                 />
-                                <p v-if="errors.message" :id="fieldId('message-error')" class="text-sm text-brutal-destructive font-medium" role="alert">
+                                <p v-if="errors.message" :id="fieldId('message-error')" :class="errorClasses" role="alert">
                                     {{ errors.message }}
                                 </p>
                             </div>

@@ -1124,7 +1124,7 @@ function getCellClasses(column: DataTableColumn<T>, row?: T, rowIndex?: number):
         <div v-if="loading" :class="loadingClasses">
             <slot name="loading">
                 <span class="inline-flex items-center justify-center border-3 border-brutal bg-brutal-bg p-2 shadow-brutal">
-                    <Loader2 class="w-8 h-8 animate-spin text-brutal-primary" />
+                    <Loader2 class="w-8 h-8 animate-spin text-brutal-fg motion-reduce:animate-none" />
                 </span>
             </slot>
         </div>

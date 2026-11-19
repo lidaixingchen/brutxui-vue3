@@ -14,7 +14,7 @@ const NARROW_VIEWPORT = { width: 320, height: 844 }
 const STANDARD_VIEWPORT = { width: 1280, height: 844 }
 const HOST_MARGIN = 12
 const SELECTOR_HOST_WIDTH = NARROW_VIEWPORT.width - HOST_MARGIN * 2
-const LONG_CHINESE_LABEL = '标签文字较长需要适当截断'.repeat(3)
+const LONG_CHINESE_LABEL = '标签文字较长需要完整呈现'.repeat(3)
 const LONG_ENGLISH_LABEL = 'LongUnbrokenOptionLabel'.repeat(2)
 const DISABLED_LABEL = '禁用选项'.repeat(6)
 
@@ -104,7 +104,7 @@ afterEach(async () => {
 })
 
 describe('Select responsive option content', () => {
-    it('clamps the long Chinese and English options to a narrow viewport while preserving their text', async () => {
+    it('wraps long Chinese and English options inside a narrow popup', async () => {
         const { trigger } = await mountSelect(NARROW_VIEWPORT.width)
         const listbox = await openSelect(trigger)
         const bounds = listbox.getBoundingClientRect()
@@ -122,9 +122,14 @@ describe('Select responsive option content', () => {
         const englishText = Array.from(englishOption.querySelectorAll<HTMLElement>('span'))
             .find(element => element.textContent?.trim() === LONG_ENGLISH_LABEL)
         expect(englishText).toBeDefined()
-        expect(getComputedStyle(englishText!).textOverflow).toBe('ellipsis')
-        expect(englishText!.scrollWidth).toBeGreaterThan(englishText!.clientWidth)
-        expect(englishText!.getBoundingClientRect().right).toBeLessThanOrEqual(bounds.right)
+        const range = document.createRange()
+        range.selectNodeContents(englishText!)
+        const lines = Array.from(range.getClientRects())
+        expect(lines.length).toBeGreaterThan(1)
+        for (const line of lines) {
+            expect(line.left).toBeGreaterThanOrEqual(bounds.left)
+            expect(line.right).toBeLessThanOrEqual(bounds.right)
+        }
 
         const disabledOption = findOption(listbox, DISABLED_LABEL)
         expect(disabledOption.getAttribute('aria-disabled')).toBe('true')
