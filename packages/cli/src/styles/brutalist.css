@@ -43,13 +43,13 @@
     --color-brutal-destructive-subtle: var(--brutal-destructive-subtle, color-mix(in srgb, var(--brutal-destructive, #EF476F) 12%, var(--brutal-bg, #ffffff)));
     --color-brutal-success-subtle: var(--brutal-success-subtle, color-mix(in srgb, var(--brutal-success, #7FB069) 12%, var(--brutal-bg, #ffffff)));
     --color-brutal-info-subtle: var(--brutal-info-subtle, color-mix(in srgb, var(--brutal-info, #4A90D9) 12%, var(--brutal-bg, #ffffff)));
+
+    /* Dynamic: border/radius resolve in the consuming element scope */
+    --border-width-3: var(--brutal-border-width, 3px);
+    --radius-brutal: var(--brutal-radius, 0px);
 }
 
 @theme {
-    /* Dynamic: border/radius use --brutal-* for theme support */
-    --border-width-3: var(--brutal-border-width, 3px);
-    --radius-brutal: var(--brutal-radius, 0px);
-
     /* Default font family (preflight html/body 继承，可被消费方 @theme 覆盖) */
     --default-font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
 
@@ -446,39 +446,71 @@
 /* @brutx:utility-rules:start */
 /* ===== brutal 阴影档位直挂（由 prebuild:tokens 从 SHADOW_DEFINITIONS 生成）===== */
 .shadow-brutal {
-    box-shadow: var(--shadow-brutal);
+    box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000);
+}
+
+.hover\:shadow-brutal:hover {
+    box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000);
+}
+
+.focus\:shadow-brutal:focus {
+    box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000);
 }
 
 .shadow-brutal-sm {
-    box-shadow: var(--shadow-brutal-sm);
+    box-shadow: calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000);
+}
+
+.hover\:shadow-brutal-sm:hover {
+    box-shadow: calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000);
+}
+
+.data-\[state\=active\]\:shadow-brutal-sm[data-state="active"] {
+    box-shadow: calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000);
 }
 
 .shadow-brutal-lg {
-    box-shadow: var(--shadow-brutal-lg);
+    box-shadow: calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000);
+}
+
+.hover\:shadow-brutal-lg:hover {
+    box-shadow: calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000);
+}
+
+.focus\:shadow-brutal-lg:focus {
+    box-shadow: calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000);
 }
 
 .shadow-brutal-xl {
-    box-shadow: var(--shadow-brutal-xl);
+    box-shadow: calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000);
 }
 
 .shadow-brutal-primary {
-    box-shadow: var(--shadow-brutal-primary);
+    box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B);
+}
+
+.focus\:shadow-brutal-primary:focus {
+    box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B);
 }
 
 .shadow-brutal-secondary {
-    box-shadow: var(--shadow-brutal-secondary);
+    box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary, #4ECDC4);
+}
+
+.focus\:shadow-brutal-secondary:focus {
+    box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary, #4ECDC4);
 }
 
 .shadow-brutal-destructive {
-    box-shadow: var(--shadow-brutal-destructive);
+    box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px color-mix(in srgb, var(--brutal-destructive, #EF476F) 30%, transparent);
 }
 
 .shadow-brutal-stacked {
-    box-shadow: var(--shadow-brutal-stacked);
+    box-shadow: calc(var(--brutal-shadow-offset-x, 4px) * 0.25) calc(var(--brutal-shadow-offset-y, 4px) * 0.25) 0px 0px var(--brutal-border-color, #000000), var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B), calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-border-color, #000000);
 }
 
 .shadow-brutal-inset {
-    box-shadow: var(--shadow-brutal-inset);
+    box-shadow: inset calc(var(--brutal-shadow-offset-x, 4px) * 0.5) calc(var(--brutal-shadow-offset-y, 4px) * 0.5) 0px 0px var(--brutal-border-color, #000000);
 }
 
 /* ===== 纹理工具类直挂（由 prebuild:tokens 从 PATTERN_UTILITIES 生成）===== */
@@ -561,23 +593,23 @@
 
 
 .border-3 {
-    border-width: var(--border-width-3);
+    border-width: var(--brutal-border-width, 3px);
 }
 
 .border-t-3 {
-    border-top-width: var(--border-width-3);
+    border-top-width: var(--brutal-border-width, 3px);
 }
 
 .border-r-3 {
-    border-right-width: var(--border-width-3);
+    border-right-width: var(--brutal-border-width, 3px);
 }
 
 .border-b-3 {
-    border-bottom-width: var(--border-width-3);
+    border-bottom-width: var(--brutal-border-width, 3px);
 }
 
 .border-l-3 {
-    border-left-width: var(--border-width-3);
+    border-left-width: var(--brutal-border-width, 3px);
 }
 
 .border-y-3 {
@@ -683,7 +715,7 @@
 }
 
 .rounded-brutal {
-    border-radius: var(--radius-brutal);
+    border-radius: var(--brutal-radius, 0px);
 }
 
 .bg-brutal-bg {
@@ -846,28 +878,6 @@
     color: var(--color-brutal-primary);
 }
 
-.hover\:shadow-brutal:hover,
-.focus\:shadow-brutal:focus {
-    box-shadow: var(--shadow-brutal);
-}
-
-.hover\:shadow-brutal-sm:hover {
-    box-shadow: var(--shadow-brutal-sm);
-}
-
-.hover\:shadow-brutal-lg:hover,
-.focus\:shadow-brutal-lg:focus {
-    box-shadow: var(--shadow-brutal-lg);
-}
-
-.focus\:shadow-brutal-primary:focus {
-    box-shadow: var(--shadow-brutal-primary);
-}
-
-.focus\:shadow-brutal-secondary:focus {
-    box-shadow: var(--shadow-brutal-secondary);
-}
-
 .focus\:ring-brutal-ring:focus,
 .focus-visible\:ring-brutal-ring:focus-visible,
 .focus-within\:ring-brutal-ring:focus-within {
@@ -934,10 +944,6 @@
 
 .data-\[state\=active\]\:ring-brutal-ring[data-state="active"] {
     --tw-ring-color: var(--color-brutal-ring);
-}
-
-.data-\[state\=active\]\:shadow-brutal-sm[data-state="active"] {
-    box-shadow: var(--shadow-brutal-sm);
 }
 
 .data-\[state\=inactive\]\:hover\:bg-brutal-muted[data-state="inactive"]:hover {

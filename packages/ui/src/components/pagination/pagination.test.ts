@@ -17,6 +17,11 @@ function getDotsCount(wrapper: ReturnType<typeof mount>) {
     return wrapper.findAll('button[aria-label="Jump pages"]').length
 }
 
+function getNavigationIcons(wrapper: ReturnType<typeof mount>) {
+    return [en.pagination.firstPage, en.pagination.previousPage, en.pagination.nextPage, en.pagination.lastPage]
+        .map(label => wrapper.get(`button[aria-label="${label}"]`).get('svg'))
+}
+
 describe('Pagination', () => {
     it('renders with default props', () => {
         const wrapper = mount(Pagination, {
@@ -246,7 +251,7 @@ describe('Pagination', () => {
             props: { totalPages: 5, modelValue: 1, showFirstLast: true },
             ...globalProvide,
         })
-        const icons = wrapper.findAll('nav button[aria-label] svg')
+        const icons = getNavigationIcons(wrapper)
         expect(icons.length).toBeGreaterThan(0)
         for (const icon of icons) {
             expect(icon.classes()).toContain('h-4')
@@ -259,7 +264,7 @@ describe('Pagination', () => {
             props: { totalPages: 5, modelValue: 1, size: 'sm', showFirstLast: true },
             ...globalProvide,
         })
-        const icons = wrapper.findAll('nav button[aria-label] svg')
+        const icons = getNavigationIcons(wrapper)
         expect(icons.length).toBeGreaterThan(0)
         for (const icon of icons) {
             expect(icon.classes()).toContain('h-3')
@@ -273,7 +278,7 @@ describe('Pagination', () => {
             props: { totalPages: 5, modelValue: 1, size: 'lg', showFirstLast: true },
             ...globalProvide,
         })
-        const icons = wrapper.findAll('nav button[aria-label] svg')
+        const icons = getNavigationIcons(wrapper)
         expect(icons.length).toBeGreaterThan(0)
         for (const icon of icons) {
             expect(icon.classes()).toContain('h-5')

@@ -29,6 +29,14 @@ export const dataTableHeaderVariants = cva(
     ],
 )
 
+export const dataTableTitleVariants = cva(
+    'text-3xl font-black tracking-tight break-words',
+)
+
+export const dataTableDescriptionVariants = cva(
+    'mt-1 text-sm font-medium text-brutal-muted-foreground break-words',
+)
+
 export const dataTableHeadVariants = cva(
     [
         'px-4 py-3 text-left',

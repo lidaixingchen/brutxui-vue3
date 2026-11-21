@@ -7,7 +7,7 @@ vi.mock('reka-ui', async (importOriginal) => {
     const { ref } = await import('vue')
     return {
         ...primitives,
-        injectPopoverRootContext: () => ({ open: ref(false) }),
+        injectPopoverRootContext: () => ({ open: ref(false), triggerElement: ref<HTMLElement>() }),
     }
 })
 

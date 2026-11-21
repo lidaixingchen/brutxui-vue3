@@ -253,10 +253,10 @@ const connectorClasses = computed(() =>
                     class="mt-2 text-center px-1"
                     :class="horizontalLabelClasses[index]"
                 >
-                    <p class="text-xs font-black tracking-wide truncate">
-{{ step.title }}
-</p>
-                    <p v-if="step.description" class="text-xs font-medium text-brutal-muted-foreground mt-0.5 truncate">
+                    <p class="text-xs font-black tracking-wide wrap-anywhere">
+                        {{ step.title }}
+                    </p>
+                    <p v-if="step.description" class="text-xs font-medium text-brutal-muted-foreground mt-0.5 wrap-anywhere">
                         {{ step.description }}
                     </p>
                 </div>

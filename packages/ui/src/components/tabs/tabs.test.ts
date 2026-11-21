@@ -57,19 +57,19 @@ describe('TabsList', () => {
             props: { size: 'sm', orientation: 'horizontal' },
             global: { stubs: { TabsList: primitiveStub } },
         })
-        expect(wrapperSm.classes()).toContain('h-9')
+        expect(wrapperSm.classes()).toContain('min-h-9')
 
         const wrapperDefault = mount(TabsList, {
             props: { size: 'default', orientation: 'horizontal' },
             global: { stubs: { TabsList: primitiveStub } },
         })
-        expect(wrapperDefault.classes()).toContain('h-11')
+        expect(wrapperDefault.classes()).toContain('min-h-11')
 
         const wrapperLg = mount(TabsList, {
             props: { size: 'lg', orientation: 'horizontal' },
             global: { stubs: { TabsList: primitiveStub } },
         })
-        expect(wrapperLg.classes()).toContain('h-14')
+        expect(wrapperLg.classes()).toContain('min-h-14')
     })
 
     it('applies vertical size variant classes', () => {
@@ -132,7 +132,7 @@ describe('TabsTrigger', () => {
         expect(wrapper.classes()).toContain('font-bold')
         expect(wrapper.classes()).toContain('border-3')
         expect(wrapper.classes()).toContain('border-transparent')
-        expect(wrapper.classes()).toContain('h-full')
+        expect(wrapper.classes()).toContain('wrap-anywhere')
         expect(wrapper.classes()).toContain('data-[state=active]:bg-brutal-primary')
     })
 
@@ -526,7 +526,7 @@ describe('Tabs 打卡机插片变体', () => {
     it('激活片上移插入槽位并以厚底边锁定', () => {
         const classTokens = tabsTriggerVariants({ variant: 'slots' }).split(/\s+/)
         expect(classTokens).toContain('data-[state=active]:-translate-y-0.5')
-        expect(classTokens).toContain('data-[state=active]:border-b-brutal-primary')
+        expect(classTokens).toContain('data-[state=active]:border-b-brutal-primary-foreground')
         expect(classTokens).toContain('border-b-4')
     })
 })

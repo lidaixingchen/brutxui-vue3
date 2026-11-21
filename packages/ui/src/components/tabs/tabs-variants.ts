@@ -3,7 +3,7 @@ import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const tabsListVariants = cva(
     [
-        'inline-flex justify-center p-1 gap-1',
+        'inline-flex p-1 gap-1',
         'bg-brutal-bg border-3 border-brutal shadow-brutal-sm rounded-brutal',
     ],
     {
@@ -14,14 +14,14 @@ export const tabsListVariants = cva(
                 lg: '',
             },
             orientation: {
-                horizontal: 'items-center max-w-full overflow-x-auto',
-                vertical: 'flex-col items-stretch w-fit max-w-full overflow-x-auto',
+                horizontal: 'items-stretch [justify-content:safe_center] max-w-full overflow-x-auto',
+                vertical: 'flex-col items-stretch justify-center w-fit max-w-full overflow-x-auto',
             },
         },
         compoundVariants: [
-            { size: 'sm', orientation: 'horizontal', class: 'h-9' },
-            { size: 'default', orientation: 'horizontal', class: 'h-11' },
-            { size: 'lg', orientation: 'horizontal', class: 'h-14' },
+            { size: 'sm', orientation: 'horizontal', class: 'min-h-9' },
+            { size: 'default', orientation: 'horizontal', class: 'min-h-11' },
+            { size: 'lg', orientation: 'horizontal', class: 'min-h-14' },
             { size: 'sm', orientation: 'vertical', class: 'min-w-28' },
             { size: 'default', orientation: 'vertical', class: 'min-w-36' },
             { size: 'lg', orientation: 'vertical', class: 'min-w-44' },
@@ -35,7 +35,7 @@ export const tabsListVariants = cva(
 
 export const tabsTriggerVariants = cva(
     [
-        'inline-flex items-center justify-center whitespace-nowrap px-3 h-full',
+        'inline-flex min-w-0 max-w-full shrink-0 items-center justify-center wrap-anywhere px-3 text-center',
         'font-bold text-sm tracking-wide',
         'border-3 border-transparent',
         'rounded-brutal',
@@ -57,8 +57,8 @@ export const tabsTriggerVariants = cva(
                 slots: [
                     'font-mono text-xs uppercase tracking-widest px-2',
                     'border-b-4 border-b-transparent rounded-none',
-                    'data-[state=active]:bg-brutal-bg data-[state=active]:text-brutal-primary',
-                    'data-[state=active]:border-b-brutal-primary data-[state=active]:shadow-none',
+                    'data-[state=active]:bg-brutal-primary data-[state=active]:text-brutal-primary-foreground',
+                    'data-[state=active]:border-b-brutal-primary-foreground data-[state=active]:shadow-none',
                     'data-[state=active]:-translate-y-0.5',
                     'data-[state=inactive]:shadow-none data-[state=inactive]:border-b-4 data-[state=inactive]:border-b-transparent',
                 ],

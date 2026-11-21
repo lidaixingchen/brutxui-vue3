@@ -79,6 +79,7 @@ console.log(sorted)`
 ## Features
 
 - **Syntax Highlighting**: Built-in Prism syntax highlighting engine supporting 20+ languages including JavaScript, TypeScript, Python, Rust, Go, etc. Language grammars are loaded on demand; unused languages have zero footprint.
+- **Filename Contrast**: The header filename uses the full `brutal-fg` semantic foreground color. Custom themes should keep `--brutal-fg` and `--brutal-muted` at WCAG AA contrast.
 - **One-Click Copy**: Seamlessly integrates a `CopyToClipboard` button in the top-right corner, providing tactile physics animation and text feedback on successful copy.
 - **Line Numbers**: Set the `show-line-numbers` prop to `true` to display a line number list on the left side, with a classic solid line separator on the right edge of the gutter.
 - **Collapse/Expand**: Use the `maxLines` prop to limit visible lines in the code area. Excess lines are automatically clipped with "Expand"/"Collapse" buttons, ideal for displaying long code in limited space.

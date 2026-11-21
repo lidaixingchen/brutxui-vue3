@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { floatingContentSideOffsets } from '@/lib/floating-content-variants'
 import { dropdownMenuSubContentVariants } from './dropdown-menu-variants'
 import { useFloatingOverlayLayer } from '@/lib/overlay-layer'
+import { usePortalThemeInheritance } from '@/lib/portal-theme'
 
 interface DropdownMenuSubContentProps {
     sideOffset?: number
@@ -16,7 +17,14 @@ const props = withDefaults(defineProps<DropdownMenuSubContentProps>(), {
     class: undefined,
 })
 
-const { style: overlayLayerStyle, ref: floatingLayerRef } = useFloatingOverlayLayer('dropdown')
+const { style: overlayLayerStyle, ref: floatingLayerRef, element: floatingElement } = useFloatingOverlayLayer('dropdown')
+const submenuTrigger = computed(() => {
+    const content = floatingElement.value
+    if (!content) return undefined
+    const triggerId = content.getAttribute('aria-labelledby')
+    return triggerId ? content.ownerDocument.getElementById(triggerId) ?? undefined : undefined
+})
+usePortalThemeInheritance(submenuTrigger, floatingElement)
 
 const classes = computed(() =>
     cn(
@@ -25,13 +33,13 @@ const classes = computed(() =>
     )
 )
 
-// 显式转发 $attrs：避免未来结构变化时隐式透传静默失效
+// 内容原语接收调用方的样式和无障碍属性。
 defineOptions({ inheritAttrs: false })
 </script>
 
 <template>
     <DropdownMenuSubContentPrimitive
-            :ref="floatingLayerRef"
+        :ref="floatingLayerRef"
         v-bind="$attrs"
         :side-offset="sideOffset"
         :class="classes"

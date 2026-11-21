@@ -32,13 +32,13 @@ afterEach(async () => {
 
 describe('Stepper horizontal label geometry', () => {
     it.each([
-        { name: '原始描述', fixtureSteps: steps, expectTruncation: false },
+        { name: '原始描述', fixtureSteps: steps, expectMultipleLines: false },
         {
             name: '长描述',
             fixtureSteps: steps.map(step => ({ ...step, description: `${step.description} — Complete the account information and verification` })),
-            expectTruncation: true,
+            expectMultipleLines: true,
         },
-    ])('$name stays within each step and clips overflowing text', async ({ fixtureSteps, expectTruncation }) => {
+    ])('$name stays within each step and keeps its full text visible', async ({ fixtureSteps, expectMultipleLines }) => {
         originalViewport = { width: window.innerWidth, height: window.innerHeight }
         await page.viewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT)
         host = document.createElement('div')
@@ -65,12 +65,11 @@ describe('Stepper horizontal label geometry', () => {
         }
 
         for (const description of descriptions) {
-            const style = getComputedStyle(description)
-            expect(style.whiteSpace).toBe('nowrap')
-            expect(style.overflow).toBe('hidden')
-            expect(style.textOverflow).toBe('ellipsis')
-            if (expectTruncation) {
-                expect(description.scrollWidth).toBeGreaterThan(description.clientWidth)
+            expect(description.scrollWidth).toBeLessThanOrEqual(description.clientWidth)
+            if (expectMultipleLines) {
+                const range = document.createRange()
+                range.selectNodeContents(description)
+                expect(range.getClientRects().length).toBeGreaterThan(1)
             }
         }
     })

@@ -38,4 +38,37 @@ describe('Calendar narrow layout', () => {
             expect(day.right).toBeLessThanOrEqual(bounds.right)
         }
     })
+
+    it('keeps the month toolbar in place when scrolling card events into view', async () => {
+        const date = new Date(2026, 10, 22)
+        const eventTitle = '用户权限季度人工审核'
+        wrapper = mount(defineComponent({
+            setup: () => () => h('div', { style: { width: `${CONTAINER_WIDTH}px` } }, [
+                h(Calendar, { mode: 'card', modelValue: date, events: [{ date, title: eventTitle }] }),
+            ]),
+        }))
+        const selector = '[data-testid="calendar-card-event-badge"]'
+        await vi.waitFor(() => {
+            expect(wrapper!.element.querySelector(selector)).not.toBeNull()
+        })
+
+        const weeks = wrapper.element.querySelector<HTMLElement>('.vc-weeks')!
+        const title = wrapper.element.querySelector<HTMLElement>('.vc-title')!
+        const badge = weeks.querySelector<HTMLElement>(selector)!
+        const toolbarLeft = title.getBoundingClientRect().left
+        expect(weeks.scrollWidth).toBeGreaterThan(weeks.clientWidth)
+        weeks.scrollLeft = weeks.scrollWidth
+
+        const range = document.createRange()
+        range.selectNodeContents(badge)
+        const lines = Array.from(range.getClientRects())
+        expect(badge.textContent?.trim()).toBe(eventTitle)
+        expect(badge.scrollWidth).toBeLessThanOrEqual(badge.clientWidth)
+        expect(lines.length).toBeGreaterThan(1)
+        for (const line of lines) {
+            expect(line.left).toBeGreaterThanOrEqual(weeks.getBoundingClientRect().left)
+            expect(line.right).toBeLessThanOrEqual(weeks.getBoundingClientRect().right)
+        }
+        expect(title.getBoundingClientRect().left).toBe(toolbarLeft)
+    })
 })

@@ -7,6 +7,8 @@ description: A navigation menu component supporting horizontal and vertical mode
 
 Used for site headers or sidebars, supporting `mode: 'horizontal' | 'vertical'`, multi-level nested `SubMenu` fold animations, and dynamic routing pushing with `vue-router`.
 
+In vertical mode, long menu item labels wrap naturally within the item width, while the full text remains the item's accessible name.
+
 ## Preview
 
 <ComponentPreview>

@@ -30,7 +30,7 @@ onBeforeUnmount(() => {
 })
 
 const classes = computed(() =>
-    cn('text-sm font-medium [&_p]:leading-relaxed', props.class)
+    cn('break-words text-sm font-medium [&_p]:leading-relaxed', props.class)
 )
 </script>
 

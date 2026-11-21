@@ -8,6 +8,8 @@ translated: true
 
 A neo-brutalist style tab navigation component built on top of reka-ui's Tabs primitive. Supports horizontal/vertical layouts, controlled mode, and multiple active state color variants.
 
+When horizontal tab content exceeds its container, the list scrolls horizontally so both the first and last tabs can be shown in full. Tabs remain centered when they fit.
+
 ## Demo
 
 <ComponentPreview>

@@ -89,7 +89,7 @@ const rootClasses = computed(() => cn(props.class))
                     :key="tab.value"
                     :value="tab.value"
                     :disabled="tab.disabled"
-                    :class="orientation === 'horizontal' ? 'flex-1 shrink-0' : 'w-full'"
+                    :class="orientation === 'horizontal' ? 'grow' : 'w-full'"
                 >
                     {{ tab.label }}
                 </TabsTrigger>
@@ -102,7 +102,7 @@ const rootClasses = computed(() => cn(props.class))
                     :value="tab.value"
                 >
                     <Card variant="flat">
-                        <p class="text-brutal-muted-foreground font-medium">
+                        <p class="text-brutal-muted-foreground font-medium wrap-anywhere">
                             {{ tab.label }}
                         </p>
                     </Card>

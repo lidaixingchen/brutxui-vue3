@@ -15,6 +15,7 @@ import {
     selectViewportPositionVariants,
 } from './select-variants'
 import { useFloatingOverlayLayer } from '@/lib/overlay-layer'
+import { usePortalThemeInheritance } from '@/lib/portal-theme'
 
 defineOptions({ inheritAttrs: false })
 
@@ -28,7 +29,9 @@ const props = withDefaults(defineProps<SelectContentProps>(), {
     class: undefined,
 })
 
-const { style: overlayLayerStyle, ref: floatingLayerRef } = useFloatingOverlayLayer('dropdown', injectSelectRootContext().open, () => props.position === 'item-aligned')
+const rootContext = injectSelectRootContext()
+const { style: overlayLayerStyle, ref: floatingLayerRef, element: floatingElement } = useFloatingOverlayLayer('dropdown', rootContext.open, () => props.position === 'item-aligned')
+usePortalThemeInheritance(rootContext.triggerElement, floatingElement)
 
 const contentClasses = computed(() =>
     cn(

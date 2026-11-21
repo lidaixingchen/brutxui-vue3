@@ -113,6 +113,12 @@ const isOpen = ref(false)
 </template>
 ```
 
+## Scoped Themes
+
+`TooltipContent` inherits the trigger scope's theme preset, dark mode, and `--brutal-*` tokens. It retains its inverse colors: the foreground token supplies the background, and the background token supplies the text color. Ancestor theme classes and inline token changes update open content when portalled to `body` or the container specified by `to`.
+
+The content panel's own `class` and inline tokens can override inherited values. See [theme tokens](/en/guide/theme#scoped-themes-for-portals).
+
 ## Sub-components
 
 | Component | Description |

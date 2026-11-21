@@ -19,7 +19,7 @@ export const statisticVariants = cva(
 )
 
 export const statisticTitleVariants = cva(
-    'font-bold tracking-wider uppercase text-brutal-muted-foreground select-none',
+    'font-bold tracking-wider uppercase text-brutal-muted-foreground select-none wrap-anywhere',
     {
         variants: {
             size: {

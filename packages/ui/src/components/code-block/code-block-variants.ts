@@ -17,7 +17,7 @@ export const codeBlockHeaderMetadataVariants = cva(
 )
 
 export const codeBlockFilenameVariants = cva(
-    'min-w-0 break-words text-brutal-fg/80 font-black'
+    'min-w-0 break-words text-brutal-fg font-black'
 )
 
 export const codeBlockLanguageVariants = cva(

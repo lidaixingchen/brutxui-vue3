@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { brutalDestructiveTextClasses } from '@/lib/semantic-text-variants'
 
 export const formWizardRootVariants = cva(
     [
@@ -26,7 +27,8 @@ export const formWizardStepCounterVariants = cva(
 
 export const formWizardErrorPanelVariants = cva(
     [
-        'p-4 border-3 border-brutal bg-brutal-destructive/10 text-brutal-destructive',
+        'p-4 border-3 border-brutal bg-brutal-destructive/10',
+        brutalDestructiveTextClasses,
     ],
 )
 

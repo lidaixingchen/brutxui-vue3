@@ -27,7 +27,7 @@ interface ToggleProps {
 
 const props = withDefaults(defineProps<ToggleProps>(), {
     modelValue: undefined,
-    defaultValue: undefined,
+    defaultValue: false,
     variant: 'default',
     size: 'default',
     disabled: false,

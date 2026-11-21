@@ -146,6 +146,10 @@ const selectedFruit = ref('')
 </template>
 ```
 
+## Scoped Themes
+
+`SelectContent` retains the trigger scope's theme preset, dark mode, and `--brutal-*` tokens after being portalled to `body`, with both `popper` and `item-aligned` positioning. Changes to ancestor theme classes or inline tokens update open content. The content panel's own `class` and inline tokens can override inherited values. See [theme tokens](/en/guide/theme#scoped-themes-for-portals).
+
 ## Sub-components
 
 | Component | Description |

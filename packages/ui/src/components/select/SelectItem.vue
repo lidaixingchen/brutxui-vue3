@@ -33,8 +33,6 @@ const classes = computed(() =>
     cn(selectItemVariants({ variant: props.variant }), 'min-w-0', props.class)
 )
 
-const textClasses = computed(() => cn('min-w-0 truncate'))
-
 const indicatorClasses = computed(() =>
     cn('absolute left-2 flex h-4 w-4 items-center justify-center', props.indicatorClass)
 )
@@ -51,7 +49,7 @@ const iconClasses = computed(() =>
                 <Check :class="iconClasses" />
             </SelectItemIndicatorPrimitive>
         </span>
-        <SelectItemTextPrimitive :class="textClasses">
+        <SelectItemTextPrimitive class="min-w-0 wrap-anywhere">
             <slot />
         </SelectItemTextPrimitive>
     </SelectItemPrimitive>

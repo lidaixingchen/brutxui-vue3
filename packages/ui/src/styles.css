@@ -50,13 +50,13 @@
     --color-brutal-destructive-subtle: var(--brutal-destructive-subtle, color-mix(in srgb, var(--brutal-destructive, #EF476F) 12%, var(--brutal-bg, #ffffff)));
     --color-brutal-success-subtle: var(--brutal-success-subtle, color-mix(in srgb, var(--brutal-success, #7FB069) 12%, var(--brutal-bg, #ffffff)));
     --color-brutal-info-subtle: var(--brutal-info-subtle, color-mix(in srgb, var(--brutal-info, #4A90D9) 12%, var(--brutal-bg, #ffffff)));
+
+    /* Dynamic: border/radius resolve in the consuming element scope */
+    --border-width-3: var(--brutal-border-width, 3px);
+    --radius-brutal: var(--brutal-radius, 0px);
 }
 
 @theme {
-    /* Dynamic: border/radius use --brutal-* for theme support */
-    --border-width-3: var(--brutal-border-width, 3px);
-    --radius-brutal: var(--brutal-radius, 0px);
-
     /* Default font family (preflight html/body 继承，可被消费方 @theme 覆盖) */
     --default-font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
 

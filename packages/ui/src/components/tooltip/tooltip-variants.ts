@@ -4,7 +4,7 @@ import { inverseFloatingSurfaceClasses, tooltipFloatingAnimationClasses } from '
 export const tooltipContentVariants = cva(
     [
         'z-tooltip max-w-[calc(100vw-2rem)] max-h-[var(--reka-tooltip-content-available-height)] overflow-auto px-3 py-1.5',
-        'text-sm font-bold',
+        'text-sm font-bold wrap-anywhere',
         ...inverseFloatingSurfaceClasses,
         ...tooltipFloatingAnimationClasses,
     ]

@@ -7,7 +7,7 @@ vi.mock('reka-ui', async (importOriginal) => {
     const { ref } = await import('vue')
     return {
         ...primitives,
-        injectTooltipRootContext: () => ({ open: ref(false) }),
+        injectTooltipRootContext: () => ({ open: ref(false), trigger: ref<HTMLElement>() }),
     }
 })
 

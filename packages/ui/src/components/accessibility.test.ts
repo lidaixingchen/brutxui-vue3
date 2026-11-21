@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { computeAccessibleName } from 'dom-accessibility-api'
 import { defineComponent, ref, nextTick } from 'vue'
 import {
     DialogRoot,
@@ -418,9 +419,9 @@ describe('Switch accessibility', () => {
         wrapper.unmount()
     })
 
-    it('should have default aria-label from locale', () => {
+    it('should have a default accessible name from locale', () => {
         const wrapper = mount(Switch, { ...localeProvide, attachTo: document.body })
-        expect(wrapper.find('[role="switch"]').attributes('aria-label')).toBeTruthy()
+        expect(computeAccessibleName(wrapper.get('[role="switch"]').element)).toBe(en.switch.toggle)
         wrapper.unmount()
     })
 
@@ -480,7 +481,7 @@ describe('RadioGroup accessibility', () => {
 describe('Toggle accessibility', () => {
     it('should have aria-pressed attribute', () => {
         const wrapper = mount(Toggle, { ...localeProvide, attachTo: document.body })
-        expect(wrapper.attributes('aria-pressed')).toBeDefined()
+        expect(wrapper.get('button').attributes('aria-pressed')).toBe('false')
         wrapper.unmount()
     })
 
@@ -557,10 +558,10 @@ describe('DatePicker accessibility', () => {
         wrapper.unmount()
     })
 
-    it('trigger should have aria-label', () => {
+    it('trigger should have a default accessible name from locale', () => {
         const wrapper = mount(DatePicker, { ...localeProvide, attachTo: document.body })
         const trigger = wrapper.find('[role="combobox"]')
-        expect(trigger.attributes('aria-label')).toBeTruthy()
+        expect(computeAccessibleName(trigger.element)).toBe(en.datePicker.placeholder)
         wrapper.unmount()
     })
 
@@ -597,10 +598,10 @@ describe('ColorPicker accessibility', () => {
         wrapper.unmount()
     })
 
-    it('trigger should have aria-label', () => {
+    it('trigger should have a default accessible name from locale', () => {
         const wrapper = mount(ColorPicker, { ...localeProvide, attachTo: document.body })
         const trigger = wrapper.find('[role="combobox"]')
-        expect(trigger.attributes('aria-label')).toBeTruthy()
+        expect(computeAccessibleName(trigger.element)).toBe(en.colorPicker.placeholder)
         wrapper.unmount()
     })
 

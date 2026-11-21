@@ -5,7 +5,7 @@ description: 了解 BrutxUI 的 CSS 变量令牌、主题预设与纹理工具�
 
 # 主题与令牌
 
-BrutxUI 使用 CSS 自定义属性（设计令牌）来控制新粗野主义系统的每个视觉方面。这让定制变得像覆盖一个变量一样简单。颜色工具类会在元素所在作用域读取 `--brutal-*` 运行时令牌，因此 `.dark`、主题预设和动态令牌更新也会作用于局部容器。
+BrutxUI 使用 CSS 自定义属性（设计令牌）来控制新粗野主义系统的每个视觉方面。这让定制变得像覆盖一个变量一样简单。颜色、边框、圆角和阴影工具类会在组件所在作用域读取 `--brutal-*` 运行时令牌，因此 `.dark`、主题预设、局部容器和组件级令牌覆盖都会驱动渲染结果；已配置的过渡按组件自身的时长完成。
 
 如果你想先可视化调参，再复制完整 CSS 变量，可以使用[主题实验室](/guide/theme-playground)。它会展示产品预览、组件矩阵、对比度检查和 token 覆盖率。
 
@@ -285,6 +285,12 @@ BrutxUI 提供 4 套开箱即用的预设主题。通过在根节点或局部容
 
 ---
 
+## 弹层的局部主题
+
+`PopoverContent`、`SelectContent`、`TooltipContent`、`DropdownMenuContent` 和 `DropdownMenuSubContent` 自动继承触发器所在作用域的主题预设类、`.dark` 和 `--brutal-*` 运行时令牌。局部容器的主题类名或内联令牌在弹层打开期间变化时，弹层会同步更新；嵌套弹层沿各自触发器继承，多组主题可以并存。ColorPicker 等复用 Popover 的组件也会继承这套行为。Tooltip 保持前景与背景令牌互换的反色样式。
+
+可通过内容面板自身的 `class` 或内联 `style` 继续覆盖令牌。主题继承保留原有 Portal 定位、层级和键盘焦点行为。
+
 ## 自定义令牌
 
 在 `:root` 级别覆盖令牌以进行全局修改：
@@ -306,6 +312,8 @@ BrutxUI 提供 4 套开箱即用的预设主题。通过在根节点或局部容
 }
 ```
 
+`border-3`、`rounded-brutal` 与 `shadow-brutal*` 会读取组件所在作用域的边框宽度、圆角半径和阴影令牌。容器覆盖和组件自身的内联样式都可用于实时调整这些形态；`border-3` 与 `rounded-brutal` 的 Tailwind 工具类会在使用它们的元素上解析令牌。
+
 也可以在[主题实验室](/guide/theme-playground)中选择基底主题并调节 token，然后复制生成的 CSS 到项目中。
 
 ---
@@ -318,9 +326,9 @@ BrutxUI 注册了以下引用 CSS 变量的 Tailwind 工具类：
 
 | 工具类 | 映射到 | 说明 |
 | :--- | :--- | :--- |
-| `border-3` | `border-width: var(--brutal-border-width)` | 粗野标准边框粗细 |
+| `border-3` | `border-width: var(--brutal-border-width)` | 在使用元素所在作用域解析粗野标准边框粗细 |
 | `border-brutal` | `border-color: var(--brutal-border-color)` | 边框主颜色 |
-| `rounded-brutal` | `border-radius: var(--brutal-radius)` | 实体圆角半径 |
+| `rounded-brutal` | `border-radius: var(--brutal-radius)` | 在使用元素所在作用域解析圆角半径 |
 
 ### 阴影
 

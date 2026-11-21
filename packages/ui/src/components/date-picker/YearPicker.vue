@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { Calendar as CalendarIcon, ChevronDown, X } from '@lucide/vue'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
-import { cn } from '@/lib/utils'
+import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 import { brutalDestructiveHoverTextClasses } from '@/lib/semantic-text-variants'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
 import { formatDate } from '@/lib/date'
 import { useLocale } from '@/composables/useLocale'
 import { useDatePicker } from '@/composables/useDatePicker'
 import PopoverContent from '../popover/PopoverContent.vue'
-import { datePickerTriggerVariants } from './date-picker-variants'
+import { datePickerControlTriggerVariants, datePickerControlVariants, datePickerTriggerVariants } from './date-picker-variants'
 import YearPickerPanel from './YearPickerPanel.vue'
 import { type YearPickerEmits, type YearPickerProps } from './types'
 
@@ -64,7 +64,7 @@ const {
     handlePanelUpdate,
     handlePanelConfirm,
     handlePanelClear,
-    handleClearClick,
+    handleClearClick: clearDatePicker,
     handleTriggerKeydown,
 } = useDatePicker({
     modelValue: () => props.modelValue,
@@ -79,10 +79,13 @@ const {
 const triggerClasses = computed(() =>
     cn(
         datePickerTriggerVariants({ size: props.size, variant: props.variant }),
+        datePickerControlTriggerVariants(),
         !props.modelValue && 'text-brutal-muted-foreground',
         props.class
     )
 )
+
+const controlClasses = computed(() => cn(datePickerControlVariants({ disabled: props.disabled })))
 
 const calendarIconClasses = computed(() =>
     iconSizeVariants({ size: props.size === 'default' ? 'md' : props.size })
@@ -96,10 +99,19 @@ const clearPlaceholderClasses = computed(() =>
 const clearButtonClasses = computed(() =>
     cn(
         'text-brutal-fg transition-colors',
+        FOCUS_RING_CLASSES,
         brutalDestructiveHoverTextClasses,
         props.size === 'sm' ? 'right-8 w-4 h-4' : 'right-10 w-5 h-5'
     )
 )
+
+const triggerRef = ref<HTMLButtonElement | null>(null)
+
+function handleClearClick(event: Event) {
+    clearDatePicker(event)
+    if (props.disabled) return
+    void nextTick(() => triggerRef.value?.focus())
+}
 
 defineExpose({ open })
 </script>
@@ -107,10 +119,11 @@ defineExpose({ open })
 <template>
     <PopoverRoot v-model:open="open">
         <input v-if="hiddenInputValue !== undefined" type="hidden" :name="name" :value="hiddenInputValue" :disabled="disabled">
-        <div class="relative w-full">
+        <div :class="controlClasses">
             <PopoverTrigger as-child>
                 <button
                     :id="id"
+                    ref="triggerRef"
                     type="button"
                     :name="name"
                     role="combobox"

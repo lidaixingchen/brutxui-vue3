@@ -45,6 +45,12 @@ import { PopoverContent, Button } from 'brutx-ui-vue'
 </template>
 ```
 
+## Scoped Themes
+
+`PopoverContent` is portalled to `body` and inherits the trigger scope's theme preset, dark mode, and `--brutal-*` tokens. Changes to ancestor theme classes or inline tokens also update open content. Nested Popovers and Popover-based ColorPickers follow the same rule.
+
+The content panel's own `class` and inline tokens can override inherited values. See [theme tokens](/en/guide/theme#scoped-themes-for-portals).
+
 ## Sub-components
 
 | Component | Description |

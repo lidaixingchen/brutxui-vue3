@@ -40,6 +40,14 @@ const SHADOW_ENTRIES: ThemeEntry[] = SHADOW_DEFINITIONS.map(def => ({
     build: def.build,
 }));
 
+const CLI_SHADOW_STATE_SELECTORS: Record<string, readonly string[]> = {
+    '--shadow-brutal': [String.raw`.hover\:shadow-brutal:hover`, String.raw`.focus\:shadow-brutal:focus`],
+    '--shadow-brutal-sm': [String.raw`.hover\:shadow-brutal-sm:hover`, String.raw`.data-\[state\=active\]\:shadow-brutal-sm[data-state="active"]`],
+    '--shadow-brutal-lg': [String.raw`.hover\:shadow-brutal-lg:hover`, String.raw`.focus\:shadow-brutal-lg:focus`],
+    '--shadow-brutal-primary': [String.raw`.focus\:shadow-brutal-primary:focus`],
+    '--shadow-brutal-secondary': [String.raw`.focus\:shadow-brutal-secondary:focus`],
+};
+
 const SUBTLE_ENTRIES: SubtleEntry[] = SUBTLE_COLOR_DEFS.map(({ key, lightPct, darkPct }) => ({
     varName: `brutal-${key}-subtle`,
     buildLight: (l: ThemeTokens): string =>
@@ -83,11 +91,8 @@ const INLINE_THEME_GROUPS: ThemeGroup[] = [
             build: (l: ThemeTokens): string => `var(--${e.varName}, ${e.buildLight(l)})`,
         })),
     },
-];
-
-const THEME_GROUPS: ThemeGroup[] = [
     {
-        comment: 'Dynamic: border/radius use --brutal-* for theme support',
+        comment: 'Dynamic: border/radius resolve in the consuming element scope',
         entries: [
             {
                 themeVar: '--border-width-3',
@@ -99,6 +104,9 @@ const THEME_GROUPS: ThemeGroup[] = [
             },
         ],
     },
+];
+
+const THEME_GROUPS: ThemeGroup[] = [
     {
         comment: 'Default font family (preflight html/body 继承，可被消费方 @theme 覆盖)',
         entries: [
@@ -273,10 +281,12 @@ export class TokenStyleCompiler {
         ];
         for (const def of SHADOW_DEFINITIONS) {
             const className: string = `.${def.themeVar.replace(CSS_VAR_PREFIX_PATTERN, '')}`;
-            shadowRules.push(`${className} {`);
-            shadowRules.push(`    box-shadow: var(${def.themeVar});`);
-            shadowRules.push('}');
-            shadowRules.push('');
+            for (const selector of [className, ...(CLI_SHADOW_STATE_SELECTORS[def.themeVar] ?? [])]) {
+                shadowRules.push(`${selector} {`);
+                shadowRules.push(`    box-shadow: ${def.build(BASE_THEME.light)};`);
+                shadowRules.push('}');
+                shadowRules.push('');
+            }
         }
 
         const patternRules: string[] = [

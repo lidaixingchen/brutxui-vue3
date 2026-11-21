@@ -50,7 +50,7 @@ const underline = ref(false)
 
 ### Native Form
 
-When `name` is provided, a pressed Toggle submits the value `true`; an unpressed Toggle omits the field. `required` requires the Toggle to be pressed. Disabled and loading Toggles are excluded from submission and required validation. Use `defaultValue` to set the initial state in uncontrolled mode.
+When `name` is provided, a pressed Toggle submits the value `true`; an unpressed Toggle omits the field. `required` requires the Toggle to be pressed. Disabled and loading Toggles are excluded from submission and required validation. Uncontrolled mode starts unpressed (`aria-pressed="false"`). Use `defaultValue` to set the initial state.
 
 ```vue
 <script setup>

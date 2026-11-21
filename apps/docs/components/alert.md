@@ -32,6 +32,10 @@ import { Alert, AlertTitle, AlertDescription } from 'brutx-ui-vue'
 </template>
 ```
 
+## 长文本
+
+`AlertTitle` 和 `AlertDescription` 会在可用宽度内换行，长单词、连续字符和链接文本也能断行，保留完整内容。启用 `closable` 时，文本继续避让右上角关闭按钮；带图标时，文字区域缩进对齐，关闭按钮保持自身尺寸和位置。`AlertTitle` 的 `as` / `asChild`、描述的无障碍关联和关闭事件保持可组合。
+
 ## 变体
 
 | 变体 | 说明 |

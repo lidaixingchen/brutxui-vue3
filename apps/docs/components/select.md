@@ -166,6 +166,10 @@ const selectedFruit = ref('')
 </template>
 ```
 
+## 局部主题
+
+`SelectContent` 传送到 `body` 后，仍继承触发器所在作用域的主题预设、暗色模式和 `--brutal-*` 令牌；`popper` 和 `item-aligned` 两种定位方式均支持。打开期间，祖先的主题类名或内联令牌变化会同步，内容面板自身的 `class` 和内联令牌可覆盖继承值。详见[主题与令牌](/guide/theme#弹层的局部主题)。
+
 ## 子组件
 
 | 组件 | 说明 |

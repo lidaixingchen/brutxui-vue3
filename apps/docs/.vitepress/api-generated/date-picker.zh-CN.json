@@ -1139,7 +1139,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/DatePickerRange.vue",
-            "line": 19
+            "line": 23
           },
           "origin": "declared",
           "required": false,
@@ -1176,7 +1176,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/date-picker/DatePickerRange.vue",
-            "line": 20
+            "line": 24
           },
           "origin": "declared",
           "required": false,
