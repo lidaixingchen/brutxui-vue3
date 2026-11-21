@@ -7,18 +7,26 @@ export const dashboardShellVariants = cva(
 export const dashboardSidebarVariants = cva(
     [
         'border-brutal bg-brutal-bg flex flex-col',
-        'transition-all duration-200 ease-brutal-snap',
-        'absolute inset-y-0 left-0 z-dialog md:relative md:inset-auto md:z-auto md:shrink-0',
+        'transition-all duration-200 ease-brutal-snap motion-reduce:transition-none',
     ],
     {
         variants: {
             open: {
-                true: 'w-64 p-4 border-r-3',
-                false: 'w-0 p-0 overflow-hidden border-r-0 md:w-64 md:p-4 md:border-r-3',
+                true: 'w-64 max-w-full p-4 border-r-3',
+                false: 'w-0 p-0 overflow-hidden border-r-0',
+            },
+            layout: {
+                viewport: 'absolute inset-y-0 left-0 z-dialog md:relative md:inset-auto md:z-auto md:shrink-0',
+                fixed: 'relative shrink-0',
+                overlay: 'absolute inset-y-0 left-0 z-dialog',
             },
         },
+        compoundVariants: [
+            { layout: 'viewport', open: false, class: 'md:w-64 md:p-4 md:border-r-3' },
+        ],
         defaultVariants: {
             open: true,
+            layout: 'viewport',
         },
     }
 )

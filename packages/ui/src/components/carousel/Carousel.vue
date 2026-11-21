@@ -94,7 +94,7 @@ const thumbnailClasses = computed(() => {
         lg: 'w-20 h-20',
     }
     return cn(
-        'border-3 border-brutal rounded-brutal cursor-pointer transition-all duration-150 overflow-hidden',
+        'shrink-0 cursor-pointer overflow-hidden rounded-brutal border-3 border-brutal transition-all duration-150 motion-reduce:transition-none',
         brutalHoverLiftSmNoX,
         brutalPress,
         sizeMap[props.thumbnails?.size ?? 'sm']
@@ -113,7 +113,7 @@ const thumbnailContainerClasses = computed(() => {
             position === 'left' ? 'order-first' : 'order-last'
         )
     }
-    return 'flex flex-row justify-center'
+    return 'flex flex-wrap justify-center px-1 py-2'
 })
 
 // 消费 thumbnails.gap 配置（默认 8px，与 Tailwind gap-2 等价）

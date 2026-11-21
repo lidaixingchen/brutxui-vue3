@@ -143,12 +143,12 @@ const resolvedBillingMode = computed<BillingMode>(() => {
     return 'auto'
 })
 
-const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
+const rootClasses = computed(() => cn('@container/pricing-section mx-auto w-full max-w-5xl', props.class))
 
 const planGridClasses = computed(() => cn(
     'grid grid-cols-1 gap-6',
-    resolvedPlans.value.length === 2 && 'md:grid-cols-2',
-    resolvedPlans.value.length >= 3 && 'md:grid-cols-3',
+    resolvedPlans.value.length >= 2 && '@2xl/pricing-section:grid-cols-2',
+    resolvedPlans.value.length >= 3 && '@4xl/pricing-section:grid-cols-3',
 ))
 
 const hasBillingPlans = computed(() =>
@@ -190,12 +190,11 @@ const featureMarkerClasses = computed(() => ({
 }))
 
 function getPlanCardClasses(plan: BrutalistPricingPlan) {
-    // 推荐主打卡片：stacked 多重彩虹阴影（twMerge 覆盖 interactive 变体的单层硬投影）；
-    // relative 恒定承载卡内警戒缎带的 absolute 定位（不随计费开关分支缺失）
     return cn(
+        'flex h-full min-w-0 flex-col',
         plan.popular && 'relative',
         showBillingToggle.value
-            ? plan.popular && 'md:scale-105 shadow-brutal-stacked'
+            ? plan.popular && 'shadow-brutal-stacked'
             : plan.popular && 'bg-brutal-accent/20',
     )
 }
@@ -306,15 +305,15 @@ function getButtonVariant(plan: BrutalistPricingPlan): ButtonVariant {
                             class="absolute inset-x-0 top-0 h-2 border-b-3 border-brutal bg-pattern-hazard"
                         />
                         <CardHeader>
-                            <CardTitle class="text-xl">
+                            <CardTitle class="wrap-anywhere text-xl">
 {{ plan.name }}
 </CardTitle>
-                            <CardDescription>{{ plan.description }}</CardDescription>
+                            <CardDescription class="wrap-anywhere">{{ plan.description }}</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div class="mb-6">
-                                <span class="text-4xl font-black">{{ getPlanPrice(plan) }}</span>
-                                <span class="text-sm font-bold text-brutal-muted-foreground">{{ getPriceLabel(plan) }}</span>
+                            <div class="mb-6 flex flex-wrap items-baseline gap-x-1">
+                                <span class="min-w-0 wrap-anywhere text-4xl font-black">{{ getPlanPrice(plan) }}</span>
+                                <span class="min-w-0 wrap-anywhere text-sm font-bold text-brutal-muted-foreground">{{ getPriceLabel(plan) }}</span>
                             </div>
                             <ul class="space-y-3">
                                 <li v-for="(feature, fIndex) in plan.features" :key="fIndex" class="flex min-w-0 items-start gap-2">
@@ -326,8 +325,8 @@ function getButtonVariant(plan: BrutalistPricingPlan): ButtonVariant {
                                 </li>
                             </ul>
                         </CardContent>
-                        <CardFooter>
-                            <Button :variant="getButtonVariant(plan)" class="w-full" @click="emit('plan-select', plan.name)">
+                        <CardFooter class="mt-auto">
+                            <Button :variant="getButtonVariant(plan)" class="h-auto min-h-11 w-full py-2 whitespace-normal wrap-anywhere" @click="emit('plan-select', plan.name)">
 {{ getButtonText(plan) }}
 </Button>
                         </CardFooter>

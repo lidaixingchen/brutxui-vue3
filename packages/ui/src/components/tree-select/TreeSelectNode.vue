@@ -4,7 +4,7 @@ import { getDocument } from '@/lib/env'
 import { Check, ChevronRight, Folder, FolderOpen } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { treeSelectNodeVariants } from './tree-select-variants'
-import { INDENT_PER_DEPTH, BASE_INDENT_TREE_SELECT, treeChevronBaseClass, treeChevronExpandedClass, treeLabelBaseClass } from '@/lib/tree-variants'
+import { INDENT_PER_DEPTH, BASE_INDENT_TREE_SELECT, treeChevronBaseClass, treeChevronExpandedClass } from '@/lib/tree-variants'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
 import type { TreeNode } from './tree-select-types'
 
@@ -52,8 +52,9 @@ const itemClass = computed(() =>
     )
 )
 
+const MAX_INDENT_SHARE = '25%'
 const indentStyle = computed(() => ({
-    paddingLeft: `${props.depth * INDENT_PER_DEPTH + BASE_INDENT_TREE_SELECT}px`,
+    paddingInlineStart: `min(${props.depth * INDENT_PER_DEPTH + BASE_INDENT_TREE_SELECT}px, max(${BASE_INDENT_TREE_SELECT}px, ${MAX_INDENT_SHARE}))`,
 }))
 
 const chevronClasses = computed(() =>
@@ -239,7 +240,7 @@ function handleBlur() {
             <Folder v-else-if="!isLeaf" :class="folderClasses" />
             <span v-else :class="spacerClasses" />
 
-            <span :class="[treeLabelBaseClass, 'min-w-0 flex-1']">{{ node.label }}</span>
+            <span class="min-w-0 flex-1 whitespace-normal wrap-anywhere">{{ node.label }}</span>
             <span :class="checkSlotClasses" aria-hidden="true">
                 <Check v-if="isSelected" :class="checkClasses" />
             </span>

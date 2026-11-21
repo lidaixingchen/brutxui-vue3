@@ -108,32 +108,13 @@ describe('DashboardShell', () => {
         expect(wrapper.classes()).toContain('my-shell')
     })
 
-    it('applies open/closed classes to sidebar', async () => {
+    it('keeps the desktop sidebar open without a toggle', () => {
         const wrapper = mount(DashboardShell, { ...localeProvide })
         const aside = wrapper.find('aside')
         expect(aside.classes()).toContain('w-64')
         expect(aside.classes()).toContain('p-4')
         expect(aside.classes()).toContain('border-r-3')
-
-        const toggleBtn = wrapper.find('header button')
-        expect(toggleBtn.exists()).toBe(true)
-        await toggleBtn.trigger('click')
-
-        expect(aside.classes()).toContain('w-0')
-        expect(aside.classes()).toContain('p-0')
-        expect(aside.classes()).toContain('overflow-hidden')
-        expect(aside.classes()).toContain('border-r-0')
-    })
-
-    it('links toggle button with sidebar via aria-expanded and aria-controls', async () => {
-        const wrapper = mount(DashboardShell, { ...localeProvide })
-        const toggleBtn = wrapper.find('header button')
-        const aside = wrapper.find('aside')
-        expect(toggleBtn.attributes('aria-controls')).toBe(aside.attributes('id'))
-        expect(toggleBtn.attributes('aria-expanded')).toBe('true')
-
-        await toggleBtn.trigger('click')
-        expect(toggleBtn.attributes('aria-expanded')).toBe('false')
+        expect(wrapper.find('header button').exists()).toBe(false)
     })
 
     describe('mobile viewport', () => {
@@ -146,7 +127,21 @@ describe('DashboardShell', () => {
             await nextTick()
             const aside = wrapper.find('aside')
             expect(aside.classes()).toContain('w-0')
+            expect(aside.classes()).toContain('p-0')
+            expect(aside.classes()).toContain('overflow-hidden')
+            expect(aside.classes()).toContain('border-r-0')
             expect(aside.attributes('inert')).toBeDefined()
+        })
+
+        it('links the toggle to the sidebar and updates its expanded state', async () => {
+            const wrapper = mount(DashboardShell, { ...localeProvide })
+            await nextTick()
+            const toggle = wrapper.get('header button')
+            expect(toggle.attributes('aria-controls')).toBe(wrapper.get('aside').attributes('id'))
+            expect(toggle.attributes('aria-expanded')).toBe('false')
+
+            await toggle.trigger('click')
+            expect(toggle.attributes('aria-expanded')).toBe('true')
         })
 
         it('removes inert and shows overlay when opened on mobile', async () => {

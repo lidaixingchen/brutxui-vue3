@@ -249,7 +249,7 @@ defineExpose({
                         :value="searchQuery"
                         @select="handleCreate"
                     >
-                        <span class="min-w-0 flex-1 truncate">{{ createItemLabel }}</span>
+                        <span class="min-w-0 flex-1 whitespace-normal wrap-anywhere">{{ createItemLabel }}</span>
                     </CommandItem>
                     <CommandGroup>
                         <CommandItem
@@ -270,7 +270,7 @@ defineExpose({
                                 v-else
                                 :class="isSelected(option.value) ? checkSelectedClasses : checkUnselectedClasses"
                             />
-                            <span class="min-w-0 flex-1 truncate">{{ option.label }}</span>
+                            <span class="min-w-0 flex-1 whitespace-normal wrap-anywhere">{{ option.label }}</span>
                         </CommandItem>
                     </CommandGroup>
                     <div v-if="loading" class="flex items-center justify-center py-2">

@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, ref, useId, watch } from 'vue'
+import { computed, nextTick, ref, useId, watch } from 'vue'
 import { ChevronsUpDown, ChevronRight, Check, X } from '@lucide/vue'
 import { PopoverRoot } from 'reka-ui'
 import PopoverTrigger from '../popover/PopoverTrigger.vue'
 import PopoverContent from '../popover/PopoverContent.vue'
 import Checkbox from '../checkbox/Checkbox.vue'
 import { cn } from '@/lib/utils'
+import { getResizeObserverCtor } from '@/lib/env'
 import { useLocale } from '@/composables/useLocale'
 import { useClearableSelection } from '@/composables/useClearableSelection'
 import { useSelectableTrigger } from '@/composables/useSelectableTrigger'
@@ -112,6 +113,7 @@ const activeItemIndex = ref(-1)
 const triggerFocusVisible = ref(false)
 const focusVisibleOptionPath = ref<CascaderValue[]>()
 const triggerRef = ref<HTMLButtonElement | null>(null)
+const columnsRef = ref<HTMLDivElement | null>(null)
 
 const uid = useId()
 const contentId = `${uid}-content`
@@ -480,9 +482,34 @@ const triggerIdAttrs = computed(() => props.id?.trim() ? { id: props.id.trim() }
 const controlClasses = computed(() => cn(cascaderControlVariants({ disabled: props.disabled })))
 
 const contentClasses = computed(() =>
-    cn(cascaderContentVariants(), 'p-0 !w-auto max-w-[100vw]', props.dropdownClass)
+    cn(cascaderContentVariants(), 'p-0 !w-auto max-w-[var(--reka-popover-content-available-width,100vw)]', props.dropdownClass)
 )
 const triggerTextClasses = computed(() => cn('min-w-0 flex-1 truncate', showClear.value && 'pr-6'))
+
+function revealColumn(index: number) {
+    const rail = columnsRef.value
+    const column = rail?.children.item(index)
+    if (!rail || !column || rail.scrollWidth <= rail.clientWidth) return
+
+    const bounds = column.getBoundingClientRect()
+    const left = rail.getBoundingClientRect().left + rail.clientLeft
+    const right = left + rail.clientWidth
+    if (bounds.left < left) {
+        rail.scrollLeft += bounds.left - left
+    } else if (bounds.right > right) {
+        rail.scrollLeft += bounds.right - right
+    }
+}
+
+watch([columnsRef, activeColumnIndex], ([, index]) => revealColumn(index), { flush: 'post' })
+watch(columnsRef, (rail, _, onCleanup) => {
+    const ResizeObserverCtor = getResizeObserverCtor()
+    if (!rail || !ResizeObserverCtor) return
+
+    const observer = new ResizeObserverCtor(() => revealColumn(activeColumnIndex.value))
+    observer.observe(rail)
+    onCleanup(() => observer.disconnect())
+}, { flush: 'post' })
 
 const displayText = useSelectionDisplayText({
     selectedItems: selectedDisplayPaths,
@@ -501,8 +528,9 @@ function setActiveItem(option: CascaderOption, colIdx: number) {
     activePath.value = [...activePath.value.slice(0, colIdx), option.value]
 }
 
-function handleMouseEnter(option: CascaderOption, colIdx: number) {
-    if (option.disabled) return
+function handleMouseMove(option: CascaderOption, colIdx: number, itemIdx: number) {
+    // 横向滚动会改变指针下方的选项，只有指针移动才更新悬停路径。
+    if (option.disabled || isCurrentOption(option, colIdx, itemIdx)) return
     setActiveItem(option, colIdx)
 }
 
@@ -525,6 +553,14 @@ function handleItemClick(option: CascaderOption, colIdx: number) {
             }
         }
     }
+}
+
+async function handlePointerItemClick(option: CascaderOption, colIdx: number) {
+    handleItemClick(option, colIdx)
+    if (option.disabled || !option.children?.length) return
+
+    await nextTick()
+    revealColumn(colIdx + 1)
 }
 
 const {
@@ -745,7 +781,12 @@ function handleKeyDown(e: KeyboardEvent) {
             <div v-if="options.length === 0" class="px-4 py-6 text-sm text-brutal-muted-foreground text-center">
                 {{ resolvedEmptyText }}
             </div>
-            <div v-else :id="contentId" class="grid grid-flow-col auto-cols-[180px] divide-x-3 divide-brutal h-64 max-w-full overflow-x-auto overflow-y-hidden w-max bg-brutal-bg text-brutal-fg">
+            <div
+                v-else
+                :id="contentId"
+                ref="columnsRef"
+                class="grid h-64 w-max max-w-full grid-flow-col auto-cols-[min(11.25rem,calc(var(--reka-popover-content-available-width,100vw)/2_-_var(--brutal-border-width,3px)))] divide-x-3 divide-brutal overflow-x-auto overflow-y-hidden bg-brutal-bg text-brutal-fg"
+            >
                 <div
                     v-for="(col, colIdx) in columns"
                     :key="colIdx"
@@ -765,8 +806,8 @@ function handleKeyDown(e: KeyboardEvent) {
                         :data-active-path="isActivePath(option, colIdx) ? '' : undefined"
                         :data-selected-trail="isOnSelectedTrail(option, colIdx) ? '' : undefined"
                         :class="itemClasses"
-                        @mouseenter="handleMouseEnter(option, colIdx)"
-                        @click="handleItemClick(option, colIdx)"
+                        @mousemove="handleMouseMove(option, colIdx, optIdx)"
+                        @click="handlePointerItemClick(option, colIdx)"
                         @focusin="handleOptionFocusIn(getOptionPath(option, colIdx), $event)"
                         @focusout="handleOptionFocusOut(getOptionPath(option, colIdx), $event)"
                     >

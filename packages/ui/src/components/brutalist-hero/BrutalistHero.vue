@@ -42,7 +42,7 @@ const emit = defineEmits<{
     'secondary-cta': []
 }>()
 
-const rootClasses = computed(() => cn('w-full', props.class))
+const rootClasses = computed(() => cn('@container/brutalist-hero w-full', props.class))
 
 const primaryCtaIconClasses = computed(() =>
     cn(iconSizeVariants({ size: props.iconSize }), 'ml-2 stroke-[3]')
@@ -53,24 +53,24 @@ const badgeIconClasses = cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
 
 <template>
     <div :class="rootClasses">
-        <div class="grid min-w-0 grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="grid min-w-0 grid-cols-1 items-center gap-12 @3xl/brutalist-hero:grid-cols-2">
             <div class="min-w-0">
                 <Badge variant="accent" class="mb-6 gap-2 rotate-[-1deg] font-black">
                     <Sparkles :class="badgeIconClasses" />
                     <span>{{ t('brutalistHero.neoBrutalismUI') }}</span>
                 </Badge>
-                <h1 class="text-4xl lg:text-5xl font-black tracking-tight leading-tight">
+                <h1 class="wrap-anywhere text-4xl leading-tight font-black tracking-tight @3xl/brutalist-hero:text-5xl">
 {{ resolvedTitle }}
 </h1>
-                <p v-if="resolvedSubtitle" class="mt-4 text-lg text-brutal-muted-foreground font-medium">
+                <p v-if="resolvedSubtitle" class="mt-4 wrap-anywhere text-lg font-medium text-brutal-muted-foreground">
 {{ resolvedSubtitle }}
 </p>
                 <div class="mt-8 flex flex-wrap gap-4">
-                    <Button variant="primary" size="lg" flair="stacked" @click="emit('primary-cta')">
+                    <Button variant="primary" size="lg" flair="stacked" class="h-auto min-h-14 max-w-full whitespace-normal wrap-anywhere text-left" @click="emit('primary-cta')">
                         {{ resolvedPrimaryCtaText }}
                         <ArrowRight :class="primaryCtaIconClasses" />
                     </Button>
-                    <Button variant="outline" size="lg" @click="emit('secondary-cta')">
+                    <Button variant="outline" size="lg" class="h-auto min-h-14 max-w-full whitespace-normal wrap-anywhere text-left" @click="emit('secondary-cta')">
 {{ resolvedSecondaryCtaText }}
 </Button>
                 </div>

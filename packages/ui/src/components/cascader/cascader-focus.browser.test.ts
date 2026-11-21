@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { userEvent } from 'vitest/browser'
+import { page, userEvent } from 'vitest/browser'
 import { defineComponent, h, nextTick, ref, type Ref } from 'vue'
 import type { CascaderOption } from './cascader-types'
 import Cascader from './Cascader.vue'
@@ -12,11 +12,16 @@ const initialOptions: CascaderOption[] = [
 ]
 
 let mounted: ReturnType<typeof mount> | undefined
+let originalViewport: { width: number; height: number } | undefined
 
-afterEach(() => {
+afterEach(async () => {
     mounted?.unmount()
     mounted = undefined
     document.body.textContent = ''
+    if (originalViewport) {
+        await page.viewport(originalViewport.width, originalViewport.height)
+        originalViewport = undefined
+    }
 })
 
 function findRow(label: string): HTMLElement {
@@ -111,5 +116,48 @@ describe('Cascader 可见焦点身份', () => {
         expect(childCheckbox.matches(':focus-visible')).toBe(true)
         expect(findRow('Parent').hasAttribute('data-focus-visible')).toBe(false)
         expect(findRow('Child').hasAttribute('data-focus-visible')).toBe(true)
+    })
+
+    it('在窄视口中随方向键滚动，使当前层级始终可见', async () => {
+        originalViewport = { width: window.innerWidth, height: window.innerHeight }
+        await page.viewport(320, 850)
+        const options: CascaderOption[] = [{
+            value: 'country', label: '中国', children: [{
+                value: 'province', label: '浙江省', children: [{
+                    value: 'city', label: '杭州市', children: [{ value: 'district', label: '西湖区' }],
+                }],
+            }],
+        }]
+        mounted = mount(defineComponent({ setup: () => () => h(Cascader, { options }) }))
+
+        const trigger = document.querySelector<HTMLElement>('[role="combobox"]')!
+        trigger.focus()
+        expect(document.activeElement).toBe(trigger)
+        await userEvent.keyboard('{ArrowDown}')
+        await expect.poll(() => trigger.getAttribute('aria-expanded')).toBe('true')
+        await userEvent.keyboard('{ArrowDown}')
+        await userEvent.hover(findRow('中国'))
+        for (const label of ['浙江省', '杭州市', '西湖区']) {
+            await userEvent.keyboard('{ArrowRight}')
+            await expect.poll(() => findRow(label).id === trigger.getAttribute('aria-activedescendant')).toBe(true)
+        }
+
+        const measureActiveRow = (label: string) => {
+            const row = findRow(label)
+            const rail = row.closest('[role="listbox"]')!.parentElement!.getBoundingClientRect()
+            const bounds = row.getBoundingClientRect()
+            return {
+                active: row.id === trigger.getAttribute('aria-activedescendant'),
+                clippedPixels: Math.max(0, Math.round(rail.left - bounds.left), Math.round(bounds.right - Math.min(rail.right, window.innerWidth))),
+            }
+        }
+
+        await expect.poll(() => measureActiveRow('西湖区')).toEqual({ active: true, clippedPixels: 0 })
+        for (const label of ['杭州市', '浙江省', '中国']) {
+            await userEvent.keyboard('{ArrowLeft}')
+            await expect.poll(() => findRow(label).id === trigger.getAttribute('aria-activedescendant')).toBe(true)
+        }
+        await expect.poll(() => measureActiveRow('中国')).toEqual({ active: true, clippedPixels: 0 })
+        expect(document.activeElement).toBe(trigger)
     })
 })

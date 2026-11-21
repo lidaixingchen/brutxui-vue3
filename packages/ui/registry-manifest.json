@@ -269,6 +269,7 @@
     "lib": [
       "brutal-interaction-variants.ts",
       "collection-item-variants.ts",
+      "env.ts",
       "floating-animation-classes.ts",
       "floating-content-variants.ts"
     ]

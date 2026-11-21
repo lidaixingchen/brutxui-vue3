@@ -272,26 +272,26 @@ describe('Cascader', () => {
         it('applies trail style to parent nodes of selected path in single mode', async () => {
             wrapper = mount(Cascader, {
                 ...localeProvide,
-                props: { options, modelValue: ['zh', 'bj', 'hd'] },
+                props: { options, modelValue: ['zh', 'bj', 'hd'], open: true },
                 attachTo: document.body,
             })
-            const vm = wrapper.vm as any
-            vm.open = true
             await nextTick()
 
-            // Column 0: activePath is empty, getOptionPath returns ['zh'] which is a prefix of the selection
-            expect(vm.isOnSelectedTrail(options[0], 0)).toBe(true)
-            expect(vm.isOnSelectedTrail(options[1], 0)).toBe(false)
+            const findRow = (label: string) => Array.from(document.querySelectorAll('[role="option"]'))
+                .find(row => row.querySelector('[data-slot="cascader-option-label"]')?.textContent === label)
 
-            // Simulate user hovering 'zh' to expand column 1
-            vm.handleMouseEnter(options[0], 0)
-            await nextTick()
-            expect(vm.isOnSelectedTrail(options[0]!.children![0], 1)).toBe(true)
+            const china = findRow('China')!
+            expect(china.hasAttribute('data-selected-trail')).toBe(true)
+            expect(findRow('USA')?.hasAttribute('data-selected-trail')).toBe(false)
 
-            // Simulate user hovering 'bj' to expand column 2
-            vm.handleMouseEnter(options[0]!.children![0], 1)
+            china.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }))
             await nextTick()
-            expect(vm.isOnSelectedTrail(options[0]!.children![0]!.children![0], 2)).toBe(false)
+            const beijing = findRow('Beijing')!
+            expect(beijing.hasAttribute('data-selected-trail')).toBe(true)
+
+            beijing.dispatchEvent(new MouseEvent('mousemove', { bubbles: true }))
+            await nextTick()
+            expect(findRow('Haidian')?.hasAttribute('data-selected-trail')).toBe(false)
         })
 
         it('does not apply trail when no value is selected', async () => {

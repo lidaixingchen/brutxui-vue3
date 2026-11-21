@@ -84,6 +84,27 @@ function getTextRects(element: Element) {
 }
 
 describe('PricingSection responsive badge layout', () => {
+    it.each([
+        { containerWidth: 480, columnCount: 1 },
+        { containerWidth: 720, columnCount: 2 },
+        { containerWidth: 1024, columnCount: 3 },
+    ])('按 $containerWidth px 容器排为 $columnCount 列', async ({ containerWidth, columnCount }) => {
+        originalViewport = { width: window.innerWidth, height: window.innerHeight }
+        await page.viewport(1440, VIEWPORT_HEIGHTS.desktop)
+        mountPricingSection(containerWidth, POPULAR_TEXT)
+        const grid = host!.querySelector<HTMLElement>('.grid')!
+        const gridStyle = getComputedStyle(grid)
+        expect(gridStyle.gridTemplateColumns.split(' ')).toHaveLength(columnCount)
+
+        for (const button of grid.querySelectorAll('button')) {
+            const bounds = button.getBoundingClientRect()
+            for (const text of getTextRects(button)) {
+                expect(text.top).toBeGreaterThan(bounds.top)
+                expect(text.bottom).toBeLessThan(bounds.bottom)
+            }
+        }
+    })
+
     it.each(LAYOUT_CASES)(
         'keeps the recommendation label readable at $viewportWidth px in a $containerWidth px container',
         async ({ viewportWidth, containerWidth, viewportHeight }) => {
@@ -131,7 +152,7 @@ describe('PricingSection responsive badge layout', () => {
     it('wraps a long custom recommendation label within its plan card', async () => {
         originalViewport = { width: window.innerWidth, height: window.innerHeight }
         await page.viewport(1440, VIEWPORT_HEIGHTS.desktop)
-        mountPricingSection(650, LONG_POPULAR_TEXT)
+        mountPricingSection(1024, LONG_POPULAR_TEXT)
         await nextTick()
         await new Promise<void>(resolve => requestAnimationFrame(() => resolve()))
 

@@ -41,7 +41,7 @@ const resolvedCopyright = computed(() => props.copyright ?? t('footerSection.def
 
 const rootClasses = computed(() =>
     cn(
-        'w-full',
+        '@container/footer-section w-full',
         'bg-brutal-bg border-t-3 border-brutal',
         props.class
     )
@@ -53,32 +53,32 @@ const isSafeHref = (href?: string): boolean =>
 
 <template>
     <footer :class="rootClasses">
-        <div class="max-w-7xl mx-auto px-4 md:px-6 py-10">
+        <div class="mx-auto max-w-7xl px-4 py-10 @3xl/footer-section:px-6">
             <slot name="header">
                 <div class="mb-8">
-                    <span class="text-xl font-black tracking-tight text-brutal-fg">
+                    <span class="wrap-anywhere text-xl font-black tracking-tight text-brutal-fg">
                         {{ resolvedLogoText }}
                     </span>
-                    <p v-if="resolvedDescription" class="mt-2 text-sm text-brutal-muted-foreground font-medium max-w-sm">
+                    <p v-if="resolvedDescription" class="mt-2 max-w-sm wrap-anywhere text-sm font-medium text-brutal-muted-foreground">
                         {{ resolvedDescription }}
                     </p>
                 </div>
             </slot>
 
             <slot>
-                <div v-if="linkGroups.length > 0" class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+                <div v-if="linkGroups.length > 0" class="mb-8 grid grid-cols-1 gap-8 @3xs/footer-section:grid-cols-2 @3xl/footer-section:grid-cols-4">
                     <!-- 复合 key 保证唯一性：title 未约束不重复 -->
                     <div v-for="(group, groupIndex) in linkGroups" :key="`${group.title}-${groupIndex}`">
-                        <h3 class="font-black text-sm tracking-wide text-brutal-fg mb-3">
+                        <h3 class="mb-3 wrap-anywhere text-sm font-black tracking-wide text-brutal-fg">
                             {{ group.title }}
                         </h3>
                         <ul class="space-y-2 list-none">
-                            <li v-for="(link, linkIndex) in group.links" :key="`${link.href ?? link.label}-${linkIndex}`" class="flex items-center gap-2">
-                                <span class="h-1.5 w-1.5 bg-brutal-fg flex-shrink-0" />
+                            <li v-for="(link, linkIndex) in group.links" :key="`${link.href ?? link.label}-${linkIndex}`" class="flex items-start gap-2">
+                                <span class="mt-2 size-1.5 shrink-0 bg-brutal-fg" />
                                 <a
                                     v-if="link.href && isSafeHref(link.href)"
                                     :href="link.href"
-                                    class="px-0 text-brutal-muted-foreground hover:text-brutal-fg text-sm font-medium cursor-pointer active:translate-y-[2px] active:shadow-none transition-all"
+                                    class="min-w-0 cursor-pointer wrap-anywhere text-sm font-medium text-brutal-muted-foreground transition-all hover:text-brutal-fg active:translate-y-[2px] active:shadow-none"
                                     @click="(event) => emit('link-click', { groupIndex, linkIndex, event })"
                                 >
                                     {{ link.label }}
@@ -87,7 +87,7 @@ const isSafeHref = (href?: string): boolean =>
                                     v-else
                                     variant="ghost"
                                     size="sm"
-                                    class="px-0 text-brutal-muted-foreground hover:text-brutal-fg"
+                                    class="h-auto min-w-0 justify-start p-0 text-left whitespace-normal wrap-anywhere text-brutal-muted-foreground hover:text-brutal-fg"
                                     @click="(event: MouseEvent) => emit('link-click', { groupIndex, linkIndex, event })"
                                 >
                                     {{ link.label }}
@@ -102,7 +102,7 @@ const isSafeHref = (href?: string): boolean =>
 
             <slot name="footer">
                 <div class="pt-6 text-center">
-                    <p class="text-sm text-brutal-muted-foreground font-medium">
+                    <p class="wrap-anywhere text-sm font-medium text-brutal-muted-foreground">
                         {{ resolvedCopyright }}
                     </p>
                 </div>

@@ -4,7 +4,7 @@ import { Menu } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
 import { cn } from '@/lib/utils'
 import { brutalDestructiveTextClasses } from '@/lib/semantic-text-variants'
-import { getDocument, isClient, matchMedia } from '@/lib/env'
+import { getDocument, getResizeObserverCtor, isClient, matchMedia } from '@/lib/env'
 import Button from '../button/Button.vue'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import {
@@ -14,7 +14,7 @@ import {
     dashboardMainVariants,
 } from './dashboard-shell-variants'
 
-const DESKTOP_MEDIA_QUERY = '(min-width: 768px)'
+const DESKTOP_MIN_WIDTH = 768
 
 interface DashboardShellProps {
     userEmail?: string
@@ -35,32 +35,38 @@ const emit = defineEmits<{
 const { t } = useLocale()
 
 const sidebarId = useId()
+const rootElement = ref<HTMLElement | null>(null)
 const sidebarElement = ref<HTMLElement | null>(null)
 const headerElement = ref<HTMLElement | null>(null)
 
 const sidebarOpen = ref(true)
 const isDesktop = ref(true)
-let desktopQuery: MediaQueryList | null = null
+let desktopQuery: MediaQueryList | undefined
+let resizeObserver: ResizeObserver | undefined
 
-const onDesktopChange = (event: MediaQueryListEvent): void => {
-    isDesktop.value = event.matches
-    sidebarOpen.value = event.matches
+function updateLayout(): void {
+    const width = rootElement.value?.clientWidth
+    const desktop = width ? width >= DESKTOP_MIN_WIDTH : desktopQuery?.matches ?? true
+    if (desktop === isDesktop.value) return
+
+    isDesktop.value = desktop
+    sidebarOpen.value = desktop
 }
 
-// 视口状态在挂载后初始化：SSR 输出桌面默认态与 hydration 首帧保持一致，
-// 避免 setup 阶段同步改写产生 hydration mismatch 警告（移动端首帧会先显示展开态再收起）
 onMounted(() => {
-    const mq = matchMedia(DESKTOP_MEDIA_QUERY)
-    if (mq) {
-        desktopQuery = mq
-        isDesktop.value = mq.matches
-        sidebarOpen.value = mq.matches
-        mq.addEventListener('change', onDesktopChange)
+    desktopQuery = matchMedia(`(min-width: ${DESKTOP_MIN_WIDTH}px)`)
+    desktopQuery?.addEventListener('change', updateLayout)
+    const ResizeObserverCtor = getResizeObserverCtor()
+    if (ResizeObserverCtor && rootElement.value) {
+        resizeObserver = new ResizeObserverCtor(updateLayout)
+        resizeObserver.observe(rootElement.value)
     }
+    updateLayout()
 })
 
 onUnmounted(() => {
-    desktopQuery?.removeEventListener('change', onDesktopChange)
+    resizeObserver?.disconnect()
+    desktopQuery?.removeEventListener('change', updateLayout)
 })
 
 const closeSidebar = (): void => {
@@ -105,7 +111,7 @@ watch(sidebarOpen, async (open) => {
 const rootClasses = computed(() => cn(dashboardShellVariants(), props.class))
 
 const sidebarClasses = computed(() =>
-    dashboardSidebarVariants({ open: sidebarOpen.value })
+    dashboardSidebarVariants({ open: sidebarOpen.value, layout: isDesktop.value ? 'fixed' : 'overlay' })
 )
 
 const headerClasses = computed(() =>
@@ -124,7 +130,7 @@ const signOutButtonClasses = computed(() =>
 </script>
 
 <template>
-    <div :class="rootClasses" @keydown.escape="onEscapeKeydown">
+    <div ref="rootElement" :class="rootClasses" @keydown.escape="onEscapeKeydown">
         <aside
             :id="sidebarId"
             ref="sidebarElement"
@@ -150,12 +156,13 @@ const signOutButtonClasses = computed(() =>
             </div>
         </aside>
 
-        <div class="relative flex-1 flex flex-col overflow-hidden">
+        <div class="relative flex min-w-0 flex-1 flex-col overflow-hidden">
             <header ref="headerElement" :class="headerClasses">
                 <Button
+                    v-if="!isDesktop"
                     variant="default"
                     size="icon"
-                    class="md:hidden h-8 w-8 shadow-brutal-sm"
+                    class="h-8 w-8 shrink-0 shadow-brutal-sm"
                     :aria-label="sidebarOpen ? t('dashboardShell.closeNavigation') : t('dashboardShell.openNavigation')"
                     :aria-expanded="sidebarOpen"
                     :aria-controls="sidebarId"
