@@ -14,6 +14,7 @@ import { iconSizeVariants } from '@/lib/icon-size-variants'
 import { modalCloseButtonVariants, overlayVariants } from '@/lib/modal-variants'
 import { useLocale } from '@/composables/useLocale'
 import { useModalOverlayLayer } from '@/lib/overlay-layer'
+import { useDialogPortalTheme } from '@/lib/portal-theme'
 
 defineOptions({
     inheritAttrs: false,
@@ -33,6 +34,7 @@ const props = withDefaults(defineProps<SheetContentProps>(), {
 
 const { t } = useLocale()
 const modalLayer = useModalOverlayLayer()
+useDialogPortalTheme()
 
 const CLOSE_BUTTON_PLACEMENT_MAP: Record<NonNullable<SheetVariantProps['side']>, 'sheet-left' | 'sheet-right'> = {
     left: 'sheet-left',
@@ -59,19 +61,21 @@ const closeIconClasses = cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
 
 <template>
     <DialogPortalPrimitive>
-        <DialogOverlayPrimitive :class="overlayClasses" :style="modalLayer.overlayStyle.value" />
-        <DialogContentPrimitive
-            v-bind="$attrs"
-            :ref="modalLayer.ref"
-            :class="contentClasses"
-            :style="[modalLayer.style.value, $attrs.style]"
-            @open-auto-focus="modalLayer.ref"
-        >
-            <slot />
-            <DialogClosePrimitive :class="closeClasses">
-                <X :class="closeIconClasses" />
-                <span class="sr-only">{{ t('sheet.close') }}</span>
-            </DialogClosePrimitive>
-        </DialogContentPrimitive>
+        <div ref="themeHost" class="contents">
+            <DialogOverlayPrimitive :class="overlayClasses" :style="modalLayer.overlayStyle.value" />
+            <DialogContentPrimitive
+                v-bind="$attrs"
+                :ref="modalLayer.ref"
+                :class="contentClasses"
+                :style="[modalLayer.style.value, $attrs.style]"
+                @open-auto-focus="modalLayer.ref"
+            >
+                <slot />
+                <DialogClosePrimitive :class="closeClasses">
+                    <X :class="closeIconClasses" />
+                    <span class="sr-only">{{ t('sheet.close') }}</span>
+                </DialogClosePrimitive>
+            </DialogContentPrimitive>
+        </div>
     </DialogPortalPrimitive>
 </template>

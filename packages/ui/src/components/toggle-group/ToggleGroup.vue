@@ -52,7 +52,7 @@ function handleUpdateModelValue(val: unknown) {
 const classes = computed(() =>
     cn(
         'flex items-center justify-center gap-1.5',
-        props.orientation === 'vertical' && 'flex-col',
+        props.orientation === 'vertical' ? 'flex-col' : 'flex-wrap',
         props.class,
     ),
 )

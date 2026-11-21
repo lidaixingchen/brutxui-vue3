@@ -13,6 +13,7 @@ import { dialogContentVariants, dialogCloseVariants, dialogViewportClasses } fro
 import { iconSizeVariants } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 import { useModalOverlayLayer } from '@/lib/overlay-layer'
+import { useDialogPortalTheme } from '@/lib/portal-theme'
 
 defineOptions({ inheritAttrs: false })
 
@@ -37,6 +38,7 @@ const props = withDefaults(defineProps<DialogContentProps>(), {
 
 const { t } = useLocale()
 const modalLayer = useModalOverlayLayer()
+useDialogPortalTheme()
 
 const contentClasses = computed(() =>
     cn(dialogContentVariants({ size: props.size, entrance: props.entrance }), dialogViewportClasses, props.class)
@@ -50,20 +52,22 @@ const closeIconClasses = cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
 
 <template>
     <DialogPortalPrimitive>
-        <DialogOverlay :force-mount="props.forceMount" />
-        <DialogContentPrimitive
-            v-bind="$attrs"
-            :ref="modalLayer.ref"
-            :class="contentClasses"
-            :force-mount="props.forceMount"
-            :style="[modalLayer.style.value, $attrs.style]"
-            @open-auto-focus="modalLayer.ref"
-        >
-            <slot />
-            <DialogClosePrimitive v-if="showCloseButton" :class="closeClasses">
-                <X :class="closeIconClasses" aria-hidden="true" />
-                <span class="sr-only">{{ t('dialog.close') }}</span>
-            </DialogClosePrimitive>
-        </DialogContentPrimitive>
+        <div ref="themeHost" class="contents">
+            <DialogOverlay :force-mount="props.forceMount" />
+            <DialogContentPrimitive
+                v-bind="$attrs"
+                :ref="modalLayer.ref"
+                :class="contentClasses"
+                :force-mount="props.forceMount"
+                :style="[modalLayer.style.value, $attrs.style]"
+                @open-auto-focus="modalLayer.ref"
+            >
+                <slot />
+                <DialogClosePrimitive v-if="showCloseButton" :class="closeClasses">
+                    <X :class="closeIconClasses" aria-hidden="true" />
+                    <span class="sr-only">{{ t('dialog.close') }}</span>
+                </DialogClosePrimitive>
+            </DialogContentPrimitive>
+        </div>
     </DialogPortalPrimitive>
 </template>

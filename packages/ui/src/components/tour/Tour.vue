@@ -429,10 +429,10 @@ onBeforeUnmount((): void => {
             >
                 STEP [{{ String(currentStep + 1).padStart(2, '0') }}/{{ String(steps.length).padStart(2, '0') }}]
             </div>
-            <div v-if="currentStepVal?.title" class="text-lg font-black tracking-wide border-b-2 border-brutal pb-2">
+            <div v-if="currentStepVal?.title" class="text-lg font-black tracking-wide border-b-2 border-brutal pb-2 wrap-anywhere">
                 {{ currentStepVal.title }}
             </div>
-            <div v-if="currentStepVal?.description" class="text-sm font-medium leading-relaxed">
+            <div v-if="currentStepVal?.description" class="text-sm font-medium leading-relaxed wrap-anywhere">
                 {{ currentStepVal.description }}
             </div>
             <div class="flex items-center justify-between mt-2 pt-2 border-t-2 border-brutal-dashed">

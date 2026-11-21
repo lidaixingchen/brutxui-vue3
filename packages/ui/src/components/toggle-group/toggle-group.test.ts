@@ -11,13 +11,13 @@ describe('ToggleGroup', () => {
         expect(wrapper.element.tagName).toBe('DIV')
     })
 
-    it('defaults to horizontal orientation without flex-col', () => {
+    it('wraps items in the default horizontal orientation', () => {
         const wrapper = mount(ToggleGroup, {
             attachTo: document.body,
         })
         const classes = wrapper.classes()
         expect(classes).toContain('flex')
-        expect(classes).not.toContain('flex-col')
+        expect(classes).toContain('flex-wrap')
     })
 
     it('applies flex-col when orientation is vertical', () => {
@@ -81,7 +81,7 @@ describe('ToggleGroupItem', () => {
             attachTo: document.body,
         })
         const item = wrapper.find('button')
-        expect(item.classes()).toContain('h-12')
+        expect(item.classes()).toContain('min-h-12')
         expect(item.classes()).toContain('data-[state=off]:bg-transparent')
     })
 
@@ -94,7 +94,7 @@ describe('ToggleGroupItem', () => {
             attachTo: document.body,
         })
         const item = wrapper.find('button')
-        expect(item.classes()).toContain('h-8')
+        expect(item.classes()).toContain('min-h-8')
     })
 
     it('inherits disabled state from ToggleGroup', () => {

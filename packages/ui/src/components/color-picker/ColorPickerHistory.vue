@@ -2,6 +2,7 @@
 import { computed, useId } from 'vue'
 import { X } from '@lucide/vue'
 import { isValidColor, normalizeColor } from '@/lib/color'
+import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import ColorPickerSwatch from './ColorPickerSwatch.vue'
 
@@ -47,6 +48,11 @@ const isSelected = (color: string) => {
 }
 
 const isEmpty = computed(() => validHistory.value.length === 0)
+const clearClasses = computed(() => cn(
+    'inline-flex items-center justify-center rounded-brutal p-0.5 text-brutal-fg',
+    'hover:bg-brutal-destructive hover:text-brutal-destructive-foreground transition-colors motion-reduce:transition-none',
+    FOCUS_RING_CLASSES,
+))
 </script>
 
 <template>
@@ -57,11 +63,11 @@ const isEmpty = computed(() => validHistory.value.length === 0)
             </span>
             <button
                 type="button"
-                class="inline-flex items-center gap-1 text-xs font-bold text-brutal-fg hover:text-brutal-destructive transition-colors"
+                :class="clearClasses"
                 :aria-label="resolvedClearLabel"
                 @click="emit('clear')"
             >
-                <X class="w-3 h-3 stroke-[3]" />
+                <X class="w-3 h-3 stroke-[3]" aria-hidden="true" />
             </button>
         </div>
         <div class="flex flex-wrap gap-1.5">

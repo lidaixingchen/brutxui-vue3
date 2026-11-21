@@ -4,7 +4,7 @@ import { chipBaseClasses, chipColorVariants } from '@/lib/chip-variants'
 export const badgeVariants = cva(
     [
         ...chipBaseClasses,
-        'font-bold tracking-wide',
+        'max-w-full font-bold tracking-wide wrap-anywhere',
         'transition-colors',
     ],
     {

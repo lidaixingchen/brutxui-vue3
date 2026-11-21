@@ -14,7 +14,7 @@ export const commandInputWrapperVariants = cva(
 export const commandItemVariants = cva(
     [
         'relative flex min-w-0 cursor-pointer items-center gap-3 px-3 py-2',
-        'text-sm font-semibold',
+        'text-sm font-semibold wrap-anywhere',
         // Reka 管理列表导航，共享行样式读取其当前项与焦点呈现状态
         'select-none',
         'border-3 border-transparent',

@@ -46,7 +46,8 @@
     "lib": [
       "floating-animation-classes.ts",
       "modal-variants.ts",
-      "overlay-layer.ts"
+      "overlay-layer.ts",
+      "portal-theme.ts"
     ]
   },
   "auth-card": {
@@ -547,6 +548,7 @@
       "icon-size-variants.ts",
       "modal-variants.ts",
       "overlay-layer.ts",
+      "portal-theme.ts",
       "render-imperative.ts"
     ]
   },
@@ -1031,6 +1033,7 @@
       "icon-size-variants.ts",
       "modal-variants.ts",
       "overlay-layer.ts",
+      "portal-theme.ts",
       "slot-utils.ts"
     ]
   },

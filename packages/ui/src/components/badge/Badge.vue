@@ -44,7 +44,7 @@ const classes = computed(() =>
 
 const dotClasses = computed(() =>
     cn(
-        'rounded-full bg-current',
+        'shrink-0 rounded-full bg-current',
         props.size === 'sm' ? 'h-1.5 w-1.5 mr-1' : props.size === 'lg' ? 'h-2.5 w-2.5 mr-2' : 'h-2 w-2 mr-1.5',
         props.pulse && 'animate-brutal-badge-pulse'
     )
@@ -66,7 +66,7 @@ const closeIconClasses = computed(() =>
 
 const iconClasses = computed(() =>
     cn(
-        'inline-flex items-center justify-center',
+        'inline-flex shrink-0 items-center justify-center',
         props.size === 'sm' ? 'mr-1' : props.size === 'lg' ? 'mr-2' : 'mr-1.5'
     )
 )
@@ -83,7 +83,7 @@ const iconClasses = computed(() =>
         <button
             v-if="closable"
             type="button"
-            class="ml-1 inline-flex items-center justify-center transition-opacity hover:opacity-70 focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden rounded-brutal"
+            class="ml-1 inline-flex shrink-0 items-center justify-center transition-opacity hover:opacity-70 focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:ring-offset-brutal-bg focus-visible:outline-hidden rounded-brutal"
             :aria-label="t('badge.close')"
             @click="handleCloseClick"
         >

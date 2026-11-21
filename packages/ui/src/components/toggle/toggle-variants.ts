@@ -5,7 +5,7 @@ import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const toggleVariants = cva(
     [
-        'inline-flex items-center justify-center gap-2 text-sm font-black tracking-wide',
+        'inline-flex max-w-full items-center justify-center gap-2 py-1 text-center text-sm font-black tracking-wide wrap-anywhere',
         'border-3 border-brutal rounded-brutal transition-all duration-150',
         FOCUS_RING_CLASSES,
         'disabled:pointer-events-none disabled:opacity-50',
@@ -31,9 +31,9 @@ export const toggleVariants = cva(
                 ],
             },
             size: {
-                default: 'h-10 px-3 min-w-10',
-                sm: 'h-8 px-2 min-w-8 text-xs',
-                lg: 'h-12 px-4 min-w-12',
+                default: 'min-h-10 px-3 min-w-10',
+                sm: 'min-h-8 px-2 min-w-8 text-xs',
+                lg: 'min-h-12 px-4 min-w-12',
             },
         },
         defaultVariants: {

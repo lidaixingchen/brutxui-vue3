@@ -1,8 +1,9 @@
-import { onBeforeUnmount, watchPostEffect, type ComputedRef, type Ref } from 'vue'
+import { injectDialogRootContext } from 'reka-ui'
+import { onBeforeUnmount, useTemplateRef, watchPostEffect, type Ref } from 'vue'
 import { getComputedStyle, getMutationObserverCtor } from './env'
 
 type ThemeAnchorRef = Readonly<Ref<HTMLElement | undefined>>
-type PortalElementRef = Readonly<ComputedRef<HTMLElement | null>>
+type PortalElementRef = Readonly<Ref<HTMLElement | null>>
 
 interface InlinePropertyValue {
     value: string
@@ -70,6 +71,7 @@ function samePath(left: Element[], right: Element[]): boolean {
 export function usePortalThemeInheritance(
     anchorRef: ThemeAnchorRef,
     contentRef: PortalElementRef,
+    resolveHost = resolveThemeHost,
 ): void {
     let host: HTMLElement | null = null
     let observer: MutationObserver | null = null
@@ -164,7 +166,7 @@ export function usePortalThemeInheritance(
             return
         }
 
-        applyTheme(resolveThemeHost(content), readThemeClasses(anchor), readThemeVariables(anchor))
+        applyTheme(resolveHost(content), readThemeClasses(anchor), readThemeVariables(anchor))
     }
 
     watchPostEffect(sync)
@@ -174,4 +176,10 @@ export function usePortalThemeInheritance(
         observedPath = []
         restoreHost()
     })
+}
+
+export function useDialogPortalTheme(): void {
+    const dialog = injectDialogRootContext(null)
+    const host = useTemplateRef<HTMLElement>('themeHost')
+    if (dialog) usePortalThemeInheritance(dialog.triggerElement, host, element => element)
 }

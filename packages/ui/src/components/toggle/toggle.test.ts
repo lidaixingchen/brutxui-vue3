@@ -54,13 +54,13 @@ describe('Toggle', () => {
         })
 
         await wrapper.setProps({ size: 'sm' } as any)
-        expect(wrapper.classes()).toContain('h-8')
+        expect(wrapper.classes()).toContain('min-h-8')
 
         await wrapper.setProps({ size: 'default' } as any)
-        expect(wrapper.classes()).toContain('h-10')
+        expect(wrapper.classes()).toContain('min-h-10')
 
         await wrapper.setProps({ size: 'lg' } as any)
-        expect(wrapper.classes()).toContain('h-12')
+        expect(wrapper.classes()).toContain('min-h-12')
     })
 
     it('emits update:modelValue when toggled', async () => {

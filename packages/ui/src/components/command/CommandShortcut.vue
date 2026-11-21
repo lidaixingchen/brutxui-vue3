@@ -13,7 +13,7 @@ const classes = computed(() =>
     cn(
         // inline-flex 自带正确行盒模型：py-1 / border-3 / bg 参与行高计算，脱离 flex 容器也能正确渲染；
         // ms-auto 兼容 RTL，在 CommandItem 的 flex 容器内保持右侧对齐
-        'ms-auto inline-flex items-center text-xs font-black tracking-wider',
+        'ms-auto inline-flex shrink-0 items-center text-xs font-black tracking-wider whitespace-nowrap',
         'px-2 py-1',
         'bg-transparent border-3 border-transparent',
         'text-current',

@@ -12,7 +12,7 @@ import {
     RefreshCw,
 } from '@lucide/vue'
 import { cn } from '@/lib/utils'
-import { brutalDestructiveTextClasses } from '@/lib/semantic-text-variants'
+import { brutalDestructiveTextClasses, brutalSuccessTextClasses } from '@/lib/semantic-text-variants'
 import type { UploadFile } from './upload-types'
 import { Progress } from '@/components/progress'
 import { Button } from '@/components/button'
@@ -110,6 +110,13 @@ const listItemClasses = computed(() =>
 const errorMessageClasses = computed(() =>
     cn('text-sm mt-1', brutalDestructiveTextClasses)
 )
+
+const successStampClasses = computed(() =>
+    cn(
+        'hidden sm:inline-block -rotate-6 select-none border-2 border-double border-current px-1.5 py-0.5 font-mono text-xs font-black uppercase tracking-widest',
+        brutalSuccessTextClasses,
+    )
+)
 </script>
 
 <template>
@@ -144,18 +151,16 @@ const errorMessageClasses = computed(() =>
         <!-- 成功状态 -->
         <div
             v-if="file.status === 'success'"
-            class="absolute top-1 right-1 bg-brutal-success rounded-full p-0.5"
+            class="absolute end-1 top-1 bg-brutal-success rounded-full p-0.5"
         >
             <Check class="h-3 w-3 text-brutal-success-foreground" />
         </div>
 
         <!-- 错误状态 -->
-        <div
+        <AlertCircle
             v-if="file.status === 'error'"
-            class="absolute inset-0 bg-brutal-destructive/10 flex items-center justify-center"
-        >
-            <AlertCircle class="h-6 w-6 text-brutal-destructive" />
-        </div>
+            class="absolute end-1 top-1 h-6 w-6 rounded-full bg-brutal-destructive p-0.5 text-brutal-destructive-foreground"
+        />
 
         <!-- 操作按钮 -->
         <div class="picture-card-actions absolute inset-0 bg-brutal-bg/60 hover:bg-brutal-bg/70 focus-within:bg-brutal-bg/70 flex items-center justify-center gap-1 opacity-100 focus-within:opacity-100 transition-opacity">
@@ -241,14 +246,14 @@ const errorMessageClasses = computed(() =>
             <!-- 上传成功图章：等宽 ASCII 印戳（纯装饰，状态语义由既有 aria/文案承担） -->
             <span
                 v-if="file.status === 'success'"
-                class="hidden sm:inline-block -rotate-6 select-none border-2 border-double border-brutal-success px-1.5 py-0.5 font-mono text-xs font-black uppercase tracking-widest text-brutal-success"
+                :class="successStampClasses"
                 aria-hidden="true"
             >[ UPLOADED ]</span>
 
             <!-- 成功状态 -->
             <Check
                 v-if="file.status === 'success'"
-                class="h-5 w-5 text-brutal-success"
+                class="h-5 w-5 rounded-full bg-brutal-success p-0.5 text-brutal-success-foreground"
             />
 
             <!-- 重试按钮 -->

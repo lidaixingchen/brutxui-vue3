@@ -29,7 +29,7 @@ export const accordionItemVariants = cva(
 
 export const accordionTriggerVariants = cva(
     [
-        'flex flex-1 items-center justify-between py-4 px-6',
+        'flex min-w-0 flex-1 items-center justify-between gap-3 py-4 px-6 wrap-anywhere',
         'text-left font-black tracking-wide transition-colors',
         'hover:bg-brutal-muted',
         FOCUS_RING_CLASSES,
@@ -55,7 +55,7 @@ export const accordionTriggerIconClasses =
     'shrink-0 transition-transform duration-200 border-3 border-brutal rounded-brutal bg-brutal-bg p-0.5 shadow-brutal-sm'
 
 export const accordionContentVariants = cva(
-    'border-t-3 p-6 text-brutal-fg',
+    'border-t-3 p-6 text-brutal-fg wrap-anywhere',
     {
         variants: {
             variant: {

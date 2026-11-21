@@ -1,6 +1,13 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { userEvent } from 'vitest/browser'
-import { nextTick } from 'vue'
+import { defineComponent, h, nextTick } from 'vue'
+import {
+    AlertDialogCancel, AlertDialogRoot, AlertDialogTrigger,
+    DialogDescription, DialogRoot, DialogTitle, DialogTrigger,
+} from 'reka-ui'
+import AlertDialogContent from '@/components/alert-dialog/AlertDialogContent.vue'
+import DialogContent from '@/components/dialog/DialogContent.vue'
+import SheetContent from '@/components/sheet/SheetContent.vue'
 import { mount } from '@/test/browser-mount'
 import '../../dist/styles.css'
 import PortalThemeTestFixture from './fixtures/PortalThemeTestFixture.vue'
@@ -168,5 +175,46 @@ describe('portal theme inheritance', () => {
                 await expect.poll(() => document.querySelector(`[data-theme-content="${name}"]`)).toBeNull()
             }
         }
+    })
+
+    it.each([
+        { name: 'dialog', root: DialogRoot, trigger: DialogTrigger, content: DialogContent },
+        { name: 'alert-dialog', root: AlertDialogRoot, trigger: AlertDialogTrigger, content: AlertDialogContent },
+        { name: 'sheet', root: DialogRoot, trigger: DialogTrigger, content: SheetContent },
+    ])('inherits the trigger theme in $name content and overlay', async ({ name, root, trigger, content }) => {
+        rootWasDark = document.documentElement.classList.contains('dark')
+        document.documentElement.classList.remove('dark')
+        wrapper = mount(defineComponent(() => () => h('section', { class: 'theme-pastel dark' }, [
+            h(root, null, () => [
+                h(trigger, { id: `${name}-trigger`, class: 'portal-theme-test-trigger' }, () => 'Open'),
+                h(content, { 'data-theme-content': name }, () => [
+                    h(DialogTitle, null, () => 'Title'),
+                    h(DialogDescription, null, () => 'Description'),
+                    content === AlertDialogContent ? h(AlertDialogCancel, null, () => 'Cancel') : null,
+                ]),
+            ]),
+        ])))
+
+        const scope = wrapper.element as HTMLElement
+        const opener = document.getElementById(`${name}-trigger`)!
+        await userEvent.click(opener)
+
+        const panel = document.querySelector<HTMLElement>(`[data-theme-content="${name}"]`)!
+        const overlay = panel.previousElementSibling!
+        await expect.poll(() => panel.contains(document.activeElement)).toBe(true)
+        expectOverlayMatchesTrigger(name)
+        expect(getComputedStyle(overlay).getPropertyValue('--brutal-overlay')).toBe(
+            getComputedStyle(opener).getPropertyValue('--brutal-overlay'),
+        )
+
+        scope.className = 'theme-warm'
+        scope.style.setProperty('--brutal-bg', '#123456')
+        scope.style.setProperty('--brutal-overlay', '#345678')
+        await settleThemeMutation()
+        expectOverlayMatchesTrigger(name)
+        expect(getComputedStyle(overlay).backgroundColor).toBe('rgb(52, 86, 120)')
+
+        await userEvent.keyboard('{Escape}')
+        await expect.poll(() => document.activeElement).toBe(opener)
     })
 })
