@@ -59,6 +59,8 @@ Inject buttons inside the `#extra` slot layout to allow further navigation or re
 
 `Result` supports `status="empty"` and is the recommended entry for empty states.
 
+The empty-state icon pairs the `--brutal-accent` background with `--brutal-accent-foreground`, following light and dark presets and local theme overrides. When customizing the accent color, configure its foreground color too so the icon remains clearly visible.
+
 ```vue
 <template>
     <Result

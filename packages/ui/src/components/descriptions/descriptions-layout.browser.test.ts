@@ -39,3 +39,26 @@ describe('Descriptions 印章布局', () => {
         expect(row.textContent).toContain('BX-2077-001')
     })
 })
+
+describe('Descriptions 长值布局', () => {
+    it('在窄屏表格内完整显示无断点的制品标识', async () => {
+        const width = 234
+        const artifact = 'WORKSPACE_ADMINISTRATIVE_PERMISSION_EXPORT_CONFIGURATION'
+        host = document.createElement('div')
+        host.style.width = `${width}px`
+        document.body.appendChild(host)
+        wrapper = mount(defineComponent({
+            setup: () => () => h(Descriptions, { border: true, column: 1 }, () =>
+                h(DescriptionsItem, { label: '制品标识' }, () => artifact),
+            ),
+        }), { attachTo: host })
+        await nextTick()
+
+        const cell = Array.from(host.querySelectorAll<HTMLDivElement>('div'))
+            .find(element => element.textContent === artifact)!
+        const range = document.createRange()
+        range.selectNodeContents(cell)
+        expect(range.getClientRects().length).toBeGreaterThan(1)
+        expect(cell.scrollWidth).toBeLessThanOrEqual(cell.clientWidth)
+    })
+})

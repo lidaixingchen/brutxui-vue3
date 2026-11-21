@@ -304,7 +304,7 @@ describe('ChatBubble avatar error recovery', () => {
 })
 
 describe('ChatBubble status meta', () => {
-    it('renders read status with primary color via STATUS_META', () => {
+    it('renders the read status with a paired primary surface and foreground', () => {
         const wrapper = mount(ChatBubble, {
             props: {
                 message: { id: '1', content: 'Hi', variant: 'sent', status: 'read' },
@@ -312,7 +312,8 @@ describe('ChatBubble status meta', () => {
         })
         const check = wrapper.findComponent(CheckCheck)
         expect(check.exists()).toBe(true)
-        expect(check.classes()).toContain('text-brutal-primary')
+        expect(check.classes()).toContain('bg-brutal-primary')
+        expect(check.classes()).toContain('text-brutal-primary-foreground')
     })
 
     it('does not crash on unknown runtime status values', () => {

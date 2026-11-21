@@ -570,7 +570,8 @@
       "floating-animation-classes.ts",
       "floating-content-variants.ts",
       "icon-size-variants.ts",
-      "overlay-layer.ts"
+      "overlay-layer.ts",
+      "portal-theme.ts"
     ]
   },
   "feedback-form": {
@@ -582,7 +583,8 @@
     ],
     "directives": [],
     "lib": [
-      "icon-size-variants.ts"
+      "icon-size-variants.ts",
+      "semantic-text-variants.ts"
     ]
   },
   "footer-section": {
@@ -1263,7 +1265,8 @@
     "directives": [],
     "lib": [
       "floating-content-variants.ts",
-      "overlay-layer.ts"
+      "overlay-layer.ts",
+      "portal-theme.ts"
     ]
   },
   "tour": {

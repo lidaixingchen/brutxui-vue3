@@ -92,18 +92,18 @@ watch(
 // 单一配置表：Record<MessageStatus, ...> 对闭联合类型做穷尽性检查，
 // 未来新增状态时漏配图标或样式会在编译期报错，而非静默失效。
 const STATUS_META: Record<MessageStatus, { icon: Component; className: string }> = {
-    sending: { icon: Loader2, className: 'text-brutal-fg/50 animate-spin' },
+    sending: { icon: Loader2, className: 'text-brutal-fg/50 animate-spin motion-reduce:animate-none' },
     sent: { icon: Check, className: 'text-brutal-fg/50' },
     delivered: { icon: CheckCheck, className: 'text-brutal-fg/70' },
-    read: { icon: CheckCheck, className: 'text-brutal-primary' },
-    failed: { icon: AlertCircle, className: 'text-brutal-destructive' },
+    read: { icon: CheckCheck, className: 'bg-brutal-primary text-brutal-primary-foreground' },
+    failed: { icon: AlertCircle, className: 'bg-brutal-status-error text-brutal-status-error-foreground' },
 };
 
 // 消息数据通常来自后端 API，status 运行时可能拿到联合类型之外的未知值；
 // 用可选链兜底避免 STATUS_META[...] 为 undefined 时访问 .icon/.className 抛 TypeError
 const statusIcon = computed(() => (props.message.status ? STATUS_META[props.message.status]?.icon ?? null : null));
 const statusClass = computed(() => (props.message.status ? STATUS_META[props.message.status]?.className ?? '' : ''));
-const statusIconClass = computed(() => cn('w-3 h-3', statusClass.value));
+const statusIconClass = computed(() => cn('size-4 shrink-0 rounded-brutal p-0.5', statusClass.value));
 </script>
 
 <template>

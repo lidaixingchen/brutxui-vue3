@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { floatingContentSideOffsets } from '@/lib/floating-content-variants'
 import { tooltipContentVariants } from './tooltip-variants'
 import { useFloatingOverlayLayer } from '@/lib/overlay-layer'
+import { usePortalThemeInheritance } from '@/lib/portal-theme'
 
 defineOptions({ inheritAttrs: false })
 
@@ -27,7 +28,9 @@ const delegatedProps = computed(() => {
 })
 
 const forwarded = useForwardProps(delegatedProps)
-const { style: overlayLayerStyle, ref: floatingLayerRef } = useFloatingOverlayLayer('tooltip', injectTooltipRootContext().open)
+const tooltipContext = injectTooltipRootContext()
+const { style: overlayLayerStyle, ref: floatingLayerRef, element: floatingElement } = useFloatingOverlayLayer('tooltip', tooltipContext.open)
+usePortalThemeInheritance(tooltipContext.trigger, floatingElement)
 
 const classes = computed(() =>
     cn(tooltipContentVariants(), props.class)

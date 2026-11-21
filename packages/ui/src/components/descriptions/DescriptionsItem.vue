@@ -49,13 +49,13 @@ const horizontalSpanContainerClasses = computed(() =>
 
 const horizontalSpanLabelClasses = computed(() =>
     cn(
-        'flex min-w-0 items-center break-words px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-r-3 border-brutal w-1/2',
+        'flex min-w-0 items-center wrap-anywhere px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-r-3 border-brutal w-1/2',
         'bg-pattern-dots',
     ),
 )
 
 const horizontalSpanContentClasses = computed(() =>
-    cn('flex-1 min-w-0 break-words flex items-center px-3 py-2 text-brutal-fg'),
+    cn('flex-1 min-w-0 wrap-anywhere flex items-center px-3 py-2 text-brutal-fg'),
 )
 
 const horizontalContainerClasses = computed(() =>
@@ -64,13 +64,13 @@ const horizontalContainerClasses = computed(() =>
 
 const horizontalLabelClasses = computed(() =>
     cn(
-        'flex min-w-0 items-center break-words px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-b-3 border-brutal w-1/2',
+        'flex min-w-0 items-center wrap-anywhere px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-b-3 border-brutal w-1/2',
         'bg-pattern-dots',
     ),
 )
 
 const horizontalContentClasses = computed(() =>
-    cn('flex-1 min-w-0 break-words flex items-center px-3 py-2 text-brutal-fg border-b-3 border-brutal'),
+    cn('flex-1 min-w-0 wrap-anywhere flex items-center px-3 py-2 text-brutal-fg border-b-3 border-brutal'),
 )
 
 const verticalContainerClasses = computed(() =>
@@ -131,14 +131,14 @@ const borderlessContainerClasses = computed(() =>
                 :style="spanStyle"
             >
                 <div
-                    class="min-w-0 break-words px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-b-3 border-brutal bg-pattern-dots"
+                    class="min-w-0 wrap-anywhere px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-b-3 border-brutal bg-pattern-dots"
                 >
                     <slot name="label">
                         {{ label }}
                     </slot>
                 </div>
                 <div
-                    class="min-w-0 break-words px-3 py-2 text-brutal-fg flex-1"
+                    class="min-w-0 wrap-anywhere px-3 py-2 text-brutal-fg flex-1"
                 >
                     <slot />
                 </div>
@@ -152,12 +152,12 @@ const borderlessContainerClasses = computed(() =>
         :class="borderlessContainerClasses"
         :style="spanStyle"
     >
-        <div class="min-w-0 break-words font-medium text-brutal-muted-foreground text-sm">
+        <div class="min-w-0 wrap-anywhere font-medium text-brutal-muted-foreground text-sm">
             <slot name="label">
                 {{ label }}
             </slot>
         </div>
-        <div class="min-w-0 break-words text-brutal-fg">
+        <div class="min-w-0 wrap-anywhere text-brutal-fg">
             <slot />
         </div>
     </div>

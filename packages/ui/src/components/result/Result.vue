@@ -43,7 +43,7 @@ const statusConfig = {
     },
     empty: {
         icon: FolderOpen,
-        colorClass: 'bg-brutal-accent text-brutal-black',
+        colorClass: 'bg-brutal-accent text-brutal-accent-foreground',
     },
 }
 

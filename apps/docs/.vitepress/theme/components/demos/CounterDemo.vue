@@ -28,7 +28,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="space-y-8">
+    <div class="w-full min-w-0 space-y-8">
         <div>
             <h3 class="text-sm font-black mb-3">基础用法</h3>
             <div

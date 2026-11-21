@@ -169,7 +169,7 @@ function tooltipStyleFor(values: number[] | null | undefined): Record<string, st
     } else {
         style.left = `${pct}%`
         style.top = '0'
-        style.transform = 'translate(-50%, -100%)'
+        style.transform = `translate(-${pct}%, -100%)`
     }
     return style
 }

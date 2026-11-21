@@ -3,7 +3,14 @@ import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const breadcrumbListVariants = cva(
-    'list-none flex flex-wrap items-center gap-2.5 break-words text-sm font-medium text-brutal-fg sm:gap-4',
+    [
+        'list-none flex flex-wrap items-center gap-2.5 break-words text-sm font-medium text-brutal-fg sm:gap-4',
+        // 分隔符前提供换行点，分隔符和后续项目之间保持同一行。
+        'has-[>[data-brutx-breadcrumb-separator]]:block has-[>[data-brutx-breadcrumb-separator]]:whitespace-nowrap',
+        '[--brutx-breadcrumb-separator-width:--spacing(9)] sm:[--brutx-breadcrumb-separator-width:--spacing(12)]',
+        '[&>[data-brutx-breadcrumb-separator]+li]:max-w-[calc(100%-var(--brutx-breadcrumb-separator-width))]',
+        'has-[>[data-brutx-breadcrumb-separator]]:[&>li:not([data-brutx-breadcrumb-separator])>*]:my-1',
+    ],
     {
         variants: {
             /* 档案插片形态：链接渲染为文件夹标签插片（等宽大写、底边开口形成插片感）。
@@ -21,7 +28,7 @@ export const breadcrumbListVariants = cva(
 )
 
 export const breadcrumbItemVariants = cva(
-    'list-none inline-flex items-center gap-1.5'
+    'list-none inline-flex max-w-full items-center gap-1.5 align-middle whitespace-normal wrap-anywhere'
 )
 
 export const breadcrumbLinkVariants = cva(
@@ -39,7 +46,7 @@ export const breadcrumbPageVariants = cva(
 )
 
 export const breadcrumbSeparatorVariants = cva(
-    'list-none [&>svg]:w-3.5 [&>svg]:h-3.5 font-bold text-brutal-fg/60'
+    'inline list-none font-bold text-brutal-fg/60 [&_svg]:w-3.5 [&_svg]:h-3.5'
 )
 
 export const breadcrumbEllipsisVariants = cva(

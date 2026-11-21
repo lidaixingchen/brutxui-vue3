@@ -55,8 +55,9 @@ function resolveHTMLElement(value: unknown): HTMLElement | null {
 
     if (value && typeof value === 'object' && '$el' in value) {
         const root = (value as { $el?: HTMLElement | CharacterData }).$el
+        // Fragment 的文本锚点后可跟随根元素，Presence 注释只表示空内容。
         const element = typeof HTMLElement !== 'undefined' && root instanceof HTMLElement
-            ? root : root?.nextElementSibling
+            ? root : root?.nodeName === '#text' ? root.nextElementSibling : null
         return typeof HTMLElement !== 'undefined' && element instanceof HTMLElement ? element : null
     }
 
@@ -267,11 +268,44 @@ export function useFloatingOverlayLayer(
 ): { style: ComputedRef<StyleValue>; ref: ReturnType<typeof useForwardExpose>['forwardRef']; element: ComputedRef<HTMLElement | null> } {
     const modalLayer = inject(modalLayerKey, null)
     const { forwardRef, currentRef } = useForwardExpose()
-    const element = computed(() => {
-        // Presence 切换时组件实例保持不变，需在开关变化后重新读取实际 DOM。
-        void open?.value
-        return resolveHTMLElement(currentRef.value)
-    })
+    const currentElement = shallowRef<HTMLElement | null>(null)
+    const element = computed(() => currentElement.value)
+    let elementObserver: MutationObserver | null = null
+    let elementParents: Node[] = []
+
+    const syncElement = (): void => {
+        const isOpen = open?.value
+        const reference = currentRef.value
+        const root = reference && '$el' in reference
+            ? reference.$el as Node | undefined
+            : reference
+        const rootElement = resolveHTMLElement(reference)
+        const nextElement = rootElement?.matches('[data-reka-popper-content-wrapper]')
+            ? resolveHTMLElement(rootElement.firstElementChild)
+            : rootElement
+        currentElement.value = nextElement
+
+        const parents = new Set<Node>()
+        if (isOpen !== false || nextElement?.isConnected) {
+            if (root?.parentNode) parents.add(root.parentNode)
+            const positionerParent = nextElement?.closest('[data-reka-popper-content-wrapper]')?.parentNode
+            if (positionerParent) parents.add(positionerParent)
+        }
+        const nextParents = [...parents]
+        if (elementParents.length === nextParents.length
+            && elementParents.every((parent, index) => parent === nextParents[index])) return
+
+        elementObserver?.disconnect()
+        elementParents = nextParents
+        const Observer = getMutationObserverCtor()
+        elementObserver = Observer ? new Observer(syncElement) : null
+        for (const parent of elementParents) elementObserver?.observe(parent, { childList: true })
+    }
+
+    // Presence 可在原语实例保持不变时替换内容节点，观察所属挂载容器以同步实际元素。
+    watchPostEffect(syncElement)
+    onMounted(syncElement)
+    onUpdated(syncElement)
     let observedElement: HTMLElement | null = null
     let observer: MutationObserver | null = null
     let stopViewportObservation: (() => void) | null = null
@@ -299,7 +333,7 @@ export function useFloatingOverlayLayer(
 
     const syncPositionerLayer = (): void => {
         void style.value
-        const root = resolveHTMLElement(currentRef.value)
+        const root = currentElement.value
         let positioner = root?.closest<HTMLElement>('[data-reka-popper-content-wrapper]')
         let element = root === positioner ? resolveHTMLElement(positioner?.firstElementChild) : root
         if (!positioner && root && itemAligned()) {
@@ -340,6 +374,7 @@ export function useFloatingOverlayLayer(
     })
     onUpdated(syncPositionerLayer)
     onBeforeUnmount(() => {
+        elementObserver?.disconnect()
         observer?.disconnect()
         stopViewportObservation?.()
     })

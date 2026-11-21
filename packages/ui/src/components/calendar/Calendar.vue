@@ -69,7 +69,9 @@ const datePickerLocale = computed(() => props.locale ?? globalLocale.value.code 
 const rootClasses = computed(() =>
     cn(
         'brutx-calendar',
-        props.mode === 'card' ? 'mode-card w-full' : 'w-fit max-w-full overflow-x-auto',
+        props.mode === 'card'
+            ? 'mode-card w-full [--brutx-calendar-card-min-day-width:--spacing(20)]'
+            : 'w-fit max-w-full overflow-x-auto',
         'p-2 sm:p-3',
         'bg-brutal-bg text-brutal-fg',
         'border-3 border-brutal',
@@ -310,7 +312,7 @@ function getDayEvents(day: { date?: Date; startDate?: Date }) {
                                 />
                                 <div
                                     v-else
-                                    class="text-[9px] sm:text-[10px] leading-tight px-1.5 py-0.5 bg-brutal-bg text-brutal-fg border border-brutal shadow-[1px_1px_0px_var(--brutal-shadow-color,#000000)] rounded font-mono truncate text-left"
+                                    class="text-xs leading-snug px-1.5 py-0.5 bg-brutal-bg text-brutal-fg border border-brutal shadow-brutal-sm rounded-brutal font-mono wrap-anywhere text-left"
                                     :title="event.title"
                                     data-testid="calendar-card-event-badge"
                                 >
@@ -477,6 +479,11 @@ function getDayEvents(day: { date?: Date; startDate?: Date }) {
 
 .brutx-calendar.mode-card .vc-weeks {
     width: 100%;
+    overflow-x: auto;
+}
+
+.brutx-calendar.mode-card :is(.vc-weekdays, .vc-week) {
+    grid-template-columns: repeat(7, minmax(var(--brutx-calendar-card-min-day-width), 1fr));
 }
 
 .brutx-calendar.mode-card .vc-day {
@@ -484,5 +491,10 @@ function getDayEvents(day: { date?: Date; startDate?: Date }) {
     min-height: 4rem; /* 4rem = min-h-16 */
     align-items: stretch;
     justify-content: flex-start;
+}
+
+.brutx-calendar.mode-card .vc-day-content {
+    width: 100%;
+    height: auto;
 }
 </style>

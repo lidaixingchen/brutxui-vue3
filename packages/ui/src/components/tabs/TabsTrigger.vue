@@ -23,10 +23,26 @@ const props = withDefaults(defineProps<TabsTriggerProps>(), {
 const classes = computed(() =>
     cn(tabsTriggerVariants({ variant: props.variant }), props.class)
 )
+
+function revealFocusedTab(event: FocusEvent) {
+    const trigger = event.currentTarget as HTMLElement
+    const list = trigger.closest<HTMLElement>('[role="tablist"]')
+    if (!list || list.scrollWidth <= list.clientWidth) return
+
+    const tabBounds = trigger.getBoundingClientRect()
+    const listLeft = list.getBoundingClientRect().left + list.clientLeft
+    const listRight = listLeft + list.clientWidth
+    if (tabBounds.left < listLeft) {
+        list.scrollLeft += tabBounds.left - listLeft
+    }
+    else if (tabBounds.right > listRight) {
+        list.scrollLeft += tabBounds.right - listRight
+    }
+}
 </script>
 
 <template>
-    <TabsTriggerPrimitive :value="value" :disabled="disabled" :class="classes">
+    <TabsTriggerPrimitive :value="value" :disabled="disabled" :class="classes" @focus="revealFocusedTab">
         <slot />
     </TabsTriggerPrimitive>
 </template>

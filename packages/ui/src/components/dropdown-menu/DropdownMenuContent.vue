@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, toRef } from 'vue'
 import {
     DropdownMenuPortal as DropdownMenuPortalPrimitive,
     DropdownMenuContent as DropdownMenuContentPrimitive,
@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import { floatingContentSideOffsets } from '@/lib/floating-content-variants'
 import { dropdownMenuContentVariants } from './dropdown-menu-variants'
 import { useFloatingOverlayLayer } from '@/lib/overlay-layer'
+import { usePortalThemeInheritance } from '@/lib/portal-theme'
 
 interface DropdownMenuContentProps {
     sideOffset?: number
@@ -21,13 +22,17 @@ interface DropdownMenuContentProps {
 
 const props = withDefaults(defineProps<DropdownMenuContentProps>(), {
     sideOffset: floatingContentSideOffsets.dropdownMenu,
-    // undefined 触发 reka-ui 默认 'center'——与本组件未暴露 align 时（原始行为）一致
+    // 省略时沿用原语的默认居中对齐。
     align: undefined,
     to: undefined,
     class: undefined,
 })
 
-const { style: overlayLayerStyle, ref: floatingLayerRef } = useFloatingOverlayLayer('dropdown', injectDropdownMenuRootContext().open)
+const dropdownMenuContext = injectDropdownMenuRootContext()
+const { style: overlayLayerStyle, ref: floatingLayerRef, element: floatingElement } = useFloatingOverlayLayer('dropdown', dropdownMenuContext.open)
+// 原语挂载时会替换触发器 ref，按当前上下文读取实际元素。
+const triggerElement = toRef(() => dropdownMenuContext.triggerElement.value)
+usePortalThemeInheritance(triggerElement, floatingElement)
 
 const classes = computed(() =>
     cn(dropdownMenuContentVariants(), props.class)

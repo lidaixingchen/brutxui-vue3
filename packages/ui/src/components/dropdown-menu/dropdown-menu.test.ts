@@ -16,7 +16,7 @@ vi.mock('reka-ui', async (importOriginal) => {
     const { ref } = await import('vue')
     return {
         ...primitives,
-        injectDropdownMenuRootContext: () => ({ open: ref(false) }),
+        injectDropdownMenuRootContext: () => ({ open: ref(false), triggerElement: ref<HTMLElement>() }),
     }
 })
 
