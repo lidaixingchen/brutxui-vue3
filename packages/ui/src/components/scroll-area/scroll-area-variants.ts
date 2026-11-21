@@ -1,17 +1,5 @@
 import { cva } from 'class-variance-authority'
 
-export const scrollAreaRootVariants = cva(
-    [
-        'relative overflow-hidden',
-    ],
-)
-
-const scrollBarColorVariants = {
-    default: 'border-brutal',
-    primary: 'border-brutal-primary',
-    accent: 'border-brutal-accent',
-}
-
 export const SCROLL_THICKNESS = {
     sm: '0.5rem',
     default: '0.75rem',
@@ -24,6 +12,17 @@ const scrollBarSizeVariants = {
     lg: '[--scroll-thickness:1rem]',
 }
 
+export const scrollAreaRootVariants = cva('relative overflow-hidden', {
+    variants: { size: scrollBarSizeVariants },
+    defaultVariants: { size: 'default' },
+})
+
+const scrollBarColorVariants = {
+    default: 'border-brutal bg-brutal-bg',
+    primary: 'border-brutal-primary bg-brutal-primary',
+    accent: 'border-brutal-accent bg-brutal-accent',
+}
+
 export const scrollAreaScrollbarVariants = cva(
     [
         'flex touch-none select-none transition-colors',
@@ -33,7 +32,7 @@ export const scrollAreaScrollbarVariants = cva(
             variant: scrollBarColorVariants,
             size: scrollBarSizeVariants,
             orientation: {
-                vertical: 'h-full w-[var(--scroll-thickness,0.75rem)] border-l-3 p-[1px]',
+                vertical: 'h-full w-[var(--scroll-thickness,0.75rem)] border-s-3 p-[1px]',
                 horizontal: 'h-[var(--scroll-thickness,0.75rem)] flex-col border-t-3 p-[1px]',
             },
         },
@@ -47,8 +46,8 @@ export const scrollAreaScrollbarVariants = cva(
 
 const scrollBarThumbColorVariants = {
     default: 'bg-brutal-fg',
-    primary: 'bg-brutal-primary',
-    accent: 'bg-brutal-accent',
+    primary: 'bg-brutal-primary-foreground',
+    accent: 'bg-brutal-accent-foreground',
 }
 
 export const scrollAreaThumbVariants = cva(

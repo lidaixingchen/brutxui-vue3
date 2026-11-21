@@ -153,7 +153,7 @@ describe('Kbd 3D 机械键帽', () => {
     it('backlit 变体应用恒黑底与 accent 背光字符令牌', () => {
         const wrapper = mount(Kbd, { props: { variant: 'backlit' } })
         expect(wrapper.classes()).toContain('bg-brutal-black')
-        expect(wrapper.classes()).toContain('text-brutal-accent')
+        expect(wrapper.classes()).toContain('text-[color-mix(in_srgb,var(--brutal-accent),var(--kbd-backlight-glow)_20%)]')
         expect(wrapper.classes()).not.toContain('bg-brutal-muted')
     })
 

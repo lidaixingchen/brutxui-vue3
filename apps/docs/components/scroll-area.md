@@ -59,13 +59,13 @@ import { ScrollArea, ScrollBar } from 'brutx-ui-vue'
 
 ## 变体
 
-控制滚动条边框与滑块颜色。设置在 `ScrollArea` 上会下发给默认垂直滚动条；手动添加的水平滚动条需在 `ScrollBar` 上单独设置。
+控制滚动条轨道与滑块的配色。`ScrollArea` 为默认垂直滚动条预留空间，滚动条显隐时内容宽度保持稳定。手动添加的水平滚动条需在 `ScrollBar` 上单独设置变体。
 
-| 变体 | 边框 | 滑块 |
+| 变体 | 轨道 | 滑块 |
 |------|------|------|
-| `default` | `border-brutal` | `bg-brutal-fg` |
-| `primary` | `border-brutal-primary` | `bg-brutal-primary` |
-| `accent` | `border-brutal-accent` | `bg-brutal-accent` |
+| `default` | `bg-brutal-bg` | `bg-brutal-fg` |
+| `primary` | `bg-brutal-primary` | `bg-brutal-primary-foreground` |
+| `accent` | `bg-brutal-accent` | `bg-brutal-accent-foreground` |
 
 ```vue
 <script setup>

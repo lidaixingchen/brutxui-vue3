@@ -45,7 +45,7 @@ const lineClasses = computed(() =>
     cn(separatorLineVariants({ variant: props.variant, size: props.size }), props.class)
 )
 
-const wrapperClasses = 'flex items-center gap-3 w-full'
+const wrapperClasses = 'flex w-full min-w-0 items-center gap-3'
 </script>
 
 <template>
@@ -57,7 +57,7 @@ const wrapperClasses = 'flex items-center gap-3 w-full'
         data-orientation="horizontal"
     >
         <div :class="lineClasses" aria-hidden="true" />
-        <slot />
+        <span class="min-w-0 max-w-2/3 text-center wrap-anywhere"><slot /></span>
         <div :class="lineClasses" aria-hidden="true" />
     </div>
     <SeparatorPrimitive

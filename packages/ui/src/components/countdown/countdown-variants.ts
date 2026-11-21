@@ -1,7 +1,7 @@
 import { cva } from 'class-variance-authority'
 
 export const countdownVariants = cva(
-    'inline-flex flex-col text-brutal-fg',
+    'inline-flex min-w-0 max-w-full flex-col text-brutal-fg',
     {
         variants: {
             variant: {

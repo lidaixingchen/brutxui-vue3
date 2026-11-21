@@ -44,12 +44,12 @@ const isPageMode = computed(() => props.page || props.fullscreen)
 const isFullscreen = computed(() => props.fullscreen)
 const pageRootClasses = computed(() => {
     if (isFullscreen.value) {
-        return cn('fixed inset-0 z-loading flex items-center justify-center bg-brutal-bg p-4 overflow-y-auto', props.class)
+        return cn('fixed inset-0 z-loading flex items-center-safe justify-center bg-brutal-bg p-4 overflow-y-auto', props.class)
     }
     return cn('min-h-screen flex items-center justify-center bg-brutal-bg p-4', props.class)
 })
 // 局部模式容器提供默认最小高度，保证 loading=false 时无内容也有可感知的遮罩区域
-const localRootClasses = computed(() => cn('relative min-h-24', props.class))
+const localRootClasses = computed(() => cn('relative grid min-h-24 grid-cols-1', props.class))
 // null/undefined 均视为无进度；取值在组件边界 clamp 到 0-100
 const hasProgress = computed(() => props.progress != null)
 const clampedProgress = computed(() =>
@@ -57,7 +57,7 @@ const clampedProgress = computed(() =>
 )
 const maskClasses = computed(() =>
     cn(
-        'absolute inset-0 flex flex-col items-center justify-center z-loading select-none bg-brutal-bg/80',
+        'col-start-1 row-start-1 z-loading flex min-w-0 flex-col items-center justify-center bg-brutal-bg/80 p-3 text-center select-none',
         props.customClass
     )
 )
@@ -76,11 +76,11 @@ const maskClasses = computed(() =>
                     <Spinner size="lg" variant="primary" />
                 </div>
 
-                <h1 v-if="title || text" class="text-2xl sm:text-3xl font-black tracking-tight text-brutal-fg">
+                <h1 v-if="title || text" class="text-2xl sm:text-3xl font-black tracking-tight text-brutal-fg wrap-anywhere">
                     {{ title ?? text }}
                 </h1>
 
-                <p v-if="description" class="mt-3 text-brutal-muted-foreground font-medium">
+                <p v-if="description" class="mt-3 text-brutal-muted-foreground font-medium wrap-anywhere">
                     {{ description }}
                 </p>
 
@@ -96,7 +96,7 @@ const maskClasses = computed(() =>
     </div>
 
     <div v-else-if="!isPageMode" :class="localRootClasses">
-        <slot />
+        <div class="col-start-1 row-start-1 min-w-0"><slot /></div>
 
         <Transition
             enter-active-class="transition-opacity duration-150 ease-out"
@@ -109,11 +109,11 @@ const maskClasses = computed(() =>
                 :class="maskClasses"
                 :style="maskStyles"
             >
-                <div class="flex flex-col items-center gap-3">
+                <div class="flex max-w-full flex-col items-center gap-3">
                     <Spinner size="lg" variant="default" />
                     <span 
                         v-if="text" 
-                        class="text-sm font-black uppercase tracking-wider bg-brutal-status-warning text-brutal-status-warning-foreground px-2 py-0.5 border border-brutal shadow-brutal-sm"
+                        class="max-w-full text-sm font-black uppercase tracking-wider bg-brutal-status-warning text-brutal-status-warning-foreground px-2 py-0.5 border border-brutal shadow-brutal-sm wrap-anywhere"
                     >
                         {{ text }}
                     </span>

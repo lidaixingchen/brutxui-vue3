@@ -156,10 +156,7 @@ function getStarWrapperClass(index: number): string {
 }
 
 const backgroundStarClass = computed(() =>
-    cn(
-        'w-full h-full text-brutal-muted stroke-brutal-muted-foreground stroke-[1.5px]',
-        props.readonly ? 'opacity-60' : 'opacity-80'
-    )
+    cn('w-full h-full text-brutal-muted stroke-brutal-muted-foreground stroke-[1.5px]')
 )
 
 const foregroundStarClass = computed(() =>

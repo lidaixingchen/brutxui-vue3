@@ -27,11 +27,11 @@ const props = withDefaults(defineProps<ScrollAreaProps>(), {
 })
 
 const classes = computed(() =>
-    cn(scrollAreaRootVariants(), props.class)
+    cn(scrollAreaRootVariants({ size: props.size }), props.class)
 )
 
 const viewportClasses = computed(() =>
-    cn('h-full w-full rounded-[inherit]', props.viewportClass)
+    cn('h-full w-[calc(100%-var(--scroll-thickness))] rounded-[inherit]', props.viewportClass)
 )
 </script>
 

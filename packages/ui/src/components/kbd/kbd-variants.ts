@@ -25,9 +25,11 @@ export const kbdVariants = cva(
                 primary: chipColorVariants.primary,
                 secondary: chipColorVariants.secondary,
                 accent: chipColorVariants.accent,
-                /* 工控背光键帽：恒黑底 + accent 发光字符。
-                   --brutal-black 在亮暗预设均为纯黑，黄字对比度跨主题稳定（≈14:1） */
-                backlit: 'bg-brutal-black text-brutal-accent border-brutal-black',
+                backlit: [
+                    'bg-brutal-black border-brutal-black',
+                    '[--kbd-backlight-glow:var(--brutal-bg)] dark:[--kbd-backlight-glow:var(--brutal-fg)]',
+                    'text-[color-mix(in_srgb,var(--brutal-accent),var(--kbd-backlight-glow)_20%)]',
+                ],
             },
             size: {
                 sm: 'px-1.5 py-0.5 text-xs min-w-[1.25rem]',

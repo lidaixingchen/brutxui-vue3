@@ -137,13 +137,13 @@ function onMaximize(event: MouseEvent | KeyboardEvent): void {
         </span>
 
         <!-- 居中等宽大写标题 -->
-        <span class="min-w-0 flex-1 truncate text-center font-mono text-xs font-bold uppercase tracking-widest text-brutal-fg">
+        <span class="min-w-0 max-w-full flex-auto text-center font-mono text-xs font-bold uppercase tracking-widest text-brutal-fg wrap-anywhere">
             {{ props.title }}
         </span>
 
         <!-- 右侧控制符区域（插槽 > 交互模式 > 静态 ASCII > 空） -->
-        <span v-if="hasCustomActions" class="shrink-0"><slot name="actions" /></span>
-        <span v-else-if="isInteractiveControls" class="flex shrink-0 items-center gap-1">
+        <span v-if="hasCustomActions" class="ms-auto min-w-0 max-w-full"><slot name="actions" /></span>
+        <span v-else-if="isInteractiveControls" class="ms-auto flex max-w-full flex-wrap items-center justify-end gap-1">
             <button
                 v-if="props.minimizable"
                 type="button"
@@ -168,7 +168,7 @@ function onMaximize(event: MouseEvent | KeyboardEvent): void {
         </span>
         <span
             v-else-if="props.showControls"
-            class="shrink-0 font-mono text-xs font-bold uppercase text-brutal-fg"
+            class="ms-auto max-w-full font-mono text-xs font-bold uppercase text-brutal-fg wrap-anywhere"
             aria-hidden="true"
         >[ _ ] [ X ]</span>
     </div>

@@ -52,7 +52,7 @@ describe('ScrollArea', () => {
         const viewport = wrapper.find('[data-reka-scroll-area-viewport]')
         expect(viewport.classes()).toContain('custom-viewport-padding')
         expect(viewport.classes()).toContain('h-full')
-        expect(viewport.classes()).toContain('w-full')
+        expect(viewport.classes()).toContain('w-[calc(100%-var(--scroll-thickness))]')
         wrapper.unmount()
     })
 
@@ -91,7 +91,7 @@ describe('ScrollBar', () => {
         const classes = scrollAreaScrollbarVariants({ orientation: 'vertical' })
         expect(classes).toContain('h-full')
         expect(classes).toContain(`w-[var(--scroll-thickness,${SCROLL_THICKNESS.default})]`)
-        expect(classes).toContain('border-l-3')
+        expect(classes).toContain('border-s-3')
         expect(classes).toContain('touch-none')
     })
 
@@ -150,12 +150,12 @@ describe('ScrollAreaThumb', () => {
 
     it('applies primary variant bg color', () => {
         const classes = scrollAreaThumbVariants({ variant: 'primary' })
-        expect(classes).toContain('bg-brutal-primary')
+        expect(classes).toContain('bg-brutal-primary-foreground')
     })
 
     it('applies accent variant bg color', () => {
         const classes = scrollAreaThumbVariants({ variant: 'accent' })
-        expect(classes).toContain('bg-brutal-accent')
+        expect(classes).toContain('bg-brutal-accent-foreground')
     })
 
     it('thumb 携带纯色实体背景、圆角与拖拽吸附高亮（无渐变伪条纹）', () => {

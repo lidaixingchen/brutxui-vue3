@@ -60,13 +60,13 @@ import { ScrollArea, ScrollBar } from 'brutx-ui-vue'
 
 ## Variants
 
-Controls the scrollbar border and thumb color. Setting it on `ScrollArea` passes it to the default vertical scrollbar; manually added horizontal scrollbars need the variant set separately on `ScrollBar`.
+Controls the scrollbar track and thumb colors. `ScrollArea` reserves space for the default vertical scrollbar so the content keeps its width as the scrollbar appears and disappears. Set the variant on `ScrollBar` for a manually added horizontal scrollbar.
 
-| Variant | Border | Thumb |
+| Variant | Track | Thumb |
 |------|------|------|
-| `default` | `border-brutal` | `bg-brutal-fg` |
-| `primary` | `border-brutal-primary` | `bg-brutal-primary` |
-| `accent` | `border-brutal-accent` | `bg-brutal-accent` |
+| `default` | `bg-brutal-bg` | `bg-brutal-fg` |
+| `primary` | `bg-brutal-primary` | `bg-brutal-primary-foreground` |
+| `accent` | `bg-brutal-accent` | `bg-brutal-accent-foreground` |
 
 ```vue
 <script setup>

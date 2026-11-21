@@ -4,10 +4,10 @@ import { FOCUS_RING_CLASSES } from '@/lib/utils'
 /** 工控窗口顶栏容器：muted 底 + 实体粗线与卡身分隔 */
 export const cardWindowHeaderVariants = cva(
     [
-        'flex items-center justify-between gap-3',
+        'flex flex-wrap items-center justify-between gap-x-3 gap-y-2',
         'border-b-3 border-brutal',
         'bg-brutal-muted',
-        'px-4 py-2',
+        'px-3 py-2',
     ],
     {
         variants: {},
@@ -19,7 +19,7 @@ export const cardWindowHeaderVariants = cva(
 export const cardWindowHeaderButtonVariants = cva(
     [
         'inline-flex items-center justify-center',
-        'min-h-[22px] px-1.5',
+        'min-h-[22px] px-1',
         'font-mono text-xs font-bold uppercase',
         'transition-colors duration-150 cursor-pointer select-none rounded-brutal',
         'active:translate-y-[1px]',

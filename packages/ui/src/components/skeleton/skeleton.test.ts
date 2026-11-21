@@ -257,7 +257,7 @@ describe('SkeletonTable', () => {
         const classes = wrapper.classes()
         expect(classes).toContain('border-3')
         expect(classes).toContain('border-brutal')
-        expect(classes).toContain('overflow-hidden')
+        expect(classes).toContain('overflow-x-auto')
     })
 
     it('renders default rows and columns', () => {

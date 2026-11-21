@@ -33,20 +33,23 @@ const safeColumns = computed(() => {
 })
 
 const DEFAULT_CELL_WIDTH_RATIOS = [0.85, 0.7, 0.9, 0.65]
+const rowLayout = 'grid min-w-[calc(var(--skeleton-table-columns)*--spacing(6))] grid-cols-[repeat(var(--skeleton-table-columns),minmax(0,1fr))]'
 
 const containerClasses = computed(() =>
-    cn('border-3 border-brutal overflow-hidden', props.class)
+    cn('overflow-x-auto border-3 border-brutal', props.class)
 )
+
+const headerClasses = computed(() => cn(rowLayout, 'border-b-3 border-brutal bg-brutal-accent'))
 
 const rowClasses = computed(() =>
     Array.from({ length: safeRows.value }, (_, i) =>
-        cn('flex', i < safeRows.value - 1 && 'border-b-3 border-brutal', i % 2 === 0 && 'bg-brutal-muted')
+        cn(rowLayout, i < safeRows.value - 1 && 'border-b-3 border-brutal', i % 2 === 0 && 'bg-brutal-muted')
     )
 )
 
 const cellClasses = computed(() =>
     Array.from({ length: safeColumns.value }, (_, i) =>
-        cn('flex-1 p-3', i < safeColumns.value - 1 && 'border-r-3 border-brutal')
+        cn('min-w-0 px-1 py-3', i < safeColumns.value - 1 && 'border-e-3 border-brutal')
     )
 )
 
@@ -57,8 +60,8 @@ function getCellWidth(colIndex: number): string {
 </script>
 
 <template>
-    <div :class="containerClasses" role="table" aria-busy="true">
-        <div v-if="safeColumns > 0" class="flex bg-brutal-accent border-b-3 border-brutal" role="row">
+    <div :class="containerClasses" :style="{ '--skeleton-table-columns': safeColumns }" role="table" aria-busy="true">
+        <div v-if="safeColumns > 0" :class="headerClasses" role="row">
             <div
                 v-for="(cellClass, colIndex) in cellClasses"
                 :key="`header-${colIndex}`"
