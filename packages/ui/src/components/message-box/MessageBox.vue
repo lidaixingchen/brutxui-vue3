@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, inject, ref, useTemplateRef, watch } from 'vue'
 import {
     DialogRoot,
     DialogPortal,
@@ -26,6 +26,10 @@ import {
     type MessageBoxType,
 } from './message-box-variants'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
+import { usePortalThemeInheritance } from '@/lib/portal-theme'
+import { messageBoxThemeAnchorKey } from './message-box-key'
+
+defineOptions({ inheritAttrs: false })
 
 export interface MessageBoxProps {
     open?: boolean
@@ -74,6 +78,10 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useLocale()
+const themeAnchor = useTemplateRef<HTMLElement>('themeAnchor')
+const themeHost = useTemplateRef<HTMLElement>('themeHost')
+const invokingElement = inject(messageBoxThemeAnchorKey, undefined)
+usePortalThemeInheritance(computed(() => invokingElement?.isConnected ? invokingElement : themeAnchor.value), themeHost, element => element)
 
 const currentInputValue = ref(props.inputValue ?? '')
 const hasValidationError = ref(false)
@@ -164,75 +172,79 @@ function handleCancel(): void {
 </script>
 
 <template>
+    <span ref="themeAnchor" hidden />
     <DialogRoot
         :open="props.open"
         @update:open="(val: boolean) => emit('update:open', val)"
     >
         <DialogPortal>
-            <DialogOverlay
-                class="fixed inset-0 z-dialog bg-brutal-overlay backdrop-blur-xs transition-opacity data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
-                :style="props.zIndex !== undefined ? { zIndex: props.zIndex } : undefined"
-            />
-            <DialogContent
-                data-brutx-portal="message-box"
-                :class="cardClasses"
-                :style="props.zIndex !== undefined ? { zIndex: props.zIndex } : undefined"
-                @escape-key-down="handleCancel"
-                @pointer-down-outside="handleCancel"
-            >
-                <!-- 顶部标题与关闭按钮 -->
-                <div class="flex items-start justify-between gap-3">
-                    <div class="flex min-w-0 items-center gap-3">
-                        <div :class="iconWrapperClasses" aria-hidden="true">
-                            <component :is="typeIconComponent" :class="iconClasses" />
+            <div ref="themeHost" class="contents">
+                <DialogOverlay
+                    class="fixed inset-0 z-dialog bg-brutal-overlay backdrop-blur-xs transition-opacity data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
+                    :style="props.zIndex !== undefined ? { zIndex: props.zIndex } : undefined"
+                />
+                <DialogContent
+                    v-bind="$attrs"
+                    data-brutx-portal="message-box"
+                    :class="cardClasses"
+                    :style="props.zIndex !== undefined ? { zIndex: props.zIndex } : undefined"
+                    @escape-key-down="handleCancel"
+                    @pointer-down-outside="handleCancel"
+                >
+                    <!-- 顶部标题与关闭按钮 -->
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex min-w-0 items-center gap-3">
+                            <div :class="iconWrapperClasses" aria-hidden="true">
+                                <component :is="typeIconComponent" :class="iconClasses" />
+                            </div>
+                            <DialogTitle class="min-w-0 whitespace-normal wrap-anywhere text-lg font-black tracking-tight text-brutal-fg">
+                                {{ displayTitle }}
+                            </DialogTitle>
                         </div>
-                        <DialogTitle class="min-w-0 whitespace-normal wrap-anywhere text-lg font-black tracking-tight text-brutal-fg">
-                            {{ displayTitle }}
-                        </DialogTitle>
+                        <DialogClose v-if="props.showCloseButton" :class="closeButtonClasses" @click="handleCancel">
+                            <X :class="closeIconClasses" aria-hidden="true" />
+                            <span class="sr-only">{{ t('dialog.close') }}</span>
+                        </DialogClose>
                     </div>
-                    <DialogClose v-if="props.showCloseButton" :class="closeButtonClasses" @click="handleCancel">
-                        <X :class="closeIconClasses" aria-hidden="true" />
-                        <span class="sr-only">{{ t('dialog.close') }}</span>
-                    </DialogClose>
-                </div>
 
-                <!-- 消息正文与输入框 -->
-                <div class="flex min-w-0 flex-col gap-4">
-                    <DialogDescription :class="descriptionClasses">
-                        {{ props.message || displayTitle }}
-                    </DialogDescription>
+                    <!-- 消息正文与输入框 -->
+                    <div class="flex min-w-0 flex-col gap-4">
+                        <DialogDescription :class="descriptionClasses">
+                            {{ props.message || displayTitle }}
+                        </DialogDescription>
 
-                    <div v-if="props.showInput" class="flex flex-col gap-1.5">
-                        <Input
-                            v-model="currentInputValue"
-                            :placeholder="props.inputPlaceholder"
-                            :variant="hasValidationError ? 'error' : 'default'"
-                            :error-message="hasValidationError ? errorMessageText : undefined"
-                            autofocus
-                            @keydown.enter.prevent="handleConfirm"
-                        />
+                        <div v-if="props.showInput" class="flex flex-col gap-1.5">
+                            <Input
+                                v-model="currentInputValue"
+                                :placeholder="props.inputPlaceholder"
+                                :variant="hasValidationError ? 'error' : 'default'"
+                                :error-message="hasValidationError ? errorMessageText : undefined"
+                                autofocus
+                                @keydown.enter.prevent="handleConfirm"
+                            />
+                        </div>
                     </div>
-                </div>
 
-                <!-- 底部操作按钮组 -->
-                <div class="mt-2 flex min-w-0 flex-wrap justify-end gap-3">
-                    <Button
-                        v-if="props.showCancelButton"
-                        variant="outline"
-                        :class="cancelButtonClasses"
-                        @click="handleCancel"
-                    >
-                        {{ cancelText }}
-                    </Button>
-                    <Button
-                        variant="default"
-                        :class="confirmButtonClasses"
-                        @click="handleConfirm"
-                    >
-                        {{ confirmText }}
-                    </Button>
-                </div>
-            </DialogContent>
+                    <!-- 底部操作按钮组 -->
+                    <div class="mt-2 flex min-w-0 flex-wrap justify-end gap-3">
+                        <Button
+                            v-if="props.showCancelButton"
+                            variant="outline"
+                            :class="cancelButtonClasses"
+                            @click="handleCancel"
+                        >
+                            {{ cancelText }}
+                        </Button>
+                        <Button
+                            variant="default"
+                            :class="confirmButtonClasses"
+                            @click="handleConfirm"
+                        >
+                            {{ confirmText }}
+                        </Button>
+                    </div>
+                </DialogContent>
+            </div>
         </DialogPortal>
     </DialogRoot>
 </template>

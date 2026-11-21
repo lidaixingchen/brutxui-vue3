@@ -1,8 +1,9 @@
-import type { AppContext } from 'vue'
+import { defineComponent, h, provide, type AppContext } from 'vue'
 import { mountOverlay, type OverlayInstanceHandle } from '@/lib/render-imperative'
 import MessageBox, { type MessageBoxProps } from './MessageBox.vue'
 import type { MessageBoxType } from './message-box-variants'
-import { canUseDocumentBody } from '@/lib/env'
+import { canUseDocumentBody, getDocument } from '@/lib/env'
+import { messageBoxThemeAnchorKey } from './message-box-key'
 
 export type { MessageBoxType }
 
@@ -23,6 +24,15 @@ export interface MessageBoxOptions extends Omit<MessageBoxProps, 'open'> {
 
 export type MessageBoxInstance = OverlayInstanceHandle<MessageBoxResult>
 
+const ImperativeMessageBox = defineComponent({
+    inheritAttrs: false,
+    setup(_, { attrs }) {
+        const invokingElement = getDocument()?.activeElement
+        if (invokingElement instanceof HTMLElement) provide(messageBoxThemeAnchorKey, invokingElement)
+        return () => h(MessageBox, attrs as MessageBoxProps)
+    },
+})
+
 /**
  * 命令式展示 MessageBox 弹层
  */
@@ -30,7 +40,7 @@ export function showMessageBox(options: MessageBoxOptions = {}): MessageBoxInsta
     const { appContext, transitionDuration, enableEsc, ...componentProps } = options
 
     return mountOverlay<MessageBoxProps, MessageBoxResult>(
-        MessageBox,
+        ImperativeMessageBox,
         (context) => ({
             ...componentProps,
             open: context.isOpen.value,

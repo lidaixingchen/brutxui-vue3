@@ -52,7 +52,7 @@ import { Avatar, AvatarImage, AvatarFallback } from 'brutx-ui-vue'
 
 ### Status Indicator
 
-Renders a small status dot at the bottom-right corner of the avatar (`w-3 h-3 rounded-full border-3 border-brutal-bg`). Not rendered when `status="none"` (default).
+The status marker at the bottom end of the avatar uses a theme color and a distinct glyph. A check marks online, a dash marks offline, and a cross marks busy. Set `status="none"` (default) to hide the marker.
 
 | Status | Color | Description |
 | --- | --- | --- |

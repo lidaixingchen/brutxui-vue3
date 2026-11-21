@@ -24,12 +24,13 @@ const isAlternateLeft = computed(() =>
 
 const classes = computed(() =>
     cn(
-        'relative flex',
+        'relative flex gap-4',
         orientation.value === 'vertical'
-            ? isAlternateLeft.value
-                ? 'flex-row-reverse gap-4 items-stretch'
-                : 'flex-row gap-4 items-stretch'
-            : 'flex-col gap-4 items-center min-w-48 flex-1',
+            ? [isAlternateLeft.value ? 'flex-row-reverse' : 'flex-row', 'items-stretch last:[&_[data-timeline-connector]]:mb-0']
+            : 'flex-col items-center min-w-48 flex-1 last:[&_[data-timeline-connector]]:end-0',
+        alternate.value && 'has-[>[data-timeline-separator]]:grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] [&>[data-timeline-separator]]:col-start-2 [&>[data-timeline-separator]]:row-start-1 [&>[data-timeline-content]]:row-start-1',
+        isAlternateLeft.value && '[&>[data-timeline-content]]:col-start-1 [&>[data-timeline-content]]:text-end',
+        alternate.value && !isAlternateLeft.value && '[&>[data-timeline-content]]:col-start-3',
         props.class
     )
 )

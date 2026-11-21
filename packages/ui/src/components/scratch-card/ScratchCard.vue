@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, toRef, watch, onUnmounted } from 'vue'
-import { getCanvas2DContext, getDevicePixelRatio, getDocument, getComputedStyle } from '@/lib/env'
+import { ref, computed, toRef, watch, onMounted, onUnmounted } from 'vue'
+import { createCanvasElement, getCanvas2DContext, getDevicePixelRatio, getComputedStyle, getMutationObserverCtor } from '@/lib/env'
 import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 import { FALLBACK_PRIMARY_COLOR, FALLBACK_SECONDARY_COLOR, FALLBACK_FG_COLOR } from '@/lib/theme-fallbacks'
 import { useReducedMotion } from '@/composables/useReducedMotion'
@@ -44,23 +44,28 @@ const canvasRemoved = ref(false)
 const prefersReducedMotion = useReducedMotion()
 const { t } = useLocale()
 
-const drawOverlay = (ctxVal: CanvasRenderingContext2D, w: number, h: number) => {
+type OverlayColors = readonly [primary: string, secondary: string, foreground: string]
+let paintedColors: OverlayColors | undefined
+let themeObserver: MutationObserver | undefined
+
+function readOverlayColors(): OverlayColors {
+    const styles = containerRef.value ? getComputedStyle(containerRef.value) : undefined
+    return [
+        styles?.getPropertyValue('--brutal-primary').trim() || FALLBACK_PRIMARY_COLOR,
+        styles?.getPropertyValue('--brutal-secondary').trim() || FALLBACK_SECONDARY_COLOR,
+        styles?.getPropertyValue('--brutal-fg').trim() || FALLBACK_FG_COLOR,
+    ]
+}
+
+const drawOverlay = (ctxVal: CanvasRenderingContext2D, w: number, h: number, colors?: OverlayColors) => {
     ctxVal.clearRect(0, 0, w, h)
 
     if (props.overlayColor) {
         ctxVal.fillStyle = props.overlayColor
         ctxVal.fillRect(0, 0, w, h)
     } else {
-        let primary = FALLBACK_PRIMARY_COLOR
-        let secondary = FALLBACK_SECONDARY_COLOR
-        let fg = FALLBACK_FG_COLOR
-        const doc = getDocument()
-        if (doc) {
-            const rootStyle = getComputedStyle(doc.documentElement)
-            primary = rootStyle?.getPropertyValue('--brutal-primary').trim() || primary
-            secondary = rootStyle?.getPropertyValue('--brutal-secondary').trim() || secondary
-            fg = rootStyle?.getPropertyValue('--brutal-fg').trim() || fg
-        }
+        paintedColors = colors ?? readOverlayColors()
+        const [primary, secondary, fg] = paintedColors
 
         ctxVal.fillStyle = secondary
         ctxVal.fillRect(0, 0, w, h)
@@ -102,6 +107,41 @@ const {
     onProgress: (percent) => emit('progress', percent),
     onCompleted: () => emit('completed'),
     drawOverlay,
+})
+
+function refreshOverlayTheme() {
+    const canvas = canvasRef.value
+    if (!canvas?.width || !canvas.height || props.overlayColor || isRevealed.value) return
+    const colors = readOverlayColors()
+    if (paintedColors?.every((value, index) => value === colors[index])) return
+
+    const mask = createCanvasElement()
+    const ctx = getCanvas2DContext(canvas)
+    if (!mask || !ctx) return
+    mask.width = canvas.width
+    mask.height = canvas.height
+    const maskCtx = getCanvas2DContext(mask)
+    if (!maskCtx) return
+    maskCtx.drawImage(canvas, 0, 0)
+
+    const dpr = getDevicePixelRatio()
+    ctx.save()
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    drawOverlay(ctx, canvas.width / dpr, canvas.height / dpr, colors)
+    // 新涂层沿用原有透明度，保留已经刮开的区域及其边缘。
+    ctx.setTransform(1, 0, 0, 1, 0, 0)
+    ctx.globalCompositeOperation = 'destination-in'
+    ctx.drawImage(mask, 0, 0)
+    ctx.restore()
+}
+
+onMounted(() => {
+    const Observer = getMutationObserverCtor()
+    if (!Observer) return
+    themeObserver = new Observer(refreshOverlayTheme)
+    for (let scope: HTMLElement | null = containerRef.value; scope; scope = scope.parentElement) {
+        themeObserver.observe(scope, { attributes: true, attributeFilter: ['class', 'style'] })
+    }
 })
 
 defineExpose({
@@ -166,6 +206,7 @@ watch(isRevealed, (revealed) => {
 
 onUnmounted(() => {
     clearRemoveTimer()
+    themeObserver?.disconnect()
 })
 </script>
 

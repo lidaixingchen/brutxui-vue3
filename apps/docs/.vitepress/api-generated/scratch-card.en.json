@@ -237,7 +237,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/scratch-card/ScratchCard.vue",
-            "line": 108
+            "line": 148
           },
           "origin": "declared",
           "nullable": false,
@@ -256,7 +256,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/scratch-card/ScratchCard.vue",
-            "line": 109
+            "line": 149
           },
           "origin": "declared",
           "nullable": false,

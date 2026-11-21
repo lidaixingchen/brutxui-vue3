@@ -291,6 +291,8 @@ Earthy warm palette with organic retro tactility. Espresso borders, burnt orange
 
 Use the content panel's own `class` or inline `style` to override inherited tokens. Theme inheritance preserves Portal positioning, stacking, and keyboard focus behavior.
 
+Declarative `MessageBox` inherits its surrounding theme scope. The imperative `showMessageBox` function and its convenience methods inherit from the focused element at the time of the call.
+
 ## Custom Tokens
 
 Override tokens at the `:root` level for global changes:

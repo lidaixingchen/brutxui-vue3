@@ -2,7 +2,7 @@ import { injectDialogRootContext } from 'reka-ui'
 import { onBeforeUnmount, useTemplateRef, watchPostEffect, type Ref } from 'vue'
 import { getComputedStyle, getMutationObserverCtor } from './env'
 
-type ThemeAnchorRef = Readonly<Ref<HTMLElement | undefined>>
+type ThemeAnchorRef = Readonly<Ref<HTMLElement | null | undefined>>
 type PortalElementRef = Readonly<Ref<HTMLElement | null>>
 
 interface InlinePropertyValue {
@@ -136,7 +136,7 @@ export function usePortalThemeInheritance(
         appliedVariables = new Set(variables.keys())
     }
 
-    const observeAnchor = (anchor: HTMLElement | undefined): void => {
+    const observeAnchor = (anchor: HTMLElement | null | undefined): void => {
         const nextPath = anchor ? readAncestorPath(anchor) : []
         if (samePath(observedPath, nextPath)) return
 

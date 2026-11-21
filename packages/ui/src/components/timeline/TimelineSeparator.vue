@@ -17,14 +17,14 @@ const isVertical = computed(() => orientation.value !== 'horizontal')
 const classes = computed(() =>
     cn(
         'relative flex items-center shrink-0',
-        isVertical.value ? 'flex-col' : 'flex-row w-full justify-center',
+        isVertical.value ? 'min-w-8 flex-col' : 'min-h-8 flex-row w-full justify-center',
         props.class
     )
 )
 </script>
 
 <template>
-    <div :class="classes">
+    <div :class="classes" data-timeline-separator>
         <slot />
     </div>
 </template>

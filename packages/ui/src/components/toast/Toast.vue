@@ -180,9 +180,9 @@ const progressBarStyle = computed(() => ({
 
 <template>
     <div :class="classes" :role="ariaRole" :aria-live="ariaLive" tabindex="0" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave" @keydown="onKeydown">
-        <div v-if="duration" class="absolute top-0 left-0 right-0 h-1 bg-brutal-fg/10 overflow-hidden">
+        <div v-if="duration" class="absolute top-0 left-0 right-0 h-1 overflow-hidden" aria-hidden="true">
             <div
-                class="h-full bg-brutal-fg/30 animate-nb-shrink"
+                class="h-full bg-current animate-nb-shrink"
                 :style="progressBarStyle"
             />
         </div>

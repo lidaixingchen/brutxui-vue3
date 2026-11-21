@@ -350,7 +350,7 @@ defineExpose({
                 <!-- Empty State -->
                 <div
                     v-if="col.cards.length === 0"
-                    class="flex items-center justify-center h-16 border-3 border-dashed border-brutal rounded-brutal text-xs font-medium opacity-40"
+                    class="flex items-center justify-center h-16 border-3 border-dashed border-brutal-muted-foreground rounded-brutal text-xs font-medium text-brutal-muted-foreground"
                 >
                     {{ t('kanban.dropCardsHere') }}
                 </div>

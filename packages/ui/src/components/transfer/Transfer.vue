@@ -45,7 +45,7 @@ const emit = defineEmits<{
 const { t } = useLocale()
 
 const rootClasses = computed(() => cn(
-    'flex w-full min-w-0 max-w-full flex-col items-stretch justify-center gap-4 text-brutal-fg md:flex-row',
+    '@container/transfer w-full min-w-0 max-w-full text-brutal-fg',
     props.class,
 ))
 
@@ -261,166 +261,168 @@ function handleRightFocusOut(item: TransferDataItem, event: FocusEvent) {
 
 <template>
     <div :class="rootClasses">
-        <!-- 左侧源列表面板 -->
-        <Card
-            variant="flat"
-            padding="none"
-            class="flex flex-col max-w-full border-3 border-brutal bg-brutal-bg shadow-brutal overflow-hidden rounded-brutal"
-            :style="panelStyle"
-        >
-            <!-- 头部 -->
-            <div class="flex items-center justify-between px-4 py-3 bg-brutal-muted border-b-3 border-brutal select-none">
-                <div class="flex items-center gap-2">
-                    <Checkbox
-                        :checked="leftIndeterminate ? 'indeterminate' : leftAllChecked"
-                        size="sm"
-                        @update:checked="handleLeftAllCheckChange"
-                    />
-                    <span class="min-w-0 break-words font-bold text-sm select-none">{{ resolvedTitles[0] }}</span>
+        <div class="flex min-w-0 flex-col items-stretch justify-center gap-4 @xl/transfer:flex-row">
+            <!-- 左侧源列表面板 -->
+            <Card
+                variant="flat"
+                padding="none"
+                class="flex min-w-0 flex-col max-w-full border-3 border-brutal bg-brutal-bg shadow-brutal overflow-hidden rounded-brutal"
+                :style="panelStyle"
+            >
+                <!-- 头部 -->
+                <div class="flex items-center justify-between gap-3 px-4 py-3 bg-brutal-muted border-b-3 border-brutal select-none">
+                    <div class="flex min-w-0 flex-1 items-center gap-2">
+                        <Checkbox
+                            :checked="leftIndeterminate ? 'indeterminate' : leftAllChecked"
+                            size="sm"
+                            @update:checked="handleLeftAllCheckChange"
+                        />
+                        <span class="min-w-0 wrap-anywhere font-bold text-sm select-none">{{ resolvedTitles[0] }}</span>
+                    </div>
+                    <span class="shrink-0 text-xs font-semibold text-brutal-muted-foreground">
+                        {{ leftMovableKeys.length }}/{{ filteredSourceData.length }}
+                    </span>
                 </div>
-                <span class="text-xs font-semibold text-brutal-muted-foreground">
-                    {{ leftMovableKeys.length }}/{{ filteredSourceData.length }}
-                </span>
-            </div>
 
-            <!-- 搜索框 -->
-            <div v-if="filterable" class="p-2 border-b-3 border-brutal">
-                <Input
-                    v-model="leftQuery"
+                <!-- 搜索框 -->
+                <div v-if="filterable" class="p-2 border-b-3 border-brutal">
+                    <Input
+                        v-model="leftQuery"
+                        size="sm"
+                        :placeholder="t('transfer.placeholder')"
+                        class="w-full"
+                        :prefix-icon="Search"
+                        clearable
+                    />
+                </div>
+
+                <!-- 列表内容 -->
+                <div class="flex-1 overflow-y-auto p-2 space-y-1 bg-brutal-bg">
+                    <div
+                        v-for="item in filteredSourceData"
+                        :key="item.key"
+                        :class="itemClasses"
+                        data-slot="transfer-item"
+                        :data-highlighted="isLeftHighlighted(item) ? '' : undefined"
+                        :data-focus-visible="leftFocusVisibleKey === item.key ? '' : undefined"
+                        :data-disabled="item.disabled ? '' : undefined"
+                        @mouseenter="handleLeftMouseEnter(item)"
+                        @mouseleave="handleLeftMouseLeave(item)"
+                        @focusin="handleLeftFocusIn(item, $event)"
+                        @focusout="handleLeftFocusOut(item, $event)"
+                        @click="toggleLeftChecked(item)"
+                    >
+                        <Checkbox
+                            :checked="leftCheckedSet.has(item.key)"
+                            :disabled="item.disabled"
+                            size="sm"
+                            @click.stop
+                            @update:checked="() => toggleLeftChecked(item)"
+                        />
+                        <span class="min-w-0 break-words text-sm font-medium">{{ item.label }}</span>
+                    </div>
+                    <div
+                        v-if="filteredSourceData.length === 0"
+                        class="flex flex-col items-center justify-center h-full text-brutal-muted-foreground text-xs py-8 select-none"
+                    >
+                        {{ t('transfer.emptyText') }}
+                    </div>
+                </div>
+            </Card>
+
+            <!-- 中间操作按钮 -->
+            <div class="flex shrink-0 flex-wrap justify-center items-center gap-3 px-2 py-1 @xl/transfer:max-w-1/3 @xl/transfer:flex-col @xl/transfer:py-0">
+                <Button
+                    variant="default"
                     size="sm"
-                    :placeholder="t('transfer.placeholder')"
-                    class="w-full"
-                    :prefix-icon="Search"
-                    clearable
-                />
+                    :disabled="leftToRightDisabled"
+                    class="flex h-auto min-h-9 max-w-full items-center justify-center gap-1 border-3 border-brutal min-w-[48px] py-1.5 whitespace-normal wrap-anywhere shadow-brutal-sm"
+                    aria-label="Move selected to right"
+                    @click="addToRight"
+                >
+                    <span v-if="resolvedButtonTexts[1]" class="text-xs font-bold">{{ resolvedButtonTexts[1] }}</span>
+                    <ChevronRight class="h-4 w-4 shrink-0 rotate-90 @xl/transfer:rotate-0" />
+                </Button>
+                <Button
+                    variant="default"
+                    size="sm"
+                    :disabled="rightToLeftDisabled"
+                    class="flex h-auto min-h-9 max-w-full items-center justify-center gap-1 border-3 border-brutal min-w-[48px] py-1.5 whitespace-normal wrap-anywhere shadow-brutal-sm"
+                    aria-label="Move selected to left"
+                    @click="addToLeft"
+                >
+                    <ChevronLeft class="h-4 w-4 shrink-0 rotate-90 @xl/transfer:rotate-0" />
+                    <span v-if="resolvedButtonTexts[0]" class="text-xs font-bold">{{ resolvedButtonTexts[0] }}</span>
+                </Button>
             </div>
 
-            <!-- 列表内容 -->
-            <div class="flex-1 overflow-y-auto p-2 space-y-1 bg-brutal-bg">
-                <div
-                    v-for="item in filteredSourceData"
-                    :key="item.key"
-                    :class="itemClasses"
-                    data-slot="transfer-item"
-                    :data-highlighted="isLeftHighlighted(item) ? '' : undefined"
-                    :data-focus-visible="leftFocusVisibleKey === item.key ? '' : undefined"
-                    :data-disabled="item.disabled ? '' : undefined"
-                    @mouseenter="handleLeftMouseEnter(item)"
-                    @mouseleave="handleLeftMouseLeave(item)"
-                    @focusin="handleLeftFocusIn(item, $event)"
-                    @focusout="handleLeftFocusOut(item, $event)"
-                    @click="toggleLeftChecked(item)"
-                >
-                    <Checkbox
-                        :checked="leftCheckedSet.has(item.key)"
-                        :disabled="item.disabled"
+            <!-- 右侧目标列表面板 -->
+            <Card
+                variant="flat"
+                padding="none"
+                class="flex min-w-0 flex-col max-w-full border-3 border-brutal bg-brutal-bg shadow-brutal overflow-hidden rounded-brutal"
+                :style="panelStyle"
+            >
+                <!-- 头部 -->
+                <div class="flex items-center justify-between gap-3 px-4 py-3 bg-brutal-muted border-b-3 border-brutal select-none">
+                    <div class="flex min-w-0 flex-1 items-center gap-2">
+                        <Checkbox
+                            :checked="rightIndeterminate ? 'indeterminate' : rightAllChecked"
+                            size="sm"
+                            @update:checked="handleRightAllCheckChange"
+                        />
+                        <span class="min-w-0 wrap-anywhere font-bold text-sm select-none">{{ resolvedTitles[1] }}</span>
+                    </div>
+                    <span class="shrink-0 text-xs font-semibold text-brutal-muted-foreground">
+                        {{ rightMovableKeys.length }}/{{ filteredTargetData.length }}
+                    </span>
+                </div>
+
+                <!-- 搜索框 -->
+                <div v-if="filterable" class="p-2 border-b-3 border-brutal">
+                    <Input
+                        v-model="rightQuery"
                         size="sm"
-                        @click.stop
-                        @update:checked="() => toggleLeftChecked(item)"
+                        :placeholder="t('transfer.placeholder')"
+                        class="w-full"
+                        :prefix-icon="Search"
+                        clearable
                     />
-                    <span class="min-w-0 break-words text-sm font-medium">{{ item.label }}</span>
                 </div>
-                <div
-                    v-if="filteredSourceData.length === 0"
-                    class="flex flex-col items-center justify-center h-full text-brutal-muted-foreground text-xs py-8 select-none"
-                >
-                    {{ t('transfer.emptyText') }}
-                </div>
-            </div>
-        </Card>
 
-        <!-- 中间操作按钮 -->
-        <div class="flex flex-row md:flex-col justify-center items-center gap-3 px-2 py-1 md:py-0">
-            <Button
-                variant="default"
-                size="sm"
-                :disabled="leftToRightDisabled"
-                class="flex items-center justify-center gap-1 border-3 border-brutal min-w-[48px] shadow-brutal-sm"
-                aria-label="Move selected to right"
-                @click="addToRight"
-            >
-                <span v-if="resolvedButtonTexts[1]" class="text-xs font-bold">{{ resolvedButtonTexts[1] }}</span>
-                <ChevronRight class="h-4 w-4" />
-            </Button>
-            <Button
-                variant="default"
-                size="sm"
-                :disabled="rightToLeftDisabled"
-                class="flex items-center justify-center gap-1 border-3 border-brutal min-w-[48px] shadow-brutal-sm"
-                aria-label="Move selected to left"
-                @click="addToLeft"
-            >
-                <ChevronLeft class="h-4 w-4" />
-                <span v-if="resolvedButtonTexts[0]" class="text-xs font-bold">{{ resolvedButtonTexts[0] }}</span>
-            </Button>
+                <!-- 列表内容 -->
+                <div class="flex-1 overflow-y-auto p-2 space-y-1 bg-brutal-bg">
+                    <div
+                        v-for="item in filteredTargetData"
+                        :key="item.key"
+                        :class="itemClasses"
+                        data-slot="transfer-item"
+                        :data-highlighted="isRightHighlighted(item) ? '' : undefined"
+                        :data-focus-visible="rightFocusVisibleKey === item.key ? '' : undefined"
+                        :data-disabled="item.disabled ? '' : undefined"
+                        @mouseenter="handleRightMouseEnter(item)"
+                        @mouseleave="handleRightMouseLeave(item)"
+                        @focusin="handleRightFocusIn(item, $event)"
+                        @focusout="handleRightFocusOut(item, $event)"
+                        @click="toggleRightChecked(item)"
+                    >
+                        <Checkbox
+                            :checked="rightCheckedSet.has(item.key)"
+                            :disabled="item.disabled"
+                            size="sm"
+                            @click.stop
+                            @update:checked="() => toggleRightChecked(item)"
+                        />
+                        <span class="min-w-0 break-words text-sm font-medium">{{ item.label }}</span>
+                    </div>
+                    <div
+                        v-if="filteredTargetData.length === 0"
+                        class="flex flex-col items-center justify-center h-full text-brutal-muted-foreground text-xs py-8 select-none"
+                    >
+                        {{ t('transfer.emptyText') }}
+                    </div>
+                </div>
+            </Card>
         </div>
-
-        <!-- 右侧目标列表面板 -->
-        <Card
-            variant="flat"
-            padding="none"
-            class="flex flex-col max-w-full border-3 border-brutal bg-brutal-bg shadow-brutal overflow-hidden rounded-brutal"
-            :style="panelStyle"
-        >
-            <!-- 头部 -->
-            <div class="flex items-center justify-between px-4 py-3 bg-brutal-muted border-b-3 border-brutal select-none">
-                <div class="flex items-center gap-2">
-                    <Checkbox
-                        :checked="rightIndeterminate ? 'indeterminate' : rightAllChecked"
-                        size="sm"
-                        @update:checked="handleRightAllCheckChange"
-                    />
-                    <span class="min-w-0 break-words font-bold text-sm select-none">{{ resolvedTitles[1] }}</span>
-                </div>
-                <span class="text-xs font-semibold text-brutal-muted-foreground">
-                    {{ rightMovableKeys.length }}/{{ filteredTargetData.length }}
-                </span>
-            </div>
-
-            <!-- 搜索框 -->
-            <div v-if="filterable" class="p-2 border-b-3 border-brutal">
-                <Input
-                    v-model="rightQuery"
-                    size="sm"
-                    :placeholder="t('transfer.placeholder')"
-                    class="w-full"
-                    :prefix-icon="Search"
-                    clearable
-                />
-            </div>
-
-            <!-- 列表内容 -->
-            <div class="flex-1 overflow-y-auto p-2 space-y-1 bg-brutal-bg">
-                <div
-                    v-for="item in filteredTargetData"
-                    :key="item.key"
-                    :class="itemClasses"
-                    data-slot="transfer-item"
-                    :data-highlighted="isRightHighlighted(item) ? '' : undefined"
-                    :data-focus-visible="rightFocusVisibleKey === item.key ? '' : undefined"
-                    :data-disabled="item.disabled ? '' : undefined"
-                    @mouseenter="handleRightMouseEnter(item)"
-                    @mouseleave="handleRightMouseLeave(item)"
-                    @focusin="handleRightFocusIn(item, $event)"
-                    @focusout="handleRightFocusOut(item, $event)"
-                    @click="toggleRightChecked(item)"
-                >
-                    <Checkbox
-                        :checked="rightCheckedSet.has(item.key)"
-                        :disabled="item.disabled"
-                        size="sm"
-                        @click.stop
-                        @update:checked="() => toggleRightChecked(item)"
-                    />
-                    <span class="min-w-0 break-words text-sm font-medium">{{ item.label }}</span>
-                </div>
-                <div
-                    v-if="filteredTargetData.length === 0"
-                    class="flex flex-col items-center justify-center h-full text-brutal-muted-foreground text-xs py-8 select-none"
-                >
-                    {{ t('transfer.emptyText') }}
-                </div>
-            </div>
-        </Card>
     </div>
 </template>

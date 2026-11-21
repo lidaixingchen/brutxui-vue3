@@ -51,7 +51,7 @@ import { Avatar, AvatarImage, AvatarFallback } from 'brutx-ui-vue'
 
 ### 状态指示
 
-在头像右下角渲染状态小圆点（`w-3 h-3 rounded-full border-3 border-brutal-bg`）。`status="none"`（默认）时不渲染。
+头像末端下方的状态标记同时使用主题状态色和图形符号。在线为勾号，离线为短横，忙碌为叉号。`status="none"`（默认）时隐藏标记。
 
 | 状态 | 颜色 | 说明 |
 | --- | --- | --- |

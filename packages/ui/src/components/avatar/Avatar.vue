@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, provide } from 'vue'
 import { AvatarRoot } from 'reka-ui'
+import { Check, Minus, X } from '@lucide/vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
@@ -31,10 +32,12 @@ const props = withDefaults(defineProps<AvatarProps>(), {
 })
 
 const statusColorMap: Record<Exclude<AvatarStatus, 'none'>, string> = {
-    online: 'bg-brutal-success',
-    offline: 'bg-brutal-muted',
-    busy: 'bg-brutal-destructive',
+    online: 'bg-brutal-success text-brutal-success-foreground',
+    offline: 'bg-brutal-muted text-brutal-fg',
+    busy: 'bg-brutal-destructive text-brutal-destructive-foreground',
 }
+
+const statusIconMap = { online: Check, offline: Minus, busy: X }
 
 const statusLocaleKeyMap: Record<Exclude<AvatarStatus, 'none'>, string> = {
     online: 'avatar.statusOnline',
@@ -65,7 +68,7 @@ const statusClasses = computed(() => {
     const status = props.status
     if (status === 'none') return ''
     return cn(
-        'absolute bottom-0 right-0 w-3 h-3 rounded-full border-3 border-brutal-bg',
+        'absolute bottom-0 end-0 flex size-4 items-center justify-center rounded-full border-2 border-brutal',
         statusColorMap[status],
     )
 })
@@ -89,6 +92,7 @@ provide(avatarKey, {
         <!-- role="status" 为 live region：读屏仅播报文本内容变化，故以 sr-only 文本承载 statusLabel，
              状态切换或语言切换时文本更新才会被播报（纯 aria-label 无内容则读屏不播报）。 -->
         <span v-if="status !== 'none'" :class="statusClasses" role="status">
+            <component :is="statusIconMap[status]" class="size-2.5 stroke-3" aria-hidden="true" />
             <span class="sr-only">{{ statusLabel }}</span>
         </span>
     </span>

@@ -27,6 +27,7 @@ interface WatermarkProps {
 const DEFAULT_WATERMARK_COLOR = '#000000'
 const DEFAULT_WATERMARK_OPACITY = 0.15
 const THEME_FOREGROUND_TOKEN = '--brutal-fg'
+const TEXT_LINE_GAP = 4
 
 const props = withDefaults(defineProps<WatermarkProps>(), {
     width: 120,
@@ -49,6 +50,7 @@ const props = withDefaults(defineProps<WatermarkProps>(), {
 const containerRef = ref<HTMLDivElement | null>(null)
 const watermarkRef = ref<HTMLDivElement | null>(null)
 const watermarkUrl = ref<string>('')
+const watermarkSize = ref<[number, number]>([0, 0])
 const watermarkKey = ref<number>(0)
 
 let observer: MutationObserver | null = null
@@ -173,29 +175,113 @@ function getWatermarkPaint(): { color: string; opacity?: number } {
     }
 }
 
-function drawSvgFallback() {
+function getTextFont() {
+    const fontSizePx = getFontSizePx(props.font.fontSize || 14)
+    const fontWeight = props.font.fontWeight || 'normal'
+    const fontStyle = props.font.fontStyle || 'normal'
+    const fontFamily = props.font.fontFamily || 'sans-serif'
+    return { fontSizePx, fontWeight, fontStyle, fontFamily, cssFont: `${fontStyle} normal ${fontWeight} ${fontSizePx}px ${fontFamily}` }
+}
+
+function wrapWatermarkLine(text: string, width: number, measure: (value: string) => number): string[] {
+    if (measure(text) <= width) return [text]
+
+    const lines: string[] = []
+    let line = ''
+    for (const word of text.trim().split(/\s+/u)) {
+        const joined = line ? `${line} ${word}` : word
+        if (measure(joined) <= width) {
+            line = joined
+            continue
+        }
+        if (line) lines.push(line)
+        if (measure(word) <= width) {
+            line = word
+            continue
+        }
+        line = ''
+        for (const character of word) {
+            if (line && measure(line + character) > width) {
+                lines.push(line)
+                line = ''
+            }
+            line += character
+        }
+    }
+    lines.push(line)
+    return lines
+}
+
+function layoutTextWatermark(ctx?: CanvasRenderingContext2D) {
     const [markWidth, markHeight] = getMarkSize()
     const [gapX, gapY] = normalizedGap.value
-    const canvasWidth = markWidth + gapX
-    const canvasHeight = markHeight + gapY
-    const { font } = props
+    const content = Array.isArray(props.content) ? props.content : [props.content]
+    const font = getTextFont()
+    const lineHeight = font.fontSizePx + TEXT_LINE_GAP
+
+    function layout(measure: (value: string) => number) {
+        const lines = content.flatMap(text => text.split(/\r?\n/u).flatMap(line => wrapWatermarkLine(line, markWidth, measure)))
+        const textWidth = Math.max(0, ...lines.map(measure))
+        const textHeight = lines.length * lineHeight
+        const angle = props.rotate * Math.PI / 180
+        const cosine = Math.abs(Math.cos(angle))
+        const sine = Math.abs(Math.sin(angle))
+        const size: [number, number] = [
+            Math.ceil(Math.max(markWidth, textWidth * cosine + textHeight * sine) + gapX),
+            Math.ceil(Math.max(markHeight, textWidth * sine + textHeight * cosine) + gapY),
+        ]
+        return { lines, size, font, lineHeight }
+    }
+
+    if (ctx) {
+        ctx.font = font.cssFont
+        ctx.textAlign = 'center'
+        return layout(text => {
+            const metrics = ctx.measureText(text)
+            return Math.max(metrics.width, metrics.actualBoundingBoxLeft * 2, metrics.actualBoundingBoxRight * 2)
+        })
+    }
+
+    const doc = getDocument()!
+    const line = doc.createElement('span')
+    Object.assign(line.style, { position: 'fixed', visibility: 'hidden', whiteSpace: 'pre', font: font.cssFont })
+    doc.body.appendChild(line)
+    try {
+        return layout(text => {
+            line.textContent = text
+            return line.getBoundingClientRect().width
+        })
+    } finally {
+        line.remove()
+    }
+}
+
+function prepareCanvas(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, [width, height]: [number, number]) {
+    const ratio = getDevicePixelRatio()
+    canvas.width = width * ratio
+    canvas.height = height * ratio
+    ctx.scale(ratio, ratio)
+    ctx.translate(width / 2, height / 2)
+    ctx.rotate(props.rotate * Math.PI / 180)
+}
+
+function getWatermarkSealGeometry() {
+    const [markWidth, markHeight] = getMarkSize()
+    const [gapX, gapY] = normalizedGap.value
+    return getSealGeometry(Math.min(markWidth + gapX, markHeight + gapY))
+}
+
+function drawSvgFallback() {
+    const { lines, size: [canvasWidth, canvasHeight], font, lineHeight } = layoutTextWatermark()
     const { color, opacity } = getWatermarkPaint()
     const fillOpacity = opacity === undefined ? '' : ` fill-opacity="${opacity}"`
     const strokeOpacity = opacity === undefined ? '' : ` stroke-opacity="${opacity}"`
-    const fontSize = font.fontSize || 14
-    const fontSizePx = getFontSizePx(fontSize)
-    const fontWeight = font.fontWeight || 'normal'
-    const fontStyle = font.fontStyle || 'normal'
-    const fontFamily = font.fontFamily || 'sans-serif'
-    
-    const contents = Array.isArray(props.content) ? props.content : [props.content]
-    const lineHeight = fontSizePx + 4
+    const { fontSizePx, fontWeight, fontStyle, fontFamily } = font
 
     /* 钢印构图：双实心圆环 + 中心五角星（seal 模式专属装饰层） */
     let sealSvg = ''
     if (props.seal) {
-        const baseSize = Math.min(markWidth, markHeight)
-        const { outerRing, innerRing, starOuter, starInner } = getSealGeometry(baseSize)
+        const { outerRing, innerRing, starOuter, starInner } = getWatermarkSealGeometry()
         const cx = canvasWidth / 2
         const cy = canvasHeight / 2
         const starPointsAttr = starPolygonPoints(cx, cy, starOuter, starInner)
@@ -204,8 +290,8 @@ function drawSvgFallback() {
         sealSvg = `<circle cx="${cx}" cy="${cy}" r="${outerRing.toFixed(2)}" fill="none" stroke="${escapeXml(color)}" stroke-width="2"${strokeOpacity}/><circle cx="${cx}" cy="${cy}" r="${innerRing.toFixed(2)}" fill="none" stroke="${escapeXml(color)}" stroke-width="1"${strokeOpacity}/><polygon points="${starPointsAttr}" fill="${escapeXml(color)}"${fillOpacity}/>`
     }
 
-    const textNodes = contents.map((text, index) => {
-        const yOffset = (index - (contents.length - 1) / 2) * lineHeight
+    const textNodes = lines.map((text, index) => {
+        const yOffset = (index - (lines.length - 1) / 2) * lineHeight
         return `<text x="50%" y="50%" dy="${escapeXml(String(yOffset))}" font-size="${escapeXml(String(fontSizePx))}" font-weight="${escapeXml(String(fontWeight))}" font-style="${escapeXml(String(fontStyle))}" font-family="${escapeXml(String(fontFamily))}" fill="${escapeXml(color)}"${fillOpacity} text-anchor="middle" dominant-baseline="middle">${escapeXml(text || '')}</text>`
     }).join('')
 
@@ -220,6 +306,7 @@ function drawSvgFallback() {
     
     const base64 = toBase64(svg)
     
+    watermarkSize.value = [canvasWidth, canvasHeight]
     watermarkUrl.value = `data:image/svg+xml;base64,${base64}`
     nextTick(() => initObserver())
 }
@@ -249,16 +336,7 @@ function renderWatermark() {
 
     const [markWidth, markHeight] = getMarkSize()
     const [gapX, gapY] = normalizedGap.value
-    const canvasWidth = markWidth + gapX
-    const canvasHeight = markHeight + gapY
-
-    const ratio = getDevicePixelRatio()
-    canvas.width = canvasWidth * ratio
-    canvas.height = canvasHeight * ratio
-    ctx.scale(ratio, ratio)
-
-    ctx.translate(canvasWidth / 2, canvasHeight / 2)
-    ctx.rotate((props.rotate * Math.PI) / 180)
+    const imageTileSize: [number, number] = [markWidth + gapX, markHeight + gapY]
 
     const isStale = () => isUnmounted || currentVersion !== renderVersion
 
@@ -269,6 +347,7 @@ function renderWatermark() {
         img.src = props.image
         img.onload = () => {
             if (isStale()) return
+            prepareCanvas(ctx, canvas, imageTileSize)
             ctx.drawImage(img, -markWidth / 2, -markHeight / 2, markWidth, markHeight)
             if (isStale()) return
             let dataUrl: string
@@ -278,6 +357,7 @@ function renderWatermark() {
                 drawSvgFallback()
                 return
             }
+            watermarkSize.value = imageTileSize
             watermarkUrl.value = dataUrl
             nextTick(() => {
                 if (isStale()) return
@@ -297,29 +377,20 @@ function drawTextWatermark(
     ctx: CanvasRenderingContext2D, 
     canvas: HTMLCanvasElement
 ) {
-    const { font } = props
+    const { lines, size, font, lineHeight } = layoutTextWatermark(ctx)
+    prepareCanvas(ctx, canvas, size)
     const { color, opacity } = getWatermarkPaint()
-    const fontSize = font.fontSize || 14
-    const fontSizePx = getFontSizePx(fontSize)
-    const fontWeight = font.fontWeight || 'normal'
-    const fontStyle = font.fontStyle || 'normal'
-    const fontFamily = font.fontFamily || 'sans-serif'
 
     const previousGlobalAlpha = ctx.globalAlpha
     if (opacity !== undefined) ctx.globalAlpha = opacity
     ctx.fillStyle = color
-    ctx.font = `${fontStyle} normal ${fontWeight} ${fontSizePx}px ${fontFamily}`
+    ctx.font = font.cssFont
     ctx.textBaseline = 'middle'
     ctx.textAlign = 'center'
 
-    const contents = Array.isArray(props.content) ? props.content : [props.content]
-    const lineHeight = fontSizePx + 4
-
-    /* 钢印构图（canvas 路径）：双实心圆环 + 中心五角星，几何与 SVG 路径同源。
-       canvas.width 为设备像素，须除回 dpr 得到逻辑尺寸作为几何基准 */
+    /* 钢印构图：双实心圆环与中心五角星。 */
     if (props.seal) {
-        const logicalSize = Math.min(canvas.width, canvas.height) / getDevicePixelRatio()
-        const { outerRing, innerRing, starOuter, starInner } = getSealGeometry(logicalSize)
+        const { outerRing, innerRing, starOuter, starInner } = getWatermarkSealGeometry()
         ctx.strokeStyle = color
         ctx.fillStyle = color
         ctx.lineWidth = 2
@@ -339,8 +410,8 @@ function drawTextWatermark(
         ctx.fill()
     }
 
-    contents.forEach((text, index) => {
-        const yOffset = (index - (contents.length - 1) / 2) * lineHeight
+    lines.forEach((text, index) => {
+        const yOffset = (index - (lines.length - 1) / 2) * lineHeight
         ctx.fillText(text || '', 0, yOffset)
     })
 
@@ -353,6 +424,7 @@ function drawTextWatermark(
         drawSvgFallback()
         return
     }
+    watermarkSize.value = size
     watermarkUrl.value = dataUrl
     nextTick(() => initObserver())
 }
@@ -497,7 +569,7 @@ watch(
                     width: `calc(100% - ${normalizedOffset[0]}px)`,
                     height: `calc(100% - ${normalizedOffset[1]}px)`,
                     backgroundImage: `url(${watermarkUrl})`,
-                    backgroundSize: `${width + normalizedGap[0]}px ${height + normalizedGap[1]}px`,
+                    backgroundSize: `${watermarkSize[0]}px ${watermarkSize[1]}px`,
                     backgroundRepeat: 'repeat',
                     zIndex: zIndex
                 }"

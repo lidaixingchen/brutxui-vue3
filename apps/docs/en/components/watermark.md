@@ -57,6 +57,8 @@ Pass an array to render multi-line text, and customize font sizing, angles, and 
 </template>
 ```
 
+Text wraps to the mark width. Each tile accommodates the full rotated text, and `gap` controls the spacing between adjacent tiles.
+
 ## API Reference
 
 <span id="watermark-1"></span>

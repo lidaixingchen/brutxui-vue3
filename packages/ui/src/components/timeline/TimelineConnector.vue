@@ -18,13 +18,13 @@ const classes = computed(() =>
         // PCB 双平行总线：双线中缝透出底色（电路板走线隐喻）
         'shrink-0 transition-colors',
         orientation.value === 'vertical'
-            ? 'w-[9px] border-l-3 border-r-3 border-brutal flex-1 min-h-8'
-            : 'absolute inset-x-0 top-1/2 -translate-y-1/2 h-[9px] border-t-3 border-b-3 border-brutal',
+            ? 'w-[9px] border-l-3 border-r-3 border-brutal flex-1 min-h-8 mb-[calc(0px-var(--timeline-gap,0px))]'
+            : 'absolute start-1/2 end-[calc(-50%-var(--timeline-gap,0px))] top-1/2 -translate-y-1/2 h-[9px] border-t-3 border-b-3 border-brutal',
         props.class
     )
 )
 </script>
 
 <template>
-    <div :class="classes" />
+    <div :class="classes" aria-hidden="true" data-timeline-connector />
 </template>

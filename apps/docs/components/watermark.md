@@ -42,6 +42,8 @@ import { Watermark } from 'brutx-ui-vue'
 
 支持传入数组生成多行水印，并且可以控制倾斜角度、网格大小以及文字样式。
 
+每行文字按标记宽度自动换行，平铺单元会容纳旋转后的完整文字。`gap` 控制相邻平铺单元的间距。
+
 ```vue
 <template>
     <Watermark

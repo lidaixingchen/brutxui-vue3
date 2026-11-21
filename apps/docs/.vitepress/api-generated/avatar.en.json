@@ -29,7 +29,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/avatar/Avatar.vue",
-            "line": 15
+            "line": 16
           },
           "origin": "declared",
           "required": false,
@@ -67,7 +67,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/avatar/Avatar.vue",
-            "line": 16
+            "line": 17
           },
           "origin": "declared",
           "required": false,
@@ -103,7 +103,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/avatar/Avatar.vue",
-            "line": 17
+            "line": 18
           },
           "origin": "declared",
           "required": false,
@@ -146,7 +146,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/avatar/Avatar.vue",
-            "line": 18
+            "line": 19
           },
           "origin": "declared",
           "required": false,
@@ -181,7 +181,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/avatar/Avatar.vue",
-            "line": 20
+            "line": 21
           },
           "origin": "declared",
           "required": false,
@@ -213,7 +213,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/avatar/Avatar.vue",
-            "line": 21
+            "line": 22
           },
           "origin": "declared",
           "required": false,
