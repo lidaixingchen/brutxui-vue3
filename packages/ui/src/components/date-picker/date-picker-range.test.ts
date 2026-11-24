@@ -184,7 +184,7 @@ describe('DatePickerRange', () => {
             attachTo: document.body,
         })
         const trigger = wrapper.find('[role="combobox"]')
-        expect(trigger.classes()).toContain('h-9')
+        expect(trigger.classes()).toContain('min-h-9')
     })
 
     it('applies size lg classes', () => {
@@ -194,7 +194,7 @@ describe('DatePickerRange', () => {
             attachTo: document.body,
         })
         const trigger = wrapper.find('[role="combobox"]')
-        expect(trigger.classes()).toContain('h-14')
+        expect(trigger.classes()).toContain('min-h-14')
     })
 
     it('applies default size classes', () => {
@@ -204,7 +204,7 @@ describe('DatePickerRange', () => {
             attachTo: document.body,
         })
         const trigger = wrapper.find('[role="combobox"]')
-        expect(trigger.classes()).toContain('h-11')
+        expect(trigger.classes()).toContain('min-h-11')
     })
 
     it('applies error variant border class', () => {

@@ -95,16 +95,16 @@ const ICON_SIZE_CLASSES = {
     swatch: { sm: 'w-4 h-4', default: 'w-5 h-5', lg: 'w-7 h-7' },
     clearButton: { sm: 'w-4 h-4', default: 'w-5 h-5', lg: 'w-5 h-5' },
     smallIcon: { sm: 'w-3 h-3', default: 'w-4 h-4', lg: 'w-4 h-4' },
+    clearPosition: {
+        sm: 'right-7 @max-3xs/color-control:right-5',
+        default: 'right-8 @max-3xs/color-control:right-6',
+        lg: 'right-9 @max-3xs/color-control:right-7',
+    },
 } as const
 
-const clearButtonClasses = computed(() => {
-    const size = props.size ?? 'default'
-    const rightOffset = size === 'sm' ? 'right-7' : size === 'lg' ? 'right-9' : 'right-8'
-    return cn(
-        rightOffset,
-        ICON_SIZE_CLASSES.clearButton[size],
-    )
-})
+const clearButtonClasses = computed(() =>
+    cn(ICON_SIZE_CLASSES.clearPosition[props.size], ICON_SIZE_CLASSES.clearButton[props.size])
+)
 
 defineExpose({ open })
 
@@ -145,10 +145,10 @@ const presetsForPanel = computed<string[] | readonly ColorPreset[] | undefined>(
                         ]"
                         :style="swatchStyle"
                     />
-                    <span v-if="showInput" class="flex-1 text-left truncate font-mono text-sm">
+                    <span v-if="showInput" class="min-w-0 flex-1 text-left font-mono text-sm whitespace-normal wrap-anywhere">
                         {{ normalizedDisplay ?? resolvedPlaceholder }}
                     </span>
-                    <span v-else class="flex-1 text-left truncate">
+                    <span v-else class="min-w-0 flex-1 text-left whitespace-normal wrap-anywhere">
                         {{ normalizedDisplay ?? resolvedPlaceholder }}
                     </span>
                     <span class="flex items-center gap-1 shrink-0">

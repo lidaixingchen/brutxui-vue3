@@ -53,6 +53,17 @@ export const datePickerTriggerVariants = cva(
     }
 )
 
+export const datePickerMultilineTriggerVariants = cva('h-auto min-w-0 py-2', {
+    variants: {
+        size: {
+            sm: 'min-h-9',
+            default: 'min-h-11',
+            lg: 'min-h-14',
+        },
+    },
+    defaultVariants: { size: 'default' },
+})
+
 export const datePickerPanelVariants = cva([
     'flex flex-col sm:flex-row max-w-[100vw] overflow-x-auto',
     'border-3 border-brutal rounded-brutal',

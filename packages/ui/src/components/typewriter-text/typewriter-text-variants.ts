@@ -2,7 +2,7 @@ import { cva } from 'class-variance-authority'
 
 export const typewriterTextVariants = cva(
     [
-        'inline-block',
+        'inline-block max-w-full wrap-anywhere',
     ],
     {
         variants: {

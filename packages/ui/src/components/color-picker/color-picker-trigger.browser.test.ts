@@ -22,6 +22,32 @@ afterEach(() => {
 })
 
 describe('ColorPicker trigger movement', () => {
+    it('keeps RGBA channels readable beside the clear action in a narrow trigger', async () => {
+        wrapper = mount(defineComponent({
+            setup: () => () => h('div', { style: { width: '180px' } }, [
+                h(ColorPicker, {
+                    modelValue: 'rgba(146, 69, 214, 0.55)',
+                    format: 'rgb',
+                    showAlpha: true,
+                    clearable: true,
+                }),
+            ]),
+        }))
+        await document.fonts.ready
+        const trigger = wrapper.element.querySelector<HTMLElement>('[role="combobox"]')!
+        const label = trigger.querySelector('.font-mono')!
+        const text = label.firstChild!
+        const value = text.textContent!.trim()
+        const firstChannel = document.createRange()
+        firstChannel.setStart(text, text.textContent!.indexOf('rgba'))
+        firstChannel.setEnd(text, text.textContent!.indexOf(',') + 1)
+        expect(firstChannel.getClientRects()).toHaveLength(1)
+        expect(value).toMatch(/^rgba\(.+, 0\.55\)$/)
+        expect(label.scrollWidth).toBe(label.clientWidth)
+        const clear = wrapper.element.querySelector<HTMLButtonElement>('button[aria-label="清除"]')!
+        expect(clear.getBoundingClientRect().left).toBeGreaterThanOrEqual(label.getBoundingClientRect().right)
+    })
+
     it.each(SIZES)('keeps the clear action aligned while hovering the %s trigger', async size => {
         wrapper = mount(defineComponent({
             setup: () => () => h('div', { style: HOST_STYLE }, [

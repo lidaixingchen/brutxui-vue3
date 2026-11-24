@@ -12,6 +12,7 @@ import PopoverContent from '../popover/PopoverContent.vue'
 import {
     datePickerControlTriggerVariants,
     datePickerControlVariants,
+    datePickerMultilineTriggerVariants,
     datePickerTriggerVariants,
 } from './date-picker-variants'
 import DatePickerRangePanel from './DatePickerRangePanel.vue'
@@ -120,6 +121,7 @@ const hasValue = computed(() => Boolean(props.modelValue && props.modelValue.len
 const triggerClasses = computed(() =>
     cn(
         datePickerTriggerVariants({ size: props.size, variant: props.variant }),
+        datePickerMultilineTriggerVariants({ size: props.size }),
         datePickerControlTriggerVariants(),
         !hasValue.value && 'text-brutal-muted-foreground',
         props.class
@@ -216,10 +218,12 @@ function handleTriggerKeydown(event: KeyboardEvent) {
                         class="shrink-0 stroke-[3] opacity-70"
                         :class="calendarIconClasses"
                     />
-                    <span class="flex-1 text-left truncate font-mono text-sm flex items-center gap-1.5 min-w-0">
-                        <span class="truncate">{{ formattedStart || resolvedStartPlaceholder }}</span>
-                        <span class="shrink-0 text-brutal-muted-foreground font-bold">{{ resolvedSeparator }}</span>
-                        <span class="truncate">{{ formattedEnd || resolvedEndPlaceholder }}</span>
+                    <span class="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-1.5 text-left font-mono text-sm">
+                        <span class="min-w-0 wrap-anywhere">{{ formattedStart || resolvedStartPlaceholder }}</span>
+                        <span class="flex min-w-0 items-baseline gap-1.5">
+                            <span class="min-w-0 wrap-anywhere font-bold text-brutal-muted-foreground">{{ resolvedSeparator }}</span>
+                            <span class="min-w-0 wrap-anywhere">{{ formattedEnd || resolvedEndPlaceholder }}</span>
+                        </span>
                     </span>
                     <span class="flex items-center gap-1 shrink-0">
                         <span

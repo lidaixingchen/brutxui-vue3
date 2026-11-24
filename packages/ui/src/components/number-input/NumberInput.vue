@@ -120,7 +120,7 @@ const iconClasses = computed(() =>
 </script>
 
 <template>
-    <div class="w-full min-w-0">
+    <div class="@container/number-input w-full min-w-0">
         <NumberFieldRoot v-bind="forwarded" :class="containerClasses">
             <template v-if="layout === 'split'">
                 <NumberFieldDecrement

@@ -235,7 +235,7 @@ describe('ColorPicker', () => {
             attachTo: document.body,
         })
         const trigger = wrapper.find('[role="combobox"]')
-        expect(trigger.classes()).toContain('h-9')
+        expect(trigger.classes()).toContain('min-h-9')
     })
 
     it('applies size lg classes', () => {
@@ -245,7 +245,7 @@ describe('ColorPicker', () => {
             attachTo: document.body,
         })
         const trigger = wrapper.find('[role="combobox"]')
-        expect(trigger.classes()).toContain('h-14')
+        expect(trigger.classes()).toContain('min-h-14')
     })
 
     it('shows clear button when clearable and value set', () => {

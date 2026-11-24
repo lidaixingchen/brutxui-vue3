@@ -278,6 +278,12 @@ const hasHistory = computed(() => props.showHistory && history.value.length > 0)
 const hasSwatches = computed(() => hasPresets.value || hasHistory.value)
 const panelClasses = computed(() => cn(colorPickerPanelVariants({ swatches: hasSwatches.value })))
 const bodyClasses = computed(() => cn(colorPickerBodyVariants({ swatches: hasSwatches.value })))
+const footerPreviewClasses = computed(() =>
+    cn('col-start-1 size-10 border-3 border-brutal', props.showInput && 'row-start-2 @md/color-picker:row-start-1', !props.modelValue && 'opacity-50')
+)
+const footerActionClasses = computed(() =>
+    cn('col-start-2 flex flex-wrap items-center justify-end gap-2 @md/color-picker:col-start-3 @md/color-picker:row-start-1', props.showInput ? 'row-start-2' : 'row-start-1')
+)
 
 function handleKeydownHue(event: KeyboardEvent) {
     const step = event.shiftKey ? 15 : 1
@@ -435,26 +441,20 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
             </div>
         </div>
 
-        <div class="flex shrink-0 flex-col gap-3 pt-4 @md/color-picker:flex-row @md/color-picker:items-center">
-            <div class="flex min-w-0 flex-1 items-center gap-2">
-                <div
-                    class="w-10 h-10 border-3 border-brutal shrink-0"
-                    :class="!modelValue && 'opacity-50'"
-                    :style="previewStyle"
-                />
-                <ColorPickerInput
-                    v-if="showInput"
-                    class="min-w-0 flex-1"
-                    :model-value="formattedValue"
-                    :format="format"
-                    :show-alpha="showAlpha"
-                    :aria-label="t('colorPicker.hex')"
-                    @update:model-value="handleInputUpdate"
-                    @confirm="handleInputConfirm"
-                />
-            </div>
+        <div class="grid shrink-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-3 pt-4 @md/color-picker:grid-cols-[auto_minmax(0,1fr)_auto]">
+            <div :class="footerPreviewClasses" :style="previewStyle" />
+            <ColorPickerInput
+                v-if="showInput"
+                class="col-span-2 row-start-1 min-w-0 @md/color-picker:col-span-1 @md/color-picker:col-start-2"
+                :model-value="formattedValue"
+                :format="format"
+                :show-alpha="showAlpha"
+                :aria-label="t('colorPicker.hex')"
+                @update:model-value="handleInputUpdate"
+                @confirm="handleInputConfirm"
+            />
 
-            <div v-if="clearable || showInput" class="flex shrink-0 items-center justify-end gap-2">
+            <div v-if="clearable || showInput" :class="footerActionClasses">
                 <Button
                     v-if="clearable"
                     variant="default"

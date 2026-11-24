@@ -7,7 +7,7 @@ import { brutalHoverLiftSmNoX, brutalPress } from '@/lib/brutal-interaction-vari
 export const glitchTextVariants = cva(
     [
         'glitch-text',
-        'relative inline-block',
+        'relative inline-block max-w-full wrap-anywhere',
         'font-black tracking-wide',
         'text-brutal-fg',
         // 仅过渡交互相关的 transform（hover/press 位移）与阴影，避免过渡无关属性

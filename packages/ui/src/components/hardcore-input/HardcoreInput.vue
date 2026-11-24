@@ -258,7 +258,7 @@ const faceClasses = computed(() =>
 )
 
 const errorMessageClasses = computed(() =>
-    cn('text-xs font-black tracking-wide animate-fade-in', brutalDestructiveTextClasses)
+    cn('wrap-anywhere text-xs font-black tracking-wide animate-fade-in', brutalDestructiveTextClasses)
 )
 </script>
 

@@ -50,14 +50,14 @@ function handleDecline() {
 
 const rootClasses = computed(() =>
     cn(
-        'fixed bottom-0 left-0 right-0 z-toast p-4',
+        'fixed inset-x-0 bottom-0 z-toast max-h-dvh overflow-y-auto p-4',
         props.class
     )
 )
 
 const cardClasses = computed(() =>
     cn(
-        'mx-auto w-full max-w-4xl',
+        '@container/cookie-consent mx-auto w-full max-w-4xl',
         'border-3 border-brutal shadow-brutal-lg',
     )
 )
@@ -78,30 +78,30 @@ const iconClasses = computed(() =>
 
 <template>
     <Transition
-        enter-active-class="transition-all duration-300 ease-out"
-        leave-active-class="transition-all duration-300 ease-in"
+        enter-active-class="transition-all duration-300 ease-out motion-reduce:transition-none"
+        leave-active-class="transition-all duration-300 ease-in motion-reduce:transition-none"
         enter-from-class="opacity-0 translate-y-full"
         leave-to-class="opacity-0 translate-y-full"
     >
         <div v-if="modelValue" :class="rootClasses" aria-live="polite" role="region" :aria-labelledby="titleId">
             <Card :class="cardClasses" variant="default">
-                <CardContent class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div class="flex items-start gap-3">
+                <CardContent class="flex flex-col gap-4 @3xl/cookie-consent:flex-row @3xl/cookie-consent:items-center">
+                    <div class="flex min-w-0 flex-1 items-start gap-3">
                         <Cookie :class="iconClasses" />
-                        <div>
-                            <h3 :id="titleId" class="text-base font-black tracking-tight">
+                        <div class="min-w-0">
+                            <h3 :id="titleId" class="wrap-anywhere text-base font-black tracking-tight">
 {{ resolvedTitle }}
 </h3>
-                            <p class="mt-1 text-sm text-brutal-muted-foreground font-medium">
+                            <p class="mt-1 wrap-anywhere text-sm font-medium text-brutal-muted-foreground">
 {{ resolvedDescription }}
 </p>
                         </div>
                     </div>
-                    <div class="flex flex-col gap-2 sm:flex-row sm:shrink-0">
-                        <Button variant="outline" size="sm" @click="handleDecline">
+                    <div class="flex min-w-0 flex-wrap gap-2 @3xl/cookie-consent:max-w-1/2 @3xl/cookie-consent:justify-end">
+                        <Button variant="outline" size="sm" class="h-auto min-h-9 w-full py-2 whitespace-normal wrap-anywhere @sm/cookie-consent:w-auto" @click="handleDecline">
                             {{ resolvedDeclineText }}
                         </Button>
-                        <Button variant="primary" size="sm" @click="handleAccept">
+                        <Button variant="primary" size="sm" class="h-auto min-h-9 w-full py-2 whitespace-normal wrap-anywhere @sm/cookie-consent:w-auto" @click="handleAccept">
                             {{ resolvedAcceptText }}
                         </Button>
                     </div>

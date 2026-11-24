@@ -41,7 +41,7 @@ export const numberInputButtonVariants = cva(
                 increment: 'bg-brutal-primary text-brutal-primary-foreground',
             },
             layout: {
-                split: 'px-4 border-brutal',
+                split: 'shrink-0 border-brutal px-4 @max-3xs/number-input:px-2',
                 stacked: 'flex-1 border-brutal',
             },
         },
@@ -64,7 +64,7 @@ export const numberInputFieldVariants = cva(
     {
         variants: {
             layout: {
-                split: 'flex-1 min-w-0 text-center py-2 px-3 text-base',
+                split: 'min-w-0 flex-1 px-3 py-2 text-center text-base @max-3xs/number-input:px-1',
                 stacked: 'flex-1 min-w-0 py-2 px-4 text-base',
             },
         },

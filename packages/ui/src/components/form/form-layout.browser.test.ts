@@ -19,6 +19,7 @@ const MINIMUM_CONTROL_WIDTH = 128
 const LONG_LABEL = '企业账户安全联系人电子邮件地址（用于订单更新与安全通知）'
 const SHORT_LABEL = '邮箱'
 const LONG_ERROR = '请输入有效邮箱地址，并确认该地址与企业账户的注册信息一致；此邮箱还会用于接收订单、安全和发票通知。'
+const FIELD_IDENTIFIER = 'NEXT_PUBLIC_BILLING_REGION'
 const HORIZONTAL_LAYOUT_CASES = [
     { labelPosition: 'left' as const, viewportWidth: MOBILE_VIEWPORT_WIDTH },
     { labelPosition: 'right' as const, viewportWidth: MOBILE_VIEWPORT_WIDTH },
@@ -139,6 +140,23 @@ describe('Form horizontal label layout', () => {
 
         expect(label.getBoundingClientRect().height).toBeLessThanOrEqual(lineHeight(label))
         expect(input.getBoundingClientRect().width).toBeGreaterThan(FORM_WIDTH / 2)
+    })
+
+    it('wraps a right-aligned field identifier inside its label column', async () => {
+        const container = await mountFormFixture({
+            labelPosition: 'right',
+            label: FIELD_IDENTIFIER,
+        }, MOBILE_VIEWPORT_WIDTH)
+        const label = container.querySelector('label')!
+        const input = container.querySelector('input')!
+        const range = document.createRange()
+        range.selectNodeContents(label)
+        const lines = Array.from(range.getClientRects())
+        expect(lines.length).toBeGreaterThan(1)
+        for (const line of lines) {
+            expect(line.left).toBeGreaterThanOrEqual(container.getBoundingClientRect().left)
+            expect(line.right).toBeLessThanOrEqual(input.getBoundingClientRect().left)
+        }
     })
 
     it('keeps long error text inside the horizontal control column', async () => {

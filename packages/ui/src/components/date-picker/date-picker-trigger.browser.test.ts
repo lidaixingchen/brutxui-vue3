@@ -21,6 +21,7 @@ const SIZES = ['sm', 'default', 'lg'] as const
 const VALUE = new Date(2026, 10, 5, 13, 42)
 const RANGE_VALUE = [VALUE, new Date(2026, 10, 9, 13, 42)] as const
 const HOST_STYLE = { margin: '3rem', width: '20rem' }
+const NARROW_TRIGGER_WIDTH = '15rem'
 const POINTER_REST_STYLE = { position: 'fixed', left: '0', top: '0', width: '1rem', height: '1rem' }
 const PICKERS: { name: string; component: Component }[] = [
     { name: 'DatePicker', component: DatePicker },
@@ -101,6 +102,36 @@ function getControls(root: Element) {
 afterEach(() => {
     wrapper?.unmount()
     wrapper = undefined
+})
+
+describe('Date picker selected value layout', () => {
+    it.each([
+        { component: DatePickerRange, values: ['2026-11-05', '2026-11-09'] },
+        { component: DateTimePicker, values: ['2026-11-05', '13:42'] },
+    ])('shows both parts of a selected value inside a narrow trigger', async ({ component, values }) => {
+        const root = mountPicker(component) as HTMLElement
+        root.style.width = NARROW_TRIGGER_WIDTH
+        const { trigger, clear } = getControls(root)
+        await document.fonts.ready
+
+        const label = trigger.querySelector('.font-mono')!
+        const bounds = label.getBoundingClientRect()
+        const walker = document.createTreeWalker(label, NodeFilter.SHOW_TEXT)
+        const lines = new Set<number>()
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+            if (!node.textContent?.trim()) continue
+            const range = document.createRange()
+            range.selectNodeContents(node)
+            for (const rect of range.getClientRects()) {
+                expect(rect.right).toBeLessThanOrEqual(bounds.right)
+                expect(rect.bottom).toBeLessThanOrEqual(bounds.bottom)
+                lines.add(rect.top)
+            }
+        }
+        for (const value of values) expect(label.textContent).toContain(value)
+        expect(lines.size).toBeGreaterThan(1)
+        expect(clear!.getBoundingClientRect().left).toBeGreaterThanOrEqual(bounds.right)
+    })
 })
 
 describe.each(PICKERS)('$name trigger movement', ({ component }) => {

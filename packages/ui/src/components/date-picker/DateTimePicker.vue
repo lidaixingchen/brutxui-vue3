@@ -14,6 +14,7 @@ import PopoverContent from '../popover/PopoverContent.vue'
 import {
     datePickerControlTriggerVariants,
     datePickerControlVariants,
+    datePickerMultilineTriggerVariants,
     datePickerTriggerVariants,
 } from './date-picker-variants'
 import DateTimePickerPanel from './DateTimePickerPanel.vue'
@@ -104,6 +105,7 @@ const {
 const triggerClasses = computed(() =>
     cn(
         datePickerTriggerVariants({ size: props.size, variant: props.variant }),
+        datePickerMultilineTriggerVariants({ size: props.size }),
         datePickerControlTriggerVariants(),
         !props.modelValue && 'text-brutal-muted-foreground',
         props.class
@@ -167,7 +169,7 @@ defineExpose({ open })
                         class="shrink-0 stroke-[3] opacity-70"
                         :class="calendarIconClasses"
                     />
-                    <span class="flex-1 text-left truncate font-mono text-sm">
+                    <span class="min-w-0 flex-1 text-left font-mono text-sm whitespace-normal wrap-anywhere">
                         {{ formattedDisplay || resolvedPlaceholder }}
                     </span>
                     <span class="flex items-center gap-1 shrink-0">

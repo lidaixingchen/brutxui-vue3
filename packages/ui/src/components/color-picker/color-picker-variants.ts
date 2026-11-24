@@ -3,7 +3,7 @@ import { brutalControlMovement } from '@/lib/brutal-interaction-variants'
 import { FOCUS_RING_CLASSES } from '@/lib/utils'
 
 export const colorPickerControlVariants = cva(
-    'group/color-picker relative w-full transition-transform duration-150 motion-reduce:transition-none',
+    '@container/color-control group/color-picker relative w-full min-w-0 transition-transform duration-150 motion-reduce:transition-none',
     {
         variants: {
             disabled: {
@@ -17,7 +17,7 @@ export const colorPickerControlVariants = cva(
 
 export const colorPickerTriggerVariants = cva(
     [
-        'flex items-center gap-2 w-full',
+        'flex w-full min-w-0 items-center gap-2 py-1.5 @max-3xs/color-control:gap-1',
         'border-3 border-brutal rounded-brutal',
         'bg-brutal-bg text-brutal-fg',
         'shadow-brutal group-hover/color-picker:shadow-brutal-lg group-active/color-picker:shadow-none',
@@ -28,9 +28,9 @@ export const colorPickerTriggerVariants = cva(
     {
         variants: {
             size: {
-                sm: 'h-9 px-3 text-sm',
-                default: 'h-11 px-4 text-base',
-                lg: 'h-14 px-5 text-lg',
+                sm: 'min-h-9 px-3 text-sm @max-3xs/color-control:px-1',
+                default: 'min-h-11 px-4 text-base @max-3xs/color-control:px-2',
+                lg: 'min-h-14 px-5 text-lg @max-3xs/color-control:px-3',
             },
         },
         defaultVariants: {

@@ -53,10 +53,10 @@ const hasFooter = computed(() =>
         <img :src="props.src" :alt="props.alt" :class="imageClasses" loading="lazy">
         <figcaption v-if="hasFooter" :class="footerClasses">
             <slot>
-                <div v-if="props.title" class="font-mono text-sm font-bold uppercase tracking-widest">
+                <div v-if="props.title" class="wrap-anywhere font-mono text-sm font-bold uppercase tracking-widest">
                     {{ props.title }}
                 </div>
-                <p v-if="props.description" class="mt-1 text-sm">
+                <p v-if="props.description" class="mt-1 wrap-anywhere text-sm">
                     {{ props.description }}
                 </p>
             </slot>

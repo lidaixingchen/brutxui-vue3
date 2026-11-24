@@ -27,6 +27,24 @@ afterEach(async () => {
 })
 
 describe('NumberInput responsive layout', () => {
+    it('shows a grouped decimal value in a 220px split control', async () => {
+        host = document.createElement('div')
+        host.style.width = '220px'
+        document.body.appendChild(host)
+        wrapper = mount(NumberInput, {
+            props: {
+                defaultValue: 1234567.89,
+                locale: 'en-US',
+                formatOptions: { minimumFractionDigits: 2, maximumFractionDigits: 2 },
+            },
+            attachTo: host,
+        })
+        await document.fonts.ready
+        const input = host.querySelector('input')!
+        expect(input.value).toBe('1,234,567.89')
+        expect(input.scrollWidth).toBe(input.clientWidth)
+    })
+
     it.each(VIEWPORT_WIDTHS)('keeps both stepper buttons inside a narrow grid at %ipx', async (width) => {
         originalViewport = { width: window.innerWidth, height: window.innerHeight }
         await page.viewport(width, VIEWPORT_HEIGHT)

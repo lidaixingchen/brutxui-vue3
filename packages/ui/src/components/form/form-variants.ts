@@ -34,12 +34,12 @@ export const formItemVariants = cva(
 )
 
 export const formLabelVariants = cva(
-    [],
+    'max-w-full wrap-anywhere leading-snug',
     {
         variants: {
             labelPosition: {
                 left: 'col-start-1 row-start-1 justify-self-start min-w-0',
-                right: 'col-start-1 row-start-1 justify-self-end min-w-0',
+                right: 'col-start-1 row-start-1 justify-self-end min-w-0 text-end',
                 top: '',
             },
         },
@@ -67,7 +67,7 @@ export const formControlVariants = cva(
 
 export const formDescriptionVariants = cva(
     [
-        'text-brutal-muted-foreground font-medium',
+        'wrap-anywhere font-medium text-brutal-muted-foreground',
     ],
     {
         variants: {
@@ -91,7 +91,7 @@ export const formDescriptionVariants = cva(
 
 export const formMessageVariants = cva(
     [
-        'font-black',
+        'wrap-anywhere font-black',
         brutalDestructiveTextClasses,
     ],
     {
