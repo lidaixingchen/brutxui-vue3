@@ -395,7 +395,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/toast/ToastContainer.vue",
-            "line": 22
+            "line": 35
           },
           "origin": "declared",
           "required": false,
@@ -433,7 +433,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/toast/ToastContainer.vue",
-            "line": 23
+            "line": 36
           },
           "origin": "declared",
           "required": false,
@@ -465,7 +465,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/toast/ToastContainer.vue",
-            "line": 24
+            "line": 37
           },
           "origin": "declared",
           "required": false,

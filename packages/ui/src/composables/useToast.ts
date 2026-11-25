@@ -62,9 +62,11 @@ export interface UseToastReturn {
 
 export const TOAST_KEY: InjectionKey<UseToastReturn> = Symbol('brutx-toast')
 
-export function createToast(isFallback = false, globalOptions?: { grouping?: boolean }): UseToastReturn {
+function createToastInstance(globalOptions?: { grouping?: boolean }) {
     const toasts = ref<ToastItem[]>([])
     const globalGrouping = globalOptions?.grouping ?? false
+    const loadingToastIds = new Set<string>()
+    let destroyed = false
 
     // 注意：useToast 层不再启动自动移除定时器。离场倒计时由渲染层（Toast.vue）的
     // duration 定时器驱动，Toast.vue 在动画完成后 emit('close')，调用方通过
@@ -74,11 +76,22 @@ export function createToast(isFallback = false, globalOptions?: { grouping?: boo
     // 3. 离场动画能正常播放（useToast 不会提前从数组移除导致组件卸载）
 
     function addToast(toast: Omit<ToastItem, 'id'>) {
+        return enqueueToast(toast)
+    }
+
+    function replaceToast(index: number, toast: ToastItem) {
+        const nextToasts = [...toasts.value]
+        nextToasts[index] = toast
+        toasts.value = nextToasts
+    }
+
+    function enqueueToast(toast: Omit<ToastItem, 'id'>, isLoading = false) {
         const isGroupingEnabled = toast.grouping ?? globalGrouping
         if (isGroupingEnabled) {
             // 匹配键包含 description/size，避免标题与变体相同但内容不同的 toast 被误合并
             const existingIndex = toasts.value.findIndex(
-                (t) => t.title === toast.title
+                (t) => loadingToastIds.has(t.id) === isLoading
+                    && t.title === toast.title
                     && t.variant === toast.variant
                     && t.description === toast.description
                     && t.size === toast.size
@@ -100,43 +113,53 @@ export function createToast(isFallback = false, globalOptions?: { grouping?: boo
                         return acc
                     }, {})
 
-                const updatedToast: ToastItem = {
+                replaceToast(existingIndex, {
                     ...existing,
                     ...mergedFields,
                     id: existing.id,
                     count: updatedCount,
-                }
-                const newToasts = [...toasts.value]
-                newToasts[existingIndex] = updatedToast
-                toasts.value = newToasts
+                })
 
                 return existing.id
             }
         }
 
         const id = `toast-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
-        if (toasts.value.length >= MAX_TOASTS) {
-            toasts.value = toasts.value.slice(1)
+        let nextToasts = toasts.value
+        if (nextToasts.length >= MAX_TOASTS) {
+            loadingToastIds.delete(nextToasts[0].id)
+            nextToasts = nextToasts.slice(1)
         }
-        toasts.value = [...toasts.value, { ...toast, id, count: toast.count ?? 1 }]
+        if (isLoading) loadingToastIds.add(id)
+        toasts.value = [...nextToasts, { ...toast, id, count: toast.count ?? 1 }]
 
         return id
     }
 
     function removeToast(id: string) {
+        loadingToastIds.delete(id)
         toasts.value = toasts.value.filter((t) => t.id !== id)
+    }
+
+    function releaseLoadingToast(id: string) {
+        if (!loadingToastIds.has(id)) return
+        const index = toasts.value.findIndex((toast) => toast.id === id)
+        const toast = toasts.value[index]
+        const count = toast.count ?? 1
+        if (count === 1) removeToast(id)
+        else replaceToast(index, { ...toast, count: count - 1 })
     }
 
     function clearAllTimers() {}
 
     function clearToasts() {
+        loadingToastIds.clear()
         toasts.value = []
     }
 
-    if (!isFallback && getCurrentScope()) {
-        onScopeDispose(() => {
-            clearToasts()
-        })
+    function destroy() {
+        destroyed = true
+        clearToasts()
     }
 
     function success(title: string, description?: string) {
@@ -155,6 +178,25 @@ export function createToast(isFallback = false, globalOptions?: { grouping?: boo
         return addToast({ variant: 'info', title, description })
     }
 
+    function runPromiseToastEffect<T>(effect: () => T): T | undefined {
+        if (destroyed) return undefined
+        try {
+            return effect()
+        } catch (error) {
+            console.error('[BrutxUI] Failed to update a promise toast.', error)
+            return undefined
+        }
+    }
+
+    function settlePromiseToast(loadingId: string | undefined, getToast: () => Omit<ToastItem, 'id'>) {
+        runPromiseToastEffect(() => {
+            if (loadingId !== undefined) releaseLoadingToast(loadingId)
+            if (destroyed) return
+            const result = getToast()
+            if (!destroyed) addToast(result)
+        })
+    }
+
     async function promise<T>(
         promiseOrFn: Promise<T> | (() => Promise<T>),
         options: PromiseToastOptions<T>
@@ -164,40 +206,35 @@ export function createToast(isFallback = false, globalOptions?: { grouping?: boo
         const promiseValue = typeof promiseOrFn === 'function'
             ? Promise.resolve().then(promiseOrFn)
             : Promise.resolve(promiseOrFn)
-        const loadingId = addToast({
+        const loadingId = runPromiseToastEffect(() => enqueueToast({
             variant: options.loadingVariant ?? 'default',
             title: options.loading,
             duration: 0,
-        })
+        }, true))
 
+        let data: T
         try {
-            const data = await promiseValue
-            removeToast(loadingId)
-            const successMessage = typeof options.success === 'function'
-                ? options.success(data)
-                : options.success
-            addToast({
-                variant: options.successVariant ?? 'success',
-                title: successMessage,
-                duration: options.duration,
-            })
-            return data
+            data = await promiseValue
         } catch (err) {
-            removeToast(loadingId)
-            const errorObj = err instanceof Error ? err : new Error(String(err))
-            const errorMessage = typeof options.error === 'function'
-                ? options.error(errorObj)
-                : options.error
-            addToast({
+            settlePromiseToast(loadingId, () => ({
                 variant: options.errorVariant ?? 'error',
-                title: errorMessage,
+                title: typeof options.error === 'function'
+                    ? options.error(err instanceof Error ? err : new Error(String(err)))
+                    : options.error,
                 duration: options.duration,
-            })
+            }))
             throw err
         }
+
+        settlePromiseToast(loadingId, () => ({
+            variant: options.successVariant ?? 'success',
+            title: typeof options.success === 'function' ? options.success(data) : options.success,
+            duration: options.duration,
+        }))
+        return data
     }
 
-    return {
+    const toast: UseToastReturn = {
         toasts: readonly(toasts),
         addToast,
         removeToast,
@@ -209,14 +246,21 @@ export function createToast(isFallback = false, globalOptions?: { grouping?: boo
         info,
         promise,
     }
+    return { toast, destroy }
+}
+
+export function createToast(isFallback = false, globalOptions?: { grouping?: boolean }): UseToastReturn {
+    const { toast, destroy } = createToastInstance(globalOptions)
+    if (!isFallback && getCurrentScope()) onScopeDispose(destroy)
+    return toast
 }
 
 // 共享 fallback 单例：懒创建 + 引用计数清理 + beforeunload 注册/移除统一由 lib/fallback-manager 管理
-const fallbackManager = createFallbackManager<UseToastReturn>({
+const fallbackManager = createFallbackManager({
     name: 'useToast',
     isClient,
-    createInstance: () => createToast(true),
-    destroyInstance: (instance) => instance.clearToasts(),
+    createInstance: () => createToastInstance(),
+    destroyInstance: ({ destroy }) => destroy(),
 })
 
 export function destroyFallback() {
@@ -235,5 +279,5 @@ export function useToast(): UseToastReturn {
     if (isClient && typeof console !== 'undefined') {
         console.warn('[BrutxUI] useToast() called without provideToast(). Falling back to shared singleton. Call provideToast() in your root component.')
     }
-    return fallbackManager.acquire()
+    return fallbackManager.acquire().toast
 }

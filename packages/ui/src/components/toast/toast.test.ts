@@ -510,6 +510,49 @@ describe('ToastContainer', () => {
         wrapper.unmount()
     })
 
+    it('finishes a manual close when a grouped operation settles during the leave animation', async () => {
+        vi.useFakeTimers()
+        let toastStore: ReturnType<typeof provideToast> | undefined
+        const wrapper = mount({
+            components: { ToastContainer },
+            setup() {
+                toastStore = provideToast({ grouping: true })
+                return {}
+            },
+            template: '<ToastContainer />',
+        }, { global: globalProvide })
+
+        let finishFirst!: () => void
+        let finishSecond!: () => void
+        const options = { loading: 'Loading', success: 'Done', error: 'Failed' }
+        const first = toastStore!.promise(new Promise<void>((resolve) => { finishFirst = resolve }), options)
+        const second = toastStore!.promise(new Promise<void>((resolve) => { finishSecond = resolve }), options)
+        await nextTick()
+
+        const loading = wrapper.getComponent(Toast)
+        expect(loading.text()).toContain('Loading (2)')
+        await loading.get('button[aria-label="Close"]').trigger('click')
+        expect(loading.classes()).toContain('animate-out')
+
+        finishFirst()
+        await first
+        expect(wrapper.getComponent(Toast).element).toBe(loading.element)
+        expect(loading.classes()).toContain('animate-out')
+        expect(loading.text()).toContain('Loading')
+        expect(loading.text()).not.toContain('(2)')
+
+        vi.advanceTimersByTime(TEST_LEAVE_ANIMATION_DELAY_MS)
+        await nextTick()
+        expect(wrapper.findAllComponents(Toast)).toHaveLength(1)
+        expect(wrapper.text()).not.toContain('Loading')
+        expect(wrapper.text()).toContain('Done')
+
+        finishSecond()
+        await second
+        expect(wrapper.text()).toContain('Done (2)')
+        wrapper.unmount()
+    })
+
     it('respects maxVisible by removing the oldest toast when limit exceeded', async () => {
         let toastStore: any = null
 

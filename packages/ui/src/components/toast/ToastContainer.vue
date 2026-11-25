@@ -1,14 +1,27 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed, shallowRef, watch } from 'vue'
 import { cn } from '@/lib/utils'
 import { DEFAULT_TOAST_MAX_VISIBLE, DEFAULT_TOAST_GAP_PX } from '@/lib/defaults'
-import type { ToastPosition, ToastStackOptions } from '@/composables/useToast'
+import type { ToastItem, ToastPosition, ToastStackOptions } from '@/composables/useToast'
 import { useLocale } from '@/composables/useLocale'
 import { useToast } from '@/composables/useToast'
 import Toast from './Toast.vue'
 
 const { t } = useLocale()
 const { toasts, removeToast } = useToast()
+const renderedToasts = shallowRef<{ toast: Readonly<ToastItem>; key: symbol }[]>([])
+
+// 新分组提示重启倒计时，异步操作结算引起的计数减少沿用进行中的离场动画。
+watch(toasts, (items) => {
+    const previousById = new Map(renderedToasts.value.map((entry) => [entry.toast.id, entry]))
+    renderedToasts.value = items.map((toast) => {
+        const previous = previousById.get(toast.id)
+        const key = !previous || (toast.count ?? 1) > (previous.toast.count ?? 1)
+            ? Symbol(toast.id)
+            : previous.key
+        return { toast, key }
+    })
+}, { immediate: true, flush: 'sync' })
 
 // 当用户未提供 default slot 时，自动渲染 Toast 列表并连接 @close 事件。
 // 这使 <ToastContainer /> 简化用法可用：useToast.addToast 后 toast 自动显示，
@@ -134,8 +147,8 @@ watch(
     <div :class="classes" :style="{ ...positionStyle, ...gapStyle }" aria-live="polite" :aria-label="t('toast.container')">
         <slot>
             <Toast
-                v-for="toast in toasts"
-                :key="`${toast.id}:${toast.count}`"
+                v-for="{ toast, key } in renderedToasts"
+                :key="key"
                 :variant="toast.variant"
                 :size="toast.size"
                 :title="toast.title"

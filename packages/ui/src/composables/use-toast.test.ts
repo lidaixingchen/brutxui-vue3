@@ -1,7 +1,17 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { createApp, defineComponent, h, ref, nextTick } from 'vue'
+import { createApp, defineComponent, effectScope, h, ref, nextTick } from 'vue'
 import { createToast, provideToast, useToast, destroyFallback, DEFAULT_TOAST_DURATION } from './useToast'
 import { MAX_TOASTS } from '../lib/defaults'
+
+function deferred<T>() {
+    let resolve!: (value: T) => void
+    let reject!: (reason: unknown) => void
+    const promise = new Promise<T>((fulfill, fail) => {
+        resolve = fulfill
+        reject = fail
+    })
+    return { promise, resolve, reject }
+}
 
 describe('useToast', () => {
     beforeEach(() => {
@@ -392,6 +402,122 @@ describe('useToast', () => {
             ).rejects.toThrow('test')
         })
 
+        it.each([true, false])('releases each loading toast independently with grouping %s', async (grouping) => {
+            const { toasts, addToast, promise } = createToast(false, { grouping })
+            const loading = 'Loading'
+            const first = deferred<string>()
+            const second = deferred<string>()
+            const options = { loading, success: 'Done', error: 'Failed' }
+            const firstResult = promise(first.promise, options)
+            const secondResult = promise(second.promise, options)
+
+            const loadingToasts = () => toasts.value.filter((toast) => toast.title === loading && toast.duration === 0)
+            expect(loadingToasts().map((toast) => toast.count)).toEqual(grouping ? [2] : [1, 1])
+            const remainingId = loadingToasts().at(-1)?.id
+
+            first.resolve('result')
+            await expect(firstResult).resolves.toBe('result')
+            expect(loadingToasts()).toMatchObject([{ id: remainingId, count: 1 }])
+            expect(toasts.value).toContainEqual(expect.objectContaining({ title: 'Done', variant: 'success' }))
+
+            const regularId = addToast({ title: loading, variant: 'default', duration: DEFAULT_TOAST_DURATION })
+            addToast({ title: loading, variant: 'default', duration: DEFAULT_TOAST_DURATION })
+            expect(loadingToasts()).toMatchObject([{ id: remainingId, count: 1 }])
+
+            const failure = new Error('failure')
+            second.reject(failure)
+            await expect(secondResult).rejects.toBe(failure)
+            expect(loadingToasts()).toHaveLength(0)
+            expect(toasts.value.find((toast) => toast.id === regularId)).toMatchObject({
+                count: grouping ? 2 : 1,
+                duration: DEFAULT_TOAST_DURATION,
+            })
+            expect(toasts.value).toContainEqual(expect.objectContaining({ title: 'Failed', variant: 'error' }))
+        })
+
+        it.each(['clear', 'remove'] as const)('shows the result after manual %s', async (dismiss) => {
+            const { toasts, clearToasts, removeToast, promise } = createToast(false, { grouping: true })
+            const options = { loading: 'Loading', success: 'Done', error: 'Failed' }
+            const first = deferred<string>()
+            const second = deferred<string>()
+            const firstResult = promise(first.promise, options)
+            if (dismiss === 'clear') clearToasts()
+            else removeToast(toasts.value[0].id)
+
+            const secondResult = promise(second.promise, options)
+            const remainingId = toasts.value[0].id
+            first.resolve('first')
+            await expect(firstResult).resolves.toBe('first')
+            expect(toasts.value).toMatchObject([{ id: remainingId, count: 1 }, { title: 'Done' }])
+
+            second.resolve('second')
+            await expect(secondResult).resolves.toBe('second')
+            expect(toasts.value).toMatchObject([{ title: 'Done', count: 2 }])
+        })
+
+        it('settles pending operations after scope disposal without formatting or showing their results', async () => {
+            const scope = effectScope()
+            const { toasts, promise } = scope.run(() => createToast(false, { grouping: true }))!
+            const first = deferred<string>()
+            const failure = new Error('failure')
+            const options = { loading: 'Loading', success: vi.fn(() => 'Done'), error: vi.fn(() => 'Failed') }
+            const firstResult = promise(first.promise, options)
+            const secondResult = promise(() => { throw failure }, options)
+
+            scope.stop()
+            expect(toasts.value).toHaveLength(0)
+            first.resolve('result')
+            await expect(firstResult).resolves.toBe('result')
+            await expect(secondResult).rejects.toBe(failure)
+            expect(toasts.value).toHaveLength(0)
+            expect(options.success).not.toHaveBeenCalled()
+            expect(options.error).not.toHaveBeenCalled()
+        })
+
+        it('releases the loading toast and shows the original error when the operation throws synchronously', async () => {
+            const { toasts, promise } = createToast()
+            const failure = new Error('failure')
+            const error = vi.fn(() => 'Failed')
+            const result = promise(() => { throw failure }, { loading: 'Loading', success: 'Done', error })
+
+            expect(toasts.value).toMatchObject([{ title: 'Loading' }])
+            await expect(result).rejects.toBe(failure)
+            expect(error).toHaveBeenCalledWith(failure)
+            expect(toasts.value).toMatchObject([{ title: 'Failed', variant: 'error' }])
+        })
+
+        it('preserves the original results and releases loading when result formatters throw', async () => {
+            const report = vi.spyOn(console, 'error').mockImplementation(() => {})
+            try {
+                const { toasts, promise } = createToast(false, { grouping: true })
+                const value = { saved: true }
+                const failure = new Error('operation failed')
+                const formattingFailure = new Error('formatter failed')
+                const success = vi.fn(() => { throw formattingFailure })
+                const error = vi.fn(() => { throw formattingFailure })
+                const options = { loading: 'Loading', success, error }
+                const first = deferred<typeof value>()
+                const second = deferred<typeof value>()
+                const firstResult = promise(first.promise, options)
+                const secondResult = promise(second.promise, options)
+
+                first.resolve(value)
+                await expect(firstResult).resolves.toBe(value)
+                expect(success).toHaveBeenCalledWith(value)
+                expect(error).not.toHaveBeenCalled()
+                expect(toasts.value).toMatchObject([{ title: 'Loading', count: 1 }])
+
+                second.reject(failure)
+                await expect(secondResult).rejects.toBe(failure)
+                expect(error).toHaveBeenCalledWith(failure)
+                expect(toasts.value).toHaveLength(0)
+                expect(report).toHaveBeenCalledTimes(2)
+                expect(report).toHaveBeenCalledWith(expect.stringContaining('[BrutxUI]'), formattingFailure)
+            } finally {
+                report.mockRestore()
+            }
+        })
+
         it('does not add toast when duration is omitted (uses undefined → defaults)', async () => {
             const { toasts, promise } = createToast()
             await promise(Promise.resolve('x'), {
@@ -547,10 +673,17 @@ describe('useToast', () => {
             await nextTick()
             expect(appToast!.toasts.value.length).toBe(2)
 
+            const result = deferred<string>()
+            const pending = appToast!.promise(result.promise, { loading: 'Loading', success: 'Done', error: 'Failed' })
+
             // 卸载第二个：同 App 引用计数归零，fallback 实例被销毁，toast 被清空
             showChild2.value = false
             await nextTick()
             expect(appToast!.toasts.value.length).toBe(0)
+            const failure = new Error('failure')
+            result.reject(failure)
+            await expect(pending).rejects.toBe(failure)
+            expect(appToast!.toasts.value).toHaveLength(0)
 
             app.unmount()
             warnSpy.mockRestore()
@@ -631,6 +764,35 @@ describe('useToast', () => {
         it('is safe to call when no fallback exists', () => {
             destroyFallback()
             destroyFallback() // should not throw
+        })
+
+        it('keeps pending results from a destroyed browser fallback out of the old and replacement instances', async () => {
+            destroyFallback()
+            const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+            try {
+                const oldToast = useToast()
+                const first = deferred<string>()
+                const second = deferred<string>()
+                const options = { loading: 'Loading', success: 'Done', error: 'Failed' }
+                const firstResult = oldToast.promise(first.promise, options)
+
+                destroyFallback()
+                const newToast = useToast()
+                const secondResult = newToast.promise(second.promise, options)
+                expect(newToast).not.toBe(oldToast)
+
+                first.resolve('first')
+                await expect(firstResult).resolves.toBe('first')
+                expect(oldToast.toasts.value).toHaveLength(0)
+                expect(newToast.toasts.value).toMatchObject([{ title: 'Loading', count: 1 }])
+
+                second.resolve('second')
+                await expect(secondResult).resolves.toBe('second')
+                expect(newToast.toasts.value).toMatchObject([{ title: 'Done' }])
+            } finally {
+                destroyFallback()
+                warnSpy.mockRestore()
+            }
         })
 
         it('destroyFallback removes the lazily-registered beforeunload listener (HMR/multi-app cleanup)', async () => {
