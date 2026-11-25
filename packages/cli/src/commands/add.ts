@@ -23,6 +23,7 @@ import {
     ComponentMutationEngine,
 } from '../lib/index.js';
 import { parseComponentSpecifier } from '../lib/registry-client.js';
+import { withRegistryOperationCache } from '../lib/storage/cache-storage.js';
 
 function validateComponents(components: string[], hasCustomRegistry: boolean): void {
     const MAX_COMPONENT_NAME_LENGTH = 100;
@@ -150,7 +151,9 @@ export async function add(components: string[], options: AddOptions): Promise<vo
                 dryRun: effectiveDryRun,
                 registrySource: options.registry ?? DEFAULT_REGISTRY_URL,
             },
-            () => addInner(components, { ...options, dryRun: effectiveDryRun }, cwd, targetCwd, useCache),
+            () => withRegistryOperationCache(effectiveDryRun, () =>
+                addInner(components, { ...options, dryRun: effectiveDryRun }, cwd, targetCwd, useCache),
+            ),
         );
     } finally {
         restoreOffline();

@@ -1,12 +1,31 @@
 import crypto from 'node:crypto';
 import path from 'node:path';
 import os from 'node:os';
+import { AsyncLocalStorage } from 'node:async_hooks';
+import { isGlobalDryRun } from '../global-dry-run.js';
 import { DiskFileSystemAdapter, type FileSystemAdapter } from '../fs/index.js';
 
 const DEFAULT_CACHE_DIR = path.join(os.homedir(), '.brutx-vue', 'cache');
 const DEFAULT_TTL = 3600000;
 const DEFAULT_MAX_ENTRIES = 200;
 const DEFAULT_MAX_BYTES = 50 * 1024 * 1024;
+
+const registryCacheScope = new AsyncLocalStorage<'read-only' | 'read-write'>();
+
+export function withRegistryOperationCache<T>(dryRun: boolean, action: () => T): T {
+    const policy = dryRun || isRegistryCacheReadOnly() ? 'read-only' : 'read-write';
+    return registryCacheScope.run(policy, action);
+}
+
+export function withRegistryPlanningCache<T>(action: () => T): T {
+    return registryCacheScope.getStore() === undefined
+        ? registryCacheScope.run('read-only', action)
+        : action();
+}
+
+export function isRegistryCacheReadOnly(): boolean {
+    return registryCacheScope.getStore() === 'read-only' || isGlobalDryRun();
+}
 
 export interface CacheEntry<T> {
     data: T;
@@ -150,12 +169,13 @@ export class CacheStorage {
         if (this.disabled) return null;
 
         const filePath = this.getCacheFilePath(name, source);
+        const allowCleanup = !isRegistryCacheReadOnly();
         try {
             if (!(await this.fs.pathExists(filePath))) return null;
 
             const raw = await this.fs.readJson<CacheFileRaw<T>>(filePath);
             if (typeof raw.timestamp !== 'number' || raw.data === undefined) {
-                await this.fs.remove(filePath).catch(() => {});
+                if (allowCleanup) await this.fs.remove(filePath).catch(() => {});
                 return null;
             }
 
@@ -169,13 +189,13 @@ export class CacheStorage {
                 expired,
             };
         } catch {
-            await this.fs.remove(filePath).catch(() => {});
+            if (allowCleanup) await this.fs.remove(filePath).catch(() => {});
             return null;
         }
     }
 
     public async set<T>(name: string, source: string, data: T, meta?: CacheWriteInput): Promise<void> {
-        if (this.disabled) return;
+        if (this.disabled || isRegistryCacheReadOnly()) return;
 
         const filePath = this.getCacheFilePath(name, source);
         await this.fs.ensureDir(this.cacheDir);
@@ -210,7 +230,7 @@ export class CacheStorage {
     }
 
     public async touch(name: string, source: string): Promise<void> {
-        if (this.disabled) return;
+        if (this.disabled || isRegistryCacheReadOnly()) return;
 
         const filePath = this.getCacheFilePath(name, source);
         if (!(await this.fs.pathExists(filePath))) return;

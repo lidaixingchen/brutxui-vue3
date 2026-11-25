@@ -1,6 +1,7 @@
+import path from 'node:path';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { MemoryFileSystemAdapter } from 'brutx-shared-vue/fs';
-import { CacheStorage } from '../../src/lib/storage/cache-storage.js';
+import { CacheStorage, withRegistryOperationCache } from '../../src/lib/storage/cache-storage.js';
 
 describe('CacheStorage (Deep Module on VFS)', () => {
     let vfs: MemoryFileSystemAdapter;
@@ -68,6 +69,18 @@ describe('CacheStorage (Deep Module on VFS)', () => {
             expect(touched).not.toBeNull();
             expect(touched!.timestamp).toBeGreaterThanOrEqual(initial!.timestamp);
         });
+    });
+
+    it.each(['broken JSON', '{}'])('treats an invalid entry as a miss during a read-only operation (%s)', async (corruptContent) => {
+        await cache.set('button', 'official', { name: 'button' });
+        const [entry] = await vfs.readdir(cacheDir);
+        const cacheFile = path.join(cacheDir, entry);
+        await vfs.writeFile(cacheFile, corruptContent);
+
+        expect(await withRegistryOperationCache(true, () => cache.get('button', 'official'))).toBeNull();
+        expect(await vfs.readFile(cacheFile)).toBe(corruptContent);
+        expect(await cache.get('button', 'official')).toBeNull();
+        expect(await vfs.pathExists(cacheFile)).toBe(false);
     });
 
     describe('并发 In-Flight 合并与请求去重', () => {

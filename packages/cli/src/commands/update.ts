@@ -15,6 +15,7 @@ import {
 } from '../lib/index.js';
 import { getInstalledComponents, diffComponent } from '../lib/services/diff-service.js';
 import { collectRegistryComponentRequests } from '../lib/registry-client.js';
+import { withRegistryOperationCache } from '../lib/storage/cache-storage.js';
 import { getUpdateRegistrySource, isRegistrySelectionOnlyUpdate } from '../lib/registry-source.js';
 
 export async function update(components: string[], options: UpdateOptions): Promise<void> {
@@ -36,7 +37,9 @@ export async function update(components: string[], options: UpdateOptions): Prom
                 cwd,
                 dryRun: effectiveDryRun,
             },
-            () => updateInner(components, { ...options, dryRun: effectiveDryRun }, cwd, useCache),
+            () => withRegistryOperationCache(effectiveDryRun, () =>
+                updateInner(components, { ...options, dryRun: effectiveDryRun }, cwd, useCache),
+            ),
         );
     } finally {
         restoreOffline();

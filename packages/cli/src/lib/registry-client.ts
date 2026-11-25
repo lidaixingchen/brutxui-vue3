@@ -11,7 +11,13 @@ import {
 } from './constants.js';
 import { CliError } from './error.js';
 import { logger } from './logger.js';
-import { createDefaultCacheStorage, isOfflineMode, type CacheStorage, type CacheReadResult } from './storage/cache-storage.js';
+import {
+    createDefaultCacheStorage,
+    isOfflineMode,
+    isRegistryCacheReadOnly,
+    type CacheStorage,
+    type CacheReadResult,
+} from './storage/cache-storage.js';
 import { resilientFetch } from './resilience/resilient-fetch.js';
 import { RegistrySourceTracker } from './resilience/source-tracker.js';
 import { hedgedRace, HedgedRaceWinnerAbort } from './resilience/hedged-race.js';
@@ -746,7 +752,8 @@ export class RegistryClient {
         fn: () => Promise<{ item: RegistryItem; source: string }>,
         effectiveUseCache: boolean,
     ): Promise<{ item: RegistryItem; source: string }> {
-        const key: string = `${name}::${sourceKey}::cache=${effectiveUseCache}`;
+        const cacheMode = effectiveUseCache ? isRegistryCacheReadOnly() ? 'read-only' : 'read-write' : 'disabled';
+        const key: string = `${name}::${sourceKey}::cache=${cacheMode}`;
         const existing: Promise<{ item: RegistryItem; source: string }> | undefined = this.inflightItems.get(key);
         if (existing) {
             return existing;
