@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { cn } from '@/lib/utils'
 import { useUpload } from '@/composables/useUpload'
 import type { UploadFile, UploadError, UploadRequestOptions } from './upload-types'
@@ -64,27 +64,71 @@ let isUnmounted: boolean = false
 // 内部文件列表
 const internalFileList = ref<UploadFile[]>([...props.fileList])
 
-interface ActiveUploadRequest {
+interface UploadAttempt {
     readonly file: UploadFile
-    readonly abortController: AbortController
-}
-
-const activeUploadRequests: Map<string, ActiveUploadRequest> = new Map()
-
-function cleanupUploadRequest(request: ActiveUploadRequest): void {
-    if (activeUploadRequests.get(request.file.id) === request) {
-        activeUploadRequests.delete(request.file.id)
-        request.file.abortController = undefined
+    request?: {
+        readonly controller: AbortController
+        readonly onAbort: () => void
     }
 }
 
-function cancelActiveUploadRequest(fileId: string): void {
-    const request: ActiveUploadRequest | undefined = activeUploadRequests.get(fileId)
-    if (!request) return
+type UploadResult =
+    | { status: 'success' | 'canceled' }
+    | { status: 'error', error: UploadError }
 
-    request.file.status = 'canceled'
-    request.abortController.abort()
-    cleanupUploadRequest(request)
+const uploadAttempts = new Map<string, UploadAttempt>()
+
+function isCurrentAttempt(attempt: UploadAttempt): boolean {
+    return uploadAttempts.get(attempt.file.id) === attempt
+}
+
+function releaseUpload(attempt: UploadAttempt): boolean {
+    const { file, request } = attempt
+    if (!isCurrentAttempt(attempt)) return false
+
+    uploadAttempts.delete(file.id)
+    if (request) {
+        request.controller.signal.removeEventListener('abort', request.onAbort)
+        file.abortController = undefined
+    }
+    return true
+}
+
+function reportUploadError(file: UploadFile, error: UploadError): void {
+    file.status = 'error'
+    file.error = error
+    emit('file-error', file, error)
+    props.onError?.(error, file)
+}
+
+function finishUpload(attempt: UploadAttempt, result: UploadResult): boolean {
+    if (!releaseUpload(attempt)) return false
+
+    const { file } = attempt
+    if (result.status === 'error') {
+        reportUploadError(file, result.error)
+    } else {
+        file.status = result.status
+        if (result.status === 'success') {
+            file.progress = 100
+            emit('file-success', file)
+        }
+    }
+    return true
+}
+
+function cancelUpload(file: UploadFile): void {
+    const attempt = uploadAttempts.get(file.id)
+    if (attempt) {
+        if (finishUpload(attempt, { status: 'canceled' })) {
+            attempt.request?.controller.abort()
+        }
+    } else if (file.status === 'uploading') {
+        const controller = file.abortController
+        file.abortController = undefined
+        file.status = 'canceled'
+        controller?.abort()
+    }
 }
 
 // 生成唯一 ID
@@ -94,23 +138,10 @@ function generateId(): string {
 }
 
 // 同步外部 fileList，按 id 保留已有对象引用，避免覆盖进行中的上传状态
-watch(() => props.fileList, (newList: UploadFile[]): void => {
-    const nextFileIds: Set<string> = new Set(newList?.map((file: UploadFile): string => file.id) ?? [])
-    for (const file of internalFileList.value) {
-        if (nextFileIds.has(file.id)) continue
-
-        cancelActiveUploadRequest(file.id)
-        if (file.status === 'uploading') {
-            file.status = 'canceled'
-            file.abortController?.abort()
-        }
-    }
-
-    if (!newList) {
-        internalFileList.value = []
-        return
-    }
-    const currentMap = new Map(internalFileList.value.map(f => [f.id, f]))
+watch(() => props.fileList?.slice() ?? [], (newList): void => {
+    const previousList = internalFileList.value
+    const nextFileIds = new Set(newList.map(file => file.id))
+    const currentMap = new Map(previousList.map(file => [file.id, file]))
     internalFileList.value = newList.map((newFile) => {
         const existing = currentMap.get(newFile.id)
         if (existing) {
@@ -123,6 +154,9 @@ watch(() => props.fileList, (newList: UploadFile[]): void => {
         }
         return newFile
     })
+    for (const file of previousList) {
+        if (!nextFileIds.has(file.id)) cancelUpload(file)
+    }
 })
 
 const { validateFileSize, matchesAccept } = useUpload({
@@ -145,97 +179,87 @@ function createUploadFile(file: File): UploadFile {
 }
 
 // 上传文件
-async function doUpload(file: UploadFile): Promise<void> {
-    if (isUnmounted || !props.httpRequest) return
+async function startUpload(attempt: UploadAttempt): Promise<void> {
+    const { file } = attempt
+    const httpRequest = props.httpRequest
+    const raw = file.raw
+    if (!isCurrentAttempt(attempt)) return
+    if (!httpRequest || !raw) {
+        releaseUpload(attempt)
+        return
+    }
 
-    cancelActiveUploadRequest(file.id)
-    file.status = 'uploading'
+    const controller = new AbortController()
+    const onAbort = (): void => {
+        finishUpload(attempt, { status: 'canceled' })
+    }
+    attempt.request = { controller, onAbort }
+    controller.signal.addEventListener('abort', onAbort)
+
+    // 同步监听器可能在文件字段变更时移除文件或启动新的上传。
     file.progress = 0
-
-    const abortController = new AbortController()
-    file.abortController = abortController
-    const request: ActiveUploadRequest = { file, abortController }
-    activeUploadRequests.set(file.id, request)
-
-    // 防止 onError 回调与 catch 同时处理导致 file-error 重复触发
-    let settled = false
-    // 文件被移除后中止上传，回调中跳过已取消的文件，避免触发 file-success/file-error
-    const isCancelled = (): boolean => isUnmounted
-        || abortController.signal.aborted
-        || activeUploadRequests.get(file.id) !== request
-
-    const cleanup = (): void => cleanupUploadRequest(request)
+    if (!isCurrentAttempt(attempt)) return
+    file.abortController = controller
+    if (!isCurrentAttempt(attempt)) return
+    file.status = 'uploading'
+    if (!isCurrentAttempt(attempt)) return
 
     try {
-        await props.httpRequest({
-            file: file.raw!,
-            signal: abortController.signal,
+        await httpRequest({
+            file: raw,
+            signal: controller.signal,
             onProgress: (percent: number) => {
-                if (isCancelled()) return
-                file.progress = percent
+                if (isCurrentAttempt(attempt)) file.progress = percent
             },
             onSuccess: () => {
-                if (settled || isCancelled()) return
-                settled = true
-                file.status = 'success'
-                file.progress = 100
-                cleanup()
-                emit('file-success', file)
+                finishUpload(attempt, { status: 'success' })
             },
             onError: (error: UploadError) => {
-                if (settled || isCancelled()) return
-                settled = true
-                file.status = 'error'
-                file.error = error
-                cleanup()
-                emit('file-error', file, error)
-                props.onError?.(error, file)
+                finishUpload(attempt, { status: 'error', error })
             },
         })
     } catch (error) {
-        if (settled || isCancelled()) return
-        settled = true
-        const uploadError: UploadError = {
-            message: error instanceof Error ? error.message : 'Upload failed',
-        }
-        file.status = 'error'
-        file.error = uploadError
-        cleanup()
-        emit('file-error', file, uploadError)
-        props.onError?.(uploadError, file)
+        finishUpload(attempt, {
+            status: 'error',
+            error: { message: error instanceof Error ? error.message : 'Upload failed' },
+        })
     }
 }
 
 // 重试上传
-async function retryUpload(file: UploadFile): Promise<void> {
-    if (isUnmounted) return
-    if (file.status === 'success') {
-        return
+async function retryUpload(uploadFile: UploadFile): Promise<void> {
+    const listedFile = internalFileList.value.find(file => file.id === uploadFile.id)
+    const file = listedFile ?? uploadAttempts.get(uploadFile.id)?.file ?? uploadFile
+    if (isUnmounted || file.status === 'success') return
+
+    const previousAttempt = uploadAttempts.get(file.id)
+    if (previousAttempt && !previousAttempt.request) {
+        releaseUpload(previousAttempt)
+    } else {
+        cancelUpload(file)
     }
-    if (file.status === 'uploading') {
-        cancelActiveUploadRequest(file.id)
-        file.abortController?.abort()
-    }
+    if (isUnmounted || uploadAttempts.has(file.id)
+        || (listedFile && !internalFileList.value.includes(listedFile))) return
+
     if (props.maxRetries !== undefined && (file.retryCount ?? 0) >= props.maxRetries) {
-        const error: UploadError = {
+        reportUploadError(file, {
             message: `已达到最大重试次数 (${props.maxRetries})`,
-        }
-        file.status = 'error'
-        file.error = error
-        emit('file-error', file, error)
-        props.onError?.(error, file)
+        })
         return
     }
+    const attempt = { file }
+    uploadAttempts.set(file.id, attempt)
     file.retryCount = (file.retryCount ?? 0) + 1
+    if (!isCurrentAttempt(attempt)) return
     file.error = undefined
-    await doUpload(file)
+    await startUpload(attempt)
 }
 
 // 处理文件选择
 async function handleFileSelect(files: FileList | File[]): Promise<void> {
     if (isUnmounted) return
     const fileArray = Array.from(files)
-    const pendingUploads: UploadFile[] = []
+    const pendingUploads: UploadAttempt[] = []
 
     function reportLimitError(file: File) {
         const error: UploadError = {
@@ -252,113 +276,123 @@ async function handleFileSelect(files: FileList | File[]): Promise<void> {
         })
     }
 
-    for (const file of fileArray) {
-        if (isUnmounted) return
-
-        // 验证文件大小
-        if (!validateFileSize(file)) {
-            const error: UploadError = {
-                message: `文件 ${file.name} 大小超过限制`,
-            }
-            props.onError?.(error, {
-                id: '',
-                name: file.name,
-                size: file.size,
-                type: file.type,
-                status: 'error',
-                progress: 0,
-                error,
-            })
-            continue
-        }
-
-        if (!matchesAccept(file)) {
-            const error: UploadError = {
-                message: `文件 ${file.name} 类型不符合要求`,
-            }
-            props.onError?.(error, {
-                id: '',
-                name: file.name,
-                size: file.size,
-                type: file.type,
-                status: 'error',
-                progress: 0,
-                error,
-            })
-            continue
-        }
-
-        // 预检剩余数量额度（快速失败，避免超限文件触发耗时的 beforeUpload）
-        if (props.limit !== undefined && internalFileList.value.length >= props.limit) {
-            reportLimitError(file)
-            continue
-        }
-
-        // 执行 beforeUpload 钩子
-        if (props.beforeUpload) {
-            const result = await props.beforeUpload(file)
+    try {
+        for (const file of fileArray) {
             if (isUnmounted) return
-            if (result === false) continue
+
+            // 验证文件大小
+            if (!validateFileSize(file)) {
+                const error: UploadError = {
+                    message: `文件 ${file.name} 大小超过限制`,
+                }
+                props.onError?.(error, {
+                    id: '',
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    status: 'error',
+                    progress: 0,
+                    error,
+                })
+                continue
+            }
+
+            if (!matchesAccept(file)) {
+                const error: UploadError = {
+                    message: `文件 ${file.name} 类型不符合要求`,
+                }
+                props.onError?.(error, {
+                    id: '',
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    status: 'error',
+                    progress: 0,
+                    error,
+                })
+                continue
+            }
+
+            // 预检剩余数量额度（快速失败，避免超限文件触发耗时的 beforeUpload）
+            if (props.limit !== undefined && internalFileList.value.length >= props.limit) {
+                reportLimitError(file)
+                continue
+            }
+
+            // 执行 beforeUpload 钩子
+            if (props.beforeUpload) {
+                const result = await props.beforeUpload(file)
+                if (isUnmounted) return
+                if (result === false) continue
+            }
+
+            // 严格验证剩余数量额度（在 beforeUpload 之后紧邻校验，避免异步挂起期间并发超限）
+            if (props.limit !== undefined && internalFileList.value.length >= props.limit) {
+                reportLimitError(file)
+                continue
+            }
+
+            const uploadFile = reactive(createUploadFile(file))
+            const attempt = { file: uploadFile }
+            uploadAttempts.set(uploadFile.id, attempt)
+            pendingUploads.push(attempt)
+            internalFileList.value.push(uploadFile)
+            emit('update:fileList', [...internalFileList.value])
+            if (isUnmounted) return
+            if (uploadFile.status === 'ready' && internalFileList.value.includes(uploadFile)) {
+                emit('file-change', uploadFile)
+            }
+            if (isUnmounted) return
         }
 
-        // 严格验证剩余数量额度（在 beforeUpload 之后紧邻校验，避免异步挂起期间并发超限）
-        if (props.limit !== undefined && internalFileList.value.length >= props.limit) {
-            reportLimitError(file)
-            continue
+        if (pendingUploads.length > 0) {
+            // 先同步父组件在文件新增事件中提交的列表，再启动整批上传。
+            await nextTick()
+            if (props.autoUpload) await Promise.allSettled(pendingUploads.map(startUpload))
         }
-
-        const uploadFile = reactive(createUploadFile(file))
-        internalFileList.value.push(uploadFile)
-        pendingUploads.push(uploadFile)
-        emit('update:fileList', [...internalFileList.value])
-        if (isUnmounted) return
-        emit('file-change', uploadFile)
-        if (isUnmounted) return
-    }
-
-    // 统一并发启动上传
-    if (!isUnmounted && props.autoUpload && pendingUploads.length > 0) {
-        await Promise.allSettled(pendingUploads.map((uploadFile) => doUpload(uploadFile)))
+    } finally {
+        for (const attempt of pendingUploads) {
+            if (!attempt.request) releaseUpload(attempt)
+        }
     }
 }
 
 // 删除文件
 async function handleFileRemove(file: UploadFile): Promise<void> {
     if (isUnmounted) return
+    const listedFile = internalFileList.value.find(item => item.id === file.id)
+    const detachedAttempt = listedFile ? undefined : uploadAttempts.get(file.id)
     if (props.beforeRemove) {
         const result = await props.beforeRemove(file)
         if (isUnmounted) return
         if (result === false) return
     }
 
-    // 中止进行中的上传，避免移除后仍触发 file-success/file-error
-    if (file.status === 'uploading') {
-        file.status = 'canceled'
+    if (!listedFile) {
+        if (detachedAttempt && isCurrentAttempt(detachedAttempt)) {
+            cancelUpload(detachedAttempt.file)
+        }
+        return
     }
-    cancelActiveUploadRequest(file.id)
-    file.abortController?.abort()
-    if (isUnmounted) return
+    const index = internalFileList.value.indexOf(listedFile)
+    if (index === -1) return
 
-    const index = internalFileList.value.findIndex(f => f.id === file.id)
-    if (index > -1) {
-        internalFileList.value.splice(index, 1)
-        emit('update:fileList', [...internalFileList.value])
-        if (isUnmounted) return
-        emit('file-remove', file)
-    }
+    internalFileList.value.splice(index, 1)
+    cancelUpload(listedFile)
+    if (isUnmounted) return
+    emit('update:fileList', [...internalFileList.value])
+    if (isUnmounted) return
+    emit('file-remove', listedFile)
 }
 
 // 卸载时中止所有进行中的上传，避免 httpRequest 回调在组件销毁后触发
 onBeforeUnmount(() => {
     isUnmounted = true
-    for (const request of activeUploadRequests.values()) {
-        request.abortController.abort()
-        cleanupUploadRequest(request)
+    for (const { file } of uploadAttempts.values()) {
+        cancelUpload(file)
     }
     for (const file of internalFileList.value) {
-        if (file.status === 'uploading') {
-            file.abortController?.abort()
-        }
+        cancelUpload(file)
     }
 })
 

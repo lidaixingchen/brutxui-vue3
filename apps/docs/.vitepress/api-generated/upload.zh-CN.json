@@ -642,7 +642,7 @@
           "name": "file-list",
           "kind": "slots",
           "type": {
-            "text": "{ files: { id: string; name: string; size: number; type: string; status: \"success\" | \"error\" | \"ready\" | \"uploading\" | \"canceled\"; progress: number; url?: string | undefined; raw?: { readonly lastModified: number; readonly name: string; readonly webkitRelativePath: string; readonly size: number; readonly type: string; arrayBuffer: () => Promise<ArrayBuffer>; bytes: () => Promise<Uint8Array<ArrayBuffer>>; slice: (start?: number | undefined, end?: number | undefined, contentType?: string | undefined) => Blob; stream: () => ReadableStream<Uint8Array<ArrayBuffer>>; text: () => Promise<string>; } | undefined; error?: { message: string; code?: string | undefined; status?: number | undefined; } | undefined; retryCount?: number | undefined; abortController?: { readonly signal: { readonly aborted: boolean; onabort: ((this: AbortSignal, ev: Event) => any) | null; readonly reason: any; throwIfAborted: () => void; addEventListener: { <K extends keyof AbortSignalEventMap>(type: K, listener: (this: AbortSignal, ev: AbortSignalEventMap[K]) => any, options?: boolean | AddEventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions | undefined): void; }; removeEventListener: { <K extends keyof AbortSignalEventMap>(type: K, listener: (this: AbortSignal, ev: AbortSignalEventMap[K]) => any, options?: boolean | EventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions | undefined): void; }; dispatchEvent: (event: Event) => boolean; }; abort: (reason?: any) => void; } | undefined; }[]; listType: \"text\" | \"picture\" | \"picture-card\"; remove: (file: UploadFile) => Promise<void>; retry: (file: UploadFile) => Promise<void>; }",
+            "text": "{ files: { id: string; name: string; size: number; type: string; status: \"success\" | \"error\" | \"ready\" | \"uploading\" | \"canceled\"; progress: number; url?: string | undefined; raw?: { readonly lastModified: number; readonly name: string; readonly webkitRelativePath: string; readonly size: number; readonly type: string; arrayBuffer: () => Promise<ArrayBuffer>; bytes: () => Promise<Uint8Array<ArrayBuffer>>; slice: (start?: number | undefined, end?: number | undefined, contentType?: string | undefined) => Blob; stream: () => ReadableStream<Uint8Array<ArrayBuffer>>; text: () => Promise<string>; } | undefined; error?: { message: string; code?: string | undefined; status?: number | undefined; } | undefined; retryCount?: number | undefined; abortController?: { readonly signal: { readonly aborted: boolean; onabort: ((this: AbortSignal, ev: Event) => any) | null; readonly reason: any; throwIfAborted: () => void; addEventListener: { <K extends keyof AbortSignalEventMap>(type: K, listener: (this: AbortSignal, ev: AbortSignalEventMap[K]) => any, options?: boolean | AddEventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions | undefined): void; }; removeEventListener: { <K extends keyof AbortSignalEventMap>(type: K, listener: (this: AbortSignal, ev: AbortSignalEventMap[K]) => any, options?: boolean | EventListenerOptions | undefined): void; (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions | undefined): void; }; dispatchEvent: (event: Event) => boolean; }; abort: (reason?: any) => void; } | undefined; }[]; listType: \"text\" | \"picture\" | \"picture-card\"; remove: (file: UploadFile) => Promise<void>; retry: (uploadFile: UploadFile) => Promise<void>; }",
             "literals": [],
             "references": [
               {
@@ -690,7 +690,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/upload/Upload.vue",
-            "line": 369
+            "line": 403
           },
           "origin": "declared",
           "nullable": false,
@@ -715,7 +715,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/upload/Upload.vue",
-            "line": 370
+            "line": 404
           },
           "origin": "declared",
           "nullable": false,
@@ -726,7 +726,7 @@
           "name": "retryUpload",
           "kind": "exposes",
           "type": {
-            "text": "(file: UploadFile) => Promise<void>",
+            "text": "(uploadFile: UploadFile) => Promise<void>",
             "literals": [],
             "references": [
               {
@@ -740,7 +740,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/upload/Upload.vue",
-            "line": 371
+            "line": 405
           },
           "origin": "declared",
           "nullable": false,

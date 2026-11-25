@@ -1,6 +1,6 @@
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
-import { h } from 'vue'
+import { h, ref, watch } from 'vue'
 import { zhCN } from '@/locales'
 import Upload from './Upload.vue'
 import UploadFileItem from './UploadFileItem.vue'
@@ -31,7 +31,7 @@ interface UploadFileListSlotProps {
     retry: (file: UploadFile) => Promise<void>
 }
 
-function getExposed(wrapper: VueWrapper): UploadExposed {
+function getExposed(wrapper: { vm: unknown }): UploadExposed {
     return wrapper.vm as unknown as UploadExposed
 }
 
@@ -171,6 +171,95 @@ describe('Upload', () => {
             pendingUpload.resolve()
         }
         await selectionPromise
+    })
+
+    it.each(['remove', 'controlled'] as const)('drops queued files removed through %s while the batch is being validated', async (removal) => {
+        const removedFile = createFile('removed.txt', 'text/plain')
+        const retainedFile = createFile('retained.txt', 'text/plain')
+        let finishValidation!: (allowed: boolean) => void
+        const beforeUpload = (file: File): boolean | Promise<boolean> => file === removedFile
+            || new Promise<boolean>((resolve) => { finishValidation = resolve })
+        const httpRequest = vi.fn(async (options: UploadRequestOptions): Promise<void> => options.onSuccess({}))
+        const wrapper = mount(Upload, { props: { beforeUpload, httpRequest } })
+
+        const selection = getExposed(wrapper).handleFileSelect([removedFile, retainedFile])
+        await flushPromises()
+        const [queuedFile] = wrapper.emitted<UploadFile[]>('file-change')![0]
+        expect(httpRequest).not.toHaveBeenCalled()
+
+        if (removal === 'remove') {
+            await getExposed(wrapper).handleFileRemove(queuedFile)
+        } else {
+            await wrapper.setProps({ fileList: [{ ...queuedFile }] })
+            await wrapper.setProps({ fileList: [] })
+        }
+        finishValidation(true)
+        await selection
+
+        expect(queuedFile.status).toBe('canceled')
+        expect(httpRequest.mock.calls.map(([options]) => options.file)).toEqual([retainedFile])
+        expect(wrapper.emitted<UploadFile[]>('file-success')?.map(([file]) => file.raw)).toEqual([retainedFile])
+        wrapper.unmount()
+    })
+
+    it('honors synchronous removal from the file-change handler', async () => {
+        const httpRequest = vi.fn(async (options: UploadRequestOptions): Promise<void> => options.onSuccess({}))
+        const wrapper = mount(Upload, {
+            props: {
+                httpRequest,
+                onFileChange: (file: UploadFile): Promise<void> => getExposed(wrapper).handleFileRemove(file),
+            },
+        })
+
+        await getExposed(wrapper).handleFileSelect([createFile('removed.txt', 'text/plain')])
+
+        expect(wrapper.emitted('file-remove')).toHaveLength(1)
+        expect(httpRequest).not.toHaveBeenCalled()
+        wrapper.unmount()
+    })
+
+    it('emits file-change only for ready files kept by the list update handler', async () => {
+        const wrapper = mount(Upload, {
+            props: {
+                autoUpload: false,
+                'onUpdate:fileList': (files: UploadFile[]) => {
+                    const file = files.find(item => item.name === 'removed.txt')
+                    if (file) void getExposed(wrapper).handleFileRemove(file)
+                },
+            },
+        })
+
+        await getExposed(wrapper).handleFileSelect([
+            createFile('removed.txt', 'text/plain'),
+            createFile('retained.txt', 'text/plain'),
+        ])
+
+        expect(wrapper.emitted('file-remove')).toHaveLength(1)
+        expect(wrapper.emitted<UploadFile[]>('file-change')).toEqual([
+            [expect.objectContaining({ name: 'retained.txt', status: 'ready' })],
+        ])
+        wrapper.unmount()
+    })
+
+    it('applies a controlled removal from file-change before starting requests', async () => {
+        const httpRequest = vi.fn(async (options: UploadRequestOptions): Promise<void> => options.onSuccess({}))
+        const fileList = ref<UploadFile[]>([])
+        const wrapper = mount({
+            setup: () => () => h(Upload, {
+                fileList: fileList.value,
+                httpRequest,
+                'onUpdate:fileList': (files: UploadFile[]) => { fileList.value = files },
+                onFileChange: () => { fileList.value = [] },
+            }),
+        })
+        const upload = wrapper.getComponent(Upload)
+
+        await getExposed(upload).handleFileSelect([createFile('rejected.txt', 'text/plain')])
+
+        expect(fileList.value).toEqual([])
+        expect(httpRequest).not.toHaveBeenCalled()
+        expect(upload.emitted('file-success')).toBeUndefined()
+        wrapper.unmount()
     })
 
     it('provides feedback when retry exceeds maxRetries', async () => {
@@ -353,18 +442,20 @@ describe('Upload', () => {
         const file: UploadFile = (wrapper.emitted('update:fileList')![0][0] as UploadFile[])[0]
         const firstOptions: UploadRequestOptions = savedOptions[0]
 
-        const retryPromise: Promise<void> = getExposed(wrapper).retryUpload(file)
+        const retryPromise: Promise<void> = getExposed(wrapper).retryUpload({ ...file })
         await flushPromises()
         const secondOptions: UploadRequestOptions = savedOptions[1]
 
         expect(firstOptions.signal.aborted).toBe(true)
         expect(secondOptions.signal.aborted).toBe(false)
+        firstOptions.onProgress(LATE_PROGRESS_PERCENT)
         firstOptions.onSuccess({ ok: true })
         firstOptions.onError({ message: 'late failure' })
         rejectRequests[0](new Error('late rejection'))
         await selectionPromise
 
         expect(file.status).toBe('uploading')
+        expect(file.progress).toBe(0)
         expect(file.abortController?.signal).toBe(secondOptions.signal)
         expect(wrapper.emitted('file-success')).toBeUndefined()
         expect(wrapper.emitted('file-error')).toBeUndefined()
@@ -377,6 +468,29 @@ describe('Upload', () => {
         expect(file.status).toBe('success')
         expect(file.abortController).toBeUndefined()
         expect(wrapper.emitted('file-success')).toHaveLength(1)
+    })
+
+    it('keeps a failed file canceled when a synchronous progress watcher removes it during retry', async () => {
+        const httpRequest = vi.fn(async (options: UploadRequestOptions): Promise<void> => {
+            options.onProgress(LATE_PROGRESS_PERCENT)
+            options.onError({ message: 'Upload failed' })
+        })
+        const wrapper = mount(Upload, { props: { httpRequest } })
+        const upload = getExposed(wrapper)
+        await upload.handleFileSelect([createFile('failed.txt', 'text/plain')])
+        const [file] = wrapper.emitted<UploadFile[]>('file-error')![0]
+        const stop = watch(() => file.progress, () => {
+            void upload.handleFileRemove(file)
+        }, { flush: 'sync' })
+
+        await upload.retryUpload(file)
+
+        stop()
+        expect(httpRequest).toHaveBeenCalledTimes(1)
+        expect(wrapper.emitted('file-remove')).toHaveLength(1)
+        expect(file.status).toBe('canceled')
+        expect(file.abortController).toBeUndefined()
+        wrapper.unmount()
     })
 
     it('connects real input and drop events to the parent file list', async () => {
@@ -516,9 +630,12 @@ describe('Upload', () => {
         const selectionPromise = getExposed(wrapper).handleFileSelect([createFile('active.txt', 'text/plain')])
         await flushPromises()
         expect(httpRequest).toHaveBeenCalledTimes(1)
+        const [file] = wrapper.emitted<UploadFile[]>('file-change')![0]
 
         wrapper.unmount()
         expect(savedOptions!.signal.aborted).toBe(true)
+        expect(file.status).toBe('canceled')
+        expect(file.abortController).toBeUndefined()
         savedOptions!.onSuccess({ ok: true })
         resolveRequest()
         await selectionPromise
@@ -532,6 +649,7 @@ describe('Upload', () => {
         const beforeRemove = vi.fn((_file: UploadFile): Promise<boolean> => new Promise<boolean>((resolve) => {
             resolveBeforeRemove = resolve
         }))
+        const controller = new AbortController()
         const file: UploadFile = {
             id: 'pending-remove',
             name: 'pending-remove.txt',
@@ -539,7 +657,7 @@ describe('Upload', () => {
             type: 'text/plain',
             status: 'uploading',
             progress: 0,
-            abortController: new AbortController(),
+            abortController: controller,
         }
         const wrapper = mount(Upload, {
             props: { beforeRemove, fileList: [file], autoUpload: false },
@@ -555,7 +673,9 @@ describe('Upload', () => {
 
         expect(wrapper.emitted('update:fileList')).toBeUndefined()
         expect(wrapper.emitted('file-remove')).toBeUndefined()
-        expect(file.status).toBe('uploading')
+        expect(controller.signal.aborted).toBe(true)
+        expect(file.status).toBe('canceled')
+        expect(file.abortController).toBeUndefined()
     })
 
     it('does not retry a file after unmount', async () => {
