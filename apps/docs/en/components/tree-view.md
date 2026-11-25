@@ -144,7 +144,7 @@ type CheckState = 'checked' | 'unchecked' | 'indeterminate'
 | `End` | Focus the last node |
 
 - **ARIA Attributes**: Uses `role="tree"` and `role="treeitem"` semantic markup; checkbox mode uses `aria-checked` attribute (`true` / `false` / `mixed`)
-- **Focus Management**: Uses roving tabindex for focus management
+- **Focus management** uses a single tab stop. Tab enters the selected node when it is visible and enabled. If the selection is collapsed, hidden, disabled, or removed, Tab enters the first available tree item and preserves the selection.
 
 ## Drag and Drop Sorting
 

@@ -3,7 +3,7 @@ import { ref, shallowRef, computed, watch, provide, type ComputedRef } from 'vue
 import { getDocument } from '@/lib/env';
 import { cn } from '@/lib/utils';
 import TreeViewNode from './TreeViewNode.vue';
-import { getCheckStateMap, getCheckableDescendantIds, moveNode, cloneTree, TREE_CHECK_STATES_KEY } from './tree-view-utils';
+import { getCheckStateMap, getCheckableDescendantIds, isTreeViewLeaf, moveNode, cloneTree, TREE_CHECK_STATES_KEY, TREE_TAB_STOP_ID_KEY } from './tree-view-utils';
 import { useLocale } from '@/composables/useLocale';
 import type { CheckState, SelectionMode, TreeNode, TreeViewContext } from './types';
 
@@ -104,9 +104,29 @@ const checkStates: ComputedRef<ReadonlyMap<string, CheckState>> = computed((): R
     if (props.selectionMode !== 'checkbox') return new Map<string, CheckState>()
     return getCheckStateMap(localNodes.value, checkedSet.value)
 })
-const firstFocusableRootIndex = computed(() =>
-    localNodes.value.findIndex((node) => !node.disabled && !node.hidden)
-)
+const tabStopId = computed(() => {
+    const selectedId = props.modelValue
+    const expanded = expandedIds.value
+    const lazy = props.lazy
+    let firstEnabledId: string | undefined
+
+    function findTabStop(nodes: TreeNode[]): string | undefined {
+        for (const node of nodes) {
+            if (node.hidden) continue
+            if (!node.disabled) {
+                if (selectedId === null || node.id === selectedId) return node.id
+                firstEnabledId ??= node.id
+            }
+            if (node.children && expanded.has(node.id) && !isTreeViewLeaf(node, lazy)) {
+                const childTabStopId = findTabStop(node.children)
+                if (childTabStopId !== undefined) return childTabStopId
+            }
+        }
+        return undefined
+    }
+
+    return findTabStop(localNodes.value) ?? firstEnabledId
+})
 const pointerHighlightedId = ref<string | undefined>(undefined)
 
 function handleNodePointerEnter(id: string) {
@@ -166,7 +186,7 @@ function getVisibleTreeItems(): HTMLElement[] {
     const root = treeRootRef.value
     if (!root) return []
     return Array.from(root.querySelectorAll<HTMLElement>('[role="treeitem"]'))
-        .filter((item) => item.getAttribute('data-hidden') !== 'true' && !item.parentElement?.closest('[data-hidden="true"]'))
+        .filter((item) => !item.closest('[data-hidden="true"], [inert]'))
 }
 
 function getNavigableTreeItems(): HTMLElement[] {
@@ -440,6 +460,7 @@ function filter(query: string) {
 }
 
 provide(TREE_CHECK_STATES_KEY, checkStates)
+provide(TREE_TAB_STOP_ID_KEY, tabStopId)
 provide('TreeViewContext', {
     lazy: computed(() => props.lazy),
     retryOnError: computed(() => props.retryOnError),
@@ -490,13 +511,12 @@ const rootClass = computed(() => cn('flex flex-col gap-0.5', props.class));
         @pointerleave="clearPointerHighlight"
     >
         <TreeViewNode
-            v-for="(node, index) in localNodes"
+            v-for="node in localNodes"
             :key="node.id"
             :node="node"
             :selected-id="modelValue"
             :expanded-ids="expandedIds"
             :depth="0"
-            :is-first-root="index === firstFocusableRootIndex && !modelValue"
             :selection-mode="selectionMode"
             :checked-ids="checkedSet"
             :disabled="node.disabled ?? false"

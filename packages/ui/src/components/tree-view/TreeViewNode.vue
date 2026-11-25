@@ -4,12 +4,14 @@ import { Check, ChevronRight, File, Folder, FolderOpen, Loader2, RotateCw } from
 import { cn } from '@/lib/utils';
 import { iconSizeVariants } from '@/lib/icon-size-variants';
 import { treeItemVariants } from './tree-view-variants';
-import { getCheckStateMap, TREE_CHECK_STATES_KEY } from './tree-view-utils';
+import { getCheckStateMap, isTreeViewLeaf, TREE_CHECK_STATES_KEY, TREE_TAB_STOP_ID_KEY } from './tree-view-utils';
 import { INDENT_PER_DEPTH, BASE_INDENT_TREE_VIEW, treeChevronBaseClass, treeChevronExpandedClass, treeLabelBaseClass } from '@/lib/tree-variants';
 import Checkbox from '../checkbox/Checkbox.vue';
 import type { CheckState, SelectionMode, TreeNode, TreeViewContext } from './types';
 
 const context = inject<TreeViewContext | null>('TreeViewContext', null);
+const treeTabStopId = inject(TREE_TAB_STOP_ID_KEY, null);
+const checkboxTabIndex = treeTabStopId ? -1 : undefined;
 
 
 const contentId = `tree-content-${useId()}`
@@ -58,18 +60,13 @@ const isHighlighted = computed(() => props.highlightedId === undefined
     ? isFocused.value
     : props.highlightedId === props.node.id)
 
-const isLeaf = computed(() => {
-    if (props.node.isLeaf !== undefined) return props.node.isLeaf;
-    if (context?.lazy?.value) {
-        if (props.node.loaded) {
-            return !props.node.children || props.node.children.length === 0;
-        }
-        return false;
-    }
-    return !props.node.children || props.node.children.length === 0;
-});
+const isLeaf = computed(() => isTreeViewLeaf(props.node, context?.lazy?.value ?? false));
 const isExpanded = computed(() => props.expandedIds.has(props.node.id));
 const isSelected = computed(() => props.selectedId === props.node.id);
+const tabIndex = computed(() => {
+    const isTabStop = treeTabStopId ? treeTabStopId.value === props.node.id : isSelected.value || props.isFirstRoot;
+    return !props.disabled && isTabStop ? 0 : -1;
+});
 const isCheckboxMode = computed(() => props.selectionMode === 'checkbox');
 
 const isLoading = computed(() => {
@@ -284,6 +281,10 @@ const focus = () => {
     });
 };
 
+function disableLeavingGroup(group: Element) {
+    group.setAttribute('inert', '');
+}
+
 defineExpose({ focus, nodeId: props.node.id });
 </script>
 
@@ -294,7 +295,7 @@ defineExpose({ focus, nodeId: props.node.id });
         class="focus:outline-hidden"
         role="treeitem"
         :data-hidden="node.hidden ? 'true' : undefined"
-        :tabindex="disabled ? -1 : (isSelected ? 0 : (isFirstRoot ? 0 : -1))"
+        :tabindex="tabIndex"
         :aria-expanded="!isLeaf ? isExpanded : undefined"
         :aria-controls="!isLeaf ? contentId : undefined"
         :aria-selected="isSelected"
@@ -331,6 +332,7 @@ defineExpose({ focus, nodeId: props.node.id });
                 v-if="isCheckboxMode"
                 :checked="isChecked ? true : (isIndeterminate ? 'indeterminate' : false)"
                 :disabled="disabled"
+                :tabindex="checkboxTabIndex"
                 size="sm"
                 class="flex-shrink-0"
                 @click.stop
@@ -365,7 +367,7 @@ defineExpose({ focus, nodeId: props.node.id });
             </button>
         </div>
 
-        <Transition name="tree-expand">
+        <Transition name="tree-expand" @before-leave="disableLeavingGroup">
             <div v-if="!isLeaf && isExpanded" :id="contentId" role="group">
                 <TreeViewNode
                     v-for="child in node.children"

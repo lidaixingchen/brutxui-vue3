@@ -1243,7 +1243,7 @@ describe('TreeViewNode checkbox mode', () => {
         expect(checkEvents).toBeTruthy()
     })
 
-    it('does not emit select when clicking the checkbox in checkbox mode', async () => {
+    it('keeps the standalone checkbox tabbable and emits check when clicked', async () => {
         const wrapper = mount(TreeViewNode, {
             props: {
                 node: { id: 'file.ts', label: 'file.ts' },
@@ -1252,7 +1252,8 @@ describe('TreeViewNode checkbox mode', () => {
                 checkedIds: emptyCheckedIds,
             },
         })
-        const checkbox = wrapper.get('[role="checkbox"]')
+        const checkbox = wrapper.get<HTMLButtonElement>('[role="checkbox"]')
+        expect(checkbox.element.tabIndex).toBe(0)
         await checkbox.trigger('click')
         expect(wrapper.emitted('check')).toEqual([[{ id: 'file.ts', label: 'file.ts' }]])
         expect(wrapper.emitted('select')).toBeFalsy()

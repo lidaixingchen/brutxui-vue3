@@ -145,7 +145,7 @@ type CheckState = 'checked' | 'unchecked' | 'indeterminate'
 | `End` | 聚焦最后一个节点 |
 
 - **ARIA 属性**：使用 `role="tree"` 和 `role="treeitem"` 语义化标记；复选模式下使用 `aria-checked` 属性（`true` / `false` / `mixed`）
-- **焦点管理**：使用 roving tabindex 管理焦点
+- **焦点管理**：Tab 优先进入可见且可用的选中节点。选中节点被折叠、隐藏、禁用或移除时，Tab 进入首个可用树项，选中值保持原样。
 
 ## 拖拽排序
 

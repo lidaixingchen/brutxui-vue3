@@ -803,7 +803,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeView.vue",
-            "line": 476
+            "line": 497
           },
           "origin": "declared",
           "nullable": false,
@@ -822,7 +822,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeView.vue",
-            "line": 477
+            "line": 498
           },
           "origin": "declared",
           "nullable": false,
@@ -856,7 +856,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 18
+            "line": 20
           },
           "origin": "declared",
           "required": true,
@@ -882,7 +882,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 19
+            "line": 21
           },
           "origin": "declared",
           "required": false,
@@ -914,7 +914,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 20
+            "line": 22
           },
           "origin": "declared",
           "required": true,
@@ -938,7 +938,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 21
+            "line": 23
           },
           "origin": "declared",
           "required": false,
@@ -973,7 +973,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 22
+            "line": 24
           },
           "origin": "declared",
           "required": false,
@@ -1014,7 +1014,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 23
+            "line": 25
           },
           "origin": "declared",
           "required": false,
@@ -1046,7 +1046,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 24
+            "line": 26
           },
           "origin": "declared",
           "required": false,
@@ -1081,7 +1081,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 25
+            "line": 27
           },
           "origin": "declared",
           "required": false,
@@ -1113,7 +1113,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 26
+            "line": 28
           },
           "origin": "declared",
           "required": false,
@@ -1344,7 +1344,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 287
+            "line": 288
           },
           "origin": "declared",
           "nullable": false,
@@ -1363,7 +1363,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/tree-view/TreeViewNode.vue",
-            "line": 287
+            "line": 288
           },
           "origin": "declared",
           "nullable": false,

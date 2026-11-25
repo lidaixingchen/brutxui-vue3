@@ -4,6 +4,11 @@ import type { ComputedRef, InjectionKey } from 'vue'
 export type { CheckState } from './types'
 
 export const TREE_CHECK_STATES_KEY: InjectionKey<ComputedRef<ReadonlyMap<string, CheckState>>> = Symbol('TreeViewCheckStates')
+export const TREE_TAB_STOP_ID_KEY: InjectionKey<ComputedRef<string | undefined>> = Symbol('TreeViewTabStopId')
+
+export function isTreeViewLeaf(node: TreeNode, lazy: boolean): boolean {
+    return node.isLeaf ?? ((!lazy || Boolean(node.loaded)) && !node.children?.length)
+}
 
 export function getAllDescendantIds(node: TreeNode): string[] {
     const result: string[] = []
