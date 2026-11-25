@@ -1,5 +1,6 @@
 import os from 'os';
 import path from 'path';
+import { acquireFileLock } from 'brutx-shared-vue/fs';
 import type { FileSystemAdapter, FsRemoveOptions } from './fs/file-system-adapter.js';
 import { DiskFileSystemAdapter } from './fs/disk-fs.js';
 import { assertSafePath, verifyWrittenPath } from './security.js';
@@ -7,6 +8,17 @@ import { assertSafePath, verifyWrittenPath } from './security.js';
 interface Snapshot {
     existed: boolean;
     backupPath?: string;
+}
+
+const PROJECT_WRITE_LOCK_FILE = '.brutx-write.lock';
+const adapterProjectWrites = new WeakMap<FileSystemAdapter, Map<string, Promise<void>>>();
+
+function getProjectWrites(fs: FileSystemAdapter): Map<string, Promise<void>> {
+    const existing = adapterProjectWrites.get(fs);
+    if (existing) return existing;
+    const writes = new Map<string, Promise<void>>();
+    adapterProjectWrites.set(fs, writes);
+    return writes;
 }
 
 export class FileTransaction {
@@ -20,11 +32,45 @@ export class FileTransaction {
     private finished = false;
     /** rollback 存在失败项时置真，禁止 commit/写操作固化未回滚完成的变更 */
     private rollbackFailed = false;
+    private projectWriteLock?: Promise<() => void>;
 
     constructor(
         private readonly fs: FileSystemAdapter = new DiskFileSystemAdapter(),
         private readonly projectCwd: string = process.cwd()
     ) {}
+
+    async lockProjectWrites(): Promise<void> {
+        this.assertActive();
+        this.projectWriteLock ??= this.acquireProjectWriteLock();
+        await this.projectWriteLock;
+    }
+
+    private async acquireProjectWriteLock(): Promise<() => void> {
+        if (this.fs instanceof DiskFileSystemAdapter) {
+            const cwd = await this.fs.realpath(this.projectCwd);
+            const { release } = await acquireFileLock(path.join(cwd, PROJECT_WRITE_LOCK_FILE), 'brutx-vue');
+            return release;
+        }
+
+        const cwd = await this.fs.realpath(this.projectCwd).catch(() => path.resolve(this.projectCwd));
+        const writes = getProjectWrites(this.fs);
+        const previous = writes.get(cwd);
+        let release!: () => void;
+        const current = new Promise<void>(resolve => { release = resolve; });
+        writes.set(cwd, current);
+        await previous;
+        return () => {
+            if (writes.get(cwd) === current) writes.delete(cwd);
+            release();
+        };
+    }
+
+    private async releaseProjectWriteLock(): Promise<void> {
+        const lock = this.projectWriteLock;
+        this.projectWriteLock = undefined;
+        const release = await lock?.catch(() => undefined);
+        release?.();
+    }
 
     async ensureDir(dirPath: string): Promise<void> {
         this.assertActive();
@@ -68,7 +114,11 @@ export class FileTransaction {
         this.assertActive();
         this.committed = true;
         this.finished = true;
-        await this.cleanup();
+        try {
+            await this.cleanup();
+        } finally {
+            await this.releaseProjectWriteLock();
+        }
     }
 
     async rollback(): Promise<string[]> {
@@ -98,6 +148,7 @@ export class FileTransaction {
             await this.cleanup();
             this.finished = true;
             this.rollbackFailed = false;
+            await this.releaseProjectWriteLock();
         } else {
             this.rollbackFailed = true;
         }

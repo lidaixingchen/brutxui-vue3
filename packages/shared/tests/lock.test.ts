@@ -4,7 +4,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import os from 'node:os'
 import { pathToFileURL } from 'node:url'
-import { acquireGenerateLock, withGenerateLock } from '../src/lock.js'
+import { acquireFileLock, acquireGenerateLock, withGenerateLock } from '../src/lock.js'
 
 const REPOSITORY_ROOT = path.resolve(__dirname, '../../..')
 const PROCESS_LOCK_PACKAGE_NAME = 'cross-process-pkg'
@@ -73,6 +73,19 @@ describe('Generation Lock Contract', () => {
         } catch {
             // ignore cleanup errors
         }
+    })
+
+    it('keeps the parent directory lifecycle with the file lock caller', async () => {
+        const project = path.join(tempDir, 'consumer')
+        const lockPath = path.join(project, 'project.lock')
+        await expect(acquireFileLock(lockPath, 'consumer')).rejects.toMatchObject({ code: 'ENOENT' })
+        expect(fs.existsSync(project)).toBe(false)
+
+        fs.mkdirSync(project)
+        const lock = await acquireFileLock(lockPath, 'consumer')
+        expect(fs.existsSync(lockPath)).toBe(true)
+        lock.release()
+        expect(fs.readdirSync(project)).toEqual([])
     })
 
     it('successfully acquires and releases a generation lock', async () => {

@@ -17,11 +17,13 @@ export interface GenerateLockOptions {
     staleLockAgeMs?: number
 }
 
-export interface GenerateLockResult {
+export interface FileLockResult {
     lockPath: string
     token: string
     release: () => void
 }
+
+export type GenerateLockResult = FileLockResult
 
 interface LockObservation {
     raw: string
@@ -135,8 +137,7 @@ function removeIfUnchanged(lockPath: string, expectedRaw: string): boolean {
     }
 }
 
-function createLock(options: NormalizedLockOptions): GenerateLockResult | null {
-    fs.mkdirSync(options.cacheDir, { recursive: true })
+function createLock(options: NormalizedLockOptions): FileLockResult | null {
     const lockPath = path.join(options.cacheDir, options.lockFileName)
     const token = crypto.randomUUID()
     const lockPayload = JSON.stringify(
@@ -203,10 +204,11 @@ function createLock(options: NormalizedLockOptions): GenerateLockResult | null {
 function conflictError(
     options: NormalizedLockOptions,
     observation: LockObservation | null,
+    label: string,
 ): Error {
     const holder = observation?.raw ? `\n锁持有信息: ${observation.raw}\n` : '\n'
     return new Error(
-        `[BrutxUI] 生成锁等待超时: 包 ${options.packageName} 的生成锁仍被占用。\n` +
+        `[BrutxUI] ${label}等待超时: 包 ${options.packageName} 的${label}仍被占用。\n` +
         `锁文件路径: ${path.join(options.cacheDir, options.lockFileName)}\n` +
         holder +
         '活跃锁不会被自动夺取；若确认前次任务已退出，请显式清理锁文件后重试。',
@@ -217,10 +219,7 @@ function wait(delayMs: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, delayMs))
 }
 
-export async function acquireGenerateLock(
-    options: GenerateLockOptions,
-): Promise<GenerateLockResult> {
-    const normalized = normalizeOptions(options)
+async function waitForLock(normalized: NormalizedLockOptions, label: string): Promise<FileLockResult> {
     const lockPath = path.join(normalized.cacheDir, normalized.lockFileName)
     const startedAtMs = Date.now()
 
@@ -236,11 +235,27 @@ export async function acquireGenerateLock(
 
         const elapsedMs = Date.now() - startedAtMs
         if (elapsedMs >= normalized.waitTimeoutMs) {
-            throw conflictError(normalized, observation)
+            throw conflictError(normalized, observation, label)
         }
         const remainingMs = normalized.waitTimeoutMs - elapsedMs
         await wait(Math.min(normalized.pollIntervalMs, remainingMs))
     }
+}
+
+/** 在现有目录中对指定文件加锁，目录的生命周期由调用方负责。 */
+export function acquireFileLock(lockPath: string, packageName: string): Promise<FileLockResult> {
+    const options = normalizeOptions({
+        packageName,
+        cacheDir: path.dirname(lockPath),
+        lockFileName: path.basename(lockPath),
+    })
+    return waitForLock(options, '文件锁')
+}
+
+export async function acquireGenerateLock(options: GenerateLockOptions): Promise<GenerateLockResult> {
+    const normalized = normalizeOptions(options)
+    fs.mkdirSync(normalized.cacheDir, { recursive: true })
+    return waitForLock(normalized, '生成锁')
 }
 
 export async function withGenerateLock<T>(

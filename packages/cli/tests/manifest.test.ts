@@ -1,9 +1,12 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
 import type { RegistryItem } from '../src/lib/types.js';
+import { MemoryFileSystemAdapter } from '../src/lib/fs/memory-fs.js';
+import { FileTransaction } from '../src/lib/file-transaction.js';
 import {
+    getBaselineRelativePath,
     getManifestPath,
     readManifest,
     removeInstalledComponents,
@@ -102,6 +105,54 @@ describe('install manifest helpers', () => {
         expect(await fs.pathExists(getManifestPath(tmpDir))).toBe(true);
     });
 
+    it.each(['commit', 'rollback'] as const)('preserves a concurrent component registration after baseline recovery %s', async (outcome) => {
+        const project = process.platform === 'win32' ? 'C:/workspace/test-app' : '/workspace/test-app';
+        const adapter = new MemoryFileSystemAdapter();
+        await adapter.ensureDir(project);
+        const registrySource = 'https://example.test/registry';
+        const source = 'src/components/button/Button.vue';
+        const content = '<template><button /></template>';
+        await updateInstalledComponents(project, [{
+            item: makeRegistryItem('button'),
+            files: [path.join(project, source)],
+            registrySource,
+        }], {}, adapter);
+        const button = (await readManifest(project, adapter))!.components.button;
+        const transaction = new FileTransaction(adapter, project);
+        const baselineWritten = Promise.withResolvers<void>();
+        const resumeRecovery = Promise.withResolvers<void>();
+        const writeFile = transaction.writeFile.bind(transaction);
+        transaction.writeFile = async (...args) => {
+            await writeFile(...args);
+            baselineWritten.resolve();
+            await resumeRecovery.promise;
+        };
+        const recovering = updateInstalledComponents(project, [], {
+            transaction,
+            baselineRecoveries: [{ componentName: button.name, installedAt: button.installedAt, files: [{ relativePath: source, content }] }],
+        }, adapter);
+        await baselineWritten.promise;
+        let registered = false;
+        const registration = updateInstalledComponents(project, [{
+            item: makeRegistryItem('badge'),
+            files: [path.join(project, 'src/components/badge/Badge.vue')],
+            registrySource,
+        }], {}, adapter).then(() => { registered = true; });
+        await new Promise<void>(resolve => setImmediate(resolve));
+        const registeredDuringRecovery = registered;
+        resumeRecovery.resolve();
+        await recovering;
+        await transaction[outcome]();
+        await registration;
+
+        expect(registeredDuringRecovery).toBe(false);
+        const manifest = (await readManifest(project, adapter))!;
+        expect(manifest.components.badge).toBeDefined();
+        const baseline = getBaselineRelativePath(button.name, source);
+        expect(manifest.components.button.baselines?.[source]).toBe(outcome === 'commit' ? baseline : undefined);
+        expect(await adapter.pathExists(path.join(project, baseline))).toBe(outcome === 'commit');
+    });
+
     it('persists the version field when provided', async () => {
         await updateInstalledComponents(tmpDir, [
             {
@@ -115,6 +166,25 @@ describe('install manifest helpers', () => {
         const manifest = await readManifest(tmpDir);
 
         expect(manifest?.components.button.version).toBe('v1.2.0');
+    });
+
+    it('changes installation identity when replacing an entry in the same millisecond', async () => {
+        const instant = Date.parse('2026-08-20T00:00:00.000Z');
+        const clock = vi.spyOn(Date, 'now').mockReturnValue(instant);
+        const registration = [{
+            item: makeRegistryItem('button'),
+            registrySource: 'https://example.test/registry',
+            files: [path.join(tmpDir, 'Button.vue')],
+        }];
+        try {
+            await updateInstalledComponents(tmpDir, registration);
+            const previous = (await readManifest(tmpDir))?.components.button.installedAt;
+            await updateInstalledComponents(tmpDir, registration);
+            const current = (await readManifest(tmpDir))?.components.button.installedAt;
+            expect(Date.parse(current!)).toBeGreaterThan(Date.parse(previous!));
+        } finally {
+            clock.mockRestore();
+        }
     });
 
     it('omits the version field when not provided (treated as "latest" by add command)', async () => {

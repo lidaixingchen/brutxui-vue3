@@ -3,7 +3,7 @@ import path from 'path';
 import { DiskFileSystemAdapter, type FileSystemAdapter } from './fs/index.js';
 import { MANIFEST_VERSION } from './types.js';
 import type { BrutxManifest, InstalledComponentManifest, RegistryItem } from './types.js';
-import type { FileTransaction } from './file-transaction.js';
+import { FileTransaction } from './file-transaction.js';
 
 const defaultDiskFs = new DiskFileSystemAdapter();
 
@@ -38,9 +38,44 @@ export interface InstalledManifestEntryInput {
 type InstalledRegistrySelection = Pick<InstalledManifestEntryInput, 'item' | 'registrySource' | 'registryBaseSource' | 'version'>;
 export type RegistrySelectionUpdate = InstalledRegistrySelection & Pick<InstalledComponentManifest, 'installedAt'>;
 
+export type InstalledComponentIdentity = Pick<
+    InstalledComponentManifest, 'installedAt' | 'version' | 'registrySource' | 'registryBaseSource'
+>;
+
+export function getInstalledComponentIdentity(entry?: InstalledComponentManifest): InstalledComponentIdentity | null {
+    if (!entry) return null;
+    const { installedAt, version, registrySource, registryBaseSource } = entry;
+    return { installedAt, version, registrySource, registryBaseSource };
+}
+
+export function assertInstalledComponentIdentity(
+    manifest: BrutxManifest | null,
+    componentName: string,
+    expected: InstalledComponentIdentity | null,
+): void {
+    const current = manifest?.components[componentName];
+    const matches = expected
+        ? current?.installedAt === expected.installedAt
+            && current.version === expected.version
+            && current.registrySource === expected.registrySource
+            && current.registryBaseSource === expected.registryBaseSource
+        : current === undefined;
+    if (!matches) {
+        throw new Error(`Installed component "${componentName}" changed during merge planning. Run the merge again.`);
+    }
+}
+
+export interface BaselineRecovery {
+    componentName: string;
+    installedAt: string;
+    identity?: InstalledComponentIdentity;
+    files: readonly { relativePath: string; content: string }[];
+}
+
 interface ManifestWriteOptions {
     transaction?: FileTransaction;
     registrySelections?: readonly RegistrySelectionUpdate[];
+    baselineRecoveries?: readonly BaselineRecovery[];
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -233,18 +268,9 @@ export async function readManifest(cwd: string, fsAdapter: FileSystemAdapter = d
 async function writeManifest(
     cwd: string,
     manifest: BrutxManifest,
-    options: ManifestWriteOptions = {},
-    fsAdapter: FileSystemAdapter = defaultDiskFs
+    transaction: FileTransaction,
 ): Promise<void> {
-    const manifestPath = getManifestPath(cwd);
-
-    if (options.transaction) {
-        await options.transaction.writeJson(manifestPath, manifest, { spaces: 4 });
-        return;
-    }
-
-    await fsAdapter.ensureDir(path.dirname(manifestPath));
-    await fsAdapter.writeJson(manifestPath, manifest, { spaces: 4 });
+    await transaction.writeJson(getManifestPath(cwd), manifest, { spaces: 4 });
 }
 
 function registryManifestFields({ item, registrySource, registryBaseSource, version }: InstalledRegistrySelection) {
@@ -265,13 +291,39 @@ export async function updateInstalledComponents(
     cwd: string,
     entries: InstalledManifestEntryInput[],
     options: ManifestWriteOptions = {},
-    fsAdapter?: FileSystemAdapter
+    fsAdapter: FileSystemAdapter = defaultDiskFs
 ): Promise<void> {
-    if (entries.length === 0 && !options.registrySelections?.length) {
+    if (entries.length === 0 && !options.registrySelections?.length && !options.baselineRecoveries?.length) {
         return;
     }
 
+    await withManifestTransaction(cwd, options, fsAdapter, transaction =>
+        applyInstalledComponents(cwd, entries, options, fsAdapter, transaction)
+    );
+}
+
+async function applyInstalledComponents(
+    cwd: string,
+    entries: InstalledManifestEntryInput[],
+    options: ManifestWriteOptions,
+    fsAdapter: FileSystemAdapter,
+    transaction: FileTransaction,
+): Promise<void> {
     const manifest = await readManifest(cwd, fsAdapter) ?? createEmptyManifest();
+    for (const recovery of options.baselineRecoveries ?? []) {
+        if (recovery.identity) assertInstalledComponentIdentity(manifest, recovery.componentName, recovery.identity);
+        const entry = manifest.components[recovery.componentName];
+        if (entry?.installedAt !== recovery.installedAt) {
+            throw new Error(`Installed component "${recovery.componentName}" changed during merge planning. Run the merge again.`);
+        }
+        const baselines = { ...entry.baselines };
+        for (const { relativePath, content } of recovery.files) {
+            const baselinePath = getBaselineRelativePath(recovery.componentName, relativePath);
+            await transaction.writeFile(path.resolve(cwd, baselinePath), content);
+            baselines[relativePath] = baselinePath;
+        }
+        entry.baselines = baselines;
+    }
     for (const selection of options.registrySelections ?? []) {
         const entry = manifest.components[selection.item.name];
         if (entry?.installedAt !== selection.installedAt) {
@@ -279,9 +331,12 @@ export async function updateInstalledComponents(
         }
         Object.assign(entry, registryManifestFields(selection));
     }
-    const installedAt = new Date().toISOString();
-
+    const installationTime = Date.now();
     for (const entry of entries) {
+        const previousInstallationTime = Date.parse(manifest.components[entry.item.name]?.installedAt ?? '');
+        const installedAt = new Date(Number.isFinite(previousInstallationTime)
+            ? Math.max(installationTime, previousInstallationTime + 1)
+            : installationTime).toISOString();
         manifest.components[entry.item.name] = {
             name: entry.item.name,
             ...registryManifestFields(entry),
@@ -293,13 +348,16 @@ export async function updateInstalledComponents(
         };
     }
 
-    await writeManifest(cwd, manifest, options, fsAdapter);
+    await writeManifest(cwd, manifest, transaction);
 }
 
 export function getBaselinesDir(cwd: string): string {
     return path.join(cwd, BASELINES_DIR_RELATIVE_PATH);
 }
 
+export function getBaselineRelativePath(componentName: string, relativePath: string): string {
+    return path.posix.join(BASELINES_DIR_RELATIVE_PATH, componentName, relativePath);
+}
 export function getGitattributesPath(cwd: string): string {
     return path.join(cwd, GITATTRIBUTES_RELATIVE_PATH);
 }
@@ -341,26 +399,44 @@ export async function removeInstalledComponents(
     cwd: string,
     componentNames: string[],
     options: ManifestWriteOptions = {},
-    fsAdapter?: FileSystemAdapter
+    fsAdapter: FileSystemAdapter = defaultDiskFs
 ): Promise<void> {
     if (componentNames.length === 0) {
         return;
     }
 
-    const manifest = await readManifest(cwd, fsAdapter);
-    if (!manifest) {
-        return;
-    }
+    await withManifestTransaction(cwd, options, fsAdapter, async transaction => {
+        const manifest = await readManifest(cwd, fsAdapter);
+        if (!manifest) return;
 
-    let changed = false;
-    for (const componentName of componentNames) {
-        if (manifest.components[componentName]) {
-            delete manifest.components[componentName];
-            changed = true;
+        let changed = false;
+        for (const componentName of componentNames) {
+            if (manifest.components[componentName]) {
+                delete manifest.components[componentName];
+                changed = true;
+            }
         }
-    }
+        if (changed) {
+            await writeManifest(cwd, manifest, transaction);
+        }
+    });
+}
 
-    if (changed) {
-        await writeManifest(cwd, manifest, options, fsAdapter);
+async function withManifestTransaction(
+    cwd: string,
+    options: ManifestWriteOptions,
+    fsAdapter: FileSystemAdapter,
+    write: (transaction: FileTransaction) => Promise<void>,
+): Promise<void> {
+    const transaction = options.transaction ?? new FileTransaction(fsAdapter, cwd);
+    await transaction.lockProjectWrites();
+    try {
+        await write(transaction);
+    } catch (error) {
+        if (options.transaction) throw error;
+        const failures = await transaction.rollback();
+        if (!failures.length) throw error;
+        throw new Error(`Manifest rollback failed for: ${failures.join(', ')}`, { cause: error });
     }
+    if (!options.transaction) await transaction.commit();
 }
