@@ -2,6 +2,7 @@ import { appendFileSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
 import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
+import { selectCiChecks } from './evaluate-gate.mjs'
 
 export const CHANGE_SCOPE_FIELDS = Object.freeze([
     'full',
@@ -508,7 +509,7 @@ function writeGitHubOutputs(flags) {
     const outputFile = process.env.GITHUB_OUTPUT
     if (!outputFile) return
     const lines = CHANGE_SCOPE_FIELDS.map(field => `${field}=${String(flags[field])}`)
-    lines.push(`json=${JSON.stringify(flags)}`)
+    lines.push(`json=${JSON.stringify(flags)}`, `selected=${JSON.stringify(selectCiChecks(flags))}`)
     appendFileSync(outputFile, `${lines.join('\n')}\n`)
 }
 

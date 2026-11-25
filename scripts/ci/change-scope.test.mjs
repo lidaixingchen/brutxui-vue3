@@ -180,6 +180,7 @@ test('the CLI includes deleted and renamed paths in its Git-derived scope and wr
         assert.equal(output.get('registry'), 'true')
         assert.equal(output.get('full'), 'false')
         assert.deepEqual(JSON.parse(output.get('json')), flags)
+        assert.deepEqual(JSON.parse(output.get('selected')), ['tooling', 'quality', 'test', 'integration', 'consumers'])
     } finally {
         rmSync(repository, { recursive: true, force: true })
     }

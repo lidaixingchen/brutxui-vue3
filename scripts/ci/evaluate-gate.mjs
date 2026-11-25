@@ -1,5 +1,16 @@
 const ALLOWED_RESULTS = new Set(['success', 'skipped', 'failure', 'cancelled'])
 
+const REQUIRED_CHECK = 'tooling'
+const SCOPED_CHECKS = [
+    { jobs: ['quality', 'test'], flags: ['ui', 'cli', 'registry', 'tooling'] },
+    { jobs: ['coverage-shard', 'coverage'], flags: ['ui'] },
+    { jobs: ['browser'], flags: ['browser', 'cost'] },
+    { jobs: ['integration'], flags: ['cli'] },
+    { jobs: ['consumers'], flags: ['consumers'] },
+    { jobs: ['site'], flags: ['site'] },
+]
+const CI_CHECKS = new Set([REQUIRED_CHECK, ...SCOPED_CHECKS.flatMap(({ jobs }) => jobs)])
+
 function isRecord(value) {
     return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
@@ -11,14 +22,10 @@ function resultOf(entry) {
 }
 
 export function selectCiChecks(flags) {
-    const selected = ['tooling']
-    if (flags.ui || flags.cli || flags.registry || flags.tooling) selected.push('quality', 'test')
-    if (flags.ui) selected.push('coverage-shard', 'coverage')
-    if (flags.browser || flags.cost) selected.push('browser')
-    if (flags.cli) selected.push('integration')
-    if (flags.consumers) selected.push('consumers')
-    if (flags.site) selected.push('site')
-    return selected
+    const scopedJobs = SCOPED_CHECKS
+        .filter(check => check.flags.some(flag => flags[flag]))
+        .flatMap(check => check.jobs)
+    return [REQUIRED_CHECK, ...scopedJobs]
 }
 
 export function evaluateGate(input) {
@@ -29,8 +36,8 @@ export function evaluateGate(input) {
 
     const selected = input.selected
     const needs = input.needs
-    if (!Array.isArray(selected) || selected.some(name => typeof name !== 'string' || name.length === 0)) {
-        failures.push({ job: 'input', reason: 'selected must be an array of non-empty check names' })
+    if (!Array.isArray(selected) || selected.some(job => !CI_CHECKS.has(job))) {
+        failures.push({ job: 'input', reason: 'selected must be an array of recognized check names' })
     }
     if (!isRecord(needs)) failures.push({ job: 'input', reason: 'needs must be an object of job results' })
 
@@ -41,37 +48,29 @@ export function evaluateGate(input) {
     if (selectedSet.size !== selectedNames.length) {
         failures.push({ job: 'input', reason: 'selected check names must be unique' })
     }
-    if (selectedNames.length === 0) {
-        failures.push({ job: 'input', reason: 'at least one check must be selected' })
+    if (!selectedSet.has(REQUIRED_CHECK)) {
+        failures.push({ job: 'input', reason: `${REQUIRED_CHECK} must be selected` })
     }
 
-    if (input.classificationResult !== 'success') {
+    const classificationResult = resultOf(needsResults.changes)
+    if (classificationResult !== 'success') {
         failures.push({
             job: 'classification',
-            result: input.classificationResult ?? 'missing',
+            result: classificationResult ?? 'missing',
             reason: 'change classification must succeed',
         })
     }
 
-    const observedResults = new Map()
-    for (const [job, entry] of Object.entries(needsResults)) {
-        const result = resultOf(entry)
-        observedResults.set(job, result)
+    const observedJobs = new Set([...CI_CHECKS, ...Object.keys(needsResults)])
+    observedJobs.delete('changes')
+    for (const job of observedJobs) {
+        const result = resultOf(needsResults[job])
         if (!ALLOWED_RESULTS.has(result)) {
             failures.push({ job, result: result ?? 'missing', reason: 'job result is missing or unsupported' })
-        } else if (!selectedSet.has(job) && (result === 'failure' || result === 'cancelled')) {
+        } else if (selectedSet.has(job) && result !== 'success') {
+            failures.push({ job, result, reason: 'selected checks must succeed' })
+        } else if (result === 'failure' || result === 'cancelled') {
             failures.push({ job, result, reason: 'failed or cancelled jobs block the gate' })
-        }
-    }
-
-    for (const job of selectedSet) {
-        const result = observedResults.get(job)
-        if (result !== 'success') {
-            failures.push({
-                job,
-                result: result ?? 'missing',
-                reason: 'selected checks must succeed',
-            })
         }
     }
 

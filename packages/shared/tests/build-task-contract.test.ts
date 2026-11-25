@@ -60,6 +60,7 @@ function runTurboDryRun(args: string[], envOverrides: NodeJS.ProcessEnv = {}): T
             cwd: rootDir,
             encoding: 'utf-8',
             env: { ...process.env, ...envOverrides },
+            maxBuffer: Infinity,
             shell: process.platform === 'win32',
         },
     )

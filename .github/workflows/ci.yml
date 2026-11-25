@@ -47,7 +47,7 @@ jobs:
             browser: ${{ steps.scope.outputs.browser }}
             consumers: ${{ steps.scope.outputs.consumers }}
             cost: ${{ steps.scope.outputs.cost }}
-            json: ${{ steps.scope.outputs.json }}
+            selected: ${{ steps.scope.outputs.selected }}
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
               with:
@@ -63,7 +63,7 @@ jobs:
     quality:
         name: Quality (build + typecheck + lint + validate)
         needs: changes
-        if: needs.changes.outputs.ui == 'true' || needs.changes.outputs.cli == 'true' || needs.changes.outputs.registry == 'true' || needs.changes.outputs.tooling == 'true'
+        if: contains(fromJSON(needs.changes.outputs.selected || '[]'), 'quality')
         runs-on: ubuntu-latest
         env:
             TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
@@ -129,6 +129,7 @@ jobs:
     tooling:
         name: Tooling and documentation checks
         needs: changes
+        if: contains(fromJSON(needs.changes.outputs.selected || '[]'), 'tooling')
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -203,7 +204,7 @@ jobs:
     test:
         name: Test (Node 22)
         needs: changes
-        if: needs.changes.outputs.ui == 'true' || needs.changes.outputs.cli == 'true' || needs.changes.outputs.registry == 'true' || needs.changes.outputs.tooling == 'true'
+        if: contains(fromJSON(needs.changes.outputs.selected || '[]'), 'test')
         runs-on: ubuntu-latest
         env:
             TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
@@ -251,7 +252,7 @@ jobs:
     coverage-shard:
         name: UI coverage shard (${{ matrix.shard-index }}/${{ matrix.shard-total }})
         needs: changes
-        if: needs.changes.outputs.ui == 'true'
+        if: contains(fromJSON(needs.changes.outputs.selected || '[]'), 'coverage-shard')
         runs-on: ubuntu-latest
         strategy:
             fail-fast: false
@@ -294,7 +295,7 @@ jobs:
     coverage:
         name: UI coverage
         needs: [changes, coverage-shard]
-        if: needs.changes.outputs.ui == 'true'
+        if: contains(fromJSON(needs.changes.outputs.selected || '[]'), 'coverage')
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -349,7 +350,7 @@ jobs:
     browser:
         name: Browser tests (Vitest + Playwright)
         needs: changes
-        if: needs.changes.outputs.browser == 'true' || needs.changes.outputs.cost == 'true'
+        if: contains(fromJSON(needs.changes.outputs.selected || '[]'), 'browser')
         runs-on: ubuntu-24.04
         env:
             TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
@@ -438,7 +439,7 @@ jobs:
     integration:
         name: CLI Integration tests
         needs: changes
-        if: needs.changes.outputs.cli == 'true'
+        if: contains(fromJSON(needs.changes.outputs.selected || '[]'), 'integration')
         runs-on: ubuntu-latest
         env:
             TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
@@ -478,7 +479,7 @@ jobs:
     consumers:
         name: Real Consumer tests (U1 / C1 / C3)
         needs: changes
-        if: needs.changes.outputs.consumers == 'true'
+        if: contains(fromJSON(needs.changes.outputs.selected || '[]'), 'consumers')
         runs-on: ubuntu-latest
         env:
             TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
@@ -528,7 +529,7 @@ jobs:
     site:
         name: Documentation site
         needs: changes
-        if: needs.changes.outputs.site == 'true'
+        if: contains(fromJSON(needs.changes.outputs.selected || '[]'), 'site')
         runs-on: ubuntu-latest
         env:
             TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
@@ -583,15 +584,18 @@ jobs:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
             - name: Evaluate selected checks
               env:
-                  FLAGS: ${{ needs.changes.outputs.json }}
+                  SELECTED_CHECKS: ${{ needs.changes.outputs.selected }}
                   RESULTS: ${{ toJSON(needs) }}
-                  CLASSIFICATION_RESULT: ${{ needs.changes.result }}
               run: |
                   node --input-type=module <<'NODE'
-                  import { evaluateGate, selectCiChecks } from './scripts/ci/evaluate-gate.mjs'
-                  const flags = JSON.parse(process.env.FLAGS || '{}')
-                  const selected = selectCiChecks(flags)
-                  const result = evaluateGate({ classificationResult: process.env.CLASSIFICATION_RESULT, selected, needs: JSON.parse(process.env.RESULTS) })
+                  import { evaluateGate } from './scripts/ci/evaluate-gate.mjs'
+                  let selected
+                  try {
+                      selected = JSON.parse(process.env.SELECTED_CHECKS || '[]')
+                  } catch {
+                      console.error('Selected CI checks output must contain valid JSON')
+                  }
+                  const result = evaluateGate({ selected, needs: JSON.parse(process.env.RESULTS) })
                   console.log(JSON.stringify(result, null, 2))
                   if (!result.passed) process.exitCode = 1
                   NODE
