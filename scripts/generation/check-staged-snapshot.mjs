@@ -24,6 +24,7 @@ const TEMPORARY_DIRECTORY_PREFIX = 'brutx-staged-snapshot-'
 const UI_PACKAGE = 'ui'
 const CLI_PACKAGE = 'cli'
 const DOCS_PACKAGE = 'docs'
+const DOCS_API_OUTPUT_DIRECTORY = 'apps/docs/.vitepress/api-generated'
 const WORKSPACE_PACKAGE_DIRECTORY = Object.freeze({
     [UI_PACKAGE]: path.join('packages', 'ui'),
     [CLI_PACKAGE]: path.join('packages', 'cli'),
@@ -223,7 +224,9 @@ function isRootGenerationInput(relativePath) {
 export function determineAffectedPackages(stagedPaths) {
     const affected = new Set()
     for (const relativePath of stagedPaths) {
-        if (isDocsApiGenerationInput(relativePath)) affected.add(DOCS_PACKAGE)
+        if (isDocsApiGenerationInput(relativePath) || relativePath.startsWith(`${DOCS_API_OUTPUT_DIRECTORY}/`)) {
+            affected.add(DOCS_PACKAGE)
+        }
         if (
             isRootGenerationInput(relativePath) ||
             SHARED_GENERATION_CHECK_FILES.has(relativePath) ||
@@ -500,7 +503,7 @@ function trimGeneratorOutput(value) {
 }
 
 function findGeneratedFileHint(output, packageName) {
-    if (packageName === DOCS_PACKAGE) return 'apps/docs/.vitepress/api-generated 组件 API 文档数据'
+    if (packageName === DOCS_PACKAGE) return `${DOCS_API_OUTPUT_DIRECTORY} 组件 API 文档数据`
     const candidates = packageName === UI_PACKAGE ? UI_GENERATED_FILES : CLI_GENERATED_FILES
     for (const relativePath of candidates) {
         if (output.includes(path.posix.basename(relativePath)) || output.includes(relativePath)) return relativePath

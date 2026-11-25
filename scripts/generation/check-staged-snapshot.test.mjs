@@ -26,6 +26,8 @@ const UI_GENERATOR = 'packages/ui/scripts/generate.ts'
 const UI_MANIFEST = 'packages/ui/registry-manifest.json'
 const UI_STYLES = 'packages/ui/src/styles.css'
 const SHARED_TOKENS = 'packages/shared/src/design-tokens.ts'
+const DOCS_API_OUTPUT = 'apps/docs/.vitepress/api-generated/button.en.json'
+const DOCS_API_BASE = '{"description":"base"}\n'
 const RUNNER_FILE =
     process.platform === 'win32'
         ? 'packages/ui/src/components/example/runner input.ts'
@@ -60,6 +62,7 @@ function createRepo() {
     writeRepoFile(repoRoot, SHARED_TOKENS, 'export const TOKEN = "base"\n')
     writeRepoFile(repoRoot, UI_MANIFEST, '{"source":"base"}\n')
     writeRepoFile(repoRoot, UI_STYLES, '/* @brutx:theme-tokens:start */\nbase\n/* @brutx:theme-tokens:end */\nmanual\n')
+    writeRepoFile(repoRoot, DOCS_API_OUTPUT, DOCS_API_BASE)
     writeRepoFile(repoRoot, RUNNER_FILE, 'export const value = "base"\n', 0o755)
     writeRepoFile(repoRoot, '.gitignore', 'packages/ui/src/components/*/index.ts\n')
     runGit(repoRoot, 'add', '.')
@@ -163,6 +166,7 @@ test('根生成输入覆盖 UI、CLI 与 API 文档，快照检查代码仍不�
     assert.deepEqual(determineAffectedPackages(['scripts/generation/check-staged-snapshot.test.mjs']), [])
     assert.deepEqual(determineAffectedPackages(['apps/docs/components/button.md']), ['docs'])
     assert.deepEqual(determineAffectedPackages(['apps/docs/blog/announcement.md']), [])
+    assert.deepEqual(determineAffectedPackages(['apps/docs/.vitepress/api-generated-backup/button.en.json']), [])
 })
 
 test('跨文件未暂存 Shared 输入不会污染候选快照', async t => {
@@ -202,11 +206,10 @@ test('API 文档生成检查读取候选快照并保持工作树与 index 不变
     const repoRoot = createRepo()
     t.after(() => disposeRepo(repoRoot))
     const contentPath = 'apps/docs/.vitepress/api-content/button.ts'
-    const generatedPath = 'apps/docs/.vitepress/api-generated/button.en.json'
     stageFile(repoRoot, contentPath, 'export const content = "staged"\n')
-    stageFile(repoRoot, generatedPath, '{"description":"staged"}\n')
+    stageFile(repoRoot, DOCS_API_OUTPUT, '{"description":"staged"}\n')
     modifyWorktree(repoRoot, contentPath, 'export const content = "unstaged"\n')
-    modifyWorktree(repoRoot, generatedPath, '{"description":"unstaged"}\n')
+    modifyWorktree(repoRoot, DOCS_API_OUTPUT, '{"description":"unstaged"}\n')
     const indexPath = join(repoRoot, runGit(repoRoot, 'rev-parse', '--git-path', 'index'))
     const indexBefore = readFileSync(indexPath)
     const statusBefore = runGit(repoRoot, 'status', '--porcelain=v1', '--untracked-files=all')
@@ -220,7 +223,7 @@ test('API 文档生成检查读取候选快照并保持工作树与 index 不变
             assert.deepEqual(request.command.slice(-2), ['scripts/generate-component-api.ts', '--check'])
             assert.equal(request.environment.BRUTX_CANDIDATE_ROOT, request.candidateRoot)
             assert.equal(readFileSync(join(request.candidateRoot, contentPath), 'utf8'), 'export const content = "staged"\n')
-            assert.equal(readFileSync(join(request.candidateRoot, generatedPath), 'utf8'), '{"description":"staged"}\n')
+            assert.equal(readFileSync(join(request.candidateRoot, DOCS_API_OUTPUT), 'utf8'), '{"description":"staged"}\n')
             return successfulRun()
         }),
     })
@@ -231,7 +234,7 @@ test('API 文档生成检查读取候选快照并保持工作树与 index 不变
     assert.deepEqual(readFileSync(indexPath), indexBefore)
     assert.equal(runGit(repoRoot, 'status', '--porcelain=v1', '--untracked-files=all'), statusBefore)
     assert.equal(readFileSync(join(repoRoot, contentPath), 'utf8'), 'export const content = "unstaged"\n')
-    assert.equal(readFileSync(join(repoRoot, generatedPath), 'utf8'), '{"description":"unstaged"}\n')
+    assert.equal(readFileSync(join(repoRoot, DOCS_API_OUTPUT), 'utf8'), '{"description":"unstaged"}\n')
 })
 
 test('API 文档生成失败指出只读检查命令', async t => {
@@ -242,12 +245,79 @@ test('API 文档生成失败指出只读检查命令', async t => {
     await assert.rejects(
         checkStagedSnapshot({
             repoRoot,
-            generatorRunner: createRunner([], () => failedRun('API_OUTPUT_STALE apps/docs/.vitepress/api-generated/button.en.json')),
+            generatorRunner: createRunner([], () => failedRun(`API_OUTPUT_STALE ${DOCS_API_OUTPUT}`)),
         }),
         error => /apps\/docs\/.vitepress\/api-generated/.test(error.message)
             && /pnpm --filter brutx-ui-vue docs:manifest`/.test(error.message)
             && /pnpm --filter brutx-ui-vue docs:manifest:check/.test(error.message),
     )
+})
+
+test('仅暂存过期的 API 文档生成物时检查候选内容', async t => {
+    const repoRoot = createRepo()
+    t.after(() => disposeRepo(repoRoot))
+    const staleContent = '{"description":"stale"}\n'
+    stageFile(repoRoot, DOCS_API_OUTPUT, staleContent)
+    modifyWorktree(repoRoot, DOCS_API_OUTPUT, DOCS_API_BASE)
+    const calls = []
+
+    await assert.rejects(
+        checkStagedSnapshot({
+            repoRoot,
+            generatorRunner: createRunner(calls, ({ candidateRoot }) => {
+                assert.equal(readFileSync(join(candidateRoot, DOCS_API_OUTPUT), 'utf8'), staleContent)
+                return failedRun(`API_OUTPUT_STALE ${DOCS_API_OUTPUT}`)
+            }),
+        }),
+        /API_OUTPUT_STALE/,
+    )
+    assert.deepEqual(calls.map(call => call.packageName), ['docs'])
+})
+
+test('仅暂存删除或重命名 API 文档生成物时检查候选文件', async t => {
+    for (const operation of ['rm', 'mv']) {
+        await t.test(operation, async t => {
+            const repoRoot = createRepo()
+            t.after(() => disposeRepo(repoRoot))
+            const renamedPath = 'apps/docs/.vitepress/renamed.en.json'
+            const targets = operation === 'mv' ? [DOCS_API_OUTPUT, renamedPath] : [DOCS_API_OUTPUT]
+            runGit(repoRoot, operation, '--', ...targets)
+            modifyWorktree(repoRoot, DOCS_API_OUTPUT, DOCS_API_BASE)
+            const calls = []
+
+            await assert.rejects(
+                checkStagedSnapshot({
+                    repoRoot,
+                    generatorRunner: createRunner(calls, ({ candidateRoot }) => {
+                        assert.equal(existsSync(join(candidateRoot, DOCS_API_OUTPUT)), false)
+                        assert.equal(existsSync(join(candidateRoot, renamedPath)), operation === 'mv')
+                        return failedRun(`API_OUTPUT_MISSING ${DOCS_API_OUTPUT}`)
+                    }),
+                }),
+                /API_OUTPUT_MISSING/,
+            )
+            assert.deepEqual(calls.map(call => call.packageName), ['docs'])
+        })
+    }
+})
+
+test('仅暂存新增的有效 API 文档生成物时检查通过', async t => {
+    const repoRoot = createRepo()
+    t.after(() => disposeRepo(repoRoot))
+    const catalogPath = 'apps/docs/.vitepress/api-generated/catalog.json'
+    const catalogContent = '{"groups":[]}\n'
+    stageFile(repoRoot, catalogPath, catalogContent)
+
+    const result = await checkStagedSnapshot({
+        repoRoot,
+        generatorRunner: ({ packageName, candidateRoot }) => {
+            assert.equal(packageName, 'docs')
+            assert.equal(readFileSync(join(candidateRoot, catalogPath), 'utf8'), catalogContent)
+            return successfulRun()
+        },
+    })
+
+    assert.deepEqual(result, { checked: true, packages: ['docs'], stagedPaths: [catalogPath] })
 })
 
 test('候选组件引用未跟踪手写依赖时明确失败', async t => {
