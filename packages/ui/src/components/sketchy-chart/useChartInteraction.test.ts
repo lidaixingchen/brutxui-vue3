@@ -279,8 +279,8 @@ describe('useChartInteraction', (): void => {
         expect(document.activeElement).toBe(tableTrigger)
     })
 
-    it('tracks pointer and manages safe corridor event listeners', async (): Promise<void> => {
-        const { interaction, tooltipEl } = createFixture()
+    it('preserves the reading across a gap and inside the tooltip until the pointer leaves', async (): Promise<void> => {
+        const { interaction, tooltipEl, hitFn } = createFixture()
         vi.spyOn(tooltipEl, 'getBoundingClientRect').mockReturnValue({
             left: 50,
             right: 150,
@@ -293,20 +293,18 @@ describe('useChartInteraction', (): void => {
             toJSON: () => {},
         })
 
-        // Open by mouse move
-        interaction.pointerMove(new PointerEvent('pointermove', { pointerType: 'mouse', clientX: 60, clientY: 60 }), 1)
+        interaction.pointerMove(new PointerEvent('pointermove', { pointerType: 'mouse', clientX: 10, clientY: 100 }), 1)
         expect(interaction.open.value).toBe(true)
         await nextTick()
 
-        // Dispatch pointermove on document inside safe corridor / tooltip
-        document.dispatchEvent(new PointerEvent('pointermove', { clientX: 70, clientY: 70 }))
+        hitFn.mockReturnValueOnce(null)
+        interaction.pointerMove(new PointerEvent('pointermove', { pointerType: 'mouse', clientX: 30, clientY: 100 }))
         expect(interaction.activeIndex.value).toBe(1)
 
-        // Dispatch pointermove far away outside safe corridor dismisses
+        tooltipEl.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, clientX: 70, clientY: 100 }))
+        expect(interaction.activeIndex.value).toBe(1)
+
         document.dispatchEvent(new PointerEvent('pointermove', { clientX: 999, clientY: 999 }))
         expect(interaction.activeIndex.value).toBeNull()
-
-        // Cleanup on unmount or dismiss
-        interaction.pointerCancel()
     })
 })

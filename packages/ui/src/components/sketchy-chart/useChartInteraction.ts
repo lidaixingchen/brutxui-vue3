@@ -112,8 +112,8 @@ export function useChartInteraction(options: ChartInteractionOptions): ChartInte
         const point: Point = { x: event.clientX, y: event.clientY }
         if (lastPointer && lastPointer.x === point.x && lastPointer.y === point.y) return
         lastPointer = point
-        if (source.value === 'mouse' && safeCorridor(point)) return
         const nextIndex: number | null = index ?? options.hit(event)
+        if (source.value === 'mouse' && (nextIndex === null || nextIndex === activeIndex.value) && safeCorridor(point)) return
         if (nextIndex === null) {
             if (source.value === 'mouse') dismiss()
             return
