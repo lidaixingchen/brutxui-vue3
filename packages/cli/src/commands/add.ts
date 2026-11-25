@@ -22,8 +22,9 @@ import {
     RegistryClient,
     ComponentMutationEngine,
 } from '../lib/index.js';
+import { parseComponentSpecifier } from '../lib/registry-client.js';
 
-async function validateComponents(components: string[], registryOverride?: string): Promise<void> {
+function validateComponents(components: string[], hasCustomRegistry: boolean): void {
     const MAX_COMPONENT_NAME_LENGTH = 100;
 
     for (const component of components) {
@@ -35,11 +36,11 @@ async function validateComponents(components: string[], registryOverride?: strin
         }
     }
 
-    if (registryOverride) {
+    if (hasCustomRegistry) {
         return;
     }
 
-    const cleanComponents = components.map(c => c.split('@')[0]);
+    const cleanComponents = components.map(component => parseComponentSpecifier(component).name);
     const invalid = cleanComponents.filter((c) => !AVAILABLE_COMPONENTS.includes(c));
 
     if (invalid.length > 0) {
@@ -185,7 +186,7 @@ async function addInner(
         });
     }
 
-    await validateComponents(components, options.registry);
+    validateComponents(components, Boolean(options.registry || context.config?.registries?.length));
 
     const selectedComponents = await selectComponents(components, options, context.registry);
 
@@ -218,7 +219,8 @@ async function addInner(
 
         logger.bold('\n📦 Brutx-Vue CLI - Installation Plan:');
         logger.info(`   Target package: ${plan.targetPackageName} (${plan.targetPackageRoot})`);
-        logger.info(`   Registry source: ${options.registry || 'Default Brutx-Vue hosted registry'}`);
+        const registrySources = [...new Set(Object.values(mutationPlan.registrySources))];
+        logger.info(`   Registry source: ${registrySources.join(', ')}`);
         logger.newLine();
 
         const planParts = mutationPlan.items.map(

@@ -88,13 +88,13 @@ brutx-vue add
 
 #### Version Locking
 
-Pin a component to a specific version using the `@` syntax:
+After configuring a custom GitHub Raw registry, use `@` to pin a component version.
 
 ```bash
 brutx-vue add button@1.2.0
 ```
 
-This maps to the corresponding GitHub branch in the registry.
+This installs from the `v1.2.0` tag and records the resolved source in the manifest. The official registry serves the latest release. Updates skip pinned components unless you pass `--across-versions`.
 
 ## Global Options
 

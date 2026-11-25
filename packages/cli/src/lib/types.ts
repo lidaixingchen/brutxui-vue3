@@ -45,6 +45,8 @@ export interface RegistryItem {
 export interface RegistryItemSnapshot {
     item: RegistryItem;
     source: string;
+    version?: string;
+    baseSource?: string;
 }
 
 
@@ -345,6 +347,8 @@ export interface RegistrySnapshot {
 export interface InstalledComponentManifest {
     name: string;
     registrySource: string;
+    /** 通过版本说明符选择版本时的基准注册表源 */
+    registryBaseSource?: string;
     integrity: string;
     installedContentHash?: string;
     version?: string;

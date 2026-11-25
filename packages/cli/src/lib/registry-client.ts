@@ -5,7 +5,7 @@ import {
     RegistryIntegrityMismatchError,
     validateRegistryItem,
 } from 'brutx-shared-vue';
-import type { RegistryItem, RegistryManifestSummary, RegistrySnapshot, TrustedPublicKey } from './types.js';
+import type { RegistryItem, RegistryItemSnapshot, RegistryManifestSummary, RegistrySnapshot, TrustedPublicKey } from './types.js';
 import {
     DEFAULT_REGISTRY_SOURCES,
 } from './constants.js';
@@ -27,6 +27,85 @@ import type {
 
 const GITHUB_RAW_URL_PATTERN = /^https:\/\/raw\.githubusercontent\.com\/([^/]+)\/([^/]+)\/([^/]+)\/(.*)$/;
 const SPECIFIER_PATTERN = /^(@[a-z0-9-]+\/[a-z0-9-]+|[a-z0-9-]+)(?:@([a-zA-Z0-9._-]+))?$/;
+
+interface RegistrySourceSelection {
+    source: string;
+    baseSource?: string;
+    version?: string;
+}
+
+interface RegistryComponentSpecifier {
+    name: string;
+    version?: string;
+}
+
+interface RegistryItemRequest {
+    key: string;
+    name: string;
+    sources: RegistrySourceSelection[];
+    requestedTag?: string;
+}
+
+/**
+ * 解析说明符为名称与版本号。
+ */
+export function parseComponentSpecifier(specifier: string): RegistryComponentSpecifier {
+    const trimmed = specifier.trim();
+    if (trimmed.length === 0) {
+        throw new CliError('Component specifier cannot be empty.', { code: 'INVALID_REGISTRY' });
+    }
+
+    const match = trimmed.match(SPECIFIER_PATTERN);
+    if (match) {
+        return {
+            name: match[1],
+            version: match[2],
+        };
+    }
+
+    // 兜底拆分处理
+    if (trimmed.includes('@') && !trimmed.startsWith('@')) {
+        const parts = trimmed.split('@');
+        return {
+            name: parts[0],
+            version: parts[1],
+        };
+    }
+
+    return { name: trimmed };
+}
+
+function normalizeRegistryTag(version: string): string {
+    return version.startsWith('v') ? version : `v${version}`;
+}
+
+function requestedRegistryTag(version?: string): string | undefined {
+    return version && version !== 'latest' ? normalizeRegistryTag(version) : undefined;
+}
+
+function assertMatchingRegistryTags(name: string, firstTag?: string, secondTag?: string): void {
+    if (firstTag && secondTag && firstTag !== secondTag) {
+        throw new CliError(
+            `Component "${name}" was requested at conflicting versions ${firstTag} and ${secondTag}.`,
+            { code: 'INVALID_REGISTRY' },
+        );
+    }
+}
+
+export function collectRegistryComponentRequests(
+    specifiers: readonly string[],
+): Map<string, RegistryComponentSpecifier & { specifier: string }> {
+    const requests = new Map<string, RegistryComponentSpecifier & { specifier: string }>();
+    for (const specifier of specifiers) {
+        const { name, version } = parseComponentSpecifier(specifier);
+        const previous = requests.get(name);
+        const previousTag = requestedRegistryTag(previous?.version);
+        const tag = requestedRegistryTag(version);
+        assertMatchingRegistryTags(name, previousTag, tag);
+        if (!previous || (!previousTag && tag)) requests.set(name, { name, version, specifier });
+    }
+    return requests;
+}
 
 interface ManifestSummaryInternal extends RegistryManifestSummary {
     name?: string;
@@ -113,25 +192,45 @@ export class RegistryClient {
     public async fetchItemWithMeta(
         specifier: string,
         options?: FetchItemOptions,
-    ): Promise<{ item: RegistryItem; source: string }> {
-        const { name, version } = this.parseSpecifier(specifier);
+    ): Promise<RegistryItemSnapshot> {
+        return this.fetchRequest(this.createItemRequest(parseComponentSpecifier(specifier), options), options);
+    }
+
+    private createItemRequest(
+        { name, version }: RegistryComponentSpecifier,
+        options?: FetchItemOptions,
+        parent?: RegistrySourceSelection,
+    ): RegistryItemRequest {
         this.assertSafeComponentName(name);
+        const sources = parent
+            ? [version ? this.selectSource(parent.baseSource ?? parent.source, version) : parent]
+            : (options?.sourceOverride ? [options.sourceOverride] : this.sources)
+                .map(source => this.selectSource(source, version));
 
-        const targetSources = options?.sourceOverride
-            ? [options.sourceOverride]
-            : this.sources;
+        return {
+            key: JSON.stringify([name, sources]),
+            name,
+            sources,
+            requestedTag: requestedRegistryTag(version),
+        };
+    }
 
-        // 如果包含版本，根据说明符转换源 URL
-        const effectiveSources: string[] = targetSources.map((source: string): string => this.resolveVersionedSource(source, version));
-        const sourceKey: string = effectiveSources.join(',');
-
-        if (options?.signal) {
-            return this.fetchWithSourcesPipeline(name, effectiveSources, options);
-        }
-
-        return this.dedupeInflight(name, sourceKey, (): Promise<{ item: RegistryItem; source: string }> => {
-            return this.fetchWithSourcesPipeline(name, effectiveSources, options);
-        }, options?.useCache ?? this.useCache);
+    private async fetchRequest(
+        request: RegistryItemRequest,
+        options?: FetchItemOptions,
+    ): Promise<RegistryItemSnapshot> {
+        const { name, sources } = request;
+        const effectiveSources = [...new Set(sources.map(selection => selection.source))];
+        const fetchItem = () => this.fetchWithSourcesPipeline(name, effectiveSources, options);
+        const result = options?.signal
+            ? await fetchItem()
+            : await this.dedupeInflight(name, JSON.stringify(effectiveSources), fetchItem, options?.useCache ?? this.useCache);
+        const selection = sources.find(candidate => candidate.source === result.source)!;
+        return {
+            ...result,
+            ...(selection.version === undefined ? {} : { version: selection.version }),
+            ...(selection.baseSource === undefined ? {} : { baseSource: selection.baseSource }),
+        };
     }
 
     /**
@@ -140,35 +239,6 @@ export class RegistryClient {
     public async fetchItem(specifier: string, options?: FetchItemOptions): Promise<RegistryItem> {
         const { item } = await this.fetchItemWithMeta(specifier, options);
         return item;
-    }
-
-    /**
-     * 解析说明符为名称与版本号。
-     */
-    private parseSpecifier(specifier: string): { name: string; version?: string } {
-        const trimmed = specifier.trim();
-        if (trimmed.length === 0) {
-            throw new CliError('Component specifier cannot be empty.', { code: 'INVALID_REGISTRY' });
-        }
-
-        const match = trimmed.match(SPECIFIER_PATTERN);
-        if (match) {
-            return {
-                name: match[1],
-                version: match[2],
-            };
-        }
-
-        // 兜底拆分处理
-        if (trimmed.includes('@') && !trimmed.startsWith('@')) {
-            const parts = trimmed.split('@');
-            return {
-                name: parts[0],
-                version: parts[1],
-            };
-        }
-
-        return { name: trimmed };
     }
 
     /**
@@ -191,39 +261,28 @@ export class RegistryClient {
         }
     }
 
-    /**
-     * 将源转换为特定版本的源。
-     */
-    private resolveVersionedSource(baseSource: string, version?: string): string {
-        if (!version) return baseSource;
-
-        const normalizedTag = version.startsWith('v') ? version : `v${version}`;
-
-        // 1. GitHub Releases 资产路径: releases/latest/download -> releases/download/<tag>
-        if (baseSource.includes('/releases/latest/download')) {
-            return baseSource.replace('/releases/latest/download', `/releases/download/${normalizedTag}`);
+    private selectSource(baseSource: string, version?: string): RegistrySourceSelection {
+        if (!version || version === 'latest' || !isHttpUrl(baseSource)
+            || DEFAULT_REGISTRY_SOURCES.some(source => source === baseSource.replace(/\/+$/, ''))) {
+            return { source: baseSource };
         }
 
-        // 2. GitHub Raw URL: https://raw.githubusercontent.com/<owner>/<repo>/<ref>/<path>
-        const match = baseSource.match(GITHUB_RAW_URL_PATTERN);
-        if (match) {
-            const [, owner, repo, , rest] = match;
-            return `https://raw.githubusercontent.com/${owner}/${repo}/${normalizedTag}/${rest}`;
+        const tag = normalizeRegistryTag(version);
+        const releasePath = /\/releases\/(?:latest\/download|download\/[^/]+)(?=\/|$)/;
+        const rawPath = baseSource.match(GITHUB_RAW_URL_PATTERN);
+        let source: string;
+        if (releasePath.test(baseSource)) {
+            source = baseSource.replace(releasePath, `/releases/download/${tag}`);
+        } else if (rawPath) {
+            const [, owner, repo, , rest] = rawPath;
+            source = `https://raw.githubusercontent.com/${owner}/${repo}/${tag}/${rest}`;
+        } else {
+            const versionPath = /\/v?\d+\.\d+(\.\d+)?(-[a-zA-Z0-9._-]+)?$/;
+            const trimmed = baseSource.replace(/\/+$/, '');
+            source = versionPath.test(trimmed) ? trimmed.replace(versionPath, `/${tag}`) : `${trimmed}/${tag}`;
         }
 
-        // 3. 通用 HTTP 注册表源带版本路径 (如 https://registry.brutxui.com 或 https://registry.brutxui.com/v0.11.0)
-        if (isHttpUrl(baseSource)) {
-            let trimmed = baseSource;
-            while (trimmed.endsWith('/')) {
-                trimmed = trimmed.slice(0, -1);
-            }
-            if (/\/v?\d+\.\d+(\.\d+)?(-[a-zA-Z0-9._-]+)?$/.test(trimmed)) {
-                return trimmed.replace(/\/v?\d+\.\d+(\.\d+)?(-[a-zA-Z0-9._-]+)?$/, `/${normalizedTag}`);
-            }
-            return `${trimmed}/${normalizedTag}`;
-        }
-
-        return baseSource;
+        return { source, version, baseSource };
     }
 
     /**
@@ -714,20 +773,10 @@ export class RegistryClient {
         const devDependencies = new Set<string>();
         const registryDependencies = new Set<string>();
 
-        const targetSources: readonly string[] = options?.sourceOverride
-            ? [options.sourceOverride]
-            : this.sources;
-
-        interface DependencyRequest {
-            readonly key: string;
-            readonly specifier: string;
-            readonly sourceOverride?: string;
-        }
-
         interface ResolvedNode {
-            readonly key: string;
-            readonly item: RegistryItem;
-            readonly source: string;
+            readonly request: RegistryItemRequest;
+            readonly snapshot: RegistryItemSnapshot;
+            readonly dependencies: RegistryItemRequest[];
         }
 
         interface TraversalFrame {
@@ -735,97 +784,67 @@ export class RegistryClient {
             dependencyIndex: number;
         }
 
-        const createRequest: (specifier: string, parentSource?: string) => DependencyRequest = (specifier: string, parentSource?: string): DependencyRequest => {
-            const parsedSpecifier: { name: string; version?: string } = this.parseSpecifier(specifier);
-            const cleanName: string = parsedSpecifier.name;
-            const version: string | undefined = parsedSpecifier.version;
-            this.assertSafeComponentName(cleanName);
+        const pins = new Map<string, RegistryItemRequest>();
+        const registerPin = (request: RegistryItemRequest): void => {
+            if (!request.requestedTag) return;
+            const previous = pins.get(request.name);
+            assertMatchingRegistryTags(request.name, previous?.requestedTag, request.requestedTag);
+            if (!previous) pins.set(request.name, request);
+        };
+        const selectRequest = (request: RegistryItemRequest) => pins.get(request.name) ?? request;
+        const rootRequests = Array.from(
+            collectRegistryComponentRequests(specifiers).values(),
+            specifier => this.createItemRequest(specifier, options),
+        );
+        rootRequests.forEach(registerPin);
 
-            const effectiveSources: string[] = (parentSource ? [parentSource] : targetSources)
-                .map((source: string): string => this.resolveVersionedSource(source, version));
-            const sourceKey: string = effectiveSources.join(',');
-            return {
-                key: `${cleanName}::${sourceKey}`,
-                specifier,
-                sourceOverride: parentSource ?? options?.sourceOverride,
-            };
+        const nodes = new Map<string, ResolvedNode>();
+        // 更深层的依赖可以指定版本，先保留读取错误，最终只报告选中路径上的错误。
+        const loadErrors = new Map<string, unknown>();
+        const loadNode = async (request: RegistryItemRequest): Promise<ResolvedNode> => {
+            const snapshot = await this.fetchRequest(request, options);
+            const { item, ...parent } = snapshot;
+            const dependencies = item.registryDependencies.map(specifier =>
+                this.createItemRequest(parseComponentSpecifier(specifier), options, parent),
+            );
+            return { request, snapshot, dependencies };
         };
 
-        const rootRequests: DependencyRequest[] = specifiers.map(
-            (specifier: string): DependencyRequest => createRequest(specifier),
-        );
-        const rootKeys: string[] = rootRequests.map(
-            (request: DependencyRequest): string => request.key,
-        );
-        const nodes: Map<string, ResolvedNode> = new Map();
-        const dependencyKeysByNode: Map<string, readonly string[]> = new Map();
-        let pending: DependencyRequest[] = [...rootRequests];
-
-        const loadNode: (request: DependencyRequest) => Promise<ResolvedNode> = (request: DependencyRequest): Promise<ResolvedNode> => {
-            const fetchOptions: FetchItemOptions = {
-                ...options,
-                ...(request.sourceOverride ? { sourceOverride: request.sourceOverride } : {}),
-            };
-            return this.fetchItemWithMeta(
-                request.specifier,
-                fetchOptions,
-            ).then(({ item, source }: { item: RegistryItem; source: string }): ResolvedNode => ({
-                key: request.key,
-                item,
-                source,
-            }));
-        };
-
+        let pending = rootRequests;
         while (pending.length > 0) {
-            const requestsByKey: Map<string, DependencyRequest> = new Map();
-            for (let requestIndex: number = 0; requestIndex < pending.length; requestIndex += 1) {
-                const request: DependencyRequest = pending[requestIndex]!;
-                if (!nodes.has(request.key) && !requestsByKey.has(request.key)) {
+            const requestsByKey = new Map<string, RegistryItemRequest>();
+            for (const candidate of pending) {
+                const request = selectRequest(candidate);
+                if (!nodes.has(request.key) && !loadErrors.has(request.key)) {
                     requestsByKey.set(request.key, request);
                 }
             }
-            pending = [];
-
-            const loadedNodes: ResolvedNode[] = await Promise.all(
-                Array.from(requestsByKey.values(), loadNode),
-            );
-
-            for (let nodeIndex: number = 0; nodeIndex < loadedNodes.length; nodeIndex += 1) {
-                const node: ResolvedNode = loadedNodes[nodeIndex]!;
-                nodes.set(node.key, node);
-                hitSources.set(node.item.name, node.source);
-
-                const dependencyRequests: DependencyRequest[] = node.item.registryDependencies.map(
-                    (specifier: string): DependencyRequest => createRequest(specifier, node.source),
-                );
-                dependencyKeysByNode.set(
-                    node.key,
-                    dependencyRequests.map((request: DependencyRequest): string => request.key),
-                );
-
-                node.item.registryDependencies.forEach((dependency: string): void => {
-                    registryDependencies.add(dependency);
-                });
-                for (
-                    let dependencyIndex: number = 0;
-                    dependencyIndex < dependencyRequests.length;
-                    dependencyIndex += 1
-                ) {
-                    const dependencyRequest: DependencyRequest = dependencyRequests[dependencyIndex]!;
-                    if (!nodes.has(dependencyRequest.key)) {
-                        pending.push(dependencyRequest);
-                    }
+            const requests = [...requestsByKey.values()];
+            const results = await Promise.allSettled(requests.map(loadNode));
+            options?.signal?.throwIfAborted();
+            const loaded: ResolvedNode[] = [];
+            results.forEach((result, index) => {
+                if (result.status === 'rejected') {
+                    loadErrors.set(requests[index]!.key, result.reason);
+                    return;
                 }
-            }
+                const node = result.value;
+                nodes.set(node.request.key, node);
+                loaded.push(node);
+                if (selectRequest(node.request).key === node.request.key) node.dependencies.forEach(registerPin);
+            });
+            pending = loaded.flatMap(node =>
+                selectRequest(node.request).key === node.request.key ? node.dependencies : [selectRequest(node.request)],
+            );
         }
 
         const visited: Set<string> = new Set();
         const activePath: string[] = [];
         const activePathIndices: Map<string, number> = new Map();
-        const resolvedNames: Set<string> = new Set();
+        const itemSnapshots = new Map<string, RegistryItemSnapshot>();
 
-        for (let rootIndex: number = 0; rootIndex < rootKeys.length; rootIndex += 1) {
-            const rootKey: string = rootKeys[rootIndex]!;
+        for (const root of rootRequests) {
+            const rootKey = selectRequest(root).key;
             if (visited.has(rootKey)) {
                 continue;
             }
@@ -836,17 +855,18 @@ export class RegistryClient {
 
             while (traversal.length > 0) {
                 const frame: TraversalFrame = traversal[traversal.length - 1]!;
-                const dependencyKeys: readonly string[] = dependencyKeysByNode.get(frame.key) ?? [];
+                if (loadErrors.has(frame.key)) throw loadErrors.get(frame.key);
+                const node = nodes.get(frame.key)!;
 
-                if (frame.dependencyIndex < dependencyKeys.length) {
-                    const dependencyKey: string = dependencyKeys[frame.dependencyIndex]!;
+                if (frame.dependencyIndex < node.dependencies.length) {
+                    const dependencyKey = selectRequest(node.dependencies[frame.dependencyIndex]!).key;
                     frame.dependencyIndex += 1;
 
                     const cycleStartIndex: number | undefined = activePathIndices.get(dependencyKey);
                     if (cycleStartIndex !== undefined) {
                         const cycleKeys: string[] = [...activePath.slice(cycleStartIndex), dependencyKey];
                         const cycleNames: string[] = cycleKeys.map(
-                            (key: string): string => nodes.get(key)!.item.name,
+                            (key: string): string => nodes.get(key)!.snapshot.item.name,
                         );
                         throw new CliError(
                             `Circular dependency detected: ${cycleNames.join(' -> ')}`,
@@ -864,16 +884,19 @@ export class RegistryClient {
                     continue;
                 }
 
-                const node: ResolvedNode = nodes.get(frame.key)!;
-                if (!resolvedNames.has(node.item.name)) {
-                    resolved.push(node.item);
-                    resolvedNames.add(node.item.name);
+                const { snapshot } = node;
+                const { item } = snapshot;
+                if (!itemSnapshots.has(item.name)) {
+                    resolved.push(item);
+                    hitSources.set(item.name, snapshot.source);
+                    itemSnapshots.set(item.name, snapshot);
                 }
 
-                (node.item.dependencies ?? []).forEach((dependency: string): void => {
+                item.registryDependencies.forEach(dependency => registryDependencies.add(dependency));
+                (item.dependencies ?? []).forEach((dependency: string): void => {
                     dependencies.add(dependency);
                 });
-                (node.item.devDependencies ?? []).forEach((dependency: string): void => {
+                (item.devDependencies ?? []).forEach((dependency: string): void => {
                     devDependencies.add(dependency);
                 });
 
@@ -887,6 +910,7 @@ export class RegistryClient {
         return {
             items: resolved,
             hitSources,
+            itemSnapshots,
             npmDependencies: Array.from(dependencies).sort(),
             npmDevDependencies: Array.from(devDependencies).sort(),
             registryDependencies: Array.from(registryDependencies).sort(),

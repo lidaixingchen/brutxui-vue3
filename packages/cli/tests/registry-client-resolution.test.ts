@@ -177,6 +177,66 @@ describe('RegistryClient dependency graph resolution', (): void => {
         expect(result.hitSources.get('versioned-dep')).toBe(versionedSource);
     }, RESOLUTION_HANG_GUARD_MS);
 
+    it.each([
+        { roots: ['button@1.2.0', 'alert'], dependency: 'button' },
+        { roots: ['alert', 'button@1.2.0'], dependency: 'button' },
+        { roots: ['button', 'alert'], dependency: 'button@1.2.0' },
+        { roots: ['alert', 'button'], dependency: 'button@1.2.0' },
+    ])('uses the pinned dependency closure for $roots and $dependency', async ({ roots, dependency }) => {
+        const baseSource = 'https://raw.githubusercontent.com/org/repo/main/registry';
+        const pinnedSource = baseSource.replace('/main/', '/v1.2.0/');
+        const pinnedButton = {
+            ...createRegistryItem('button', ['pinned-icon']),
+            dependencies: ['pinned-package'],
+        };
+        const latestButton = createRegistryItem('button', ['latest-icon']);
+        const icon = createRegistryItem('pinned-icon');
+        const bridge = createRegistryItem('bridge', [dependency]);
+        const alert = createRegistryItem('alert', ['bridge']);
+        const items = new Map([
+            [`${baseSource}/button.json`, latestButton],
+            [`${pinnedSource}/button.json`, pinnedButton],
+            [`${pinnedSource}/pinned-icon.json`, icon],
+            [`${baseSource}/bridge.json`, bridge],
+            [`${baseSource}/alert.json`, alert],
+        ]);
+        const requestedItems: string[] = [];
+        const client = createClient(async url => {
+            if (url.endsWith('/registry-manifest.json')) return new Response(null, { status: HTTP_NOT_FOUND_STATUS });
+            requestedItems.push(url);
+            const item = items.get(url);
+            return item ? createJsonResponse(item) : new Response(null, { status: HTTP_NOT_FOUND_STATUS });
+        }, [baseSource]);
+
+        const result = await client.resolve(roots);
+
+        expect(result.items).toEqual([icon, pinnedButton, bridge, alert]);
+        expect(result.registryDependencies).toEqual(['bridge', dependency, 'pinned-icon']);
+        expect(result.npmDependencies).toEqual(['pinned-package']);
+        if (dependency === 'button') {
+            expect(requestedItems.filter(url => url.endsWith('/button.json'))).toEqual([`${pinnedSource}/button.json`]);
+        }
+        expect(result.hitSources.get('button')).toBe(pinnedSource);
+        expect(result.itemSnapshots?.get('button')).toEqual({
+            item: pinnedButton,
+            source: pinnedSource,
+            baseSource,
+            version: '1.2.0',
+        });
+    });
+
+    it('rejects different explicit versions for the same component before fetching', async () => {
+        const source = 'https://raw.githubusercontent.com/org/repo/main/registry';
+        const client = createClient(async () => {
+            throw new Error('Unexpected registry request');
+        }, [source]);
+
+        await expect(client.resolve(['button@1.0.0', 'button@v2.0.0'])).rejects.toMatchObject({
+            code: 'INVALID_REGISTRY',
+            message: 'Component "button" was requested at conflicting versions v1.0.0 and v2.0.0.',
+        });
+    });
+
     it('loads independent dependency branches concurrently', async (): Promise<void> => {
         const itemA: RegistryItem = createRegistryItem('parallel-a', ['parallel-b', 'parallel-c']);
         const itemB: RegistryItem = createRegistryItem('parallel-b');

@@ -1,5 +1,5 @@
 import type { FileSystemAdapter } from './fs/file-system-adapter.js';
-import type { RegistryItem } from './types.js';
+import type { RegistryItem, RegistryItemSnapshot } from './types.js';
 import type { CacheStorage } from './storage/cache-storage.js';
 import type { RegistrySourceTracker } from './resilience/source-tracker.js';
 import type { TrustedPublicKey } from './types.js';
@@ -30,6 +30,7 @@ export interface RegistryClientOptions {
 export interface ResolvedComponentPlan {
     readonly items: readonly RegistryItem[];
     readonly hitSources: ReadonlyMap<string, string>;
+    readonly itemSnapshots?: ReadonlyMap<string, RegistryItemSnapshot>;
     readonly npmDependencies: readonly string[];
     readonly npmDevDependencies: readonly string[];
     readonly registryDependencies: readonly string[];

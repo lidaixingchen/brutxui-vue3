@@ -105,13 +105,13 @@ brutx-vue add
 
 #### 版本锁定
 
-使用 `@` 语法将组件锁定到指定版本：
+项目配置自定义 GitHub Raw 注册表后，可以用 `@` 锁定组件版本。
 
 ```bash
 brutx-vue add button@1.2.0
 ```
 
-这会映射到注册表中对应的 GitHub 分支。
+示例从 `v1.2.0` 标签安装，并在清单中记录实际来源。官方默认注册表始终安装最新发布版。普通更新会跳过已锁定的组件。
 
 ### `brutx-vue update [components...]`
 
@@ -135,6 +135,7 @@ brutx-vue update --dry-run
 | `-c, --cwd <cwd>` | 指定工作目录 |
 | `-s, --silent` | 静默输出 |
 | `--dry-run` | 仅显示可更新组件，不写入文件 |
+| `--across-versions` | 允许已锁定的组件切换到指定版本，省略版本时跟随注册表的默认版本 |
 | `-r, --registry <registry>` | 自定义注册表路径或 URL |
 | `--no-cache` | 跳过注册表缓存 |
 

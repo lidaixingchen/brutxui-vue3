@@ -146,7 +146,7 @@ npx brutx-vue@latest add --all
 
 #### Version Pinning with `@version` Syntax
 
-Pin components to specific releases using the `@` syntax:
+With a custom GitHub Raw registry configured, the following command installs from the `v1.2.0` tag and records the resolved source.
 
 ```bash
 npx brutx-vue@latest add button@1.2.0

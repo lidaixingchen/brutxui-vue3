@@ -4,11 +4,13 @@ import type { RegistryItem, RegistryItemSnapshot } from '../types.js';
 import { DEFAULT_REGISTRY_URL } from '../constants.js';
 import { ensureUtilsFile } from './add-service.js';
 import { mergeSnippetsFile, hasVscodeDir } from '../vscode-snippets.js';
-import { computeInstalledContentHash, updateInstalledComponents, readManifest, ensureGitattributes } from '../manifest.js';
+import { computeInstalledContentHash, updateInstalledComponents, readManifest, ensureGitattributes, type RegistrySelectionUpdate } from '../manifest.js';
 import { MergeExecutor } from '../merge/merge-executor.js';
 import { PackageManagerAdapter } from '../workspace/package-manager-adapter.js';
 import { WorkspaceTopologyEngine } from '../workspace/topology-engine.js';
 import { CliError } from '../error.js';
+import { collectRegistryComponentRequests } from '../registry-client.js';
+import { getUpdateRegistrySource, isRegistrySelectionOnlyUpdate } from '../registry-source.js';
 
 export type PlanFileAction = 'create' | 'overwrite' | 'merge' | 'delete' | 'skip';
 
@@ -35,6 +37,9 @@ export interface ComponentMutationPlan {
     updateSnippets: boolean;
     /** 命中并解析该组件的注册表源映射 */
     registrySources: Record<string, string>;
+    registryBaseSources?: Record<string, string>;
+    /** 仅同步注册表信息的组件及规划时对应的安装时间 */
+    registrySelectionOnly?: ReadonlyMap<string, string>;
     /** 组件版本映射（显式指定或锁定版本） */
     versionByName: Map<string, string>;
     /** 计划阶段产生的诊断与版本告警信息 */
@@ -59,7 +64,8 @@ export interface ComponentPlanOptions {
 }
 
 export interface ComponentUpdatePlanOptions extends ComponentPlanOptions {
-    /** 更新检查阶段已获取的注册表条目快照，缺失项仍由规划阶段独立获取 */
+    acrossVersions?: boolean;
+    /** 按组件说明符记录更新检查阶段已获取的条目快照 */
     registrySnapshots?: ReadonlyMap<string, RegistryItemSnapshot>;
 }
 
@@ -118,28 +124,16 @@ export class ComponentMutationEngine {
      * 阶段一：安装规划（纯内存计算，零副作用）
      */
     async planInstall(options: ComponentPlanOptions): Promise<ComponentMutationPlan> {
-        const versionByName = new Map<string, string>();
-        const cleanNames: string[] = [];
-
-        for (const comp of options.components) {
-            const match = comp.match(/^(@[a-z0-9-]+\/[a-z0-9-]+|[a-z0-9-]+)@([a-zA-Z0-9._-]+)$/);
-            if (match) {
-                versionByName.set(match[1], match[2]);
-                cleanNames.push(match[1]);
-            } else {
-                cleanNames.push(comp);
-            }
-        }
-
-        const client = this.context.getRegistryClient({
-            sources: options.registryOverride ? [options.registryOverride] : undefined,
-            useCache: options.useCache !== false,
-        });
-
-        const resolution = await client.resolve(cleanNames, {
+        const resolution = await this.context.registry.resolve(options.components, {
             sourceOverride: options.registryOverride,
             useCache: options.useCache !== false,
         });
+        const versionByName = new Map<string, string>();
+        const registryBaseSources: Record<string, string> = {};
+        for (const [name, snapshot] of resolution.itemSnapshots ?? []) {
+            if (snapshot.version) versionByName.set(name, snapshot.version);
+            if (snapshot.baseSource) registryBaseSources[name] = snapshot.baseSource;
+        }
 
         const utilsPath = await this.context.resolveUtilsFilePath();
         const utilsExists = await this.context.fs.pathExists(utilsPath);
@@ -211,7 +205,7 @@ export class ComponentMutationEngine {
             for (const [name, newVersion] of versionByName) {
                 const existing = existingManifest.components[name];
                 if (existing?.version && existing.version !== newVersion) {
-                    warnings.push(`Version mismatch: "${name}" is already installed at version ${existing.version}, but you requested ${newVersion}. Mixing versions may cause compatibility issues.`);
+                    warnings.push(`Version mismatch: "${name}" is already installed at version ${existing.version}, but the registry resolved version ${newVersion}. Mixing versions may cause compatibility issues.`);
                 }
             }
         }
@@ -223,6 +217,7 @@ export class ComponentMutationEngine {
             ensureUtils,
             updateSnippets,
             registrySources: Object.fromEntries(resolution.hitSources),
+            registryBaseSources,
             versionByName,
             warnings,
         };
@@ -234,41 +229,33 @@ export class ComponentMutationEngine {
     async planUpdate(options: ComponentUpdatePlanOptions): Promise<ComponentMutationPlan> {
         const manifest = await readManifest(this.context.cwd, this.context.fs).catch(() => null);
         const versionByName = new Map<string, string>();
-        const cleanNames: string[] = [];
-
-        for (const comp of options.components) {
-            const match = comp.match(/^(@[a-z0-9-]+\/[a-z0-9-]+|[a-z0-9-]+)@([a-zA-Z0-9._-]+)$/);
-            if (match) {
-                versionByName.set(match[1], match[2]);
-                cleanNames.push(match[1]);
-            } else {
-                cleanNames.push(comp);
-            }
-        }
-
-        const client = this.context.getRegistryClient({
-            sources: options.registryOverride ? [options.registryOverride] : undefined,
-            useCache: options.useCache !== false,
-        });
-
         const remoteItems: RegistryItem[] = [];
         const registrySources: Record<string, string> = {};
+        const registryBaseSources: Record<string, string> = {};
         const npmDepsSet = new Set<string>();
+        const registrySelectionOnly = new Map<string, string>();
 
-        for (const name of cleanNames) {
-            const itemRegistrySource = options.registryOverride ?? manifest?.components[name]?.registrySource;
-            const snapshot: RegistryItemSnapshot | undefined = options.registrySnapshots?.get(name);
-            const item: RegistryItem = snapshot?.item ?? await client.fetchItem(name, {
-                sourceOverride: itemRegistrySource,
+        for (const { name, version, specifier } of collectRegistryComponentRequests(options.components).values()) {
+            const entry = manifest?.components[name];
+            const useBaseSource = options.acrossVersions || version !== undefined;
+            const sourceOverride = getUpdateRegistrySource(entry, options.registryOverride, useBaseSource);
+            const snapshot = options.registrySnapshots?.get(specifier) ?? await this.context.registry.fetchItemWithMeta(specifier, {
+                sourceOverride,
                 useCache: options.useCache !== false,
             });
+            const { item, source } = snapshot;
+            const keepPin = !useBaseSource && !options.registryOverride && entry?.registrySource === source;
+            const selectedVersion = snapshot.version ?? (keepPin && entry?.registryBaseSource ? entry.version : undefined);
+            const baseSource = snapshot.baseSource ?? (keepPin ? entry?.registryBaseSource : undefined);
+
             remoteItems.push(item);
-            const registrySource: string | undefined = snapshot?.source ?? itemRegistrySource;
-            if (registrySource) {
-                registrySources[name] = registrySource;
-            }
+            registrySources[item.name] = source;
+            if (selectedVersion) versionByName.set(item.name, selectedVersion);
+            if (baseSource) registryBaseSources[item.name] = baseSource;
+            const selectionOnly = entry !== undefined && useBaseSource && isRegistrySelectionOnlyUpdate(entry, snapshot);
+            if (selectionOnly) registrySelectionOnly.set(item.name, entry.installedAt);
             for (const dep of item.dependencies) {
-                npmDepsSet.add(dep);
+                if (!selectionOnly || !entry.dependencies.includes(dep)) npmDepsSet.add(dep);
             }
         }
 
@@ -277,6 +264,7 @@ export class ComponentMutationEngine {
         const files: MutationPlanFile[] = [];
 
         for (const item of remoteItems) {
+            if (registrySelectionOnly.has(item.name)) continue;
             if (options.overwrite) {
                 for (const file of item.files) {
                     const targetPath = await this.context.resolveTargetPath(file.path);
@@ -334,6 +322,8 @@ export class ComponentMutationEngine {
             ensureUtils: false,
             updateSnippets,
             registrySources,
+            registryBaseSources,
+            registrySelectionOnly,
             versionByName,
             warnings: [],
         };
@@ -394,6 +384,13 @@ export class ComponentMutationEngine {
         const filesByComponent = new Map<string, string[]>();
         const baselinesByComponent = new Map<string, Record<string, string>>();
         const conflictsMap = new Map<string, string[]>();
+        const registrySelections: RegistrySelectionUpdate[] = [];
+        const registrySelectionFor = (item: RegistryItem) => ({
+            item,
+            registrySource: plan.registrySources[item.name] ?? DEFAULT_REGISTRY_URL,
+            registryBaseSource: plan.registryBaseSources?.[item.name],
+            version: plan.versionByName.get(item.name) ?? 'latest',
+        });
         let manifestUpdated: boolean = false;
 
         try {
@@ -409,6 +406,13 @@ export class ComponentMutationEngine {
                     current: i + 1,
                     total: plan.items.length,
                 });
+
+                const installedAt = plan.registrySelectionOnly?.get(item.name);
+                if (installedAt !== undefined) {
+                    registrySelections.push({ ...registrySelectionFor(item), installedAt });
+                    succeeded.push(item.name);
+                    continue;
+                }
 
                 const itemFiles = plan.files.filter(f => f.componentName === item.name);
                 const writtenForThisItem: string[] = [];
@@ -492,16 +496,18 @@ export class ComponentMutationEngine {
                 }
             }
 
-            if (plan.updateSnippets && succeeded.length > 0) {
-                await mergeSnippetsFile(this.context.cwd, succeeded, this.context.fs, transaction);
+            if (plan.updateSnippets && filesByComponent.size > 0) {
+                await mergeSnippetsFile(this.context.cwd, [...filesByComponent.keys()], this.context.fs, transaction);
             }
 
             if (succeeded.length > 0) {
-                await ensureGitattributes(this.context.cwd, this.context.fs, transaction);
+                if (filesByComponent.size > 0) {
+                    await ensureGitattributes(this.context.cwd, this.context.fs, transaction);
+                }
 
                 const manifestEntries = await Promise.all(
                     plan.items
-                        .filter(item => succeeded.includes(item.name))
+                        .filter(item => filesByComponent.has(item.name))
                         .map(async item => {
                             const compFiles = filesByComponent.get(item.name) ?? [];
                             const allInstalledFilesExist = compFiles.length > 0
@@ -511,17 +517,15 @@ export class ComponentMutationEngine {
                                 : undefined;
 
                             return {
-                                item,
-                                registrySource: plan.registrySources[item.name] ?? DEFAULT_REGISTRY_URL,
+                                ...registrySelectionFor(item),
                                 files: compFiles,
                                 installedContentHash,
-                                version: plan.versionByName.get(item.name) ?? 'latest',
                                 baselines: baselinesByComponent.get(item.name),
                             };
                         })
                 );
 
-                await updateInstalledComponents(this.context.cwd, manifestEntries, { transaction }, this.context.fs);
+                await updateInstalledComponents(this.context.cwd, manifestEntries, { transaction, registrySelections }, this.context.fs);
                 manifestUpdated = true;
             }
 

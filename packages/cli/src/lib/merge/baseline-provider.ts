@@ -62,7 +62,9 @@ export class BaselineProvider {
             };
         }
 
-        const source = options.registrySource ?? manifestEntry.registrySource;
+        const source = manifestEntry.registryBaseSource
+            ? manifestEntry.registrySource
+            : options.registrySource ?? manifestEntry.registrySource;
 
         // 1. 优先从本地 .brutx/baselines/<component>/ 读取基线快照
         const filesMap = new Map<string, string>();
@@ -121,7 +123,7 @@ export class BaselineProvider {
         filesMap.clear();
 
         try {
-            const fetchTarget = manifestEntry.version && manifestEntry.version !== 'latest'
+            const fetchTarget = !manifestEntry.registryBaseSource && manifestEntry.version !== 'latest'
                 ? `${componentName}@${manifestEntry.version}`
                 : componentName;
 

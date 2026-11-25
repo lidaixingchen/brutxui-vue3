@@ -1,4 +1,5 @@
 import path from 'path';
+import { parseComponentSpecifier } from '../registry-client.js';
 import { diffLines } from 'diff';
 import type {
     DiffComponentStatus,
@@ -139,12 +140,13 @@ function getIntegrityMetadata(
 
 export async function diffComponent(
     context: ProjectContext,
-    componentName: string,
+    componentSpecifier: string,
     registryOverride?: string,
     manifestEntry?: InstalledComponentManifest,
     shouldCache = true,
     onRegistryItem?: (snapshot: RegistryItemSnapshot) => void,
 ): Promise<DiffResult> {
+    const { name: componentName } = parseComponentSpecifier(componentSpecifier);
     const config = context.requireConfig();
     let registryItem: RegistryItem | null;
     let registryError: Error | null = null;
@@ -152,19 +154,16 @@ export async function diffComponent(
     const client = registryOverride
         ? context.getRegistryClient({ sources: resolveRegistrySources(config, registryOverride) })
         : context.getRegistryClient();
-    let registryItemSource: string | undefined;
+    let snapshot: RegistryItemSnapshot | undefined;
     try {
-        const result: RegistryItemSnapshot = await client.fetchItemWithMeta(componentName, { useCache: shouldCache });
-        registryItem = result.item;
-        registryItemSource = result.source;
+        snapshot = await client.fetchItemWithMeta(componentSpecifier, { useCache: shouldCache });
+        registryItem = snapshot.item;
     } catch (error) {
         registryItem = null;
         registryError = error instanceof Error ? error : new Error(String(error));
     }
 
-    if (registryItem && registryItemSource) {
-        onRegistryItem?.({ item: registryItem, source: registryItemSource });
-    }
+    if (snapshot) onRegistryItem?.(snapshot);
 
     const localFiles = await getLocalComponentFiles(context, componentName, registryItem?.files);
 

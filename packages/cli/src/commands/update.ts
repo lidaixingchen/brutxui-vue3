@@ -14,6 +14,8 @@ import {
     ComponentMutationEngine,
 } from '../lib/index.js';
 import { getInstalledComponents, diffComponent } from '../lib/services/diff-service.js';
+import { collectRegistryComponentRequests } from '../lib/registry-client.js';
+import { getUpdateRegistrySource, isRegistrySelectionOnlyUpdate } from '../lib/registry-source.js';
 
 export async function update(components: string[], options: UpdateOptions): Promise<void> {
     const cwd = options.cwd ?? process.cwd();
@@ -59,11 +61,11 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
 
     const context = await ProjectContext.loadUninitialized(cwd, { configOverride: config });
 
-    const installedComponents = components.length > 0
+    const specifiers = components.length > 0
         ? components
         : await getInstalledComponents(context);
 
-    if (installedComponents.length === 0) {
+    if (specifiers.length === 0) {
         logger.info('No installed components found to update.');
         return;
     }
@@ -71,13 +73,14 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
     logger.info('Checking for updates...');
     const manifest = await readManifest(cwd).catch(() => null);
 
+    const requests = collectRegistryComponentRequests(specifiers);
     // 版本约束：version-pinned 组件默认锁定，需 --across-versions 才跨版本更新。
     // 语义：name@version 是 git ref（非 semver），用户显式锁定即不应被 update 擅自改变。
     // version='latest' 或无 version 字段的组件视为未锁定，正常更新。
     const acrossVersions = options.acrossVersions === true;
     const versionPinnedNames: string[] = [];
     if (!acrossVersions && manifest) {
-        for (const name of installedComponents) {
+        for (const name of requests.keys()) {
             const entry = manifest.components[name];
             if (entry?.version && entry.version !== 'latest') {
                 versionPinnedNames.push(name);
@@ -96,7 +99,7 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
         logger.newLine();
     }
 
-    const updatableComponents = installedComponents.filter(name => !versionPinnedNames.includes(name));
+    const updatableComponents = [...requests.values()].filter(({ name }) => !versionPinnedNames.includes(name));
 
     if (updatableComponents.length === 0) {
         logger.info('No updatable components found (all are version-pinned).');
@@ -107,14 +110,14 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
     // 失败明细告警后继续；全部失败时才抛汇总 CliError
     const registrySnapshotsByComponent: Map<string, RegistryItemSnapshot> = new Map();
     const settled = await Promise.allSettled(
-        updatableComponents.map((name: string) => diffComponent(
+        updatableComponents.map(({ name, version, specifier }) => diffComponent(
             context,
-            name,
-            options.registry ?? manifest?.components[name]?.registrySource,
+            specifier,
+            getUpdateRegistrySource(manifest?.components[name], options.registry, acrossVersions || version !== undefined),
             manifest?.components[name],
             useCache,
             (snapshot: RegistryItemSnapshot): void => {
-                registrySnapshotsByComponent.set(name, snapshot);
+                registrySnapshotsByComponent.set(specifier, snapshot);
             },
         ))
     );
@@ -123,7 +126,7 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
     const checkFailures: Array<{ name: string; message: string }> = [];
     for (let i = 0; i < settled.length; i++) {
         const entry = settled[i];
-        const name = updatableComponents[i];
+        const { name } = updatableComponents[i];
         if (entry.status === 'rejected') {
             const message = entry.reason instanceof Error ? entry.reason.message : String(entry.reason);
             checkFailures.push({ name, message });
@@ -146,7 +149,15 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
         );
     }
 
-    const outdated = results.filter((r): r is DiffResult => r.status === 'modified' || r.integrityStatus === 'outdated');
+    const registrySelectionOnly = new Set<string>();
+    for (const { name, version, specifier } of updatableComponents) {
+        if ((acrossVersions || version !== undefined)
+            && isRegistrySelectionOnlyUpdate(manifest?.components[name], registrySnapshotsByComponent.get(specifier))) {
+            registrySelectionOnly.add(name);
+        }
+    }
+    const outdated = results.filter(result => result.status === 'modified' || result.integrityStatus === 'outdated'
+        || registrySelectionOnly.has(result.component));
 
     if (outdated.length === 0) {
         // 部分组件检查失败时不能输出"全部最新"：如实区分成功与失败
@@ -167,7 +178,9 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
     for (const result of outdated) {
         const changedFiles = result.files.filter(f => f.status !== 'unchanged');
         const statuses = changedFiles.map(f => f.status).filter((s, i, arr) => arr.indexOf(s) === i);
-        const statusLabel = statuses.length > 0 ? statuses.join(', ') : 'registry';
+        const statusLabel = statuses.length > 0 && !registrySelectionOnly.has(result.component)
+            ? statuses.join(', ')
+            : 'registry';
         logger.info(`  ${chalk.yellow('●')} ${result.component}  ${chalk.dim(`(${statusLabel})`)}`);
     }
 
@@ -202,7 +215,7 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
     if (options.force) {
         const filesToOverwrite: Array<{ component: string; modifiedFiles: number }> = [];
         for (const result of outdated) {
-            if (!selected.includes(result.component)) continue;
+            if (!selected.includes(result.component) || registrySelectionOnly.has(result.component)) continue;
             const modifiedFiles = result.files.filter(f => f.status === 'modified').length;
             const integrityDrift = result.integrityStatus === 'outdated' ? 1 : 0;
             if (modifiedFiles + integrityDrift > 0) {
@@ -226,19 +239,25 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
     const conflictStrategy = options.ours ? 'ours' : options.theirs ? 'theirs' : 'markers';
     const engine = new ComponentMutationEngine(context);
     const selectedRegistrySnapshots: Map<string, RegistryItemSnapshot> = new Map();
-    for (const name of selected) {
-        const snapshot: RegistryItemSnapshot | undefined = registrySnapshotsByComponent.get(name);
+    const selectedSpecifiers = selected.map(name => requests.get(name)!.specifier);
+    for (const specifier of selectedSpecifiers) {
+        const snapshot: RegistryItemSnapshot | undefined = registrySnapshotsByComponent.get(specifier);
         if (snapshot) {
-            selectedRegistrySnapshots.set(snapshot.item.name, snapshot);
+            selectedRegistrySnapshots.set(specifier, snapshot);
         }
     }
 
     logger.newLine();
-    logger.info(options.force ? 'Overwriting selected components...' : 'Applying 3-Way Merge for selected components...');
+    if (selected.every(name => registrySelectionOnly.has(name))) {
+        logger.info('Updating registry versions for selected components...');
+    } else {
+        logger.info(options.force ? 'Overwriting selected components...' : 'Applying 3-Way Merge for selected components...');
+    }
     logger.newLine();
 
     const plan = await engine.planUpdate({
-        components: selected,
+        components: selectedSpecifiers,
+        acrossVersions,
         overwrite: options.force === true,
         conflictStrategy,
         registryOverride: options.registry,

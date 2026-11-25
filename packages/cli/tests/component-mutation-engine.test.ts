@@ -5,10 +5,12 @@ import { MemoryFileSystemAdapter } from '../src/lib/fs/memory-fs.js';
 import { ProjectContext } from '../src/lib/project-context.js';
 import { ComponentMutationEngine } from '../src/lib/services/component-mutation-engine.js';
 import type { BrutalistConfig, RegistryItem, RegistryItemSnapshot } from '../src/lib/types.js';
-import type { RegistryClient } from '../src/lib/registry-client.js';
+import { RegistryClient } from '../src/lib/registry-client.js';
 import { BaselineProvider } from '../src/lib/merge/baseline-provider.js';
 import { diffComponent } from '../src/lib/services/diff-service.js';
 import { CliError } from '../src/lib/error.js';
+import { DEFAULT_REGISTRY_URL } from '../src/lib/constants.js';
+import { readManifest } from '../src/lib/manifest.js';
 import { integrityHashDriftRule } from '../src/lib/diagnostics/rules/integrity-rules.js';
 
 describe('ComponentMutationEngine (VFS Zero-IO)', () => {
@@ -129,6 +131,92 @@ describe('ComponentMutationEngine (VFS Zero-IO)', () => {
         expect(await fs.pathExists(expectedFilePath)).toBe(false);
         const expectedUtilsPath = path.join(projectCwd, 'src/lib/utils.ts');
         expect(await fs.pathExists(expectedUtilsPath)).toBe(false);
+    });
+
+    it('writes the selected tag and its dependency from the same registry source', async () => {
+        const source = 'https://raw.githubusercontent.com/org/repo/main/registry';
+        const tagSource = source.replace('/main/', '/v1.2.0/');
+        const dependency = makeComponentItem('badge', [{
+            ...buttonFiles[0],
+            path: 'components/ui/badge/Badge.vue',
+        }]);
+        const pinnedButton = {
+            ...makeComponentItem('button', [{ ...buttonFiles[0], content: '<template>Pinned</template>\n' }]),
+            registryDependencies: ['badge'],
+        };
+        const fetcher = vi.fn(async (url: string) => {
+            if (url === `${tagSource}/button.json`) return Response.json(pinnedButton);
+            if (url === `${tagSource}/badge.json`) return Response.json(dependency);
+            if (url === `${source}/button.json`) return Response.json(buttonItem);
+            return new Response(null, { status: 404 });
+        });
+        const registryClient = new RegistryClient({ sources: [source], fsAdapter: fs, httpFetcher: fetcher });
+        const context = await ProjectContext.loadUninitialized(projectCwd, { fs, registryClient });
+        const engine = new ComponentMutationEngine(context);
+
+        const plan = await engine.planInstall({ components: ['button@1.2.0'], useCache: false });
+        expect(plan.items.map(item => item.name)).toEqual(['badge', 'button']);
+        expect(plan.registrySources).toEqual({ badge: tagSource, button: tagSource });
+        await engine.execute(plan, { skipDependencies: true });
+
+        const expectedFile = path.join(projectCwd, 'src/components/ui/button/Button.vue');
+        expect(await fs.readFile(expectedFile, 'utf-8')).toBe(pinnedButton.files[0].content);
+        const manifest = await readManifest(projectCwd, fs);
+        const sourceFields = { registrySource: tagSource, registryBaseSource: source, version: '1.2.0' };
+        expect(manifest?.components.button).toMatchObject(sourceFields);
+        expect(manifest?.components.badge).toMatchObject(sourceFields);
+        expect(fetcher.mock.calls.map(([url]) => url).filter(url => url.endsWith('/button.json'))).toEqual([`${tagSource}/button.json`]);
+    });
+
+    it('recovers a missing baseline from the installed tag during a cross-version update', async () => {
+        const source = 'https://raw.githubusercontent.com/org/repo/main/registry';
+        const tagSource = source.replace('/main/', '/v1.2.0/');
+        const fetcher = vi.fn(async (url: string) => url === `${tagSource}/button.json`
+            ? Response.json(buttonItem)
+            : new Response(null, { status: 404 }));
+        const registryClient = new RegistryClient({ sources: [source], fsAdapter: fs, httpFetcher: fetcher });
+        const context = await ProjectContext.loadUninitialized(projectCwd, { fs, registryClient });
+        const engine = new ComponentMutationEngine(context);
+        const plan = await engine.planInstall({ components: ['button@1.2.0'], useCache: false });
+        await engine.execute(plan, { skipDependencies: true });
+        const manifest = await readManifest(projectCwd, fs);
+        const baseline = Object.values(manifest?.components.button.baselines ?? {})[0];
+        await fs.remove(path.join(projectCwd, baseline));
+
+        fetcher.mockClear();
+        const recovered = await new BaselineProvider({ fs }).getComponentBaseline(context, 'button', {
+            registrySource: source,
+            useCache: false,
+        });
+
+        expect(recovered).toMatchObject({ status: 'ready', registrySource: tagSource });
+        expect(fetcher.mock.calls.map(([url]) => url).filter(url => url.endsWith('/button.json')))
+            .toEqual([`${tagSource}/button.json`]);
+    });
+
+    it.each(['official', 'local', 'fixed-release', 'fixed-release-bare'])('tracks the actual source for a %s registry', async (kind) => {
+        const fixedRelease = DEFAULT_REGISTRY_URL.replace('/latest/download', '/download/v1.2.0');
+        const localRegistry = path.join(projectCwd, 'registry');
+        const source = kind === 'local' ? localRegistry : kind === 'official' ? DEFAULT_REGISTRY_URL : fixedRelease;
+        const fetcher = vi.fn(async (url: string) => url === `${source}/button.json`
+            ? Response.json(buttonItem)
+            : new Response(null, { status: 404 }));
+        if (kind === 'local') {
+            await fs.ensureDir(localRegistry);
+            await fs.writeJson(path.join(localRegistry, 'button.json'), buttonItem);
+        }
+        const registryClient = new RegistryClient({ sources: [source], fsAdapter: fs, httpFetcher: fetcher });
+        const context = await ProjectContext.loadUninitialized(projectCwd, { fs, registryClient });
+        const engine = new ComponentMutationEngine(context);
+        const specifier = kind === 'fixed-release-bare' ? 'button' : 'button@1.2.0';
+        const plan = await engine.planInstall({ components: [specifier], useCache: false });
+        await engine.execute(plan, { skipDependencies: true });
+
+        const installed = (await readManifest(projectCwd, fs))?.components.button;
+        expect(installed?.registrySource).toBe(source);
+        expect(installed?.version).toBe(kind === 'fixed-release' ? '1.2.0' : 'latest');
+        expect(installed?.registryBaseSource).toBe(kind === 'fixed-release' ? fixedRelease : undefined);
+        if (kind === 'local') expect(fetcher).not.toHaveBeenCalled();
     });
 
     it('execute should atomically commit component files, utils file, and manifest', async () => {
@@ -394,6 +482,29 @@ describe('ComponentMutationEngine (VFS Zero-IO)', () => {
         expect(result.succeeded).toEqual(['button']);
         expect(result.manifestUpdated).toBe(true);
         expect(await fs.pathExists(path.join(projectCwd, 'src/components/ui/button/Button.vue'))).toBe(true);
+    });
+
+    it('syncs dependency declarations when a new version keeps the installed source files', async () => {
+        const context = await ProjectContext.loadUninitialized(projectCwd, { fs });
+        setupMockRegistry(context, [buttonItem]);
+        const engine = new ComponentMutationEngine(context);
+        await engine.execute(await engine.planInstall({ components: ['button'] }), { skipDependencies: true });
+        const version = '2.0.0';
+        const specifier = `button@${version}`;
+        const baseSource = 'https://registry.example.com';
+        const item = { ...buttonItem, dependencies: ['clsx', 'vue'], registryDependencies: ['badge'] };
+        const snapshot = { item, source: `${baseSource}/v${version}`, baseSource, version };
+        const plan = await engine.planUpdate({ components: [specifier], registrySnapshots: new Map([[specifier, snapshot]]) });
+
+        expect(plan.files).toEqual([]);
+        expect(plan.npmDependencies).toEqual(['vue']);
+        const result = await engine.execute(plan, { skipDependencies: true });
+        expect(result.filesWritten).toEqual([]);
+        expect((await readManifest(projectCwd, fs))?.components.button).toMatchObject({
+            version,
+            dependencies: item.dependencies,
+            registryDependencies: item.registryDependencies,
+        });
     });
 
     it('planUpdate and execute should handle 3-way merge correctly', async () => {
@@ -668,7 +779,7 @@ describe('ComponentMutationEngine (VFS Zero-IO)', () => {
         const plan = await engine.planUpdate({ components: ['button'], overwrite: true });
 
         expect(plan.items).toEqual([buttonItem]);
-        expect(client.fetchItem).toHaveBeenCalledTimes(1);
+        expect(client.fetchItemWithMeta).toHaveBeenCalledTimes(1);
     });
 
     it('planUpdate and execute should handle file deletion when upstream deprecates a file', async () => {

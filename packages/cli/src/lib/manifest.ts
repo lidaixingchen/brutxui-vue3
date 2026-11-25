@@ -28,14 +28,19 @@ const COMPONENT_CATEGORIES: Array<NonNullable<RegistryItem['category']>> = [
 export interface InstalledManifestEntryInput {
     item: RegistryItem;
     registrySource: string;
+    registryBaseSource?: string;
     files: string[];
     installedContentHash?: string;
     version?: string;
     baselines?: Record<string, string>;
 }
 
+type InstalledRegistrySelection = Pick<InstalledManifestEntryInput, 'item' | 'registrySource' | 'registryBaseSource' | 'version'>;
+export type RegistrySelectionUpdate = InstalledRegistrySelection & Pick<InstalledComponentManifest, 'installedAt'>;
+
 interface ManifestWriteOptions {
     transaction?: FileTransaction;
+    registrySelections?: readonly RegistrySelectionUpdate[];
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -66,6 +71,11 @@ function validateManifestEntry(value: unknown, componentName: string): Installed
     const registrySource = value.registrySource;
     if (typeof registrySource !== 'string' || registrySource.length === 0) {
         throw new Error(`Invalid manifest entry for "${componentName}": "registrySource" must be a non-empty string.`);
+    }
+
+    const registryBaseSource = value.registryBaseSource;
+    if (registryBaseSource !== undefined && (typeof registryBaseSource !== 'string' || registryBaseSource.length === 0)) {
+        throw new Error(`Invalid manifest entry for "${componentName}": "registryBaseSource" must be a non-empty string when provided.`);
     }
 
     const integrity = value.integrity;
@@ -113,6 +123,7 @@ function validateManifestEntry(value: unknown, componentName: string): Installed
     return {
         name: value.name,
         registrySource,
+        registryBaseSource,
         integrity,
         installedContentHash,
         version,
@@ -236,34 +247,48 @@ async function writeManifest(
     await fsAdapter.writeJson(manifestPath, manifest, { spaces: 4 });
 }
 
+function registryManifestFields({ item, registrySource, registryBaseSource, version }: InstalledRegistrySelection) {
+    return {
+        registrySource,
+        registryBaseSource,
+        version,
+        dependencies: [...item.dependencies].sort(),
+        registryDependencies: [...item.registryDependencies].sort(),
+        category: item.category,
+        examples: [...(item.examples ?? [])].sort(),
+        status: item.status,
+        replacement: item.replacement,
+    };
+}
+
 export async function updateInstalledComponents(
     cwd: string,
     entries: InstalledManifestEntryInput[],
     options: ManifestWriteOptions = {},
     fsAdapter?: FileSystemAdapter
 ): Promise<void> {
-    if (entries.length === 0) {
+    if (entries.length === 0 && !options.registrySelections?.length) {
         return;
     }
 
     const manifest = await readManifest(cwd, fsAdapter) ?? createEmptyManifest();
+    for (const selection of options.registrySelections ?? []) {
+        const entry = manifest.components[selection.item.name];
+        if (entry?.installedAt !== selection.installedAt) {
+            throw new Error(`Installed component "${selection.item.name}" changed during update planning. Run the update again.`);
+        }
+        Object.assign(entry, registryManifestFields(selection));
+    }
     const installedAt = new Date().toISOString();
 
     for (const entry of entries) {
         manifest.components[entry.item.name] = {
             name: entry.item.name,
-            registrySource: entry.registrySource,
+            ...registryManifestFields(entry),
             integrity: entry.item.integrity,
             installedContentHash: entry.installedContentHash,
-            version: entry.version,
             installedAt,
             files: entry.files.map(file => toPortableRelativePath(cwd, file)),
-            dependencies: [...entry.item.dependencies].sort(),
-            registryDependencies: [...entry.item.registryDependencies].sort(),
-            category: entry.item.category,
-            examples: [...(entry.item.examples ?? [])].sort(),
-            status: entry.item.status,
-            replacement: entry.item.replacement,
             baselines: entry.baselines,
         };
     }

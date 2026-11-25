@@ -4,7 +4,7 @@ import { CliError } from './error.js';
 import { logger } from './logger.js';
 import { hedgedRace } from './resilience/hedged-race.js';
 import { RegistrySourceTracker } from './resilience/source-tracker.js';
-import type { BrutalistConfig } from './types.js';
+import type { BrutalistConfig, InstalledComponentManifest, RegistryItemSnapshot } from './types.js';
 
 /**
  * 多 registry 源与离线韧性
@@ -58,6 +58,26 @@ export function resolveRegistrySources(
         return fromConfig;
     }
     return [...DEFAULT_REGISTRY_SOURCES];
+}
+
+export function getUpdateRegistrySource(
+    entry: InstalledComponentManifest | undefined,
+    registryOverride?: string,
+    useBaseSource?: boolean,
+): string | undefined {
+    return registryOverride ?? (useBaseSource ? entry?.registryBaseSource : undefined) ?? entry?.registrySource;
+}
+
+export function isRegistrySelectionOnlyUpdate(
+    entry: InstalledComponentManifest | undefined,
+    snapshot: RegistryItemSnapshot | undefined,
+): boolean {
+    if (!entry || !snapshot || entry.integrity !== snapshot.item.integrity) return false;
+
+    const installedVersion = entry.version ?? 'latest';
+    const selectedVersion = snapshot.version ?? 'latest';
+    return (installedVersion !== 'latest' || selectedVersion !== 'latest')
+        && (installedVersion !== selectedVersion || entry.registrySource !== snapshot.source);
 }
 
 /**

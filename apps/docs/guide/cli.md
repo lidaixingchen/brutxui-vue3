@@ -145,7 +145,7 @@ npx brutx-vue@latest add --all
 
 #### 版本锁定与 `@version` 语法
 
-CLI 支持使用 `@` 语法锁定拉取特定版本的组件：
+项目配置自定义 GitHub Raw 注册表后，以下命令从 `v1.2.0` 标签安装组件并记录实际来源。
 
 ```bash
 npx brutx-vue@latest add button@1.2.0
