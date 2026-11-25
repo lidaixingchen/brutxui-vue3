@@ -136,6 +136,10 @@ function getOptionId(colIdx: number, itemIdx: number): string {
     return `${uid}-col-${colIdx}-item-${itemIdx}`
 }
 
+function getOptionLabelId(colIdx: number, itemIdx: number): string {
+    return `${getOptionId(colIdx, itemIdx)}-label`
+}
+
 const activeDescendantId = computed(() => {
     if (!open.value || activeItemIndex.value < 0) return undefined
     const activeOption = columns.value[activeColumnIndex.value]?.[activeItemIndex.value]
@@ -815,11 +819,19 @@ function handleKeyDown(e: KeyboardEvent) {
                             <Checkbox
                                 v-if="multiple"
                                 :checked="getCheckboxChecked(option, colIdx)"
+                                :disabled="option.disabled"
+                                :aria-labelledby="getOptionLabelId(colIdx, optIdx)"
                                 size="sm"
                                 @update:checked="(checked) => toggleCheckbox(option, colIdx, checked)"
                                 @click.stop
                             />
-                            <span data-slot="cascader-option-label" class="min-w-0 truncate">{{ option.label }}</span>
+                            <span
+                                :id="multiple ? getOptionLabelId(colIdx, optIdx) : undefined"
+                                data-slot="cascader-option-label"
+                                class="min-w-0 truncate"
+                            >
+                                {{ option.label }}
+                            </span>
                         </div>
                         <span class="flex h-4 w-8 shrink-0 items-center justify-end gap-1">
                             <span :class="selectionIndicatorClasses">
