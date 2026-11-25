@@ -298,7 +298,8 @@
     "directives": [],
     "lib": [
       "form-toggle-base.ts",
-      "icon-size-variants.ts"
+      "icon-size-variants.ts",
+      "native-form-reset.ts"
     ]
   },
   "code-block": {
@@ -853,6 +854,7 @@
     "directives": [],
     "lib": [
       "icon-size-variants.ts",
+      "native-form-reset.ts",
       "semantic-text-variants.ts"
     ]
   },
@@ -1137,7 +1139,8 @@
     ],
     "directives": [],
     "lib": [
-      "form-toggle-base.ts"
+      "form-toggle-base.ts",
+      "native-form-reset.ts"
     ]
   },
   "table": {
@@ -1244,7 +1247,8 @@
     "lib": [
       "brutal-interaction-variants.ts",
       "form-toggle-base.ts",
-      "icon-size-variants.ts"
+      "icon-size-variants.ts",
+      "native-form-reset.ts"
     ]
   },
   "toggle-group": {
@@ -1256,6 +1260,7 @@
     "composables": [],
     "directives": [],
     "lib": [
+      "native-form-reset.ts",
       "selection-value.ts"
     ]
   },

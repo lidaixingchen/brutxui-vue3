@@ -23,7 +23,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 13
+            "line": 14
           },
           "origin": "declared",
           "required": false,
@@ -59,7 +59,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 17
+            "line": 18
           },
           "origin": "declared",
           "required": false,
@@ -94,7 +94,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 21
+            "line": 22
           },
           "origin": "declared",
           "required": false,
@@ -129,7 +129,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 22
+            "line": 23
           },
           "origin": "declared",
           "required": false,
@@ -168,7 +168,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 23
+            "line": 24
           },
           "origin": "declared",
           "required": false,
@@ -205,7 +205,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 24
+            "line": 25
           },
           "origin": "declared",
           "required": false,
@@ -240,7 +240,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 26
+            "line": 27
           },
           "origin": "declared",
           "required": false,
@@ -272,7 +272,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 28
+            "line": 29
           },
           "origin": "declared",
           "required": false,
@@ -304,7 +304,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 30
+            "line": 31
           },
           "origin": "declared",
           "required": false,
@@ -336,7 +336,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 32
+            "line": 33
           },
           "origin": "declared",
           "required": false,
@@ -368,7 +368,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 34
+            "line": 35
           },
           "origin": "declared",
           "required": false,
@@ -400,7 +400,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 36
+            "line": 37
           },
           "origin": "declared",
           "required": false,
@@ -435,7 +435,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 38
+            "line": 39
           },
           "origin": "declared",
           "required": false,
@@ -467,7 +467,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 40
+            "line": 41
           },
           "origin": "declared",
           "required": false,
@@ -499,7 +499,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 42
+            "line": 43
           },
           "origin": "declared",
           "required": false,
@@ -534,7 +534,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/switch/Switch.vue",
-            "line": 44
+            "line": 45
           },
           "origin": "declared",
           "required": false,

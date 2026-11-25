@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, ref, type VNode } from 'vue'
+import { computed, type VNode } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
-import { Primitive, SwitchRoot, SwitchThumb, useForwardExpose } from 'reka-ui'
+import { useNativeFormReset, vNativeFormValue } from '@/lib/native-form-reset'
+import { Primitive, SwitchRoot, SwitchThumb, useForwardExpose, VisuallyHidden } from 'reka-ui'
 import { switchLabelVariants, switchRootVariants, switchThumbVariants } from './switch-variants'
 import { useLocale } from '@/composables/useLocale'
 import { useBrutalHaptics } from '@/composables/useBrutalHaptics'
@@ -71,8 +72,7 @@ const { t } = useLocale()
 
 const haptics = useBrutalHaptics({ sound: () => props.sound })
 
-const { forwardRef, currentElement } = useForwardExpose()
-const rootElement = computed(() => currentElement.value as HTMLButtonElement | undefined)
+const { forwardRef } = useForwardExpose()
 const resolvedAriaLabel = computed(() => props.ariaLabelledby?.trim()
     ? undefined
     : props.ariaLabel?.trim() || undefined,
@@ -81,27 +81,21 @@ const showFallbackName = computed(() => !resolvedAriaLabel.value && !props.ariaL
 
 function bindRoot(vnode: VNode): void {
     forwardRef(vnode.el as HTMLButtonElement)
+    bindFormReset(vnode)
 }
 
-const initialValue = props.defaultValue ?? false
-const internalValue = ref(initialValue)
-const isControlled = computed(() => props.modelValue !== undefined)
-const currentValue = computed({
-    get: () => (isControlled.value ? Boolean(props.modelValue) : internalValue.value),
-    set: (val: boolean) => {
-        if (!isControlled.value) {
-            internalValue.value = val
-        }
-        emit('update:modelValue', val)
-    },
-})
+const { value: currentValue, resetValue, updateValue, bindFormReset, resetting } = useNativeFormReset(
+    () => props.modelValue === undefined ? undefined : Boolean(props.modelValue),
+    props.defaultValue ?? false,
+)
 
 /** 用户切换播放音效；程序化更新与表单重置仅同步状态。 */
 function onUserToggle(next: boolean): void {
     if (next !== currentValue.value) {
         haptics.snap()
     }
-    currentValue.value = next
+    updateValue(next)
+    emit('update:modelValue', next)
 }
 
 const classes = computed(() =>
@@ -131,35 +125,6 @@ const statusLabel = computed(() => currentValue.value
     : (props.uncheckedLabel ?? t('switch.uncheckedLabel')),
 )
 
-let ownerForm: HTMLFormElement | null = null
-
-function onFormReset(event: Event): void {
-    const input = props.name ? rootElement.value?.nextElementSibling as HTMLInputElement | null : null
-    // 浏览器在 reset 事件之后读取 defaultChecked，保证同步读取表单时即得到重置值。
-    if (input) {
-        const checked = input.checked
-        input.defaultChecked = isControlled.value ? currentValue.value : initialValue
-        input.checked = checked
-    }
-    void nextTick(() => {
-        if (event.defaultPrevented) return
-        if (!isControlled.value) internalValue.value = initialValue
-        if (input) input.checked = currentValue.value
-    })
-}
-
-function syncFormOwner(): void {
-    const element = rootElement.value
-    const form = element?.form ?? null
-    if (form === ownerForm) return
-    ownerForm?.removeEventListener('reset', onFormReset)
-    ownerForm = form
-    ownerForm?.addEventListener('reset', onFormReset)
-}
-
-onMounted(syncFormOwner)
-onUpdated(syncFormOwner)
-onBeforeUnmount(() => ownerForm?.removeEventListener('reset', onFormReset))
 </script>
 
 <template>
@@ -168,7 +133,7 @@ onBeforeUnmount(() => ownerForm?.removeEventListener('reset', onFormReset))
         :class="classes"
         :model-value="currentValue"
         :disabled="disabled"
-        :name="name"
+        :name="undefined"
         :value="value"
         :required="required"
         @update:model-value="onUserToggle"
@@ -179,6 +144,7 @@ onBeforeUnmount(() => ownerForm?.removeEventListener('reset', onFormReset))
             :aria-labelledby="ariaLabelledby"
             :aria-label="resolvedAriaLabel"
             @vue:mounted="bindRoot"
+            @vue:updated="bindFormReset"
         >
             <SwitchThumb data-slot="switch-thumb" :class="thumbClasses">
                 <span
@@ -189,6 +155,19 @@ onBeforeUnmount(() => ownerForm?.removeEventListener('reset', onFormReset))
             </SwitchThumb>
             <span v-if="showFallbackName" class="sr-only">{{ t('switch.toggle') }}</span>
         </Primitive>
+        <VisuallyHidden
+            v-if="name"
+            v-native-form-value="{ current: currentValue, initial: resetValue, bubble: !resetting }"
+            as="input"
+            feature="fully-hidden"
+            type="checkbox"
+            :form="$attrs.form"
+            :name="name"
+            :checked="currentValue"
+            :value="value ?? 'on'"
+            :required="required"
+            :disabled="disabled"
+        />
     </SwitchRoot>
 </template>
 

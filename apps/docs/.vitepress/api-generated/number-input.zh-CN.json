@@ -26,7 +26,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/number-input/NumberInput.vue",
-            "line": 22
+            "line": 25
           },
           "origin": "declared",
           "required": false,
@@ -62,7 +62,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/number-input/NumberInput.vue",
-            "line": 23
+            "line": 26
           },
           "origin": "declared",
           "required": false,
@@ -94,7 +94,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/number-input/NumberInput.vue",
-            "line": 24
+            "line": 27
           },
           "origin": "declared",
           "required": false,
@@ -126,7 +126,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/number-input/NumberInput.vue",
-            "line": 25
+            "line": 28
           },
           "origin": "declared",
           "required": false,
@@ -158,7 +158,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/number-input/NumberInput.vue",
-            "line": 26
+            "line": 29
           },
           "origin": "declared",
           "required": false,
@@ -190,7 +190,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/number-input/NumberInput.vue",
-            "line": 27
+            "line": 30
           },
           "origin": "declared",
           "required": false,
@@ -222,7 +222,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/number-input/NumberInput.vue",
-            "line": 28
+            "line": 31
           },
           "origin": "declared",
           "required": false,
@@ -267,7 +267,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/number-input/NumberInput.vue",
-            "line": 29
+            "line": 32
           },
           "origin": "declared",
           "required": false,
@@ -302,7 +302,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/number-input/NumberInput.vue",
-            "line": 31
+            "line": 34
           },
           "origin": "declared",
           "required": false,

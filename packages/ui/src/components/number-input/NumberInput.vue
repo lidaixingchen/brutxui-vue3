@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, useId, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, toRef, useId, watch } from 'vue'
 import {
     NumberFieldRoot,
     type NumberFieldRootProps,
@@ -7,10 +7,13 @@ import {
     NumberFieldInput,
     NumberFieldIncrement,
     NumberFieldDecrement,
-    useForwardPropsEmits
+    VisuallyHidden,
+    useLocale as useRekaLocale,
+    useForwardProps
 } from 'reka-ui'
 import { Plus, Minus, ChevronUp, ChevronDown } from '@lucide/vue'
 import { cn } from '@/lib/utils'
+import { useNativeFormReset, vNativeFormValue } from '@/lib/native-form-reset'
 import { brutalDestructiveTextClasses } from '@/lib/semantic-text-variants'
 import { numberInputRootVariants, numberInputButtonVariants, numberInputFieldVariants } from './number-input-variants'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
@@ -46,6 +49,23 @@ const props = withDefaults(defineProps<NumberInputProps>(), {
 defineOptions({ inheritAttrs: false })
 
 const emit = defineEmits<NumberFieldRootEmits>()
+
+const { value: currentValue, resetValue, updateValue, bindFormReset, resetting } = useNativeFormReset(
+    () => props.modelValue,
+    props.defaultValue ?? null,
+    () => { restoreText.value = true },
+)
+// 重置时显示已提交的格式化文本，随后由原语继续处理下一次输入。
+const restoreText = ref(false)
+const locale = useRekaLocale(toRef(props, 'locale'))
+const resetText = computed(() => resetValue.value === null || Number.isNaN(resetValue.value)
+    ? ''
+    : new Intl.NumberFormat(locale.value, props.formatOptions).format(resetValue.value))
+
+function onUserUpdate(value: number) {
+    updateValue(value ?? null)
+    emit('update:modelValue', value)
+}
 
 const { t } = useLocale()
 
@@ -86,6 +106,9 @@ const DELEGATED_OMIT_KEYS = new Set([
     'ariaLabelledby',
     'iconSize',
     'sound',
+    'modelValue',
+    'defaultValue',
+    'name',
 ])
 
 const delegatedProps = computed(() => {
@@ -93,7 +116,7 @@ const delegatedProps = computed(() => {
     return Object.fromEntries(entries) as Partial<NumberFieldRootProps>
 })
 
-const forwarded = useForwardPropsEmits(delegatedProps, emit)
+const forwarded = useForwardProps(delegatedProps)
 
 const containerClasses = computed(() =>
     cn(numberInputRootVariants({ layout: props.layout, variant: props.variant }), props.class)
@@ -121,7 +144,13 @@ const iconClasses = computed(() =>
 
 <template>
     <div class="@container/number-input w-full min-w-0">
-        <NumberFieldRoot v-bind="forwarded" :class="containerClasses">
+        <NumberFieldRoot
+            v-slot="{ textValue }"
+            v-bind="forwarded"
+            :model-value="currentValue"
+            :class="containerClasses"
+            @update:model-value="onUserUpdate"
+        >
             <template v-if="layout === 'split'">
                 <NumberFieldDecrement
                     :class="decrementClasses"
@@ -132,7 +161,8 @@ const iconClasses = computed(() =>
                 </NumberFieldDecrement>
 
                 <NumberFieldInput
-                    v-bind="$attrs"
+                    v-native-form-value="{ current: textValue, initial: resetText, preserveCurrent: true }"
+                    v-bind="restoreText ? { ...$attrs, value: textValue } : $attrs"
                     :placeholder="resolvedPlaceholder"
                     :aria-label="ariaLabelledby ? undefined : ariaLabel"
                     :aria-labelledby="ariaLabelledby"
@@ -140,6 +170,9 @@ const iconClasses = computed(() =>
                     :aria-describedby="errorMessage ? [errorTextId, $attrs['aria-describedby']].filter(Boolean).join(' ') : $attrs['aria-describedby']"
                     :class="fieldClasses"
                     @animationend="isDrumming = false"
+                    @input="restoreText = false"
+                    @vue:mounted="bindFormReset"
+                    @vue:updated="bindFormReset"
                 />
 
                 <NumberFieldIncrement
@@ -153,7 +186,8 @@ const iconClasses = computed(() =>
 
             <template v-else>
                 <NumberFieldInput
-                    v-bind="$attrs"
+                    v-native-form-value="{ current: textValue, initial: resetText, preserveCurrent: true }"
+                    v-bind="restoreText ? { ...$attrs, value: textValue } : $attrs"
                     :placeholder="resolvedPlaceholder"
                     :aria-label="ariaLabelledby ? undefined : ariaLabel"
                     :aria-labelledby="ariaLabelledby"
@@ -161,6 +195,9 @@ const iconClasses = computed(() =>
                     :aria-describedby="errorMessage ? [errorTextId, $attrs['aria-describedby']].filter(Boolean).join(' ') : $attrs['aria-describedby']"
                     :class="fieldClasses"
                     @animationend="isDrumming = false"
+                    @input="restoreText = false"
+                    @vue:mounted="bindFormReset"
+                    @vue:updated="bindFormReset"
                 />
 
                 <div class="flex flex-col border-l-3 border-brutal w-10 shrink-0">
@@ -180,6 +217,23 @@ const iconClasses = computed(() =>
                     </NumberFieldDecrement>
                 </div>
             </template>
+            <VisuallyHidden
+                v-if="name"
+                v-native-form-value="{
+                    current: String(currentValue ?? ''),
+                    initial: String(resetValue ?? ''),
+                    bubble: !resetting,
+                }"
+                as="input"
+                feature="fully-hidden"
+                type="text"
+                :form="$attrs.form"
+                :name="name"
+                :value="currentValue"
+                :disabled="disabled"
+                :readonly="readonly"
+                :required="required"
+            />
         </NumberFieldRoot>
         <p
             v-if="variant === 'error' && errorMessage"

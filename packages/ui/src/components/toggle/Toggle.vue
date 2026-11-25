@@ -4,6 +4,7 @@ import { Toggle as TogglePrimitive, VisuallyHidden } from 'reka-ui'
 import { type VariantProps } from 'class-variance-authority'
 import { Loader2 } from '@lucide/vue'
 import { cn } from '@/lib/utils'
+import { useNativeFormReset, vNativeFormValue } from '@/lib/native-form-reset'
 import { toggleVariants } from './toggle-variants'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 
@@ -40,6 +41,16 @@ const props = withDefaults(defineProps<ToggleProps>(), {
 
 const emit = defineEmits<{ 'update:modelValue': [value: boolean] }>()
 
+const { value: pressed, resetValue, updateValue, bindFormReset } = useNativeFormReset(
+    () => props.modelValue,
+    props.defaultValue,
+)
+
+function onUserToggle(next: boolean) {
+    updateValue(next)
+    emit('update:modelValue', next)
+}
+
 const TOGGLE_SIZE_TO_ICON: Record<NonNullable<ToggleVariantProps['size']>, IconSize> = {
     sm: 'sm',
     default: 'md',
@@ -67,16 +78,16 @@ const loaderClasses = computed(() =>
 
 <template>
     <TogglePrimitive
-        v-slot="{ pressed }"
-        :model-value="modelValue"
-        :default-value="defaultValue"
+        :model-value="pressed"
         :disabled="isDisabled"
         :name="undefined"
         :required="false"
         :class="classes"
         :aria-label="ariaLabel"
         :aria-busy="loading || undefined"
-        @update:model-value="emit('update:modelValue', $event)"
+        @update:model-value="onUserToggle"
+        @vue:mounted="bindFormReset"
+        @vue:updated="bindFormReset"
     >
         <span v-if="loading" class="inline-flex items-center gap-2 opacity-0">
             <slot />
@@ -85,12 +96,14 @@ const loaderClasses = computed(() =>
         <Loader2 v-if="loading" :class="loaderClasses" aria-hidden="true" />
         <VisuallyHidden
             v-if="name || required"
+            v-native-form-value="{ current: pressed, initial: resetValue }"
             as="input"
             feature="fully-hidden"
             type="checkbox"
+            :form="$attrs.form"
             :name="name"
             :checked="pressed"
-            :value="pressed"
+            value="true"
             :required="required"
             :disabled="isDisabled"
         />

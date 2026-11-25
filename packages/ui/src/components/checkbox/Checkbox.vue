@@ -2,7 +2,8 @@
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
-import { CheckboxRoot, CheckboxIndicator, Primitive, type AcceptableValue } from 'reka-ui'
+import { getFormValueEntries, useNativeFormReset, vNativeFormValue } from '@/lib/native-form-reset'
+import { CheckboxRoot, CheckboxIndicator, Primitive, VisuallyHidden, injectCheckboxGroupRootContext, type AcceptableValue } from 'reka-ui'
 import { Check, Minus } from '@lucide/vue'
 import { checkboxVariants, checkboxIndicatorVariants } from './checkbox-variants'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
@@ -55,6 +56,19 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useLocale()
+const group = injectCheckboxGroupRootContext(null)
+const { value: currentValue, resetValue, updateValue, bindFormReset, resetting } = useNativeFormReset(
+    () => props.checked,
+    props.defaultValue ?? false,
+)
+const formEntries = computed(() => props.name && !group
+    ? getFormValueEntries(props.name, props.value ?? 'on', props.required)
+    : [])
+
+function onUserToggle(next: boolean | 'indeterminate') {
+    updateValue(next)
+    emit('update:checked', next)
+}
 
 const CHECKBOX_SIZE_TO_ICON: Record<NonNullable<CheckboxVariantProps['size']>, IconSize> = {
     sm: 'sm',
@@ -87,19 +101,20 @@ const checkClasses = computed(() =>
         v-slot="{ state }"
         as-child
         :class="classes"
-        :model-value="checked"
-        :default-value="defaultValue"
+        :model-value="currentValue"
         :disabled="disabled"
-        :name="name"
+        :name="undefined"
         :value="value"
         :required="required"
-        @update:model-value="(val: boolean | 'indeterminate') => emit('update:checked', val)"
+        @update:model-value="onUserToggle"
     >
         <Primitive
             :id="id"
             as="button"
             :aria-labelledby="ariaLabelledby"
             :aria-label="resolvedAriaLabel"
+            @vue:mounted="bindFormReset"
+            @vue:updated="bindFormReset"
         >
             <CheckboxIndicator :class="checkClasses">
                 <!-- 图标跟随 reka-ui 内部实际 state（受控/非受控一致），
@@ -109,5 +124,19 @@ const checkClasses = computed(() =>
             </CheckboxIndicator>
             <span v-if="showFallbackName" class="sr-only">{{ t('checkbox.check') }}</span>
         </Primitive>
+        <VisuallyHidden
+            v-for="[fieldName, fieldValue] in formEntries"
+            :key="fieldName"
+            v-native-form-value="{ current: Boolean(state), initial: Boolean(resetValue), bubble: !resetting }"
+            as="input"
+            feature="fully-hidden"
+            type="checkbox"
+            :form="$attrs.form"
+            :name="fieldName"
+            :checked="Boolean(state)"
+            :value="fieldValue"
+            :required="required"
+            :disabled="disabled"
+        />
     </CheckboxRoot>
 </template>

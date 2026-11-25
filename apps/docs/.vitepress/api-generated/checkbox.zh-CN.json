@@ -23,7 +23,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/checkbox/Checkbox.vue",
-            "line": 14
+            "line": 15
           },
           "origin": "declared",
           "required": false,
@@ -59,7 +59,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/checkbox/Checkbox.vue",
-            "line": 15
+            "line": 16
           },
           "origin": "declared",
           "required": false,
@@ -95,7 +95,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/checkbox/Checkbox.vue",
-            "line": 20
+            "line": 21
           },
           "origin": "declared",
           "required": false,
@@ -130,7 +130,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/checkbox/Checkbox.vue",
-            "line": 21
+            "line": 22
           },
           "origin": "declared",
           "required": false,
@@ -169,7 +169,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/checkbox/Checkbox.vue",
-            "line": 22
+            "line": 23
           },
           "origin": "declared",
           "required": false,
@@ -206,7 +206,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/checkbox/Checkbox.vue",
-            "line": 23
+            "line": 24
           },
           "origin": "declared",
           "required": false,
@@ -238,7 +238,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/checkbox/Checkbox.vue",
-            "line": 25
+            "line": 26
           },
           "origin": "declared",
           "required": false,
@@ -270,7 +270,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/checkbox/Checkbox.vue",
-            "line": 27
+            "line": 28
           },
           "origin": "declared",
           "required": false,
@@ -302,7 +302,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/checkbox/Checkbox.vue",
-            "line": 29
+            "line": 30
           },
           "origin": "declared",
           "required": false,
@@ -334,7 +334,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/checkbox/Checkbox.vue",
-            "line": 31
+            "line": 32
           },
           "origin": "declared",
           "required": false,
@@ -368,7 +368,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/checkbox/Checkbox.vue",
-            "line": 33
+            "line": 34
           },
           "origin": "declared",
           "required": false,
@@ -403,7 +403,7 @@
           "notes": [],
           "source": {
             "file": "packages/ui/src/components/checkbox/Checkbox.vue",
-            "line": 35
+            "line": 36
           },
           "origin": "declared",
           "required": false,
