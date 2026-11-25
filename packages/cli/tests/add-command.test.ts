@@ -8,6 +8,9 @@ import { computeRegistryIntegrity } from 'brutx-shared-vue';
 import type { RegistryItem } from '../src/lib/types.js';
 import { RegistryClient } from '../src/lib/registry-client.js';
 import { readManifest } from '../src/lib/manifest.js';
+import { ProjectContext } from '../src/lib/project-context.js';
+import { MergeExecutor } from '../src/lib/merge/merge-executor.js';
+import { ComponentMutationEngine } from '../src/lib/services/component-mutation-engine.js';
 
 describe('add command (CLI Adapter)', () => {
     let tmpDir: string;
@@ -69,6 +72,7 @@ describe('add command (CLI Adapter)', () => {
     afterEach(async () => {
         vi.restoreAllMocks();
         vi.unstubAllGlobals();
+        vi.unstubAllEnvs();
         await fs.remove(tmpDir);
     });
 
@@ -86,6 +90,134 @@ describe('add command (CLI Adapter)', () => {
         expect(await fs.pathExists(manifestFile)).toBe(true);
         const manifest = await fs.readJson(manifestFile);
         expect(manifest.components.button).toBeDefined();
+    });
+
+    it('leaves the project unchanged during add --merge --dry-run and restores the baseline on a real run', async () => {
+        const options = { cwd: tmpDir, yes: true, silent: true, cache: false };
+        vi.spyOn(RegistryClient.prototype, 'fetchItem').mockResolvedValue(buttonItem);
+        await add(['button'], options);
+
+        const manifestPath = path.join(tmpDir, '.brutx/manifest.json');
+        const manifest = (await readManifest(tmpDir))!;
+        const entry = manifest.components.button;
+        const sourcePath = path.join(tmpDir, entry.files[0]);
+        const source = await fs.readFile(sourcePath, 'utf-8');
+        const baselinePath = path.join(tmpDir, entry.baselines![entry.files[0]]);
+        await fs.remove(baselinePath);
+        delete entry.baselines;
+        await fs.writeJson(manifestPath, manifest);
+        const manifestBefore = await fs.readFile(manifestPath, 'utf-8');
+
+        await add(['button'], { ...options, merge: true, dryRun: true });
+
+        expect(await fs.pathExists(baselinePath)).toBe(false);
+        expect(await fs.readFile(manifestPath, 'utf-8')).toBe(manifestBefore);
+        expect(await fs.readFile(sourcePath, 'utf-8')).toBe(source);
+
+        await add(['button'], { ...options, merge: true });
+
+        expect(await fs.readFile(baselinePath, 'utf-8')).toBe(source);
+        expect((await readManifest(tmpDir))?.components.button).toMatchObject({
+            installedAt: entry.installedAt,
+            baselines: { [entry.files[0]]: path.relative(tmpDir, baselinePath).split(path.sep).join('/') },
+        });
+        expect(await fs.readFile(sourcePath, 'utf-8')).toBe(source);
+    });
+
+    it('keeps the remote cache untouched in add and update dry-runs and still reads it offline', async () => {
+        vi.mocked(RegistryClient.prototype.resolve).mockRestore();
+        const cacheDir = path.join(tmpDir, '.brutx', 'registry-cache');
+        vi.stubEnv('BRUTX_CACHE_DIR', cacheDir);
+        vi.stubEnv('BRUTX_NO_CACHE', undefined);
+        vi.stubEnv('BRUTX_OFFLINE', undefined);
+        const registry = 'https://registry.example.com';
+        const itemUrl = `${registry}/button.json`;
+        const etag = '"button-v1"';
+        const fetcher = vi.fn(async (url: string, init?: RequestInit) => {
+            if (url !== itemUrl) return new Response(null, { status: 404 });
+            if (new Headers(init?.headers).get('if-none-match') === etag) {
+                return new Response(null, { status: 304 });
+            }
+            return Response.json(buttonItem, { headers: { ETag: etag } });
+        });
+        vi.stubGlobal('fetch', fetcher);
+        const options = { cwd: tmpDir, registry, yes: true, silent: true };
+
+        await add(['button'], { ...options, merge: true, dryRun: true });
+        expect(fetcher.mock.calls.some(([url]) => url === itemUrl)).toBe(true);
+        expect(await fs.pathExists(cacheDir)).toBe(false);
+        expect(await readManifest(tmpDir)).toBeNull();
+
+        await add(['button'], options);
+        const [entry] = await fs.readdir(cacheDir);
+        const cacheFile = path.join(cacheDir, entry);
+        const cacheEntry = await fs.readJson(cacheFile);
+        await fs.writeJson(cacheFile, { ...cacheEntry, timestamp: 0 });
+        const original = await fs.readFile(cacheFile, 'utf8');
+
+        fetcher.mockClear();
+        await add(['button'], { ...options, merge: true, offline: true, dryRun: true });
+        expect(fetcher).not.toHaveBeenCalled();
+        expect(await fs.readFile(cacheFile, 'utf8')).toBe(original);
+
+        await update(['button'], { ...options, dryRun: true });
+        const request = fetcher.mock.calls.find(([url]) => url === itemUrl);
+        expect(new Headers(request?.[1]?.headers).get('if-none-match')).toBe(etag);
+        expect(await fs.readFile(cacheFile, 'utf8')).toBe(original);
+
+        await update(['button'], options);
+        expect((await fs.readJson(cacheFile)).timestamp).toBeGreaterThan(0);
+    });
+
+    it('keeps direct SDK merge and mutation plans read-only while allowing standalone execution to cache', async () => {
+        vi.mocked(RegistryClient.prototype.resolve).mockRestore();
+        const cacheDir = path.join(tmpDir, '.brutx', 'registry-cache');
+        const registry = 'https://registry.example.com';
+        const itemUrl = `${registry}/button.json`;
+        vi.stubEnv('BRUTX_CACHE_DIR', cacheDir);
+        vi.stubEnv('BRUTX_NO_CACHE', undefined);
+        vi.stubEnv('BRUTX_OFFLINE', undefined);
+        const fetcher = vi.fn(async (url: string) => url === itemUrl
+            ? Response.json(buttonItem)
+            : new Response(null, { status: 404 }));
+        vi.stubGlobal('fetch', fetcher);
+
+        await add(['button'], { cwd: tmpDir, registry, yes: true, silent: true, cache: false });
+        const installed = (await readManifest(tmpDir))!.components.button;
+        const baselinePath = path.join(tmpDir, installed.baselines![installed.files[0]]);
+        await fs.remove(baselinePath);
+        const context = await ProjectContext.load(tmpDir);
+        const executor = new MergeExecutor();
+        const engine = new ComponentMutationEngine(context);
+        const plans = [
+            async () => (await executor.plan(context, 'button', buttonItem)).baselineRecovery,
+            async () => (await executor.planAndExecute(context, 'button', buttonItem, { dryRun: true })).plan.baselineRecovery,
+            async () => (await engine.planInstall({ components: ['button'], registryOverride: registry, merge: true })).baselineRecoveries?.[0],
+            async () => (await engine.planUpdate({ components: ['button'] })).baselineRecoveries?.[0],
+        ];
+
+        for (const plan of plans) {
+            fetcher.mockClear();
+            expect(await plan()).toMatchObject({ componentName: 'button' });
+            expect(fetcher.mock.calls.some(([url]) => url === itemUrl)).toBe(true);
+            expect(await fs.pathExists(cacheDir)).toBe(false);
+            expect(await fs.pathExists(baselinePath)).toBe(false);
+        }
+
+        await executor.planAndExecute(context, 'button', buttonItem);
+        expect(await fs.pathExists(baselinePath)).toBe(true);
+        const [entry] = await fs.readdir(cacheDir);
+        const cacheFile = path.join(cacheDir, entry);
+        const original = await fs.readFile(cacheFile, 'utf8');
+
+        await fs.remove(baselinePath);
+        vi.stubEnv('BRUTX_OFFLINE', '1');
+        const offline = await ProjectContext.load(tmpDir);
+        fetcher.mockClear();
+        expect((await executor.plan(offline, 'button', buttonItem)).baselineRecovery).toBeDefined();
+        expect(fetcher).not.toHaveBeenCalled();
+        expect(await fs.readFile(cacheFile, 'utf8')).toBe(original);
+        expect(await fs.pathExists(baselinePath)).toBe(false);
     });
 
     it('updates a pinned install from its original source with --across-versions', async () => {

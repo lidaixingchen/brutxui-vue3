@@ -90,10 +90,12 @@ describe('BaselineProvider', () => {
 
         const fs = new MemoryFileSystemAdapter({
             [path.join(projectCwd, 'components.json')]: JSON.stringify(sampleConfig),
-            [path.join(projectCwd, '.brutx/manifest.json')]: JSON.stringify(manifestContent),
         });
-
         const ctx = await ProjectContext.load(projectCwd, { fs });
+        manifestContent.components.button.files = await Promise.all(mockButtonRegistryItem.files.map(async file =>
+            ctx.toRelativePosixPath(await ctx.resolveTargetPath(file.path))
+        ));
+        await fs.writeJson(path.join(projectCwd, '.brutx/manifest.json'), manifestContent);
         const mockFetcher = async () => mockButtonRegistryItem;
         const provider = new BaselineProvider({ fs, itemFetcher: mockFetcher });
 
@@ -182,26 +184,26 @@ describe('BaselineProvider', () => {
                 },
             },
         });
-        const fetcher = vi.fn(async () => oldItem);
+        const fetcher = vi.fn(async (name: string) => {
+            if (name === 'widget') return { ...oldItem, integrity: 'sha256-widget-latest' };
+            return oldItem;
+        });
         const provider = new BaselineProvider({ fs, itemFetcher: fetcher });
 
-        const result = await provider.getComponentBaseline(ctx, 'widget');
+        const result = await provider.getComponentBaseline(ctx, 'widget', { registrySource: 'new-source' });
 
-        expect(fetcher).toHaveBeenCalledWith('widget@1.0.0', 'official', true, fs);
+        expect(fetcher).toHaveBeenNthCalledWith(1, 'widget', 'official', true, fs);
+        expect(fetcher).toHaveBeenNthCalledWith(2, 'widget@1.0.0', 'official', true, fs);
         expect(result.status).toBe('ready');
         expect(result.files.get(fileA)).toBe('export const a = "v1-a";\n');
         expect(result.files.get(fileB)).toBe('export const b = "v1-b";\n');
 
-        const recoveredManifest = await fs.readJson(path.join(projectCwd, '.brutx/manifest.json'));
-        expect(recoveredManifest.components.widget.baselines).toMatchObject({
-            [fileA]: `.brutx/baselines/widget/${fileA}`,
-            [fileB]: `.brutx/baselines/widget/${fileB}`,
-        });
-
-        const secondResult = await provider.getComponentBaseline(ctx, 'widget');
-        expect(secondResult.status).toBe('ready');
-        expect(secondResult.files.get(fileA)).toBe('export const a = "v1-a";\n');
-        expect(secondResult.files.get(fileB)).toBe('export const b = "v1-b";\n');
-        expect(fetcher).toHaveBeenCalledTimes(1);
+        expect(result.recovery?.files).toEqual([
+            { relativePath: fileA, content: oldItem.files[0].content },
+            { relativePath: fileB, content: oldItem.files[1].content },
+        ]);
+        const manifest = await fs.readJson(path.join(projectCwd, '.brutx/manifest.json'));
+        expect(manifest.components.widget.baselines).toEqual({ 'index.ts': '.brutx/baselines/widget/index.ts' });
+        expect(await fs.pathExists(path.join(projectCwd, '.brutx/baselines/widget', fileA))).toBe(false);
     });
 });

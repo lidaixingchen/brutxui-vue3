@@ -2,7 +2,7 @@ import path from 'path';
 import type { FileSystemAdapter } from '../fs/index.js';
 import type { ProjectContext } from '../project-context.js';
 import type { RegistryItem } from '../types.js';
-import { resolveImportAlias } from '../project.js';
+import { projectRegistryFiles } from '../component-files.js';
 import type { ComponentBaselineResult } from './baseline-provider.js';
 import { threeWayMerge } from './three-way-merge-engine.js';
 import type {
@@ -28,59 +28,32 @@ export class DirectoryMergePlanner {
         componentName: string,
         remoteItem: RegistryItem,
         baseline: ComponentBaselineResult,
-        options: ThreeWayMergeOptions = {}
+        options: ThreeWayMergeOptions = {},
+        {
+            retainedPaths = new Set(),
+            sharedBaselines = new Map(),
+            projectedFiles,
+        }: {
+            retainedPaths?: ReadonlySet<string>;
+            sharedBaselines?: ReadonlyMap<string, string>;
+            projectedFiles?: Awaited<ReturnType<typeof projectRegistryFiles>>;
+        } = {},
     ): Promise<ComponentMergePlan> {
         const fs = this.fsAdapter ?? context.fs;
-        const config = context.config;
-
-        interface TargetFileInfo {
-            relPath: string;
-            absPath: string;
-            remoteRawContent: string;
-            remoteProjectedContent: string;
-            baseName: string;
-        }
-
-        const remoteFilesMap = new Map<string, TargetFileInfo>();
+        const remoteFiles = projectedFiles ?? await projectRegistryFiles(context, remoteItem.files ?? []);
+        const remoteFilesMap = new Map(remoteFiles.map(file => [file.relativePath, file]));
         const baseNameToRelPath = new Map<string, string>();
-
-        if (remoteItem.files && Array.isArray(remoteItem.files)) {
-            for (const file of remoteItem.files) {
-                const absPath = await context.resolveTargetPath(file.path);
-                const relPath = path.relative(context.cwd, absPath).split(path.sep).join('/');
-                const baseName = file.path.replace(/\\/g, '/').split('/').pop()!;
-                const remoteRawContent = file.content ?? '';
-                const remoteProjectedContent = config
-                    ? resolveImportAlias(remoteRawContent, config)
-                    : remoteRawContent;
-
-                const fileInfo: TargetFileInfo = {
-                    relPath,
-                    absPath,
-                    remoteRawContent,
-                    remoteProjectedContent,
-                    baseName,
-                };
-                remoteFilesMap.set(relPath, fileInfo);
-                if (!baseNameToRelPath.has(baseName)) {
-                    baseNameToRelPath.set(baseName, relPath);
-                }
-            }
+        for (const { relativePath } of remoteFiles) {
+            const baseName = path.posix.basename(relativePath);
+            if (!baseNameToRelPath.has(baseName)) baseNameToRelPath.set(baseName, relativePath);
         }
 
         // 收集所有相关文件的 POSIX 相对路径
-        const allRelPaths = new Set<string>();
-        for (const relPath of remoteFilesMap.keys()) {
-            allRelPaths.add(relPath);
-        }
+        const allRelPaths = new Set(remoteFilesMap.keys());
 
-        // 尝试从 baseline 获取文件路径
-        for (const [key] of baseline.files) {
-            if (key.includes('/')) {
-                allRelPaths.add(key);
-            } else if (baseNameToRelPath.has(key)) {
-                allRelPaths.add(baseNameToRelPath.get(key)!);
-            }
+        for (const key of baseline.projectPaths ?? baseline.files.keys()) {
+            const relPath = baseline.projectPaths || key.includes('/') ? key : baseNameToRelPath.get(key);
+            if (relPath) allRelPaths.add(relPath);
         }
 
         // 检查磁盘上现有组件目录
@@ -102,6 +75,7 @@ export class DirectoryMergePlanner {
         }
 
         const fileResults: SingleFileMergeResult[] = [];
+        const observedFiles = new Map<string, string | undefined>();
         const isFallback = baseline.status === 'fallback-diff';
 
         for (const relPath of Array.from(allRelPaths).sort()) {
@@ -109,58 +83,30 @@ export class DirectoryMergePlanner {
             const localExists = await fs.pathExists(absPath);
             const localContent = localExists ? await fs.readFile(absPath) : undefined;
             const remoteInfo = remoteFilesMap.get(relPath);
-            const baseName = relPath.split('/').pop()!;
-            const baseContent = baseline.files.get(relPath) ?? baseline.files.get(baseName);
-
+            const baseName = path.posix.basename(relPath);
+            const installedBase = baseline.projectPaths
+                ? baseline.projectPaths.has(relPath) ? baseline.files.get(relPath) : undefined
+                : baseline.files.get(relPath) ?? baseline.files.get(baseName);
+            const baseContent = installedBase ?? sharedBaselines.get(relPath);
+            if (remoteInfo || baseContent !== undefined || baseline.projectPaths?.has(relPath)) {
+                observedFiles.set(absPath, localContent);
+            }
             const detectedEol = localContent ? detectEol(localContent) : '\n';
 
-            // 1. Base 缺失时的 2-Way 优雅降级
-            if (isFallback) {
-                if (!localExists && remoteInfo) {
-                    fileResults.push({
-                        filePath: relPath,
-                        status: 'added',
-                        action: 'write',
-                        content: remoteInfo.remoteProjectedContent,
-                        hasConflicts: false,
-                        conflictCount: 0,
-                        detectedEol,
-                    });
-                } else if (localExists && remoteInfo) {
-                    const normLocal = normalizeEol(localContent!);
-                    const normRemote = normalizeEol(remoteInfo.remoteProjectedContent);
-                    if (normLocal === normRemote) {
-                        fileResults.push({
-                            filePath: relPath,
-                            status: 'unchanged',
-                            action: 'skip',
-                            content: localContent,
-                            hasConflicts: false,
-                            conflictCount: 0,
-                            detectedEol,
-                        });
-                    } else {
-                        fileResults.push({
-                            filePath: relPath,
-                            status: 'fallback-diff',
-                            action: 'write',
-                            content: restoreEol(remoteInfo.remoteProjectedContent, detectedEol),
-                            hasConflicts: false,
-                            conflictCount: 0,
-                            detectedEol,
-                        });
-                    }
-                } else if (localExists && !remoteInfo) {
-                    fileResults.push({
-                        filePath: relPath,
-                        status: 'delete-skipped',
-                        action: 'skip',
-                        content: localContent,
-                        hasConflicts: false,
-                        conflictCount: 0,
-                        detectedEol,
-                    });
-                }
+            const lacksInstalledBaseline = baseContent === undefined && isFallback
+                && (baseline.projectPaths?.has(relPath) ?? true);
+            if (lacksInstalledBaseline && localContent !== undefined) {
+                const sameContent = remoteInfo && normalizeEol(localContent) === normalizeEol(remoteInfo.content);
+                const overwrite = remoteInfo && !sameContent && options.conflictStrategy === 'theirs';
+                fileResults.push({
+                    filePath: relPath,
+                    status: remoteInfo ? sameContent ? 'unchanged' : 'fallback-diff' : 'delete-skipped',
+                    action: overwrite ? 'write' : 'skip',
+                    content: overwrite ? restoreEol(remoteInfo.content, detectedEol) : localContent,
+                    hasConflicts: false,
+                    conflictCount: 0,
+                    detectedEol,
+                });
                 continue;
             }
 
@@ -174,7 +120,7 @@ export class DirectoryMergePlanner {
                 const mergeRes = threeWayMerge(
                     baseContent,
                     localContent,
-                    remoteInfo.remoteProjectedContent,
+                    remoteInfo.content,
                     {
                         filePath: relPath,
                         conflictStrategy: options.conflictStrategy,
@@ -187,7 +133,7 @@ export class DirectoryMergePlanner {
                     filePath: relPath,
                     status: 'added',
                     action: 'write',
-                    content: remoteInfo.remoteProjectedContent,
+                    content: remoteInfo.content,
                     hasConflicts: false,
                     conflictCount: 0,
                     detectedEol,
@@ -195,7 +141,7 @@ export class DirectoryMergePlanner {
             } else if (hasBase && hasLocal && !hasRemote) {
                 // Case 3: 官方弃用文件
                 const isLocalModified = normalizeEol(localContent) !== normalizeEol(baseContent);
-                if (isLocalModified) {
+                if (isLocalModified || retainedPaths.has(absPath)) {
                     // 用户有修改 -> 冲突保留
                     fileResults.push({
                         filePath: relPath,
@@ -220,7 +166,7 @@ export class DirectoryMergePlanner {
                 }
             } else if (hasBase && !hasLocal && hasRemote) {
                 // Case 4: 用户在本地删除了该文件
-                const isRemoteUpdated = normalizeEol(remoteInfo.remoteProjectedContent) !== normalizeEol(baseContent);
+                const isRemoteUpdated = normalizeEol(remoteInfo.content) !== normalizeEol(baseContent);
                 if (isRemoteUpdated) {
                     // 远端有更新，用户删除了 -> 提示恢复
                     fileResults.push({
@@ -249,7 +195,7 @@ export class DirectoryMergePlanner {
                 const mergeRes = threeWayMerge(
                     '',
                     localContent,
-                    remoteInfo.remoteProjectedContent,
+                    remoteInfo.content,
                     {
                         filePath: relPath,
                         conflictStrategy: options.conflictStrategy,
@@ -276,6 +222,8 @@ export class DirectoryMergePlanner {
             addedFiles,
             deletedFiles,
             isFallback,
+            observedFiles,
+            ...(baseline.recovery ? { baselineRecovery: baseline.recovery } : {}),
         };
     }
 }

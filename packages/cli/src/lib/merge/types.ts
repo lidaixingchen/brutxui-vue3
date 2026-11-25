@@ -1,3 +1,5 @@
+import type { BaselineRecovery, InstalledComponentIdentity } from '../manifest.js';
+
 /**
  * 单文件合并处理状态
  * - `unchanged`: 本地与远端一致，无须处理
@@ -5,9 +7,9 @@
  * - `conflict`: 3-Way Merge 发生冲突（输出冲突标记或应用冲突策略）
  * - `added`: 远端新增文件，执行写入
  * - `deleted`: 远端弃用且本地未修改，安全删除
- * - `delete-skipped`: 远端弃用但本地有定制，跳过删除保留本地文件
+ * - `delete-skipped`: 远端弃用，但文件有本地定制、仍有其他所有者或缺少可用基线
  * - `restore-prompt`: 远端有更新但本地已主动删除，提示恢复并标记跳过
- * - `fallback-diff`: Base 祖先不可用时的降级合并状态
+ * - `fallback-diff`: 基线不可用，默认保留本地内容
  */
 export type MergeFileStatus =
     | 'unchanged'
@@ -45,6 +47,9 @@ export interface ComponentMergePlan {
     addedFiles: number;
     deletedFiles: number;
     isFallback: boolean;
+    baselineRecovery?: BaselineRecovery;
+    installedIdentities?: ReadonlyMap<string, InstalledComponentIdentity | null>;
+    observedFiles?: ReadonlyMap<string, string | undefined>;
 }
 
 export interface MergeExecutionOptions {

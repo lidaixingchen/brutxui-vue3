@@ -4,13 +4,29 @@ import type { RegistryItem, RegistryItemSnapshot } from '../types.js';
 import { DEFAULT_REGISTRY_URL } from '../constants.js';
 import { ensureUtilsFile } from './add-service.js';
 import { mergeSnippetsFile, hasVscodeDir } from '../vscode-snippets.js';
-import { computeInstalledContentHash, updateInstalledComponents, readManifest, ensureGitattributes, type RegistrySelectionUpdate } from '../manifest.js';
+import {
+    assertInstalledComponentIdentity,
+    computeInstalledContentHash,
+    updateInstalledComponents,
+    readManifest,
+    ensureGitattributes,
+    getBaselineRelativePath,
+    getInstalledComponentIdentity,
+    type BaselineRecovery,
+    type InstalledComponentIdentity,
+    type RegistrySelectionUpdate,
+} from '../manifest.js';
+import { collectInstalledFilePaths, projectRegistryFiles, resolveInstalledFile, type PlannedComponentSource } from '../component-files.js';
+import { normalizeEol } from '../merge/whitespace-normalizer.js';
 import { MergeExecutor } from '../merge/merge-executor.js';
+import { assertMergeFilesUnchanged, recordMergeFileObservations } from '../merge/file-observations.js';
+import { withRegistryPlanningCache } from '../storage/cache-storage.js';
 import { PackageManagerAdapter } from '../workspace/package-manager-adapter.js';
 import { WorkspaceTopologyEngine } from '../workspace/topology-engine.js';
 import { CliError } from '../error.js';
 import { collectRegistryComponentRequests } from '../registry-client.js';
 import { getUpdateRegistrySource, isRegistrySelectionOnlyUpdate } from '../registry-source.js';
+import { findFilesReferencedByInstalledComponents } from './remove-service.js';
 
 export type PlanFileAction = 'create' | 'overwrite' | 'merge' | 'delete' | 'skip';
 
@@ -40,6 +56,14 @@ export interface ComponentMutationPlan {
     registryBaseSources?: Record<string, string>;
     /** 仅同步注册表信息的组件及规划时对应的安装时间 */
     registrySelectionOnly?: ReadonlyMap<string, string>;
+    /** 需要同步文件归属的组件，包括仅变更清单的更新 */
+    fileOwnershipUpdates?: ReadonlySet<string>;
+    /** 执行事务时待写入的已安装版本基线 */
+    baselineRecoveries?: readonly BaselineRecovery[];
+    /** 安装时使用的合并基线对应的清单身份 */
+    installedIdentities?: ReadonlyMap<string, InstalledComponentIdentity | null>;
+    /** 合并规划时读取的文件内容，缺失文件记为 undefined */
+    observedFiles?: ReadonlyMap<string, string | undefined>;
     /** 组件版本映射（显式指定或锁定版本） */
     versionByName: Map<string, string>;
     /** 计划阶段产生的诊断与版本告警信息 */
@@ -124,6 +148,10 @@ export class ComponentMutationEngine {
      * 阶段一：安装规划（纯内存计算，零副作用）
      */
     async planInstall(options: ComponentPlanOptions): Promise<ComponentMutationPlan> {
+        return withRegistryPlanningCache(() => this.planInstallComponents(options));
+    }
+
+    private async planInstallComponents(options: ComponentPlanOptions): Promise<ComponentMutationPlan> {
         const resolution = await this.context.registry.resolve(options.components, {
             sourceOverride: options.registryOverride,
             useCache: options.useCache !== false,
@@ -147,7 +175,14 @@ export class ComponentMutationEngine {
         }
 
         const files: MutationPlanFile[] = [];
+        const baselineRecoveries: BaselineRecovery[] = [];
+        const observedFiles = new Map<string, string | undefined>();
+        const plannedContent = new Map<string, string>();
         const mergeExecutor = options.merge ? new MergeExecutor({ fs: this.context.fs }) : null;
+        const existingManifest = await readManifest(this.context.cwd, this.context.fs).catch(() => null);
+        const installedIdentities = mergeExecutor
+            ? new Map(resolution.items.map(item => [item.name, getInstalledComponentIdentity(existingManifest?.components[item.name])]))
+            : undefined;
 
         for (const item of resolution.items) {
             if (options.merge && mergeExecutor) {
@@ -155,7 +190,11 @@ export class ComponentMutationEngine {
                     conflictStrategy: options.conflictStrategy,
                     registrySource: resolution.hitSources.get(item.name) ?? options.registryOverride,
                     useCache: options.useCache,
+                    installedManifest: existingManifest,
                 });
+                for (const [name, identity] of mergePlan.installedIdentities ?? []) installedIdentities?.set(name, identity);
+                if (mergePlan.baselineRecovery) baselineRecoveries.push(mergePlan.baselineRecovery);
+                recordMergeFileObservations(this.context, observedFiles, mergePlan.observedFiles);
 
                 for (const fileResult of mergePlan.files) {
                     const absPath = path.resolve(this.context.cwd, fileResult.filePath);
@@ -177,22 +216,24 @@ export class ComponentMutationEngine {
                     });
                 }
             } else {
-                for (const file of item.files) {
-                    const targetPath = await this.context.resolveTargetPath(file.path);
-                    const exists = await this.context.fs.pathExists(targetPath);
+                for (const { absolutePath, content } of await projectRegistryFiles(this.context, item.files)) {
+                    const alreadyPlanned = plannedContent.has(absolutePath);
+                    const exists = alreadyPlanned || await this.context.fs.pathExists(absolutePath);
                     let action: PlanFileAction;
-                    if (exists) {
+                    if (alreadyPlanned && plannedContent.get(absolutePath) === content) {
+                        action = 'skip';
+                    } else if (exists) {
                         action = options.overwrite ? 'overwrite' : 'skip';
                     } else {
                         action = 'create';
                     }
 
-                    const resolvedContent = this.context.resolveImportAlias(file.content);
+                    if (action !== 'skip') plannedContent.set(absolutePath, content);
                     files.push({
                         componentName: item.name,
-                        filePath: targetPath,
+                        filePath: absolutePath,
                         action,
-                        sourceContent: resolvedContent,
+                        sourceContent: content,
                         hasConflicts: false,
                     });
                 }
@@ -200,7 +241,6 @@ export class ComponentMutationEngine {
         }
 
         const warnings: string[] = [];
-        const existingManifest = await readManifest(this.context.cwd, this.context.fs).catch(() => null);
         if (existingManifest && versionByName.size > 0) {
             for (const [name, newVersion] of versionByName) {
                 const existing = existingManifest.components[name];
@@ -218,6 +258,9 @@ export class ComponentMutationEngine {
             updateSnippets,
             registrySources: Object.fromEntries(resolution.hitSources),
             registryBaseSources,
+            baselineRecoveries,
+            installedIdentities,
+            observedFiles,
             versionByName,
             warnings,
         };
@@ -227,6 +270,10 @@ export class ComponentMutationEngine {
      * 阶段一：更新规划（针对已安装组件计算差异与 3-way 合并计划）
      */
     async planUpdate(options: ComponentUpdatePlanOptions): Promise<ComponentMutationPlan> {
+        return withRegistryPlanningCache(() => this.planUpdateComponents(options));
+    }
+
+    private async planUpdateComponents(options: ComponentUpdatePlanOptions): Promise<ComponentMutationPlan> {
         const manifest = await readManifest(this.context.cwd, this.context.fs).catch(() => null);
         const versionByName = new Map<string, string>();
         const remoteItems: RegistryItem[] = [];
@@ -262,18 +309,37 @@ export class ComponentMutationEngine {
         const conflictStrategy = options.conflictStrategy ?? 'markers';
         const mergeExecutor = new MergeExecutor({ fs: this.context.fs });
         const files: MutationPlanFile[] = [];
+        const baselineRecoveries: BaselineRecovery[] = [];
+        const observedFiles = new Map<string, string | undefined>();
+        const fileOwnershipUpdates = new Set<string>();
+        const updatingItems = remoteItems.filter(item => !registrySelectionOnly.has(item.name));
+        const updatingNames = new Set(updatingItems.map(item => item.name));
+        const installedIdentities = new Map(remoteItems.map(item => [item.name, getInstalledComponentIdentity(manifest?.components[item.name])]));
+        const retainedPaths = collectInstalledFilePaths(this.context, manifest, updatingNames);
+        const projectedByComponent = new Map(await Promise.all(updatingItems.map(async item =>
+            [item.name, await projectRegistryFiles(this.context, item.files)] as const
+        )));
+        const protectedRetirements = new Set<string>();
+        for (const [name, projected] of projectedByComponent) {
+            const projectedPaths = new Set(projected.map(file => file.absolutePath));
+            for (const absolutePath of projectedPaths) retainedPaths.add(absolutePath);
+            const previous = manifest?.components[name];
+            if (previous && (
+                previous.files.length !== projectedPaths.size ||
+                previous.files.some(filePath => !projectedPaths.has(resolveInstalledFile(this.context, filePath)))
+            )) {
+                fileOwnershipUpdates.add(name);
+            }
+        }
 
-        for (const item of remoteItems) {
-            if (registrySelectionOnly.has(item.name)) continue;
+        for (const item of updatingItems) {
             if (options.overwrite) {
-                for (const file of item.files) {
-                    const targetPath = await this.context.resolveTargetPath(file.path);
-                    const resolvedContent = this.context.resolveImportAlias(file.content);
+                for (const { absolutePath, content } of projectedByComponent.get(item.name) ?? []) {
                     files.push({
                         componentName: item.name,
-                        filePath: targetPath,
+                        filePath: absolutePath,
                         action: 'overwrite',
-                        sourceContent: resolvedContent,
+                        sourceContent: content,
                         hasConflicts: false,
                     });
                 }
@@ -282,10 +348,15 @@ export class ComponentMutationEngine {
                     conflictStrategy,
                     registrySource: registrySources[item.name] ?? options.registryOverride,
                     useCache: options.useCache,
-                });
+                    installedManifest: manifest,
+                }, retainedPaths);
+                for (const [name, identity] of mergePlan.installedIdentities ?? []) installedIdentities.set(name, identity);
+                if (mergePlan.baselineRecovery) baselineRecoveries.push(mergePlan.baselineRecovery);
+                recordMergeFileObservations(this.context, observedFiles, mergePlan.observedFiles);
 
                 for (const fileResult of mergePlan.files) {
                     const absPath = path.resolve(this.context.cwd, fileResult.filePath);
+                    if (fileResult.status === 'delete-skipped') protectedRetirements.add(absPath);
                     let action: PlanFileAction;
                     if (fileResult.action === 'write') {
                         action = fileResult.status === 'added' ? 'create' : 'merge';
@@ -307,6 +378,51 @@ export class ComponentMutationEngine {
                 }
             }
         }
+        const deletions = new Map(files.filter(file => file.action === 'delete').map(file => [file.filePath, file.componentName]));
+        if (deletions.size > 0) {
+            const finalSources = new Map<string, PlannedComponentSource>();
+            const sourcePaths = new Map<string, string>();
+            for (const [name, projected] of projectedByComponent) {
+                for (const file of projected) sourcePaths.set(file.absolutePath, name);
+                for (const recorded of manifest?.components[name]?.files ?? []) {
+                    sourcePaths.set(resolveInstalledFile(this.context, recorded), name);
+                }
+            }
+            for (const file of files) {
+                sourcePaths.set(file.filePath, file.componentName);
+                if (file.action !== 'skip' && file.action !== 'delete') {
+                    finalSources.set(file.filePath, {
+                        componentName: file.componentName,
+                        content: file.mergedContent ?? file.sourceContent,
+                    });
+                }
+            }
+            for (const [filePath, componentName] of sourcePaths) {
+                if (deletions.has(filePath) && !protectedRetirements.has(filePath)) continue;
+                if (!finalSources.has(filePath) && await this.context.isSafePath(filePath) && await this.context.fs.pathExists(filePath)) {
+                    const content = await this.context.fs.readFile(filePath, 'utf-8');
+                    finalSources.set(filePath, { componentName, content });
+                }
+            }
+            const candidates = new Set([...deletions.keys()].filter(file => !protectedRetirements.has(file)));
+            while (candidates.size > 0) {
+                const referenced = await findFilesReferencedByInstalledComponents(
+                    this.context, manifest, [...candidates], updatingNames, finalSources,
+                );
+                if (referenced.size === 0) break;
+                for (const filePath of referenced) {
+                    protectedRetirements.add(filePath);
+                    candidates.delete(filePath);
+                    const content = await this.context.fs.readFile(filePath, 'utf-8');
+                    finalSources.set(filePath, { componentName: deletions.get(filePath)!, content });
+                }
+            }
+        }
+        for (const file of files) {
+            if (file.action !== 'delete') continue;
+            if (protectedRetirements.has(file.filePath)) file.action = 'skip';
+            else protectedRetirements.add(file.filePath);
+        }
 
         let updateSnippets = false;
         if (options.vscode === true) {
@@ -324,6 +440,10 @@ export class ComponentMutationEngine {
             registrySources,
             registryBaseSources,
             registrySelectionOnly,
+            fileOwnershipUpdates,
+            baselineRecoveries,
+            installedIdentities,
+            observedFiles,
             versionByName,
             warnings: [],
         };
@@ -394,7 +514,14 @@ export class ComponentMutationEngine {
         let manifestUpdated: boolean = false;
 
         try {
+            await transaction.lockProjectWrites();
             const previousManifest = await readManifest(this.context.cwd, this.context.fs);
+            for (const [name, identity] of plan.installedIdentities ?? []) {
+                assertInstalledComponentIdentity(previousManifest, name, identity);
+            }
+            await assertMergeFilesUnchanged(this.context, plan.observedFiles);
+            const updatedNames = new Set(plan.items.filter(item => !plan.registrySelectionOnly?.has(item.name)).map(item => item.name));
+            const retainedPaths = collectInstalledFilePaths(this.context, previousManifest, updatedNames);
             if (plan.ensureUtils) {
                 await ensureUtilsFile(this.context, undefined, undefined, transaction);
             }
@@ -415,9 +542,16 @@ export class ComponentMutationEngine {
                 }
 
                 const itemFiles = plan.files.filter(f => f.componentName === item.name);
-                const writtenForThisItem: string[] = [];
+                const previousEntry = previousManifest?.components[item.name];
+                const projectedFiles = await projectRegistryFiles(this.context, item.files);
 
-                if (itemFiles.length > 0 && itemFiles.every(f => f.action === 'skip')) {
+                const hasFileMutations = itemFiles.some(file => file.action !== 'skip');
+                const adoptExistingFiles = !previousEntry && projectedFiles.length > 0 && !hasFileMutations
+                    && (await Promise.all(projectedFiles.map(async file =>
+                        await this.context.fs.pathExists(file.absolutePath) &&
+                        normalizeEol(await this.context.fs.readFile(file.absolutePath, 'utf-8')) === normalizeEol(file.content)
+                    ))).every(Boolean);
+                if (!hasFileMutations && !adoptExistingFiles && !plan.fileOwnershipUpdates?.has(item.name)) {
                     skipped.push(item.name);
                     continue;
                 }
@@ -428,7 +562,12 @@ export class ComponentMutationEngine {
                     }
 
                     if (file.action === 'delete') {
-                        this.context.assertSafePath(file.filePath);
+                        if (retainedPaths.has(file.filePath)) {
+                            deletedFiles--;
+                            skippedFiles++;
+                            continue;
+                        }
+                        await this.context.assertSafePath(file.filePath);
                         await transaction.remove(file.filePath);
                         filesDeleted.push(file.filePath);
 
@@ -444,7 +583,6 @@ export class ComponentMutationEngine {
                     await transaction.writeFile(file.filePath, contentToWrite);
 
                     filesWritten.push(file.filePath);
-                    writtenForThisItem.push(file.filePath);
 
                     options.callbacks?.onFileWritten?.({
                         component: item.name,
@@ -459,48 +597,41 @@ export class ComponentMutationEngine {
                     }
                 }
 
-                if (writtenForThisItem.length > 0 || itemFiles.some(f => f.action === 'delete')) {
-                    succeeded.push(item.name);
+                succeeded.push(item.name);
 
-                    const installedPaths: string[] = [];
-                    const componentBaselines: Record<string, string> = {};
-                    const currentBaselinePaths = new Set<string>();
-                    for (const registryFile of item.files) {
-                        const targetPath = await this.context.resolveTargetPath(registryFile.path);
-                        const projectRelativePath = this.context.toRelativePosixPath(targetPath);
-                        const baselineRelPath = `.brutx/baselines/${item.name}/${projectRelativePath}`;
-                        const baselineAbsPath = path.resolve(this.context.cwd, baselineRelPath);
-                        const baselineContent = this.context.resolveImportAlias(registryFile.content);
-
-                        await transaction.writeFile(baselineAbsPath, baselineContent);
-                        installedPaths.push(targetPath);
-                        componentBaselines[projectRelativePath] = baselineRelPath;
-                        currentBaselinePaths.add(baselineRelPath);
-                    }
-
-                    const previousEntry = previousManifest?.components[item.name];
-                    const previousBaselinePaths = new Set([
-                        ...Object.values(previousEntry?.baselines ?? {}),
-                        ...(previousEntry?.files ?? []).map(filePath =>
-                            `.brutx/baselines/${item.name}/${path.posix.basename(filePath.replace(/\\/g, '/'))}`
-                        ),
-                    ]);
-                    for (const baselineRelPath of previousBaselinePaths) {
-                        if (!currentBaselinePaths.has(baselineRelPath)) {
-                            await transaction.remove(path.resolve(this.context.cwd, baselineRelPath));
-                        }
-                    }
-
-                    filesByComponent.set(item.name, installedPaths);
-                    baselinesByComponent.set(item.name, componentBaselines);
+                const installedPaths: string[] = [];
+                const componentBaselines: Record<string, string> = {};
+                const currentBaselinePaths = new Set<string>();
+                for (const { absolutePath, relativePath, content } of projectedFiles) {
+                    const baselineRelPath = getBaselineRelativePath(item.name, relativePath);
+                    await transaction.writeFile(path.resolve(this.context.cwd, baselineRelPath), content);
+                    installedPaths.push(absolutePath);
+                    componentBaselines[relativePath] = baselineRelPath;
+                    currentBaselinePaths.add(baselineRelPath);
                 }
+
+                const previousBaselinePaths = new Set([
+                    ...Object.values(previousEntry?.baselines ?? {}),
+                    ...(previousEntry?.files ?? []).map(filePath =>
+                        getBaselineRelativePath(item.name, path.posix.basename(filePath.replace(/\\/g, '/')))
+                    ),
+                ]);
+                for (const baselineRelPath of previousBaselinePaths) {
+                    if (!currentBaselinePaths.has(baselineRelPath)) {
+                        await transaction.remove(path.resolve(this.context.cwd, baselineRelPath));
+                    }
+                }
+
+                filesByComponent.set(item.name, installedPaths);
+                baselinesByComponent.set(item.name, componentBaselines);
             }
 
             if (plan.updateSnippets && filesByComponent.size > 0) {
                 await mergeSnippetsFile(this.context.cwd, [...filesByComponent.keys()], this.context.fs, transaction);
             }
 
-            if (succeeded.length > 0) {
+            const baselineRecoveries = plan.baselineRecoveries?.filter(recovery => !filesByComponent.has(recovery.componentName));
+            if (succeeded.length > 0 || baselineRecoveries?.length) {
                 if (filesByComponent.size > 0) {
                     await ensureGitattributes(this.context.cwd, this.context.fs, transaction);
                 }
@@ -525,7 +656,11 @@ export class ComponentMutationEngine {
                         })
                 );
 
-                await updateInstalledComponents(this.context.cwd, manifestEntries, { transaction, registrySelections }, this.context.fs);
+                await updateInstalledComponents(this.context.cwd, manifestEntries, {
+                    transaction,
+                    registrySelections,
+                    baselineRecoveries,
+                }, this.context.fs);
                 manifestUpdated = true;
             }
 

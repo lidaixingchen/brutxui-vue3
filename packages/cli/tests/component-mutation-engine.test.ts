@@ -10,8 +10,9 @@ import { BaselineProvider } from '../src/lib/merge/baseline-provider.js';
 import { diffComponent } from '../src/lib/services/diff-service.js';
 import { CliError } from '../src/lib/error.js';
 import { DEFAULT_REGISTRY_URL } from '../src/lib/constants.js';
-import { readManifest } from '../src/lib/manifest.js';
+import { readManifest, updateInstalledComponents } from '../src/lib/manifest.js';
 import { integrityHashDriftRule } from '../src/lib/diagnostics/rules/integrity-rules.js';
+import { prepareRemoveComponents, removeComponents } from '../src/lib/services/remove-service.js';
 
 describe('ComponentMutationEngine (VFS Zero-IO)', () => {
     let fs: MemoryFileSystemAdapter;
@@ -108,6 +109,300 @@ describe('ComponentMutationEngine (VFS Zero-IO)', () => {
             [path.join(projectCwd, 'components.json')]: JSON.stringify(sampleConfig),
             [path.join(projectCwd, 'src/assets/main.css')]: '@import "tailwindcss";\n',
         });
+    });
+
+    it('releases shared files on update and deletes only the unmodified file of the last owner', async () => {
+        const card = { ...buttonFiles[0], path: 'components/ui/card/Card.vue' };
+        const badge = { ...buttonFiles[0], path: 'components/ui/badge/Badge.vue' };
+        const lib = {
+            path: 'lib/native-form-reset.ts',
+            content: 'import { reset } from "@/composables/useReset";\nexport { reset };\n',
+            type: 'registry:lib' as const,
+        };
+        const hook = { path: 'composables/useReset.ts', content: 'export const reset = () => {};\n', type: 'registry:hook' as const };
+        const items = [makeComponentItem('card', [card, lib, hook]), makeComponentItem('badge', [badge, lib, hook])];
+        const context = await ProjectContext.loadUninitialized(projectCwd, {
+            fs,
+            configOverride: { ...sampleConfig, sharedBase: '@/foundation' },
+        });
+        setupMockRegistry(context, items);
+        const engine = new ComponentMutationEngine(context);
+        const options = { skipDependencies: true };
+        const install = await engine.planInstall({ components: ['card', 'badge'] });
+        const libPath = await context.resolveTargetPath(lib.path);
+        const hookPath = await context.resolveTargetPath(hook.path);
+        expect((await engine.execute(install, options)).filesWritten.filter(file => file === libPath)).toHaveLength(1);
+        const libRelative = context.toRelativePosixPath(libPath);
+        const hookRelative = context.toRelativePosixPath(hookPath);
+        const projectedLib = await fs.readFile(libPath, 'utf-8');
+        expect(projectedLib).toContain('@/foundation/hooks/useReset');
+
+        const manifestPath = path.join(projectCwd, '.brutx/manifest.json');
+        const manifest = (await readManifest(projectCwd, fs))!;
+        manifest.components.badge.files = manifest.components.badge.files.map(file => file.replaceAll('/', '\\'));
+        await fs.writeJson(manifestPath, manifest);
+        expect((await diffComponent(context, 'badge')).files).toEqual(expect.arrayContaining([
+            { path: lib.path, status: 'unchanged' },
+            { path: hook.path, status: 'unchanged' },
+        ]));
+
+        items[0] = makeComponentItem('card', [card]);
+        const first = await engine.execute(await engine.planUpdate({ components: ['card'] }), options);
+        expect(first.filesDeleted).toEqual([]);
+        expect(await fs.readFile(libPath, 'utf-8')).toBe(projectedLib);
+        const afterFirst = (await readManifest(projectCwd, fs))!;
+        expect(afterFirst.components.card.files).not.toContain(libRelative);
+        expect(afterFirst.components.card.files).not.toContain(hookRelative);
+
+        const customHook = 'export const reset = () => "local";\n';
+        await fs.writeFile(hookPath, customHook);
+        expect((await diffComponent(context, 'badge')).files).toContainEqual(expect.objectContaining({
+            path: hook.path,
+            status: 'modified',
+        }));
+        items[1] = makeComponentItem('badge', [badge]);
+        const last = await engine.execute(await engine.planUpdate({ components: ['badge'] }), options);
+        expect(last.filesDeleted).toEqual([libPath]);
+        expect(await fs.pathExists(libPath)).toBe(false);
+        expect(await fs.readFile(hookPath, 'utf-8')).toBe(customHook);
+        const afterLast = (await readManifest(projectCwd, fs))!;
+        expect(afterLast.components.badge.files).not.toContain(hookRelative);
+    });
+
+    it.each([['card', 'badge'], ['badge', 'card']])('resolves ownership for the whole update batch (%s then %s)', async (first, second) => {
+        const card = { ...buttonFiles[0], path: 'components/ui/card/Card.vue' };
+        const badge = { ...buttonFiles[0], path: 'components/ui/badge/Badge.vue' };
+        const shared = { ...buttonFiles[0], path: 'lib/shared.ts', content: 'export const shared = true;\n' };
+        const items = [makeComponentItem('card', [card, shared]), makeComponentItem('badge', [badge])];
+        const context = await ProjectContext.loadUninitialized(projectCwd, { fs });
+        setupMockRegistry(context, items);
+        const engine = new ComponentMutationEngine(context);
+        const options = { skipDependencies: true };
+        await engine.execute(await engine.planInstall({ components: ['card', 'badge'] }), options);
+        const sharedPath = await context.resolveTargetPath(shared.path);
+        const relativePath = context.toRelativePosixPath(sharedPath);
+        items[0] = makeComponentItem('card', [card]);
+        items[1] = makeComponentItem('badge', [badge, shared]);
+
+        const result = await engine.execute(await engine.planUpdate({ components: [first, second] }), options);
+
+        expect(result.filesDeleted).toEqual([]);
+        expect(await fs.readFile(sharedPath, 'utf-8')).toBe(shared.content);
+        const manifest = (await readManifest(projectCwd, fs))!;
+        expect(manifest.components.card.files).not.toContain(relativePath);
+        expect(manifest.components.badge.files).toContain(relativePath);
+
+        items[0] = makeComponentItem('card', [card, shared]);
+        await engine.execute(await engine.planUpdate({ components: ['card'] }), options);
+        items[0] = makeComponentItem('card', [card]);
+        items[1] = makeComponentItem('badge', [badge]);
+        const retirement = await engine.execute(await engine.planUpdate({ components: [first, second] }), options);
+        expect(retirement.filesDeleted).toEqual([sharedPath]);
+        expect(await fs.pathExists(sharedPath)).toBe(false);
+    });
+
+    it.each([['alpha', 'beta', 'registry'], ['beta', 'alpha', 'registry'], ['alpha', 'beta', 'local']])(
+        'preserves a file imported by a merged component (%s then %s, %s import)',
+        async (first, second, importSource) => {
+            const alpha = { ...buttonFiles[0], path: 'components/ui/alpha/Alpha.vue' };
+            const beta = {
+                ...buttonFiles[0],
+                path: 'components/ui/beta/Beta.vue',
+                content: '<script setup>\nconst label = "before";\n</script>\n<template>{{ label }}</template>\n',
+            };
+            const shared = { ...buttonFiles[0], path: 'lib/shared.ts', content: 'export const shared = true;\n' };
+            const items = [makeComponentItem('alpha', [alpha, shared]), makeComponentItem('beta', [beta])];
+            const context = await ProjectContext.loadUninitialized(projectCwd, { fs });
+            setupMockRegistry(context, items);
+            const engine = new ComponentMutationEngine(context);
+            const options = { skipDependencies: true };
+            await engine.execute(await engine.planInstall({ components: ['alpha', 'beta'] }), options);
+            const sharedPath = await context.resolveTargetPath(shared.path);
+            const betaPath = await context.resolveTargetPath(beta.path);
+            const addSharedImport = (content: string) => content.replace(
+                'const label = "before";', 'import { shared } from "@/lib/shared";\nconst label = shared;',
+            );
+            const nextBetaContent = beta.content.replace('{{ label }}', '<small>{{ label }}</small>');
+            if (importSource === 'local') await fs.writeFile(betaPath, addSharedImport(beta.content));
+            const betaUpdate = { ...beta, content: importSource === 'local' ? nextBetaContent : addSharedImport(nextBetaContent) };
+            items[0] = makeComponentItem('alpha', [alpha]);
+            items[1] = makeComponentItem('beta', [betaUpdate]);
+
+            const update = await engine.planUpdate({ components: [first, second] });
+            const result = await engine.execute(update, options);
+
+            expect(result.filesDeleted).toEqual([]);
+            expect(await fs.readFile(betaPath, 'utf-8')).toBe(addSharedImport(nextBetaContent));
+            expect(await fs.readFile(sharedPath, 'utf-8')).toBe(shared.content);
+            const manifest = (await readManifest(projectCwd, fs))!;
+            expect(manifest.components.alpha.files).not.toContain(context.toRelativePosixPath(sharedPath));
+            expect(manifest.components.beta.files).not.toContain(context.toRelativePosixPath(sharedPath));
+        },
+    );
+
+    it('keeps a file registered by another component after update planning', async () => {
+        const card = { ...buttonFiles[0], path: 'components/ui/card/Card.vue' };
+        const shared = { ...buttonFiles[0], path: 'lib/shared.ts', content: 'export const shared = true;\n' };
+        const items = [makeComponentItem('card', [card, shared])];
+        const context = await ProjectContext.loadUninitialized(projectCwd, { fs });
+        setupMockRegistry(context, items);
+        const engine = new ComponentMutationEngine(context);
+        const options = { skipDependencies: true };
+        await engine.execute(await engine.planInstall({ components: ['card'] }), options);
+        const sharedPath = await context.resolveTargetPath(shared.path);
+        items[0] = makeComponentItem('card', [card]);
+        const update = await engine.planUpdate({ components: ['card'] });
+        expect(update.files).toContainEqual(expect.objectContaining({ filePath: sharedPath, action: 'delete' }));
+
+        await updateInstalledComponents(projectCwd, [{
+            item: makeComponentItem('badge', [shared]),
+            registrySource: 'https://registry.example.com',
+            files: [sharedPath],
+        }], {}, fs);
+        const result = await engine.execute(update, options);
+
+        expect(result.filesDeleted).toEqual([]);
+        expect(result.stats.deletedFiles).toBe(0);
+        expect(await fs.readFile(sharedPath, 'utf-8')).toBe(shared.content);
+        const manifest = (await readManifest(projectCwd, fs))!;
+        expect(manifest.components.card.files).not.toContain(context.toRelativePosixPath(sharedPath));
+        expect(manifest.components.badge.files).toContain(context.toRelativePosixPath(sharedPath));
+    });
+
+    it('preserves a shared import whose owning component has a legacy manifest entry', async () => {
+        const card = { ...buttonFiles[0], path: 'components/ui/card/Card.vue' };
+        const badge = {
+            ...buttonFiles[0],
+            path: 'components/ui/badge/Badge.vue',
+            content: '<script setup>\nimport { shared } from "@/lib/shared";\n</script>\n<template>{{ shared }}</template>\n',
+        };
+        const shared = { ...buttonFiles[0], path: 'lib/shared.ts', content: 'export const shared = true;\n' };
+        const items = [makeComponentItem('card', [card, shared]), makeComponentItem('badge', [badge, shared])];
+        const context = await ProjectContext.loadUninitialized(projectCwd, { fs });
+        setupMockRegistry(context, items);
+        const engine = new ComponentMutationEngine(context);
+        const options = { skipDependencies: true };
+        await engine.execute(await engine.planInstall({ components: ['card', 'badge'] }), options);
+        const sharedPath = await context.resolveTargetPath(shared.path);
+        const sharedRelative = context.toRelativePosixPath(sharedPath);
+        const legacyManifest = (await readManifest(projectCwd, fs))!;
+        legacyManifest.components.badge.files = legacyManifest.components.badge.files.filter(file => file !== sharedRelative);
+        delete legacyManifest.components.badge.baselines;
+        await fs.writeJson(path.join(projectCwd, '.brutx/manifest.json'), legacyManifest);
+
+        const removal = await prepareRemoveComponents(context, ['card'], legacyManifest, false);
+        expect(removal.orphanedFiles).not.toContain(sharedPath);
+        items[0] = makeComponentItem('card', [card]);
+        const update = await engine.planUpdate({ components: ['card'] });
+        const result = await engine.execute(update, options);
+
+        expect(result.filesDeleted).toEqual([]);
+        expect(await fs.readFile(sharedPath, 'utf-8')).toBe(shared.content);
+        expect((await readManifest(projectCwd, fs))?.components.card.files).not.toContain(sharedRelative);
+    });
+
+    it('records an existing identical file when adding another owner and preserves it during removal', async () => {
+        const shared = { ...buttonFiles[0], path: 'lib/shared.ts', content: 'export const shared = true;\n' };
+        const card = makeComponentItem('card', [shared]);
+        const badge = makeComponentItem('badge', [shared]);
+        const items = [card];
+        const context = await ProjectContext.loadUninitialized(projectCwd, { fs });
+        setupMockRegistry(context, items);
+        const engine = new ComponentMutationEngine(context);
+        const options = { skipDependencies: true };
+        await engine.execute(await engine.planInstall({ components: ['card'] }), options);
+        items[0] = badge;
+        const installation = await engine.execute(await engine.planInstall({ components: ['badge'] }), options);
+        expect(installation.filesWritten).toEqual([]);
+        const sharedPath = await context.resolveTargetPath(shared.path);
+        const relativePath = context.toRelativePosixPath(sharedPath);
+        const manifest = (await readManifest(projectCwd, fs))!;
+        expect(manifest.components.badge.files).toEqual([relativePath]);
+
+        const removal = await prepareRemoveComponents(context, ['card'], manifest, false);
+        expect(removal.orphanedFiles).toEqual([]);
+        await removeComponents(context, removal.toRemove, removal.orphanedFiles);
+        expect(await fs.pathExists(sharedPath)).toBe(true);
+        const finalRemoval = await prepareRemoveComponents(context, ['badge'], null, false);
+        expect(finalRemoval.orphanedFiles).toEqual([sharedPath]);
+        await removeComponents(context, finalRemoval.toRemove, finalRemoval.orphanedFiles);
+        expect(await fs.pathExists(sharedPath)).toBe(false);
+    });
+
+    it('rolls back a recovered baseline if the manifest write fails during execution', async () => {
+        const context = await ProjectContext.loadUninitialized(projectCwd, { fs });
+        setupMockRegistry(context);
+        const engine = new ComponentMutationEngine(context);
+        await engine.execute(await engine.planInstall({ components: ['button'] }), { skipDependencies: true });
+        const manifestPath = path.join(projectCwd, '.brutx/manifest.json');
+        const manifest = (await readManifest(projectCwd, fs))!;
+        const entry = manifest.components.button;
+        const sourcePath = path.join(projectCwd, entry.files[0]);
+        const source = await fs.readFile(sourcePath, 'utf-8');
+        const baselinePath = path.join(projectCwd, entry.baselines![entry.files[0]]);
+        await fs.remove(path.join(projectCwd, '.brutx/baselines/button'));
+        delete entry.baselines;
+        await fs.writeJson(manifestPath, manifest);
+        const manifestBefore = await fs.readFile(manifestPath, 'utf-8');
+
+        const plan = await engine.planInstall({ components: ['button'], merge: true });
+
+        expect(plan.baselineRecoveries).toHaveLength(1);
+        expect(await fs.pathExists(baselinePath)).toBe(false);
+        expect(await fs.readFile(manifestPath, 'utf-8')).toBe(manifestBefore);
+        const failure = vi.spyOn(fs, 'writeJson').mockImplementationOnce(async () => {
+            expect(await fs.pathExists(baselinePath)).toBe(true);
+            throw new Error('manifest write failed');
+        });
+        await expect(engine.execute(plan, { skipDependencies: true })).rejects.toThrow(/rollback completed.*manifest write failed/);
+        failure.mockRestore();
+
+        expect(await fs.pathExists(path.join(projectCwd, '.brutx/baselines/button'))).toBe(false);
+        expect(await fs.readFile(manifestPath, 'utf-8')).toBe(manifestBefore);
+        expect(await fs.readFile(sourcePath, 'utf-8')).toBe(source);
+        await engine.execute(plan, { skipDependencies: true });
+        expect(await fs.readFile(baselinePath, 'utf-8')).toBe(source);
+    });
+
+    it('rejects an earlier merge and recovery plan before overwriting a newer installation', async () => {
+        const context = await ProjectContext.loadUninitialized(projectCwd, { fs });
+        const original = makeComponentItem('button', buttonFiles);
+        const later = (label: string) => makeComponentItem('button', buttonFiles.map(file => ({
+            ...file, content: file.content.replace('Button</button>', `${label}</button>`),
+        })));
+        const items = [original];
+        const registry = setupMockRegistry(context, items);
+        const engine = new ComponentMutationEngine(context);
+        await engine.execute(await engine.planInstall({ components: ['button'] }), { skipDependencies: true });
+        const manifestPath = path.join(projectCwd, '.brutx/manifest.json');
+        const entry = (await readManifest(projectCwd, fs))!.components.button;
+        const baselinePath = path.join(projectCwd, entry.baselines![entry.files[0]]);
+        await fs.remove(baselinePath);
+        vi.mocked(registry.fetchItem).mockResolvedValueOnce(original);
+        items[0] = later('two');
+        const stalePlan = await engine.planInstall({ components: ['button'], merge: true });
+        expect(stalePlan.baselineRecoveries).toHaveLength(1);
+        expect(stalePlan.files.some(file => file.action === 'merge')).toBe(true);
+
+        const current = later('three');
+        const version = '3.0.0';
+        const specifier = `button@${version}`;
+        const registrySnapshots = new Map([[specifier, { item: current, source: entry.registrySource, version }]]);
+        vi.mocked(registry.fetchItem).mockResolvedValueOnce(original);
+        await engine.execute(await engine.planUpdate({ components: [specifier], registrySnapshots }), { skipDependencies: true });
+        const manifestBefore = await fs.readFile(manifestPath, 'utf-8');
+        const progress = vi.fn();
+        expect(await fs.readFile(baselinePath, 'utf-8')).toBe(current.files[0].content);
+
+        await expect(engine.execute(stalePlan, {
+            skipDependencies: true,
+            callbacks: { onProgress: progress },
+        })).rejects.toThrow('changed during merge planning');
+
+        expect(progress).not.toHaveBeenCalled();
+        expect(await fs.readFile(path.join(projectCwd, entry.files[0]), 'utf-8')).toBe(current.files[0].content);
+        expect(await fs.readFile(baselinePath, 'utf-8')).toBe(current.files[0].content);
+        expect(await fs.readFile(manifestPath, 'utf-8')).toBe(manifestBefore);
     });
 
     it('planInstall should calculate execution plan purely in memory without disk side-effects', async () => {

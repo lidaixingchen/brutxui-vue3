@@ -182,7 +182,7 @@ describe('DirectoryMergePlanner', () => {
         expect(deprecatedRes.action).toBe('skip');
     });
 
-    it('gracefully degrades to 2-way diff when baseline status is fallback-diff', async () => {
+    it('keeps local content by default when the baseline is unavailable', async () => {
         const buttonPath = path.join(projectCwd, 'src/components/ui/button/Button.vue');
         const fs = new MemoryFileSystemAdapter({
             [path.join(projectCwd, 'components.json')]: JSON.stringify(sampleConfig),
@@ -221,6 +221,13 @@ describe('DirectoryMergePlanner', () => {
 
         expect(plan.isFallback).toBe(true);
         expect(plan.files[0].status).toBe('fallback-diff');
-        expect(plan.files[0].action).toBe('write');
+        expect(plan.files[0].action).toBe('skip');
+        expect(plan.files[0].content).toBe(await fs.readFile(buttonPath));
+
+        const theirs = await planner.planComponentMerge(ctx, 'button', remoteItem, fallbackBaseline, {
+            conflictStrategy: 'theirs',
+        });
+        expect(theirs.files[0].action).toBe('write');
+        expect(theirs.files[0].content).toBe(remoteItem.files[0].content);
     });
 });
