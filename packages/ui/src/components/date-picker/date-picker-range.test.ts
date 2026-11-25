@@ -4,7 +4,7 @@ import DatePickerRange from './DatePickerRange.vue'
 import DatePickerRangePanel from './DatePickerRangePanel.vue'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
-import { type DatePickerRangeShortcut } from './types'
+import { type DatePickerRangeShortcut, type DateRange } from './types'
 
 const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
@@ -317,6 +317,49 @@ describe('DatePickerRange', () => {
         await clearBtn.trigger('click')
         expect(wrapper.emitted('change')).toBeTruthy()
         expect(wrapper.emitted('change')![0]).toEqual([null])
+    })
+
+    it('emits one change when clearing from the trigger before closing an open panel', async () => {
+        wrapper = mount(DatePickerRange, {
+            ...localeProvide,
+            props: {
+                modelValue: [new Date(2026, 0, 5), new Date(2026, 0, 10)],
+                clearable: true,
+            },
+            attachTo: document.body,
+        })
+        await openPanel(wrapper)
+        const trigger = wrapper.get('[role="combobox"]')
+
+        await wrapper.get('button[aria-label="Clear"]').trigger('click')
+        expect(trigger.attributes('aria-expanded')).toBe('true')
+        await trigger.trigger('click')
+
+        expect(wrapper.emitted('close')).toHaveLength(1)
+        expect(wrapper.emitted('update:modelValue')).toEqual([[null]])
+        expect(wrapper.emitted('change')).toEqual([[null]])
+    })
+
+    it.each([
+        { start: 6, end: 10, changed: true },
+        { start: 5, end: 11, changed: true },
+        { start: 5, end: 10, changed: false },
+    ])('compares both endpoints on close when selecting a range from day $start to $end', async ({ start, end, changed }) => {
+        const modelValue: DateRange = [new Date(2026, 0, 5), new Date(2026, 0, 10)]
+        const selection: DateRange = [new Date(2026, 0, start), new Date(2026, 0, end)]
+        wrapper = mount(DatePickerRange, {
+            ...localeProvide,
+            props: { modelValue, shortcuts: [{ label: 'Test range', value: selection }] },
+            attachTo: document.body,
+        })
+        await openPanel(wrapper)
+        document.body.querySelector<HTMLElement>('[role="option"]')!.click()
+        await nextTick()
+        expect(wrapper.emitted('update:modelValue')).toEqual([[selection]])
+        await wrapper.get('[role="combobox"]').trigger('click')
+
+        expect(wrapper.emitted('close')).toHaveLength(1)
+        expect(wrapper.emitted('change')).toEqual(changed ? [[selection]] : undefined)
     })
 
     it('emits change exactly once when confirming a selection', async () => {

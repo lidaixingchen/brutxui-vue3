@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { Calendar as CalendarIcon, ChevronDown, X } from '@lucide/vue'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
@@ -7,6 +7,7 @@ import { cn, FOCUS_RING_CLASSES } from '@/lib/utils'
 import { brutalDestructiveHoverTextClasses } from '@/lib/semantic-text-variants'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
+import { useDatePickerSelection } from '@/composables/useDatePickerSelection'
 import { formatDate } from '@/lib/date'
 import PopoverContent from '../popover/PopoverContent.vue'
 import {
@@ -55,56 +56,25 @@ const resolvedSeparator = computed(() => props.separator ?? t('datePicker.separa
 // 控件可访问名称与 placeholder 提示分离（placeholder 是示例文本，非控件名）
 const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('datePicker.rangeLabel'))
 
-const open = ref(false)
-const displayValue = ref<DateRange | null>(props.modelValue)
 const triggerRef = ref<HTMLButtonElement | null>(null)
-
-// readonly 时拒绝打开（与 useDatePicker 的 setter 拦截语义一致）
-const openModel = computed<boolean>({
-    get: () => open.value,
-    set: (val) => {
-        if (val && props.readonly) return
-        open.value = val
+const {
+    open,
+    displayValue,
+    handlePanelUpdate,
+    handlePanelConfirm,
+    handlePanelClear,
+    handleClearClick,
+    handleTriggerKeydown,
+} = useDatePickerSelection<DateRange>(
+    {
+        modelValue: () => props.modelValue,
+        disabled: () => props.disabled,
+        readonly: () => props.readonly,
+        emit,
+        onTriggerClear: () => void nextTick(() => triggerRef.value?.focus()),
     },
-})
-
-let suppressCloseChange = false
-
-watch(open, (isOpen) => {
-    if (isOpen) {
-        suppressCloseChange = false
-        // 打开时以 modelValue 重新初始化 displayValue：父组件单向绑定时，
-        // 上次关闭前未确认的选择残留会让下次打开的面板显示过期值
-        displayValue.value = props.modelValue
-        emit('open')
-    } else {
-        emit('close')
-        if (suppressCloseChange) {
-            suppressCloseChange = false
-            return
-        }
-        const display = displayValue.value
-        const model = props.modelValue
-        if (
-            display?.[0]?.getTime() !== model?.[0]?.getTime() ||
-            display?.[1]?.getTime() !== model?.[1]?.getTime()
-        ) {
-            emit('change', displayValue.value)
-        }
-    }
-})
-
-watch(() => props.modelValue, (value) => {
-    displayValue.value = value
-})
-
-watch(() => props.disabled, (isDisabled) => {
-    if (!isDisabled || !open.value) return
-
-    displayValue.value = props.modelValue
-    suppressCloseChange = true
-    open.value = false
-})
+    (a, b) => a?.[0]?.getTime() === b?.[0]?.getTime() && a?.[1]?.getTime() === b?.[1]?.getTime(),
+)
 
 const formattedStart = computed(() => {
     if (!props.modelValue || props.modelValue.length !== 2) return ''
@@ -149,55 +119,10 @@ const clearButtonClasses = computed(() =>
         props.size === 'sm' ? 'right-8 w-4 h-4' : 'right-10 w-5 h-5'
     )
 )
-
-function handlePanelUpdate(value: DateRange | null) {
-    if (props.disabled) return
-    displayValue.value = value
-    // 新值非空时取消抑制：清除后重新选择并关闭面板时仍需触发 change
-    // （与单日期 useDatePicker 的语义一致）
-    if (value !== null) suppressCloseChange = false
-    emit('update:modelValue', value)
-}
-
-function handlePanelConfirm(value: DateRange | null) {
-    if (props.disabled) return
-    displayValue.value = value
-    emit('update:modelValue', value)
-    emit('change', value)
-    suppressCloseChange = true
-    open.value = false
-}
-
-function handlePanelClear() {
-    if (props.disabled) return
-    displayValue.value = null
-    emit('update:modelValue', null)
-    emit('change', null)
-    // 已在此处 emit change(null)，面板随后关闭时不再重复 emit
-    suppressCloseChange = true
-}
-
-function handleClearClick(event: Event) {
-    event.stopPropagation()
-    if (props.disabled) return
-    displayValue.value = null
-    emit('update:modelValue', null)
-    emit('change', null)
-    void nextTick(() => triggerRef.value?.focus())
-}
-
-function handleTriggerKeydown(event: KeyboardEvent) {
-    if (
-        (props.disabled || props.readonly)
-        && (event.key === 'Enter' || event.key === ' ')
-    ) {
-        event.preventDefault()
-    }
-}
 </script>
 
 <template>
-    <PopoverRoot v-model:open="openModel">
+    <PopoverRoot v-model:open="open">
         <div :class="controlClasses">
             <PopoverTrigger as-child>
                 <button

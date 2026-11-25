@@ -126,6 +126,7 @@ export const API_CONTRACT: ApiContract = {
         { id: 'composable:useDataTableSelection', source: 'src/composables/useDataTableSelection.ts', owner: 'composable:useDataTableSelection', layer: 'composite', public: true },
         { id: 'composable:useDataTableSort', source: 'src/composables/useDataTableSort.ts', owner: 'composable:useDataTableSort', layer: 'composite', public: true },
         { id: 'composable:useDatePicker', source: 'src/composables/useDatePicker.ts', owner: 'composable:useDatePicker', layer: 'runtime/helper', public: true },
+        { id: 'composable:useDatePickerSelection', source: 'src/composables/useDatePickerSelection.ts', owner: 'component:date-picker', layer: 'runtime/helper', public: false },
         { id: 'composable:useDebounce', source: 'src/composables/useDebounce.ts', owner: 'composable:useDebounce', layer: 'runtime/helper', public: true },
         { id: 'composable:useDialog', source: 'src/composables/useDialog.ts', owner: 'composable:useDialog', layer: 'composite', public: true },
         { id: 'composable:useDialogEnhanced', source: 'src/composables/useDialogEnhanced.ts', owner: 'composable:useDialogEnhanced', layer: 'runtime/helper', public: true },

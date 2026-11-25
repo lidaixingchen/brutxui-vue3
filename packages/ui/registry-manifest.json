@@ -504,6 +504,7 @@
     ],
     "composables": [
       "useDatePicker.ts",
+      "useDatePickerSelection.ts",
       "useLocale.ts"
     ],
     "directives": [],

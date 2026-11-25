@@ -144,6 +144,30 @@ describe('useDatePicker', () => {
         expect(emitted).toContainEqual(['change', date])
     })
 
+    it('emits one change when the parent closes a controlled panel after confirming', async () => {
+        const openProp = ref(true)
+        const modelValue = new Date(2026, 0, 1)
+        const emit = vi.fn()
+        const emitUpdateOpen = vi.fn()
+        const { open, handlePanelConfirm } = createDatePicker({
+            openProp,
+            modelValue,
+            emit,
+            emitUpdateOpen,
+        })
+
+        const date = new Date(2026, 5, 26)
+        handlePanelConfirm(date)
+        await nextTick()
+        expect(open.value).toBe(true)
+        expect(emitUpdateOpen.mock.calls).toEqual([[false]])
+        expect(emit.mock.calls).toEqual([['update:modelValue', date], ['change', date]])
+
+        openProp.value = false
+        await nextTick()
+        expect(emit.mock.calls).toEqual([['update:modelValue', date], ['change', date], ['close']])
+    })
+
     it('handlePanelClear clears value and emits update:modelValue null and change null', () => {
         const emitted: Array<[string, unknown]> = []
         const { handlePanelClear, displayValue } = createDatePicker({
