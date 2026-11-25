@@ -2,6 +2,7 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { readPassedReleaseCheck } from './check-record.mjs';
 
 // 发布准备一体化脚本：
 //   prepare 模式：守卫（工作区/待发布 changeset）→ pnpm version-packages（bump + 包 CHANGELOG + 版本提交）
@@ -190,16 +191,9 @@ function tag(force, dryRun) {
         fail(`tag ${tagName} 已存在且指向不同提交 (${tagCommit.slice(0, 7)} vs ${headCommit.slice(0, 7)})。若需重打（如发布后补修、门禁修复后再提交），用 --force 覆盖。`);
     }
 
-    const checkPath = path.join(repoRoot, 'tmp', 'release-check.json');
-    if (existsSync(checkPath)) {
-        try {
-            const checkData = JSON.parse(readFileSync(checkPath, 'utf-8'));
-            if (checkData.commit === headCommit && checkData.status === 'passed') {
-                step(`验证本地发布门禁: 已在提交 ${headCommit.slice(0, 7)} 通过 release:check (${checkData.timestamp})`);
-            }
-        } catch {
-            // ignore
-        }
+    const checkData = readPassedReleaseCheck(repoRoot, headCommit);
+    if (checkData) {
+        step(`验证本地发布门禁: 已在提交 ${headCommit.slice(0, 7)} 通过 release:check (${checkData.timestamp})`);
     }
 
     // 重打 tag 后远程已有同名 tag，普通 push 会因 non-fast-forward 被拒（publish.yml 由 push v* 触发，

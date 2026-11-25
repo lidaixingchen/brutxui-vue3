@@ -23,6 +23,7 @@ test('release prepare commits generated changelog files without staging unrelate
         fs.mkdirSync(path.dirname(preparePath), { recursive: true });
         fs.mkdirSync(binDir, { recursive: true });
         fs.writeFileSync(preparePath, fs.readFileSync(PREPARE_SOURCE, 'utf-8'));
+        fs.copyFileSync(new URL('../check-record.mjs', import.meta.url), path.join(path.dirname(preparePath), 'check-record.mjs'));
         fs.writeFileSync(path.join(fixtureRoot, 'packages', 'ui', 'package.json'), JSON.stringify({ name: 'brutx-ui-vue', version: '0.2.0' }, null, 2));
         fs.writeFileSync(path.join(fixtureRoot, 'packages', 'cli', 'package.json'), JSON.stringify({ name: 'brutx-vue', version: '0.2.0' }, null, 2));
         fs.writeFileSync(path.join(fixtureRoot, '.changeset', 'fix.md'), '---\n"brutx-ui-vue": patch\n---\nFix input behavior.\n');

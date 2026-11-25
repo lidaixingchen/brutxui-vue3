@@ -52,7 +52,7 @@ git push origin v<version>         # ⑥ 推送 tag 后自动发布
    - 运行静态契约检查（`check:contracts`）
    - 运行真实消费者安装构建矩阵（`test-consumers`）
    - 运行发布状态机与 provenance 演练（`test:release`）
-   - 检验通过后生成本地凭据 `tmp/release-check.json` 供打 tag 时校验
+   - 每轮检查启动时都会更新 `tmp/release-check.json`。打 tag 或预演时，仅在最近开始的一轮已通过且对应当前提交时显示通过提示。
 
 4. **`pnpm release:tag`**：自动读取 UI 包版本打 `v<version>` tag。tag 命名以 UI 包版本为主（如 `v0.10.0`），CLI 版本不单独打 tag。若 tag 已存在且指向当前提交，自动视为已完成。
 
