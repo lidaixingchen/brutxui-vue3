@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRef } from 'vue'
+import { computed } from 'vue'
 import {
     DropdownMenuPortal as DropdownMenuPortalPrimitive,
     DropdownMenuContent as DropdownMenuContentPrimitive,
@@ -8,8 +8,7 @@ import {
 import { cn } from '@/lib/utils'
 import { floatingContentSideOffsets } from '@/lib/floating-content-variants'
 import { dropdownMenuContentVariants } from './dropdown-menu-variants'
-import { useFloatingOverlayLayer } from '@/lib/overlay-layer'
-import { usePortalThemeInheritance } from '@/lib/portal-theme'
+import { useFloatingOverlay } from '@/lib/overlay-layer'
 
 interface DropdownMenuContentProps {
     sideOffset?: number
@@ -29,10 +28,11 @@ const props = withDefaults(defineProps<DropdownMenuContentProps>(), {
 })
 
 const dropdownMenuContext = injectDropdownMenuRootContext()
-const { style: overlayLayerStyle, ref: floatingLayerRef, element: floatingElement } = useFloatingOverlayLayer('dropdown', dropdownMenuContext.open)
-// 原语挂载时会替换触发器 ref，按当前上下文读取实际元素。
-const triggerElement = toRef(() => dropdownMenuContext.triggerElement.value)
-usePortalThemeInheritance(triggerElement, floatingElement)
+const { style: overlayLayerStyle, ref: floatingLayerRef } = useFloatingOverlay('dropdown', {
+    // 原语挂载时会替换触发器 ref，按当前上下文读取实际元素。
+    anchor: () => dropdownMenuContext.triggerElement.value,
+    open: dropdownMenuContext.open,
+})
 
 const classes = computed(() =>
     cn(dropdownMenuContentVariants(), props.class)

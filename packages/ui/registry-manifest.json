@@ -574,8 +574,7 @@
       "floating-animation-classes.ts",
       "floating-content-variants.ts",
       "icon-size-variants.ts",
-      "overlay-layer.ts",
-      "portal-theme.ts"
+      "overlay-layer.ts"
     ]
   },
   "feedback-form": {
@@ -894,8 +893,7 @@
     "lib": [
       "floating-animation-classes.ts",
       "floating-content-variants.ts",
-      "overlay-layer.ts",
-      "portal-theme.ts"
+      "overlay-layer.ts"
     ]
   },
   "pricing-section": {
@@ -1005,7 +1003,6 @@
       "floating-content-variants.ts",
       "icon-size-variants.ts",
       "overlay-layer.ts",
-      "portal-theme.ts",
       "semantic-text-variants.ts"
     ]
   },
@@ -1272,8 +1269,7 @@
     "directives": [],
     "lib": [
       "floating-content-variants.ts",
-      "overlay-layer.ts",
-      "portal-theme.ts"
+      "overlay-layer.ts"
     ]
   },
   "tour": {

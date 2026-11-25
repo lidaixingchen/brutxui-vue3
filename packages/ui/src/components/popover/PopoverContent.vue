@@ -9,8 +9,7 @@ import {
 import { cn } from '@/lib/utils'
 import { floatingContentSideOffsets } from '@/lib/floating-content-variants'
 import { popoverContentVariants } from './popover-variants'
-import { useFloatingOverlayLayer } from '@/lib/overlay-layer'
-import { usePortalThemeInheritance } from '@/lib/portal-theme'
+import { useFloatingOverlay } from '@/lib/overlay-layer'
 
 defineOptions({ inheritAttrs: false })
 
@@ -29,8 +28,10 @@ const props = withDefaults(defineProps<PopoverContentProps>(), {
 })
 
 const rootContext = injectPopoverRootContext()
-const { style: overlayLayerStyle, ref: floatingLayerRef, element: floatingElement } = useFloatingOverlayLayer('popover', rootContext.open)
-usePortalThemeInheritance(rootContext.triggerElement, floatingElement)
+const { style: overlayLayerStyle, ref: floatingLayerRef } = useFloatingOverlay('popover', {
+    anchor: () => rootContext.triggerElement.value,
+    open: rootContext.open,
+})
 
 const classes = computed(() =>
     cn(popoverContentVariants(), props.class)

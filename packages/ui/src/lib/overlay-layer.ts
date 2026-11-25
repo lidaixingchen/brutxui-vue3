@@ -6,6 +6,7 @@ import {
     onUpdated,
     provide,
     shallowRef,
+    toRef,
     watch,
     watchPostEffect,
     type ComputedRef,
@@ -15,6 +16,7 @@ import {
     type StyleValue,
 } from 'vue'
 import { getComputedStyle, getDocument, getMutationObserverCtor } from './env'
+import { usePortalThemeInheritance } from './portal-theme'
 import { useForwardExpose } from 'reka-ui'
 
 type ModalLayerToken = 'dialog'
@@ -37,6 +39,12 @@ interface ModalOverlayLayer {
     style: ComputedRef<StyleValue>
     overlayStyle: ComputedRef<StyleValue>
     ref: (value: unknown) => void
+}
+
+interface FloatingOverlayOptions {
+    anchor: (content: HTMLElement | null) => HTMLElement | null | undefined
+    open?: Readonly<Ref<boolean>>
+    itemAligned?: () => boolean
 }
 
 const modalLayerKey: InjectionKey<ModalLayerContext> = Symbol('BrutxModalLayer')
@@ -261,15 +269,13 @@ export function useCurrentModalOverlayLayerStyle(): ComputedRef<StyleValue> {
     })
 }
 
-export function useFloatingOverlayLayer(
+export function useFloatingOverlay(
     token: FloatingLayerToken,
-    open?: Readonly<Ref<boolean>>,
-    itemAligned: () => boolean = () => false,
-): { style: ComputedRef<StyleValue>; ref: ReturnType<typeof useForwardExpose>['forwardRef']; element: ComputedRef<HTMLElement | null> } {
+    { anchor, open, itemAligned }: FloatingOverlayOptions,
+): { style: ComputedRef<StyleValue>; ref: ReturnType<typeof useForwardExpose>['forwardRef'] } {
     const modalLayer = inject(modalLayerKey, null)
     const { forwardRef, currentRef } = useForwardExpose()
     const currentElement = shallowRef<HTMLElement | null>(null)
-    const element = computed(() => currentElement.value)
     let elementObserver: MutationObserver | null = null
     let elementParents: Node[] = []
 
@@ -336,7 +342,7 @@ export function useFloatingOverlayLayer(
         const root = currentElement.value
         let positioner = root?.closest<HTMLElement>('[data-reka-popper-content-wrapper]')
         let element = root === positioner ? resolveHTMLElement(positioner?.firstElementChild) : root
-        if (!positioner && root && itemAligned()) {
+        if (!positioner && root && itemAligned?.()) {
             element = root.getAttribute('role') === 'listbox'
                 ? root : root.querySelector<HTMLElement>('[role="listbox"]')
             positioner = element?.parentElement
@@ -379,5 +385,7 @@ export function useFloatingOverlayLayer(
         stopViewportObservation?.()
     })
 
-    return { style, ref: forwardRef, element }
+    usePortalThemeInheritance(toRef(() => anchor(currentElement.value)), currentElement)
+
+    return { style, ref: forwardRef }
 }

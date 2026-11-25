@@ -4,8 +4,7 @@ import { DropdownMenuSubContent as DropdownMenuSubContentPrimitive } from 'reka-
 import { cn } from '@/lib/utils'
 import { floatingContentSideOffsets } from '@/lib/floating-content-variants'
 import { dropdownMenuSubContentVariants } from './dropdown-menu-variants'
-import { useFloatingOverlayLayer } from '@/lib/overlay-layer'
-import { usePortalThemeInheritance } from '@/lib/portal-theme'
+import { useFloatingOverlay } from '@/lib/overlay-layer'
 
 interface DropdownMenuSubContentProps {
     sideOffset?: number
@@ -17,14 +16,13 @@ const props = withDefaults(defineProps<DropdownMenuSubContentProps>(), {
     class: undefined,
 })
 
-const { style: overlayLayerStyle, ref: floatingLayerRef, element: floatingElement } = useFloatingOverlayLayer('dropdown')
-const submenuTrigger = computed(() => {
-    const content = floatingElement.value
-    if (!content) return undefined
-    const triggerId = content.getAttribute('aria-labelledby')
-    return triggerId ? content.ownerDocument.getElementById(triggerId) ?? undefined : undefined
+const { style: overlayLayerStyle, ref: floatingLayerRef } = useFloatingOverlay('dropdown', {
+    anchor: (content) => {
+        if (!content) return null
+        const triggerId = content.getAttribute('aria-labelledby')
+        return triggerId ? content.ownerDocument.getElementById(triggerId) : null
+    },
 })
-usePortalThemeInheritance(submenuTrigger, floatingElement)
 
 const classes = computed(() =>
     cn(
